@@ -11,11 +11,11 @@ exit ;
 
 sub brush() 
 {
-	processDir( "./cds" ) ;
-	processDir( "./src" ) ;
-	processDir( "./tests/test-hdr" ) ;
-	processDir( "./tests/unit" ) ;
-	processDir( "./tests/cppunit" ) ;
+	processDir( "../cds" ) ;
+	processDir( "../src" ) ;
+	processDir( "../tests/test-hdr" ) ;
+	processDir( "../tests/unit" ) ;
+	processDir( "../tests/cppunit" ) ;
 }
 
 sub processDir( $ )
