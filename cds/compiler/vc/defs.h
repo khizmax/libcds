@@ -118,6 +118,12 @@
 // Explicit conversion operator (VC12+)
 #define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
 
+#if CDS_COMPILER_VERSION == CDS_COMPILER_MSVC12
+    // VC12: move ctor cannot be defaulted
+    // Error: C2610 [move ctor] is not a special member function which can be defaulted
+#   define CDS_DISABLE_DEFAULT_MOVE_CTOR
+#endif
+
 // <cstdint>
 #include <cstdint>
 

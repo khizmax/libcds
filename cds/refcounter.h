@@ -74,10 +74,10 @@ namespace cds {
     };
 
     /// Signed 32bit reference counter
-    typedef ref_counter<cds::int32_t>       signed_ref_counter;
+    typedef ref_counter<int32_t>       signed_ref_counter;
 
     /// Unsigned 32bit reference counter
-    typedef ref_counter<cds::uint32_t>      unsigned_ref_counter;
+    typedef ref_counter<uint32_t>      unsigned_ref_counter;
 
 } // namespace cds
 
