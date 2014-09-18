@@ -411,15 +411,6 @@ namespace cds {
 
 namespace cds {
 
-    //@cond
-    /// Helper template: converts volatile pointer to non-volatile one
-    template <typename T>
-    static inline T * non_volatile( T volatile * p ) { return const_cast<T *>( p ); }
-
-    template <typename T>
-    static inline T * non_volatile( T * p ) { return p; }
-    //@endcond
-
     /// Base of all exceptions in the library
     class Exception: public std::exception
     {
