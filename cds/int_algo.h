@@ -3,7 +3,7 @@
 #ifndef __CDS_INT_ALGO_H
 #define __CDS_INT_ALGO_H
 
-#include <cds/bitop.h>
+#include <cds/algo/bitop.h>
 
 namespace cds { namespace beans {
 

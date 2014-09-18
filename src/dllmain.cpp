@@ -20,7 +20,7 @@ static HINSTANCE            s_DllInstance = NULL;
 // For Windows below Windows 7
 
 #include <cds/os/topology.h>
-#include <cds/bitop.h>
+#include <cds/algo/bitop.h>
 
 static unsigned int     s_nProcessorCount = 1;
 static unsigned int     s_nProcessorGroupCount = 1;

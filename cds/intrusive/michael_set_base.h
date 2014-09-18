@@ -6,7 +6,7 @@
 #include <cds/intrusive/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
-#include <cds/bitop.h>
+#include <cds/algo/bitop.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/ref.h>
 

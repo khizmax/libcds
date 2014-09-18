@@ -3,7 +3,7 @@
 #ifndef __CDS_DETAILS_BIT_REVERSE_COUNTER_H
 #define __CDS_DETAILS_BIT_REVERSE_COUNTER_H
 
-#include <cds/bitop.h>
+#include <cds/algo/bitop.h>
 
 //@cond
 namespace cds { namespace bitop {

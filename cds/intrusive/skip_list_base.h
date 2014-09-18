@@ -5,7 +5,7 @@
 
 #include <cds/intrusive/base.h>
 #include <cds/details/marked_ptr.h>
-#include <cds/bitop.h>
+#include <cds/algo/bitop.h>
 #include <cds/os/timer.h>
 #include <cds/urcu/options.h>
 

@@ -7,7 +7,7 @@
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/int_algo.h>
-#include <cds/bitop.h>
+#include <cds/algo/bitop.h>
 #include <cds/details/functor_wrapper.h>
 
 namespace cds { namespace intrusive {
