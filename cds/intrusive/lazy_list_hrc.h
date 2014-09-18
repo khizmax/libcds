@@ -30,19 +30,19 @@ namespace cds { namespace intrusive { namespace lazy_list {
         }
 
         node()
-            : m_pNext( null_ptr<node *>() )
+            : m_pNext( nullptr )
         {}
 
     protected:
         virtual void cleanUp( cds::gc::hrc::ThreadGC * pGC )
         {
-            assert( pGC != null_ptr<cds::gc::hrc::ThreadGC *>() );
+            assert( pGC != nullptr );
             typename gc::GuardArray<2> aGuards( *pGC );
 
             while ( true ) {
                 marked_ptr pNextMarked( aGuards.protect( 0, m_pNext ));
                 node * pNext = pNextMarked.ptr();
-                if ( pNext != null_ptr<node *>() && pNext->m_bDeleted.load(CDS_ATOMIC::memory_order_acquire) ) {
+                if ( pNext != nullptr && pNext->m_bDeleted.load( CDS_ATOMIC::memory_order_acquire ) ) {
                     marked_ptr p = aGuards.protect( 1, pNext->m_pNext );
                     m_pNext.compare_exchange_weak( pNextMarked, p, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed );
                     continue;

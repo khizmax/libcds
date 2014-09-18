@@ -39,7 +39,7 @@ namespace cds {
 
         public:
             HPGuardT() CDS_NOEXCEPT
-                : base_class( null_ptr<hazard_ptr>() )
+                : base_class( nullptr )
             {}
             ~HPGuardT() CDS_NOEXCEPT
             {}
@@ -81,7 +81,7 @@ namespace cds {
             void clear() CDS_NOEXCEPT
             {
                 // memory order is not necessary here
-                base_class::store( null_ptr<hazard_ptr>(), CDS_ATOMIC::memory_order_relaxed );
+                base_class::store( nullptr, CDS_ATOMIC::memory_order_relaxed );
                 //CDS_COMPILER_RW_BARRIER;
             }
         };

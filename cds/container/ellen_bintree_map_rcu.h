@@ -642,7 +642,7 @@ namespace cds { namespace container {
         value_type * get( Q const& key ) const
         {
             leaf_node * pNode = base_class::get( key );
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
 
         /// Finds \p key with \p pred predicate and return the item found
@@ -659,7 +659,7 @@ namespace cds { namespace container {
         {
             leaf_node * pNode = base_class::get_with( key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >());
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
 
         /// Clears the map

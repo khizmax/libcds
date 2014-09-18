@@ -319,7 +319,7 @@ namespace cds {
                 CDS_ATOMIC::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
 
                 thread_list_record()
-                    : m_pNext( null_ptr<ThreadData *>() )
+                    : m_pNext( nullptr )
                     , m_idOwner( cds::OS::nullThreadId() )
                 {}
 
@@ -340,7 +340,7 @@ namespace cds {
 
             public:
                 thread_list()
-                    : m_pHead( null_ptr<thread_record *>())
+                    : m_pHead( nullptr )
                 {}
 
                 ~thread_list()
@@ -379,13 +379,13 @@ namespace cds {
 
                 void retire( thread_record * pRec )
                 {
-                    assert( pRec != null_ptr<thread_record *>() );
+                    assert( pRec != nullptr );
                     pRec->m_list.m_idOwner.store( cds::OS::nullThreadId(), CDS_ATOMIC::memory_order_release );
                 }
 
                 void detach_all()
                 {
-                    thread_record * pNext = null_ptr<thread_record *>();
+                    thread_record * pNext = nullptr;
                     cds::OS::ThreadId const nullThreadId = cds::OS::nullThreadId();
 
                     for ( thread_record * pRec = m_pHead.load(CDS_ATOMIC::memory_order_acquire); pRec; pRec = pNext ) {
@@ -408,7 +408,7 @@ namespace cds {
                     CDS_DEBUG_DO( cds::OS::ThreadId const nullThreadId = cds::OS::nullThreadId() ;)
                     CDS_DEBUG_DO( cds::OS::ThreadId const mainThreadId = cds::OS::getCurrentThreadId() ;)
 
-                    thread_record * p = m_pHead.exchange( null_ptr<thread_record *>(), CDS_ATOMIC::memory_order_seq_cst );
+                    thread_record * p = m_pHead.exchange( nullptr, CDS_ATOMIC::memory_order_seq_cst );
                     while ( p ) {
                         thread_record * pNext = p->m_list.m_pNext;
 

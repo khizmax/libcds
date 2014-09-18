@@ -72,7 +72,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair< iterator, bool > pos = find_prev_item_cmp( key, cmp );
                 if ( !pos.second )
-                    return null_ptr<value_type *>();
+                    return nullptr;
 
                 // key exists
                 iterator it = pos.first;

@@ -20,14 +20,14 @@
 namespace cds { namespace gc {
     namespace hrc {
 
-        GarbageCollector * GarbageCollector::m_pGC = null_ptr<GarbageCollector *>();
+        GarbageCollector * GarbageCollector::m_pGC = nullptr;
 
         GarbageCollector::GarbageCollector(
             size_t nHazardPtrCount,
             size_t nMaxThreadCount,
             size_t nRetiredNodeArraySize
             )
-            : m_pListHead( null_ptr<thread_list_node *>()),
+            : m_pListHead( nullptr ),
             m_bStatEnabled( true ),
             m_nHazardPointerCount( nHazardPtrCount ),
             m_nMaxThreadCount( nMaxThreadCount ),
@@ -81,7 +81,7 @@ namespace cds { namespace gc {
                 }
 
                 delete m_pGC;
-                m_pGC = null_ptr<GarbageCollector *>();
+                m_pGC = nullptr;
             }
         }
 
@@ -103,10 +103,10 @@ namespace cds { namespace gc {
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
             ContainerNode * pItem;
             for ( size_t n = 0; n < pNode->m_arrRetired.capacity(); ++n ) {
-                if ( (pItem = pNode->m_arrRetired[n].m_pNode.load(CDS_ATOMIC::memory_order_relaxed)) != null_ptr<ContainerNode *>() ) {
+                if ( (pItem = pNode->m_arrRetired[n].m_pNode.load( CDS_ATOMIC::memory_order_relaxed )) != nullptr ) {
                     pNode->m_arrRetired[n].m_funcFree( pItem );
                     //pItem->destroy();
-                    pNode->m_arrRetired[n].m_pNode.store( null_ptr<ContainerNode *>(), CDS_ATOMIC::memory_order_relaxed );
+                    pNode->m_arrRetired[n].m_pNode.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
                 }
             }
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
@@ -123,7 +123,7 @@ namespace cds { namespace gc {
                     return hprec;
                 }
             }
-            return null_ptr<GarbageCollector::thread_list_node *>();
+            return nullptr;
         }
 
         details::thread_descriptor * GarbageCollector::allocateHRCThreadDesc( ThreadGC * pThreadGC )
@@ -177,7 +177,7 @@ namespace cds { namespace gc {
                 after thread termination
             */
             assert( pNode->m_idOwner.load(CDS_ATOMIC::memory_order_relaxed) != cds::OS::nullThreadId() );
-            pNode->m_pOwner = null_ptr<ThreadGC *>();
+            pNode->m_pOwner = nullptr;
             pNode->m_idOwner.store( cds::OS::nullThreadId(), CDS_ATOMIC::memory_order_release );
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
         }
@@ -290,7 +290,7 @@ namespace cds { namespace gc {
                 }
 
                 // We own threadDesc.
-                assert( pRec->m_pOwner == null_ptr<ThreadGC *>() );
+                assert( pRec->m_pOwner == nullptr );
 
                 if ( !pRec->m_bFree ) {
                     // All undeleted pointers is moved to pThis (it is private for the current thread)
@@ -303,7 +303,7 @@ namespace cds { namespace gc {
                     details::retired_vector::iterator it = src.begin();
 
                     for ( size_t nRetired = 0; it != itEnd; ++nRetired, ++it ) {
-                        if ( it->m_pNode.load(CDS_ATOMIC::memory_order_relaxed) == null_ptr<ContainerNode *>() )
+                        if ( it->m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr )
                             continue;
 
                         dest.push( it->m_pNode.load(CDS_ATOMIC::memory_order_relaxed), it->m_funcFree );

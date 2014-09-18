@@ -100,7 +100,7 @@ namespace cds { namespace container {
             node_type * m_pItemFound;
 
             ensure_functor()
-                : m_pItemFound( null_ptr<node_type *>() )
+                : m_pItemFound( nullptr )
             {}
 
             void operator ()(bool, node_type& item, node_type& )
@@ -223,21 +223,21 @@ namespace cds { namespace container {
             key_type const& key() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                assert( p != null_ptr<typename iterator_base::value_ptr>() );
+                assert( p != nullptr );
                 return p->m_Data.first;
             }
 
             value_ref val() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                assert( p != null_ptr<typename iterator_base::value_ptr>() );
+                assert( p != nullptr );
                 return p->m_Data.second;
             }
 
             pair_ptr operator ->() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                return p ? &(p->m_Data) : null_ptr<pair_ptr>();
+                return p ? &(p->m_Data) : nullptr;
             }
 
             pair_ref operator *() const
@@ -533,12 +533,12 @@ namespace cds { namespace container {
         //@cond
         node_type * insert_node_at( head_type& refHead, node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             scoped_node_ptr p( pNode );
             if ( base_class::insert_at( &refHead, *p ))
                 return p.release();
 
-            return null_ptr<node_type *>();
+            return nullptr;
         }
 
         template <typename K>
@@ -563,7 +563,7 @@ namespace cds { namespace container {
                 return pNode.release();
             }
 
-            return null_ptr<node_type *>();
+            return nullptr;
         }
 
 
@@ -571,7 +571,7 @@ namespace cds { namespace container {
         std::pair< node_type *, bool > ensure_at( head_type& refHead, const K& key )
         {
             scoped_node_ptr pNode( alloc_node( key ));
-            node_type * pItemFound = null_ptr<node_type *>();
+            node_type * pItemFound = nullptr;
 
 #       ifdef CDS_CXX11_LAMBDA_SUPPORT
             std::pair<bool, bool> ret = base_class::ensure_at( &refHead, *pNode, [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; } );
@@ -583,7 +583,7 @@ namespace cds { namespace container {
             if ( ret.first && ret.second )
                 pNode.release();
 
-            assert( pItemFound != null_ptr<node_type *>() );
+            assert( pItemFound != nullptr );
             return std::make_pair( pItemFound, ret.second );
         }
 

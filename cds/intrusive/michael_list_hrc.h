@@ -20,7 +20,7 @@ namespace cds { namespace intrusive { namespace michael_list {
         atomic_marked_ptr m_pNext ; ///< pointer to the next node in the stack
 
         node()
-            : m_pNext( null_ptr<node *>() )
+            : m_pNext( nullptr )
         {}
 
     protected:

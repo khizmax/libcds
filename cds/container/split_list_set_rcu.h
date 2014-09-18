@@ -261,7 +261,7 @@ namespace cds { namespace container {
 
         bool insert_node( node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             scoped_node_ptr p(pNode);
 
             if ( base_class::insert( *pNode ) ) {
@@ -912,7 +912,7 @@ namespace cds { namespace container {
         value_type * get( Q const& val )
         {
             node_type * pNode = base_class::get( val );
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
 
         /// Finds the key \p val and return the item found
@@ -928,7 +928,7 @@ namespace cds { namespace container {
         value_type * get_with( Q const& val, Less pred )
         {
             node_type * pNode = base_class::get_with( val, typename maker::template predicate_wrapper<Less>::type());
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
 
         /// Clears the set (non-atomic)

@@ -189,7 +189,7 @@ namespace cds { namespace intrusive {
             //@cond
             void allocate_table()
             {
-                m_Table = bucket_table_allocator().NewArray( m_nCapacity, null_ptr<node_type *>() );
+                m_Table = bucket_table_allocator().NewArray( m_nCapacity, nullptr );
             }
 
             void destroy_table()
@@ -237,7 +237,7 @@ namespace cds { namespace intrusive {
             void bucket( size_t nBucket, node_type * pNode )
             {
                 assert( nBucket < capacity() );
-                assert( bucket(nBucket) == null_ptr<node_type *>() );
+                assert( bucket( nBucket ) == nullptr );
 
                 m_Table[ nBucket ].store( pNode, memory_model::memory_order_release );
             }
@@ -358,7 +358,7 @@ namespace cds { namespace intrusive {
 
             segment_type * allocate_table()
             {
-                return bucket_table_allocator().NewArray( m_metrics.nSegmentCount, null_ptr<table_entry *>() );
+                return bucket_table_allocator().NewArray( m_metrics.nSegmentCount, nullptr );
             }
 
             void destroy_table( segment_type * pTable )
@@ -368,7 +368,7 @@ namespace cds { namespace intrusive {
 
             table_entry * allocate_segment()
             {
-                return segment_allocator().NewArray( m_metrics.nSegmentSize, null_ptr<node_type *>() );
+                return segment_allocator().NewArray( m_metrics.nSegmentSize, nullptr );
             }
 
             void destroy_segment( table_entry * pSegment )
@@ -414,7 +414,7 @@ namespace cds { namespace intrusive {
                 segment_type * pSegments = m_Segments;
                 for ( size_t i = 0; i < m_metrics.nSegmentCount; ++i ) {
                     table_entry * pEntry = pSegments[i].load(memory_model::memory_order_relaxed);
-                    if ( pEntry != null_ptr<table_entry *>() )
+                    if ( pEntry != nullptr )
                         destroy_segment( pEntry );
                 }
                 destroy_table( pSegments );
@@ -427,8 +427,8 @@ namespace cds { namespace intrusive {
                 assert( nSegment < m_metrics.nSegmentCount );
 
                 table_entry * pSegment = m_Segments[ nSegment ].load(memory_model::memory_order_acquire);
-                if ( pSegment == null_ptr<table_entry *>() )
-                    return null_ptr<node_type *>() ;    // uninitialized bucket
+                if ( pSegment == nullptr )
+                    return nullptr;    // uninitialized bucket
                 return pSegment[ nBucket & (m_metrics.nSegmentSize - 1) ].load(memory_model::memory_order_acquire);
             }
 
@@ -439,9 +439,9 @@ namespace cds { namespace intrusive {
                 assert( nSegment < m_metrics.nSegmentCount );
 
                 segment_type& segment = m_Segments[nSegment];
-                if ( segment.load(memory_model::memory_order_relaxed) == null_ptr<table_entry *>() ) {
+                if ( segment.load( memory_model::memory_order_relaxed ) == nullptr ) {
                     table_entry * pNewSegment = allocate_segment();
-                    table_entry * pNull = null_ptr<table_entry *>();
+                    table_entry * pNull = nullptr;
                     if ( !segment.compare_exchange_strong( pNull, pNewSegment, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
                         destroy_segment( pNewSegment );
                     }

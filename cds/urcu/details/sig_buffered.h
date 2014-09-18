@@ -87,7 +87,7 @@ namespace cds { namespace urcu {
         /// Checks if the singleton is created and ready to use
         static bool isUsed()
         {
-            return singleton_ptr::s_pRCU != null_ptr<singleton_vtbl *>();
+            return singleton_ptr::s_pRCU != nullptr;
         }
 
     protected:
@@ -151,7 +151,7 @@ namespace cds { namespace urcu {
                 if ( bDetachAll )
                     instance()->m_ThreadList.detach_all();
                 delete instance();
-                singleton_ptr::s_pRCU = null_ptr<singleton_vtbl *>();
+                singleton_ptr::s_pRCU = nullptr;
             }
         }
 

@@ -201,7 +201,7 @@ namespace cds { namespace opt {
         public:
             /// Initializes the generator of arbitrary length \p nLength
             random_shuffle_permutation( size_t nLength )
-                : m_pCur( null_ptr<integer_type *>() )
+                : m_pCur( nullptr )
             {
                 m_pFirst = new integer_type[nLength];
                 m_pLast = m_pFirst + nLength;

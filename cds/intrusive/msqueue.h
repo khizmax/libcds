@@ -155,7 +155,7 @@ namespace cds { namespace intrusive {
         {
             void operator()( value_type * p )
             {
-                assert( p != null_ptr<value_type *>());
+                assert( p != nullptr );
 
                 MSQueue::clear_links( node_traits::to_node_ptr(p) );
                 disposer()( p );
@@ -199,7 +199,7 @@ namespace cds { namespace intrusive {
                 if ( m_pHead.load(memory_model::memory_order_acquire) != h )
                     continue;
 
-                if ( pNext == null_ptr<node_type *>() )
+                if ( pNext == nullptr )
                     return false ;    // empty queue
 
                 node_type * t = m_pTail.load(memory_model::memory_order_acquire);
@@ -227,7 +227,7 @@ namespace cds { namespace intrusive {
 
         static void clear_links( node_type * pNode )
         {
-            pNode->m_pNext.store( null_ptr<node_type *>(), memory_model::memory_order_release );
+            pNode->m_pNext.store( nullptr, memory_model::memory_order_release );
         }
 
         void dispose_result( dequeue_result& res )
@@ -256,8 +256,8 @@ namespace cds { namespace intrusive {
     public:
         /// Initializes empty queue
         MSQueue()
-            : m_pHead( null_ptr<node_type *>() )
-            , m_pTail( null_ptr<node_type *>() )
+            : m_pHead( nullptr )
+            , m_pTail( nullptr )
         {
             // GC and node_type::gc must be the same
             static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
@@ -288,11 +288,11 @@ namespace cds { namespace intrusive {
 
             node_type * pHead = m_pHead.load(memory_model::memory_order_relaxed);
 
-            assert( pHead != null_ptr<node_type *>() );
+            assert( pHead != nullptr );
             assert( pHead == m_pTail.load(memory_model::memory_order_relaxed) );
 
-            m_pHead.store( null_ptr<node_type *>(), memory_model::memory_order_relaxed );
-            m_pTail.store( null_ptr<node_type *>(), memory_model::memory_order_relaxed );
+            m_pHead.store( nullptr, memory_model::memory_order_relaxed );
+            m_pTail.store( nullptr, memory_model::memory_order_relaxed );
 
             dispose_node( pHead );
         }
@@ -333,14 +333,14 @@ namespace cds { namespace intrusive {
                 t = guard.protect( m_pTail, node_to_value() );
 
                 node_type * pNext = t->m_pNext.load(memory_model::memory_order_acquire);
-                if ( pNext != null_ptr<node_type *>() ) {
+                if ( pNext != nullptr ) {
                     // Tail is misplaced, advance it
                     m_pTail.compare_exchange_weak( t, pNext, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
                     m_Stat.onBadTail();
                     continue;
                 }
 
-                node_type * tmp = null_ptr<node_type *>();
+                node_type * tmp = nullptr;
                 if ( t->m_pNext.compare_exchange_strong( tmp, pNew, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
                     break;
 
@@ -388,7 +388,7 @@ namespace cds { namespace intrusive {
 
                 return node_traits::to_value_ptr( *res.pNext );
             }
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Synonym for \ref cds_intrusive_MSQueue_enqueue "enqueue" function
@@ -407,7 +407,7 @@ namespace cds { namespace intrusive {
         bool empty() const
         {
             typename gc::Guard guard;
-            return guard.protect( m_pHead, node_to_value() )->m_pNext.load(memory_model::memory_order_relaxed) == null_ptr<node_type *>();
+            return guard.protect( m_pHead, node_to_value() )->m_pNext.load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
         /// Clear the queue

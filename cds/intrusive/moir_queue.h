@@ -123,7 +123,7 @@ namespace cds { namespace intrusive {
                 h = res.guards.protect( 0, base_class::m_pHead, node_to_value() );
                 pNext = res.guards.protect( 1, h->m_pNext, node_to_value() );
 
-                if ( pNext == null_ptr<node_type *>() )
+                if ( pNext == nullptr )
                     return false    ;    // queue is empty
 
                 if ( base_class::m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
@@ -158,7 +158,7 @@ namespace cds { namespace intrusive {
                 base_class::dispose_result( res );
                 return node_traits::to_value_ptr( *res.pNext );
             }
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Synonym for \ref cds_intrusive_MoirQueue_dequeue "dequeue" function

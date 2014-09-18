@@ -257,7 +257,7 @@ namespace cds { namespace intrusive {
             {
                 void operator()( segment * pSegment )
                 {
-                    assert( pSegment != null_ptr<segment *>());
+                    assert( pSegment != nullptr );
                     free_segment( pSegment );
                 }
             };
@@ -266,15 +266,15 @@ namespace cds { namespace intrusive {
             {
                 void operator()( segment * pSegment )
                 {
-                    assert( pSegment != null_ptr<segment *>());
+                    assert( pSegment != nullptr );
                     retire_segment( pSegment );
                 }
             };
 
         public:
             segment_list( size_t nQuasiFactor, stat& st )
-                : m_pHead( null_ptr<segment *>() )
-                , m_pTail( null_ptr<segment *>() )
+                : m_pHead( nullptr )
+                , m_pTail( nullptr )
                 , m_nQuasiFactor( nQuasiFactor )
                 , m_Stat( st )
             {
@@ -355,9 +355,9 @@ namespace cds { namespace intrusive {
                     scoped_lock l( m_Lock );
 
                     if ( m_List.empty() ) {
-                        m_pTail.store( null_ptr<segment *>(), memory_model::memory_order_relaxed );
-                        m_pHead.store( null_ptr<segment *>(), memory_model::memory_order_relaxed );
-                        return guard.assign( null_ptr<segment *>() );
+                        m_pTail.store( nullptr, memory_model::memory_order_relaxed );
+                        m_pHead.store( nullptr, memory_model::memory_order_relaxed );
+                        return guard.assign( nullptr );
                     }
 
                     if ( pHead != &m_List.front() || get_version(pHead) != m_List.front().version ) {
@@ -369,8 +369,8 @@ namespace cds { namespace intrusive {
 
                     m_List.pop_front();
                     if ( m_List.empty() ) {
-                        pRet = guard.assign( null_ptr<segment *>() );
-                        m_pTail.store( null_ptr<segment *>(), memory_model::memory_order_relaxed );
+                        pRet = guard.assign( nullptr );
+                        m_pTail.store( nullptr, memory_model::memory_order_relaxed );
                     }
                     else
                         pRet = guard.assign( &m_List.front() );
@@ -529,7 +529,7 @@ namespace cds { namespace intrusive {
                 assert( pVal );
                 return pVal;
             }
-            return null_ptr<value_type *>();
+            return nullptr;
 
         }
 

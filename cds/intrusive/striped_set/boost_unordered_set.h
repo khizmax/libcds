@@ -110,7 +110,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 iterator it = m_Set.find( key, typename container_type::hasher(), typename container_type::key_equal() );
                 if ( it == m_Set.end() )
-                    return null_ptr<value_type *>();
+                    return nullptr;
                 value_type& val = *it;
                 cds::unref(f)( val );
                 m_Set.erase( it );
@@ -122,7 +122,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 iterator it = m_Set.find( key, typename container_type::hasher(), equal_from_compare<Less>(pred) );
                 if ( it == m_Set.end() )
-                    return null_ptr<value_type *>();
+                    return nullptr;
                 value_type& val = *it;
                 cds::unref(f)( val );
                 m_Set.erase( it );

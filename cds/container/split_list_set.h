@@ -215,7 +215,7 @@ namespace cds { namespace container {
 
         bool insert_node( node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             scoped_node_ptr p(pNode);
 
             if ( base_class::insert( *pNode ) ) {

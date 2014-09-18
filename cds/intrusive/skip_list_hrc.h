@@ -31,9 +31,9 @@ namespace cds { namespace intrusive { namespace skip_list {
     public:
         /// Constructs a node of height 1 (a bottom-list node)
         node()
-            : m_pNext( null_ptr<node *>())
+            : m_pNext( nullptr )
             , m_nHeight(1)
-            , m_arrNext( null_ptr<atomic_marked_ptr *>())
+            , m_arrNext( nullptr )
             , m_bDel( false )
         {}
 
@@ -47,8 +47,8 @@ namespace cds { namespace intrusive { namespace skip_list {
         void make_tower( unsigned int nHeight, atomic_marked_ptr * nextTower )
         {
             assert( nHeight > 0 );
-            assert( ( nHeight == 1 && nextTower == null_ptr<atomic_marked_ptr *>() )  // bottom-list node
-                || ( nHeight > 1  && nextTower != null_ptr<atomic_marked_ptr *>() )   // node at level of more than 0
+            assert( (nHeight == 1 && nextTower == nullptr)  // bottom-list node
+                    || (nHeight > 1 && nextTower != nullptr)   // node at level of more than 0
                 );
 
             m_arrNext = nextTower;
@@ -60,7 +60,7 @@ namespace cds { namespace intrusive { namespace skip_list {
             unsigned int nHeight = m_nHeight - 1;
             atomic_marked_ptr * pTower = m_arrNext;
             if ( pTower ) {
-                m_arrNext = null_ptr<atomic_marked_ptr *>();
+                m_arrNext = nullptr;
                 m_nHeight = 1;
                 for ( unsigned int i = 0; i < nHeight; ++i )
                     pTower[i].store( marked_ptr(), CDS_ATOMIC::memory_order_release );
@@ -77,7 +77,7 @@ namespace cds { namespace intrusive { namespace skip_list {
         atomic_marked_ptr& next( unsigned int nLevel )
         {
             assert( nLevel < height() );
-            assert( nLevel == 0 || (nLevel > 0 && m_arrNext != null_ptr<atomic_marked_ptr *>() ));
+            assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
             return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
         }
@@ -86,7 +86,7 @@ namespace cds { namespace intrusive { namespace skip_list {
         atomic_marked_ptr const& next( unsigned int nLevel ) const
         {
             assert( nLevel < height() );
-            assert( nLevel == 0 || (nLevel > 0 && m_arrNext != null_ptr<atomic_marked_ptr *>()) );
+            assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
             return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
         }

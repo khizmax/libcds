@@ -300,15 +300,15 @@ namespace cds { namespace gc {
                 //@cond
                 thread_list_node( const GarbageCollector& HzpMgr )
                     : thread_descriptor( HzpMgr ),
-                    m_pNext(null_ptr<thread_list_node *>()),
-                    m_pOwner( null_ptr<ThreadGC *>() ),
+                    m_pNext( nullptr ),
+                    m_pOwner( nullptr ),
                     m_idOwner( cds::OS::nullThreadId() ),
                     m_bFree( false )
                 {}
 
                 ~thread_list_node()
                 {
-                    assert( m_pOwner == null_ptr<ThreadGC *>() );
+                    assert( m_pOwner == nullptr );
                     assert( m_idOwner.load(CDS_ATOMIC::memory_order_relaxed) == cds::OS::nullThreadId() );
                 }
                 //@endcond
@@ -371,7 +371,7 @@ namespace cds { namespace gc {
             /// Checks if global GC object is constructed and may be used
             static bool isUsed()
             {
-                return m_pGC != null_ptr<GarbageCollector *>();
+                return m_pGC != nullptr;
             }
 
             /// Get max count of hazard pointers as defined in @ref Construct call
@@ -480,7 +480,7 @@ namespace cds { namespace gc {
             //@cond
             ThreadGC()
                 : m_gc( GarbageCollector::instance() )
-                , m_pDesc( null_ptr<details::thread_descriptor *>() )
+                , m_pDesc( nullptr )
             {}
             ~ThreadGC()
             {
@@ -489,7 +489,7 @@ namespace cds { namespace gc {
             //@endcond
 
             /// Checks if thread GC is initialized
-            bool    isInitialized() const   { return m_pDesc != null_ptr<details::thread_descriptor *>() ; }
+            bool    isInitialized() const { return m_pDesc != nullptr; }
 
             /// Initialization. Multiple calls is allowed
             void init()
@@ -505,7 +505,7 @@ namespace cds { namespace gc {
                     cleanUpLocal();
                     m_gc.Scan( this );
                     details::thread_descriptor * pRec = m_pDesc;
-                    m_pDesc = null_ptr<details::thread_descriptor *>();
+                    m_pDesc = nullptr;
                     if  ( pRec )
                         m_gc.retireHRCThreadDesc( pRec );
                 }
@@ -515,14 +515,14 @@ namespace cds { namespace gc {
             /// Initializes HP guard \p guard
             details::HPGuard& allocGuard()
             {
-                assert( m_pDesc != null_ptr<details::thread_descriptor *>() );
+                assert( m_pDesc != nullptr );
                 return m_pDesc->m_hzp.alloc();
             }
 
             /// Frees HP guard \p guard
             void freeGuard( details::HPGuard& guard )
             {
-                assert( m_pDesc != null_ptr<details::thread_descriptor *>() );
+                assert( m_pDesc != nullptr );
                 m_pDesc->m_hzp.free( guard );
             }
 
@@ -530,7 +530,7 @@ namespace cds { namespace gc {
             template <size_t Count>
             void allocGuard( details::HPArray<Count>& arr )
             {
-                assert( m_pDesc != null_ptr<details::thread_descriptor *>() );
+                assert( m_pDesc != nullptr );
                 m_pDesc->m_hzp.alloc( arr );
             }
 
@@ -538,7 +538,7 @@ namespace cds { namespace gc {
             template <size_t Count>
             void freeGuard( details::HPArray<Count>& arr )
             {
-                assert( m_pDesc != null_ptr<details::thread_descriptor *>() );
+                assert( m_pDesc != nullptr );
                 m_pDesc->m_hzp.free( arr );
             }
 

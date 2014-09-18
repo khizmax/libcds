@@ -82,7 +82,7 @@ namespace cds { namespace urcu {
     public:
         /// Constructs empty pointer
         exempt_ptr() CDS_NOEXCEPT
-            : m_pNode( null_ptr<node_type *>())
+            : m_pNode( nullptr )
         {}
 
         /// Releases the pointer
@@ -94,13 +94,13 @@ namespace cds { namespace urcu {
         /// Checks if the pointer is \p NULL
         bool empty() const CDS_NOEXCEPT
         {
-            return m_pNode == null_ptr<node_type *>();
+            return m_pNode == nullptr;
         }
 
         /// Dereference operator
         value_type * operator->() const CDS_NOEXCEPT
         {
-            return !empty() ? node_to_value_cast()( m_pNode ) : null_ptr<value_type *>();
+            return !empty() ? node_to_value_cast()(m_pNode) : nullptr;
         }
 
         /// Returns a reference to the value
@@ -128,7 +128,7 @@ namespace cds { namespace urcu {
             assert( !rcu::is_locked() );
             if ( !empty() ) {
                 rcu::template retire_ptr<disposer>( m_pNode );
-                m_pNode = null_ptr<node_type *>();
+                m_pNode = nullptr;
             }
         }
     };
@@ -161,7 +161,7 @@ namespace cds { namespace urcu {
     public:
         /// Constructs empty pointer
         exempt_ptr() CDS_NOEXCEPT
-            : m_pNode( null_ptr<node_type *>())
+            : m_pNode( nullptr )
         {}
 
         /// Releases the pointer
@@ -173,13 +173,13 @@ namespace cds { namespace urcu {
         /// Checks if the pointer is \p NULL
         bool empty() const CDS_NOEXCEPT
         {
-            return m_pNode == null_ptr<node_type *>();
+            return m_pNode == nullptr;
         }
 
         /// Dereference operator.
         value_type * operator->() const CDS_NOEXCEPT
         {
-            return !empty() ? m_pNode : null_ptr<value_type *>();
+            return !empty() ? m_pNode : nullptr;
         }
 
         /// Returns a reference to the value
@@ -205,7 +205,7 @@ namespace cds { namespace urcu {
             assert( !rcu::is_locked() );
             if ( !empty() ) {
                 rcu::template retire_ptr<disposer>( m_pNode );
-                m_pNode = null_ptr<node_type *>();
+                m_pNode = nullptr;
             }
         }
     };

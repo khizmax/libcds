@@ -160,17 +160,17 @@ namespace cds {
                 if (cds::gc::HP::isUsed() )
                     m_hpManager = new (m_hpManagerPlaceholder) cds::gc::HP::thread_gc_impl;
                 else
-                    m_hpManager = null_ptr<cds::gc::HP::thread_gc_impl *>();
+                    m_hpManager = nullptr;
 
                 if ( cds::gc::HRC::isUsed() )
                     m_hrcManager = new (m_hrcManagerPlaceholder) cds::gc::HRC::thread_gc_impl;
                 else
-                    m_hrcManager = null_ptr<cds::gc::HRC::thread_gc_impl *>();
+                    m_hrcManager = nullptr;
 
                 if ( cds::gc::PTB::isUsed() )
                     m_ptbManager = new (m_ptbManagerPlaceholder) cds::gc::PTB::thread_gc_impl;
                 else
-                    m_ptbManager = null_ptr<cds::gc::PTB::thread_gc_impl *>();
+                    m_ptbManager = nullptr;
             }
 
             ~ThreadData()
@@ -178,19 +178,19 @@ namespace cds {
                 if ( m_hpManager ) {
                     typedef cds::gc::HP::thread_gc_impl hp_thread_gc_impl;
                     m_hpManager->~hp_thread_gc_impl();
-                    m_hpManager = null_ptr<cds::gc::HP::thread_gc_impl *>();
+                    m_hpManager = nullptr;
                 }
 
                 if ( m_hrcManager ) {
                     typedef cds::gc::HRC::thread_gc_impl hrc_thread_gc_impl;
                     m_hrcManager->~hrc_thread_gc_impl();
-                    m_hrcManager = null_ptr<cds::gc::HRC::thread_gc_impl *>();
+                    m_hrcManager = nullptr;
                 }
 
                 if ( m_ptbManager ) {
                     typedef cds::gc::PTB::thread_gc_impl ptb_thread_gc_impl;
                     m_ptbManager->~ptb_thread_gc_impl();
-                    m_ptbManager = null_ptr<cds::gc::PTB::thread_gc_impl *>();
+                    m_ptbManager = nullptr;
                 }
 
                 assert( m_pGPIRCU == NULL );

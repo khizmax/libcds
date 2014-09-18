@@ -63,8 +63,8 @@ namespace cds { namespace gc {
                 assert( m_p != NULL );
                 m_funcFree( m_p );
 
-                CDS_STRICT_DO( m_p = null_ptr<pointer>() );
-                CDS_STRICT_DO( m_funcFree = null_ptr<free_retired_ptr_func>());
+                CDS_STRICT_DO( m_p = nullptr );
+                CDS_STRICT_DO( m_funcFree = nullptr );
             }
         };
 

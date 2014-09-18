@@ -75,7 +75,7 @@ namespace cds { namespace intrusive {
 
         public: // for internal use only!!!
             iterator( node_type& refHead )
-                : m_pNode( null_ptr<node_type *>() )
+                : m_pNode( nullptr )
             {
                 back_off bkoff;
 
@@ -100,7 +100,7 @@ namespace cds { namespace intrusive {
 
         public:
             iterator()
-                : m_pNode( null_ptr<node_type *>())
+                : m_pNode( nullptr )
             {}
 
             iterator( iterator const& s)
@@ -111,16 +111,16 @@ namespace cds { namespace intrusive {
 
             value_type * operator ->() const
             {
-                assert( m_pNode != null_ptr< node_type *>() );
-                assert( node_traits::to_value_ptr( m_pNode ) != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
+                assert( node_traits::to_value_ptr( m_pNode ) != nullptr );
 
                 return node_traits::to_value_ptr( m_pNode );
             }
 
             value_ref operator *() const
             {
-                assert( m_pNode != null_ptr< node_type *>() );
-                assert( node_traits::to_value_ptr( m_pNode ) != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
+                assert( node_traits::to_value_ptr( m_pNode ) != nullptr );
 
                 return *node_traits::to_value_ptr( m_pNode );
             }
@@ -506,7 +506,7 @@ namespace cds { namespace intrusive {
 
         static void dispose_node( value_type * pVal )
         {
-            assert( pVal != null_ptr<value_type *>() );
+            assert( pVal != nullptr );
             typename node_builder::node_disposer()( node_traits::to_node_ptr(pVal) );
             disposer()( pVal );
         }
@@ -535,7 +535,7 @@ namespace cds { namespace intrusive {
                         goto retry;
                     }
 
-                    if ( pCur.ptr() == null_ptr<node_type *>()) {
+                    if ( pCur.ptr() == nullptr ) {
                         // end of the list at level nLevel - goto next level
                         break;
                     }
@@ -632,7 +632,7 @@ namespace cds { namespace intrusive {
                 pos.pSucc[ nLevel ] = pCur.ptr();
             }
 
-            return (pos.pCur = pCur.ptr()) != null_ptr<node_type *>();
+            return (pos.pCur = pCur.ptr()) != nullptr;
         }
 
         bool find_max_position( position& pos )
@@ -657,7 +657,7 @@ namespace cds { namespace intrusive {
                         goto retry;
                     }
 
-                    if ( pCur.ptr() == null_ptr<node_type *>()) {
+                    if ( pCur.ptr() == nullptr ) {
                         // end of the list at level nLevel - goto next level
                         break;
                     }
@@ -694,7 +694,7 @@ namespace cds { namespace intrusive {
                 pos.pSucc[ nLevel ] = pCur.ptr();
             }
 
-            return (pos.pCur = pCur.ptr()) != null_ptr<node_type *>();
+            return (pos.pCur = pCur.ptr()) != nullptr;
         }
 
         template <typename Func>
@@ -744,7 +744,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool try_remove_at( node_type * pDel, position& pos, Func f )
         {
-            assert( pDel != null_ptr<node_type *>());
+            assert( pDel != nullptr );
 
             marked_node_ptr pSucc;
             typename gc::Guard gSucc;
@@ -1151,7 +1151,7 @@ namespace cds { namespace intrusive {
             node_type * pNode = node_traits::to_node_ptr( val );
             scoped_node_ptr scp( pNode );
             unsigned int nHeight = pNode->height();
-            bool bTowerOk = nHeight > 1 && pNode->get_tower() != null_ptr<atomic_node_ptr *>();
+            bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
             bool bTowerMade = false;
 
             position pos;
@@ -1223,7 +1223,7 @@ namespace cds { namespace intrusive {
             node_type * pNode = node_traits::to_node_ptr( val );
             scoped_node_ptr scp( pNode );
             unsigned int nHeight = pNode->height();
-            bool bTowerOk = nHeight > 1 && pNode->get_tower() != null_ptr<atomic_node_ptr *>();
+            bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
             bool bTowerMade = false;
 
 #       ifndef CDS_CXX11_LAMBDA_SUPPORT
@@ -1707,7 +1707,7 @@ namespace cds { namespace intrusive {
         /// Checks if the set is empty
         bool empty() const
         {
-            return m_Head.head()->next(0).load( memory_model::memory_order_relaxed ) == null_ptr<node_type *>();
+            return m_Head.head()->next( 0 ).load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
         /// Clears the set (non-atomic)

@@ -395,12 +395,12 @@ namespace cds { namespace container {
         //@cond
         node_type * insert_node_at( head_type& refHead, node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             scoped_node_ptr p(pNode);
             if ( base_class::insert_at( refHead, *pNode ))
                 return p.release();
 
-            return null_ptr<node_type *>();
+            return nullptr;
         }
 
         template <typename Q>
@@ -413,7 +413,7 @@ namespace cds { namespace container {
         std::pair< node_type *, bool > ensure_at( head_type& refHead, const Q& val )
         {
             scoped_node_ptr pNode( alloc_node( val ));
-            node_type * pItemFound = null_ptr<node_type *>();
+            node_type * pItemFound = nullptr;
 
 #   ifdef CDS_CXX11_LAMBDA_SUPPORT
             std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode, [&pItemFound](bool, node_type& item, node_type&) { pItemFound = &item; });
@@ -422,7 +422,7 @@ namespace cds { namespace container {
             std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode, boost::ref(func) );
             pItemFound = func.m_pItemFound;
 #   endif
-            assert( pItemFound != null_ptr<node_type *>() );
+            assert( pItemFound != nullptr );
 
             if ( ret.first && ret.second )
                 pNode.release();

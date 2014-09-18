@@ -184,7 +184,7 @@ namespace cds { namespace intrusive {
         value_type * dequeue()
         {
             fc_record * pRec = m_FlatCombining.acquire_record();
-            pRec->pVal = null_ptr<value_type *>();
+            pRec->pVal = nullptr;
 
             if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_deq, pRec, *this );

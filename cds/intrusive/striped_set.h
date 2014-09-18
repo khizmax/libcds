@@ -422,7 +422,7 @@ namespace cds { namespace intrusive {
     public:
         /// Default ctor. The initial capacity is 16.
         StripedSet()
-        : m_Buckets( null_ptr<bucket_type *>() )
+            : m_Buckets( nullptr )
         , m_nBucketMask( c_nMinimalCapacity - 1 )
         , m_MutexPolicy( c_nMinimalCapacity )
         {
@@ -433,7 +433,7 @@ namespace cds { namespace intrusive {
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
         )
-        : m_Buckets( null_ptr<bucket_type *>() )
+        : m_Buckets( nullptr )
         , m_nBucketMask( calc_init_capacity(nCapacity) - 1 )
         , m_MutexPolicy( m_nBucketMask + 1 )
         {
@@ -448,7 +448,7 @@ namespace cds { namespace intrusive {
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy const& resizingPolicy  ///< Resizing policy
         )
-        : m_Buckets( null_ptr<bucket_type *>() )
+        : m_Buckets( nullptr )
         , m_nBucketMask( ( nCapacity ? calc_init_capacity(nCapacity) : c_nMinimalCapacity ) - 1 )
         , m_MutexPolicy( m_nBucketMask + 1 )
         , m_ResizingPolicy( resizingPolicy )
@@ -466,7 +466,7 @@ namespace cds { namespace intrusive {
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy&& resizingPolicy  ///< Resizing policy
         )
-        : m_Buckets( null_ptr<bucket_type *>() )
+        : m_Buckets( nullptr )
         , m_nBucketMask( ( nCapacity ? calc_init_capacity(nCapacity) : c_nMinimalCapacity ) - 1 )
         , m_MutexPolicy( m_nBucketMask + 1 )
         , m_ResizingPolicy( resizingPolicy )

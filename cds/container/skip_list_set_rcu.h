@@ -196,7 +196,7 @@ namespace cds { namespace container {
 
         value_type * to_value_ptr( node_type * pNode ) const CDS_NOEXCEPT
         {
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
         //@endcond
 

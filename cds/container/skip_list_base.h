@@ -166,7 +166,7 @@ namespace cds { namespace container {
 
                 static void free_space( unsigned char * p, unsigned int nHeight )
                 {
-                    assert( p != null_ptr<unsigned char *>() );
+                    assert( p != nullptr );
                     if ( nHeight == 1 )
                         node_allocator_type().deallocate( reinterpret_cast<node_type *>(p), 1 );
                     else
@@ -179,7 +179,7 @@ namespace cds { namespace container {
                 {
                     unsigned char * pMem = alloc_space( nHeight );
                     return new( pMem )
-                        node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>( pMem + c_nNodeSize ) : null_ptr<node_tower_item *>(), v );
+                        node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>(pMem + c_nNodeSize) : nullptr, v );
                 }
 
 #       ifdef CDS_EMPLACE_SUPPORT
@@ -188,14 +188,14 @@ namespace cds { namespace container {
                 {
                     unsigned char * pMem = alloc_space( nHeight );
                     return new( pMem )
-                        node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>( pMem + c_nNodeSize ): null_ptr<node_tower_item *>(),
+                        node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>(pMem + c_nNodeSize) : nullptr,
                         std::forward<Args>(args)... );
                 }
 #       endif
 
                 void Delete( node_type * p )
                 {
-                    assert( p != null_ptr<node_type *>() );
+                    assert( p != nullptr );
 
                     unsigned int nHeight = p->height();
                     node_allocator_type().destroy( p );

@@ -36,7 +36,7 @@ namespace cds { namespace intrusive {
 
             /// Default ctor
             node()
-                : m_pNext( null_ptr<node *>())
+                : m_pNext( nullptr )
             {}
 
             /// Clears internal fields
@@ -193,7 +193,7 @@ namespace cds { namespace intrusive {
             value_type *    pFound;
 
             get_functor()
-                : pFound(null_ptr<value_type *>())
+                : pFound( nullptr )
             {}
 
             template <typename Q>
@@ -216,7 +216,7 @@ namespace cds { namespace intrusive {
         struct clear_and_dispose {
             void operator()( value_type * p )
             {
-                assert( p != null_ptr<value_type *>() );
+                assert( p != nullptr );
                 clear_links( node_traits::to_node_ptr(p));
                 disposer()( p );
             }
@@ -267,17 +267,17 @@ namespace cds { namespace intrusive {
 
             void next()
             {
-                assert( m_pNode != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
 
                 node_type * pNode = node_traits::to_node_ptr( m_pNode );
                 node_type * pNext = pNode->m_pNext.load(memory_model::memory_order_relaxed).ptr();
-                if ( pNext != null_ptr<node_type *>() )
+                if ( pNext != nullptr )
                     m_pNode = node_traits::to_value_ptr( pNext );
             }
 
             void skip_deleted()
             {
-                if ( m_pNode != null_ptr<value_type *>() ) {
+                if ( m_pNode != nullptr ) {
                     node_type * pNode = node_traits::to_node_ptr( m_pNode );
 
                     // Dummy tail node could not be marked
@@ -300,7 +300,7 @@ namespace cds { namespace intrusive {
             typedef typename cds::details::make_const_type<value_type, IsConst>::reference value_ref;
 
             iterator_type()
-                : m_pNode(null_ptr<value_type *>())
+                : m_pNode( nullptr )
             {}
 
             iterator_type( iterator_type const& src )
@@ -314,7 +314,7 @@ namespace cds { namespace intrusive {
 
             value_ref operator *() const
             {
-                assert( m_pNode != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
                 return *m_pNode;
             }
 
@@ -885,8 +885,8 @@ namespace cds { namespace intrusive {
         // split-list support
         bool insert_aux_node( node_type * pHead, node_type * pNode )
         {
-            assert( pHead != null_ptr<node_type *>() );
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pHead != nullptr );
+            assert( pNode != nullptr );
 
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node can be non-reducible to value_type
@@ -1118,7 +1118,7 @@ namespace cds { namespace intrusive {
                 if ( nResult ) {
                     if ( nResult > 0 )
                         return node_traits::to_value_ptr( pos.pCur );
-                    return null_ptr<value_type *>();
+                    return nullptr;
                 }
             }
         }
@@ -1170,12 +1170,12 @@ namespace cds { namespace intrusive {
         value_type * get_at( node_type * pHead, Q const& val, Compare cmp ) const
         {
 #       ifdef CDS_CXX11_LAMBDA_SUPPORT
-            value_type * pFound = null_ptr<value_type *>();
+            value_type * pFound = nullptr;
             return find_at( pHead, val, cmp, [&pFound](value_type& found, Q const& ) { pFound = &found; } )
-                ? pFound : null_ptr<value_type *>();
+                ? pFound : nullptr;
 #       else
             get_functor gf;
-            return find_at( pHead , val, cmp, cds::ref(gf) ) ? gf.pFound : null_ptr<value_type *>();
+            return find_at( pHead, val, cmp, cds::ref( gf ) ) ? gf.pFound : nullptr;
 #       endif
         }
 

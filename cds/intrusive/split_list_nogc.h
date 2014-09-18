@@ -95,7 +95,7 @@ namespace cds { namespace intrusive {
         public:
             list_iterator insert_at_( dummy_node_type * pHead, value_type& val )
             {
-                assert( pHead != null_ptr<dummy_node_type *>() );
+                assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::insert_at_( h, val );
             }
@@ -103,7 +103,7 @@ namespace cds { namespace intrusive {
             template <typename Func>
             std::pair<list_iterator, bool> ensure_at_( dummy_node_type * pHead, value_type& val, Func func )
             {
-                assert( pHead != null_ptr<dummy_node_type *>() );
+                assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::ensure_at_( h, val, func );
             }
@@ -111,7 +111,7 @@ namespace cds { namespace intrusive {
             template <typename Q, typename Compare, typename Func>
             bool find_at( dummy_node_type * pHead, split_list::details::search_value_type<Q>& val, Compare cmp, Func f )
             {
-                assert( pHead != null_ptr<dummy_node_type *>() );
+                assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::find_at( h, val, cmp, f );
             }
@@ -119,7 +119,7 @@ namespace cds { namespace intrusive {
             template <typename Q, typename Compare>
             list_iterator find_at_( dummy_node_type * pHead, split_list::details::search_value_type<Q> const & val, Compare cmp )
             {
-                assert( pHead != null_ptr<dummy_node_type *>() );
+                assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::find_at_( h, val, cmp );
             }
@@ -180,11 +180,11 @@ namespace cds { namespace intrusive {
             size_t nParent = parent_bucket( nBucket );
 
             dummy_node_type * pParentBucket = m_Buckets.bucket( nParent );
-            if ( pParentBucket == null_ptr<dummy_node_type *>() ) {
+            if ( pParentBucket == nullptr ) {
                 pParentBucket = init_bucket( nParent );
             }
 
-            assert( pParentBucket != null_ptr<dummy_node_type *>() );
+            assert( pParentBucket != nullptr );
 
             // Allocate a dummy node for new bucket
             {
@@ -205,7 +205,7 @@ namespace cds { namespace intrusive {
             back_off bkoff;
             while ( true ) {
                 dummy_node_type volatile * p = m_Buckets.bucket( nBucket );
-                if ( p && p != null_ptr<dummy_node_type volatile *>() )
+                if ( p && p != nullptr )
                     return const_cast<dummy_node_type *>( p );
                 bkoff();
             }
@@ -216,7 +216,7 @@ namespace cds { namespace intrusive {
             size_t nBucket = bucket_no( nHash );
 
             dummy_node_type * pHead = m_Buckets.bucket( nBucket );
-            if ( pHead == null_ptr<dummy_node_type *>() )
+            if ( pHead == nullptr )
                 pHead = init_bucket( nBucket );
 
             assert( pHead->is_dummy() );
@@ -337,7 +337,7 @@ namespace cds { namespace intrusive {
         {
             iterator it = find_( val );
             if ( it == end() )
-                return null_ptr<value_type *>();
+                return nullptr;
             return &*it;
         }
 
@@ -353,7 +353,7 @@ namespace cds { namespace intrusive {
         {
             iterator it = find_with_( val, pred );
             if ( it == end() )
-                return null_ptr<value_type *>();
+                return nullptr;
             return &*it;
         }
 
@@ -547,7 +547,7 @@ namespace cds { namespace intrusive {
         {
             size_t nHash = hash_value( val );
             dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != null_ptr<dummy_node_type *>() );
+            assert( pHead != nullptr );
 
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
 
@@ -564,7 +564,7 @@ namespace cds { namespace intrusive {
         {
             size_t nHash = hash_value( val );
             dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != null_ptr<dummy_node_type *>() );
+            assert( pHead != nullptr );
 
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
 
@@ -583,7 +583,7 @@ namespace cds { namespace intrusive {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != null_ptr<dummy_node_type *>() );
+            assert( pHead != nullptr );
 
             return iterator( m_List.find_at_( pHead, sv, typename wrapped_ordered_list::template make_compare_from_less<Less>() ), m_List.end() );
         }
@@ -594,7 +594,7 @@ namespace cds { namespace intrusive {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != null_ptr<dummy_node_type *>() );
+            assert( pHead != nullptr );
 
             return iterator( m_List.find_at_( pHead, sv, key_comparator() ), m_List.end() );
 
@@ -606,7 +606,7 @@ namespace cds { namespace intrusive {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != null_ptr<dummy_node_type *>() );
+            assert( pHead != nullptr );
 #       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return m_List.find_at( pHead, sv, cmp,
                 [&f](value_type& item, split_list::details::search_value_type<Q>& val){ cds::unref(f)(item, val.val ); });

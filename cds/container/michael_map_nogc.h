@@ -137,14 +137,14 @@ namespace cds { namespace container {
             /// Dereference operator
             pair_ptr operator ->() const
             {
-                assert( base_class::m_pCurBucket != null_ptr<bucket_ptr>() );
+                assert( base_class::m_pCurBucket != nullptr );
                 return base_class::m_itList.operator ->();
             }
 
             /// Dereference operator
             pair_ref operator *() const
             {
-                assert( base_class::m_pCurBucket != null_ptr<bucket_ptr>() );
+                assert( base_class::m_pCurBucket != nullptr );
                 return base_class::m_itList.operator *();
             }
 

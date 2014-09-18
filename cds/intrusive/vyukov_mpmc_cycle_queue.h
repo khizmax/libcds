@@ -102,8 +102,8 @@ namespace cds { namespace intrusive {
         */
         value_type * dequeue()
         {
-            value_type * p = null_ptr<value_type *>();
-            return base_class::dequeue( p ) ? p : null_ptr<value_type *>();
+            value_type * p = nullptr;
+            return base_class::dequeue( p ) ? p : nullptr;
         }
 
         /// Synonym of \ref enqueue
@@ -134,7 +134,7 @@ namespace cds { namespace intrusive {
         void clear( Disposer f )
         {
             value_type * pv;
-            while ( (pv = pop()) != null_ptr<value_type *>() ) {
+            while ( (pv = pop()) != nullptr ) {
                 unref(f)( pv );
             }
         }

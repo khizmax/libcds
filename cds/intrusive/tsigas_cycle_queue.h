@@ -116,7 +116,7 @@ namespace cds { namespace intrusive {
         //@cond
         static CDS_CONSTEXPR value_type * free0() CDS_NOEXCEPT
         {
-            return null_ptr<value_type *>();
+            return nullptr;
         }
         static CDS_CONSTEXPR value_type * free1() CDS_NOEXCEPT
         {
@@ -296,7 +296,7 @@ namespace cds { namespace intrusive {
             } while ( bkoff(), true );
 
             // No control path reaches this line!
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Synonym of \ref cds_intrusive_TsigasQueue_enqueue "enqueue"
@@ -350,7 +350,7 @@ namespace cds { namespace intrusive {
         void clear( Disposer f )
         {
             value_type * pv;
-            while ( (pv = pop()) != null_ptr<value_type *>() ) {
+            while ( (pv = pop()) != nullptr ) {
                 unref(f)( pv );
             }
         }

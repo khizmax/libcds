@@ -241,7 +241,7 @@ namespace cds { namespace container {
         //@cond
         iterator insert_node( node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             scoped_node_ptr p(pNode);
 
             iterator it( base_class::insert_( *pNode ));

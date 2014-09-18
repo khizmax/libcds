@@ -35,7 +35,7 @@ namespace cds { namespace intrusive {
             CDS_ATOMIC::atomic<unsigned int> nStatus; ///< Internal elimination status
 
             operation()
-                : pVal( null_ptr<T *>() )
+                : pVal( nullptr )
                 , nStatus(0)
             {}
         };
@@ -228,7 +228,7 @@ namespace cds { namespace intrusive {
                                     himOp->pVal = op.pVal;
                                 else
                                     op.pVal = himOp->pVal;
-                                slot.pRec = null_ptr<elimination_rec *>();
+                                slot.pRec = nullptr;
                                 slot.lock.unlock();
 
                                 himOp->nStatus.store( op_collided, CDS_ATOMIC::memory_order_release );
@@ -259,7 +259,7 @@ namespace cds { namespace intrusive {
                     {
                         slot_scoped_lock l( slot.lock );
                         if ( slot.pRec == myRec )
-                            slot.pRec = null_ptr<elimination_rec *>();
+                            slot.pRec = nullptr;
                     }
 
                     bool bCollided = op.nStatus.load( CDS_ATOMIC::memory_order_acquire ) == op_collided;
@@ -511,7 +511,7 @@ namespace cds { namespace intrusive {
         //@cond
         void clear_links( node_type * pNode ) CDS_NOEXCEPT
         {
-            pNode->m_pNext.store( null_ptr<node_type *>(), memory_model::memory_order_relaxed );
+            pNode->m_pNext.store( nullptr, memory_model::memory_order_relaxed );
         }
 
         template <bool EnableElimination>
@@ -540,7 +540,7 @@ namespace cds { namespace intrusive {
     public:
         /// Constructs empty stack
         TreiberStack()
-            : m_Top(null_ptr<node_type *>())
+            : m_Top( nullptr )
         {
             init();
         }
@@ -552,7 +552,7 @@ namespace cds { namespace intrusive {
             \p nCollisionCapacity parameter specifies the capacity of collision array.
         */
         TreiberStack( size_t nCollisionCapacity )
-            : m_Top(null_ptr<node_type *>())
+            : m_Top( nullptr )
             , m_Backoff( nCollisionCapacity )
         {
             init();
@@ -614,8 +614,8 @@ namespace cds { namespace intrusive {
 
             while ( true ) {
                 node_type * t = guard.protect( m_Top, node_to_value() );
-                if ( t == null_ptr<node_type *>() )
-                    return null_ptr<value_type *>() ;    // stack is empty
+                if ( t == nullptr )
+                    return nullptr;    // stack is empty
 
                 node_type * pNext = t->m_pNext.load(memory_model::memory_order_relaxed);
                 if ( m_Top.compare_exchange_weak( t, pNext, memory_model::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed )) {              // #2
@@ -637,7 +637,7 @@ namespace cds { namespace intrusive {
         bool empty() const
         {
             // http://www.manning-sandbox.com/thread.jspa?threadID=46245&tstart=0
-            return m_Top.load(memory_model::memory_order_relaxed) == null_ptr<node_type *>();
+            return m_Top.load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
         /// Clear the stack
@@ -654,9 +654,9 @@ namespace cds { namespace intrusive {
             node_type * pTop;
             while ( true ) {
                 pTop = m_Top.load( memory_model::memory_order_relaxed );
-                if ( pTop == null_ptr<node_type *>() )
+                if ( pTop == nullptr )
                     return;
-                if ( m_Top.compare_exchange_weak( pTop, null_ptr<node_type *>(), memory_model::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed )) {    // sync-with #1 and #2
+                if ( m_Top.compare_exchange_weak( pTop, nullptr, memory_model::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed ) ) {    // sync-with #1 and #2
                     m_ItemCounter.reset();
                     break;
                 }

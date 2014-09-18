@@ -33,7 +33,7 @@ namespace cds {
         public:
             /// Constructs null marked pointer. The flag is cleared.
             CDS_CONSTEXPR marked_ptr() CDS_NOEXCEPT
-                : m_ptr( null_ptr<pointer_type>() )
+                : m_ptr( nullptr )
             {}
 
             /// Constructs marked pointer with \p ptr value. The least bit(s) of \p ptr is the flag.
@@ -340,7 +340,7 @@ CDS_CXX11_ATOMIC_BEGIN_NAMESPACE
         }
 
         CDS_CONSTEXPR atomic() CDS_NOEXCEPT
-            : m_atomic( cds::null_ptr<T *>() )
+            : m_atomic( nullptr )
         {}
 
         CDS_CONSTEXPR explicit atomic(marked_ptr val) CDS_NOEXCEPT

@@ -50,7 +50,7 @@ namespace cds { namespace intrusive {
 
             /// Default ctor
             node()
-                : m_pNext( null_ptr<node *>())
+                : m_pNext( nullptr )
             {}
         };
 
@@ -177,7 +177,7 @@ namespace cds { namespace intrusive {
             */
             static void is_empty( node_type const * pNode )
             {
-                assert( pNode->m_pNext.load(CDS_ATOMIC::memory_order_relaxed) == null_ptr<node_type const *>());
+                assert( pNode->m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
             }
         };
 

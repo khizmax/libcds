@@ -78,9 +78,9 @@ namespace cds { namespace container { namespace details {
                 unsigned char * pMem = base_class::alloc_space( nHeight );
                 return new( pMem )
                     node_type( nHeight,
-                        nHeight > 1 ? reinterpret_cast<typename base_class::node_tower_item *>( pMem + base_class::c_nNodeSize )
-                            : null_ptr<typename base_class::node_tower_item *>(),
-                        key, val );
+                        nHeight > 1 ? reinterpret_cast<typename base_class::node_tower_item *>( pMem + base_class::c_nNodeSize ) : nullptr,
+                        key, val 
+                    );
             }
 #       ifdef CDS_EMPLACE_SUPPORT
             template <typename... Args>
@@ -88,9 +88,10 @@ namespace cds { namespace container { namespace details {
             {
                 unsigned char * pMem = base_class::alloc_space( nHeight );
                 return new( pMem )
-                    node_type( nHeight, nHeight > 1 ? reinterpret_cast<typename base_class::node_tower_item *>( pMem + base_class::c_nNodeSize )
-                        : null_ptr<typename base_class::node_tower_item *>(),
-                    std::forward<Args>(args)... );
+                    node_type( nHeight, 
+                        nHeight > 1 ? reinterpret_cast<typename base_class::node_tower_item *>( pMem + base_class::c_nNodeSize ) : nullptr,
+                        std::forward<Args>(args)... 
+                    );
             }
 #       endif
         };

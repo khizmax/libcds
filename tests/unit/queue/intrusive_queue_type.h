@@ -120,7 +120,7 @@ namespace queue {
             {
                 lock_guard l( m_Lock );
                 if ( m_List.empty() )
-                    return cds::null_ptr<T *>();
+                    return cds::nullptr;
                 value_type& v = m_List.front();
                 m_List.pop_front();
                 return &v;

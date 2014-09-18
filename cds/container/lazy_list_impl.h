@@ -302,7 +302,7 @@ namespace cds { namespace container {
             value_ptr operator ->() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                return p ? &(p->m_Value) : null_ptr<value_ptr>();
+                return p ? &(p->m_Value) : nullptr;
             }
 
             value_ref operator *() const
@@ -825,7 +825,7 @@ namespace cds { namespace container {
         //@cond
         bool insert_node_at( head_type& refHead, node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             scoped_node_ptr p( pNode );
 
             if ( base_class::insert_at( &refHead, *pNode )) {

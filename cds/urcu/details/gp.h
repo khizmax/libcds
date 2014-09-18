@@ -35,7 +35,7 @@ namespace cds { namespace urcu { namespace details {
     inline void gp_thread_gc<RCUtag>::access_lock()
     {
         thread_record * pRec = get_thread_record();
-        assert( pRec != null_ptr<thread_record *>());
+        assert( pRec != nullptr );
 
         uint32_t tmp = pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_relaxed );
         if ( (tmp & rcu_class::c_nNestMask) == 0 ) {
@@ -53,7 +53,7 @@ namespace cds { namespace urcu { namespace details {
     inline void gp_thread_gc<RCUtag>::access_unlock()
     {
         thread_record * pRec = get_thread_record();
-        assert( pRec != null_ptr<thread_record *>());
+        assert( pRec != nullptr );
 
         //CDS_COMPILER_RW_BARRIER;
         pRec->m_nAccessControl.fetch_sub( 1, CDS_ATOMIC::memory_order_release );
@@ -63,7 +63,7 @@ namespace cds { namespace urcu { namespace details {
     inline bool gp_thread_gc<RCUtag>::is_locked()
     {
         thread_record * pRec = get_thread_record();
-        assert( pRec != null_ptr<thread_record *>());
+        assert( pRec != nullptr );
 
         return (pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_relaxed ) & rcu_class::c_nNestMask) != 0;
     }

@@ -254,8 +254,8 @@ namespace cds { namespace intrusive {
                 value_type * erase( Q const& key, Func f )
                 {
                     iterator it = m_Set.find( key, key_comparator() );
-                    if ( it == m_Set.end() )
-                        return null_ptr<value_type *>();
+                    if (it == m_Set.end())
+                        return nullptr;
                     value_type& val = *it;
                     cds::unref(f)( val );
                     m_Set.erase( it );
@@ -266,8 +266,8 @@ namespace cds { namespace intrusive {
                 value_type * erase( Q const& key, Less pred, Func f )
                 {
                     iterator it = m_Set.find( key, pred );
-                    if ( it == m_Set.end() )
-                        return null_ptr<value_type *>();
+                    if (it == m_Set.end())
+                        return nullptr;
                     value_type& val = *it;
                     cds::unref(f)( val );
                     m_Set.erase( it );

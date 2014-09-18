@@ -303,21 +303,21 @@ namespace cds { namespace container {
             key_type const& key() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                assert( p != null_ptr<typename iterator_base::value_ptr>() );
+                assert( p != nullptr );
                 return p->m_Data.first;
             }
 
             value_ref val() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                assert( p != null_ptr<typename iterator_base::value_ptr>() );
+                assert( p != nullptr );
                 return p->m_Data.second;
             }
 
             pair_ptr operator ->() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                return p ? &(p->m_Data) : null_ptr<pair_ptr>();
+                return p ? &(p->m_Data) : nullptr;
             }
 
             pair_ref operator *() const
@@ -821,7 +821,7 @@ namespace cds { namespace container {
         //@cond
         bool insert_node_at( head_type& refHead, node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             scoped_node_ptr p( pNode );
 
             if ( base_class::insert_at( &refHead, *p )) {
@@ -936,7 +936,7 @@ namespace cds { namespace container {
         value_type * get_at( head_type& refHead, K const& val, Compare cmp ) const
         {
             node_type * pNode = base_class::get_at( &refHead, val, cmp );
-            return pNode ? &pNode->m_Data : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Data : nullptr;
         }
 
         //@endcond

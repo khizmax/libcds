@@ -118,7 +118,7 @@ namespace cds { namespace gc {
         /// Checks if the guarded pointer is \p NULL
         bool empty() const CDS_NOEXCEPT
         {
-            return m_guard.template get<guarded_type>() == null_ptr<guarded_type *>();
+            return m_guard.template get<guarded_type>() == nullptr;
         }
 
         /// Clears guarded pointer
@@ -198,7 +198,7 @@ namespace cds { namespace gc {
 
         bool empty() const CDS_NOEXCEPT
         {
-            return m_guard.template get<guarded_type>() == null_ptr<guarded_type *>();
+            return m_guard.template get<guarded_type>() == nullptr;
         }
 
         void release() CDS_NOEXCEPT

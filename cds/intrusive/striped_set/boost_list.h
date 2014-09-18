@@ -124,7 +124,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 iterator it = find_key( key, find_predicate() );
                 if ( it == m_List.end() || key_comparator()( key, *it ) != 0 )
-                    return null_ptr<value_type *>();
+                    return nullptr;
 
                 // key exists
                 value_type& val = *it;
@@ -139,7 +139,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 iterator it = find_key( key, pred );
                 if ( it == m_List.end() || pred( key, *it ) || pred( *it, key ) )
-                    return null_ptr<value_type *>();
+                    return nullptr;
 
                 // key exists
                 value_type& val = *it;

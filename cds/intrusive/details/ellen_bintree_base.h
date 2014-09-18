@@ -73,7 +73,7 @@ namespace cds { namespace intrusive {
             update_desc *   pNextRetire     ;   // for local retired list (RCU)
 
             update_desc()
-                : pNextRetire( null_ptr<update_desc *>() )
+                : pNextRetire( nullptr )
             {}
             //@endcond
         };
@@ -210,8 +210,8 @@ namespace cds { namespace intrusive {
             /// Default ctor
             internal_node()
                 : base_class( true )
-                , m_pLeft( null_ptr<base_class *>() )
-                , m_pRight( null_ptr<base_class *>() )
+                , m_pLeft( nullptr )
+                , m_pRight( nullptr )
                 , m_pUpdate( update_ptr() )
                 , m_nEmptyUpdate(0)
             {}

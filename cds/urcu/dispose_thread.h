@@ -91,7 +91,7 @@ namespace cds { namespace urcu {
                     bQuit = m_bQuit;
                     nCurEpoch = m_nCurEpoch;
                     pBuffer = m_pBuffer;
-                    m_pBuffer = null_ptr<buffer_type *>();
+                    m_pBuffer = nullptr;
                 }
 
                 if ( pBuffer )
@@ -116,7 +116,7 @@ namespace cds { namespace urcu {
     public:
         //@cond
         dispose_thread()
-            : m_pBuffer( null_ptr<buffer_type *>() )
+            : m_pBuffer( nullptr )
             , m_nCurEpoch(0)
             , m_bQuit( false )
             , m_bReady( false )

@@ -92,7 +92,7 @@ namespace cds { namespace urcu {
         /// Checks if the singleton is created and ready to use
         static bool isUsed()
         {
-            return singleton_ptr::s_pRCU != null_ptr<singleton_vtbl *>();
+            return singleton_ptr::s_pRCU != nullptr;
         }
 
     protected:
@@ -155,7 +155,7 @@ namespace cds { namespace urcu {
                 pThis->m_DisposerThread.stop( pThis->m_Buffer, pThis->m_nCurEpoch.load( CDS_ATOMIC::memory_order_acquire ));
 
                 delete pThis;
-                singleton_ptr::s_pRCU = null_ptr<singleton_vtbl *>();
+                singleton_ptr::s_pRCU = nullptr;
             }
         }
 

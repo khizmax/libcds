@@ -362,7 +362,7 @@ namespace cds { namespace container {
         value_type * get_min() const
         {
             node_type * pNode = base_class::get_min();
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
 
         /// Gets maximum key from the set
@@ -372,7 +372,7 @@ namespace cds { namespace container {
         value_type * get_max() const
         {
             node_type * pNode = base_class::get_max();
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
 
         /// Clears the set (non-atomic)

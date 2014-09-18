@@ -140,7 +140,7 @@ namespace michael {
         struct make_null_ptr {
             void operator ()(void *& p)
             {
-                p = null_ptr<void *>();
+                p = nullptr;
             }
         };
 #endif
@@ -332,7 +332,7 @@ namespace michael {
         {
             auto_lock al(m_access);
             if ( base_class::empty() )
-                return null_ptr<T *>();
+                return nullptr;
             T& rDesc = base_class::front();
             base_class::pop_front();
             assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc) ) );
@@ -386,7 +386,7 @@ namespace michael {
         {
             auto_lock al( m_access );
             if ( base_class::empty() )
-                return null_ptr<T *>();
+                return nullptr;
             T& rDesc = base_class::front();
             base_class::pop_front();
             assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc) ) );
@@ -396,7 +396,7 @@ namespace michael {
         /// Removes \p pDesc descriptor from the free-list
         bool unlink( T * pDesc )
         {
-            assert( pDesc != null_ptr<T *>() );
+            assert(pDesc != nullptr);
             auto_lock al( m_access );
             // !inited(pDesc) is equal to "pDesc is being linked to partial list"
             if ( !base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc) ) ) {
@@ -794,8 +794,8 @@ namespace michael {
 
             //@cond
             superblock_desc()
-                : pSB( null_ptr<byte *>() )
-                , pProcHeap( null_ptr<processor_heap_base *>() )
+                : pSB(nullptr)
+                , pProcHeap( nullptr )
             {}
             //@endcond
         };
@@ -982,7 +982,7 @@ namespace michael {
 
         public:
             CDS_CONSTEXPR active_tag() CDS_NOEXCEPT
-                : pDesc(null_ptr<superblock_desc *>())
+                : pDesc( nullptr )
                 , nCredits(0)
             {}
 
@@ -1020,7 +1020,7 @@ namespace michael {
 
             void clear()
             {
-                pDesc = null_ptr<superblock_desc *>();
+                pDesc = nullptr;
                 nCredits = 0;
             }
 
@@ -1043,7 +1043,7 @@ namespace michael {
 
         public:
             active_tag() CDS_NOEXCEPT
-                : pDesc( null_ptr<superblock_desc *>() )
+                : pDesc( nullptr )
             {}
 #   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             // Clang 3.1: error: first argument to atomic operation must be a pointer to a trivially-copyable type
@@ -1119,9 +1119,9 @@ namespace michael {
 
             //@cond
             processor_heap_base() CDS_NOEXCEPT
-                : pProcDesc( null_ptr<processor_desc *>() )
-                , pSizeClass( null_ptr<size_class *>() )
-                , pPartial( null_ptr<superblock_desc *>() )
+                : pProcDesc( nullptr )
+                , pSizeClass( nullptr )
+                , pPartial( nullptr )
             {
                 assert( (reinterpret_cast<uptr_atomic_t>(this) & (c_nAlignment - 1)) == 0 );
             }
@@ -1136,7 +1136,7 @@ namespace michael {
                         pDesc =  partialList.pop();
                         break;
                     }
-                } while ( !pPartial.compare_exchange_weak( pDesc, null_ptr<superblock_desc *>(), CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed));
+                } while ( !pPartial.compare_exchange_weak( pDesc, nullptr, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
 
                 //assert( pDesc == NULL || free_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_free_list_hook *>(pDesc) ));
                 //assert( pDesc == NULL || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
@@ -1149,7 +1149,7 @@ namespace michael {
                 assert( pPartial != pDesc );
                 //assert( partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
 
-                superblock_desc * pCur = null_ptr<superblock_desc *>();
+                superblock_desc * pCur = nullptr;
                 if ( !pPartial.compare_exchange_strong(pCur, pDesc, CDS_ATOMIC::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed) )
                     partialList.push( pDesc );
             }
@@ -1174,8 +1174,8 @@ namespace michael {
 
             //@cond
             processor_desc()
-                : arrProcHeap( null_ptr<processor_heap *>() )
-                , pageHeaps( null_ptr<page_heap *>() )
+                : arrProcHeap( nullptr )
+                , pageHeaps( nullptr )
             {}
             //@endcond
         };
@@ -1215,7 +1215,7 @@ namespace michael {
                 ++nCollision;
                 oldActive = pProcHeap->active.load(CDS_ATOMIC::memory_order_acquire);
                 if ( !oldActive.ptr() )
-                    return null_ptr<block_header *>();
+                    return nullptr;
                 unsigned int nCredits = oldActive.credits();
                 active_tag  newActive   ; // default = 0
                 if ( nCredits != 0 ) {
@@ -1285,7 +1285,7 @@ namespace michael {
         retry:
             superblock_desc * pDesc = pProcHeap->get_partial();
             if ( !pDesc )
-                return null_ptr<block_header *>();
+                return nullptr;
 
             // reserve blocks
             anchor_tag  oldAnchor;
@@ -1353,7 +1353,7 @@ namespace michael {
         block_header * alloc_from_new_superblock( processor_heap * pProcHeap )
         {
             superblock_desc * pDesc = new_superblock_desc( pProcHeap );
-            assert( pDesc != null_ptr<superblock_desc *>() );
+            assert( pDesc != nullptr );
             pDesc->pSB = new_superblock_buffer( pProcHeap );
 
             anchor_tag anchor = pDesc->anchor.load(CDS_ATOMIC::memory_order_relaxed);
@@ -1384,7 +1384,7 @@ namespace michael {
             }
 
             free_superblock( pDesc );
-            return null_ptr<block_header *>();
+            return nullptr;
         }
 
         /// Find appropriate processor heap based on size-class selected
@@ -1560,7 +1560,7 @@ namespace michael {
                 (pDesc->pageHeaps + i)->page_heap::~page_heap();
 
             //m_IntHeap.free( pDesc->pageHeaps );
-            pDesc->pageHeaps = null_ptr<page_heap *>();
+            pDesc->pageHeaps = nullptr;
 
             pDesc->processor_desc::~processor_desc();
             m_AlignedHeap.free( pDesc );
@@ -1571,7 +1571,7 @@ namespace michael {
         {
             anchor_tag anchor;
             superblock_desc * pDesc = pProcHeap->pProcDesc->listSBDescFree.pop();
-            if ( pDesc == null_ptr<superblock_desc *>() ) {
+            if ( pDesc == nullptr ) {
                 pDesc = new( m_AlignedHeap.alloc(sizeof(superblock_desc), c_nAlignment ) ) superblock_desc;
                 assert( (uptr_atomic_t(pDesc) & (c_nAlignment - 1)) == 0 );
 
@@ -1639,17 +1639,17 @@ namespace michael {
                 if ( !pProcHeap )
                     return alloc_from_OS( nSize );
 
-                if ( (pBlock = alloc_from_active( pProcHeap )) != null_ptr<block_header *>() )
+                if ( (pBlock = alloc_from_active( pProcHeap )) != nullptr )
                     break;
-                if ( (pBlock = alloc_from_partial( pProcHeap )) != null_ptr<block_header *>() )
+                if ( (pBlock = alloc_from_partial( pProcHeap )) != nullptr )
                     break;
-                if ( (pBlock = alloc_from_new_superblock( pProcHeap )) != null_ptr<block_header *>() )
+                if ( (pBlock = alloc_from_new_superblock( pProcHeap )) != nullptr )
                     break;
             }
 
             pProcHeap->stat.incAllocatedBytes( pProcHeap->pSizeClass->nBlockSize );
 
-            assert( pBlock != null_ptr<block_header *>() );
+            assert( pBlock != nullptr );
             return pBlock;
         }
 
@@ -1767,7 +1767,7 @@ namespace michael {
                     free_superblock( pDesc );
             }
             else if (oldAnchor.state == SBSTATE_FULL ) {
-                assert( pProcHeap != null_ptr<processor_heap_base *>() );
+                assert( pProcHeap != nullptr );
                 pProcHeap->stat.decDescFull();
                 pProcHeap->add_partial( pDesc );
             }
@@ -1791,7 +1791,7 @@ namespace michael {
         {
             if ( nNewSize == 0 ) {
                 free( pMemory );
-                return null_ptr<void *>();
+                return nullptr;
             }
 
             const size_t nOrigSize = nNewSize;
@@ -1802,7 +1802,7 @@ namespace michael {
             // Reallocation of aligned block is not possible
             if ( pBlock->isAligned() ) {
                 assert( false );
-                return null_ptr<void *>();
+                return nullptr;
             }
 
             if ( pBlock->isOSAllocated() ) {
@@ -1840,7 +1840,7 @@ namespace michael {
                 return pNew;
             }
 
-            return null_ptr<void *>();
+            return nullptr;
         }
 
         /// Allocate aligned memory block

@@ -36,7 +36,7 @@ namespace cds { namespace gc { namespace ptb {
                 assert( (nBucketCount & (nBucketCount - 1)) == 0 );
 
                 m_Buckets = allocator_type().NewArray( nBucketCount );
-                std::fill( m_Buckets, m_Buckets + nBucketCount, null_ptr<item_type>());
+                std::fill( m_Buckets, m_Buckets + nBucketCount, nullptr );
             }
 
             ~liberate_set()
@@ -46,14 +46,14 @@ namespace cds { namespace gc { namespace ptb {
 
             void insert( retired_ptr_node& node )
             {
-                node.m_pNext = null_ptr<item_type>();
+                node.m_pNext = nullptr;
 
                 item_type& refBucket = bucket( node );
                 if ( refBucket ) {
                     item_type p = refBucket;
                     do {
                         if ( p->m_ptr.m_p == node.m_ptr.m_p ) {
-                            assert( node.m_pNextFree == null_ptr<details::retired_ptr_node *>() );
+                            assert( node.m_pNextFree == nullptr );
 
                             node.m_pNextFree = p->m_pNextFree;
                             p->m_pNextFree = &node;
@@ -71,7 +71,7 @@ namespace cds { namespace gc { namespace ptb {
             {
                 item_type& refBucket = bucket( ptr );
                 item_type p = refBucket;
-                item_type pPrev = null_ptr<item_type>();
+                item_type pPrev = nullptr;
 
                 while ( p ) {
                     if ( p->m_ptr.m_p == ptr ) {
@@ -79,21 +79,21 @@ namespace cds { namespace gc { namespace ptb {
                             pPrev->m_pNext = p->m_pNext;
                         else
                             refBucket = p->m_pNext;
-                        p->m_pNext = null_ptr<item_type>();
+                        p->m_pNext = nullptr;
                         return p;
                     }
                     pPrev = p;
                     p = p->m_pNext;
                 }
 
-                return null_ptr<item_type>();
+                return nullptr;
             }
 
             typedef std::pair<item_type, item_type>     list_range;
 
             list_range free_all()
             {
-                item_type pTail = null_ptr<item_type>();
+                item_type pTail = nullptr;
                 list_range ret = std::make_pair( pTail, pTail );
 
                 item_type const * pEndBucket = m_Buckets + m_nBucketCount;
@@ -109,12 +109,12 @@ namespace cds { namespace gc { namespace ptb {
                         for (;;) {
                             item_type pNext = pTail->m_pNext;
                             pTail->m_ptr.free();
-                            pTail->m_pNext = null_ptr<item_type>();
+                            pTail->m_pNext = nullptr;
 
                             while ( pTail->m_pNextFree ) {
                                 pTail = pTail->m_pNextFree;
                                 pTail->m_ptr.free();
-                                pTail->m_pNext = null_ptr<item_type>();
+                                pTail->m_pNext = nullptr;
                             }
 
                             if ( pNext )
@@ -126,7 +126,7 @@ namespace cds { namespace gc { namespace ptb {
                 }
 
                 if ( pTail )
-                    pTail->m_pNextFree = null_ptr<item_type>();
+                    pTail->m_pNextFree = nullptr;
                 ret.second = pTail;
                 return ret;
             }
@@ -165,12 +165,12 @@ namespace cds { namespace gc { namespace ptb {
         liberate();
 
 #if 0
-        details::retired_ptr_node * pHead = null_ptr<details::retired_ptr_node *>();
-        details::retired_ptr_node * pTail = null_ptr<details::retired_ptr_node *>();
+        details::retired_ptr_node * pHead = nullptr;
+        details::retired_ptr_node * pTail = nullptr;
 
         for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(CDS_ATOMIC::memory_order_relaxed)) {
             details::guard_data::handoff_ptr h = pGuard->pHandOff;
-            pGuard->pHandOff  = null_ptr<details::guard_data::handoff_ptr>();
+            pGuard->pHandOff  = nullptr;
             while ( h ) {
                 details::guard_data::handoff_ptr pNext = h->m_pNextFree;
                 if ( h->m_ptr.m_p )
@@ -199,7 +199,7 @@ namespace cds { namespace gc { namespace ptb {
             details::retired_ptr_node * pHead = retiredList.first;
             while ( pHead ) {
                 details::retired_ptr_node * pNext = pHead->m_pNext;
-                pHead->m_pNextFree = null_ptr<details::retired_ptr_node *>();
+                pHead->m_pNextFree = nullptr;
                 set.insert( *pHead );
                 pHead = pNext;
             }
@@ -232,7 +232,7 @@ namespace cds { namespace gc { namespace ptb {
             m_RetiredAllocator.inc_epoch();
 
             if ( range.first ) {
-                assert( range.second != null_ptr<details::retired_ptr_node *>() );
+                assert( range.second != nullptr );
                 m_RetiredAllocator.free_range( range.first, range.second );
             }
             else {
@@ -245,7 +245,7 @@ namespace cds { namespace gc { namespace ptb {
 #if 0
     void GarbageCollector::liberate( details::liberate_set& set )
     {
-        details::guard_data::handoff_ptr const nullHandOff = null_ptr<details::guard_data::handoff_ptr>();
+        details::guard_data::handoff_ptr const nullHandOff = nullptr;
 
         for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(CDS_ATOMIC::memory_order_acquire) )
         {
@@ -265,7 +265,7 @@ namespace cds { namespace gc { namespace ptb {
                     cds::lock::Auto<details::guard_data::handoff_spin> al( pGuard->spinHandOff );
                     if ( valGuarded == pGuard->pPost.load(CDS_ATOMIC::memory_order_acquire) ) {
                         if ( pGuard->pHandOff && pGuard->pHandOff->m_ptr.m_p == pRetired->m_ptr.m_p ) {
-                            h = nullHandOff ; //null_ptr<details::guard_data::handoff_ptr>();
+                            h = nullHandOff ; //nullptr;
                             details::retired_ptr_node * pTail = pGuard->pHandOff;
                             while ( pTail->m_pNextFree )
                                 pTail = pTail->m_pNextFree;

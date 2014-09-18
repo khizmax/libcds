@@ -104,8 +104,8 @@ namespace cds { namespace algo {
                 : nRequest( req_EmptyRecord )
                 , nState( inactive )
                 , nAge(0)
-                , pNext( null_ptr<publication_record *>() )
-                , pOwner( null_ptr<void *>() )
+                , pNext( nullptr )
+                , pOwner( nullptr )
             {}
 
             /// Returns the value of \p nRequest field
@@ -280,7 +280,7 @@ namespace cds { namespace algo {
             */
             kernel()
                 : m_nCount(0)
-                , m_pHead( null_ptr< publication_record_type *>())
+                , m_pHead( nullptr )
                 , m_pThreadRec( tls_cleanup )
                 , m_nCompactFactor( 64 - 1 ) // binary mask
                 , m_nCombinePassCount( 8 )
@@ -294,7 +294,7 @@ namespace cds { namespace algo {
                 ,unsigned int nCombinePassCount ///< Number of combining passes for combiner thread
                 )
                 : m_nCount(0)
-                , m_pHead( null_ptr< publication_record_type *>())
+                , m_pHead( nullptr )
                 , m_pThreadRec( tls_cleanup )
                 , m_nCompactFactor( (unsigned int)( cds::beans::ceil2( nCompactFactor ) - 1 ))   // binary mask
                 , m_nCombinePassCount( nCombinePassCount )
@@ -307,7 +307,7 @@ namespace cds { namespace algo {
             {
                 // mark all publication record as detached
                 for ( publication_record * p = m_pHead; p; p = p->pNext.load( memory_model::memory_order_relaxed ))
-                    p->pOwner = null_ptr<void *>();
+                    p->pOwner = nullptr;
             }
 
             /// Gets publication list record for the current thread
@@ -475,7 +475,7 @@ namespace cds { namespace algo {
             public:
                 /// Initializes an empty iterator object
                 iterator()
-                    : m_pRec( null_ptr<publication_record_type *>())
+                    : m_pRec( nullptr )
                 {}
 
                 /// Copy ctor
@@ -554,7 +554,7 @@ namespace cds { namespace algo {
 
             void init()
             {
-                assert( m_pThreadRec.get() == null_ptr<publication_record_type *>() );
+                assert( m_pThreadRec.get() == nullptr );
                 publication_record_type * pRec = cxx11_allocator().New();
                 m_pHead = pRec;
                 pRec->pOwner = this;
@@ -667,7 +667,7 @@ namespace cds { namespace algo {
             template <class Container>
             bool combining_pass( Container& owner, unsigned int nCurAge )
             {
-                publication_record * pPrev = null_ptr<publication_record *>();
+                publication_record * pPrev = nullptr;
                 publication_record * p = m_pHead;
                 bool bOpDone = false;
                 while ( p ) {
@@ -740,7 +740,7 @@ namespace cds { namespace algo {
             void compact_list( unsigned int const nCurAge )
             {
                 // Thinning publication list
-                publication_record * pPrev = null_ptr<publication_record *>();
+                publication_record * pPrev = nullptr;
                 for ( publication_record * p = m_pHead; p; ) {
                     if ( p->nState.load( memory_model::memory_order_acquire ) == active && p->nAge + m_nCompactFactor < nCurAge ) {
                         if ( pPrev ) {

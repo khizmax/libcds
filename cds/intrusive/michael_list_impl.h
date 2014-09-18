@@ -260,13 +260,13 @@ namespace cds { namespace intrusive {
         //@cond
         void retire_node( node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             gc::template retire<clean_disposer>( node_traits::to_value_ptr( *pNode ) );
         }
 
         bool link_node( node_type * pNode, position& pos )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             link_checker::is_empty( pNode );
 
             marked_node_ptr cur(pos.pCur);
@@ -276,8 +276,8 @@ namespace cds { namespace intrusive {
 
         bool unlink_node( position& pos )
         {
-            assert( pos.pPrev != null_ptr<atomic_node_ptr *>() );
-            assert( pos.pCur != null_ptr<node_type *>() );
+            assert( pos.pPrev != nullptr );
+            assert( pos.pCur != nullptr );
 
             // Mark the node (logical deleting)
             marked_node_ptr next(pos.pNext, 0);
@@ -320,7 +320,7 @@ namespace cds { namespace intrusive {
                         m_pNode = m_Guard.assign( g.template get<value_type>() );
                     }
                     else {
-                        m_pNode = null_ptr<value_type *>();
+                        m_pNode = nullptr;
                         m_Guard.clear();
                     }
                 }
@@ -334,7 +334,7 @@ namespace cds { namespace intrusive {
                         m_pNode = m_Guard.assign( node_traits::to_value_ptr( p.ptr() ) );
                     }
                     else {
-                        m_pNode = null_ptr<value_type *>();
+                        m_pNode = nullptr;
                         m_Guard.clear();
                     }
                     if ( p == pNode.load(memory_model::memory_order_acquire) )
@@ -347,7 +347,7 @@ namespace cds { namespace intrusive {
             typedef typename cds::details::make_const_type<value_type, IsConst>::reference value_ref;
 
             iterator_type()
-                : m_pNode( null_ptr<value_type *>() )
+                : m_pNode( nullptr )
             {}
 
             iterator_type( iterator_type const& src )
@@ -356,7 +356,7 @@ namespace cds { namespace intrusive {
                     m_pNode = m_Guard.assign( src.m_pNode );
                 }
                 else
-                    m_pNode = null_ptr<value_type *>();
+                    m_pNode = nullptr;
             }
 
             value_ptr operator ->() const
@@ -366,7 +366,7 @@ namespace cds { namespace intrusive {
 
             value_ref operator *() const
             {
-                assert( m_pNode != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
                 return *m_pNode;
             }
 
@@ -504,7 +504,7 @@ namespace cds { namespace intrusive {
     public:
         /// Default constructor initializes empty list
         MichaelList()
-            : m_pHead(null_ptr<node_type *>())
+            : m_pHead( nullptr )
         {
             static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
         }
@@ -875,7 +875,7 @@ namespace cds { namespace intrusive {
                 if ( head.ptr() )
                     guard.assign( node_traits::to_value_ptr( *head.ptr() ));
                 if ( m_pHead.load(memory_model::memory_order_acquire) == head ) {
-                    if ( head.ptr() == null_ptr<node_type *>() )
+                    if ( head.ptr() == nullptr )
                         break;
                     value_type& val = *node_traits::to_value_ptr( *head.ptr() );
                     unlink( val );
@@ -886,7 +886,7 @@ namespace cds { namespace intrusive {
         /// Checks if the list is empty
         bool empty() const
         {
-            return m_pHead.load(memory_model::memory_order_relaxed).all() == null_ptr<node_type *>();
+            return m_pHead.load( memory_model::memory_order_relaxed ).all() == nullptr;
         }
 
         /// Returns list's item count
@@ -913,7 +913,7 @@ namespace cds { namespace intrusive {
         // split-list support
         bool insert_aux_node( atomic_node_ptr& refHead, node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
 
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node can be non-reducible to value_type
@@ -1112,7 +1112,7 @@ namespace cds { namespace intrusive {
 
 try_again:
             pPrev = &refHead;
-            pNext = null_ptr<node_type *>();
+            pNext = nullptr;
 
             pCur = pPrev->load(memory_model::memory_order_relaxed);
             pos.guards.assign( position::guard_current_item, node_traits::to_value_ptr( pCur.ptr() ) );
@@ -1120,7 +1120,7 @@ try_again:
                 goto try_again;
 
             while ( true ) {
-                if ( pCur.ptr() == null_ptr<node_type *>() ) {
+                if ( pCur.ptr() == nullptr ) {
                     pos.pPrev = pPrev;
                     pos.pCur = pCur.ptr();
                     pos.pNext = pNext.ptr();
@@ -1152,7 +1152,7 @@ try_again:
                     }
                 }
                 else {
-                    assert( pCur.ptr() != null_ptr<node_type *>() );
+                    assert( pCur.ptr() != nullptr );
                     int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr() ), val );
                     if ( nCmp >= 0 ) {
                         pos.pPrev = pPrev;

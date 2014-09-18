@@ -36,7 +36,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
 
             CDS_CONSTEXPR node() CDS_NOEXCEPT
-                : m_pNext( null_ptr<node *>() )
+                : m_pNext( nullptr )
             {}
         };
 
@@ -129,7 +129,7 @@ namespace cds { namespace intrusive {
             */
             static void is_empty( const node_type * pNode )
             {
-                assert( pNode->m_pNext.load(CDS_ATOMIC::memory_order_relaxed) == null_ptr<node_type *>() );
+                assert( pNode->m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
             }
         };
 

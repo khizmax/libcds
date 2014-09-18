@@ -37,8 +37,8 @@ namespace cds { namespace intrusive {
             atomic_node_ptr m_pNext ;   ///< Pointer to next node
 
             CDS_CONSTEXPR node() CDS_NOEXCEPT
-                : m_pPrev( null_ptr<node *>() )
-                , m_pNext( null_ptr<node *>() )
+                : m_pPrev( nullptr )
+                , m_pNext( nullptr )
             {}
         };
 
@@ -118,8 +118,8 @@ namespace cds { namespace intrusive {
             */
             static void is_empty( const node_type * pNode )
             {
-                assert( pNode->m_pNext.load(CDS_ATOMIC::memory_order_relaxed) == null_ptr<node_type *>() );
-                assert( pNode->m_pPrev.load(CDS_ATOMIC::memory_order_relaxed) == null_ptr<node_type *>() );
+                assert( pNode->m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
+                assert( pNode->m_pPrev.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
             }
         };
 
@@ -353,7 +353,7 @@ namespace cds { namespace intrusive {
         {
             void operator ()( value_type * p )
             {
-                assert( p != null_ptr<value_type *>());
+                assert( p != nullptr );
 
                 OptimisticQueue::clear_links( node_traits::to_node_ptr(*p) );
                 disposer()( p );
@@ -377,8 +377,8 @@ namespace cds { namespace intrusive {
         //@cond
         static void clear_links( node_type * pNode )
         {
-            pNode->m_pNext.store( null_ptr<node_type *>(), memory_model::memory_order_release );
-            pNode->m_pPrev.store( null_ptr<node_type *>(), memory_model::memory_order_release );
+            pNode->m_pNext.store( nullptr, memory_model::memory_order_release );
+            pNode->m_pPrev.store( nullptr, memory_model::memory_order_release );
         }
 
         struct dequeue_result {
@@ -398,12 +398,12 @@ namespace cds { namespace intrusive {
             while ( true ) { // Try till success or empty
                 pHead = res.guards.protect( 0, m_pHead, node_to_value() );
                 pTail = res.guards.protect( 1, m_pTail, node_to_value() );
-                assert( pHead != null_ptr<node_type *>() );
+                assert( pHead != nullptr );
                 pFirstNodePrev = res.guards.protect( 2, pHead->m_pPrev, node_to_value() );
 
                 if ( pHead == m_pHead.load(memory_model::memory_order_relaxed)) {
                     if ( pTail != pHead ) {
-                        if ( pFirstNodePrev == null_ptr<node_type *>()
+                        if ( pFirstNodePrev == nullptr
                           || pFirstNodePrev->m_pNext.load(memory_model::memory_order_relaxed) != pHead )
                         {
                             fix_list( pTail, pHead );
@@ -462,7 +462,7 @@ namespace cds { namespace intrusive {
 
         void dispose_node( node_type * p )
         {
-            assert( p != null_ptr<node_type *>());
+            assert( p != nullptr );
 
             if ( p != &m_Dummy ) {
                 gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
@@ -474,8 +474,8 @@ namespace cds { namespace intrusive {
     public:
         /// Constructor creates empty queue
         OptimisticQueue()
-            : m_pTail( null_ptr<node_type *>() )
-            , m_pHead( null_ptr<node_type *>() )
+            : m_pTail( nullptr )
+            , m_pHead( nullptr )
         {
             // GC and node_type::gc must be the same
             static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
@@ -493,10 +493,10 @@ namespace cds { namespace intrusive {
             node_type * pHead = m_pHead.load(memory_model::memory_order_relaxed);
             CDS_DEBUG_DO( node_type * pTail = m_pTail.load(memory_model::memory_order_relaxed); )
             CDS_DEBUG_DO( assert( pHead == pTail ); )
-            assert( pHead != null_ptr<node_type *>() );
+            assert( pHead != nullptr );
 
-            m_pHead.store( null_ptr<node_type *>(), memory_model::memory_order_relaxed );
-            m_pTail.store( null_ptr<node_type *>(), memory_model::memory_order_relaxed );
+            m_pHead.store( nullptr, memory_model::memory_order_relaxed );
+            m_pTail.store( nullptr, memory_model::memory_order_relaxed );
 
             dispose_node( pHead );
         }
@@ -559,7 +559,7 @@ namespace cds { namespace intrusive {
 
                 return node_traits::to_value_ptr( *res.pNext );
             }
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Synonym for @ref cds_intrusive_OptimisticQueue_enqueue "enqueue"
@@ -589,7 +589,7 @@ namespace cds { namespace intrusive {
         void clear()
         {
             value_type * pv;
-            while ( (pv = dequeue()) != null_ptr<value_type *>() );
+            while ( (pv = dequeue()) != nullptr );
         }
 
         /// Returns queue's item count

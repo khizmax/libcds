@@ -24,8 +24,8 @@ namespace cds { namespace gc { namespace hrc {
 
             /// Default ctor
             retired_node()
-                : m_pNode( null_ptr<ContainerNode *>() )
-                , m_funcFree( null_ptr<free_retired_ptr_func>() )
+                : m_pNode( nullptr )
+                , m_funcFree( nullptr )
                 , m_nNextFree(0)
                 , m_nClaim(0)
                 , m_bDone( false )
@@ -62,7 +62,7 @@ namespace cds { namespace gc { namespace hrc {
             /// Invokes destructor function for the pointer
             void free()
             {
-                assert( m_funcFree != null_ptr<free_retired_ptr_func>() );
+                assert( m_funcFree != nullptr );
                 m_funcFree( m_pNode.load( CDS_ATOMIC::memory_order_relaxed ));
             }
         };
@@ -116,7 +116,7 @@ namespace cds { namespace gc { namespace hrc {
                 size_t nCount = 0;
                 const size_t nCapacity = capacity();
                 for ( size_t i = 0; i < nCapacity; ++i ) {
-                    if ( m_arr[i].m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) != null_ptr<ContainerNode *>() )
+                    if ( m_arr[i].m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) != nullptr )
                         ++nCount;
                 }
                 return nCount;
@@ -128,7 +128,7 @@ namespace cds { namespace gc { namespace hrc {
                 assert( !isFull());
 
                 size_t n = m_nFreeList;
-                assert( m_arr[n].m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) == null_ptr<ContainerNode *>() );
+                assert( m_arr[n].m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
                 m_nFreeList = m_arr[n].m_nNextFree;
                 CDS_DEBUG_DO( m_arr[n].m_nNextFree = m_nEndFreeList ; )
                 m_arr[n].set( p, pFunc );
@@ -138,7 +138,7 @@ namespace cds { namespace gc { namespace hrc {
             void pop( size_t n )
             {
                 assert( n < capacity() );
-                m_arr[n].m_pNode.store( null_ptr<ContainerNode *>(), CDS_ATOMIC::memory_order_release );
+                m_arr[n].m_pNode.store( nullptr, CDS_ATOMIC::memory_order_release );
                 m_arr[n].m_nNextFree = m_nFreeList;
                 m_nFreeList = n;
             }

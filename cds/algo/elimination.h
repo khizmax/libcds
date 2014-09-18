@@ -50,7 +50,7 @@ namespace cds { namespace algo {
         /// Releases elimination record for the current thread
         static inline void clear_record()
         {
-            cds::threading::elimination_record().pOp = null_ptr<operation_desc*>();
+            cds::threading::elimination_record().pOp = nullptr;
         }
     } // namespace elimination
 }} // namespace cds::algo

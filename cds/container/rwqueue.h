@@ -82,18 +82,18 @@ namespace cds { namespace container {
             value_type              m_value ;   ///< Value stored in the node
 
             node_type( value_type const& v )
-                : m_pNext(null_ptr<node_type *>())
+                : m_pNext( nullptr )
                 , m_value(v)
             {}
 
             node_type()
-                : m_pNext( null_ptr<node_type *>() )
+                : m_pNext( nullptr )
             {}
 
 #       ifdef CDS_EMPLACE_SUPPORT
             template <typename... Args>
             node_type( Args&&... args )
-                : m_pNext(null_ptr<node_type *>())
+                : m_pNext( nullptr )
                 , m_value( std::forward<Args>(args)...)
             {}
 #       endif
@@ -147,7 +147,7 @@ namespace cds { namespace container {
 
         bool enqueue_node( node_type * p )
         {
-            assert( p != null_ptr<node_type *>());
+            assert( p != nullptr );
             {
                 auto_lock lock( m_TailLock );
                 m_pTail =
@@ -269,7 +269,7 @@ namespace cds { namespace container {
                 auto_lock lock( m_HeadLock );
                 pNode = m_pHead;
                 node_type * pNewHead = pNode->m_pNext;
-                if ( pNewHead == null_ptr<node_type *>() )
+                if ( pNewHead == nullptr )
                     return false;
                 unref(f)( dest, pNewHead->m_value );
                 m_pHead = pNewHead;
@@ -321,7 +321,7 @@ namespace cds { namespace container {
         bool empty() const
         {
             auto_lock lock( m_HeadLock );
-            return m_pHead->m_pNext == null_ptr<node_type *>();
+            return m_pHead->m_pNext == nullptr;
         }
 
         /// Clears queue
@@ -329,7 +329,7 @@ namespace cds { namespace container {
         {
             auto_lock lockR( m_HeadLock );
             auto_lock lockW( m_TailLock );
-            while ( m_pHead->m_pNext != null_ptr<node_type *>() ) {
+            while ( m_pHead->m_pNext != nullptr ) {
                 node_type * pHead = m_pHead;
                 m_pHead = m_pHead->m_pNext;
                 free_node( pHead );

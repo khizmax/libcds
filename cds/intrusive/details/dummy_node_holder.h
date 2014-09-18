@@ -37,9 +37,9 @@ namespace cds { namespace intrusive { namespace details {
         struct dummy_node_disposer {
             void operator()( node_type * p )
             {
-                assert( p != null_ptr<node_type *>());
+                assert( p != nullptr );
 
-                p->m_pNext.store( null_ptr<node_type *>(), CDS_ATOMIC::memory_order_release );
+                p->m_pNext.store( nullptr, CDS_ATOMIC::memory_order_release );
                 allocator_type().Delete( p );
             }
         };

@@ -186,7 +186,7 @@ namespace cds { namespace intrusive {
 
             /// Creates empty node
             node()
-                : m_pVal( null_ptr<value_type *>() )
+                : m_pVal( nullptr )
                 , m_nTag( tag_type(Empty) )
             {}
 
@@ -311,7 +311,7 @@ namespace cds { namespace intrusive {
             m_Lock.unlock();
             refBottom.m_nTag = tag_type(Empty);
             value_type * pVal = refBottom.m_pVal;
-            refBottom.m_pVal = null_ptr<value_type *>();
+            refBottom.m_pVal = nullptr;
             refBottom.unlock();
 
             node& refTop = m_Heap[ 1 ];

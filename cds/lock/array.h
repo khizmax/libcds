@@ -142,11 +142,11 @@ namespace cds { namespace lock {
 
         // Only for internal use!!!
         array()
-            : m_arrLocks( null_ptr<lock_type *>() )
+            : m_arrLocks( nullptr )
             , m_nCapacity(0)
         {}
         array( select_cell_policy const& policy )
-            : m_arrLocks( null_ptr<lock_type *>() )
+            : m_arrLocks( nullptr )
             , m_nCapacity(0)
             , m_SelectCellPolicy( policy )
         {}
@@ -160,7 +160,7 @@ namespace cds { namespace lock {
         array(
             size_t nCapacity        ///< [in] Array size
         )
-        : m_arrLocks( null_ptr<lock_type *>() )
+        : m_arrLocks( nullptr )
         , m_nCapacity( nCapacity )
         {
             m_arrLocks = create_lock_array( nCapacity );
@@ -174,7 +174,7 @@ namespace cds { namespace lock {
             size_t nCapacity,       ///< [in] Array size
             select_cell_policy const& policy    ///< Cell selection policy (copy-constructible)
         )
-        : m_arrLocks( null_ptr<lock_type *>() )
+        : m_arrLocks( nullptr )
         , m_nCapacity( nCapacity )
         , m_SelectCellPolicy( policy )
         {
@@ -190,7 +190,7 @@ namespace cds { namespace lock {
             size_t nCapacity,       ///< [in] Array size
             select_cell_policy&& policy    ///< Cell selection policy (move-constructible)
         )
-        : m_arrLocks( null_ptr<lock_type *>() )
+        : m_arrLocks( nullptr )
         , m_nCapacity( nCapacity )
         , m_SelectCellPolicy( std::forward<select_cell_policy>( policy ))
         {

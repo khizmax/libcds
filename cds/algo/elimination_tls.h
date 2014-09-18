@@ -19,13 +19,13 @@ namespace cds { namespace algo { namespace elimination {
 
         /// Initialization
         record()
-            : pOp( null_ptr<operation_desc *>() )
+            : pOp( nullptr )
         {}
 
         /// Checks if the record is free
         bool is_free() const
         {
-            return pOp == null_ptr<operation_desc *>();
+            return pOp == nullptr;
         }
     };
 

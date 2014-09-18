@@ -33,17 +33,17 @@ namespace cds { namespace intrusive {
         public:
             /// Constructs a node of height 1 (a bottom-list node)
             node()
-                : m_pNext( null_ptr<node *>())
+                : m_pNext( nullptr )
                 , m_nHeight(1)
-                , m_arrNext( null_ptr<atomic_ptr *>())
+                , m_arrNext( nullptr )
             {}
 
             /// Constructs a node of height \p nHeight
             void make_tower( unsigned int nHeight, atomic_ptr * nextTower )
             {
                 assert( nHeight > 0 );
-                assert( ( nHeight == 1 && nextTower == null_ptr<atomic_ptr *>() )  // bottom-list node
-                    || ( nHeight > 1  && nextTower != null_ptr<atomic_ptr *>() )   // node at level of more than 0
+                assert( (nHeight == 1 && nextTower == nullptr)  // bottom-list node
+                        || (nHeight > 1 && nextTower != nullptr)   // node at level of more than 0
                     );
 
                 m_arrNext = nextTower;
@@ -53,7 +53,7 @@ namespace cds { namespace intrusive {
             atomic_ptr * release_tower()
             {
                 atomic_ptr * pTower = m_arrNext;
-                m_arrNext = null_ptr<atomic_ptr *>();
+                m_arrNext = nullptr;
                 m_nHeight = 1;
                 return pTower;
             }
@@ -67,7 +67,7 @@ namespace cds { namespace intrusive {
             atomic_ptr& next( unsigned int nLevel )
             {
                 assert( nLevel < height() );
-                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != null_ptr<atomic_ptr *>() ));
+                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
             }
@@ -76,7 +76,7 @@ namespace cds { namespace intrusive {
             atomic_ptr const& next( unsigned int nLevel ) const
             {
                 assert( nLevel < height() );
-                assert( nLevel == 0 || nLevel > 0 && m_arrNext != null_ptr<atomic_ptr *>() );
+                assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
             }
@@ -102,14 +102,14 @@ namespace cds { namespace intrusive {
             /// Clears internal links
             void clear()
             {
-                assert( m_arrNext == null_ptr<atomic_ptr *>());
-                m_pNext.store( null_ptr<node *>(), CDS_ATOMIC::memory_order_release );
+                assert( m_arrNext == nullptr );
+                m_pNext.store( nullptr, CDS_ATOMIC::memory_order_release );
             }
 
             bool is_cleared() const
             {
-                return m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == null_ptr<atomic_ptr *>()
-                    && m_arrNext == null_ptr<atomic_ptr *>()
+                return m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr
+                    && m_arrNext == nullptr
                     && m_nHeight <= 1
 ;
             }
@@ -149,7 +149,7 @@ namespace cds { namespace intrusive {
 
         public:
             iterator()
-                : m_pNode( null_ptr<node_type *>())
+                : m_pNode( nullptr )
             {}
 
             iterator( iterator const& s)
@@ -158,16 +158,16 @@ namespace cds { namespace intrusive {
 
             value_type * operator ->() const
             {
-                assert( m_pNode != null_ptr< node_type *>() );
-                assert( node_traits::to_value_ptr( m_pNode ) != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
+                assert( node_traits::to_value_ptr( m_pNode ) != nullptr );
 
                 return node_traits::to_value_ptr( m_pNode );
             }
 
             value_ref operator *() const
             {
-                assert( m_pNode != null_ptr< node_type *>() );
-                assert( node_traits::to_value_ptr( m_pNode ) != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
+                assert( node_traits::to_value_ptr( m_pNode ) != nullptr );
 
                 return *node_traits::to_value_ptr( m_pNode );
             }
@@ -443,7 +443,7 @@ namespace cds { namespace intrusive {
             head_node( unsigned int nHeight )
             {
                 for ( size_t i = 0; i < sizeof(m_Tower) / sizeof(m_Tower[0]); ++i )
-                    m_Tower[i].store( null_ptr<node_type *>(), CDS_ATOMIC::memory_order_relaxed );
+                    m_Tower[i].store( nullptr, CDS_ATOMIC::memory_order_relaxed );
 
                 node_type::make_tower( nHeight, m_Tower );
             }
@@ -456,8 +456,8 @@ namespace cds { namespace intrusive {
             void clear()
             {
                 for (unsigned int i = 0; i < sizeof(m_Tower) / sizeof(m_Tower[0]); ++i )
-                    m_Tower[i].store( null_ptr<node_type *>(), CDS_ATOMIC::memory_order_relaxed );
-                node_type::m_pNext.store( null_ptr<node_type *>(), CDS_ATOMIC::memory_order_relaxed );
+                    m_Tower[i].store( nullptr, CDS_ATOMIC::memory_order_relaxed );
+                node_type::m_pNext.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
             }
         };
         //@endcond
@@ -487,7 +487,7 @@ namespace cds { namespace intrusive {
 
         static void dispose_node( node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>() );
+            assert( pNode != nullptr );
             typename node_builder::node_disposer()( pNode );
             disposer()( node_traits::to_value_ptr( pNode ));
         }
@@ -497,7 +497,7 @@ namespace cds { namespace intrusive {
         {
             node_type * pPred;
             node_type * pSucc;
-            node_type * pCur = null_ptr<node_type *>();
+            node_type * pCur = nullptr;
 
             int nCmp = 1;
 
@@ -551,7 +551,7 @@ namespace cds { namespace intrusive {
             unsigned int nHeight = pNode->height();
 
             for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel )
-                pNode->next(nLevel).store( null_ptr<node_type *>(), memory_model::memory_order_relaxed );
+                pNode->next( nLevel ).store( nullptr, memory_model::memory_order_relaxed );
 
             {
                 node_type * p = pos.pSucc[0];
@@ -563,7 +563,7 @@ namespace cds { namespace intrusive {
             }
 
             for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel ) {
-                node_type * p = null_ptr<node_type *>();
+                node_type * p = nullptr;
                 while ( true ) {
                     node_type * q = pos.pSucc[ nLevel ];
 
@@ -594,7 +594,7 @@ namespace cds { namespace intrusive {
             }
             else {
                 m_Stat.onFindFastFailed();
-                return null_ptr<node_type *>();
+                return nullptr;
             }
         }
 
@@ -691,7 +691,7 @@ namespace cds { namespace intrusive {
             node_type * pNode = node_traits::to_node_ptr( val );
             scoped_node_ptr scp( pNode );
             unsigned int nHeight = pNode->height();
-            bool bTowerOk = nHeight > 1 && pNode->get_tower() != null_ptr<atomic_node_ptr *>();
+            bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
             bool bTowerMade = false;
 
             position pos;
@@ -765,7 +765,7 @@ namespace cds { namespace intrusive {
             node_type * pNode = node_traits::to_node_ptr( val );
             scoped_node_ptr scp( pNode );
             unsigned int nHeight = pNode->height();
-            bool bTowerOk = nHeight > 1 && pNode->get_tower() != null_ptr<atomic_node_ptr *>();
+            bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
             bool bTowerMade = false;
 
 #       ifndef CDS_CXX11_LAMBDA_SUPPORT
@@ -841,7 +841,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Func>
         bool find( Q& val, Func f ) const
         {
-            return find_with_( val, key_comparator(), f ) != null_ptr<node_type *>();
+            return find_with_( val, key_comparator(), f ) != nullptr;
         }
 
         /// Finds the key \p val using \p pred predicate for comparing
@@ -854,7 +854,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& val, Less pred, Func f ) const
         {
-            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), f ) != null_ptr<node_type *>();
+            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), f ) != nullptr;
         }
 
         /// Finds the key \p val
@@ -883,7 +883,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Func>
         bool find( Q const& val, Func f ) const
         {
-            return find_with_( val, key_comparator(), f ) != null_ptr<node_type *>();
+            return find_with_( val, key_comparator(), f ) != nullptr;
         }
 
         /// Finds the key \p val using \p pred predicate for comparing
@@ -896,7 +896,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& val, Less pred, Func f ) const
         {
-            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), f ) != null_ptr<node_type *>();
+            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), f ) != nullptr;
         }
 
         /// Finds the key \p val
@@ -918,7 +918,7 @@ namespace cds { namespace intrusive {
 #       endif
             if ( pNode )
                 return node_traits::to_value_ptr( pNode );
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Finds the key \p val using \p pred predicate for comparing
@@ -939,7 +939,7 @@ namespace cds { namespace intrusive {
 #       endif
             if ( pNode )
                 return node_traits::to_value_ptr( pNode );
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Gets minimum key from the set
@@ -973,7 +973,7 @@ namespace cds { namespace intrusive {
                     pPred = pCur;
                 }
             }
-            return pPred && pPred != m_Head.head() ? node_traits::to_value_ptr( pPred ) : null_ptr<value_type *>();
+            return pPred && pPred != m_Head.head() ? node_traits::to_value_ptr( pPred ) : nullptr;
         }
 
         /// Clears the set (non-atomic)
@@ -1012,7 +1012,7 @@ namespace cds { namespace intrusive {
         /// Checks if the set is empty
         bool empty() const
         {
-            return m_Head.head()->next(0).load( memory_model::memory_order_relaxed ) == null_ptr<node_type *>();
+            return m_Head.head()->next( 0 ).load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
         /// Returns maximum height of skip-list. The max height is a constant for each object and does not exceed 32.

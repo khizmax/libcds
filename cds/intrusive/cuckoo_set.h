@@ -121,7 +121,7 @@ namespace cds { namespace intrusive {
             node *  m_pNext;
 
             CDS_CONSTEXPR node() CDS_NOEXCEPT
-                : m_pNext( null_ptr<node *>() )
+                : m_pNext( nullptr )
             {}
 
             void store_hash( size_t * )
@@ -131,12 +131,12 @@ namespace cds { namespace intrusive {
             {
                 // This node type does not store hash values!!!
                 assert(false);
-                return null_ptr<size_t *>();
+                return nullptr;
             }
 
             void clear()
             {
-                m_pNext = null_ptr<node *>();
+                m_pNext = nullptr;
             }
         };
 
@@ -153,7 +153,7 @@ namespace cds { namespace intrusive {
             size_t  m_arrHash[ hash_array_size ];
 
             node() CDS_NOEXCEPT
-                : m_pNext( null_ptr<node *>() )
+                : m_pNext( nullptr )
             {
                 memset( m_arrHash, 0, sizeof(m_arrHash));
             }
@@ -170,7 +170,7 @@ namespace cds { namespace intrusive {
 
             void clear()
             {
-                m_pNext = null_ptr<node *>();
+                m_pNext = nullptr;
             }
 
         };
@@ -194,7 +194,7 @@ namespace cds { namespace intrusive {
             {
                 // This node type does not store hash values!!!
                 assert(false);
-                return null_ptr<size_t *>();
+                return nullptr;
             }
 
             void clear()
@@ -447,7 +447,7 @@ namespace cds { namespace intrusive {
                         }
                     }
                     else {
-                        std::fill( m_guard, m_guard + c_nArity, null_ptr<lock_type *>() );
+                        std::fill( m_guard, m_guard + c_nArity, nullptr );
                     }
                     policy.m_Stat.onCellTryLock();
                 }
@@ -1201,7 +1201,7 @@ namespace cds { namespace intrusive {
 
                 public:
                     iterator()
-                        : pNode( null_ptr<node_type *>())
+                        : pNode( nullptr )
                     {}
                     iterator( node_type * p )
                         : pNode( p )
@@ -1228,7 +1228,7 @@ namespace cds { namespace intrusive {
                     }
                     node_type& operator*()
                     {
-                        assert( pNode != null_ptr<node_type *>());
+                        assert( pNode != nullptr );
                         return *pNode;
                     }
 
@@ -1252,7 +1252,7 @@ namespace cds { namespace intrusive {
 
             public:
                 bucket_entry()
-                    : pHead( null_ptr<node_type *>())
+                    : pHead( nullptr )
                     , nSize(0)
                 {
                     static_assert(( std::is_same<typename node_type::probeset_type, probeset_type>::value ), "Incompatible node type" );
@@ -1307,7 +1307,7 @@ namespace cds { namespace intrusive {
                     }
 
                     nSize = 0;
-                    pHead = null_ptr<node_type *>();
+                    pHead = nullptr;
                 }
 
                 template <typename Disposer>
@@ -1321,7 +1321,7 @@ namespace cds { namespace intrusive {
                     }
 
                     nSize = 0;
-                    pHead = null_ptr<node_type *>();
+                    pHead = nullptr;
                 }
 
                 unsigned int size() const
@@ -1373,7 +1373,7 @@ namespace cds { namespace intrusive {
 
                 public:
                     iterator()
-                        : pArr( null_ptr<node_type **>() )
+                        : pArr( nullptr )
                     {}
                     iterator( node_type ** p )
                         : pArr(p)
@@ -1390,13 +1390,13 @@ namespace cds { namespace intrusive {
 
                     node_type * operator->()
                     {
-                        assert( pArr != null_ptr<node_type **>());
+                        assert( pArr != nullptr );
                         return *pArr;
                     }
                     node_type& operator*()
                     {
-                        assert( pArr != null_ptr<node_type **>());
-                        assert( *pArr != null_ptr<node_type *>());
+                        assert( pArr != nullptr );
+                        assert( *pArr != nullptr );
                         return *(*pArr);
                     }
 
@@ -2034,7 +2034,7 @@ namespace cds { namespace intrusive {
             bucket_table_allocator alloc;
             for ( unsigned int i = 0; i < c_nArity; ++i ) {
                 alloc.Delete( pTable[i], nCapacity );
-                pTable[i] = null_ptr<bucket_entry *>();
+                pTable[i] = nullptr;
             }
         }
         void free_bucket_tables()
@@ -2078,7 +2078,7 @@ namespace cds { namespace intrusive {
             }
 
             m_Stat.onEraseFailed();
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         template <typename Q, typename Predicate, typename Func>

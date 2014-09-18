@@ -42,7 +42,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
 
             node()
-                : m_pNext( null_ptr<node *>() )
+                : m_pNext( nullptr )
             {}
         };
 
@@ -60,13 +60,13 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
 
             node()
-                : m_pNext(null_ptr<node *>())
+                : m_pNext( nullptr )
             {}
 
         protected:
             virtual void cleanUp( cds::gc::hrc::ThreadGC * pGC )
             {
-                assert( pGC != null_ptr<cds::gc::hrc::ThreadGC *>() );
+                assert( pGC != nullptr );
                 typename gc::template GuardArray<2> aGuards( *pGC );
 
                 while ( true ) {
@@ -424,7 +424,7 @@ namespace cds { namespace intrusive {
         {
             void operator()( value_type * p )
             {
-                assert( p != null_ptr<value_type *>());
+                assert( p != nullptr );
 
                 BasketQueue::clear_links( node_traits::to_node_ptr(p) );
                 disposer()( p );
@@ -581,7 +581,7 @@ namespace cds { namespace intrusive {
 
         static void clear_links( node_type * pNode )
         {
-            pNode->m_pNext.store( marked_ptr( null_ptr<node_type *>()), memory_model::memory_order_release );
+            pNode->m_pNext.store( marked_ptr( nullptr ), memory_model::memory_order_release );
         }
 
         void dispose_node( node_type * p )
@@ -597,8 +597,8 @@ namespace cds { namespace intrusive {
     public:
         /// Initializes empty queue
         BasketQueue()
-            : m_pHead( null_ptr<node_type *>() )
-            , m_pTail( null_ptr<node_type *>() )
+            : m_pHead( nullptr )
+            , m_pTail( nullptr )
             , m_nMaxHops( 3 )
         {
             // GC and node_type::gc must be the same
@@ -629,7 +629,7 @@ namespace cds { namespace intrusive {
             clear();
 
             node_type * pHead = m_pHead.load(memory_model::memory_order_relaxed).ptr();
-            assert( pHead != null_ptr<node_type *>() );
+            assert( pHead != nullptr );
 
             {
                 node_type * pNext = pHead->m_pNext.load( memory_model::memory_order_relaxed ).ptr();
@@ -643,8 +643,8 @@ namespace cds { namespace intrusive {
                 //m_pTail.store( marked_ptr( pHead ), memory_model::memory_order_relaxed );
             }
 
-            m_pHead.store( marked_ptr( null_ptr<node_type *>()), memory_model::memory_order_relaxed );
-            m_pTail.store( marked_ptr( null_ptr<node_type *>()), memory_model::memory_order_relaxed );
+            m_pHead.store( marked_ptr( nullptr ), memory_model::memory_order_relaxed );
+            m_pTail.store( marked_ptr( nullptr ), memory_model::memory_order_relaxed );
 
             dispose_node( pHead );
         }
@@ -686,7 +686,7 @@ namespace cds { namespace intrusive {
 
                 marked_ptr pNext = t->m_pNext.load(memory_model::memory_order_acquire );
 
-                if ( pNext.ptr() == null_ptr<node_type *>() ) {
+                if ( pNext.ptr() == nullptr ) {
                     pNew->m_pNext.store( marked_ptr(), memory_model::memory_order_release );
                     if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr(pNew), memory_model::memory_order_release, memory_model::memory_order_relaxed ) ) {
                         if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, memory_model::memory_order_relaxed ))
@@ -730,7 +730,7 @@ namespace cds { namespace intrusive {
 
                     marked_ptr p;
                     bool bTailOk = true;
-                    while ( ( p = pNext->m_pNext.load(memory_model::memory_order_relaxed) ).ptr() != null_ptr<node_type *>() )
+                    while ( (p = pNext->m_pNext.load( memory_model::memory_order_relaxed )).ptr() != nullptr )
                     {
                         bTailOk = m_pTail.load( memory_model::memory_order_relaxed ) == t;
                         if ( !bTailOk )
@@ -769,7 +769,7 @@ namespace cds { namespace intrusive {
 
             if ( do_dequeue( res, true ))
                 return node_traits::to_value_ptr( *res.pNext );
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Synonym for \ref cds_intrusive_BasketQueue_enqueue "enqueue" function

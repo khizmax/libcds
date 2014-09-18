@@ -225,9 +225,9 @@ namespace cds { namespace intrusive {
             bool                bRightParent    ; // true if pParent is right child of pGrandParent, false otherwise
 
             search_result()
-                :pGrandParent( null_ptr<internal_node *>() )
-                ,pParent( null_ptr<internal_node *>() )
-                ,pLeaf( null_ptr<leaf_node *>() )
+                :pGrandParent( nullptr )
+                , pParent( nullptr )
+                , pLeaf( nullptr )
                 ,bRightLeaf( false )
                 ,bRightParent( false )
             {}
@@ -909,8 +909,8 @@ namespace cds { namespace intrusive {
         void unsafe_clear()
         {
             while ( true ) {
-                internal_node * pParent = null_ptr< internal_node *>();
-                internal_node * pGrandParent = null_ptr<internal_node *>();
+                internal_node * pParent = nullptr;
+                internal_node * pGrandParent = nullptr;
                 tree_node *     pLeaf = const_cast<internal_node *>( &m_Root );
 
                 // Get leftmost leaf
@@ -1008,7 +1008,7 @@ namespace cds { namespace intrusive {
             // See whether pParent->m_pUpdate has not been changed
             if ( pParent->m_pUpdate.load( memory_model::memory_order_acquire ) != updParent ) {
                 // update has been changed - returns nullptr as a flag to search retry
-                return null_ptr<tree_node *>();
+                return nullptr;
             }
 
             if ( p && p->is_leaf() )
@@ -1032,7 +1032,7 @@ namespace cds { namespace intrusive {
         bool search( search_result& res, KeyValue const& key, Compare cmp ) const
         {
             internal_node * pParent;
-            internal_node * pGrandParent = null_ptr<internal_node *>();
+            internal_node * pGrandParent = nullptr;
             update_ptr      updParent;
             update_ptr      updGrandParent;
             bool bRightLeaf;
@@ -1041,9 +1041,9 @@ namespace cds { namespace intrusive {
             int nCmp = 0;
 
         retry:
-            pParent = null_ptr< internal_node *>();
-            //pGrandParent = null_ptr<internal_node *>();
-            updParent = null_ptr<update_desc *>();
+            pParent = nullptr;
+            //pGrandParent = nullptr;
+            updParent = nullptr;
             bRightLeaf = false;
             tree_node * pLeaf = const_cast<internal_node *>( &m_Root );
             while ( pLeaf->is_internal() ) {
@@ -1096,9 +1096,9 @@ namespace cds { namespace intrusive {
             update_ptr      updGrandParent;
 
         retry:
-            pParent = null_ptr< internal_node *>();
-            pGrandParent = null_ptr<internal_node *>();
-            updParent = null_ptr<update_desc *>();
+            pParent = nullptr;
+            pGrandParent = nullptr;
+            updParent = nullptr;
             tree_node *     pLeaf = const_cast<internal_node *>( &m_Root );
             while ( pLeaf->is_internal() ) {
                 res.guards.copy( search_result::Guard_GrandParent, search_result::Guard_Parent );
@@ -1149,9 +1149,9 @@ namespace cds { namespace intrusive {
             bool bRightParent = false;
 
         retry:
-            pParent = null_ptr< internal_node *>();
-            pGrandParent = null_ptr<internal_node *>();
-            updParent = null_ptr<update_desc *>();
+            pParent = nullptr;
+            pGrandParent = nullptr;
+            updParent = nullptr;
             bRightLeaf = false;
             tree_node * pLeaf = const_cast<internal_node *>( &m_Root );
             while ( pLeaf->is_internal() ) {
@@ -1238,7 +1238,7 @@ namespace cds { namespace intrusive {
         {
             // precondition: all member of res must be guarded
 
-            assert( res.pGrandParent != null_ptr<internal_node *>() );
+            assert( res.pGrandParent != nullptr );
 
             return
                 static_cast<internal_node *>(
@@ -1394,7 +1394,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare, typename Equal, typename Func>
         bool erase_( Q const& val, Compare cmp, Equal eq, Func f )
         {
-            update_desc * pOp = null_ptr<update_desc *>();
+            update_desc * pOp = nullptr;
             search_result res;
 
             for ( ;; ) {
@@ -1428,7 +1428,7 @@ namespace cds { namespace intrusive {
                                 cds::unref(f)( *node_traits::to_value_ptr( res.pLeaf ));
                                 break;
                             }
-                            pOp = null_ptr<update_desc *>();
+                            pOp = nullptr;
                         }
                     }
                 }
@@ -1476,7 +1476,7 @@ namespace cds { namespace intrusive {
 
         bool extract_max_( typename gc::Guard& guard )
         {
-            update_desc * pOp = null_ptr<update_desc *>();
+            update_desc * pOp = nullptr;
             search_result res;
 
             for ( ;; ) {
@@ -1508,7 +1508,7 @@ namespace cds { namespace intrusive {
                         {
                             if ( help_delete( pOp ))
                                 break;
-                            pOp = null_ptr<update_desc *>();
+                            pOp = nullptr;
                         }
                     }
                 }
@@ -1524,7 +1524,7 @@ namespace cds { namespace intrusive {
 
         bool extract_min_( typename gc::Guard& guard )
         {
-            update_desc * pOp = null_ptr<update_desc *>();
+            update_desc * pOp = nullptr;
             search_result res;
 
             for ( ;; ) {
@@ -1556,7 +1556,7 @@ namespace cds { namespace intrusive {
                         {
                             if ( help_delete( pOp ))
                                 break;
-                            pOp = null_ptr<update_desc *>();
+                            pOp = nullptr;
                         }
                     }
                 }

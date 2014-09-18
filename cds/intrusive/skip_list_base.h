@@ -45,17 +45,17 @@ namespace cds { namespace intrusive {
         public:
             /// Constructs a node of height 1 (a bottom-list node)
             node()
-                : m_pNext( null_ptr<node *>())
+                : m_pNext( nullptr )
                 , m_nHeight(1)
-                , m_arrNext( null_ptr<atomic_marked_ptr *>())
+                , m_arrNext( nullptr )
             {}
 
             /// Constructs a node of height \p nHeight
             void make_tower( unsigned int nHeight, atomic_marked_ptr * nextTower )
             {
                 assert( nHeight > 0 );
-                assert( ( nHeight == 1 && nextTower == null_ptr<atomic_marked_ptr *>() )  // bottom-list node
-                     || ( nHeight > 1  && nextTower != null_ptr<atomic_marked_ptr *>() )   // node at level of more than 0
+                assert( (nHeight == 1 && nextTower == nullptr)  // bottom-list node
+                        || (nHeight > 1 && nextTower != nullptr)   // node at level of more than 0
                 );
 
                 m_arrNext = nextTower;
@@ -66,7 +66,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr * release_tower()
             {
                 atomic_marked_ptr * pTower = m_arrNext;
-                m_arrNext = null_ptr<atomic_marked_ptr *>();
+                m_arrNext = nullptr;
                 m_nHeight = 1;
                 return pTower;
             }
@@ -81,7 +81,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr& next( unsigned int nLevel )
             {
                 assert( nLevel < height() );
-                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != null_ptr<atomic_marked_ptr *>() ));
+                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
             }
@@ -90,7 +90,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr const& next( unsigned int nLevel ) const
             {
                 assert( nLevel < height() );
-                assert( nLevel == 0 || nLevel > 0 && m_arrNext != null_ptr<atomic_marked_ptr *>() );
+                assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
             }
@@ -116,7 +116,7 @@ namespace cds { namespace intrusive {
             /// Clears internal links
             void clear()
             {
-                assert( m_arrNext == null_ptr<atomic_marked_ptr *>());
+                assert( m_arrNext == nullptr );
                 m_pNext.store( marked_ptr(), CDS_ATOMIC::memory_order_release );
             }
 
@@ -124,7 +124,7 @@ namespace cds { namespace intrusive {
             bool is_cleared() const
             {
                 return m_pNext == atomic_marked_ptr()
-                    && m_arrNext == null_ptr<atomic_marked_ptr *>()
+                    && m_arrNext == nullptr
                     && m_nHeight <= 1
 ;
             }
@@ -617,7 +617,7 @@ namespace cds { namespace intrusive {
                 static node_type * make_tower( node_type * pNode, unsigned int nHeight )
                 {
                     if ( nHeight > 1 )
-                        pNode->make_tower( nHeight, tower_allocator().NewArray( nHeight - 1, null_ptr<node_type *>() ));
+                        pNode->make_tower( nHeight, tower_allocator().NewArray( nHeight - 1, nullptr ) );
                     return pNode;
                 }
 

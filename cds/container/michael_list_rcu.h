@@ -956,7 +956,7 @@ namespace cds { namespace container {
         value_type * get_at( head_type& refHead, Q const& val, Compare cmp ) const
         {
             node_type * pNode = base_class::get_at( refHead, val, cmp );
-            return pNode ? &pNode->m_Value : null_ptr<value_type *>();
+            return pNode ? &pNode->m_Value : nullptr;
         }
 
         //@endcond

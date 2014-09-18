@@ -62,7 +62,7 @@ namespace cds { namespace gc {
             CDS_DEBUG_DO( const cds::OS::ThreadId mainThreadId = cds::OS::getCurrentThreadId() ;)
 
             hplist_node * pHead = m_pListHead.load( CDS_ATOMIC::memory_order_relaxed );
-            m_pListHead.store( null_ptr<hplist_node *>(), CDS_ATOMIC::memory_order_relaxed );
+            m_pListHead.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
 
             hplist_node * pNext = NULL;
             for ( hplist_node * hprec = pHead; hprec; hprec = pNext ) {

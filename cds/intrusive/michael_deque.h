@@ -390,7 +390,7 @@ namespace cds { namespace intrusive {
             {
                 void operator()( value_type * p )
                 {
-                    assert( p != null_ptr<value_type *>());
+                    assert( p != nullptr );
 
                     MichaelDeque::clear_links( node_traits::to_node_ptr(p) );
                     disposer()( p );
@@ -479,7 +479,7 @@ namespace cds { namespace intrusive {
                 node_type * pNode;
 
                 at_functor()
-                    : pNode( null_ptr<node_type *>())
+                    : pNode( nullptr )
                     {}
 
                 void operator()( value_type& v, unsigned int nIdx )
@@ -520,7 +520,7 @@ namespace cds { namespace intrusive {
 #   if defined(CDS_CXX11_LAMBDA_SUPPORT) && !((CDS_COMPILER == CDS_COMPILER_MSVC ||CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1700)
                 // MS VC++2010 bug: error C2955: 'cds::intrusive::node_traits' : use of class template requires template argument list
                 // see declaration of 'cds::intrusive::node_traits'
-                node_type * pNode = null_ptr<node_type *>();
+                node_type * pNode = nullptr;
                 if ( m_set.find( nIdx,
                     [&pNode](value_type& v, unsigned int nIdx) {
                         pNode = node_traits::to_node_ptr(v);
@@ -533,7 +533,7 @@ namespace cds { namespace intrusive {
                 if ( m_set.find( nIdx, cds::ref(f) ))
                     return f.pNode;
 #   endif
-                return null_ptr<node_type *>();
+                return nullptr;
             }
         };
         //@endcond
@@ -928,7 +928,7 @@ namespace cds { namespace intrusive {
                 return res.pPopped;
             }
 
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Pop front
@@ -945,7 +945,7 @@ namespace cds { namespace intrusive {
                 return res.pPopped;
             }
 
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
         /// Returns deque's item count
@@ -976,7 +976,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            while ( pop_back() != null_ptr<value_type *>() );
+            while ( pop_back() != nullptr );
         }
 
         /// Returns reference to internal statistics

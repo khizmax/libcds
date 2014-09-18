@@ -128,9 +128,9 @@ namespace cds { namespace intrusive {
 
             public:
                 iterator()
-                    : m_pCurBucket( null_ptr<bucket_ptr>() )
+                    : m_pCurBucket( nullptr )
                     , m_itList()
-                    , m_pEndBucket( null_ptr<bucket_ptr>() )
+                    , m_pEndBucket( nullptr )
                 {}
 
                 iterator( list_iterator const& it, bucket_ptr pFirst, bucket_ptr pLast )
@@ -150,13 +150,13 @@ namespace cds { namespace intrusive {
 
                 value_ptr operator ->() const
                 {
-                    assert( m_pCurBucket != null_ptr<bucket_ptr>() );
+                    assert( m_pCurBucket != nullptr );
                     return m_itList.operator ->();
                 }
 
                 value_ref operator *() const
                 {
-                    assert( m_pCurBucket != null_ptr<bucket_ptr>() );
+                    assert( m_pCurBucket != nullptr );
                     return m_itList.operator *();
                 }
 
@@ -177,7 +177,7 @@ namespace cds { namespace intrusive {
 
                 bucket_ptr bucket() const
                 {
-                    return m_pCurBucket != m_pEndBucket ? m_pCurBucket : null_ptr<bucket_ptr>();
+                    return m_pCurBucket != m_pEndBucket ? m_pCurBucket : nullptr;
                 }
 
                 template <bool C>

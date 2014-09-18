@@ -469,16 +469,6 @@ namespace cds {
     virtual const char * what( ) const throw() { return _msg; } \
     }
 
-
-    //@cond
-    // This template function should be replaced with nullptr keyword when all compilers will support it
-    template <typename T>
-    static inline CDS_CONSTEXPR T null_ptr() CDS_NOEXCEPT
-    {
-        return reinterpret_cast<T>( NULL );
-    }
-    //@endcond
-
 } // namespace cds
 
 

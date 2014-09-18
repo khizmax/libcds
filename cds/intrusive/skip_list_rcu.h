@@ -47,14 +47,14 @@ namespace cds { namespace intrusive {
         public:
             /// Constructs a node of height 1 (a bottom-list node)
             node()
-                : m_pNext( null_ptr<node *>())
-                , m_pDelChain( null_ptr<node *>())
+                : m_pNext( nullptr )
+                , m_pDelChain( nullptr )
 #       ifdef _DEBUG
                 , m_bLinked( false )
                 , m_bUnlinked( false )
 #       endif
                 , m_nHeight(1)
-                , m_arrNext( null_ptr<atomic_marked_ptr *>())
+                , m_arrNext( nullptr )
             {}
 
 #       ifdef _DEBUG
@@ -68,8 +68,8 @@ namespace cds { namespace intrusive {
             void make_tower( unsigned int nHeight, atomic_marked_ptr * nextTower )
             {
                 assert( nHeight > 0 );
-                assert( ( nHeight == 1 && nextTower == null_ptr<atomic_marked_ptr *>() )  // bottom-list node
-                    || ( nHeight > 1  && nextTower != null_ptr<atomic_marked_ptr *>() )   // node at level of more than 0
+                assert( (nHeight == 1 && nextTower == nullptr)  // bottom-list node
+                        || (nHeight > 1 && nextTower != nullptr)   // node at level of more than 0
                     );
 
                 m_arrNext = nextTower;
@@ -79,7 +79,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr * release_tower()
             {
                 atomic_marked_ptr * pTower = m_arrNext;
-                m_arrNext = null_ptr<atomic_marked_ptr *>();
+                m_arrNext = nullptr;
                 m_nHeight = 1;
                 return pTower;
             }
@@ -99,7 +99,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr& next( unsigned int nLevel )
             {
                 assert( nLevel < height() );
-                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != null_ptr<atomic_marked_ptr *>() ));
+                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
             }
@@ -108,7 +108,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr const& next( unsigned int nLevel ) const
             {
                 assert( nLevel < height() );
-                assert( nLevel == 0 || nLevel > 0 && m_arrNext != null_ptr<atomic_marked_ptr *>() );
+                assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
             }
@@ -134,15 +134,15 @@ namespace cds { namespace intrusive {
             /// Clears internal links
             void clear()
             {
-                assert( m_arrNext == null_ptr<atomic_marked_ptr *>());
+                assert( m_arrNext == nullptr );
                 m_pNext.store( marked_ptr(), CDS_ATOMIC::memory_order_release );
-                m_pDelChain = null_ptr<node *>();
+                m_pDelChain = nullptr;
             }
 
             bool is_cleared() const
             {
                 return m_pNext == atomic_marked_ptr()
-                    && m_arrNext == null_ptr<atomic_marked_ptr *>()
+                    && m_arrNext == nullptr
                     && m_nHeight <= 1;
             }
         };
@@ -207,7 +207,7 @@ namespace cds { namespace intrusive {
 
         public: // for internal use only!!!
             iterator( node_type& refHead )
-                : m_pNode( null_ptr<node_type *>() )
+                : m_pNode( nullptr )
             {
                 // RCU should be locked before iterating!!!
                 assert( gc::is_locked() );
@@ -234,7 +234,7 @@ namespace cds { namespace intrusive {
 
         public:
             iterator()
-                : m_pNode( null_ptr<node_type *>())
+                : m_pNode( nullptr )
             {
                 // RCU should be locked before iterating!!!
                 assert( gc::is_locked() );
@@ -249,16 +249,16 @@ namespace cds { namespace intrusive {
 
             value_type * operator ->() const
             {
-                assert( m_pNode != null_ptr< node_type *>() );
-                assert( node_traits::to_value_ptr( m_pNode ) != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
+                assert( node_traits::to_value_ptr( m_pNode ) != nullptr );
 
                 return node_traits::to_value_ptr( m_pNode );
             }
 
             value_ref operator *() const
             {
-                assert( m_pNode != null_ptr< node_type *>() );
-                assert( node_traits::to_value_ptr( m_pNode ) != null_ptr<value_type *>() );
+                assert( m_pNode != nullptr );
+                assert( node_traits::to_value_ptr( m_pNode ) != nullptr );
 
                 return *node_traits::to_value_ptr( m_pNode );
             }
@@ -586,12 +586,12 @@ namespace cds { namespace intrusive {
             node_type *   pDelChain;
 
             position()
-                : pDelChain( null_ptr<node_type *>())
+                : pDelChain( nullptr )
             {}
 #       ifdef _DEBUG
             ~position()
             {
-                assert( pDelChain == null_ptr<node_type *>());
+                assert( pDelChain == nullptr );
             }
 #       endif
         };
@@ -722,7 +722,7 @@ namespace cds { namespace intrusive {
                         goto retry;
                     }
 
-                    if ( pCur.ptr() == null_ptr<node_type *>()) {
+                    if ( pCur.ptr() == nullptr ) {
                         // end of the list at level nLevel - goto next level
                         break;
                     }
@@ -837,7 +837,7 @@ namespace cds { namespace intrusive {
                 pos.pPrev[ nLevel ] = pPred;
                 pos.pSucc[ nLevel ] = pCur.ptr();
             }
-            return (pos.pCur = pCur.ptr()) != null_ptr<node_type *>();
+            return (pos.pCur = pCur.ptr()) != nullptr;
         }
 
         bool find_max_position( position& pos )
@@ -860,7 +860,7 @@ retry:
                         goto retry;
                     }
 
-                    if ( pCur.ptr() == null_ptr<node_type *>()) {
+                    if ( pCur.ptr() == nullptr ) {
                         // end of the list at level nLevel - goto next level
                         break;
                     }
@@ -908,7 +908,7 @@ retry:
                 pos.pSucc[ nLevel ] = pCur.ptr();
             }
 
-            return (pos.pCur = pCur.ptr()) != null_ptr<node_type *>();
+            return (pos.pCur = pCur.ptr()) != nullptr;
         }
 
         template <typename Func>
@@ -960,7 +960,7 @@ retry:
 
         static void link_for_remove( position& pos, node_type * pDel )
         {
-            assert( pDel->m_pDelChain == null_ptr<node_type *>() );
+            assert( pDel->m_pDelChain == nullptr );
 
             pDel->m_pDelChain = pos.pDelChain;
             pos.pDelChain = pDel;
@@ -969,7 +969,7 @@ retry:
         template <typename Func>
         bool try_remove_at( node_type * pDel, position& pos, Func f, bool bExtract )
         {
-            assert( pDel != null_ptr<node_type *>());
+            assert( pDel != nullptr );
             assert( gc::is_locked() );
 
             marked_node_ptr pSucc;
@@ -1186,7 +1186,7 @@ retry:
 
             if ( !find_position( key, pos, cmp, false ) ) {
                 m_Stat.onExtractFailed();
-                pDel = null_ptr<node_type *>();
+                pDel = nullptr;
             }
             else {
                 pDel = pos.pCur;
@@ -1208,12 +1208,12 @@ retry:
                 }
                 else {
                     m_Stat.onExtractFailed();
-                    pDel = null_ptr<node_type *>();
+                    pDel = nullptr;
                 }
             }
 
             defer_chain( pos );
-            return pDel ? node_traits::to_value_ptr(pDel) : null_ptr<value_type *>();
+            return pDel ? node_traits::to_value_ptr( pDel ) : nullptr;
         }
 
         template <typename ExemptPtr, typename Q>
@@ -1225,7 +1225,7 @@ retry:
             {
                 rcu_lock l;
                 value_type * pDel = do_extract_key( key, key_comparator() );
-                bReturn = pDel != null_ptr<value_type *>();
+                bReturn = pDel != nullptr;
                 if ( bReturn )
                     result = pDel;
             }
@@ -1243,7 +1243,7 @@ retry:
             {
                 rcu_lock l;
                 value_type * pDel = do_extract_key( key, cds::opt::details::make_comparator_from_less<Less>() );
-                bReturn = pDel != null_ptr<value_type *>();
+                bReturn = pDel != nullptr;
                 if ( bReturn )
                     result = pDel;
             }
@@ -1261,7 +1261,7 @@ retry:
 
             if ( !find_min_position( pos ) ) {
                 m_Stat.onExtractMinFailed();
-                pDel = null_ptr<node_type *>();
+                pDel = nullptr;
             }
             else {
                 pDel = pos.pCur;
@@ -1281,7 +1281,7 @@ retry:
                 }
                 else {
                     m_Stat.onExtractMinFailed();
-                    pDel = null_ptr<node_type *>();
+                    pDel = nullptr;
                 }
             }
 
@@ -1298,7 +1298,7 @@ retry:
             {
                 rcu_lock l;
                 node_type * pDel = do_extract_min();
-                bReturn = pDel != null_ptr<node_type *>();
+                bReturn = pDel != nullptr;
                 if ( bReturn )
                     result = node_traits::to_value_ptr(pDel);
             }
@@ -1316,7 +1316,7 @@ retry:
 
             if ( !find_max_position( pos ) ) {
                 m_Stat.onExtractMaxFailed();
-                pDel = null_ptr<node_type *>();
+                pDel = nullptr;
             }
             else {
                 pDel = pos.pCur;
@@ -1336,7 +1336,7 @@ retry:
                 }
                 else {
                     m_Stat.onExtractMaxFailed();
-                    pDel = null_ptr<node_type *>();
+                    pDel = nullptr;
                 }
             }
 
@@ -1353,7 +1353,7 @@ retry:
             {
                 rcu_lock l;
                 node_type * pDel = do_extract_max();
-                bReturn = pDel != null_ptr<node_type *>();
+                bReturn = pDel != nullptr;
                 if ( bReturn )
                     result = node_traits::to_value_ptr(pDel);
             }
@@ -1377,7 +1377,7 @@ retry:
                 : pCur(p)
             {}
             deferred_list_iterator()
-                : pCur( null_ptr<node_type *>())
+                : pCur( nullptr )
             {}
 
             cds::urcu::retired_ptr operator *() const
@@ -1416,7 +1416,7 @@ retry:
             // Delete local chain
             if ( pos.pDelChain ) {
                 dispose_chain( pos.pDelChain );
-                pos.pDelChain = null_ptr<node_type *>();
+                pos.pDelChain = nullptr;
             }
 
             // Delete deferred chain
@@ -1425,7 +1425,7 @@ retry:
 
         void dispose_deferred()
         {
-            dispose_chain( m_pDeferredDelChain.exchange( null_ptr<node_type *>(), memory_model::memory_order_acq_rel ));
+            dispose_chain( m_pDeferredDelChain.exchange( nullptr, memory_model::memory_order_acq_rel ) );
         }
 
         void defer_chain( position& pos )
@@ -1441,7 +1441,7 @@ retry:
                     pTail->m_pDelChain = pDeferList;
                 } while ( !m_pDeferredDelChain.compare_exchange_weak( pDeferList, pHead, memory_model::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed ));
 
-                pos.pDelChain = null_ptr<node_type *>();
+                pos.pDelChain = nullptr;
             }
         }
 
@@ -1452,7 +1452,7 @@ retry:
         SkipListSet()
             : m_Head( c_nMaxHeight )
             , m_nHeight( c_nMinHeight )
-            , m_pDeferredDelChain( null_ptr<node_type *>() )
+            , m_pDeferredDelChain( nullptr )
         {
             static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
 
@@ -1560,7 +1560,7 @@ retry:
                 node_type * pNode = node_traits::to_node_ptr( val );
                 scoped_node_ptr scp( pNode );
                 unsigned int nHeight = pNode->height();
-                bool bTowerOk = nHeight > 1 && pNode->get_tower() != null_ptr<atomic_node_ptr *>();
+                bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
                 bool bTowerMade = false;
 
                 rcu_lock rcuLock;
@@ -1645,7 +1645,7 @@ retry:
                 node_type * pNode = node_traits::to_node_ptr( val );
                 scoped_node_ptr scp( pNode );
                 unsigned int nHeight = pNode->height();
-                bool bTowerOk = nHeight > 1 && pNode->get_tower() != null_ptr<atomic_node_ptr *>();
+                bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
                 bool bTowerMade = false;
 
 #       ifndef CDS_CXX11_LAMBDA_SUPPORT
@@ -2115,11 +2115,11 @@ retry:
 #       ifdef CDS_CXX11_LAMBDA_SUPPORT
             value_type * pFound;
             return do_find_with( val, key_comparator(), [&pFound](value_type& found, Q const& ) { pFound = &found; } )
-                ? pFound : null_ptr<value_type *>();
+                ? pFound : nullptr;
 #       else
             get_functor gf;
             return do_find_with( val, key_comparator(), cds::ref(gf) )
-                ? gf.pFound : null_ptr<value_type *>();
+                ? gf.pFound : nullptr;
 #       endif
         }
 
@@ -2141,11 +2141,11 @@ retry:
             value_type * pFound;
             return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(),
                 [&pFound](value_type& found, Q const& ) { pFound = &found; } )
-                ? pFound : null_ptr<value_type *>();
+                ? pFound : nullptr;
 #       else
             get_functor gf;
             return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(), cds::ref(gf) )
-                ? gf.pFound : null_ptr<value_type *>();
+                ? gf.pFound : nullptr;
 #       endif
         }
 
@@ -2164,7 +2164,7 @@ retry:
         /// Checks if the set is empty
         bool empty() const
         {
-            return m_Head.head()->next(0).load( memory_model::memory_order_relaxed ) == null_ptr<node_type *>();
+            return m_Head.head()->next( 0 ).load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
         /// Clears the set (non-atomic)

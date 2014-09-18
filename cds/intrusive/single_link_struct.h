@@ -38,7 +38,7 @@ namespace cds { namespace intrusive {
             atomic_node_ptr m_pNext ; ///< pointer to the next node in the container
 
             node()
-                : m_pNext( null_ptr<node *>() )
+                : m_pNext( nullptr )
             {}
         };
 
@@ -54,13 +54,13 @@ namespace cds { namespace intrusive {
             atomic_node_ptr m_pNext ; ///< pointer to the next node in the container
 
             node()
-                : m_pNext(null_ptr<node *>())
+                : m_pNext( nullptr )
             {}
 
         protected:
             virtual void cleanUp( cds::gc::hrc::ThreadGC * pGC )
             {
-                assert( pGC != null_ptr<cds::gc::hrc::ThreadGC *>() );
+                assert( pGC != nullptr );
                 typename gc::GuardArray<2> aGuards( *pGC );
 
                 while ( true ) {
@@ -80,10 +80,10 @@ namespace cds { namespace intrusive {
             {
                 if ( bConcurrent ) {
                     node * pNext = m_pNext.load(CDS_ATOMIC::memory_order_relaxed);
-                    do {} while ( !m_pNext.compare_exchange_weak( pNext, null_ptr<node *>(), CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
+                    do {} while ( !m_pNext.compare_exchange_weak( pNext, nullptr, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
                 }
                 else {
-                    m_pNext.store( null_ptr<node *>(), CDS_ATOMIC::memory_order_relaxed );
+                    m_pNext.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
                 }
             }
         };
@@ -166,7 +166,7 @@ namespace cds { namespace intrusive {
             */
             static void is_empty( const node_type * pNode )
             {
-                assert( pNode->m_pNext.load(CDS_ATOMIC::memory_order_relaxed) == null_ptr<node_type *>() );
+                assert( pNode->m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
             }
         };
 

@@ -27,7 +27,7 @@ namespace cds { namespace intrusive {
             /// Constructs leaf (bIntrenal == false) or internal (bInternal == true) node
             explicit base_node( bool bInternal )
                 : basic_node( bInternal ? internal : 0 )
-                , m_pNextRetired( null_ptr<base_node *>() )
+                , m_pNextRetired( nullptr )
             {}
         };
 
@@ -533,9 +533,9 @@ namespace cds { namespace intrusive {
             bool                bRightParent    ; // true if pParent is right child of pGrandParent, false otherwise
 
             search_result()
-                :pGrandParent( null_ptr<internal_node *>() )
-                ,pParent( null_ptr<internal_node *>() )
-                ,pLeaf( null_ptr<leaf_node *>() )
+                :pGrandParent( nullptr )
+                , pParent( nullptr )
+                , pLeaf( nullptr )
                 ,bRightLeaf( false )
                 ,bRightParent( false )
             {}
@@ -610,8 +610,8 @@ namespace cds { namespace intrusive {
                 {}
 
                 forward_iterator()
-                    : m_pUpdate( null_ptr<update_desc *>() )
-                    , m_pNode( null_ptr< tree_node *>() )
+                    : m_pUpdate( nullptr )
+                    , m_pNode( nullptr )
                 {}
 
                 cds::urcu::retired_ptr operator *()
@@ -630,7 +630,7 @@ namespace cds { namespace intrusive {
                                 reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_internal_node ) );
                         }
                     }
-                    return cds::urcu::retired_ptr( null_ptr<void *>(),
+                    return cds::urcu::retired_ptr( nullptr,
                         reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_update_desc ) );
                 }
 
@@ -656,8 +656,8 @@ namespace cds { namespace intrusive {
 
         public:
             retired_list()
-                : pUpdateHead( null_ptr<update_desc *>() )
-                , pNodeHead( null_ptr<tree_node *>() )
+                : pUpdateHead( nullptr )
+                , pNodeHead( nullptr )
             {}
 
             ~retired_list()
@@ -1329,8 +1329,8 @@ namespace cds { namespace intrusive {
             rcu_lock l;
 
             while ( true ) {
-                internal_node * pParent = null_ptr< internal_node *>();
-                internal_node * pGrandParent = null_ptr<internal_node *>();
+                internal_node * pParent = nullptr;
+                internal_node * pGrandParent = nullptr;
                 tree_node *     pLeaf = const_cast<internal_node *>( &m_Root );
 
                 // Get leftmost leaf
@@ -1454,7 +1454,7 @@ namespace cds { namespace intrusive {
 
         bool check_delete_precondition( search_result& res )
         {
-            assert( res.pGrandParent != null_ptr<internal_node *>() );
+            assert( res.pGrandParent != nullptr );
 
             return
                 static_cast<internal_node *>( res.bRightParent
@@ -1538,7 +1538,7 @@ namespace cds { namespace intrusive {
             assert( gc::is_locked() );
 
             internal_node * pParent;
-            internal_node * pGrandParent = null_ptr<internal_node *>();
+            internal_node * pGrandParent = nullptr;
             tree_node *     pLeaf;
             update_ptr      updParent;
             update_ptr      updGrandParent;
@@ -1548,9 +1548,9 @@ namespace cds { namespace intrusive {
             int nCmp = 0;
 
         retry:
-            pParent = null_ptr<internal_node *>();
+            pParent = nullptr;
             pLeaf = const_cast<internal_node *>( &m_Root );
-            updParent = null_ptr<update_desc *>();
+            updParent = nullptr;
             bRightLeaf = false;
             while ( pLeaf->is_internal() ) {
                 pGrandParent = pParent;
@@ -1591,13 +1591,13 @@ namespace cds { namespace intrusive {
             assert( gc::is_locked() );
 
             internal_node * pParent;
-            internal_node * pGrandParent = null_ptr<internal_node *>();
+            internal_node * pGrandParent = nullptr;
             tree_node *     pLeaf;
             update_ptr      updParent;
             update_ptr      updGrandParent;
 
         retry:
-            pParent = null_ptr< internal_node *>();
+            pParent = nullptr;
             pLeaf = const_cast<internal_node *>( &m_Root );
             while ( pLeaf->is_internal() ) {
                 pGrandParent = pParent;
@@ -1635,7 +1635,7 @@ namespace cds { namespace intrusive {
             assert( gc::is_locked() );
 
             internal_node * pParent;
-            internal_node * pGrandParent = null_ptr<internal_node *>();
+            internal_node * pGrandParent = nullptr;
             tree_node *     pLeaf;
             update_ptr      updParent;
             update_ptr      updGrandParent;
@@ -1643,7 +1643,7 @@ namespace cds { namespace intrusive {
             bool bRightParent = false;
 
         retry:
-            pParent = null_ptr< internal_node *>();
+            pParent = nullptr;
             pLeaf = const_cast<internal_node *>( &m_Root );
             bRightLeaf = false;
             while ( pLeaf->is_internal() ) {
@@ -1691,7 +1691,7 @@ namespace cds { namespace intrusive {
             check_deadlock_policy::check();
 
             retired_list updRetire;
-            update_desc * pOp = null_ptr<update_desc *>();
+            update_desc * pOp = nullptr;
             search_result res;
 
             {
@@ -1729,7 +1729,7 @@ namespace cds { namespace intrusive {
                                     cds::unref(f)( *node_traits::to_value_ptr( res.pLeaf ));
                                     break;
                                 }
-                                pOp = null_ptr<update_desc *>();
+                                pOp = nullptr;
                             }
                             else {
                                 // updGP has been changed by CAS
@@ -1766,7 +1766,7 @@ namespace cds { namespace intrusive {
             check_deadlock_policy::check();
 
             retired_list updRetire;
-            update_desc * pOp = null_ptr<update_desc *>();
+            update_desc * pOp = nullptr;
             search_result res;
 
             {
@@ -1803,7 +1803,7 @@ namespace cds { namespace intrusive {
                                     ptr = node_traits::to_value_ptr( res.pLeaf );
                                     break;
                                 }
-                                pOp = null_ptr<update_desc *>();
+                                pOp = nullptr;
                             }
                             else {
                                 // updGP has been changed by CAS
@@ -1828,7 +1828,7 @@ namespace cds { namespace intrusive {
             check_deadlock_policy::check();
 
             retired_list updRetire;
-            update_desc * pOp = null_ptr<update_desc *>();
+            update_desc * pOp = nullptr;
             search_result res;
 
             {
@@ -1866,7 +1866,7 @@ namespace cds { namespace intrusive {
                                     result = node_traits::to_value_ptr( res.pLeaf );
                                     break;
                                 }
-                                pOp = null_ptr<update_desc *>();
+                                pOp = nullptr;
                             }
                             else {
                                 // updGP has been changed by CAS
@@ -1889,7 +1889,7 @@ namespace cds { namespace intrusive {
             check_deadlock_policy::check();
 
             retired_list updRetire;
-            update_desc * pOp = null_ptr<update_desc *>();
+            update_desc * pOp = nullptr;
             search_result res;
 
             {
@@ -1927,7 +1927,7 @@ namespace cds { namespace intrusive {
                                     result = node_traits::to_value_ptr( res.pLeaf );
                                     break;
                                 }
-                                pOp = null_ptr<update_desc *>();
+                                pOp = nullptr;
                             }
                             else {
                                 // updGP has been changed by CAS
@@ -1998,7 +1998,7 @@ namespace cds { namespace intrusive {
             }
 
             m_Stat.onFindFailed();
-            return null_ptr<value_type *>();
+            return nullptr;
         }
 
 

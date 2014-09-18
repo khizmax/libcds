@@ -192,7 +192,7 @@ namespace cds { namespace container {
 
         bool push_node_back( node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>());
+            assert( pNode != nullptr );
             scoped_node_ptr p(pNode);
 
             if ( base_class::push_back( *pNode ) ) {
@@ -204,7 +204,7 @@ namespace cds { namespace container {
 
         bool push_node_front( node_type * pNode )
         {
-            assert( pNode != null_ptr<node_type *>());
+            assert( pNode != nullptr );
             scoped_node_ptr p(pNode);
 
             if ( base_class::push_front( *pNode ) ) {
@@ -353,7 +353,7 @@ namespace cds { namespace container {
         */
         bool pop_back()
         {
-            return base_class::pop_back() != null_ptr<node_type *>();
+            return base_class::pop_back() != nullptr;
         }
 
         /// Pops back side a value using copy functor
@@ -406,7 +406,7 @@ namespace cds { namespace container {
         */
         bool pop_front()
         {
-            return base_class::pop_front() != null_ptr<node_type *>();
+            return base_class::pop_front() != nullptr;
         }
 
         /// Pops front side a value using copy functor
