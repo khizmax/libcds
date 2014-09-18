@@ -408,7 +408,7 @@ namespace cds {
  Common things
 **************************************************************************/
 
-#include <cds/numtraits.h>
+#include <cds/details/numtraits.h>
 
 namespace cds {
 

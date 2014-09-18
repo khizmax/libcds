@@ -634,6 +634,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\cds\algo\backoff_strategy.h" />
     <ClInclude Include="..\..\..\cds\algo\base.h" />
+    <ClInclude Include="..\..\..\cds\algo\bitop.h" />
     <ClInclude Include="..\..\..\cds\algo\elimination.h" />
     <ClInclude Include="..\..\..\cds\algo\elimination_opt.h" />
     <ClInclude Include="..\..\..\cds\algo\elimination_tls.h" />
@@ -726,6 +727,7 @@
     <ClInclude Include="..\..\..\cds\details\cxx11_features.h" />
     <ClInclude Include="..\..\..\cds\details\hash_functor_selector.h" />
     <ClInclude Include="..\..\..\cds\details\lib.h" />
+    <ClInclude Include="..\..\..\cds\details\numtraits.h" />
     <ClInclude Include="..\..\..\cds\details\static_functor.h" />
     <ClInclude Include="..\..\..\cds\details\std\condition_variable.h" />
     <ClInclude Include="..\..\..\cds\details\std\memory.h" />
@@ -810,7 +812,6 @@
     <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h" />
     <ClInclude Include="..\..\..\src\hzp_const.h" />
     <ClInclude Include="..\..\..\cds\init.h" />
-    <ClInclude Include="..\..\..\cds\numtraits.h" />
     <ClInclude Include="..\..\..\cds\ref.h" />
     <ClInclude Include="..\..\..\cds\refcounter.h" />
     <ClInclude Include="..\..\..\cds\version.h" />

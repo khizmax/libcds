@@ -197,9 +197,6 @@
     <ClInclude Include="..\..\..\cds\init.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\numtraits.h">
-      <Filter>Header Files\cds</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\ref.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>
@@ -1315,6 +1312,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\backoff_strategy.h">
       <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\bitop.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\numtraits.h">
+      <Filter>Header Files\cds\details</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

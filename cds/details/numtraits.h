@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_NUMERIC_TRAITS_H
-#define __CDS_NUMERIC_TRAITS_H
+#ifndef __CDS_DETAILS_NUMERIC_TRAITS_H
+#define __CDS_DETAILS_NUMERIC_TRAITS_H
 
 /*
     Filename: numtraits.h
@@ -219,4 +219,4 @@ namespace cds {
     }    // namespace beans
 }    // namespace cds
 
-#endif    // __CDS_NUMERIC_TRAITS_H
+#endif    // __CDS_DETAILS_NUMERIC_TRAITS_H
