@@ -60,8 +60,8 @@ namespace cds { namespace intrusive {
             /**
                 The storage type for the heap array. Default is cds::opt::v::dynamic_buffer.
 
-                You may specify any type of buffer's value since at instantiation time 
-                the \p buffer::rebind member metafunction is called to change type 
+                You may specify any type of buffer's value since at instantiation time
+                the \p buffer::rebind member metafunction is called to change type
                 of values stored in the buffer.
             */
             typedef opt::v::dynamic_buffer<void *>  buffer;

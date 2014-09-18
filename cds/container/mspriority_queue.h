@@ -28,7 +28,7 @@ namespace cds { namespace container {
         /// Type traits for MSPriorityQueue
         /**
             The type traits for cds::container::MSPriorityQueue is the same as for
-            cds::intrusive::MSPriorityQueue (see cds::intrusive::mspriority_queue::type_traits) 
+            cds::intrusive::MSPriorityQueue (see cds::intrusive::mspriority_queue::type_traits)
             plus some additional properties.
         */
         struct type_traits: public cds::intrusive::mspriority_queue::type_traits
@@ -223,7 +223,7 @@ namespace cds { namespace container {
             The item is deleted from the heap.
 
             The function uses \ref move_policy to move extracted value from the heap's top
-            to \p dest. 
+            to \p dest.
 
             The function is equivalent of such call:
             \code

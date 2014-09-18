@@ -189,7 +189,7 @@ namespace cds { namespace opt {
             >::type
         type;
         */
-        struct type: public 
+        struct type: public
             do_pack<
                 typename do_pack<
                     typename do_pack<

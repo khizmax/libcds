@@ -4391,8 +4391,8 @@ namespace map2 {
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< 
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal > 
+        typedef NogcMapWrapper_dctor<
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal >
         > SkipListMap_nogc_less_pascal;
 
         class traits_SkipListMap_nogc_less_pascal_seqcst: public cc::skip_list::make_traits <
@@ -4402,8 +4402,8 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< 
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal_seqcst > 
+        typedef NogcMapWrapper_dctor<
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal_seqcst >
         > SkipListMap_nogc_less_pascal_seqcst;
 
         class traits_SkipListMap_nogc_less_pascal_stat: public cc::skip_list::make_traits <
@@ -4413,8 +4413,8 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< 
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal_stat > 
+        typedef NogcMapWrapper_dctor<
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal_stat >
         > SkipListMap_nogc_less_pascal_stat;
 
         class traits_SkipListMap_nogc_cmp_pascal: public cc::skip_list::make_traits <
@@ -4424,7 +4424,7 @@ namespace map2 {
             >::type
         {};
         typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_pascal > 
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_pascal >
         > SkipListMap_nogc_cmp_pascal;
 
         class traits_SkipListMap_nogc_cmp_pascal_stat: public cc::skip_list::make_traits <
@@ -4434,8 +4434,8 @@ namespace map2 {
                 ,co::stat< cc::skip_list::stat<> >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< 
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_pascal_stat > 
+        typedef NogcMapWrapper_dctor<
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_pascal_stat >
         > SkipListMap_nogc_cmp_pascal_stat;
 
         class traits_SkipListMap_nogc_less_xorshift: public cc::skip_list::make_traits <
@@ -4444,8 +4444,8 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< 
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_xorshift > 
+        typedef NogcMapWrapper_dctor<
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_xorshift >
         > SkipListMap_nogc_less_xorshift;
 
         class traits_SkipListMap_nogc_less_xorshift_stat: public cc::skip_list::make_traits <
@@ -4455,8 +4455,8 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< 
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_xorshift_stat > 
+        typedef NogcMapWrapper_dctor<
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_xorshift_stat >
         > SkipListMap_nogc_less_xorshift_stat;
 
         class traits_SkipListMap_nogc_cmp_xorshift: public cc::skip_list::make_traits <
@@ -4465,8 +4465,8 @@ namespace map2 {
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< cc::SkipListMap< 
-            cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_xorshift > 
+        typedef NogcMapWrapper_dctor< cc::SkipListMap<
+            cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_xorshift >
         > SkipListMap_nogc_cmp_xorshift;
 
         class traits_SkipListMap_nogc_cmp_xorshift_stat: public cc::skip_list::make_traits <
@@ -4476,8 +4476,8 @@ namespace map2 {
                 ,co::stat< cc::skip_list::stat<> >
             >::type
         {};
-        typedef NogcMapWrapper_dctor< 
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_xorshift_stat > 
+        typedef NogcMapWrapper_dctor<
+            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_xorshift_stat >
         > SkipListMap_nogc_cmp_xorshift_stat;
 
         // ***************************************************************************
