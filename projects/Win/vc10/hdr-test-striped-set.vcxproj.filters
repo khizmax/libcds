@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="container">
+      <UniqueIdentifier>{daf0001a-2d99-470f-b06c-b71cc66b08e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="intrusive">
+      <UniqueIdentifier>{b2fe5479-3542-4ea7-8a0e-8db919dc3afc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="intrusive\cuckoo">
+      <UniqueIdentifier>{8abe9194-8b9c-490e-a31e-da5fa62a99ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="intrusive\striped">
+      <UniqueIdentifier>{1ed3bb8a-8c6e-46f2-9fb7-38e1c8876374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container\cuckoo">
+      <UniqueIdentifier>{ce2bc420-ee23-4aad-a531-da6a8d474160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container\striped">
+      <UniqueIdentifier>{2e3a4938-f8de-42aa-a3af-5ef832cdda4b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_cuckoo_refinable_set.cpp">
+      <Filter>intrusive\cuckoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_cuckoo_set.cpp">
+      <Filter>intrusive\cuckoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_avlset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_list.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_set.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_sgset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_slist.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_splayset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_treapset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_refinable_hashset_uset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_avlset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_list.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_set.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_sgset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_slist.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_splayset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_treapset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_hashset_uset.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_set.cpp">
+      <Filter>intrusive\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_cuckoo_set.cpp">
+      <Filter>container\cuckoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_flat_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_list.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_stable_vector.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_unordered_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_vector.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_hashset_std.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_hashset_vc.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_list.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_slist.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_vector.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_flat_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_list.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_stable_vector.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_unordered_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_vector.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_hashset_std.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_hashset_vc.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_list.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_set.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_slist.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_vector.cpp">
+      <Filter>container\striped</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_cuckoo_set.h">
+      <Filter>intrusive\cuckoo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\intrusive_cuckoo_set_common.h">
+      <Filter>intrusive\cuckoo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_set.h">
+      <Filter>intrusive\striped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_cuckoo_set.h">
+      <Filter>container\cuckoo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_striped_set.h">
+      <Filter>container\striped</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

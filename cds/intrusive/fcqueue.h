@@ -1,0 +1,345 @@
+//$$CDS-header$$
+
+#ifndef __CDS_INTRUSIVE_FCQUEUE_H
+#define __CDS_INTRUSIVE_FCQUEUE_H
+
+#include <cds/algo/flat_combining.h>
+#include <cds/algo/elimination_opt.h>
+#include <cds/intrusive/options.h>
+#include <boost/intrusive/list.hpp>
+
+namespace cds { namespace intrusive {
+
+    /// FCQueue related definitions
+    namespace fcqueue {
+
+        /// FCQueue internal statistics
+        template <typename Counter = cds::atomicity::event_counter >
+        struct stat: public cds::algo::flat_combining::stat<Counter>
+        {
+            typedef cds::algo::flat_combining::stat<Counter>    flat_combining_stat; ///< Flat-combining statistics
+            typedef typename flat_combining_stat::counter_type  counter_type;        ///< Counter type
+
+            counter_type    m_nEnqueue     ;   ///< Count of push operations
+            counter_type    m_nDequeue     ;   ///< Count of success pop operations
+            counter_type    m_nFailedDeq   ;   ///< Count of failed pop operations (pop from empty queue)
+            counter_type    m_nCollided    ;   ///< How many pairs of push/pop were collided, if elimination is enabled
+
+            //@cond
+            void    onEnqueue()                 { ++m_nEnqueue; }
+            void    onDequeue( bool bFailed )   { if ( bFailed ) ++m_nFailedDeq; else ++m_nDequeue;  }
+            void    onCollide()                 { ++m_nCollided; }
+            //@endcond
+        };
+
+        /// FCQueue dummy statistics, no overhead
+        struct empty_stat: public cds::algo::flat_combining::empty_stat
+        {
+            //@cond
+            void    onEnqueue()     {}
+            void    onDequeue(bool) {}
+            void    onCollide()     {}
+            //@endcond
+        };
+
+        /// FCQueue type traits
+        struct type_traits: public cds::algo::flat_combining::type_traits
+        {
+            typedef cds::intrusive::opt::v::empty_disposer  disposer ; ///< Disposer to erase removed elements. Used only in \p FCQueue::clear() function
+            typedef empty_stat      stat;   ///< Internal statistics
+            static CDS_CONSTEXPR_CONST bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"
+        };
+
+        /// Metafunction converting option list to traits
+        /**
+            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
+            \p Options are:
+            - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
+            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
+            - \p opt::disposer - the functor used for dispose removed items. Default is opt::intrusive::v::empty_disposer.
+                This option is used only in \p FCQueue::clear() function.
+            - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p opt::stat - internal statistics, possible type: \ref stat, \ref empty_stat (the default)
+            - \p opt::memory_model - C++ memory ordering model.
+                List of all available memory ordering see opt::memory_model.
+                Default if cds::opt::v:relaxed_ordering
+            - \p opt::enable_elimination - enable/disable operation \ref cds_elimination_description "elimination"
+                By default, the elimination is disabled.
+        */
+        template <CDS_DECL_OPTIONS8>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type ;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS8 >::type
+                ,CDS_OPTIONS8
+            >::type   type;
+#   endif
+        };
+    } // namespace fcqueue
+
+    /// Flat-combining intrusive queue
+    /**
+        @ingroup cds_intrusive_queue
+        @ingroup cds_flat_combining_intrusive
+
+        \ref cds_flat_combining_description "Flat combining" sequential intrusive queue.
+
+        Template parameters:
+        - \p T - a value type stored in the queue
+        - \p Container - sequential intrusive container with \p push_back and \p pop_front functions.
+            Default is \p boost::intrusive::list
+        - \p Traits - type traits of flat combining, default is \p fcqueue::type_traits.
+            \p fcqueue::make_traits metafunction can be used to construct specialized \p %type_traits
+    */
+    template <typename T
+        ,class Container = boost::intrusive::list<T>
+        ,typename Traits = fcqueue::type_traits
+    >
+    class FCQueue
+#ifndef CDS_DOXYGEN_INVOKED
+        : public cds::algo::flat_combining::container
+#endif
+    {
+    public:
+        typedef T           value_type;     ///< Value type
+        typedef Container   container_type; ///< Sequential container type
+        typedef Traits      type_traits;    ///< Queue type traits
+
+        typedef typename type_traits::disposer  disposer;   ///< The disposer functor. The disposer is used only in \ref clear() function
+        typedef typename type_traits::stat  stat;   ///< Internal statistics type
+        static CDS_CONSTEXPR_CONST bool c_bEliminationEnabled = type_traits::enable_elimination; ///< \p true if elimination is enabled
+
+    protected:
+        //@cond
+        /// Queue operation IDs
+        enum fc_operation {
+            op_enq = cds::algo::flat_combining::req_Operation, ///< Enqueue
+            op_deq,                 ///< Dequeue
+            op_clear,               ///< Clear
+            op_clear_and_dispose    ///< Clear and dispose
+        };
+
+        /// Flat combining publication list record
+        struct fc_record: public cds::algo::flat_combining::publication_record
+        {
+            value_type * pVal;  ///< Value to enqueue or dequeue
+            bool         bEmpty; ///< \p true if the queue is empty
+        };
+        //@endcond
+
+        /// Flat combining kernel
+        typedef cds::algo::flat_combining::kernel< fc_record, type_traits > fc_kernel;
+
+    protected:
+        //@cond
+        fc_kernel       m_FlatCombining;
+        container_type  m_Queue;
+        //@endcond
+
+    public:
+        /// Initializes empty queue object
+        FCQueue()
+        {}
+
+        /// Initializes empty queue object and gives flat combining parameters
+        FCQueue(
+            unsigned int nCompactFactor     ///< Flat combining: publication list compacting factor
+            ,unsigned int nCombinePassCount ///< Flat combining: number of combining passes for combiner thread
+            )
+            : m_FlatCombining( nCompactFactor, nCombinePassCount )
+        {}
+
+        /// Inserts a new element at the end of the queue
+        /**
+            The function always returns \p true.
+        */
+        bool enqueue( value_type& val )
+        {
+            fc_record * pRec = m_FlatCombining.acquire_record();
+            pRec->pVal = &val;
+
+            if ( c_bEliminationEnabled )
+                m_FlatCombining.batch_combine( op_enq, pRec, *this );
+            else
+                m_FlatCombining.combine( op_enq, pRec, *this );
+
+            assert( pRec->is_done() );
+            m_FlatCombining.release_record( pRec );
+            m_FlatCombining.internal_statistics().onEnqueue();
+            return true;
+        }
+
+        /// Inserts a new element at the end of the queue (a synonym for \ref enqueue)
+        bool push( value_type& val )
+        {
+            return enqueue( val );
+        }
+
+        /// Removes the next element from the queue
+        /**
+            If the queue is empty the function returns \p nullptr
+        */
+        value_type * dequeue()
+        {
+            fc_record * pRec = m_FlatCombining.acquire_record();
+            pRec->pVal = null_ptr<value_type *>();
+
+            if ( c_bEliminationEnabled )
+                m_FlatCombining.batch_combine( op_deq, pRec, *this );
+            else
+                m_FlatCombining.combine( op_deq, pRec, *this );
+
+            assert( pRec->is_done() );
+            m_FlatCombining.release_record( pRec );
+
+            m_FlatCombining.internal_statistics().onDequeue( pRec->bEmpty );
+            return pRec->pVal;
+        }
+
+        /// Removes the next element from the queue (a synonym for \ref dequeue)
+        value_type * pop()
+        {
+            return dequeue();
+        }
+
+        /// Clears the queue
+        /**
+            If \p bDispose is \p true, the disposer provided in \p Traits class' template parameter
+            will be called for each removed element.
+        */
+        void clear( bool bDispose = false )
+        {
+            fc_record * pRec = m_FlatCombining.acquire_record();
+
+            if ( c_bEliminationEnabled )
+                m_FlatCombining.batch_combine( bDispose ? op_clear_and_dispose : op_clear, pRec, *this );
+            else
+                m_FlatCombining.combine( bDispose ? op_clear_and_dispose : op_clear, pRec, *this );
+
+            assert( pRec->is_done() );
+            m_FlatCombining.release_record( pRec );
+        }
+
+        /// Returns the number of elements in the queue.
+        /**
+            Note that <tt>size() == 0</tt> is not mean that the queue is empty because
+            combining record can be in process.
+            To check emptiness use \ref empty function.
+        */
+        size_t size() const
+        {
+            return m_Queue.size();
+        }
+
+        /// Checks if the queue is empty
+        /**
+            If the combining is in process the function waits while it is done.
+        */
+        bool empty() const
+        {
+            m_FlatCombining.wait_while_combining();
+            return m_Queue.empty();
+        }
+
+        /// Internal statistics
+        stat const& statistics() const
+        {
+            return m_FlatCombining.statistics();
+        }
+
+    public: // flat combining cooperation, not for direct use!
+        //@cond
+        /// Flat combining supporting function. Do not call it directly!
+        /**
+            The function is called by \ref cds::algo::flat_combining::kernel "flat combining kernel"
+            object if the current thread becomes a combiner. Invocation of the function means that
+            the queue should perform an action recorded in \p pRec.
+        */
+        void fc_apply( fc_record * pRec )
+        {
+            assert( pRec );
+
+            switch ( pRec->op() ) {
+            case op_enq:
+                assert( pRec->pVal );
+                m_Queue.push_back( *(pRec->pVal ) );
+                break;
+            case op_deq:
+                pRec->bEmpty = m_Queue.empty();
+                if ( !pRec->bEmpty ) {
+                    pRec->pVal = &m_Queue.front();
+                    m_Queue.pop_front();
+                }
+                break;
+            case op_clear:
+                m_Queue.clear();
+                break;
+            case op_clear_and_dispose:
+                m_Queue.clear_and_dispose( disposer() );
+                break;
+            default:
+                assert(false);
+                break;
+            }
+        }
+
+        /// Batch-processing flat combining
+        void fc_process( typename fc_kernel::iterator itBegin, typename fc_kernel::iterator itEnd )
+        {
+            typedef typename fc_kernel::iterator fc_iterator;
+            for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
+                switch ( it->op() ) {
+                case op_enq:
+                case op_deq:
+                    if ( m_Queue.empty() ) {
+                        if ( itPrev != itEnd && collide( *itPrev, *it ))
+                            itPrev = itEnd;
+                        else
+                            itPrev = it;
+                    }
+                    break;
+                }
+            }
+        }
+        //@endcond
+
+    private:
+        //@cond
+        bool collide( fc_record& rec1, fc_record& rec2 )
+        {
+            assert( m_Queue.empty() );
+
+            switch ( rec1.op() ) {
+                case op_enq:
+                    if ( rec2.op() == op_deq ) {
+                        assert(rec1.pVal);
+                        rec2.pVal = rec1.pVal;
+                        rec2.bEmpty = false;
+                        m_FlatCombining.operation_done( rec1 );
+                        m_FlatCombining.operation_done( rec2 );
+                        m_FlatCombining.internal_statistics().onCollide();
+                        return true;
+                    }
+                    break;
+                case op_deq:
+                    if ( rec2.op() == op_enq ) {
+                        assert(rec2.pVal);
+                        rec1.pVal = rec2.pVal;
+                        rec1.bEmpty = false;
+                        m_FlatCombining.operation_done( rec1 );
+                        m_FlatCombining.operation_done( rec2 );
+                        m_FlatCombining.internal_statistics().onCollide();
+                        return true;
+                    }
+                    break;
+            }
+            return false;
+        }
+        //@endcond
+    };
+
+}} // namespace cds::intrusive
+
+#endif // #ifndef __CDS_INTRUSIVE_FCQUEUE_H

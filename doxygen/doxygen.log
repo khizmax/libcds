@@ -1,0 +1,15 @@
+C:/works/libs/cds/cds/compiler/gcc/amd64/cxx11_atomic.h:208: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 207)
+C:/works/libs/cds/cds/compiler/gcc/ia64/cxx11_atomic.h:655: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 653)
+C:/works/libs/cds/cds/compiler/gcc/sparc/cxx11_atomic.h:614: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 612)
+C:/works/libs/cds/cds/compiler/gcc/x86/cxx11_atomic.h:188: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 186)
+C:/works/libs/cds/cds/compiler/gcc/x86/cxx11_atomic32.h:477: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 475)
+C:/works/libs/cds/cds/compiler/vc/amd64/cxx11_atomic.h:588: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 586)
+C:/works/libs/cds/cds/compiler/vc/x86/cxx11_atomic.h:562: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 560)
+C:/works/libs/cds/cds/details/defs.h:547: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 411)
+C:/works/libs/cds/cds/intrusive/details/ellen_bintree_base.h:702: warning: Reached end of file while still inside a (nested) comment. Nesting level 2 (probable line reference: 330, 326)
+C:/works/libs/cds/cds/intrusive/ellen_bintree_hp.h:10: warning: Reached end of file while still inside a (nested) comment. Nesting level 2 (probable line reference: )
+C:/works/libs/cds/cds/memory/michael/allocator.h:1102: warning: Found ';' while parsing initializer list! (doxygen could be confused by a macro call without semicolon)
+C:/works/libs/cds/cds/os/timer.h:34: warning: Reached end of file while still inside a (nested) comment. Nesting level 1 (probable line reference: 32)
+<Construct>:1: warning: unable to resolve reference to `ContainerNode' for \ref command
+C:/works/libs/cds/cds/container/striped_map.h:526: warning: explicit link request to 'type' could not be resolved
+C:/works/libs/cds/cds/container/striped_set.h:40: warning: explicit link request to 'type' could not be resolved

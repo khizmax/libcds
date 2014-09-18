@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_cuckoo_map.cpp">
+      <Filter>cuckoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_hp.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_ptb.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_hrc.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_hp.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_hrc.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_nogc.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_ptb.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_nogc.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_flat_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_slist.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_list.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_unordered_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_hashmap_std.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_hashmap_vc.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_list.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_hp.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_ptb.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_hrc.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_hp.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_ptb.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_hrc.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_hp.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_hrc.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_nogc.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_ptb.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_nogc.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_boost_flat_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_slist.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_boost_list.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_boost_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_boost_unordered_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_hashmap_std.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_hashmap_vc.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_list.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_map.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_gpb.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_gpi.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_gpt.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_gpb.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_gpi.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_gpt.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_rcu_gpb.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_rcu_gpi.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_rcu_gpt.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_rcu_gpb.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_rcu_gpi.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_rcu_gpt.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu_gpb.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu_gpi.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu_gpt.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_nogc.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_map_reg.cpp">
+      <Filter>striped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_shb.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_sht.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_shb.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_sht.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu_shb.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu_sht.cpp">
+      <Filter>skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_rcu_shb.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_rcu_sht.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_rcu_shb.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_rcu_sht.cpp">
+      <Filter>split_list</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_map.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\map\print_skiplist_stat.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map.h">
+      <Filter>skip_list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu.h">
+      <Filter>skip_list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_striped_map.h">
+      <Filter>striped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_cuckoo_map.h">
+      <Filter>cuckoo</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="cuckoo">
+      <UniqueIdentifier>{461285c3-7f6b-46dc-b81d-d3bdda1d1de5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="michael">
+      <UniqueIdentifier>{ff9bff4e-3bb7-4189-8a75-95400c4d7b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="striped">
+      <UniqueIdentifier>{8f87f661-bbcd-40b5-988b-52d2fef226c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="skip_list">
+      <UniqueIdentifier>{96805520-3b6b-41d4-8455-a69726c2c1c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="split_list">
+      <UniqueIdentifier>{f081717f-6035-4716-bc90-6ddff4a4018b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

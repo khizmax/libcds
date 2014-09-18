@@ -1,0 +1,263 @@
+//$$CDS-header$$
+
+#ifndef __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
+#define __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
+
+#include <cds/intrusive/base.h>
+#include <cds/opt/compare.h>
+#include <cds/cxx11_atomic.h>
+#include <cds/details/marked_ptr.h>
+#include <cds/ref.h>
+#include <cds/details/make_const_type.h>
+#include <cds/details/std/type_traits.h>
+#include <cds/urcu/options.h>
+
+namespace cds { namespace intrusive {
+
+    /// MichaelList ordered list related definitions
+    /** @ingroup cds_intrusive_helper
+    */
+    namespace michael_list {
+        /// Michael's list node
+        /**
+            Template parameters:
+            - GC - garbage collector
+            - Tag - a tag used to distinguish between different implementation
+        */
+        template <class GC, typename Tag = opt::none>
+        struct node
+        {
+            typedef GC              gc  ;   ///< Garbage collector
+            typedef Tag             tag ;   ///< tag
+
+            typedef cds::details::marked_ptr<node, 1>   marked_ptr         ;   ///< marked pointer
+            typedef typename gc::template atomic_marked_ptr< marked_ptr>     atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
+
+            atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
+
+            CDS_CONSTEXPR node() CDS_NOEXCEPT
+                : m_pNext( null_ptr<node *>() )
+            {}
+        };
+
+        //@cond
+        template <typename GC, typename Node, typename MemoryModel>
+        struct node_cleaner {
+            void operator()( Node * p )
+            {
+                typedef typename Node::marked_ptr marked_ptr;
+                p->m_pNext.store( marked_ptr(), MemoryModel::memory_order_release );
+            }
+        };
+        //@endcond
+
+        //@cond
+        struct undefined_gc;
+        struct default_hook {
+            typedef undefined_gc    gc;
+            typedef opt::none       tag;
+        };
+        //@endcond
+
+        //@cond
+        template < typename HookType, CDS_DECL_OPTIONS2>
+        struct hook
+        {
+            typedef typename opt::make_options< default_hook, CDS_OPTIONS2>::type  options;
+            typedef typename options::gc    gc;
+            typedef typename options::tag   tag;
+            typedef node<gc, tag>   node_type;
+            typedef HookType        hook_type;
+        };
+        //@endcond
+
+        /// Base hook
+        /**
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - tag
+        */
+        template < CDS_DECL_OPTIONS2 >
+        struct base_hook: public hook< opt::base_hook_tag, CDS_OPTIONS2 >
+        {};
+
+        /// Member hook
+        /**
+            \p MemberOffset defines offset in bytes of \ref node member into your structure.
+            Use \p offsetof macro to define \p MemberOffset
+
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - tag
+        */
+        template < size_t MemberOffset, CDS_DECL_OPTIONS2 >
+        struct member_hook: public hook< opt::member_hook_tag, CDS_OPTIONS2 >
+        {
+            //@cond
+            static const size_t c_nMemberOffset = MemberOffset;
+            //@endcond
+        };
+
+        /// Traits hook
+        /**
+            \p NodeTraits defines type traits for node.
+            See \ref node_traits for \p NodeTraits interface description
+
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - tag
+        */
+        template <typename NodeTraits, CDS_DECL_OPTIONS2 >
+        struct traits_hook: public hook< opt::traits_hook_tag, CDS_OPTIONS2 >
+        {
+            //@cond
+            typedef NodeTraits node_traits;
+            //@endcond
+        };
+
+        /// Check link
+        template <typename Node>
+        struct link_checker
+        {
+            //@cond
+            typedef Node node_type;
+            //@endcond
+
+            /// Checks if the link field of node \p pNode is \p NULL
+            /**
+                An asserting is generated if \p pNode link field is not \p NULL
+            */
+            static void is_empty( const node_type * pNode )
+            {
+                assert( pNode->m_pNext.load(CDS_ATOMIC::memory_order_relaxed) == null_ptr<node_type *>() );
+            }
+        };
+
+        //@cond
+        template <class GC, typename Node, opt::link_check_type LinkType >
+        struct link_checker_selector;
+
+        template <typename GC, typename Node>
+        struct link_checker_selector< GC, Node, opt::never_check_link >
+        {
+            typedef intrusive::opt::v::empty_link_checker<Node>  type;
+        };
+
+        template <typename GC, typename Node>
+        struct link_checker_selector< GC, Node, opt::debug_check_link >
+        {
+#       ifdef _DEBUG
+            typedef link_checker<Node>  type;
+#       else
+            typedef intrusive::opt::v::empty_link_checker<Node>  type;
+#       endif
+        };
+
+        template <typename GC, typename Node>
+        struct link_checker_selector< GC, Node, opt::always_check_link >
+        {
+            typedef link_checker<Node>  type;
+        };
+        //@endcond
+
+        /// Metafunction for selecting appropriate link checking policy
+        template < typename Node, opt::link_check_type LinkType >
+        struct get_link_checker
+        {
+            //@cond
+            typedef typename link_checker_selector< typename Node::gc, Node, LinkType>::type type;
+            //@endcond
+        };
+
+        /// Type traits for MichaelList class
+        struct type_traits
+        {
+            /// Hook used
+            /**
+                Possible values are: michael_list::base_hook, michael_list::member_hook, michael_list::traits_hook.
+            */
+            typedef base_hook<>       hook;
+
+            /// Key comparison functor
+            /**
+                No default functor is provided. If the option is not specified, the \p less is used.
+            */
+            typedef opt::none                       compare;
+
+            /// specifies binary predicate used for key compare.
+            /**
+                Default is \p std::less<T>.
+            */
+            typedef opt::none                       less;
+
+            /// back-off strategy used
+            /**
+                If the option is not specified, the cds::backoff::Default is used.
+            */
+            typedef cds::backoff::Default           back_off;
+
+            /// Disposer
+            /**
+                the functor used for dispose removed items. Default is opt::v::empty_disposer.
+            */
+            typedef opt::v::empty_disposer          disposer;
+
+            /// Item counter
+            /**
+                The type for item counting feature.
+                Default is no item counter (\ref atomicity::empty_item_counter)
+            */
+            typedef atomicity::empty_item_counter     item_counter;
+
+            /// Link fields checking feature
+            /**
+                Default is \ref opt::debug_check_link
+            */
+            static const opt::link_check_type link_checker = opt::debug_check_link;
+
+            /// C++ memory ordering model
+            /**
+                List of available memory ordering see opt::memory_model
+            */
+            typedef opt::v::relaxed_ordering        memory_model;
+
+            /// RCU deadlock checking policy (only for \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList")
+            /**
+                List of available options see opt::rcu_check_deadlock
+            */
+            typedef opt::v::rcu_throw_deadlock      rcu_check_deadlock;
+        };
+
+        /// Metafunction converting option list to traits
+        /**
+            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
+            \p Options list see \ref MichaelList.
+        */
+        template <CDS_DECL_OPTIONS9>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type ;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS9 >::type
+                ,CDS_OPTIONS9
+            >::type   type;
+            //typedef typename cds::opt::make_options< type_traits, CDS_OPTIONS9>::type type  ;   ///< Result of metafunction
+#   endif
+        };
+
+    } // namespace michael_list
+
+    //@cond
+    // Forward declaration
+    template < class GC, typename T, class Traits = michael_list::type_traits >
+    class MichaelList;
+    //@endcond
+
+
+    /// Tag for selecting Michael list
+    //class michael_list_tag;
+
+}}   // namespace cds::intrusive
+
+#endif // #ifndef __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H

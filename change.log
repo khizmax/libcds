@@ -1,0 +1,230 @@
+1.6.0
+    General release
+    - Add flat combining (FC) technique and FC-based containers: FCStack, FCQueue, 
+      FCDeque, FCPriorityQueue
+    - Add elimination back-off feature to TreiberStack class
+    - Add SegmentedQueue - an unfair queue implementation
+    - New member functions for sets and maps:
+      Functions get() and get_with() search a key and return the pointer to item found 
+      in safe manner.
+      Function extract() searches a key, unlinks the item found from the container 
+      and returns pointer to item in safe manner.
+      The functions get, get_with, extract, extract_with extract_min, extract_max 
+      has been added to the following container:
+        SkipListSet, SkipListMap
+        EllenBinTree, EllenBinTreeSet, EllenBinTreeMap
+      The functions get, get_with, extract, extract_with has been added 
+      to the following container:
+        MichaelList, LazyList
+        MichaelHashSet, MichaelHashMap
+        SplitListSet, SplitListMap
+    - Fix a serious bug in cds::gc::HRC
+    - Changed MSPriorityQueue to simplify interface and to fix possible pop() deadlock
+    - Fix a bug in BasketQueue
+    - Fix EllenBinTree crash under high contention
+    - Changed: the thread manager detach order to prevent crashing of signal-handled RCU
+      in some case.
+    - Changed: cds::gc::HP calls Scan() when a thread is detached.
+      This prevents accumulating retired data.
+    - Changed: minimal boost version is 1.51
+    - Removed: file cds/lock/rwlock.h
+
+1.5.0 29.12.2013
+    General release
+    1. Added: EllenBinTree - an implementation of unbalanced binary search
+      tree based on paper [2010] F.Ellen, P.Fatourou, E.Ruppert, F.van Breugel 
+      "Non-blocking Binary Search Tree".
+    2. Added: MSPriorityQueue - an array-based lock-based priority queue heap, 
+      see [1996] G.Hunt, M.Michael, S. Parthasarathy, M.Scott "An efficient 
+      algorithm for concurrent priority queue heaps"
+    3. Added support for boost.atomic for boost 1.54 and above. 
+      Now, libcds supports processor architecture like ARM, PowerPC and any other
+      that are supported by boost.atomic or by C++11 compiler. Any feedbacks are appreciated.
+      To use boost.atomic you should specify -DCDS_USE_BOOST_ATOMIC in compiler's command line.
+    4. Added: a new CDS_USE_LIBCDS_ATOMIC preprocessor flag has been added to direct
+      the compiler to use libcds atomic unconditionally.
+    5. build.sh has been modified to relax processor architecture and OS requirements. 
+      This allows to use libcds with native compiler atomic support (or boost.atomic) 
+      for a processor architecture that has not been tested by libcds's developers.
+    6. Added support for CLang 3.3
+    7. Added support for MS VC++ 2013
+    8. Added support for Mac OS X, see build/sample/build-osx-clang-libc++.sh, 
+      build/sample/build-osx-gcc.sh for example.
+    9. Fixed: SkipListSet::erase_with does not take into account "less" predicate parameter.
+    10.Fixed: some bugs in SkipListSet leading to deadloop
+    11.Fixed: MichaelMap bug: computing hash value for type Q different from key type.
+
+1.4.0 20.05.2013
+    General release
+    1. Added: user-space RCU garbage collector (5 different implementations), 
+       see cds::urcu namespace
+    2. Added: RCU-related set/map container specializations
+    3. Added: Skip-list specialization for cds::gc::nogc (undeletable skip-list)
+    4. For set/map classes: find_with and erase_with member functions have been added.
+       These functions allow to use different predicates for searching.
+    5. Added: threading model based on Ñ++11 thread_local keyword (CDS_THREADING_CXX11).
+       At present, only gcc 4.8 supports such model.
+    6. Fixed: bug #11 "ABA bug in libcds 1.3.1 cds/intrusive/msqueue.h"
+       Thanks to Jelle van den Hooff.
+    7. Added support for GCC 4.8
+
+1.3.1 27.01.2013
+    Bugfix release
+    - Bug fixed: building libcds with boost versions before 1.48
+      Thanks Lucas Larsch who points me to this problem.
+  
+1.3.0 29.12.2012
+    General release
+    1. Added: StripedSet, StripedMap - hash set and hash map 
+        implementation based on fine-grained lock-striping technique
+    2. Added: CuckooSet, CuckooMap - implementation of cuckoo hashing algorithm
+        based on fine-grained lock-striping technique
+    3. Added: SkipListSet, SkipListMap - implementation of lock-free skip list
+    4. Added: template <typename... Args> emplace(Args&&... args) member function 
+        for all containers in cds::container namespace. This function is available 
+        only if the compiler supports new C++11 features - variadic
+        templates and move semantics.
+    5. Changed: lambda functions are used internally instead of wrapping functors.
+        If the compiler does not support C++11 lambdas the old-style wrapping functors are used.
+    6. Changed: test projects has been splitted for optimizing compile time.
+    7. Breaking change: class cds::lock::Auto has been renamed to cds::lock::scoped_lock,
+        class cds::lock::AutoUnlock has been removed
+    8. Added: support for MinGW (tested with TDM-GCC 64bit, gcc 4.7)
+    
+1.2.0 20.08.2012 (beta)
+    General release
+    1. Added: MichaelDeque - deque lock-free algo discovered by Maged Michael
+    2. Added: BasketQueue - Michael's queue modification discovered by Nir Shavit et al.
+    3. Added: support of Clang 3.0, 3.1 compiler (tested on Linux with boost 1.49)
+    4. Fixed: solving problem of 8-byte atomic data alignment on 32-bit platforms
+    5. Fixed bug 3536393: OptimisticQueue core dump 
+
+1.1.0 17.04.2012 (beta)
+    General release
+    1. Added: C++11 atomic operations support. The library has been rewritten
+        for using std::atomic class and operations proposed in C++11 Standard.
+        If the compiler does not support the standard <atomic> library, 
+        own partial implementation declared in cds/cxx11_atomic.h is used. 
+        cxx11_atomic.h contains implementation for lock-free part of C++11 
+        <atomic> header needed for libcds.
+    2. Added: support for C++11 feature (if applicable):
+       - inline namespace (for GCC 4.4+)
+       - function =default and =delete specifiers (for GCC 4.4+)
+    3. Changed: the main reclamation cycle ("liberate" function) of cds::gc::PTB 
+       memory reclamation schema has been optimized. Previous implementation
+       could lead to unbounded memory consumption under high contention.
+    4. Changed: the internal structure of cds::intrusive::OptimisticQueue is greatly simplified. 
+       The interface of the class is slightly changed.
+    5. Fixed: some problem with cds::gc::HRC memory reclamation schema that
+       could be the cause of occasional program crash.
+    6. Fixed: an error in node reclamation algo in queue implementation (MSQueue, MoirQueue, 
+       OptimisticQueue). As an result of the error, some items could be lost with memory leaks.
+    7. Changed: cds::concept namespace and its content has been removed
+    8. Added support for Microsoft Visual C++ 11 Beta
+    9. Added support for GCC 4.7
+    
+1.0.0  31.12.2011 (beta)
+    This version is completely rewritten to support intrusive version of lock-free containers
+    and more lightweight garbage collectors interface.
+    The class hierarchy and interfaces have been completely reimplemented from scratch.
+
+    1. Added: intrusive containers. Many lock-free containers in libcds have the intrusive
+       counterparts. The library is fully refactored to support intrusive containers.
+       Class hierarchy is changed: almost all non-intrusive container classes are based 
+       on their intrusive versions.
+       Two new namespace is added:
+        cds::intrusive - for intrusive containers
+        cds::container - for non-intrusive containers
+       Namespaces by container type (cds::queue, cds::map and so on) have been removed.
+    2. Added: New option-based approach is used for class declaration instead
+       old traits-based one. This approach allows to declare template arguments
+       in position-independent manner that is very useful for complex template declarations.
+       Option-based declarations use C++0x variadic templates if compiler supports it (GCC),
+       otherwise (MS VC) an emulation is used.
+    3. Changed: garbage collectors interface is generalized. cds::gc::GC (where GC is
+       one of HP, HRC, PTB) classes has been added.
+    4. Removed: tagged pointer GC. This GC
+       - unsafe for complex data structure
+       - x86-specific since it requires double-width CAS primitive
+       - memory-consuming since it requires separate free-list for each type stored in the containers
+    5. Default threading model is changed (see doc for cds::threading namespace):
+       - for Windows and MSVC++, CDS_THREADING_WIN_TLS is the default now
+       - for *nix and GCC, CDS_THREADING_PTHREAD is the default now
+    6. Added GCC 4.6 support (constexpr)
+    7. Added Microsoft Visual Studio 2010 (vc10) solution
+
+0.8.0  28.03.2011 (beta)
+    1. Added: cds::Initialize and cds::Terminate functions that initializes and frees library's
+       internal structures.
+    2. Added: cds::memory::michael::Heap - Michael's lock-free allocator
+    3. Added: Exponential back-off strategy for spinning
+    4. Added: cds::queue::vyukov_mpmc_bounded - bounded queue
+       developed by Dmitry Vyukov (http://www.1024cores.net)
+    5. Added: support for FreeBSD amd64, x86
+
+0.7.2  27.02.2011 (beta)
+    1. [Bug 3157201] Added implementation of threading manager based on Windows TLS API, see
+       cds::threading::wintls::Manager. Added CDS_THREADING_WIN_TLS macro. See docs for
+       cds::threading namespace for details.
+    2. Fixed bug in cds::threading::pthread::Manager: ptb_gc has not been initialized properly.
+    3. New function
+            template <typename T, typename FUNC>
+            bool erase( const key_type& key, T& dest, FUNC func ) ;
+       has been added to all map classes.
+    4. New function
+            template <typename T, typename FUNC>
+            bool insert( const key_type& key, T& val, FUNC func ) ;
+       has been added to all map classes.
+    5. Added new argument "bNew" to functor "func" of map's "ensure" member function:
+            void func( VALUE& itemValue, const VALUE& val, bool bNew ) ;
+        bNew = true if new item has been added
+        bNew = false if key is found
+    6. Fixed bug in cds::map::SplitOrderedList: LSB of dummy node's hash should be zero
+    7. Changed: thread liveliness checking on *nix has been changed to pthread_kill(id, 0).
+    8. Fixed: in map template member functions the functor may be passed by value
+       or by reference; use boost::ref( yourFunctor ) to pass your functor by reference
+    9. Fixed: cds::gc::tagged GC and all classes based on this GC has been rewritten
+       to solve stability problems.
+
+0.7.1  30.12.2010 (beta)
+    1. [Bug 3130852] cds::queue::TZCyclicQueue::empty() has been corrected
+    2. [Bug 3128161] It seems, GCC 4.4 has a bug in __thread on x86 and x86_64. New "threading model"
+       CDS_THREADING_AUTODETECT has been added. See docs of cds::threading namespace for details
+    3. Fixed errors in the "Pass-the-Buck" garbage collector (namespace cds::gc::ptb)
+    4. [Bug 3128148] The code is aligned with the C++ standard (minor violations has been removed)
+    5. [Bug 3141654] missing break statement for atomic store - fixed
+    6. Added in-place scan strategy to cds::gc::hzp::GarbageCollector that does not allocate any memory.
+    7. Fixed bugs in HRC and tagged GC
+
+0.7.0 05.12.2010 (beta)
+    1. Preliminary support for "Pass The Buck" memory manager is added. See cds::gc::ptb namespace.
+    2. Many part of library is rewritten to generalize the usage of various GCs
+    3. The new class cds::details::aligned_allocator has been added for allocating aligned memory
+       blocks. It is useful for Tagged Pointer memory reclamation schema (cds::gc::tagged_gc).
+    4. [Break change] New argument has been added to the member functions "ensure" and "find"
+       for ordered list and map classes
+    5. New member function "emplace" has been added to ordered list and map classes. This member function
+       allows change the value (or a part of it) of list/map item.
+    6. The internal structure of class cds::map::MichaelHashMap is completely refactored to support
+       cds::gc::no_gc correctly
+    7. The classes RecursiveSpinT, RecursiveSpin32, RecursiveSpin64, and RecursiveSpin from cds::lock
+       namespace have been renamed to ReentrantSpinT, ReentrantSpin32, ReentrantSpin64, and ReentrantSpin
+       respectively
+    8. Compiler support: GCC version below 4.3.0 is not supported
+    9. Fixed memory leak in cds::map::SplitOrderedList
+   10. Added compiler barrier to spin-lock release primitive for x86 and amd64
+   11. Makefile script is changed to resolve the problem when an user calls 'make clean' directly.
+       Thanks to Tamas Lengyel to point me to this bug.
+   12. The file dictionary.txt is exluded from distributive. This file is used for testing purposes only.
+       You may create dictionary.txt in this way:
+        cd ./tests/data
+        perl -X split.pl
+
+0.6.0 26.03.2010 (beta)
+    1. The library is rewritten using atomic primitives with explicit memory ordering (based on C++
+       memory model proposal). The implementation of atomic primitives for supported architectures
+       is developed from scratch.
+    2. Total refactoring
+
+0.5.0 31.12.2009  (beta)
+    First release

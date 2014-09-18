@@ -1,0 +1,1338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\cds">
+      <UniqueIdentifier>{202add83-3de8-46db-a1aa-4c0030beae1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\details">
+      <UniqueIdentifier>{0051e611-824f-49c5-b100-df394c55975a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\gc">
+      <UniqueIdentifier>{a3c9928d-5261-4593-a8b9-728235f7056f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\gc\hzp">
+      <UniqueIdentifier>{21a6c665-7381-45b8-9f03-b21f3da5503d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\gc\hrc">
+      <UniqueIdentifier>{695568b2-b136-4b80-bd18-6e3e13c22301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\gc\ptb">
+      <UniqueIdentifier>{53d28ee4-5fe9-4fa1-a617-53d8b0628eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\gc\details">
+      <UniqueIdentifier>{d7c48c0e-cc45-4a1a-b8e9-aa5b50abd22a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\user_setup">
+      <UniqueIdentifier>{f9f695b1-1322-437c-87b2-c243d83e1b0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\lock">
+      <UniqueIdentifier>{189d2da3-ba56-44b2-be2a-fad41fd75c4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\threading">
+      <UniqueIdentifier>{1af712b3-4429-4ecc-b0a2-f9c639decd19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler">
+      <UniqueIdentifier>{4cce5abe-4256-4883-988d-2e725f38eee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc">
+      <UniqueIdentifier>{98435c30-814f-40fb-8906-0e7847db55ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc\amd64">
+      <UniqueIdentifier>{87ab6aea-29b2-4e79-ad22-2190fa3c5870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc\ia64">
+      <UniqueIdentifier>{9aedc993-3ad3-4f6b-9df0-cdf5a69a3ae0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc\sparc">
+      <UniqueIdentifier>{44e1d2da-18b3-416f-9aeb-d937d46b5479}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc\x86">
+      <UniqueIdentifier>{45671e15-bec1-47fd-a174-a7b57bb55458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc\ppc64">
+      <UniqueIdentifier>{58c4d0de-4802-4a0f-9f03-37b338b9d08a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\vc">
+      <UniqueIdentifier>{04b93d00-cb76-468a-86ce-f03ba531e47d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\vc\x86">
+      <UniqueIdentifier>{2a690a60-0be8-423f-91cb-7f198b4bc507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\vc\amd64">
+      <UniqueIdentifier>{125d466a-6e6e-4c88-9c60-475557797d91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS">
+      <UniqueIdentifier>{f058a2ad-989d-45e9-9bb2-43dfda122708}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\hpux">
+      <UniqueIdentifier>{36e1bb0b-ab23-4484-8fb2-cc52bad3dbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\linux">
+      <UniqueIdentifier>{6d27baa4-414b-41a6-a7e0-72e406af5543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\posix">
+      <UniqueIdentifier>{00c94a5c-9f94-427b-9739-fc06a2f39167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\sunos">
+      <UniqueIdentifier>{4bc2a231-2ea0-4af8-84ad-534a76fda942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\win">
+      <UniqueIdentifier>{64c62189-73c0-4c45-9bf5-aed7b5c6c5e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\aix">
+      <UniqueIdentifier>{5cf9ca07-cadf-4854-a36d-f8293bffc553}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\libc">
+      <UniqueIdentifier>{20b237f6-e6fd-43bd-970d-4f1daf89f494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\free_bsd">
+      <UniqueIdentifier>{f1518588-7c09-496e-81c0-a1ee55cc5d21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\details">
+      <UniqueIdentifier>{fcebfe0e-30de-48ac-8890-7497f1d97fba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\memory">
+      <UniqueIdentifier>{5c631093-3ca2-4a36-acf7-2d9368b65366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\memory\michael">
+      <UniqueIdentifier>{b7cdb65c-15d3-4655-abec-1e4640271432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\opt">
+      <UniqueIdentifier>{fe7576b4-d93f-473a-8522-493feac51996}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\intrusive">
+      <UniqueIdentifier>{7226715d-6777-4c01-8e66-83b3885c00c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container">
+      <UniqueIdentifier>{84ca9e83-f6c9-4503-a45f-14f08317fd70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container\details">
+      <UniqueIdentifier>{4b79fe31-4f6c-4e05-8910-1151a26d51f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\clang">
+      <UniqueIdentifier>{48cc7cd0-fbd6-46fc-ae91-693d7ec85924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\details\std">
+      <UniqueIdentifier>{903ea79d-4241-439d-91f8-32c1b735d0db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\intrusive\striped_set">
+      <UniqueIdentifier>{251e804f-9dde-4e65-867c-4d3aae456868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container\striped_map">
+      <UniqueIdentifier>{8ba63aec-041b-471e-b956-b62656367d9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container\striped_set">
+      <UniqueIdentifier>{a6a14876-fc00-46b2-8cbb-908129803e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\urcu">
+      <UniqueIdentifier>{d2a4c592-44ad-48ad-9110-4331ff0d2509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\urcu\details">
+      <UniqueIdentifier>{b6b1c167-2351-42b7-8d5a-7f4671732414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\intrusive\details">
+      <UniqueIdentifier>{3933ac98-c2ef-4fd2-9aca-69edbbc854f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\icl">
+      <UniqueIdentifier>{bc95b990-68c6-4245-9781-29ae5e952e2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\OS\osx">
+      <UniqueIdentifier>{3b730524-324b-4104-b956-2f34892053a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\algo">
+      <UniqueIdentifier>{8be21b5b-cd62-4c1f-b686-26add61b9656}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\hrc_gc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\hzp_gc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\init.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\michael_heap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ptb_gc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\topology_hpux.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\topology_linux.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\urcu_gp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\urcu_sh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\topology_osx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\hzp_const.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\backoff_strategy.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\bitop.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\init.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\int_algo.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\numtraits.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\ref.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\refcounter.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\version.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\aligned_allocator.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\aligned_type.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\allocator.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\bitop_generic.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\bounded_array.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\comparator.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\defs.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\functor_wrapper.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\is_aligned.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\make_const_type.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\marked_ptr.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\noncopyable.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\impl\queue_base.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\trivial_assign.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\type_padding.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\void_selector.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\default_gc.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hp.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\nogc.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\ptb.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_alloc.h">
+      <Filter>Header Files\cds\gc\hzp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_fwd.h">
+      <Filter>Header Files\cds\gc\hzp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_inline.h">
+      <Filter>Header Files\cds\gc\hzp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_retired.h">
+      <Filter>Header Files\cds\gc\hzp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_type.h">
+      <Filter>Header Files\cds\gc\hzp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hzp\hzp.h">
+      <Filter>Header Files\cds\gc\hzp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc\gc_fwd.h">
+      <Filter>Header Files\cds\gc\hrc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc\hrc.h">
+      <Filter>Header Files\cds\gc\hrc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_fwd.h">
+      <Filter>Header Files\cds\gc\hrc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_inline.h">
+      <Filter>Header Files\cds\gc\hrc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_retired.h">
+      <Filter>Header Files\cds\gc\hrc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\ptb\ptb.h">
+      <Filter>Header Files\cds\gc\ptb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\details\retired_ptr.h">
+      <Filter>Header Files\cds\gc\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\user_setup\allocator.h">
+      <Filter>Header Files\cds\user_setup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\user_setup\cache_line.h">
+      <Filter>Header Files\cds\user_setup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\user_setup\threading.h">
+      <Filter>Header Files\cds\user_setup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\lock\spinlock.h">
+      <Filter>Header Files\cds\lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\_common.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\auto_detect.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\gcc.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\gcc_manager.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\model.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\msvc.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\msvc_manager.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\pthread.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\pthread_manager.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\wintls.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\wintls_manager.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\backoff.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\bitop.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\defs.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\compiler_barriers.h">
+      <Filter>Header Files\cds\compiler\gcc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\defs.h">
+      <Filter>Header Files\cds\compiler\gcc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\amd64\backoff.h">
+      <Filter>Header Files\cds\compiler\gcc\amd64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\amd64\bitop.h">
+      <Filter>Header Files\cds\compiler\gcc\amd64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\backoff.h">
+      <Filter>Header Files\cds\compiler\gcc\ia64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\bitop.h">
+      <Filter>Header Files\cds\compiler\gcc\ia64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\sparc\backoff.h">
+      <Filter>Header Files\cds\compiler\gcc\sparc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\sparc\bitop.h">
+      <Filter>Header Files\cds\compiler\gcc\sparc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\x86\backoff.h">
+      <Filter>Header Files\cds\compiler\gcc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\x86\bitop.h">
+      <Filter>Header Files\cds\compiler\gcc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\ppc64\backoff.h">
+      <Filter>Header Files\cds\compiler\gcc\ppc64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\ppc64\bitop.h">
+      <Filter>Header Files\cds\compiler\gcc\ppc64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\compiler_barriers.h">
+      <Filter>Header Files\cds\compiler\vc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\defs.h">
+      <Filter>Header Files\cds\compiler\vc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\x86\backoff.h">
+      <Filter>Header Files\cds\compiler\vc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\x86\bitop.h">
+      <Filter>Header Files\cds\compiler\vc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\amd64\backoff.h">
+      <Filter>Header Files\cds\compiler\vc\amd64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\amd64\bitop.h">
+      <Filter>Header Files\cds\compiler\vc\amd64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\alloc_aligned.h">
+      <Filter>Header Files\cds\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\syserror.h">
+      <Filter>Header Files\cds\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\thread.h">
+      <Filter>Header Files\cds\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\timer.h">
+      <Filter>Header Files\cds\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\topology.h">
+      <Filter>Header Files\cds\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\hpux\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\hpux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\hpux\timer.h">
+      <Filter>Header Files\cds\OS\hpux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\hpux\topology.h">
+      <Filter>Header Files\cds\OS\hpux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\linux\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\linux\timer.h">
+      <Filter>Header Files\cds\OS\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\linux\topology.h">
+      <Filter>Header Files\cds\OS\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\posix\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\posix\syserror.h">
+      <Filter>Header Files\cds\OS\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\posix\thread.h">
+      <Filter>Header Files\cds\OS\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\sunos\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\sunos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\sunos\timer.h">
+      <Filter>Header Files\cds\OS\sunos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\sunos\topology.h">
+      <Filter>Header Files\cds\OS\sunos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\win\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\win\syserror.h">
+      <Filter>Header Files\cds\OS\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\win\thread.h">
+      <Filter>Header Files\cds\OS\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\win\timer.h">
+      <Filter>Header Files\cds\OS\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\win\topology.h">
+      <Filter>Header Files\cds\OS\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\aix\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\aix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\aix\timer.h">
+      <Filter>Header Files\cds\OS\aix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\aix\topology.h">
+      <Filter>Header Files\cds\OS\aix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\libc\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\free_bsd\alloc_aligned.h">
+      <Filter>Header Files\cds\OS\free_bsd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\free_bsd\timer.h">
+      <Filter>Header Files\cds\OS\free_bsd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\free_bsd\topology.h">
+      <Filter>Header Files\cds\OS\free_bsd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\details\fake_topology.h">
+      <Filter>Header Files\cds\OS\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\michael\allocator.h">
+      <Filter>Header Files\cds\memory\michael</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\michael\bound_check.h">
+      <Filter>Header Files\cds\memory\michael</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\michael\options.h">
+      <Filter>Header Files\cds\memory\michael</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\michael\osalloc_stat.h">
+      <Filter>Header Files\cds\memory\michael</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\michael\procheap_stat.h">
+      <Filter>Header Files\cds\memory\michael</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\buffer.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\compare.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\hash.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\make_options_std.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\make_options_var.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\options.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\permutation.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\value_cleaner.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\base.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\fcqueue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\fcstack.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_base.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_hp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_hrc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_impl.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_nogc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_ptb.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_base.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_hp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_hrc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_impl.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_nogc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_ptb.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_set.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_set_base.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_set_nogc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\moir_queue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\msqueue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\optimistic_queue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\queue_stat.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\segmented_queue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\single_link_struct.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\split_list.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\split_list_base.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\split_list_nogc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\treiber_stack.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\tsigas_cycle_queue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\vyukov_mpmc_cycle_queue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\fcdeque.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\fcpriority_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\fcqueue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\fcstack.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hrc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_hrc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_kvlist_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_kvlist_hrc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_kvlist_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_kvlist_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_kvlist_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_hrc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_map.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_map_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_map_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_set.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_set_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_set_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\moir_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\msqueue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\optimistic_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\rwqueue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\segmented_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\split_list_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\split_list_map.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\split_list_map_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\split_list_set.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\split_list_set_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\treiber_stack.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\tsigas_cycle_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\vyukov_mpmc_cycle_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_lazy_kvlist.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_lazy_list.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_michael_kvlist.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_michael_list.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hp_decl.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hp_impl.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc_decl.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hrc_impl.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\ptb_decl.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\ptb_impl.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\x86\cxx11_atomic.h">
+      <Filter>Header Files\cds\compiler\vc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\vc\amd64\cxx11_atomic.h">
+      <Filter>Header Files\cds\compiler\vc\amd64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\amd64\cxx11_atomic.h">
+      <Filter>Header Files\cds\compiler\gcc\amd64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\x86\cxx11_atomic.h">
+      <Filter>Header Files\cds\compiler\gcc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\cxx11_atomic.h">
+      <Filter>Header Files\cds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\sparc\cxx11_atomic.h">
+      <Filter>Header Files\cds\compiler\gcc\sparc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h">
+      <Filter>Header Files\cds\compiler\gcc\ia64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\cstdint_boost.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\cstdint_std.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic_patches.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\cxx11_atomic_patches.h">
+      <Filter>Header Files\cds\compiler\gcc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\bounded_container.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\hash_functor_selector.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\cxx11_features.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\all.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\clang\defs.h">
+      <Filter>Header Files\cds\compiler\clang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_deque.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\mapper.h">
+      <Filter>Header Files\cds\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_deque.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\basket_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic_prepatches.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\clang\cxx11_atomic_prepatches.h">
+      <Filter>Header Files\cds\compiler\clang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\deque_stat.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\std\type_traits.h">
+      <Filter>Header Files\cds\details\std</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\std\memory.h">
+      <Filter>Header Files\cds\details\std</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_refinable_hash_set.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\std\tuple.h">
+      <Filter>Header Files\cds\details\std</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\adapter.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_avl_set.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_list.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_set.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_sg_set.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_slist.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_splay_set.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_treap_set.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_unordered_set.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\resizing_policy.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\striped_set\striping_policy.h">
+      <Filter>Header Files\cds\intrusive\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\adapter.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\boost_flat_set.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\boost_list.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\boost_set.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\boost_slist.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\boost_stable_vector.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\boost_unordered_set.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\boost_vector.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_std.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_vc.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\std_list.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\std_set.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set\std_vector.h">
+      <Filter>Header Files\cds\container\striped_set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\boost_flat_map.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\boost_list.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\boost_map.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\boost_slist.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\boost_unordered_map.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_std.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_vc.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\std_list.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map\std_map.h">
+      <Filter>Header Files\cds\container\striped_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_map.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\striped_set.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\cuckoo_set.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\cuckoo_map.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\cuckoo_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_base.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_hrc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_impl.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_ptb.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\exception.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_hrc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_hrc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\static_functor.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\std\condition_variable.h">
+      <Filter>Header Files\cds\details\std</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\std\mutex.h">
+      <Filter>Header Files\cds\details\std</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\std\thread.h">
+      <Filter>Header Files\cds\details\std</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\std\chrono.h">
+      <Filter>Header Files\cds\details\std</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\base.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\gp.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\gp_decl.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\gpb.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\gpi.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\gpt.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\exempt_ptr.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\general_buffered.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\general_instant.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\general_threaded.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\node_traits.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\options.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\check_deadlock.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\options.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_set_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_kvlist_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\split_list_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\split_list_set_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_map_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_set_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\split_list_map_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_nogc.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\cxx11.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\threading\details\cxx11_manager.h">
+      <Filter>Header Files\cds\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_nogc.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\binary_functor_wrapper.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\gc_fwd.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\dummy_node_holder.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\sh.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\sh_decl.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\sig_buffered.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\details\sig_threaded.h">
+      <Filter>Header Files\cds\urcu\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\dispose_thread.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\signal_buffered.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_hp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_ptb.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_base.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\pool_allocator.h">
+      <Filter>Header Files\cds\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\memory\vyukov_queue_pool.h">
+      <Filter>Header Files\cds\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\bit_reverse_counter.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\mspriority_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\icl\defs.h">
+      <Filter>Header Files\cds\compiler\icl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\icl\cxx11_atomic_patches_win.h">
+      <Filter>Header Files\cds\compiler\icl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\icl\compiler_barriers.h">
+      <Filter>Header Files\cds\compiler\icl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\lib.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_impl.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_impl.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_ptb.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\mspriority_queue.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\compiler_macro.h">
+      <Filter>Header Files\cds\compiler\gcc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\posix\fake_topology.h">
+      <Filter>Header Files\cds\OS\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\posix\timer.h">
+      <Filter>Header Files\cds\OS\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\osx\timer.h">
+      <Filter>Header Files\cds\OS\osx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\os\osx\topology.h">
+      <Filter>Header Files\cds\OS\osx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\guarded_ptr.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\base.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\elimination.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\elimination_opt.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\elimination_tls.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\flat_combining.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
