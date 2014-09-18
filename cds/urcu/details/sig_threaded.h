@@ -7,7 +7,7 @@
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 
 #include <cds/urcu/dispose_thread.h>
-#include <cds/backoff_strategy.h>
+#include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
 
 namespace cds { namespace urcu {

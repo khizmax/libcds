@@ -167,7 +167,7 @@ namespace cds {
             example, you may define two \p exponential back-offs that is the best for your task A and B:
             \code
 
-            #include <cds/backoff_strategy.h>
+            #include <cds/algo/backoff_strategy.h>
             namespace bkoff = cds::backoff;
 
             struct tagA ;   // tag to select task A implementation
@@ -189,7 +189,7 @@ namespace cds {
 
             Another way of solving this problem is subclassing \p exponential back-off class:
             \code
-            #include <cds/backoff_strategy.h>
+            #include <cds/algo/backoff_strategy.h>
             namespace bkoff = cds::backoff;
             typedef bkoff::exponential<bkoff::hint, bkoff::yield>   base_bkoff;
 
@@ -309,7 +309,7 @@ namespace cds {
             example, you may define two \p delay back-offs for 5 and 10 ms timeout:
             \code
 
-            #include <cds/backoff_strategy.h>
+            #include <cds/algo/backoff_strategy.h>
             namespace bkoff = cds::backoff;
 
             struct ms5  ;   // tag to select 5ms
@@ -326,7 +326,7 @@ namespace cds {
 
             Another way of solving this problem is subclassing \p delay back-off class:
             \code
-            #include <cds/backoff_strategy.h>
+            #include <cds/algo/backoff_strategy.h>
             namespace bkoff = cds::backoff;
             typedef bkoff::delay<> delay_bkoff;
 

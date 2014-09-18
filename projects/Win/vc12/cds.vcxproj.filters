@@ -194,9 +194,6 @@
     <ClInclude Include="..\..\..\src\hzp_const.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\backoff_strategy.h">
-      <Filter>Header Files\cds</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\bitop.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>
@@ -1321,6 +1318,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\flat_combining.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\backoff_strategy.h">
+      <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

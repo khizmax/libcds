@@ -5,7 +5,7 @@
 
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
-#include <cds/backoff_strategy.h>
+#include <cds/algo/backoff_strategy.h>
 #include <cds/lock/spinlock.h>
 #include <cds/details/std/mutex.h>  // lock_guard
 #include <cds/opt/options.h>

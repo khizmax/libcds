@@ -632,6 +632,7 @@
     <ClCompile Include="..\..\..\src\urcu_sh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\cds\algo\backoff_strategy.h" />
     <ClInclude Include="..\..\..\cds\algo\base.h" />
     <ClInclude Include="..\..\..\cds\algo\elimination.h" />
     <ClInclude Include="..\..\..\cds\algo\elimination_opt.h" />
@@ -808,7 +809,6 @@
     <ClInclude Include="..\..\..\cds\urcu\signal_buffered.h" />
     <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h" />
     <ClInclude Include="..\..\..\src\hzp_const.h" />
-    <ClInclude Include="..\..\..\cds\backoff_strategy.h" />
     <ClInclude Include="..\..\..\cds\bitop.h" />
     <ClInclude Include="..\..\..\cds\init.h" />
     <ClInclude Include="..\..\..\cds\int_algo.h" />

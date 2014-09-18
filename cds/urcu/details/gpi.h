@@ -4,7 +4,7 @@
 #define _CDS_URCU_DETAILS_GPI_H
 
 #include <cds/urcu/details/gp.h>
-#include <cds/backoff_strategy.h>
+#include <cds/algo/backoff_strategy.h>
 #include <cds/lock/scoped_lock.h>
 
 #include <cds/details/std/mutex.h>

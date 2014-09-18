@@ -14,7 +14,7 @@
 
 #include <cds/cxx11_atomic.h>
 #include <cds/os/thread.h>
-#include <cds/backoff_strategy.h>
+#include <cds/algo/backoff_strategy.h>
 #include <cds/lock/scoped_lock.h>
 
 #include <cds/details/noncopyable.h>

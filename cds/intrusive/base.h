@@ -5,7 +5,7 @@
 
 #include <cds/intrusive/node_traits.h>
 #include <cds/details/allocator.h>
-#include <cds/backoff_strategy.h>
+#include <cds/algo/backoff_strategy.h>
 
 namespace cds {
 

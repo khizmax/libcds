@@ -3,7 +3,6 @@
 #ifndef _CDS_URCU_DISPOSE_THREAD_H
 #define _CDS_URCU_DISPOSE_THREAD_H
 
-//#include <cds/backoff_strategy.h>
 #include <cds/details/std/thread.h>
 #include <cds/details/std/mutex.h>
 #include <cds/details/std/condition_variable.h>

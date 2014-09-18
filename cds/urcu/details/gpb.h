@@ -4,7 +4,7 @@
 #define _CDS_URCU_DETAILS_GPB_H
 
 #include <cds/urcu/details/gp.h>
-#include <cds/backoff_strategy.h>
+#include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
 
 #include <cds/details/std/mutex.h>

@@ -6,7 +6,7 @@
 #include <cds/urcu/details/sh.h>
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 
-#include <cds/backoff_strategy.h>
+#include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
 
 #include <cds/details/std/mutex.h>
