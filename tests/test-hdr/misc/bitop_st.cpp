@@ -2,7 +2,7 @@
 
 #include "cppunit/cppunit_proxy.h"
 
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 #include <cds/os/timer.h>
 
 class bitop_ST : public CppUnitMini::TestCase

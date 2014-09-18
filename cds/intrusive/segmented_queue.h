@@ -5,7 +5,7 @@
 
 #include <cds/intrusive/base.h>
 #include <cds/details/marked_ptr.h>
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 #include <cds/details/std/mutex.h>
 #include <cds/lock/spinlock.h>
 #include <cds/opt/permutation.h>

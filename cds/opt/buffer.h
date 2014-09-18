@@ -6,7 +6,7 @@
 #include <cds/details/defs.h>
 #include <cds/user_setup/allocator.h>
 #include <cds/details/allocator.h>
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 
 namespace cds { namespace opt {
 

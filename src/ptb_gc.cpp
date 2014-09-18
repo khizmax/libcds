@@ -3,7 +3,7 @@
 // Pass The Buck (PTB) Memory manager implementation
 
 #include <cds/gc/ptb/ptb.h>
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 
 #include <cds/details/hash_functor_selector.h>
 #include <algorithm>   // std::fill

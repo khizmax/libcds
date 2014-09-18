@@ -55,31 +55,6 @@ namespace cds {
         };
         //@endcond
 
-        //TODO - deprecated. Use is_power2 from int_algo.h
-        /// A tricky runtime algorithm to ensure that @p n is power of 2
-        static inline bool isExp2( size_t n )
-        {
-            return(n & (n - 1)) == 0 && n;
-        }
-
-        //TODO: deprecated. Use log2 from int_algo.h
-        /// Runtime algorithm to compute log2( @p nTest ). If @p nTest is not power of two then -1 returns
-        static inline int exponent2( size_t nTest )
-        {
-            int nExp = -1;
-            size_t nMask = 1;
-            for ( size_t n = 0; n < CDS_BUILD_BITS; n++ ) {
-                if ( nTest & nMask ) {
-                    if ( nExp == -1 )
-                        nExp = (int) n;
-                    else
-                        return -1    ;    // nTest не является степенью двойки
-                }
-                nMask = nMask << 1;
-            }
-            return nExp;
-        }
-
         /// Returns @a N: 2**N is nearest to @p nNumber, 2**N < nNumber
         static inline size_t exp2Ceil( size_t nNumber )
         {

@@ -6,7 +6,7 @@
 #include <cds/intrusive/base.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 #include <cds/algo/bitop.h>
 #include <cds/details/functor_wrapper.h>
 

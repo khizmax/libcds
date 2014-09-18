@@ -9,7 +9,7 @@
 #include <cds/lock/spinlock.h>
 #include <cds/details/std/mutex.h>  // lock_guard
 #include <cds/opt/options.h>
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 #include <boost/thread/tss.hpp>     // thread_specific_ptr
 
 namespace cds { namespace algo {

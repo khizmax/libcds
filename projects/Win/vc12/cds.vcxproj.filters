@@ -197,9 +197,6 @@
     <ClInclude Include="..\..\..\cds\init.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\int_algo.h">
-      <Filter>Header Files\cds</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\numtraits.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>
