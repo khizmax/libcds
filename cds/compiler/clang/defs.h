@@ -90,9 +90,6 @@
 #   define CDS_CXX11_THREAD_LOCAL_SUPPORT
 #endif
 
-
-#include <cds/compiler/cstdint_std.h>
-
 // Thread support library (thread, mutex, condition variable, chrono)
 #if CDS_COMPILER_VERSION >= 30100
 #   if __has_include(<thread>)

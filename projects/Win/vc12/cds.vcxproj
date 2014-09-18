@@ -639,8 +639,6 @@
     <ClInclude Include="..\..\..\cds\algo\flat_combining.h" />
     <ClInclude Include="..\..\..\cds\compiler\clang\cxx11_atomic_prepatches.h" />
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h" />
-    <ClInclude Include="..\..\..\cds\compiler\cstdint_boost.h" />
-    <ClInclude Include="..\..\..\cds\compiler\cstdint_std.h" />
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic_patches.h" />
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic_prepatches.h" />

@@ -124,9 +124,6 @@
 #   define CDS_DISABLE_DEFAULT_MOVE_CTOR
 #endif
 
-// <cstdint>
-#include <cstdint>
-
 // Thread support library (thread, mutex, condition variable)
 #define CDS_CXX11_STDLIB_THREAD
 #define CDS_CXX11_STDLIB_MUTEX

@@ -115,8 +115,6 @@
 #   define CDS_DISABLE_DEFAULT_MOVE_CTOR
 #endif
 
-#include <cds/compiler/cstdint_std.h>
-
 // Thread support library (thread, mutex, condition variable, chrono)
 #if CDS_COMPILER_VERSION >= 40800
 #   define CDS_CXX11_STDLIB_THREAD

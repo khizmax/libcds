@@ -845,12 +845,6 @@
     <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h">
       <Filter>Header Files\cds\compiler\gcc\ia64</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\compiler\cstdint_boost.h">
-      <Filter>Header Files\cds\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\compiler\cstdint_std.h">
-      <Filter>Header Files\cds\compiler</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic_patches.h">
       <Filter>Header Files\cds\compiler</Filter>
     </ClInclude>
@@ -1324,6 +1318,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\elimination_tls.h">
       <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\flat_combining.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

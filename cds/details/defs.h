@@ -4,6 +4,7 @@
 #define __CDS_DEFS_H
 
 #include <assert.h>
+#include <cstdint>
 #include <exception>
 #include <string>
 #include <memory>

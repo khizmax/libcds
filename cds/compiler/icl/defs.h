@@ -162,16 +162,6 @@
 //#   define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
 //#endif
 
-
-// <cstdint>
-// <cstdint>
-#if _MSC_VER == 1500
-// MS VC 2008 has no <cstdint>
-#   include <cds/compiler/cstdint_boost.h>
-#else
-#   include <cds/compiler/cstdint_std.h>
-#endif
-
 // Thread support library (thread, mutex, condition variable)
 #if _MSC_VER >= 1700
     // MS VC 11+
