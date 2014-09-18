@@ -1,5 +1,5 @@
 :: Command line arguments:
-:: %1 - Visual C++ version: vc10 (2010), vc11 (2012), vc12 (2013)
+:: %1 - Visual C++ version: vc12 (2013)
 :: %2 - configuration to build (Release, Debug etc)
 :: %3,%4,...%9 - [optional] additional MSBuild options
 

@@ -87,29 +87,12 @@ Common approach:
     [2010] Hendler, Incze, Shavit and Tzafrir "Flat Combining and 
            the Synchronization-Parallelism Tradeoff"
     
-Supported platforms and compilers
+Supported compilers
 ---------------------------------
 
-GCC: 4.3 and above
-MS Visual C++: 9 (2008) and above
-Clang: 3.0 and above
-
-The library was tested on following server platforms:
-GNU GCC 4.3.3:
-    x86 RedHat Linux 4.0, 5.0
-    amd64 (x86-64) RedHat Linux 4.0, 5.0
-    ia64 (itanium) RedHat Linux 4.0
-    ia64 (itanium) HP-UX 11.23 and HP-UX 11.31
-    sparc (ultrasparc-IV and Niagara) Sun Solaris 2.10
-
-    also tested by GCC 4.4+ on amd64 Ubuntu 12.04, amd64 FreeBSD 8.1, Mac OS X
-
-Microsoft Visual C++ 2008 :
-    x86 Windows7
-    amd64 (x86-64) Windows7
-    
-Clang:
-    amd64 Linux Ubuntu 12.04
+GCC: 4.8 and above
+MS Visual C++: 12 (2013) and above
+Clang: 3.3 and above
 
 How to build
 ------------
@@ -119,12 +102,12 @@ The regression tests in tests directory also depends on boost_thread dynamic lib
 You should build boost_thread library before building CDS test.
 
 Windows
-    Use Visual C++ 2008 solution projects\Win\vc9\cds.sln.
+    Use Visual C++ 2013 solution projects\Win\vc12\cds.sln.
     The solution depends on BOOST_PATH environment variable that contains the path to boost root directory. 
     The CDS tests also depends on boost_thread library in %BOOST_PATH%\stage\lib or %BOOST_PATH%\bin.
 
 Unix 
-    GCC compiler supported (4.3 and above) and Clang 3.0 and above for Linux
+    GCC compiler supported (4.8 and above) and Clang 3.3 and above for Linux
     Use script build/build.sh that builds release and debug libcds.so and tests executable. Please,
     do not try to call 'make' directly, - build.sh script sets necessary vars for make.
     See examples in build/sample directory.
