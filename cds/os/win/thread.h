@@ -9,26 +9,8 @@ namespace cds { namespace OS {
     /// Windows-specific functions
     namespace Win32 {
 
-        /// OS-specific type of thread identifier
-        typedef DWORD           ThreadId;
-
-        /// OS-specific type of thread handle
-        typedef HANDLE            ThreadHandle;
-
-        /// Get null thread id
-        CDS_CONSTEXPR static inline ThreadId nullThreadId()
-        {
-            return 0;
-        }
-
-        /// Get current thread id
-        static inline ThreadId getCurrentThreadId()
-        {
-            return ::GetCurrentThreadId();
-        }
-
         /// Tests whether the thread is alive
-        static inline bool isThreadAlive( ThreadId id )
+        static inline bool isThreadAlive( std::thread::id id )
         {
             HANDLE h = ::OpenThread( SYNCHRONIZE, FALSE, id );
             if ( h == NULL )
@@ -54,11 +36,6 @@ namespace cds { namespace OS {
         }
     }    // namespace Win32
 
-    using Win32::ThreadId;
-    using Win32::ThreadHandle;
-
-    using Win32::nullThreadId;
-    using Win32::getCurrentThreadId;
     using Win32::isThreadAlive;
     using Win32::yield;
     using Win32::backoff;

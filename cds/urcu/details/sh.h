@@ -105,7 +105,7 @@ namespace cds { namespace urcu { namespace details {
     }
 
     template <typename RCUtag>
-    inline void sh_singleton<RCUtag>::raise_signal( cds::OS::ThreadId tid )
+    inline void sh_singleton<RCUtag>::raise_signal( std::thread::id tid )
     {
         pthread_kill( tid, m_nSigNo );
     }
@@ -114,11 +114,11 @@ namespace cds { namespace urcu { namespace details {
     template <class Backoff>
     inline void sh_singleton<RCUtag>::force_membar_all_threads( Backoff& bkOff )
     {
-        OS::ThreadId const nullThreadId = OS::nullThreadId();
+        std::thread::id const nullThreadId = std::thread::id();
 
         // Send "need membar" signal to all RCU threads
         for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            OS::ThreadId tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire);
+            std::thread::id tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire);
             if ( tid != nullThreadId ) {
                 pRec->m_bNeedMemBar.store( true, CDS_ATOMIC::memory_order_release );
                 raise_signal( tid );
@@ -127,7 +127,7 @@ namespace cds { namespace urcu { namespace details {
 
         // Wait while all RCU threads process the signal
         for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            OS::ThreadId tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire);
+            std::thread::id tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire);
             if ( tid != nullThreadId ) {
                 bkOff.reset();
                 while ( (tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire )) != nullThreadId
@@ -154,7 +154,7 @@ namespace cds { namespace urcu { namespace details {
     template <class Backoff>
     void sh_singleton<RCUtag>::wait_for_quiescent_state( Backoff& bkOff )
     {
-        OS::ThreadId const nullThreadId = OS::nullThreadId();
+        std::thread::id const nullThreadId = std::thread::id();
 
         for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
             while ( pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire) != nullThreadId && check_grace_period( pRec ))

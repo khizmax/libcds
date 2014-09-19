@@ -58,8 +58,8 @@ namespace cds { namespace gc {
 
         GarbageCollector::~GarbageCollector()
         {
-            CDS_DEBUG_DO( const cds::OS::ThreadId nullThreadId = cds::OS::nullThreadId() ;)
-            CDS_DEBUG_DO( const cds::OS::ThreadId mainThreadId = cds::OS::getCurrentThreadId() ;)
+            CDS_DEBUG_DO( const std::thread::id nullThreadId = std::thread::id(); )
+            CDS_DEBUG_DO( const std::thread::id mainThreadId = std::this_thread::get_id(); )
 
             hplist_node * pHead = m_pListHead.load( CDS_ATOMIC::memory_order_relaxed );
             m_pListHead.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
@@ -108,12 +108,12 @@ namespace cds { namespace gc {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocHPRec );
 
             hplist_node * hprec;
-            const cds::OS::ThreadId nullThreadId = cds::OS::nullThreadId();
-            const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
+            const std::thread::id nullThreadId = std::thread::id();
+            const std::thread::id curThreadId = std::this_thread::get_id();
 
             // First try to reuse a retired (non-active) HP record
             for ( hprec = m_pListHead.load( CDS_ATOMIC::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode ) {
-                cds::OS::ThreadId thId = nullThreadId;
+                std::thread::id thId = nullThreadId;
                 if ( !hprec->m_idOwner.compare_exchange_strong( thId, curThreadId, CDS_ATOMIC::memory_order_seq_cst, CDS_ATOMIC::memory_order_relaxed ) )
                     continue;
                 hprec->m_bFree.store( false, CDS_ATOMIC::memory_order_release );
@@ -144,13 +144,13 @@ namespace cds { namespace gc {
             pRec->clear();
             Scan( pRec );
             hplist_node * pNode = static_cast<hplist_node *>( pRec );
-            pNode->m_idOwner.store( cds::OS::nullThreadId(), CDS_ATOMIC::memory_order_release );
+            pNode->m_idOwner.store( std::thread::id(), CDS_ATOMIC::memory_order_release );
         }
 
         void GarbageCollector::detachAllThread()
         {
             hplist_node * pNext = NULL;
-            const cds::OS::ThreadId nullThreadId = cds::OS::nullThreadId();
+            const std::thread::id nullThreadId = std::thread::id();
             for ( hplist_node * hprec = m_pListHead.load(CDS_ATOMIC::memory_order_acquire); hprec; hprec = pNext ) {
                 pNext = hprec->m_pNextNode;
                 if ( hprec->m_idOwner.load(CDS_ATOMIC::memory_order_relaxed) != nullThreadId ) {
@@ -269,10 +269,10 @@ namespace cds { namespace gc {
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_HelpScanCallCount );
 
-            assert( static_cast<hplist_node *>(pThis)->m_idOwner.load(CDS_ATOMIC::memory_order_relaxed) == cds::OS::getCurrentThreadId() );
+            assert( static_cast<hplist_node *>(pThis)->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == std::this_thread::get_id() );
 
-            const cds::OS::ThreadId nullThreadId = cds::OS::nullThreadId();
-            const cds::OS::ThreadId curThreadId = cds::OS::getCurrentThreadId();
+            const std::thread::id nullThreadId = std::thread::id();
+            const std::thread::id curThreadId = std::this_thread::get_id();
             for ( hplist_node * hprec = m_pListHead.load(CDS_ATOMIC::memory_order_acquire); hprec; hprec = hprec->m_pNextNode ) {
 
                 // If m_bFree == true then hprec->m_arrRetired is empty - we don't need to see it
@@ -282,7 +282,7 @@ namespace cds { namespace gc {
                 // Owns hprec if it is empty.
                 // Several threads may work concurrently so we use atomic technique only.
                 {
-                    cds::OS::ThreadId curOwner = hprec->m_idOwner.load(CDS_ATOMIC::memory_order_acquire);
+                    std::thread::id curOwner = hprec->m_idOwner.load( CDS_ATOMIC::memory_order_acquire );
                     if ( curOwner == nullThreadId || !cds::OS::isThreadAlive( curOwner )) {
                         if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
                             continue;

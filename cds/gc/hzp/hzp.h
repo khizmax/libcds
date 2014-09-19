@@ -208,20 +208,20 @@ namespace cds {
             struct hplist_node: public details::HPRec
             {
                 hplist_node *                       m_pNextNode ; ///< next hazard ptr record in list
-                CDS_ATOMIC::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
+                CDS_ATOMIC::atomic<std::thread::id>    m_idOwner; ///< Owner thread id; 0 - the record is free (not owned)
                 CDS_ATOMIC::atomic<bool>            m_bFree     ; ///< true if record if free (not owned)
 
                 //@cond
                 hplist_node( const GarbageCollector& HzpMgr )
                     : HPRec( HzpMgr ),
                     m_pNextNode(NULL),
-                    m_idOwner( OS::nullThreadId() ),
+                    m_idOwner( std::thread::id() ),
                     m_bFree( true )
                 {}
 
                 ~hplist_node()
                 {
-                    assert( m_idOwner.load(CDS_ATOMIC::memory_order_relaxed) == OS::nullThreadId() );
+                    assert( m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == std::thread::id() );
                     assert( m_bFree.load(CDS_ATOMIC::memory_order_relaxed) );
                 }
                 //@endcond

@@ -648,7 +648,7 @@ namespace cds { namespace intrusive {
             typedef cds::details::Allocator< lock_array_type, allocator_type >  lock_array_allocator;
 
             typedef unsigned long long  owner_t;
-            typedef cds::OS::ThreadId   threadId_t;
+            typedef std::thread::id     threadId_t;
 
             typedef cds::lock::Spin     spinlock_type;
             typedef cds::lock::scoped_lock< spinlock_type > scoped_spinlock;
@@ -681,7 +681,7 @@ namespace cds { namespace intrusive {
 
             void acquire( size_t const * arrHash, lock_array_ptr * pLockArr, lock_type ** parrLock )
             {
-                owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+                owner_t me = (owner_t)std::this_thread::get_id();
                 owner_t who;
 
                 back_off bkoff;
@@ -760,7 +760,7 @@ namespace cds { namespace intrusive {
 
             void acquire_all()
             {
-                owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+                owner_t me = (owner_t)std::this_thread::get_id();
 
                 back_off bkoff;
                 while ( true ) {
@@ -784,7 +784,7 @@ namespace cds { namespace intrusive {
 
             void acquire_resize( lock_array_ptr * pOldLocks )
             {
-                owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+                owner_t me = (owner_t)std::this_thread::get_id();
 
                 while ( true ) {
                     {

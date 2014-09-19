@@ -159,7 +159,7 @@ namespace cds { namespace urcu { namespace details {
         void set_signal_handler();
         void clear_signal_handler();
         static void signal_handler( int signo, siginfo_t * sigInfo, void * context );
-        void raise_signal( cds::OS::ThreadId tid );
+        void raise_signal( std::thread::id tid );
 
         template <class Backoff>
         void force_membar_all_threads( Backoff& bkOff );

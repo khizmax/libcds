@@ -15,17 +15,8 @@
 namespace cds { namespace OS {
     /// posix-related wrappers
     namespace posix {
-        /// Posix thread id type
-        typedef pthread_t       ThreadId;
-
-        /// Null thread id constant
-        CDS_CONSTEXPR static inline ThreadId nullThreadId()   { return 0 ; }
-
-        /// Get current thread id
-        static inline ThreadId getCurrentThreadId()    { return pthread_self() ; }
-
         /// Checks if thread \p id is alive
-        static inline bool isThreadAlive( ThreadId id )
+        static inline bool isThreadAlive( std::thread::id id )
         {
             // if sig is zero, error checking is performed but no signal is actually sent.
             // ESRCH - No thread could be found corresponding to that specified by the given thread ID
@@ -41,10 +32,6 @@ namespace cds { namespace OS {
 
     }    // namespace posix
 
-    using posix::ThreadId;
-
-    using posix::nullThreadId;
-    using posix::getCurrentThreadId;
     using posix::isThreadAlive;
     using posix::yield;
     using posix::backoff;

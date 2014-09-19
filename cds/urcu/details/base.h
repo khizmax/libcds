@@ -316,11 +316,11 @@ namespace cds {
             template <typename ThreadData>
             struct thread_list_record {
                 ThreadData *    m_pNext ;  ///< Next item in thread list
-                CDS_ATOMIC::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
+                CDS_ATOMIC::atomic<std::thread::id>    m_idOwner; ///< Owner thread id; 0 - the record is free (not owned)
 
                 thread_list_record()
                     : m_pNext( nullptr )
-                    , m_idOwner( cds::OS::nullThreadId() )
+                    , m_idOwner( std::thread::id() )
                 {}
 
                 ~thread_list_record()
@@ -351,12 +351,12 @@ namespace cds {
                 thread_record * alloc()
                 {
                     thread_record * pRec;
-                    cds::OS::ThreadId const nullThreadId = cds::OS::nullThreadId();
-                    cds::OS::ThreadId const curThreadId  = cds::OS::getCurrentThreadId();
+                    std::thread::id const nullThreadId = std::thread::id();
+                    std::thread::id const curThreadId = std::this_thread::get_id();
 
                     // First try to reuse a retired (non-active) HP record
                     for ( pRec = m_pHead.load( CDS_ATOMIC::memory_order_acquire ); pRec; pRec = pRec->m_list.m_pNext ) {
-                        cds::OS::ThreadId thId = nullThreadId;
+                        std::thread::id thId = nullThreadId;
                         if ( !pRec->m_list.m_idOwner.compare_exchange_strong( thId, curThreadId, CDS_ATOMIC::memory_order_seq_cst, CDS_ATOMIC::memory_order_relaxed ) )
                             continue;
                         return pRec;
@@ -380,13 +380,13 @@ namespace cds {
                 void retire( thread_record * pRec )
                 {
                     assert( pRec != nullptr );
-                    pRec->m_list.m_idOwner.store( cds::OS::nullThreadId(), CDS_ATOMIC::memory_order_release );
+                    pRec->m_list.m_idOwner.store( std::thread::id(), CDS_ATOMIC::memory_order_release );
                 }
 
                 void detach_all()
                 {
                     thread_record * pNext = nullptr;
-                    cds::OS::ThreadId const nullThreadId = cds::OS::nullThreadId();
+                    std::thread::id const nullThreadId = std::thread::id();
 
                     for ( thread_record * pRec = m_pHead.load(CDS_ATOMIC::memory_order_acquire); pRec; pRec = pNext ) {
                         pNext = pRec->m_list.m_pNext;
@@ -405,8 +405,8 @@ namespace cds {
                 void destroy()
                 {
                     allocator_type al;
-                    CDS_DEBUG_DO( cds::OS::ThreadId const nullThreadId = cds::OS::nullThreadId() ;)
-                    CDS_DEBUG_DO( cds::OS::ThreadId const mainThreadId = cds::OS::getCurrentThreadId() ;)
+                    CDS_DEBUG_DO( std::thread::id const nullThreadId = std::thread::id(); )
+                    CDS_DEBUG_DO( std::thread::id const mainThreadId = std::this_thread::get_id(); )
 
                     thread_record * p = m_pHead.exchange( nullptr, CDS_ATOMIC::memory_order_seq_cst );
                     while ( p ) {
