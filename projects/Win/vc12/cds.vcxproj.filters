@@ -1283,9 +1283,6 @@
     <ClInclude Include="..\..\..\cds\algo\elimination_tls.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\algo\flat_combining.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\backoff_strategy.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
@@ -1294,6 +1291,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\numtraits.h">
       <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\flat_combining.h">
+      <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
