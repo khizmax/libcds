@@ -16,8 +16,8 @@
     2009.09.10  Maxim Khiszinsky    reset() function added
 */
 
+#include <thread>
 #include <cds/compiler/backoff.h>
-#include <cds/details/std/thread.h>
 #include <cds/details/std/chrono.h>
 
 namespace cds {
@@ -74,8 +74,7 @@ namespace cds {
             //@cond
             void operator ()()
             {
-                cds_std::this_thread::yield();
-                //OS::yield();
+                std::this_thread::yield();
             }
 
             template <typename Predicate>
@@ -368,7 +367,7 @@ namespace cds {
             //@cond
             void operator()() const
             {
-                cds_std::this_thread::sleep_for( duration_type( m_nTimeout ));
+                std::this_thread::sleep_for( duration_type( m_nTimeout ));
             }
 
             template <typename Predicate>
@@ -377,7 +376,7 @@ namespace cds {
                 for ( unsigned int i = 0; i < m_nTimeout; i += 2 ) {
                     if ( pr() )
                         return true;
-                    cds_std::this_thread::sleep_for( duration_type( 2 ));
+                    std::this_thread::sleep_for( duration_type( 2 ));
                 }
                 return false;
             }

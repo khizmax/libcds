@@ -878,9 +878,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\deque_stat.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\std\memory.h">
-      <Filter>Header Files\cds\details\std</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1062,9 +1059,6 @@
       <Filter>Header Files\cds\details\std</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\std\mutex.h">
-      <Filter>Header Files\cds\details\std</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\std\thread.h">
       <Filter>Header Files\cds\details\std</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\std\chrono.h">

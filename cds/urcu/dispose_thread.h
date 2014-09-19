@@ -4,7 +4,7 @@
 #define _CDS_URCU_DISPOSE_THREAD_H
 
 #include <memory>
-#include <cds/details/std/thread.h>
+#include <thread>
 #include <cds/details/std/mutex.h>
 #include <cds/details/std/condition_variable.h>
 #include <cds/details/aligned_type.h>
@@ -26,9 +26,9 @@ namespace cds { namespace urcu {
         typedef Buffer  buffer_type ;   ///< Buffer type
     private:
         //@cond
-        typedef cds_std::thread                     thread_type;
-        typedef cds_std::mutex                      mutex_type;
-        typedef cds_std::condition_variable         condvar_type;
+        typedef std::thread                 thread_type;
+        typedef cds_std::mutex              mutex_type;
+        typedef cds_std::condition_variable condvar_type;
         typedef cds_std::unique_lock< mutex_type >  unique_lock;
 
         class dispose_thread_starter: public thread_type

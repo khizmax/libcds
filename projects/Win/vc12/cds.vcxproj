@@ -730,9 +730,7 @@
     <ClInclude Include="..\..\..\cds\details\numtraits.h" />
     <ClInclude Include="..\..\..\cds\details\static_functor.h" />
     <ClInclude Include="..\..\..\cds\details\std\condition_variable.h" />
-    <ClInclude Include="..\..\..\cds\details\std\memory.h" />
     <ClInclude Include="..\..\..\cds\details\std\mutex.h" />
-    <ClInclude Include="..\..\..\cds\details\std\thread.h" />
     <ClInclude Include="..\..\..\cds\details\std\chrono.h" />
     <ClInclude Include="..\..\..\cds\gc\all.h" />
     <ClInclude Include="..\..\..\cds\gc\exception.h" />
