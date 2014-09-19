@@ -82,7 +82,7 @@ namespace cds { namespace urcu { namespace details {
     template <class Backoff>
     inline void gp_singleton<RCUtag>::flip_and_wait( Backoff& bkoff )
     {
-        std::thread::id const nullThreadId = std::thread::id();
+        OS::ThreadId const nullThreadId = OS::c_NullThreadId;
         m_nGlobalControl.fetch_xor( general_purpose_rcu::c_nControlBit, CDS_ATOMIC::memory_order_seq_cst );
 
         for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {

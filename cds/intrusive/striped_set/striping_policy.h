@@ -142,7 +142,7 @@ namespace cds { namespace intrusive { namespace striped_set {
         typedef cds::details::Allocator< lock_array_type, allocator_type >  lock_array_allocator;
 
         typedef unsigned long long  owner_t;
-        typedef std::thread::id     threadId_t;
+        typedef cds::OS::ThreadId   threadId_t;
 
         typedef cds::lock::Spin     spinlock_type;
         typedef cds::lock::scoped_lock< spinlock_type > scoped_spinlock;
@@ -175,7 +175,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         lock_type& acquire( size_t nHash )
         {
-            owner_t me = (owner_t) std::this_thread::get_id();
+            owner_t me = (owner_t) cds::OS::getCurrentThreadId();
             owner_t who;
 
             back_off bkoff;
@@ -206,7 +206,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         lock_array_ptr acquire_all()
         {
-            owner_t me = (owner_t)std::this_thread::get_id();
+            owner_t me = (owner_t) cds::OS::getCurrentThreadId();
             owner_t who;
 
             back_off bkoff;
@@ -242,7 +242,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         bool acquire_resize()
         {
-            owner_t me = (owner_t)std::this_thread::get_id();
+            owner_t me = (owner_t) cds::OS::getCurrentThreadId();
 
             back_off bkoff;
             for (unsigned int nAttempts = 0; nAttempts < 32; ++nAttempts ) {

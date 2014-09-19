@@ -33,7 +33,7 @@ namespace map2 {
             size_t      nData;
             CDS_ATOMIC::atomic<size_t> nEnsureCall;
             CDS_ATOMIC::atomic<bool>   bInitialized;
-            std::thread::id            threadId;   // insert thread id
+            cds::OS::ThreadId          threadId     ;   // insert thread id
 
             typedef cds::lock::Spinlock< cds::backoff::pause >   lock_type;
             mutable lock_type   m_access;
@@ -43,7 +43,7 @@ namespace map2 {
                 , nData(0)
                 , nEnsureCall(0)
                 , bInitialized( false )
-                , threadId( std::this_thread::get_id() )
+                , threadId( cds::OS::getCurrentThreadId() )
             {}
 
             value_type( value_type const& s )
@@ -51,7 +51,7 @@ namespace map2 {
                 , nData(s.nData)
                 , nEnsureCall(s.nEnsureCall.load(CDS_ATOMIC::memory_order_relaxed))
                 , bInitialized( s.bInitialized.load(CDS_ATOMIC::memory_order_relaxed) )
-                , threadId( std::this_thread::get_id() )
+                , threadId( cds::OS::getCurrentThreadId() )
             {}
 
             // boost::container::flat_map requires operator =

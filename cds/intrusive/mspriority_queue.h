@@ -169,7 +169,7 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef std::thread::id tag_type;
+        typedef cds::OS::ThreadId   tag_type;
 
         enum tag_value {
             Available   = -1,
@@ -255,7 +255,7 @@ namespace cds { namespace intrusive {
         */
         bool push( value_type& val )
         {
-            tag_type const curId = std::this_thread::get_id();
+            tag_type const curId = cds::OS::getCurrentThreadId();
 
             // Insert new item at bottom of the heap
             m_Lock.lock();

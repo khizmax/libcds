@@ -294,7 +294,7 @@ namespace cds { namespace gc {
             {
                 thread_list_node *  m_pNext     ; ///< next list record
                 ThreadGC *          m_pOwner    ; ///< Owner of record
-                CDS_ATOMIC::atomic<std::thread::id>   m_idOwner   ; ///< Id of thread owned; 0 - record is free
+                CDS_ATOMIC::atomic<cds::OS::ThreadId>   m_idOwner   ; ///< Id of thread owned; 0 - record is free
                 bool                m_bFree        ; ///< Node is help-scanned
 
                 //@cond
@@ -302,14 +302,14 @@ namespace cds { namespace gc {
                     : thread_descriptor( HzpMgr ),
                     m_pNext( nullptr ),
                     m_pOwner( nullptr ),
-                    m_idOwner( std::thread::id() ),
+                    m_idOwner(cds::OS::c_NullThreadId),
                     m_bFree( false )
                 {}
 
                 ~thread_list_node()
                 {
                     assert( m_pOwner == nullptr );
-                    assert( m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == std::thread::id() );
+                    assert( m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == cds::OS::c_NullThreadId );
                 }
                 //@endcond
             };

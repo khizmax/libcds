@@ -28,9 +28,9 @@ namespace set2 {
         struct value_type {
             size_t      nKey;
             size_t      nData;
-            CDS_ATOMIC::atomic<size_t>  nEnsureCall;
-            bool volatile               bInitialized;
-            std::thread::id             threadId;   // insert thread id
+            CDS_ATOMIC::atomic<size_t> nEnsureCall;
+            bool volatile   bInitialized;
+            cds::OS::ThreadId          threadId     ;   // insert thread id
 
             typedef cds::lock::Spinlock< cds::backoff::pause >   lock_type;
             mutable lock_type   m_access;
@@ -40,7 +40,7 @@ namespace set2 {
                 , nData(0)
                 , nEnsureCall(0)
                 , bInitialized( false )
-                , threadId( std::this_thread::get_id() )
+                , threadId( cds::OS::getCurrentThreadId() )
             {}
 
             value_type( value_type const& s )
@@ -48,7 +48,7 @@ namespace set2 {
                 , nData(s.nData)
                 , nEnsureCall(s.nEnsureCall.load(CDS_ATOMIC::memory_order_relaxed))
                 , bInitialized( s.bInitialized )
-                , threadId( std::this_thread::get_id() )
+                , threadId( cds::OS::getCurrentThreadId() )
             {}
 
             // boost::container::flat_map requires operator =

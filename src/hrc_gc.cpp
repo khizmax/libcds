@@ -38,7 +38,7 @@ namespace cds { namespace gc {
         {
             thread_list_node * pNode = m_pListHead.load( CDS_ATOMIC::memory_order_relaxed );
             while ( pNode ) {
-                assert( pNode->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == std::thread::id() );
+                assert( pNode->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == cds::OS::c_NullThreadId );
                 clearHRCThreadDesc( pNode );
                 thread_list_node * pNext = pNode->m_pNext;
                 deleteHRCThreadDesc( pNode );
@@ -115,7 +115,7 @@ namespace cds { namespace gc {
         GarbageCollector::thread_list_node *  GarbageCollector::getHRCThreadDescForCurrentThread() const
         {
             thread_list_node * hprec;
-            const std::thread::id curThreadId = std::this_thread::get_id();
+            const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
 
             for ( hprec = m_pListHead.load( CDS_ATOMIC::memory_order_acquire ); hprec; hprec = hprec->m_pNext ) {
                 if ( hprec->m_idOwner.load( CDS_ATOMIC::memory_order_acquire ) == curThreadId ) {
@@ -131,12 +131,12 @@ namespace cds { namespace gc {
             CDS_HRC_STATISTIC( ++m_Stat.m_AllocHRCThreadDesc );
 
             thread_list_node * hprec;
-            const std::thread::id nullThreadId = std::thread::id();
-            const std::thread::id curThreadId = std::this_thread::get_id();
+            const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
+            const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
 
             // First try to reuse a retired (non-active) HP record
             for ( hprec = m_pListHead.load( CDS_ATOMIC::memory_order_acquire ); hprec; hprec = hprec->m_pNext ) {
-                std::thread::id expectedThreadId = nullThreadId;
+                cds::OS::ThreadId expectedThreadId = nullThreadId;
                 if ( !hprec->m_idOwner.compare_exchange_strong( expectedThreadId, curThreadId, CDS_ATOMIC::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed ) )
                     continue;
                 hprec->m_pOwner = pThreadGC;
@@ -172,13 +172,13 @@ namespace cds { namespace gc {
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
             /*
                 It is possible that
-                    pNode->m_idOwner.value() != std::this_thread::get_id()
+                    pNode->m_idOwner.value() != cds::OS::getCurrentThreadId()
                 if the destruction of thread object is called by the destructor
                 after thread termination
             */
-            assert( pNode->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) != std::thread::id() );
+            assert( pNode->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) != cds::OS::c_NullThreadId );
             pNode->m_pOwner = nullptr;
-            pNode->m_idOwner.store( std::thread::id(), CDS_ATOMIC::memory_order_release );
+            pNode->m_idOwner.store( cds::OS::c_NullThreadId, CDS_ATOMIC::memory_order_release );
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
         }
 
@@ -189,7 +189,7 @@ namespace cds { namespace gc {
             typedef std::vector< ContainerNode * > hazard_ptr_list;
 
             details::thread_descriptor * pRec = pThreadGC->m_pDesc;
-            assert( static_cast< thread_list_node *>(pRec)->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == std::this_thread::get_id() );
+            assert( static_cast< thread_list_node *>( pRec )->m_idOwner.load(CDS_ATOMIC::memory_order_relaxed) == cds::OS::getCurrentThreadId() );
 
             // Step 1: mark all pRec->m_arrRetired items as "traced"
             {
@@ -277,13 +277,13 @@ namespace cds { namespace gc {
 
             CDS_HRC_STATISTIC( ++m_Stat.m_HelpScanCalls );
 
-            const std::thread::id nullThreadId = std::thread::id();
-            const std::thread::id curThreadId = std::this_thread::get_id();
+            const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
+            const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
 
             for ( thread_list_node * pRec = m_pListHead.load(CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_pNext )
             {
                 // If threadDesc is free then own its
-                std::thread::id expectedThreadId = nullThreadId;
+                cds::OS::ThreadId expectedThreadId = nullThreadId;
                 if ( !pRec->m_idOwner.compare_exchange_strong(expectedThreadId, curThreadId, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed) )
                 {
                     continue;
@@ -329,7 +329,7 @@ namespace cds { namespace gc {
         {
             CDS_HRC_STATISTIC( ++m_Stat.m_CleanUpAllCalls );
 
-            //const std::thread::id nullThreadId = std::thread::id();
+            //const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
             thread_list_node * pThread = m_pListHead.load(CDS_ATOMIC::memory_order_acquire);
             while ( pThread ) {
                 for ( size_t i = 0; i < pThread->m_arrRetired.capacity(); ++i ) {

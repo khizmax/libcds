@@ -50,18 +50,18 @@ namespace cds {
         class Spinlock
         {
         public:
-            typedef Backoff     backoff_strategy;   ///< back-off strategy type
+            typedef        Backoff      backoff_strategy    ;        ///< back-off strategy type
         private:
-            CDS_ATOMIC::atomic<bool>    m_spin;     ///< Spin
+            CDS_ATOMIC::atomic<bool>    m_spin  ;       ///< Spin
 #    ifdef CDS_DEBUG
-            typename std::thread::id    m_dbgOwnerId; ///< Owner thread id (only for debug mode)
+            typename OS::ThreadId       m_dbgOwnerId        ;       ///< Owner thread id (only for debug mode)
 #    endif
 
         public:
             /// Construct free (unlocked) spin-lock
             Spinlock() CDS_NOEXCEPT
 #    ifdef CDS_DEBUG
-                :m_dbgOwnerId( std::thread::id() )
+                :m_dbgOwnerId( OS::c_NullThreadId )
 #    endif
             {
                 m_spin.store( false, CDS_ATOMIC::memory_order_relaxed );
@@ -73,7 +73,7 @@ namespace cds {
             */
             Spinlock( bool bLocked ) CDS_NOEXCEPT
 #    ifdef CDS_DEBUG
-                :m_dbgOwnerId( bLocked ? std::this_thread::get_id() : std::thread::id() )
+                :m_dbgOwnerId( bLocked ? OS::getCurrentThreadId() : OS::c_NullThreadId )
 #    endif
             {
                 m_spin.store( bLocked, CDS_ATOMIC::memory_order_relaxed );
@@ -88,7 +88,7 @@ namespace cds {
             Spinlock(const Spinlock<Backoff>& ) CDS_NOEXCEPT
                 : m_spin( false )
 #   ifdef CDS_DEBUG
-                , m_dbgOwnerId( std::thread::id() )
+                , m_dbgOwnerId( OS::c_NullThreadId )
 #   endif
             {}
 
@@ -124,7 +124,7 @@ namespace cds {
 
                 CDS_DEBUG_DO(
                     if ( !bCurrent ) {
-                        m_dbgOwnerId = std::this_thread::get_id();
+                        m_dbgOwnerId = OS::getCurrentThreadId();
                     }
                 )
                 return !bCurrent;
@@ -158,7 +158,7 @@ namespace cds {
                 Backoff backoff;
 
                 // Deadlock detected
-                assert( m_dbgOwnerId != std::this_thread::get_id() );
+                assert( m_dbgOwnerId != OS::getCurrentThreadId() );
 
                 // TATAS algorithm
                 while ( !tryLock() ) {
@@ -166,7 +166,7 @@ namespace cds {
                         backoff();
                     }
                 }
-                assert( m_dbgOwnerId == std::this_thread::get_id() );
+                assert( m_dbgOwnerId == OS::getCurrentThreadId() );
             }
 
             /// Unlock the spin-lock. Debug version: deadlock may be detected
@@ -174,8 +174,8 @@ namespace cds {
             {
                 assert( m_spin.load( CDS_ATOMIC::memory_order_relaxed ) );
 
-                assert( m_dbgOwnerId == std::this_thread::get_id() );
-                CDS_DEBUG_DO( m_dbgOwnerId = std::thread::id() );)
+                assert( m_dbgOwnerId == OS::getCurrentThreadId() );
+                CDS_DEBUG_DO( m_dbgOwnerId = OS::c_NullThreadId; )
 
                 m_spin.store( false, CDS_ATOMIC::memory_order_release );
             }
@@ -195,7 +195,7 @@ namespace cds {
         template <typename Integral, class Backoff>
         class ReentrantSpinT
         {
-            typedef std::thread::id thread_id;        ///< The type of thread id
+            typedef OS::ThreadId    thread_id    ;        ///< The type of thread id
 
         public:
             typedef Integral        integral_type       ; ///< The integral type
@@ -203,7 +203,7 @@ namespace cds {
 
         private:
             CDS_ATOMIC::atomic<integral_type>   m_spin      ; ///< spin-lock atomic
-            thread_id                           m_OwnerId   ; ///< Owner thread id. If spin-lock is not locked it usually equals to std::thread::id()
+            thread_id                           m_OwnerId   ; ///< Owner thread id. If spin-lock is not locked it usually equals to OS::c_NullThreadId
 
         private:
             //@cond
@@ -214,7 +214,7 @@ namespace cds {
 
             void free() CDS_NOEXCEPT
             {
-                m_OwnerId = std::thread::id();
+                m_OwnerId = OS::c_NullThreadId;
             }
 
             bool isOwned( thread_id tid ) const CDS_NOEXCEPT
@@ -264,7 +264,7 @@ namespace cds {
             /// Default constructor initializes spin to free (unlocked) state
             ReentrantSpinT() CDS_NOEXCEPT
                 : m_spin(0)
-                , m_OwnerId( std::thread::id() )
+                , m_OwnerId( OS::c_NullThreadId )
             {}
 
             /// Dummy copy constructor
@@ -275,13 +275,13 @@ namespace cds {
             */
             ReentrantSpinT(const ReentrantSpinT<Integral, Backoff>& ) CDS_NOEXCEPT
                 : m_spin(0)
-                , m_OwnerId( std::thread::id() )
+                , m_OwnerId( OS::c_NullThreadId )
             {}
 
             /// Construct object for specified state
             ReentrantSpinT(bool bLocked) CDS_NOEXCEPT
-                : m_spin(0),
-                m_OwnerId( std::thread::id() )
+                : m_spin(0)
+                , m_OwnerId( OS::c_NullThreadId )
             {
                 if ( bLocked )
                     lock();
@@ -294,13 +294,13 @@ namespace cds {
             */
             bool is_locked() const CDS_NOEXCEPT
             {
-                return !(m_spin.load( CDS_ATOMIC::memory_order_relaxed ) == 0 || isOwned( std::this_thread::get_id() ));
+                return !( m_spin.load( CDS_ATOMIC::memory_order_relaxed ) == 0 || isOwned( cds::OS::getCurrentThreadId() ));
             }
 
             /// Try to lock the spin-lock (synonym for \ref try_lock)
             bool tryLock() CDS_NOEXCEPT
             {
-                thread_id tid = std::this_thread::get_id();
+                thread_id tid = OS::getCurrentThreadId();
                 if ( tryLockOwned( tid ) )
                     return true;
                 if ( tryAcquireLock()) {
@@ -324,7 +324,7 @@ namespace cds {
                 CDS_NOEXCEPT_( noexcept( tryAcquireLock(nTryCount) ))
 #       endif
             {
-                thread_id tid = std::this_thread::get_id();
+                thread_id tid = OS::getCurrentThreadId();
                 if ( tryLockOwned( tid ) )
                     return true;
                 if ( tryAcquireLock( nTryCount )) {
@@ -353,7 +353,7 @@ namespace cds {
             /// Lock the object waits if it is busy
             void lock() CDS_NOEXCEPT
             {
-                thread_id tid = std::this_thread::get_id();
+                thread_id tid = OS::getCurrentThreadId();
                 if ( !tryLockOwned( tid ) ) {
                     acquireLock();
                     beOwner( tid );
@@ -363,7 +363,7 @@ namespace cds {
             /// Unlock the spin-lock. Return @p true if the current thread is owner of spin-lock @p false otherwise
             bool unlock() CDS_NOEXCEPT
             {
-                if ( isOwned( std::this_thread::get_id() ) ) {
+                if ( isOwned( OS::getCurrentThreadId() ) ) {
                     integral_type n = m_spin.load( CDS_ATOMIC::memory_order_relaxed );
                     if ( n > 1 )
                         m_spin.store( n - 1, CDS_ATOMIC::memory_order_relaxed );
@@ -377,10 +377,10 @@ namespace cds {
             }
 
             /// Change the owner of locked spin-lock. May be called by thread that is owner of the spin-lock
-            bool changeOwner( std::thread::id newOwnerId ) CDS_NOEXCEPT
+            bool changeOwner( OS::ThreadId newOwnerId ) CDS_NOEXCEPT
             {
-                if ( isOwned( std::this_thread::get_id() ) ) {
-                    assert( newOwnerId != std::thread::id() );
+                if ( isOwned( OS::getCurrentThreadId() ) ) {
+                    assert( newOwnerId != OS::c_NullThreadId );
                     m_OwnerId = newOwnerId;
                     return true;
                 }

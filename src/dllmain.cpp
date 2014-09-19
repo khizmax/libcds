@@ -13,8 +13,8 @@
 #   endif
 #endif
 
-static std::thread::id  s_MainThreadId = 0;
-static HINSTANCE        s_DllInstance = NULL;
+static cds::OS::ThreadId    s_MainThreadId = 0;
+static HINSTANCE            s_DllInstance = NULL;
 
 #if _WIN32_WINNT < 0x0601
 // For Windows below Windows 7
@@ -191,7 +191,7 @@ BOOL WINAPI DllMain(
     switch ( fdwReason ) {
         case DLL_PROCESS_ATTACH:
             s_DllInstance = hinstDLL;
-            s_MainThreadId = std::this_thread::get_id();
+            s_MainThreadId = cds::OS::getCurrentThreadId();
 #if _WIN32_WINNT < 0x0601
             discover_topology();
 #endif
