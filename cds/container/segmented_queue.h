@@ -3,9 +3,9 @@
 #ifndef __CDS_CONTAINER_SEGMENTED_QUEUE_H
 #define __CDS_CONTAINER_SEGMENTED_QUEUE_H
 
+#include <memory>
 #include <cds/intrusive/segmented_queue.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/details/std/memory.h>
 #include <cds/ref.h>
 
 namespace cds { namespace container {

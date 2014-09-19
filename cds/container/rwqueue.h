@@ -3,12 +3,12 @@
 #ifndef __CDS_CONTAINER_RWQUEUE_H
 #define __CDS_CONTAINER_RWQUEUE_H
 
+#include <memory>
 #include <cds/opt/options.h>
 #include <cds/lock/spinlock.h>
 #include <cds/intrusive/queue_stat.h>
 #include <cds/details/allocator.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/details/std/memory.h>
 #include <cds/ref.h>
 
 namespace cds { namespace container {

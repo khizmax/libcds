@@ -3,11 +3,12 @@
 #ifndef __CDS_CONTAINER_BASKET_QUEUE_H
 #define __CDS_CONTAINER_BASKET_QUEUE_H
 
+#include <memory>
 #include <cds/intrusive/basket_queue.h>
 #include <cds/container/base.h>
 #include <cds/ref.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/details/std/memory.h>
+
 
 namespace cds { namespace container {
 

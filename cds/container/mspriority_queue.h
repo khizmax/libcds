@@ -3,9 +3,9 @@
 #ifndef __CDS_CONTAINER_MSPRIORITY_QUEUE_H
 #define __CDS_CONTAINER_MSPRIORITY_QUEUE_H
 
+#include <memory>
 #include <cds/container/base.h>
 #include <cds/intrusive/mspriority_queue.h>
-#include <cds/details/std/memory.h>
 
 namespace cds { namespace container {
 

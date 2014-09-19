@@ -3,12 +3,12 @@
 #ifndef __CDS_CONTAINER_MOIR_QUEUE_H
 #define __CDS_CONTAINER_MOIR_QUEUE_H
 
+#include <memory>
 #include <cds/intrusive/moir_queue.h>
 #include <cds/intrusive/queue_stat.h>
 #include <cds/container/base.h>
 #include <cds/ref.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/details/std/memory.h>
 
 namespace cds { namespace container {
 

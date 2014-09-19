@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_MICHAEL_LIST_IMPL_H
 #define __CDS_CONTAINER_MICHAEL_LIST_IMPL_H
 
-#include <cds/details/std/memory.h>
+#include <memory>
 #include <cds/container/details/guarded_ptr_cast.h>
 
 namespace cds { namespace container {

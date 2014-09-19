@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <algorithm>    // random_shuffle
-#include <cds/details/std/memory.h>
+#include <memory>
 
 namespace pqueue {
 

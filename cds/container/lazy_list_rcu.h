@@ -3,10 +3,10 @@
 #ifndef __CDS_CONTAINER_LAZY_LIST_RCU_H
 #define __CDS_CONTAINER_LAZY_LIST_RCU_H
 
+#include <memory>
 #include <cds/container/lazy_list_base.h>
 #include <cds/intrusive/lazy_list_rcu.h>
 #include <cds/details/binary_functor_wrapper.h>
-#include <cds/details/std/memory.h>
 #include <cds/container/details/make_lazy_list.h>
 
 namespace cds { namespace container {

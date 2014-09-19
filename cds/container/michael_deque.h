@@ -3,9 +3,9 @@
 #ifndef __CDS_CONTAINER_MICHAEL_DEQUE_H
 #define __CDS_CONTAINER_MICHAEL_DEQUE_H
 
+#include <memory>
 #include <cds/intrusive/michael_deque.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/details/std/memory.h>
 
 namespace cds { namespace container {
 

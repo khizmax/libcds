@@ -3,12 +3,12 @@
 #ifndef __CDS_INTRUSIVE_ELLEN_BINTREE_IMPL_H
 #define __CDS_INTRUSIVE_ELLEN_BINTREE_IMPL_H
 
+#include <memory>
 #include <cds/intrusive/details/ellen_bintree_base.h>
 #include <cds/opt/compare.h>
 #include <cds/ref.h>
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/urcu/details/check_deadlock.h>
-#include <cds/details/std/memory.h>
 #include <cds/gc/guarded_ptr.h>
 
 namespace cds { namespace intrusive {

@@ -3,9 +3,9 @@
 #ifndef __CDS_CONTAINER_LAZY_KVLIST_IMPL_H
 #define __CDS_CONTAINER_LAZY_KVLIST_IMPL_H
 
+#include <memory>
 #include <cds/ref.h>
 #include <cds/details/functor_wrapper.h>
-#include <cds/details/std/memory.h>
 #include <cds/container/details/guarded_ptr_cast.h>
 
 namespace cds { namespace container {

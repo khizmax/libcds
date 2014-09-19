@@ -4,8 +4,8 @@
 #define __CDS_INTRUSIVE_SKIP_LIST_IMPL_H
 
 #include <type_traits>
+#include <memory>
 #include <cds/intrusive/skip_list_base.h>
-#include <cds/details/std/memory.h>
 #include <cds/opt/compare.h>
 #include <cds/ref.h>
 #include <cds/details/binary_functor_wrapper.h>

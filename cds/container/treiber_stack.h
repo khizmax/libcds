@@ -3,9 +3,9 @@
 #ifndef __CDS_CONTAINER_TREIBER_STACK_H
 #define __CDS_CONTAINER_TREIBER_STACK_H
 
+#include <memory>
 #include <cds/intrusive/treiber_stack.h>
 #include <cds/container/base.h>
-#include <cds/details/std/memory.h>
 
 namespace cds { namespace container {
 

@@ -3,9 +3,9 @@
 #ifndef __CDS_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H
 #define __CDS_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H
 
-#include <cds/opt/options.h>
 #include <exception>
 #include <memory.h>
+#include <cds/opt/options.h>
 
 namespace cds { namespace memory { namespace michael {
 

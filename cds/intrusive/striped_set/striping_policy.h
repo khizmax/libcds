@@ -3,9 +3,9 @@
 #ifndef __CDS_INTRUSIVE_STRIPED_SET_STRIPING_POLICY_H
 #define __CDS_INTRUSIVE_STRIPED_SET_STRIPING_POLICY_H
 
+#include <memory>
 #include <cds/lock/array.h>
 #include <cds/os/thread.h>
-#include <cds/details/std/memory.h>
 #include <cds/lock/spinlock.h>
 
 #include <cds/details/std/mutex.h>

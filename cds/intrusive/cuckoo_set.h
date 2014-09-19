@@ -3,6 +3,7 @@
 #ifndef __CDS_INTRUSIVE_CUCKOO_SET_H
 #define __CDS_INTRUSIVE_CUCKOO_SET_H
 
+#include <memory>
 #include <type_traits>
 #include <cds/intrusive/base.h>
 #include <cds/opt/compare.h>
@@ -10,7 +11,6 @@
 #include <cds/lock/array.h>
 #include <cds/ref.h>
 #include <cds/os/thread.h>
-#include <cds/details/std/memory.h>
 #include <cds/details/functor_wrapper.h>
 #include <cds/lock/spinlock.h>
 

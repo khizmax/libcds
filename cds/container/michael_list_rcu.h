@@ -3,11 +3,11 @@
 #ifndef __CDS_CONTAINER_MICHAEL_LIST_RCU_H
 #define __CDS_CONTAINER_MICHAEL_LIST_RCU_H
 
+#include <memory>
 #include <cds/container/michael_list_base.h>
 #include <cds/intrusive/michael_list_rcu.h>
 #include <cds/container/details/make_michael_list.h>
 #include <cds/details/binary_functor_wrapper.h>
-#include <cds/details/std/memory.h>
 
 namespace cds { namespace container {
 

@@ -3,11 +3,11 @@
 #ifndef __CDS_CONTAINER_LAZY_KVLIST_NOGC_H
 #define __CDS_CONTAINER_LAZY_KVLIST_NOGC_H
 
+#include <memory>
 #include <cds/container/lazy_list_base.h>
 #include <cds/intrusive/lazy_list_nogc.h>
 #include <cds/container/details/make_lazy_kvlist.h>
 #include <cds/details/functor_wrapper.h>
-#include <cds/details/std/memory.h>
 
 namespace cds { namespace container {
 

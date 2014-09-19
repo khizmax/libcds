@@ -3,10 +3,10 @@
 #ifndef _CDS_URCU_DISPOSE_THREAD_H
 #define _CDS_URCU_DISPOSE_THREAD_H
 
+#include <memory>
 #include <cds/details/std/thread.h>
 #include <cds/details/std/mutex.h>
 #include <cds/details/std/condition_variable.h>
-#include <cds/details/std/memory.h>     // unique_ptr
 #include <cds/details/aligned_type.h>
 
 namespace cds { namespace urcu {

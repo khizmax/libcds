@@ -3,10 +3,10 @@
 #ifndef __CDS_CONTAINER_TSIGAS_CYCLE_QUEUE_H
 #define __CDS_CONTAINER_TSIGAS_CYCLE_QUEUE_H
 
+#include <memory>
 #include <cds/intrusive/tsigas_cycle_queue.h>
 #include <cds/container/base.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/details/std/memory.h>
 
 namespace cds { namespace container {
 
