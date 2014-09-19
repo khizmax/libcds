@@ -10,10 +10,10 @@
         2008.03.08    Maxim.Khiszinsky    Created
 */
 
+#include <type_traits>
+#include <memory>
 #include <cds/details/defs.h>
 #include <cds/user_setup/allocator.h>
-#include <cds/details/std/type_traits.h>
-#include <memory>
 #include <boost/type_traits/has_trivial_destructor.hpp>
 
 namespace cds {

@@ -3,9 +3,9 @@
 #ifndef __CDS_CONTAINER_STRIPED_MAP_H
 #define __CDS_CONTAINER_STRIPED_MAP_H
 
+#include <type_traits>
 #include <cds/container/striped_set.h>
 #include <cds/container/striped_set/adapter.h>
-#include <cds/details/std/type_traits.h>
 #include <cds/details/binary_functor_wrapper.h>
 
 #ifndef CDS_CXX11_LAMBDA_SUPPORT

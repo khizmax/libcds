@@ -3,9 +3,9 @@
 #ifndef __CDS_INTRUSIVE_SKIP_LIST_NOGC_H
 #define __CDS_INTRUSIVE_SKIP_LIST_NOGC_H
 
+#include <type_traits>
 #include <cds/gc/nogc.h>
 #include <cds/intrusive/skip_list_base.h>
-#include <cds/details/std/type_traits.h>
 #include <cds/details/std/memory.h>
 #include <cds/opt/compare.h>
 #include <cds/ref.h>

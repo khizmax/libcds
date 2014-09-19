@@ -3,14 +3,13 @@
 #ifndef __CDS_INTRUSIVE_MICHAEL_DEQUE_H
 #define __CDS_INTRUSIVE_MICHAEL_DEQUE_H
 
+#include <type_traits>
 #include <cds/intrusive/michael_list_impl.h>
 #include <cds/intrusive/michael_set.h>
 #include <cds/intrusive/deque_stat.h>
 #include <cds/ref.h>
 #include <cds/details/aligned_type.h>
 #include <cds/gc/default_gc.h>
-
-#include <cds/details/std/type_traits.h>
 
 namespace cds { namespace intrusive {
 

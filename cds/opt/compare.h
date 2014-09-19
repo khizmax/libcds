@@ -8,11 +8,10 @@
         2011.05.05 khizmax  Created
 */
 
-#include <cds/opt/options.h>
-
+#include <type_traits>
 #include <functional>
 #include <string>
-#include <cds/details/std/type_traits.h>
+#include <cds/opt/options.h>
 
 namespace cds { namespace opt {
 

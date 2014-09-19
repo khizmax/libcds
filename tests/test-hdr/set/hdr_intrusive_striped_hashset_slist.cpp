@@ -4,7 +4,7 @@
 #include <cds/intrusive/striped_set/boost_slist.h>
 #include <cds/intrusive/striped_set.h>
 
-#include <cds/details/std/type_traits.h>    // std::is_same
+#include <type_traits> // std::is_same
 
 namespace set {
     namespace bi = boost::intrusive;

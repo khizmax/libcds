@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
+#include <type_traits>
 #include <cds/opt/options.h>
-#include <cds/details/std/type_traits.h>
 
 // Value options
 namespace {

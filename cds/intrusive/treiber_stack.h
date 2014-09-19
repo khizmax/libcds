@@ -3,13 +3,13 @@
 #ifndef __CDS_INTRUSIVE_TREIBER_STACK_H
 #define __CDS_INTRUSIVE_TREIBER_STACK_H
 
+#include <type_traits>
 #include <cds/intrusive/single_link_struct.h>
 #include <cds/ref.h>
 #include <cds/algo/elimination.h>
 #include <cds/opt/buffer.h>
 #include <cds/lock/spinlock.h>
 #include <cds/lock/scoped_lock.h>
-#include <cds/details/std/type_traits.h>
 #include <cds/details/type_padding.h>
 
 namespace cds { namespace intrusive {

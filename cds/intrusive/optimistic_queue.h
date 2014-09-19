@@ -3,14 +3,13 @@
 #ifndef __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
 #define __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
 
+#include <type_traits>
 #include <cds/intrusive/base.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/gc/default_gc.h>
 #include <cds/gc/hrc/gc_fwd.h>
 #include <cds/intrusive/queue_stat.h>
 #include <cds/ref.h>
-
-#include <cds/details/std/type_traits.h>
 
 namespace cds { namespace intrusive {
 

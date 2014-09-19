@@ -3,10 +3,10 @@
 #ifndef __CDS_INTRUSIVE_DETAILS_ELLEN_BINTREE_BASE_H
 #define __CDS_INTRUSIVE_DETAILS_ELLEN_BINTREE_BASE_H
 
+#include <type_traits>
 #include <cds/intrusive/base.h>
 #include <cds/opt/options.h>
 #include <cds/urcu/options.h>
-#include <cds/details/std/type_traits.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/details/allocator.h>
 

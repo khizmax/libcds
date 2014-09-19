@@ -3,7 +3,7 @@
 #ifndef __CDS_DETAILS_VOID_SELECTOR_H
 #define __CDS_DETAILS_VOID_SELECTOR_H
 
-#include <cds/details/std/type_traits.h>
+#include <type_traits>
 
 namespace cds {
     namespace details {

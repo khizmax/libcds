@@ -3,10 +3,10 @@
 #ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_IMPL_H
 #define __CDS_CONTAINER_ELLEN_BINTREE_MAP_IMPL_H
 
+#include <type_traits>
 #include <cds/container/ellen_bintree_base.h>
 #include <cds/intrusive/ellen_bintree_impl.h>
 #include <cds/details/functor_wrapper.h>
-#include <cds/details/std/type_traits.h>
 #include <cds/container/details/guarded_ptr_cast.h>
 
 namespace cds { namespace container {

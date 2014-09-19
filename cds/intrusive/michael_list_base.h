@@ -3,13 +3,13 @@
 #ifndef __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
 #define __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
 
+#include <type_traits>
 #include <cds/intrusive/base.h>
 #include <cds/opt/compare.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/ref.h>
 #include <cds/details/make_const_type.h>
-#include <cds/details/std/type_traits.h>
 #include <cds/urcu/options.h>
 
 namespace cds { namespace intrusive {
