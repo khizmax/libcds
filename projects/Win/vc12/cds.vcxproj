@@ -734,7 +734,6 @@
     <ClInclude Include="..\..\..\cds\details\std\mutex.h" />
     <ClInclude Include="..\..\..\cds\details\std\thread.h" />
     <ClInclude Include="..\..\..\cds\details\std\chrono.h" />
-    <ClInclude Include="..\..\..\cds\details\std\tuple.h" />
     <ClInclude Include="..\..\..\cds\gc\all.h" />
     <ClInclude Include="..\..\..\cds\gc\exception.h" />
     <ClInclude Include="..\..\..\cds\gc\gc_fwd.h" />

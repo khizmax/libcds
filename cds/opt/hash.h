@@ -3,9 +3,9 @@
 #ifndef __CDS_OPT_HASH_H
 #define __CDS_OPT_HASH_H
 
+#include <tuple>
 #include <cds/opt/options.h>
 #include <cds/details/hash_functor_selector.h>
-#include <cds/details/std/tuple.h>
 
 namespace cds { namespace opt {
 

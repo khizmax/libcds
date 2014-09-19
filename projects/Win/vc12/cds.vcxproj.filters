@@ -881,9 +881,6 @@
     <ClInclude Include="..\..\..\cds\details\std\memory.h">
       <Filter>Header Files\cds\details\std</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\std\tuple.h">
-      <Filter>Header Files\cds\details\std</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
