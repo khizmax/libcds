@@ -27,7 +27,7 @@ namespace queue {
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::deque<int> >,
             cds::container::fcqueue::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         > queue_type;
         testFCQueue<queue_type>();
@@ -64,7 +64,7 @@ namespace queue {
     {
         typedef cds::container::FCQueue<int, std::queue<int, std::list<int> >,
             cds::container::fcqueue::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         > queue_type;
         testFCQueue<queue_type>();

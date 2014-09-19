@@ -14,7 +14,7 @@
 #include <deque>
 #include <boost/container/stable_vector.hpp>
 #include <boost/container/deque.hpp>
-#include <cds/details/std/mutex.h>
+#include <mutex>
 #include <cds/lock/spinlock.h>
 
 #include "print_ellenbintree_stat.h"
@@ -65,7 +65,7 @@ namespace pqueue {
         typedef cc::MSPriorityQueue< Value,
             typename cc::mspriority_queue::make_traits<
                 co::buffer< co::v::static_buffer< char, c_nBoundedCapacity > >
-                ,co::lock_type<cds_std::mutex>
+                ,co::lock_type<std::mutex>
             >::type
         > MSPriorityQueue_static_mutex;
 
@@ -92,7 +92,7 @@ namespace pqueue {
         typedef cc::MSPriorityQueue< Value,
             typename cc::mspriority_queue::make_traits<
                 co::buffer< co::v::dynamic_buffer< char > >
-                ,co::lock_type<cds_std::mutex>
+                ,co::lock_type<std::mutex>
             >::type
         > MSPriorityQueue_dyn_mutex;
 
@@ -444,9 +444,9 @@ namespace pqueue {
 
         /// Standard priority_queue
         typedef StdPQueue< Value, std::vector<Value>, cds::lock::Spin > StdPQueue_vector_spin;
-        typedef StdPQueue< Value, std::vector<Value>, cds_std::mutex >  StdPQueue_vector_mutex;
+        typedef StdPQueue< Value, std::vector<Value>, std::mutex >  StdPQueue_vector_mutex;
         typedef StdPQueue< Value, std::deque<Value>,  cds::lock::Spin > StdPQueue_deque_spin;
-        typedef StdPQueue< Value, std::deque<Value>,  cds_std::mutex >  StdPQueue_deque_mutex;
+        typedef StdPQueue< Value, std::deque<Value>,  std::mutex >  StdPQueue_deque_mutex;
     };
 
 

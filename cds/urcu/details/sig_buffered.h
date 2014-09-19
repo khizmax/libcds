@@ -6,10 +6,9 @@
 #include <cds/urcu/details/sh.h>
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 
+#include <mutex>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
-
-#include <cds/details/std/mutex.h>
 
 namespace cds { namespace urcu {
 
@@ -46,7 +45,7 @@ namespace cds { namespace urcu {
             epoch_retired_ptr
             ,cds::opt::buffer< cds::opt::v::dynamic_buffer< epoch_retired_ptr > >
         >
-        ,class Lock = cds_std::mutex
+        ,class Lock = std::mutex
         ,class Backoff = cds::backoff::Default
     >
     class signal_buffered: public details::sh_singleton< signal_buffered_tag >

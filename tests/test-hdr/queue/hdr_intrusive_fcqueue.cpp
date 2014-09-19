@@ -198,7 +198,7 @@ namespace queue {
             cds::intrusive::fcqueue::make_traits<
                 cds::intrusive::opt::disposer< disposer >
                 ,cds::opt::enable_elimination< true >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         > queue_type;
 
@@ -271,7 +271,7 @@ namespace queue {
             cds::intrusive::fcqueue::make_traits<
                 cds::intrusive::opt::disposer< disposer >
                 ,cds::opt::enable_elimination< true >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         > queue_type;
 

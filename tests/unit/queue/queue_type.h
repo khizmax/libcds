@@ -703,7 +703,7 @@ namespace queue {
         {};
         struct traits_FCDeque_mutex:
             public cds::container::fcdeque::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         {};
 
@@ -731,8 +731,8 @@ namespace queue {
 
         typedef StdQueue_deque<Value>               StdQueue_deque_Spinlock;
         typedef StdQueue_list<Value>                StdQueue_list_Spinlock;
-        typedef StdQueue_deque<Value, cds_std::mutex> StdQueue_deque_BoostMutex;
-        typedef StdQueue_list<Value, cds_std::mutex>  StdQueue_list_BoostMutex;
+        typedef StdQueue_deque<Value, std::mutex>   StdQueue_deque_BoostMutex;
+        typedef StdQueue_list<Value, std::mutex>    StdQueue_list_BoostMutex;
 #ifdef UNIT_LOCK_WIN_CS
         typedef StdQueue_deque<Value, lock::win::CS>    StdQueue_deque_WinCS;
         typedef StdQueue_list<Value, lock::win::CS>     StdQueue_list_WinCS;
@@ -749,12 +749,12 @@ namespace queue {
         class traits_SegmentedQueue_mutex_stat:
             public cds::container::segmented_queue::make_traits<
                 cds::opt::stat< cds::intrusive::segmented_queue::stat<> >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         {};
         class traits_SegmentedQueue_mutex:
             public cds::container::segmented_queue::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         {};
 

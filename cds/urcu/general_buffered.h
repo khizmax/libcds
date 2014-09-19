@@ -24,7 +24,7 @@ namespace cds { namespace urcu {
             retired_ptr
             ,cds::opt::buffer< cds::opt::v::dynamic_buffer< retired_ptr > >
         >
-        ,class Lock = cds_std::mutex
+        ,class Lock = std::mutex
         ,class Backoff = cds::backoff::Default
 #else
         class Buffer

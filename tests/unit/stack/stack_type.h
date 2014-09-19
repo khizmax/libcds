@@ -12,7 +12,7 @@
 #include <cds/gc/ptb.h>
 #include <cds/gc/hrc.h>
 
-#include <cds/details/std/mutex.h>
+#include <mutex>
 #include <cds/lock/spinlock.h>
 #include <stack>
 #include <list>
@@ -120,7 +120,7 @@ namespace stack {
             mutable Lock    m_Lock;
             cds::container::treiber_stack::empty_stat m_stat;
 
-            typedef cds_std::unique_lock<Lock>  unique_lock;
+            typedef std::unique_lock<Lock>  unique_lock;
 
         public:
             bool push( T const& v )
@@ -448,7 +448,7 @@ namespace stack {
         {};
         struct traits_FCStack_mutex:
             public cds::container::fcstack::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         {};
 
@@ -486,7 +486,7 @@ namespace stack {
         {};
         struct traits_FCDeque_mutex:
             public cds::container::fcdeque::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         {};
 
@@ -613,11 +613,11 @@ namespace stack {
 
 
         // std::stack
-        typedef details::StdStack< T, std::stack< T >, cds_std::mutex >  StdStack_Deque_Mutex;
+        typedef details::StdStack< T, std::stack< T >, std::mutex >  StdStack_Deque_Mutex;
         typedef details::StdStack< T, std::stack< T >, cds::lock::Spin > StdStack_Deque_Spin;
-        typedef details::StdStack< T, std::stack< T, std::vector<T> >, cds_std::mutex >  StdStack_Vector_Mutex;
+        typedef details::StdStack< T, std::stack< T, std::vector<T> >, std::mutex >  StdStack_Vector_Mutex;
         typedef details::StdStack< T, std::stack< T, std::vector<T> >, cds::lock::Spin > StdStack_Vector_Spin;
-        typedef details::StdStack< T, std::stack< T, std::list<T> >, cds_std::mutex >  StdStack_List_Mutex;
+        typedef details::StdStack< T, std::stack< T, std::list<T> >, std::mutex >  StdStack_List_Mutex;
         typedef details::StdStack< T, std::stack< T, std::list<T> >, cds::lock::Spin > StdStack_List_Spin;
 
     };

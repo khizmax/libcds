@@ -3,11 +3,10 @@
 #ifndef _CDS_URCU_DETAILS_GPB_H
 #define _CDS_URCU_DETAILS_GPB_H
 
+#include <mutex>
 #include <cds/urcu/details/gp.h>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
-
-#include <cds/details/std/mutex.h>
 
 namespace cds { namespace urcu {
 
@@ -44,7 +43,7 @@ namespace cds { namespace urcu {
             epoch_retired_ptr
             ,cds::opt::buffer< cds::opt::v::dynamic_buffer< epoch_retired_ptr > >
         >
-        ,class Lock = cds_std::mutex
+        ,class Lock = std::mutex
         ,class Backoff = cds::backoff::Default
     >
     class general_buffered: public details::gp_singleton< general_buffered_tag >

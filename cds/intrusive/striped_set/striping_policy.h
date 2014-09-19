@@ -4,14 +4,10 @@
 #define __CDS_INTRUSIVE_STRIPED_SET_STRIPING_POLICY_H
 
 #include <memory>
+#include <mutex>
 #include <cds/lock/array.h>
 #include <cds/os/thread.h>
 #include <cds/lock/spinlock.h>
-
-#include <cds/details/std/mutex.h>
-//#include <boost/thread/mutex.hpp>
-//#include <boost/thread/recursive_mutex.hpp>
-
 
 namespace cds { namespace intrusive { namespace striped_set {
 
@@ -29,11 +25,11 @@ namespace cds { namespace intrusive { namespace striped_set {
         The policy contains an internal array of \p Lock locks.
 
         Template arguments:
-        - \p Lock - the type of mutex. The default is \p cds_std::mutex. The mutex type should be default-constructible.
+        - \p Lock - the type of mutex. The default is \p std::mutex. The mutex type should be default-constructible.
             Note that a spin-lock is not so good suitable for lock striping for performance reason.
         - \p Alloc - allocator type used for lock array memory allocation. Default is \p CDS_DEFAULT_ALLOCATOR.
     */
-    template <class Lock = cds_std::mutex, class Alloc = CDS_DEFAULT_ALLOCATOR >
+    template <class Lock = std::mutex, class Alloc = CDS_DEFAULT_ALLOCATOR >
     class striping
     {
     public:
@@ -113,12 +109,12 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         Template arguments:
         - \p RecursiveLock - the type of mutex. Reentrant (recursive) mutex is required.
-            The default is \p cds_std::recursive_mutex. The mutex type should be default-constructible.
+            The default is \p std::recursive_mutex. The mutex type should be default-constructible.
         - \p BackOff - back-off strategy. Default is cds::backoff::yield
         - \p Alloc - allocator type used for lock array memory allocation. Default is \p CDS_DEFAULT_ALLOCATOR.
     */
     template <
-        class RecursiveLock = cds_std::recursive_mutex,
+        class RecursiveLock = std::recursive_mutex,
         typename BackOff = cds::backoff::yield,
         class Alloc = CDS_DEFAULT_ALLOCATOR>
     class refinable

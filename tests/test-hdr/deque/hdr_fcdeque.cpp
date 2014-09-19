@@ -115,7 +115,7 @@ namespace deque {
             typedef cds::container::FCDeque<int, std::deque<int>,
                 cds::container::fcdeque::make_traits<
                     cds::opt::enable_elimination< true >
-                    ,cds::opt::lock_type< cds_std::mutex >
+                    ,cds::opt::lock_type< std::mutex >
                 >::type
             > deque_type;
             test<deque_type>();
@@ -152,7 +152,7 @@ namespace deque {
             typedef cds::container::FCDeque<int, boost::container::deque<int>,
                 cds::container::fcdeque::make_traits<
                     cds::opt::enable_elimination< true >
-                    ,cds::opt::lock_type< cds_std::mutex >
+                    ,cds::opt::lock_type< std::mutex >
                 >::type
             > deque_type;
             test<deque_type>();

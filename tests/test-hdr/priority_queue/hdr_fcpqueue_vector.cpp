@@ -33,7 +33,7 @@ namespace priority_queue {
             PQueueHdrTest::value_type
             ,std::priority_queue< PQueueHdrTest::value_type >
             ,cds::container::fcpqueue::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         > pqueue_type;
         test_fcpqueue<pqueue_type>();

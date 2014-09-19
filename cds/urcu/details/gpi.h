@@ -3,11 +3,10 @@
 #ifndef _CDS_URCU_DETAILS_GPI_H
 #define _CDS_URCU_DETAILS_GPI_H
 
+#include <mutex>
 #include <cds/urcu/details/gp.h>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/lock/scoped_lock.h>
-
-#include <cds/details/std/mutex.h>
 
 namespace cds { namespace urcu {
 
@@ -29,7 +28,7 @@ namespace cds { namespace urcu {
         - \p Backoff - back-off schema, default is cds::backoff::Default
     */
     template <
-        class Lock = cds_std::mutex
+        class Lock = std::mutex
        ,class Backoff = cds::backoff::Default
     >
     class general_instant: public details::gp_singleton< general_instant_tag >

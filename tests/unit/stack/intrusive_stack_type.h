@@ -11,7 +11,7 @@
 #include <cds/gc/ptb.h>
 #include <cds/gc/hrc.h>
 
-#include <cds/details/std/mutex.h>
+#include <mutex>
 #include <cds/lock/spinlock.h>
 #include <stack>
 #include <list>
@@ -68,7 +68,7 @@ namespace istack {
             mutable Lock    m_Lock;
             cds::intrusive::treiber_stack::empty_stat m_stat;
 
-            typedef cds_std::unique_lock<Lock>  unique_lock;
+            typedef std::unique_lock<Lock>  unique_lock;
 
         public:
             typedef T value_type;
@@ -455,20 +455,20 @@ namespace istack {
         struct traits_FCStack_mutex_stat:
             public cds::intrusive::fcstack::make_traits<
                 cds::opt::stat< cds::intrusive::fcstack::stat<> >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         {};
         struct traits_FCStack_mutex_elimination:
             public cds::intrusive::fcstack::make_traits<
                 cds::opt::enable_elimination< true >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         {};
         struct traits_FCStack_mutex_elimination_stat:
             public cds::intrusive::fcstack::make_traits<
                 cds::opt::stat< cds::intrusive::fcstack::stat<> >
                 ,cds::opt::enable_elimination< true >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         {};
 
@@ -624,11 +624,11 @@ namespace istack {
 
 
         // std::stack
-        typedef details::StdStack< T, std::stack< T* >, cds_std::mutex >  StdStack_Deque_Mutex;
+        typedef details::StdStack< T, std::stack< T* >, std::mutex >  StdStack_Deque_Mutex;
         typedef details::StdStack< T, std::stack< T* >, cds::lock::Spin > StdStack_Deque_Spin;
-        typedef details::StdStack< T, std::stack< T*, std::vector<T*> >, cds_std::mutex >  StdStack_Vector_Mutex;
+        typedef details::StdStack< T, std::stack< T*, std::vector<T*> >, std::mutex >  StdStack_Vector_Mutex;
         typedef details::StdStack< T, std::stack< T*, std::vector<T*> >, cds::lock::Spin > StdStack_Vector_Spin;
-        typedef details::StdStack< T, std::stack< T*, std::list<T*> >, cds_std::mutex >  StdStack_List_Mutex;
+        typedef details::StdStack< T, std::stack< T*, std::list<T*> >, std::mutex >  StdStack_List_Mutex;
         typedef details::StdStack< T, std::stack< T*, std::list<T*> >, cds::lock::Spin > StdStack_List_Spin;
 
     };

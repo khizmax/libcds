@@ -27,7 +27,7 @@ namespace cds { namespace urcu {
             epoch_retired_ptr
             ,cds::opt::buffer< cds::opt::v::dynamic_buffer< epoch_retired_ptr > >
         >
-        ,class Lock = cds_std::mutex
+        ,class Lock = std::mutex
         ,class DisposerThread = dispose_thread<Buffer>
         ,class Backoff = cds::backoff::Default
 #else

@@ -17,7 +17,7 @@ namespace queue {
     {
         typedef cds::container::SegmentedQueue< cds::gc::HP, item,
             cds::container::segmented_queue::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         > queue_type;
 

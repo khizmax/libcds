@@ -3,10 +3,10 @@
 #ifndef __CDS_INTRUSIVE_SEGMENTED_QUEUE_H
 #define __CDS_INTRUSIVE_SEGMENTED_QUEUE_H
 
+#include <mutex>
 #include <cds/intrusive/base.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/algo/int_algo.h>
-#include <cds/details/std/mutex.h>
 #include <cds/lock/spinlock.h>
 #include <cds/opt/permutation.h>
 
@@ -242,7 +242,7 @@ namespace cds { namespace intrusive {
         class segment_list
         {
             typedef boost::intrusive::slist< segment, boost::intrusive::cache_last< true > > list_impl;
-            typedef cds_std::unique_lock< lock_type > scoped_lock;
+            typedef std::unique_lock< lock_type > scoped_lock;
 
             aligned_segment_ptr m_pHead;
             aligned_segment_ptr m_pTail;

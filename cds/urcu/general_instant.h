@@ -18,7 +18,7 @@ namespace cds { namespace urcu {
     */
     template <
 #ifdef CDS_DOXGEN_INVOKED
-        class Lock = cds_std::mutex
+        class Lock = std::mutex
        ,class Backoff = cds::backoff::Default
 #else
         class Lock

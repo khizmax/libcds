@@ -3,11 +3,11 @@
 #ifndef __CDS_ALGO_FLAT_COMBINING_H
 #define __CDS_ALGO_FLAT_COMBINING_H
 
+#include <mutex>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/lock/spinlock.h>
-#include <cds/details/std/mutex.h>  // lock_guard
 #include <cds/opt/options.h>
 #include <cds/algo/int_algo.h>
 #include <boost/thread/tss.hpp>     // thread_specific_ptr
@@ -259,7 +259,7 @@ namespace cds { namespace algo {
         protected:
             //@cond
             typedef cds::details::Allocator< publication_record_type, allocator >   cxx11_allocator; ///< internal helper cds::details::Allocator
-            typedef cds_std::lock_guard<global_lock_type> lock_guard;
+            typedef std::lock_guard<global_lock_type> lock_guard;
             //@endcond
 
         protected:
@@ -596,7 +596,7 @@ namespace cds { namespace algo {
             {
                 if ( m_Mutex.try_lock() ) {
                     // The thread becomes a combiner
-                    lock_guard l( m_Mutex, cds_std::adopt_lock_t() );
+                    lock_guard l( m_Mutex, std::adopt_lock_t() );
 
                     // The record pRec can be excluded from publication list. Re-publish it
                     republish( pRec );
@@ -608,7 +608,7 @@ namespace cds { namespace algo {
                     // There is another combiner, wait while it executes our request
                     if ( !wait_for_combining( pRec ) ) {
                         // The thread becomes a combiner
-                        lock_guard l( m_Mutex, cds_std::adopt_lock_t() );
+                        lock_guard l( m_Mutex, std::adopt_lock_t() );
 
                         // The record pRec can be excluded from publication list. Re-publish it
                         republish( pRec );
@@ -624,7 +624,7 @@ namespace cds { namespace algo {
             {
                 if ( m_Mutex.try_lock() ) {
                     // The thread becomes a combiner
-                    lock_guard l( m_Mutex, cds_std::adopt_lock_t() );
+                    lock_guard l( m_Mutex, std::adopt_lock_t() );
 
                     // The record pRec can be excluded from publication list. Re-publish it
                     republish( pRec );
@@ -636,7 +636,7 @@ namespace cds { namespace algo {
                     // There is another combiner, wait while it executes our request
                     if ( !wait_for_combining( pRec ) ) {
                         // The thread becomes a combiner
-                        lock_guard l( m_Mutex, cds_std::adopt_lock_t() );
+                        lock_guard l( m_Mutex, std::adopt_lock_t() );
 
                         // The record pRec can be excluded from publication list. Re-publish it
                         republish( pRec );

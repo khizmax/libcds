@@ -464,39 +464,6 @@ namespace cds {
 } // namespace cds
 
 
-/// @defgroup cds_cxx11_stdlib_wrapper New C++11 standard library support
-
-/// C++11 standard library wrapper namespace
-/** @ingroup cds_cxx11_stdlib_wrapper
-    libcds needs support from new features defined in C++11 standard library.
-    In case when an old compiler and corresponding \p std library has no required feature
-    the \p boost library is used if possible. The \p %cds_std namespace is a wrapper for new C++11 stdlib classes:
-    - if the compiler supports new feature, this feature places (with \p using directive) into \p %cds_std namespace "as is"
-    - otherwise the \p boost analog is used and it places into \p %cds_std namespace too
-
-    For example, for class \p std::mutex the \p libcds does the following:
-    - for old compiler: \code
-        #include <boost/thread/mutex.hpp>
-        namespace cds_std {
-            using boost::mutex;
-        }
-        \endcode
-    - for C++11-ready compiler: \code
-        #include <mutex>
-        namespace cds_std {
-            using std::mutex;
-        }
-        \endcode
-
-        Everywhere in \p libcds the class \p %cds_std::mutex is used instead of \p std::mutex.
-
-        Note, not all C++11 features are contained in \p %cds_std but only required by \p libcds.
-
-        In future when all compilers will be C++11-ready we can transform the \p libcds
-        to new C++11 standard library changing \p %cds_std namespace to native \p std.
-*/
-namespace cds_std {}
-
 //@cond
 #ifdef _DEBUG
 #   define cds_assert(X)    assert(X)

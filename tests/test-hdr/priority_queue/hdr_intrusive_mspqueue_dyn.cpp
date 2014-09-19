@@ -2,7 +2,7 @@
 
 #include "priority_queue/hdr_intrusive_pqueue.h"
 #include <cds/intrusive/mspriority_queue.h>
-#include <cds/details/std/mutex.h>
+#include <mutex>
 
 namespace priority_queue {
     namespace intrusive_pqueue {
@@ -70,7 +70,7 @@ namespace priority_queue {
             cds::intrusive::mspriority_queue::make_traits<
                 cds::opt::buffer< buffer_type >
                 ,cds::opt::compare< IntrusivePQueueHdrTest::compare >
-                ,cds::opt::lock_type<cds_std::mutex>
+                ,cds::opt::lock_type<std::mutex>
             >::type
         > pqueue;
 

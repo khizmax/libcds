@@ -5,8 +5,8 @@
 
 #include <memory>
 #include <thread>
-#include <cds/details/std/mutex.h>
-#include <cds/details/std/condition_variable.h>
+#include <mutex>
+#include <condition_variable>
 #include <cds/details/aligned_type.h>
 
 namespace cds { namespace urcu {
@@ -27,9 +27,9 @@ namespace cds { namespace urcu {
     private:
         //@cond
         typedef std::thread                 thread_type;
-        typedef cds_std::mutex              mutex_type;
-        typedef cds_std::condition_variable condvar_type;
-        typedef cds_std::unique_lock< mutex_type >  unique_lock;
+        typedef std::mutex              mutex_type;
+        typedef std::condition_variable condvar_type;
+        typedef std::unique_lock< mutex_type >  unique_lock;
 
         class dispose_thread_starter: public thread_type
         {

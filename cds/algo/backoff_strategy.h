@@ -17,8 +17,9 @@
 */
 
 #include <thread>
+#include <chrono>
+#include <cds/details/defs.h>
 #include <cds/compiler/backoff.h>
-#include <cds/details/std/chrono.h>
 
 namespace cds {
     /// Different backoff schemes
@@ -341,7 +342,7 @@ namespace cds {
             \endcode
 
         */
-        template <class Duration = cds_std::chrono::milliseconds, typename Tag=void >
+        template <class Duration = cds::chrono::milliseconds, typename Tag=void >
         class delay
         {
         public:
@@ -399,7 +400,7 @@ namespace cds {
             The declaration <tt>cds::backoff::delay_of< 5 > bkoff</tt> is equal for
             <tt>cds::backoff::delay<> bkoff(5)</tt>.
         */
-        template <unsigned int Timeout, class Duration = cds_std::chrono::milliseconds >
+        template <unsigned int Timeout, class Duration = cds::chrono::milliseconds >
         class delay_of: public delay<Duration>
         {
         //@cond

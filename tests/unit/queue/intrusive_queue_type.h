@@ -91,12 +91,12 @@ namespace queue {
             }
         };
 
-        template <typename T, typename Lock=cds_std::mutex>
+        template <typename T, typename Lock=std::mutex>
         class BoostSList
         {
             typedef boost::intrusive::slist< T, boost::intrusive::cache_last<true> >    slist_type;
             typedef Lock lock_type;
-            typedef cds_std::lock_guard<lock_type> lock_guard;
+            typedef std::lock_guard<lock_type> lock_guard;
 
             slist_type  m_List;
             mutable lock_type m_Lock;
@@ -569,12 +569,12 @@ namespace queue {
         class traits_SegmentedQueue_mutex_stat:
             public cds::intrusive::segmented_queue::make_traits<
                 cds::opt::stat< cds::intrusive::segmented_queue::stat<> >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         {};
         class traits_SegmentedQueue_mutex:
             public cds::intrusive::segmented_queue::make_traits<
-                cds::opt::lock_type< cds_std::mutex >
+                cds::opt::lock_type< std::mutex >
             >::type
         {};
 
@@ -589,7 +589,7 @@ namespace queue {
         typedef cds::intrusive::SegmentedQueue< cds::gc::PTB, T, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_PTB_mutex_stat;
 
         // Boost SList
-        typedef details::BoostSList< T, cds_std::mutex >    BoostSList_mutex;
+        typedef details::BoostSList< T, std::mutex >    BoostSList_mutex;
         typedef details::BoostSList< T, cds::lock::Spin >   BoostSList_spin;
     };
 }

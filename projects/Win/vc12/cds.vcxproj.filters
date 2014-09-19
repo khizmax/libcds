@@ -124,9 +124,6 @@
     <Filter Include="Header Files\cds\compiler\clang">
       <UniqueIdentifier>{ae97048d-bd62-4ff2-be28-3c84338e7186}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\details\std">
-      <UniqueIdentifier>{e6c65d81-ad06-40f3-be4e-ddaab3295bf3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\cds\intrusive\striped_set">
       <UniqueIdentifier>{560b4d4c-71e1-443c-942e-dcc5a275c7c2}</UniqueIdentifier>
     </Filter>
@@ -1054,15 +1051,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h">
       <Filter>Header Files\cds\container\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\std\condition_variable.h">
-      <Filter>Header Files\cds\details\std</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\std\mutex.h">
-      <Filter>Header Files\cds\details\std</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\std\chrono.h">
-      <Filter>Header Files\cds\details\std</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\static_functor.h">
       <Filter>Header Files\cds\details</Filter>

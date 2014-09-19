@@ -22,7 +22,7 @@ namespace queue {
         typedef cds::intrusive::SegmentedQueue< cds::gc::PTB, item,
             cds::intrusive::segmented_queue::make_traits<
                 cds::intrusive::opt::disposer< Disposer >
-                ,cds::opt::lock_type< cds_std::mutex >
+                ,cds::opt::lock_type< std::mutex >
             >::type
         > queue_type;
 

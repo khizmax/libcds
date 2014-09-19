@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <type_traits>
+#include <mutex>
 #include <cds/intrusive/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
@@ -14,8 +15,6 @@
 #include <cds/details/functor_wrapper.h>
 #include <cds/lock/spinlock.h>
 
-#include <cds/details/std/mutex.h>
-//#include <boost/thread/recursive_mutex.hpp>
 
 namespace cds { namespace intrusive {
 
@@ -347,7 +346,7 @@ namespace cds { namespace intrusive {
             The policy contains an internal array of \p RecursiveLock locks.
 
             Template arguments:
-            - \p RecursiveLock - the type of recursive mutex. The default is \p cds_std::recursive_mutex. The mutex type should be default-constructible.
+            - \p RecursiveLock - the type of recursive mutex. The default is \p std::recursive_mutex. The mutex type should be default-constructible.
                 Note that a recursive spin-lock is not suitable for lock striping for performance reason.
             - \p Arity - unsigned int constant that specifies an arity. The arity is the count of hash functors, i.e., the
                 count of lock arrays. Default value is 2.
@@ -356,7 +355,7 @@ namespace cds { namespace intrusive {
                 class according to its \p opt::stat option.
         */
         template <
-            class RecursiveLock = cds_std::recursive_mutex,
+            class RecursiveLock = std::recursive_mutex,
             unsigned int Arity = 2,
             class Alloc = CDS_DEFAULT_ALLOCATOR,
             class Stat = empty_striping_stat
@@ -597,7 +596,7 @@ namespace cds { namespace intrusive {
 
             Template arguments:
             - \p RecursiveLock - the type of mutex. Reentrant (recursive) mutex is required.
-                The default is \p cds_std::recursive_mutex. The mutex type should be default-constructible.
+                The default is \p std::recursive_mutex. The mutex type should be default-constructible.
             - \p Arity - unsigned int constant that specifies an arity. The arity is the count of hash functors, i.e., the
                 count of lock arrays. Default value is 2.
             - \p BackOff - back-off strategy. Default is cds::backoff::yield
@@ -606,7 +605,7 @@ namespace cds { namespace intrusive {
                 class according to its \p opt::stat option.
         */
         template <
-            class RecursiveLock = cds_std::recursive_mutex,
+            class RecursiveLock = std::recursive_mutex,
             unsigned int Arity = 2,
             typename BackOff = cds::backoff::yield,
             class Alloc = CDS_DEFAULT_ALLOCATOR,
