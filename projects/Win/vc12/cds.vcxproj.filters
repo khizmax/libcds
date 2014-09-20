@@ -830,9 +830,6 @@
     <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h">
       <Filter>Header Files\cds\compiler\gcc\ia64</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\compiler\gcc\cxx11_atomic_patches.h">
-      <Filter>Header Files\cds\compiler\gcc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\details\bounded_container.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
