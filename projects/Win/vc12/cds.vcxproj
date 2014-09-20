@@ -644,6 +644,7 @@
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\amd64\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\compiler_macro.h" />
+    <ClInclude Include="..\..\..\cds\compiler\gcc\cxx11_atomic_patches.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\sparc\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\x86\cxx11_atomic.h" />

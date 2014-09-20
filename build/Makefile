@@ -30,7 +30,7 @@ endif
 endif
 
 COMP_OPT = -c $(CFLAGS) $(BASE_OPT)
-CPP_COMP_OPT = -std=c++0x -c $(CXXFLAGS) $(BASE_OPT)
+CPP_COMP_OPT = -std=c++11 -c $(CXXFLAGS) $(BASE_OPT)
 
 COMPILER_ROOT = $(shell dirname `dirname \`which 	$(CXX)\``)
 

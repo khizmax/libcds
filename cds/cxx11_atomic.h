@@ -96,6 +96,8 @@ namespace cxx11_atomics {
 #   if BOOST_VERSION >= 105400
 #       include <boost/atomic.hpp>
 #       define CDS_ATOMIC boost
+#       define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace boost {
+#       define CDS_CXX11_ATOMIC_END_NAMESPACE }
 #   else
 #       error "Boost version 1.54 or above is needed for boost.atomic"
 #   endif
@@ -103,10 +105,14 @@ namespace cxx11_atomics {
     // libcds atomic
 #   include <cds/compiler/cxx11_atomic.h>
 #   define CDS_ATOMIC cds::cxx11_atomics
+#   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace cds { namespace cxx11_atomics {
+#   define CDS_CXX11_ATOMIC_END_NAMESPACE }}
 #else
     // Compiler provided C++11 atomic
 #   include <atomic>
 #   define CDS_ATOMIC std
+#   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace std {
+#   define CDS_CXX11_ATOMIC_END_NAMESPACE }
 #endif
 //@endcond
 
