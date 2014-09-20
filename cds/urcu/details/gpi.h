@@ -134,13 +134,13 @@ namespace cds { namespace urcu {
         /// Waits to finish a grace period
         void synchronize()
         {
-            CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_acquire );
+            atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
                 cds::lock::scoped_lock<lock_type> sl( m_Lock );
                 flip_and_wait();
                 flip_and_wait();
             }
-            CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_release );
+            atomics::atomic_thread_fence( atomics::memory_order_release );
         }
 
         //@cond

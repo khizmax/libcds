@@ -36,9 +36,9 @@ namespace cds { namespace gc {
 
         GarbageCollector::~GarbageCollector()
         {
-            thread_list_node * pNode = m_pListHead.load( CDS_ATOMIC::memory_order_relaxed );
+            thread_list_node * pNode = m_pListHead.load( atomics::memory_order_relaxed );
             while ( pNode ) {
-                assert( pNode->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == cds::OS::c_NullThreadId );
+                assert( pNode->m_idOwner.load( atomics::memory_order_relaxed ) == cds::OS::c_NullThreadId );
                 clearHRCThreadDesc( pNode );
                 thread_list_node * pNext = pNode->m_pNext;
                 deleteHRCThreadDesc( pNode );
@@ -103,10 +103,10 @@ namespace cds { namespace gc {
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
             ContainerNode * pItem;
             for ( size_t n = 0; n < pNode->m_arrRetired.capacity(); ++n ) {
-                if ( (pItem = pNode->m_arrRetired[n].m_pNode.load( CDS_ATOMIC::memory_order_relaxed )) != nullptr ) {
+                if ( (pItem = pNode->m_arrRetired[n].m_pNode.load( atomics::memory_order_relaxed )) != nullptr ) {
                     pNode->m_arrRetired[n].m_funcFree( pItem );
                     //pItem->destroy();
-                    pNode->m_arrRetired[n].m_pNode.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
+                    pNode->m_arrRetired[n].m_pNode.store( nullptr, atomics::memory_order_relaxed );
                 }
             }
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
@@ -117,8 +117,8 @@ namespace cds { namespace gc {
             thread_list_node * hprec;
             const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
 
-            for ( hprec = m_pListHead.load( CDS_ATOMIC::memory_order_acquire ); hprec; hprec = hprec->m_pNext ) {
-                if ( hprec->m_idOwner.load( CDS_ATOMIC::memory_order_acquire ) == curThreadId ) {
+            for ( hprec = m_pListHead.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNext ) {
+                if ( hprec->m_idOwner.load( atomics::memory_order_acquire ) == curThreadId ) {
                     assert( !hprec->m_bFree );
                     return hprec;
                 }
@@ -135,9 +135,9 @@ namespace cds { namespace gc {
             const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
 
             // First try to reuse a retired (non-active) HP record
-            for ( hprec = m_pListHead.load( CDS_ATOMIC::memory_order_acquire ); hprec; hprec = hprec->m_pNext ) {
+            for ( hprec = m_pListHead.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNext ) {
                 cds::OS::ThreadId expectedThreadId = nullThreadId;
-                if ( !hprec->m_idOwner.compare_exchange_strong( expectedThreadId, curThreadId, CDS_ATOMIC::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed ) )
+                if ( !hprec->m_idOwner.compare_exchange_strong( expectedThreadId, curThreadId, atomics::memory_order_acq_rel, atomics::memory_order_relaxed ) )
                     continue;
                 hprec->m_pOwner = pThreadGC;
                 hprec->m_bFree = false;
@@ -149,15 +149,15 @@ namespace cds { namespace gc {
             // Allocate and push a new HP record
             hprec = newHRCThreadDesc();
             assert( hprec->m_hzp.size() == hprec->m_hzp.capacity() );
-            hprec->m_idOwner.store( curThreadId, CDS_ATOMIC::memory_order_relaxed );
+            hprec->m_idOwner.store( curThreadId, atomics::memory_order_relaxed );
             hprec->m_pOwner = pThreadGC;
             hprec->m_bFree = false;
             thread_list_node * pOldHead;
 
-            pOldHead = m_pListHead.load( CDS_ATOMIC::memory_order_relaxed );
+            pOldHead = m_pListHead.load( atomics::memory_order_relaxed );
             do {
                 hprec->m_pNext = pOldHead;
-            } while ( !m_pListHead.compare_exchange_weak( pOldHead, hprec, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ));
+            } while ( !m_pListHead.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
             assert( hprec->m_hzp.size() == hprec->m_hzp.capacity() );
             return hprec;
@@ -176,9 +176,9 @@ namespace cds { namespace gc {
                 if the destruction of thread object is called by the destructor
                 after thread termination
             */
-            assert( pNode->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) != cds::OS::c_NullThreadId );
+            assert( pNode->m_idOwner.load( atomics::memory_order_relaxed ) != cds::OS::c_NullThreadId );
             pNode->m_pOwner = nullptr;
-            pNode->m_idOwner.store( cds::OS::c_NullThreadId, CDS_ATOMIC::memory_order_release );
+            pNode->m_idOwner.store( cds::OS::c_NullThreadId, atomics::memory_order_release );
             assert( pNode->m_hzp.size() == pNode->m_hzp.capacity() );
         }
 
@@ -189,19 +189,19 @@ namespace cds { namespace gc {
             typedef std::vector< ContainerNode * > hazard_ptr_list;
 
             details::thread_descriptor * pRec = pThreadGC->m_pDesc;
-            assert( static_cast< thread_list_node *>( pRec )->m_idOwner.load(CDS_ATOMIC::memory_order_relaxed) == cds::OS::getCurrentThreadId() );
+            assert( static_cast< thread_list_node *>( pRec )->m_idOwner.load(atomics::memory_order_relaxed) == cds::OS::getCurrentThreadId() );
 
             // Step 1: mark all pRec->m_arrRetired items as "traced"
             {
                 details::retired_vector::const_iterator itEnd = pRec->m_arrRetired.end();
 
                 for ( details::retired_vector::const_iterator it = pRec->m_arrRetired.begin() ; it != itEnd; ++it ) {
-                    ContainerNode * pNode = it->m_pNode.load( CDS_ATOMIC::memory_order_acquire );
+                    ContainerNode * pNode = it->m_pNode.load( atomics::memory_order_acquire );
                     if ( pNode ) {
                         if ( pNode->m_RC.value() == 0 ) {
-                            pNode->m_bTrace.store( true, CDS_ATOMIC::memory_order_release );
+                            pNode->m_bTrace.store( true, atomics::memory_order_release );
                             if ( pNode->m_RC.value() != 0 )
-                                pNode->m_bTrace.store( false, CDS_ATOMIC::memory_order_release );
+                                pNode->m_bTrace.store( false, atomics::memory_order_release );
                         }
                     }
                 }
@@ -214,7 +214,7 @@ namespace cds { namespace gc {
 
             // Stage 2: Scan HP list and insert non-null values to plist
             {
-                thread_list_node * pNode = m_pListHead.load( CDS_ATOMIC::memory_order_acquire );
+                thread_list_node * pNode = m_pListHead.load( atomics::memory_order_acquire );
 
                 while ( pNode ) {
                     for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
@@ -241,17 +241,17 @@ namespace cds { namespace gc {
 
                 for ( size_t nRetired = 0; it != itEnd; ++nRetired, ++it ) {
                     details::retired_node& node = *it;
-                    ContainerNode * pNode = node.m_pNode.load(CDS_ATOMIC::memory_order_acquire);
+                    ContainerNode * pNode = node.m_pNode.load(atomics::memory_order_acquire);
                     if ( !pNode )
                         continue;
 
-                    if ( pNode->m_RC.value() == 0 && pNode->m_bTrace.load(CDS_ATOMIC::memory_order_acquire) && !std::binary_search( itHPBegin, itHPEnd, pNode ) ) {
+                    if ( pNode->m_RC.value() == 0 && pNode->m_bTrace.load(atomics::memory_order_acquire) && !std::binary_search( itHPBegin, itHPEnd, pNode ) ) {
                         // pNode may be destructed safely
 
-                        node.m_bDone.store( true, CDS_ATOMIC::memory_order_release );
-                        if ( node.m_nClaim.load( CDS_ATOMIC::memory_order_acquire ) == 0 ) {
+                        node.m_bDone.store( true, atomics::memory_order_release );
+                        if ( node.m_nClaim.load( atomics::memory_order_acquire ) == 0 ) {
                             pNode->terminate( pThreadGC, false );
-                            pNode->clean( CDS_ATOMIC::memory_order_relaxed );
+                            pNode->clean( atomics::memory_order_relaxed );
                             node.m_funcFree( pNode );
 
                             arr.pop( nRetired );
@@ -260,7 +260,7 @@ namespace cds { namespace gc {
                         }
 
                         pNode->terminate( pThreadGC, true );
-                        //node.m_bDone.store( true, CDS_ATOMIC::memory_order_release );
+                        //node.m_bDone.store( true, atomics::memory_order_release );
                         CDS_HRC_STATISTIC( ++m_Stat.m_ScanClaimGuarded );
                     }
                     else {
@@ -280,11 +280,11 @@ namespace cds { namespace gc {
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
             const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
 
-            for ( thread_list_node * pRec = m_pListHead.load(CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_pNext )
+            for ( thread_list_node * pRec = m_pListHead.load(atomics::memory_order_acquire); pRec; pRec = pRec->m_pNext )
             {
                 // If threadDesc is free then own its
                 cds::OS::ThreadId expectedThreadId = nullThreadId;
-                if ( !pRec->m_idOwner.compare_exchange_strong(expectedThreadId, curThreadId, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed) )
+                if ( !pRec->m_idOwner.compare_exchange_strong(expectedThreadId, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed) )
                 {
                     continue;
                 }
@@ -303,10 +303,10 @@ namespace cds { namespace gc {
                     details::retired_vector::iterator it = src.begin();
 
                     for ( size_t nRetired = 0; it != itEnd; ++nRetired, ++it ) {
-                        if ( it->m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr )
+                        if ( it->m_pNode.load( atomics::memory_order_relaxed ) == nullptr )
                             continue;
 
-                        dest.push( it->m_pNode.load(CDS_ATOMIC::memory_order_relaxed), it->m_funcFree );
+                        dest.push( it->m_pNode.load(atomics::memory_order_relaxed), it->m_funcFree );
                         src.pop( nRetired );
 
                         while ( dest.isFull() ) {
@@ -321,7 +321,7 @@ namespace cds { namespace gc {
                     }
                     pRec->m_bFree = true;
                 }
-                pRec->m_idOwner.store( nullThreadId, CDS_ATOMIC::memory_order_release );
+                pRec->m_idOwner.store( nullThreadId, atomics::memory_order_release );
             }
         }
 
@@ -330,19 +330,19 @@ namespace cds { namespace gc {
             CDS_HRC_STATISTIC( ++m_Stat.m_CleanUpAllCalls );
 
             //const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
-            thread_list_node * pThread = m_pListHead.load(CDS_ATOMIC::memory_order_acquire);
+            thread_list_node * pThread = m_pListHead.load(atomics::memory_order_acquire);
             while ( pThread ) {
                 for ( size_t i = 0; i < pThread->m_arrRetired.capacity(); ++i ) {
                     details::retired_node& rRetiredNode = pThread->m_arrRetired[i];
-                    ContainerNode * pNode = rRetiredNode.m_pNode.load(CDS_ATOMIC::memory_order_acquire);
-                    if ( pNode && !rRetiredNode.m_bDone.load(CDS_ATOMIC::memory_order_acquire) ) {
-                        rRetiredNode.m_nClaim.fetch_add( 1, CDS_ATOMIC::memory_order_release );
-                        if ( !rRetiredNode.m_bDone.load(CDS_ATOMIC::memory_order_acquire)
-                            && pNode == rRetiredNode.m_pNode.load(CDS_ATOMIC::memory_order_acquire) )
+                    ContainerNode * pNode = rRetiredNode.m_pNode.load(atomics::memory_order_acquire);
+                    if ( pNode && !rRetiredNode.m_bDone.load(atomics::memory_order_acquire) ) {
+                        rRetiredNode.m_nClaim.fetch_add( 1, atomics::memory_order_release );
+                        if ( !rRetiredNode.m_bDone.load(atomics::memory_order_acquire)
+                            && pNode == rRetiredNode.m_pNode.load(atomics::memory_order_acquire) )
                         {
                             pNode->cleanUp( pThis );
                         }
-                        rRetiredNode.m_nClaim.fetch_sub( 1, CDS_ATOMIC::memory_order_release );
+                        rRetiredNode.m_nClaim.fetch_sub( 1, atomics::memory_order_release );
                     }
                 }
                 pThread = pThread->m_pNext;
@@ -363,7 +363,7 @@ namespace cds { namespace gc {
                 stat.nRetiredPtrInFreeHRCRecs = 0;
 
             // Walk through HRC records
-            for ( thread_list_node *hprec = m_pListHead.load(CDS_ATOMIC::memory_order_acquire); hprec; hprec = hprec->m_pNext ) {
+            for ( thread_list_node *hprec = m_pListHead.load(atomics::memory_order_acquire); hprec; hprec = hprec->m_pNext ) {
                 ++stat.nHRCRecAllocated;
                 size_t nRetiredNodeCount = hprec->m_arrRetired.retiredNodeCount();
                 if ( hprec->m_bFree ) {

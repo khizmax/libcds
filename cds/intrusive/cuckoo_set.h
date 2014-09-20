@@ -658,8 +658,8 @@ namespace cds { namespace intrusive {
             //@cond
             static owner_t const c_nOwnerMask = (((owner_t) 1) << (sizeof(owner_t) * 8 - 1)) - 1;
 
-            CDS_ATOMIC::atomic< owner_t >   m_Owner     ;   ///< owner mark (thread id + boolean flag)
-            CDS_ATOMIC::atomic<size_t>      m_nCapacity ;   ///< lock array capacity
+            atomics::atomic< owner_t >   m_Owner     ;   ///< owner mark (thread id + boolean flag)
+            atomics::atomic<size_t>      m_nCapacity ;   ///< lock array capacity
             lock_array_ptr                  m_arrLocks[ c_nArity ]  ; ///< Lock array. The capacity of array is specified in constructor.
             spinlock_type                   m_access    ;   ///< access to m_arrLocks
             statistics_type                 m_Stat      ;   ///< internal statistics
@@ -695,7 +695,7 @@ namespace cds { namespace intrusive {
 
                     // wait while resizing
                     while ( true ) {
-                        who = m_Owner.load( CDS_ATOMIC::memory_order_acquire );
+                        who = m_Owner.load( atomics::memory_order_acquire );
                         if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask) )
                             break;
                         bkoff();
@@ -715,7 +715,7 @@ namespace cds { namespace intrusive {
                             parrLock[i]->lock();
                         }
 
-                        who = m_Owner.load( CDS_ATOMIC::memory_order_acquire );
+                        who = m_Owner.load( atomics::memory_order_acquire );
                         if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask) ) && m_arrLocks[0] == pLockArr[0] ) {
                             m_Stat.onCellLock();
                             return;
@@ -742,7 +742,7 @@ namespace cds { namespace intrusive {
                 // It is assumed that the current thread already has a lock
                 // and requires a second lock for other hash
 
-                size_t const nMask = m_nCapacity.load(CDS_ATOMIC::memory_order_acquire) - 1;
+                size_t const nMask = m_nCapacity.load(atomics::memory_order_acquire) - 1;
                 size_t nCell = m_arrLocks[0]->try_lock( arrHash[0] & nMask);
                 if ( nCell == lock_array_type::c_nUnspecifiedCell ) {
                     m_Stat.onSecondCellLockFailed();
@@ -765,7 +765,7 @@ namespace cds { namespace intrusive {
                 back_off bkoff;
                 while ( true ) {
                     owner_t ownNull = 0;
-                    if ( m_Owner.compare_exchange_strong( ownNull, (me << 1) | 1, CDS_ATOMIC::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed )) {
+                    if ( m_Owner.compare_exchange_strong( ownNull, (me << 1) | 1, atomics::memory_order_acq_rel, atomics::memory_order_relaxed )) {
                         m_arrLocks[0]->lock_all();
 
                         m_Stat.onFullLock();
@@ -779,7 +779,7 @@ namespace cds { namespace intrusive {
             void release_all()
             {
                 m_arrLocks[0]->unlock_all();
-                m_Owner.store( 0, CDS_ATOMIC::memory_order_release );
+                m_Owner.store( 0, atomics::memory_order_release );
             }
 
             void acquire_resize( lock_array_ptr * pOldLocks )
@@ -795,9 +795,9 @@ namespace cds { namespace intrusive {
 
                     // global lock
                     owner_t ownNull = 0;
-                    if ( m_Owner.compare_exchange_strong( ownNull, (me << 1) | 1, CDS_ATOMIC::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed )) {
+                    if ( m_Owner.compare_exchange_strong( ownNull, (me << 1) | 1, atomics::memory_order_acq_rel, atomics::memory_order_relaxed )) {
                         if ( pOldLocks[0] != m_arrLocks[0] ) {
-                            m_Owner.store( 0, CDS_ATOMIC::memory_order_release );
+                            m_Owner.store( 0, atomics::memory_order_release );
                             m_Stat.onResizeLockArrayChanged();
                         }
                         else {
@@ -820,7 +820,7 @@ namespace cds { namespace intrusive {
 
             void release_resize( lock_array_ptr * pOldLocks )
             {
-                m_Owner.store( 0, CDS_ATOMIC::memory_order_release );
+                m_Owner.store( 0, atomics::memory_order_release );
                 pOldLocks[0]->unlock_all();
             }
             //@endcond
@@ -935,7 +935,7 @@ namespace cds { namespace intrusive {
                     for ( unsigned int i = 0; i < c_nArity; ++i )
                         m_arrLocks[i] = pNew[i];
                 }
-                m_nCapacity.store( nCapacity, CDS_ATOMIC::memory_order_release );
+                m_nCapacity.store( nCapacity, atomics::memory_order_release );
 
                 m_Stat.onResize();
             }
@@ -947,7 +947,7 @@ namespace cds { namespace intrusive {
             */
             size_t lock_count() const
             {
-                return m_nCapacity.load(CDS_ATOMIC::memory_order_relaxed);
+                return m_nCapacity.load(atomics::memory_order_relaxed);
             }
 
             /// Returns the arity of \p refinable mutex policy

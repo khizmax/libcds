@@ -172,7 +172,7 @@ namespace cds { namespace intrusive {
         public:
             typedef GC      gc          ;   ///< Garbage collector
             typedef Node    node_type   ;   ///< Bucket node type
-            typedef CDS_ATOMIC::atomic<node_type *> table_entry ;   ///< Table entry type
+            typedef atomics::atomic<node_type *> table_entry ;   ///< Table entry type
 
             /// Bucket table allocator
             typedef cds::details::Allocator< table_entry, typename options::allocator >  bucket_table_allocator;
@@ -283,13 +283,13 @@ namespace cds { namespace intrusive {
         public:
             typedef GC      gc          ;   ///< Garbage collector
             typedef Node    node_type   ;   ///< Bucket node type
-            typedef CDS_ATOMIC::atomic<node_type *> table_entry ;   ///< Table entry type
+            typedef atomics::atomic<node_type *> table_entry ;   ///< Table entry type
 
             /// Memory model for atomic operations
             typedef typename options::memory_model     memory_model;
 
         protected:
-            typedef CDS_ATOMIC::atomic<table_entry *>   segment_type    ;   ///< Bucket table segment type
+            typedef atomics::atomic<table_entry *>   segment_type    ;   ///< Bucket table segment type
 
         public:
             /// Bucket table allocator
@@ -442,7 +442,7 @@ namespace cds { namespace intrusive {
                 if ( segment.load( memory_model::memory_order_relaxed ) == nullptr ) {
                     table_entry * pNewSegment = allocate_segment();
                     table_entry * pNull = nullptr;
-                    if ( !segment.compare_exchange_strong( pNull, pNewSegment, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
+                    if ( !segment.compare_exchange_strong( pNull, pNewSegment, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                         destroy_segment( pNewSegment );
                     }
                 }

@@ -16,7 +16,7 @@
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
-    // warning C4251: 'cds::gc::hzp::GarbageCollector::m_pListHead' : class 'cds::cxx11_atomics::atomic<T>'
+    // warning C4251: 'cds::gc::hzp::GarbageCollector::m_pListHead' : class 'cds::cxx11_atomic::atomic<T>'
     // needs to have dll-interface to be used by clients of class 'cds::gc::hzp::GarbageCollector'
 #   pragma warning(disable: 4251)
 #endif
@@ -208,8 +208,8 @@ namespace cds {
             struct hplist_node: public details::HPRec
             {
                 hplist_node *                       m_pNextNode ; ///< next hazard ptr record in list
-                CDS_ATOMIC::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
-                CDS_ATOMIC::atomic<bool>            m_bFree     ; ///< true if record if free (not owned)
+                atomics::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
+                atomics::atomic<bool>            m_bFree     ; ///< true if record if free (not owned)
 
                 //@cond
                 hplist_node( const GarbageCollector& HzpMgr )
@@ -221,13 +221,13 @@ namespace cds {
 
                 ~hplist_node()
                 {
-                    assert( m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == OS::c_NullThreadId );
-                    assert( m_bFree.load(CDS_ATOMIC::memory_order_relaxed) );
+                    assert( m_idOwner.load( atomics::memory_order_relaxed ) == OS::c_NullThreadId );
+                    assert( m_bFree.load(atomics::memory_order_relaxed) );
                 }
                 //@endcond
             };
 
-            CDS_ATOMIC::atomic<hplist_node *>   m_pListHead  ;  ///< Head of GC list
+            atomics::atomic<hplist_node *>   m_pListHead  ;  ///< Head of GC list
 
             static GarbageCollector *    m_pHZPManager  ;   ///< GC instance pointer
 

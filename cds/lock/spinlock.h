@@ -52,7 +52,7 @@ namespace cds {
         public:
             typedef        Backoff      backoff_strategy    ;        ///< back-off strategy type
         private:
-            CDS_ATOMIC::atomic<bool>    m_spin  ;       ///< Spin
+            atomics::atomic<bool>    m_spin  ;       ///< Spin
 #    ifdef CDS_DEBUG
             typename OS::ThreadId       m_dbgOwnerId        ;       ///< Owner thread id (only for debug mode)
 #    endif
@@ -64,7 +64,7 @@ namespace cds {
                 :m_dbgOwnerId( OS::c_NullThreadId )
 #    endif
             {
-                m_spin.store( false, CDS_ATOMIC::memory_order_relaxed );
+                m_spin.store( false, atomics::memory_order_relaxed );
             }
 
             /// Construct spin-lock in specified state
@@ -76,7 +76,7 @@ namespace cds {
                 :m_dbgOwnerId( bLocked ? OS::getCurrentThreadId() : OS::c_NullThreadId )
 #    endif
             {
-                m_spin.store( bLocked, CDS_ATOMIC::memory_order_relaxed );
+                m_spin.store( bLocked, atomics::memory_order_relaxed );
             }
 
             /// Dummy copy constructor
@@ -95,13 +95,13 @@ namespace cds {
             /// Destructor. On debug time it checks whether spin-lock is free
             ~Spinlock()
             {
-                assert( !m_spin.load( CDS_ATOMIC::memory_order_relaxed ) );
+                assert( !m_spin.load( atomics::memory_order_relaxed ) );
             }
 
             /// Check if the spin is locked
             bool is_locked() const CDS_NOEXCEPT
             {
-                return m_spin.load( CDS_ATOMIC::memory_order_relaxed );
+                return m_spin.load( atomics::memory_order_relaxed );
             }
 
             /// Try to lock the object
@@ -120,7 +120,7 @@ namespace cds {
             bool tryLock() CDS_NOEXCEPT
             {
                 bool bCurrent = false;
-                m_spin.compare_exchange_strong( bCurrent, true, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed );
+                m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_relaxed );
 
                 CDS_DEBUG_DO(
                     if ( !bCurrent ) {
@@ -162,7 +162,7 @@ namespace cds {
 
                 // TATAS algorithm
                 while ( !tryLock() ) {
-                    while ( m_spin.load( CDS_ATOMIC::memory_order_relaxed ) ) {
+                    while ( m_spin.load( atomics::memory_order_relaxed ) ) {
                         backoff();
                     }
                 }
@@ -172,12 +172,12 @@ namespace cds {
             /// Unlock the spin-lock. Debug version: deadlock may be detected
             void unlock() CDS_NOEXCEPT
             {
-                assert( m_spin.load( CDS_ATOMIC::memory_order_relaxed ) );
+                assert( m_spin.load( atomics::memory_order_relaxed ) );
 
                 assert( m_dbgOwnerId == OS::getCurrentThreadId() );
                 CDS_DEBUG_DO( m_dbgOwnerId = OS::c_NullThreadId; )
 
-                m_spin.store( false, CDS_ATOMIC::memory_order_release );
+                m_spin.store( false, atomics::memory_order_release );
             }
         };
 
@@ -202,7 +202,7 @@ namespace cds {
             typedef Backoff         backoff_strategy    ; ///< The backoff type
 
         private:
-            CDS_ATOMIC::atomic<integral_type>   m_spin      ; ///< spin-lock atomic
+            atomics::atomic<integral_type>   m_spin      ; ///< spin-lock atomic
             thread_id                           m_OwnerId   ; ///< Owner thread id. If spin-lock is not locked it usually equals to OS::c_NullThreadId
 
         private:
@@ -225,7 +225,7 @@ namespace cds {
             bool    tryLockOwned( thread_id tid ) CDS_NOEXCEPT
             {
                 if ( isOwned( tid )) {
-                    m_spin.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
+                    m_spin.fetch_add( 1, atomics::memory_order_relaxed );
                     return true;
                 }
                 return false;
@@ -234,7 +234,7 @@ namespace cds {
             bool tryAcquireLock() CDS_NOEXCEPT
             {
                 integral_type nCurrent = 0;
-                return m_spin.compare_exchange_weak( nCurrent, 1, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed );
+                return m_spin.compare_exchange_weak( nCurrent, 1, atomics::memory_order_acquire, atomics::memory_order_relaxed );
             }
 
             bool tryAcquireLock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( backoff_strategy()() ))
@@ -254,7 +254,7 @@ namespace cds {
                 // TATAS algorithm
                 backoff_strategy bkoff;
                 while ( !tryAcquireLock() ) {
-                    while ( m_spin.load( CDS_ATOMIC::memory_order_relaxed ) )
+                    while ( m_spin.load( atomics::memory_order_relaxed ) )
                         bkoff();
                 }
             }
@@ -294,7 +294,7 @@ namespace cds {
             */
             bool is_locked() const CDS_NOEXCEPT
             {
-                return !( m_spin.load( CDS_ATOMIC::memory_order_relaxed ) == 0 || isOwned( cds::OS::getCurrentThreadId() ));
+                return !( m_spin.load( atomics::memory_order_relaxed ) == 0 || isOwned( cds::OS::getCurrentThreadId() ));
             }
 
             /// Try to lock the spin-lock (synonym for \ref try_lock)
@@ -364,12 +364,12 @@ namespace cds {
             bool unlock() CDS_NOEXCEPT
             {
                 if ( isOwned( OS::getCurrentThreadId() ) ) {
-                    integral_type n = m_spin.load( CDS_ATOMIC::memory_order_relaxed );
+                    integral_type n = m_spin.load( atomics::memory_order_relaxed );
                     if ( n > 1 )
-                        m_spin.store( n - 1, CDS_ATOMIC::memory_order_relaxed );
+                        m_spin.store( n - 1, atomics::memory_order_relaxed );
                     else {
                         free();
-                        m_spin.store( 0, CDS_ATOMIC::memory_order_release );
+                        m_spin.store( 0, atomics::memory_order_release );
                     }
                     return true;
                 }

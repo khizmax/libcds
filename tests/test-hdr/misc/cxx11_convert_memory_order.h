@@ -4,26 +4,26 @@
 
 namespace misc {
 
-    static inline CDS_ATOMIC::memory_order convert_to_store_order( CDS_ATOMIC::memory_order order )
+    static inline atomics::memory_order convert_to_store_order( atomics::memory_order order )
     {
         switch ( order ) {
-            case CDS_ATOMIC::memory_order_acquire:
-            case CDS_ATOMIC::memory_order_consume:
-                return CDS_ATOMIC::memory_order_relaxed;
-            case CDS_ATOMIC::memory_order_acq_rel:
-                return CDS_ATOMIC::memory_order_release;
+            case atomics::memory_order_acquire:
+            case atomics::memory_order_consume:
+                return atomics::memory_order_relaxed;
+            case atomics::memory_order_acq_rel:
+                return atomics::memory_order_release;
             default:
                 return order;
         }
     }
 
-    static inline CDS_ATOMIC::memory_order convert_to_load_order( CDS_ATOMIC::memory_order order )
+    static inline atomics::memory_order convert_to_load_order( atomics::memory_order order )
     {
         switch ( order ) {
-            case CDS_ATOMIC::memory_order_release:
-                return CDS_ATOMIC::memory_order_relaxed;
-            case CDS_ATOMIC::memory_order_acq_rel:
-                return CDS_ATOMIC::memory_order_acquire;
+            case atomics::memory_order_release:
+                return atomics::memory_order_relaxed;
+            case atomics::memory_order_acq_rel:
+                return atomics::memory_order_acquire;
             default:
                 return order;
         }

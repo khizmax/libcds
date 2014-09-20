@@ -12,7 +12,7 @@
 #include <cstdint>
 
 //@cond
-namespace cds { namespace cxx11_atomics {
+namespace cds { namespace cxx11_atomic {
     namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace gcc { CDS_CXX11_INLINE_NAMESPACE namespace ia64 {
 
         static inline void itanium_full_fence() CDS_NOEXCEPT
@@ -647,7 +647,7 @@ namespace cds { namespace cxx11_atomics {
     using namespace gcc::ia64;
 #endif
     }   // namespace platform
-}}  // namespace cds::cxx11_atomics
+}}  // namespace cds::cxx11_atomic
 //@endcond
 
 #endif // #ifndef __CDS_COMPILER_GCC_IA64_CXX11_ATOMIC_H

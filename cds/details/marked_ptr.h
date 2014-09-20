@@ -257,7 +257,7 @@ CDS_CXX11_ATOMIC_BEGIN_NAMESPACE
     {
     private:
         typedef cds::details::marked_ptr<T, Bitmask> marked_ptr;
-        typedef CDS_ATOMIC::atomic<T *>  atomic_impl;
+        typedef atomics::atomic<T *>  atomic_impl;
 
         atomic_impl m_atomic;
     public:

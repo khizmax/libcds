@@ -27,7 +27,7 @@ namespace CppUnitMini {
         ThreadPool&         m_Pool;
         boost::thread *     m_pThread;
         cds::OS::Timer      m_Timer;
-        CDS_ATOMIC::atomic<bool>    m_bTimeElapsed;
+        atomics::atomic<bool>    m_bTimeElapsed;
 
     public:
         double              m_nDuration;
@@ -60,11 +60,11 @@ namespace CppUnitMini {
         virtual void fini() {}
         void stop()
         {
-            m_bTimeElapsed.store( true, CDS_ATOMIC::memory_order_release );
+            m_bTimeElapsed.store( true, atomics::memory_order_release );
         }
         bool time_elapsed() const
         {
-            return m_bTimeElapsed.load( CDS_ATOMIC::memory_order_acquire );
+            return m_bTimeElapsed.load( atomics::memory_order_acquire );
         }
 
         bool check_timeout( size_t nMaxDuration )

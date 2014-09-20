@@ -98,7 +98,7 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        typedef CDS_ATOMIC::atomic<size_t> sequence_type;
+        typedef atomics::atomic<size_t> sequence_type;
         struct cell_type
         {
             sequence_type   sequence;

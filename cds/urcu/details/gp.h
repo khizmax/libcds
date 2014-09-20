@@ -37,15 +37,15 @@ namespace cds { namespace urcu { namespace details {
         thread_record * pRec = get_thread_record();
         assert( pRec != nullptr );
 
-        uint32_t tmp = pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_relaxed );
+        uint32_t tmp = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
         if ( (tmp & rcu_class::c_nNestMask) == 0 ) {
-            pRec->m_nAccessControl.store( gp_singleton<RCUtag>::instance()->global_control_word(CDS_ATOMIC::memory_order_relaxed),
-                CDS_ATOMIC::memory_order_relaxed );
-            CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_acquire );
+            pRec->m_nAccessControl.store( gp_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_relaxed),
+                atomics::memory_order_relaxed );
+            atomics::atomic_thread_fence( atomics::memory_order_acquire );
             //CDS_COMPILER_RW_BARRIER;
         }
         else {
-            pRec->m_nAccessControl.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
+            pRec->m_nAccessControl.fetch_add( 1, atomics::memory_order_relaxed );
         }
     }
 
@@ -56,7 +56,7 @@ namespace cds { namespace urcu { namespace details {
         assert( pRec != nullptr );
 
         //CDS_COMPILER_RW_BARRIER;
-        pRec->m_nAccessControl.fetch_sub( 1, CDS_ATOMIC::memory_order_release );
+        pRec->m_nAccessControl.fetch_sub( 1, atomics::memory_order_release );
     }
 
     template <typename RCUtag>
@@ -65,7 +65,7 @@ namespace cds { namespace urcu { namespace details {
         thread_record * pRec = get_thread_record();
         assert( pRec != nullptr );
 
-        return (pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_relaxed ) & rcu_class::c_nNestMask) != 0;
+        return (pRec->m_nAccessControl.load( atomics::memory_order_relaxed ) & rcu_class::c_nNestMask) != 0;
     }
 
 
@@ -73,9 +73,9 @@ namespace cds { namespace urcu { namespace details {
     template <typename RCUtag>
     inline bool gp_singleton<RCUtag>::check_grace_period( typename gp_singleton<RCUtag>::thread_record * pRec ) const
     {
-        uint32_t const v = pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_relaxed );
+        uint32_t const v = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
         return (v & general_purpose_rcu::c_nNestMask)
-            && ((( v ^ m_nGlobalControl.load( CDS_ATOMIC::memory_order_relaxed )) & ~general_purpose_rcu::c_nNestMask ));
+            && ((( v ^ m_nGlobalControl.load( atomics::memory_order_relaxed )) & ~general_purpose_rcu::c_nNestMask ));
     }
 
     template <typename RCUtag>
@@ -83,10 +83,10 @@ namespace cds { namespace urcu { namespace details {
     inline void gp_singleton<RCUtag>::flip_and_wait( Backoff& bkoff )
     {
         OS::ThreadId const nullThreadId = OS::c_NullThreadId;
-        m_nGlobalControl.fetch_xor( general_purpose_rcu::c_nControlBit, CDS_ATOMIC::memory_order_seq_cst );
+        m_nGlobalControl.fetch_xor( general_purpose_rcu::c_nControlBit, atomics::memory_order_seq_cst );
 
-        for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            while ( pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire) != nullThreadId && check_grace_period( pRec ) ) {
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
+            while ( pRec->m_list.m_idOwner.load( atomics::memory_order_acquire) != nullThreadId && check_grace_period( pRec ) ) {
                 bkoff();
                 CDS_COMPILER_RW_BARRIER;
             }

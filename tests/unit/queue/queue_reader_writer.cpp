@@ -178,7 +178,7 @@ namespace queue {
 
     protected:
         size_t                  m_nThreadPushCount;
-        CDS_ATOMIC::atomic<size_t>     m_nWriterDone;
+        atomics::atomic<size_t>     m_nWriterDone;
 
     protected:
         template <class Queue>

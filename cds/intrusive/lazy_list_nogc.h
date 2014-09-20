@@ -20,7 +20,7 @@ namespace cds { namespace intrusive {
             typedef Lock        lock_type   ;   ///< Lock type
             typedef Tag         tag         ;   ///< tag
 
-            CDS_ATOMIC::atomic<node *> m_pNext ; ///< pointer to the next node in the list
+            atomics::atomic<node *> m_pNext ; ///< pointer to the next node in the list
             mutable lock_type   m_Lock  ; ///< Node lock
 
             node()

@@ -168,7 +168,7 @@ namespace cds { namespace gc { namespace ptb {
         details::retired_ptr_node * pHead = nullptr;
         details::retired_ptr_node * pTail = nullptr;
 
-        for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(CDS_ATOMIC::memory_order_relaxed)) {
+        for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_relaxed)) {
             details::guard_data::handoff_ptr h = pGuard->pHandOff;
             pGuard->pHandOff  = nullptr;
             while ( h ) {
@@ -192,7 +192,7 @@ namespace cds { namespace gc { namespace ptb {
         details::retired_ptr_buffer::privatize_result retiredList = m_RetiredBuffer.privatize();
         if ( retiredList.first ) {
 
-            size_t nLiberateThreshold = m_nLiberateThreshold.load(CDS_ATOMIC::memory_order_relaxed);
+            size_t nLiberateThreshold = m_nLiberateThreshold.load(atomics::memory_order_relaxed);
             details::liberate_set set( beans::ceil2( retiredList.second > nLiberateThreshold ? retiredList.second : nLiberateThreshold ) );
 
             // Get list of retired pointers
@@ -205,10 +205,10 @@ namespace cds { namespace gc { namespace ptb {
             }
 
             // Liberate cycle
-            for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(CDS_ATOMIC::memory_order_acquire) )
+            for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire) )
             {
                 // get guarded pointer
-                details::guard_data::guarded_ptr  valGuarded = pGuard->pPost.load(CDS_ATOMIC::memory_order_acquire);
+                details::guard_data::guarded_ptr  valGuarded = pGuard->pPost.load(atomics::memory_order_acquire);
 
                 if ( valGuarded ) {
                     details::retired_ptr_node * pRetired = set.erase( valGuarded );
@@ -237,7 +237,7 @@ namespace cds { namespace gc { namespace ptb {
             }
             else {
                 // liberate cycle did not free any retired pointer - double liberate threshold
-                m_nLiberateThreshold.compare_exchange_strong( nLiberateThreshold, nLiberateThreshold * 2, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                m_nLiberateThreshold.compare_exchange_strong( nLiberateThreshold, nLiberateThreshold * 2, atomics::memory_order_release, atomics::memory_order_relaxed );
             }
         }
     }
@@ -247,10 +247,10 @@ namespace cds { namespace gc { namespace ptb {
     {
         details::guard_data::handoff_ptr const nullHandOff = nullptr;
 
-        for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(CDS_ATOMIC::memory_order_acquire) )
+        for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire) )
         {
             // get guarded pointer
-            details::guard_data::guarded_ptr  valGuarded = pGuard->pPost.load(CDS_ATOMIC::memory_order_acquire);
+            details::guard_data::guarded_ptr  valGuarded = pGuard->pPost.load(atomics::memory_order_acquire);
             details::guard_data::handoff_ptr h;
 
             if ( valGuarded ) {
@@ -263,7 +263,7 @@ namespace cds { namespace gc { namespace ptb {
 
                     // Now, try to set retired node pRetired as a hand-off node for the guard
                     cds::lock::Auto<details::guard_data::handoff_spin> al( pGuard->spinHandOff );
-                    if ( valGuarded == pGuard->pPost.load(CDS_ATOMIC::memory_order_acquire) ) {
+                    if ( valGuarded == pGuard->pPost.load(atomics::memory_order_acquire) ) {
                         if ( pGuard->pHandOff && pGuard->pHandOff->m_ptr.m_p == pRetired->m_ptr.m_p ) {
                             h = nullHandOff ; //nullptr;
                             details::retired_ptr_node * pTail = pGuard->pHandOff;

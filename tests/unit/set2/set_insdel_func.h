@@ -28,7 +28,7 @@ namespace set2 {
         struct value_type {
             size_t      nKey;
             size_t      nData;
-            CDS_ATOMIC::atomic<size_t> nEnsureCall;
+            atomics::atomic<size_t> nEnsureCall;
             bool volatile   bInitialized;
             cds::OS::ThreadId          threadId     ;   // insert thread id
 
@@ -46,7 +46,7 @@ namespace set2 {
             value_type( value_type const& s )
                 : nKey(s.nKey)
                 , nData(s.nData)
-                , nEnsureCall(s.nEnsureCall.load(CDS_ATOMIC::memory_order_relaxed))
+                , nEnsureCall(s.nEnsureCall.load(atomics::memory_order_relaxed))
                 , bInitialized( s.bInitialized )
                 , threadId( cds::OS::getCurrentThreadId() )
             {}
@@ -56,7 +56,7 @@ namespace set2 {
             {
                 nKey = v.nKey;
                 nData = v.nData;
-                nEnsureCall.store( v.nEnsureCall.load(CDS_ATOMIC::memory_order_relaxed), CDS_ATOMIC::memory_order_relaxed );
+                nEnsureCall.store( v.nEnsureCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
                 bInitialized = v.bInitialized;
 
                 return *this;
@@ -196,7 +196,7 @@ namespace set2 {
                         ++nCreated;
                     }
                     else {
-                        val.val.nEnsureCall.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
+                        val.val.nEnsureCall.fetch_add( 1, atomics::memory_order_relaxed );
                         ++nModified;
                     }
                 }

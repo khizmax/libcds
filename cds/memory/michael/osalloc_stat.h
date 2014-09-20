@@ -11,10 +11,10 @@ namespace cds { namespace memory { namespace michael {
     struct os_allocated_atomic
     {
         ///@cond
-        CDS_ATOMIC::atomic<size_t>              nAllocCount         ;   ///< Event count of large block allocation from %OS
-        CDS_ATOMIC::atomic<size_t>              nFreeCount          ;   ///< Event count of large block deallocation to %OS
-        CDS_ATOMIC::atomic<unsigned long long>  nBytesAllocated     ;   ///< Total size of allocated large blocks, in bytes
-        CDS_ATOMIC::atomic<unsigned long long>  nBytesDeallocated   ;   ///< Total size of deallocated large blocks, in bytes
+        atomics::atomic<size_t>              nAllocCount         ;   ///< Event count of large block allocation from %OS
+        atomics::atomic<size_t>              nFreeCount          ;   ///< Event count of large block deallocation to %OS
+        atomics::atomic<unsigned long long>  nBytesAllocated     ;   ///< Total size of allocated large blocks, in bytes
+        atomics::atomic<unsigned long long>  nBytesDeallocated   ;   ///< Total size of deallocated large blocks, in bytes
 
         os_allocated_atomic()
             : nAllocCount(0)
@@ -27,39 +27,39 @@ namespace cds { namespace memory { namespace michael {
         /// Adds \p nSize to nBytesAllocated counter
         void incBytesAllocated( size_t nSize )
         {
-            nAllocCount.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed);
-            nBytesAllocated.fetch_add( nSize, CDS_ATOMIC::memory_order_relaxed );
+            nAllocCount.fetch_add( 1, atomics::memory_order_relaxed);
+            nBytesAllocated.fetch_add( nSize, atomics::memory_order_relaxed );
         }
 
         /// Adds \p nSize to nBytesDeallocated counter
         void incBytesDeallocated( size_t nSize )
         {
-            nFreeCount.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
-            nBytesDeallocated.fetch_add( nSize, CDS_ATOMIC::memory_order_relaxed );
+            nFreeCount.fetch_add( 1, atomics::memory_order_relaxed );
+            nBytesDeallocated.fetch_add( nSize, atomics::memory_order_relaxed );
         }
 
         /// Returns count of \p alloc and \p alloc_aligned function call (for large block allocated directly from %OS)
         size_t allocCount() const
         {
-            return nAllocCount.load(CDS_ATOMIC::memory_order_relaxed);
+            return nAllocCount.load(atomics::memory_order_relaxed);
         }
 
         /// Returns count of \p free and \p free_aligned function call (for large block allocated directly from %OS)
         size_t freeCount() const
         {
-            return nFreeCount.load(CDS_ATOMIC::memory_order_relaxed);
+            return nFreeCount.load(atomics::memory_order_relaxed);
         }
 
         /// Returns current value of nBytesAllocated counter
         atomic64u_t allocatedBytes() const
         {
-            return nBytesAllocated.load(CDS_ATOMIC::memory_order_relaxed);
+            return nBytesAllocated.load(atomics::memory_order_relaxed);
         }
 
         /// Returns current value of nBytesAllocated counter
         atomic64u_t deallocatedBytes() const
         {
-            return nBytesDeallocated.load(CDS_ATOMIC::memory_order_relaxed);
+            return nBytesDeallocated.load(atomics::memory_order_relaxed);
         }
     };
 

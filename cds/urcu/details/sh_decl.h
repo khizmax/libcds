@@ -19,8 +19,8 @@ namespace cds { namespace urcu { namespace details {
     // that is not so efficiently
 #   define CDS_SHURCU_DECLARE_THREAD_DATA(tag_) \
     template <> struct thread_data<tag_> { \
-        CDS_ATOMIC::atomic<uint32_t>        m_nAccessControl ; \
-        CDS_ATOMIC::atomic<bool>            m_bNeedMemBar    ; \
+        atomics::atomic<uint32_t>        m_nAccessControl ; \
+        atomics::atomic<bool>            m_bNeedMemBar    ; \
         thread_list_record< thread_data >   m_list ; \
         thread_data(): m_nAccessControl(0), m_bNeedMemBar(false) {} \
         ~thread_data() {} \
@@ -103,7 +103,7 @@ namespace cds { namespace urcu { namespace details {
         typedef sh_singleton_instance< rcu_tag >    rcu_instance;
 
     protected:
-        CDS_ATOMIC::atomic<uint32_t>    m_nGlobalControl;
+        atomics::atomic<uint32_t>    m_nGlobalControl;
         thread_list< rcu_tag >          m_ThreadList;
         int const                       m_nSigNo;
 
@@ -150,7 +150,7 @@ namespace cds { namespace urcu { namespace details {
             m_ThreadList.retire( pRec );
         }
 
-        uint32_t global_control_word( CDS_ATOMIC::memory_order mo ) const
+        uint32_t global_control_word( atomics::memory_order mo ) const
         {
             return m_nGlobalControl.load( mo );
         }
@@ -166,7 +166,7 @@ namespace cds { namespace urcu { namespace details {
 
         void switch_next_epoch()
         {
-            m_nGlobalControl.fetch_xor( rcu_tag::c_nControlBit, CDS_ATOMIC::memory_order_seq_cst );
+            m_nGlobalControl.fetch_xor( rcu_tag::c_nControlBit, atomics::memory_order_seq_cst );
         }
         bool check_grace_period( thread_record * pRec ) const;
 
@@ -188,7 +188,7 @@ namespace cds { namespace urcu { namespace details {
         static rcu_singleton * instance() { assert( rcu_instance::s_pRCU ); return static_cast<rcu_singleton *>( rcu_instance::s_pRCU ); } \
         static thread_record * attach_thread() { return instance()->attach_thread() ; } \
         static void detach_thread( thread_record * pRec ) { return instance()->detach_thread( pRec ) ; } \
-        static uint32_t global_control_word( CDS_ATOMIC::memory_order mo ) { return instance()->global_control_word( mo ) ; } \
+        static uint32_t global_control_word( atomics::memory_order mo ) { return instance()->global_control_word( mo ) ; } \
     }
 
     CDS_SIGRCU_DECLARE_SINGLETON( signal_buffered_tag  );

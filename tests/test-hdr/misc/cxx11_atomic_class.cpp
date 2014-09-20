@@ -11,9 +11,9 @@ namespace misc {
     class cxx11_atomic_class: public CppUnitMini::TestCase
     {
         template <typename AtomicFlag>
-        void do_test_atomic_flag_mo( AtomicFlag& f, CDS_ATOMIC::memory_order order )
+        void do_test_atomic_flag_mo( AtomicFlag& f, atomics::memory_order order )
         {
-            CDS_ATOMIC::memory_order mo_clear = convert_to_store_order(order);
+            atomics::memory_order mo_clear = convert_to_store_order(order);
             for ( int i = 0; i < 5; ++i ) {
                 CPPUNIT_ASSERT( !f.test_and_set( order ));
                 CPPUNIT_ASSERT( f.test_and_set( order ) );
@@ -32,12 +32,12 @@ namespace misc {
                 f.clear();
             }
 
-            do_test_atomic_flag_mo( f, CDS_ATOMIC::memory_order_relaxed );
-            do_test_atomic_flag_mo( f, CDS_ATOMIC::memory_order_consume );
-            do_test_atomic_flag_mo( f, CDS_ATOMIC::memory_order_acquire );
-            do_test_atomic_flag_mo( f, CDS_ATOMIC::memory_order_release );
-            do_test_atomic_flag_mo( f, CDS_ATOMIC::memory_order_acq_rel );
-            do_test_atomic_flag_mo( f, CDS_ATOMIC::memory_order_seq_cst );
+            do_test_atomic_flag_mo( f, atomics::memory_order_relaxed );
+            do_test_atomic_flag_mo( f, atomics::memory_order_consume );
+            do_test_atomic_flag_mo( f, atomics::memory_order_acquire );
+            do_test_atomic_flag_mo( f, atomics::memory_order_release );
+            do_test_atomic_flag_mo( f, atomics::memory_order_acq_rel );
+            do_test_atomic_flag_mo( f, atomics::memory_order_seq_cst );
         }
 
         template <class Atomic, typename Integral>
@@ -185,12 +185,12 @@ namespace misc {
         }
 
         template <class Atomic, typename Integral>
-        void do_test_atomic_type( Atomic& a, CDS_ATOMIC::memory_order order )
+        void do_test_atomic_type( Atomic& a, atomics::memory_order order )
         {
             typedef Integral    integral_type;
 
-            const CDS_ATOMIC::memory_order oLoad = convert_to_load_order( order );
-            const CDS_ATOMIC::memory_order oStore = convert_to_store_order( order );
+            const atomics::memory_order oLoad = convert_to_load_order( order );
+            const atomics::memory_order oStore = convert_to_store_order( order );
 
             CPPUNIT_ASSERT( a.is_lock_free() );
             a.store((integral_type) 0, oStore );
@@ -210,9 +210,9 @@ namespace misc {
                 integral_type n = integral_type(42) << (nByte * 8);
                 integral_type expected = prev;
 
-                CPPUNIT_ASSERT( a.compare_exchange_weak( expected, n, order, CDS_ATOMIC::memory_order_relaxed));
+                CPPUNIT_ASSERT( a.compare_exchange_weak( expected, n, order, atomics::memory_order_relaxed));
                 CPPUNIT_ASSERT( expected  == prev );
-                CPPUNIT_ASSERT( !a.compare_exchange_weak( expected, n, order, CDS_ATOMIC::memory_order_relaxed));
+                CPPUNIT_ASSERT( !a.compare_exchange_weak( expected, n, order, atomics::memory_order_relaxed));
                 CPPUNIT_ASSERT( expected  == n );
 
                 prev = n;
@@ -226,9 +226,9 @@ namespace misc {
                 integral_type n = integral_type(42) << (nByte * 8);
                 integral_type expected = prev;
 
-                CPPUNIT_ASSERT( a.compare_exchange_strong( expected, n, order, CDS_ATOMIC::memory_order_relaxed));
+                CPPUNIT_ASSERT( a.compare_exchange_strong( expected, n, order, atomics::memory_order_relaxed));
                 CPPUNIT_ASSERT( expected  == prev );
-                CPPUNIT_ASSERT( !a.compare_exchange_strong( expected, n, order, CDS_ATOMIC::memory_order_relaxed));
+                CPPUNIT_ASSERT( !a.compare_exchange_strong( expected, n, order, atomics::memory_order_relaxed));
                 CPPUNIT_ASSERT( expected  == n );
 
                 prev = n;
@@ -239,14 +239,14 @@ namespace misc {
         }
 
         template <class Atomic, typename Integral>
-        void do_test_atomic_integral( Atomic& a, CDS_ATOMIC::memory_order order )
+        void do_test_atomic_integral( Atomic& a, atomics::memory_order order )
         {
             do_test_atomic_type< Atomic, Integral >( a, order );
 
             typedef Integral    integral_type;
 
-            const CDS_ATOMIC::memory_order oLoad = convert_to_load_order( order );
-            const CDS_ATOMIC::memory_order oStore = convert_to_store_order( order );
+            const atomics::memory_order oLoad = convert_to_load_order( order );
+            const atomics::memory_order oStore = convert_to_store_order( order );
 
             // fetch_xxx testing
             a.store( (integral_type) 0, oStore );
@@ -298,18 +298,18 @@ namespace misc {
         {
             do_test_atomic_integral<Atomic, Integral >(a);
 
-            do_test_atomic_integral<Atomic, Integral >( a, CDS_ATOMIC::memory_order_relaxed );
-            do_test_atomic_integral<Atomic, Integral >( a, CDS_ATOMIC::memory_order_consume );
-            do_test_atomic_integral<Atomic, Integral >( a, CDS_ATOMIC::memory_order_acquire );
-            do_test_atomic_integral<Atomic, Integral >( a, CDS_ATOMIC::memory_order_release );
-            do_test_atomic_integral<Atomic, Integral >( a, CDS_ATOMIC::memory_order_acq_rel );
-            do_test_atomic_integral<Atomic, Integral >( a, CDS_ATOMIC::memory_order_seq_cst );
+            do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_relaxed );
+            do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_consume );
+            do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_acquire );
+            do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_release );
+            do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_acq_rel );
+            do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_seq_cst );
         }
 
         template <typename Integral>
         void test_atomic_integral()
         {
-            typedef CDS_ATOMIC::atomic<Integral> atomic_type;
+            typedef atomics::atomic<Integral> atomic_type;
 
             atomic_type a[8];
             for ( size_t i = 0; i < sizeof(a)/sizeof(a[0]); ++i ) {
@@ -319,7 +319,7 @@ namespace misc {
         template <typename Integral>
         void test_atomic_integral_volatile()
         {
-            typedef CDS_ATOMIC::atomic<Integral> volatile atomic_type;
+            typedef atomics::atomic<Integral> volatile atomic_type;
 
             atomic_type a[8];
             for ( size_t i = 0; i < sizeof(a)/sizeof(a[0]); ++i ) {
@@ -361,10 +361,10 @@ namespace misc {
         }
 
         template <class AtomicBool>
-        void do_test_atomic_bool( AtomicBool& a, CDS_ATOMIC::memory_order order )
+        void do_test_atomic_bool( AtomicBool& a, atomics::memory_order order )
         {
-            const CDS_ATOMIC::memory_order oLoad = convert_to_load_order( order );
-            const CDS_ATOMIC::memory_order oStore = convert_to_store_order( order );
+            const atomics::memory_order oLoad = convert_to_load_order( order );
+            const atomics::memory_order oStore = convert_to_store_order( order );
 
             CPPUNIT_ASSERT( a.is_lock_free() );
             a.store( false, oStore );
@@ -377,9 +377,9 @@ namespace misc {
             CPPUNIT_ASSERT( a.load( oLoad ) == false );
 
             bool expected = false;
-            CPPUNIT_ASSERT( a.compare_exchange_weak( expected, true, order, CDS_ATOMIC::memory_order_relaxed));
+            CPPUNIT_ASSERT( a.compare_exchange_weak( expected, true, order, atomics::memory_order_relaxed));
             CPPUNIT_ASSERT( expected  == false );
-            CPPUNIT_ASSERT( !a.compare_exchange_weak( expected, false, order, CDS_ATOMIC::memory_order_relaxed));
+            CPPUNIT_ASSERT( !a.compare_exchange_weak( expected, false, order, atomics::memory_order_relaxed));
             CPPUNIT_ASSERT( expected  == true );
             CPPUNIT_ASSERT( a.load( oLoad ) == true );
 
@@ -387,9 +387,9 @@ namespace misc {
             a.store( false, oStore );
 
             expected = false;
-            CPPUNIT_ASSERT( a.compare_exchange_strong( expected, true, order, CDS_ATOMIC::memory_order_relaxed));
+            CPPUNIT_ASSERT( a.compare_exchange_strong( expected, true, order, atomics::memory_order_relaxed));
             CPPUNIT_ASSERT( expected  == false );
-            CPPUNIT_ASSERT( !a.compare_exchange_strong( expected, false, order, CDS_ATOMIC::memory_order_relaxed));
+            CPPUNIT_ASSERT( !a.compare_exchange_strong( expected, false, order, atomics::memory_order_relaxed));
             CPPUNIT_ASSERT( expected  == true );
 
             CPPUNIT_ASSERT( a.load( oLoad ) == true );
@@ -399,27 +399,27 @@ namespace misc {
 
 
         template <typename Atomic>
-        void do_test_atomic_pointer_void_( Atomic& a, char * arr, char aSize, CDS_ATOMIC::memory_order order )
+        void do_test_atomic_pointer_void_( Atomic& a, char * arr, char aSize, atomics::memory_order order )
         {
-            CDS_ATOMIC::memory_order oLoad = convert_to_load_order(order);
-            CDS_ATOMIC::memory_order oStore = convert_to_store_order(order);
+            atomics::memory_order oLoad = convert_to_load_order(order);
+            atomics::memory_order oStore = convert_to_store_order(order);
             void *  p;
 
             a.store( (void *) arr, oStore );
             CPPUNIT_ASSERT( *reinterpret_cast<char *>(a.load( oLoad )) == 1 );
 
             p = arr;
-            CPPUNIT_ASSERT( a.compare_exchange_weak( p, (void *)(arr + 5), order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( a.compare_exchange_weak( p, (void *)(arr + 5), order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 0 );
             CPPUNIT_ASSERT( *reinterpret_cast<char *>(p) == 1 );
-            CPPUNIT_ASSERT( !a.compare_exchange_weak( p, (void *)(arr + 3), order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( !a.compare_exchange_weak( p, (void *)(arr + 3), order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 5 );
             CPPUNIT_ASSERT( *reinterpret_cast<char *>(p) == 6 );
 
-            CPPUNIT_ASSERT( a.compare_exchange_strong( p, (void *)(arr + 3), order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( a.compare_exchange_strong( p, (void *)(arr + 3), order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 5 );
             CPPUNIT_ASSERT( *reinterpret_cast<char *>(p) == 6 );
-            CPPUNIT_ASSERT( !a.compare_exchange_strong( p, (void *)(arr + 5), order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( !a.compare_exchange_strong( p, (void *)(arr + 5), order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 3 );
             CPPUNIT_ASSERT( *reinterpret_cast<char *>(p) == 4 );
 
@@ -443,7 +443,7 @@ namespace misc {
         template <bool Volatile>
         void do_test_atomic_pointer_void()
         {
-            typedef typename add_volatile<CDS_ATOMIC::atomic< void *>, Volatile>::type    atomic_pointer;
+            typedef typename add_volatile<atomics::atomic< void *>, Volatile>::type    atomic_pointer;
 
             char   arr[8];
             const char aSize = sizeof(arr)/sizeof(arr[0]);
@@ -497,37 +497,37 @@ namespace misc {
                 CPPUNIT_ASSERT( *reinterpret_cast<char *>(a.load()) == i - 1 );
             }
 
-            do_test_atomic_pointer_void_( a, arr, aSize, CDS_ATOMIC::memory_order_relaxed );
-            do_test_atomic_pointer_void_( a, arr, aSize, CDS_ATOMIC::memory_order_consume );
-            do_test_atomic_pointer_void_( a, arr, aSize, CDS_ATOMIC::memory_order_acquire );
-            do_test_atomic_pointer_void_( a, arr, aSize, CDS_ATOMIC::memory_order_release );
-            do_test_atomic_pointer_void_( a, arr, aSize, CDS_ATOMIC::memory_order_acq_rel );
-            do_test_atomic_pointer_void_( a, arr, aSize, CDS_ATOMIC::memory_order_seq_cst );
+            do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_relaxed );
+            do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_consume );
+            do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_acquire );
+            do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_release );
+            do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_acq_rel );
+            do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_seq_cst );
         }
 
         template <typename Atomic, typename Integral>
-        void test_atomic_pointer_for_( Atomic& a, Integral * arr, Integral aSize, CDS_ATOMIC::memory_order order )
+        void test_atomic_pointer_for_( Atomic& a, Integral * arr, Integral aSize, atomics::memory_order order )
         {
             typedef Integral integral_type;
-            CDS_ATOMIC::memory_order oLoad = convert_to_load_order(order);
-            CDS_ATOMIC::memory_order oStore = convert_to_store_order(order);
+            atomics::memory_order oLoad = convert_to_load_order(order);
+            atomics::memory_order oStore = convert_to_store_order(order);
             integral_type *  p;
 
             a.store( arr, oStore );
             CPPUNIT_ASSERT( *a.load( oLoad ) == 1 );
 
             p = arr;
-            CPPUNIT_ASSERT( a.compare_exchange_weak( p, arr + 5, order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( a.compare_exchange_weak( p, arr + 5, order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 0 );
             CPPUNIT_ASSERT( *p == 1 );
-            CPPUNIT_ASSERT( !a.compare_exchange_weak( p, arr + 3, order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( !a.compare_exchange_weak( p, arr + 3, order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 5 );
             CPPUNIT_ASSERT( *p == 6 );
 
-            CPPUNIT_ASSERT( a.compare_exchange_strong( p, arr + 3, order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( a.compare_exchange_strong( p, arr + 3, order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 5 );
             CPPUNIT_ASSERT( *p == 6 );
-            CPPUNIT_ASSERT( !a.compare_exchange_strong( p, arr + 5, order, CDS_ATOMIC::memory_order_relaxed ));
+            CPPUNIT_ASSERT( !a.compare_exchange_strong( p, arr + 5, order, atomics::memory_order_relaxed ));
             CPPUNIT_ASSERT( p == arr + 3 );
             CPPUNIT_ASSERT( *p == 4 );
 
@@ -554,7 +554,7 @@ namespace misc {
         void test_atomic_pointer_for()
         {
             typedef Integral integral_type;
-            typedef typename add_volatile<CDS_ATOMIC::atomic< integral_type *>, Volatile>::type    atomic_pointer;
+            typedef typename add_volatile<atomics::atomic< integral_type *>, Volatile>::type    atomic_pointer;
 
             integral_type   arr[8];
             const integral_type aSize = sizeof(arr)/sizeof(arr[0]);
@@ -602,12 +602,12 @@ namespace misc {
                 CPPUNIT_ASSERT( *a.load() == i - 1 );
             }
 
-            test_atomic_pointer_for_( a, arr, aSize, CDS_ATOMIC::memory_order_relaxed );
-            test_atomic_pointer_for_( a, arr, aSize, CDS_ATOMIC::memory_order_consume );
-            test_atomic_pointer_for_( a, arr, aSize, CDS_ATOMIC::memory_order_acquire );
-            test_atomic_pointer_for_( a, arr, aSize, CDS_ATOMIC::memory_order_release );
-            test_atomic_pointer_for_( a, arr, aSize, CDS_ATOMIC::memory_order_acq_rel );
-            test_atomic_pointer_for_( a, arr, aSize, CDS_ATOMIC::memory_order_seq_cst );
+            test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_relaxed );
+            test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_consume );
+            test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_acquire );
+            test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_release );
+            test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_acq_rel );
+            test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_seq_cst );
         }
 
     public:
@@ -615,7 +615,7 @@ namespace misc {
         {
             // Array to test different alignment
 
-            CDS_ATOMIC::atomic_flag flags[8];
+            atomics::atomic_flag flags[8];
             for ( size_t i = 0; i < sizeof(flags)/sizeof(flags[0]); ++i )
                 do_test_atomic_flag( flags[i] );
         }
@@ -624,7 +624,7 @@ namespace misc {
         {
             // Array to test different alignment
 
-            CDS_ATOMIC::atomic_flag volatile flags[8];
+            atomics::atomic_flag volatile flags[8];
             for ( size_t i = 0; i < sizeof(flags)/sizeof(flags[0]); ++i )
                 do_test_atomic_flag( flags[i] );
         }
@@ -638,22 +638,22 @@ namespace misc {
             for ( size_t i = 0; i < sizeof(a)/sizeof(a[0]); ++i ) {
                 do_test_atomic_bool( a[i] );
 
-                do_test_atomic_bool( a[i], CDS_ATOMIC::memory_order_relaxed );
-                do_test_atomic_bool( a[i], CDS_ATOMIC::memory_order_consume );
-                do_test_atomic_bool( a[i], CDS_ATOMIC::memory_order_acquire );
-                do_test_atomic_bool( a[i], CDS_ATOMIC::memory_order_release );
-                do_test_atomic_bool( a[i], CDS_ATOMIC::memory_order_acq_rel );
-                do_test_atomic_bool( a[i], CDS_ATOMIC::memory_order_seq_cst );
+                do_test_atomic_bool( a[i], atomics::memory_order_relaxed );
+                do_test_atomic_bool( a[i], atomics::memory_order_consume );
+                do_test_atomic_bool( a[i], atomics::memory_order_acquire );
+                do_test_atomic_bool( a[i], atomics::memory_order_release );
+                do_test_atomic_bool( a[i], atomics::memory_order_acq_rel );
+                do_test_atomic_bool( a[i], atomics::memory_order_seq_cst );
             }
         }
 
         void test_atomic_bool()
         {
-            test_atomic_bool_< CDS_ATOMIC::atomic<bool> >();
+            test_atomic_bool_< atomics::atomic<bool> >();
         }
         void test_atomic_bool_volatile()
         {
-            test_atomic_bool_< CDS_ATOMIC::atomic<bool> volatile >();
+            test_atomic_bool_< atomics::atomic<bool> volatile >();
         }
 
         void test_atomic_char()                 { test_atomic_integral<char>(); }

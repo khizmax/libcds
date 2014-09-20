@@ -786,7 +786,7 @@ namespace michael {
             : public options::free_list::item_hook
             , public options::partial_list::item_hook
         {
-            CDS_ATOMIC::atomic<anchor_tag>          anchor      ;   ///< anchor, see \ref anchor_tag
+            atomics::atomic<anchor_tag>          anchor      ;   ///< anchor, see \ref anchor_tag
             byte *              pSB         ;   ///< ptr to superblock
             processor_heap_base * pProcHeap ;   ///< pointer to owner processor heap
             unsigned int        nBlockSize  ;   ///< block size in bytes
@@ -1099,10 +1099,10 @@ namespace michael {
         /// Processor heap
         struct processor_heap_base
         {
-            CDS_DATA_ALIGNMENT(8) CDS_ATOMIC::atomic<active_tag> active;   ///< pointer to the descriptor of active superblock owned by processor heap
+            CDS_DATA_ALIGNMENT(8) atomics::atomic<active_tag> active;   ///< pointer to the descriptor of active superblock owned by processor heap
             processor_desc *    pProcDesc   ;   ///< pointer to parent processor descriptor
             const size_class *  pSizeClass  ;   ///< pointer to size class
-            CDS_ATOMIC::atomic<superblock_desc *>   pPartial    ;   ///< pointer to partial filled superblock (may be \p nullptr)
+            atomics::atomic<superblock_desc *>   pPartial    ;   ///< pointer to partial filled superblock (may be \p nullptr)
             partial_list        partialList ;   ///< list of partial filled superblocks owned by the processor heap
             unsigned int        nPageIdx    ;   ///< page size-class index, \ref c_nPageSelfAllocation - "small page"
 
@@ -1130,13 +1130,13 @@ namespace michael {
             /// Get partial superblock owned by the processor heap
             superblock_desc * get_partial()
             {
-                superblock_desc * pDesc = pPartial.load(CDS_ATOMIC::memory_order_acquire);
+                superblock_desc * pDesc = pPartial.load(atomics::memory_order_acquire);
                 do {
                     if ( !pDesc ) {
                         pDesc =  partialList.pop();
                         break;
                     }
-                } while ( !pPartial.compare_exchange_weak( pDesc, nullptr, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
+                } while ( !pPartial.compare_exchange_weak( pDesc, nullptr, atomics::memory_order_release, atomics::memory_order_relaxed ) );
 
                 //assert( pDesc == nullptr || free_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_free_list_hook *>(pDesc) ));
                 //assert( pDesc == nullptr || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
@@ -1150,7 +1150,7 @@ namespace michael {
                 //assert( partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
 
                 superblock_desc * pCur = nullptr;
-                if ( !pPartial.compare_exchange_strong(pCur, pDesc, CDS_ATOMIC::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed) )
+                if ( !pPartial.compare_exchange_strong(pCur, pDesc, atomics::memory_order_acq_rel, atomics::memory_order_relaxed) )
                     partialList.push( pDesc );
             }
 
@@ -1186,7 +1186,7 @@ namespace michael {
         system_heap         m_LargeHeap          ;  ///< Heap for large block
         aligned_heap        m_AlignedHeap        ;  ///< Internal aligned heap
         sizeclass_selector  m_SizeClassSelector  ;  ///< Size-class selector
-        CDS_ATOMIC::atomic<processor_desc *> *   m_arrProcDesc  ;  ///< array of pointers to the processor descriptors
+        atomics::atomic<processor_desc *> *   m_arrProcDesc  ;  ///< array of pointers to the processor descriptors
         unsigned int        m_nProcessorCount    ;  ///< Processor count
         bound_checker       m_BoundChecker       ;  ///< Bound checker
 
@@ -1213,7 +1213,7 @@ namespace michael {
             // Reserve block
             while ( true ) {
                 ++nCollision;
-                oldActive = pProcHeap->active.load(CDS_ATOMIC::memory_order_acquire);
+                oldActive = pProcHeap->active.load(atomics::memory_order_acquire);
                 if ( !oldActive.ptr() )
                     return nullptr;
                 unsigned int nCredits = oldActive.credits();
@@ -1222,7 +1222,7 @@ namespace michael {
                     newActive = oldActive;
                     newActive.credits( nCredits - 1 );
                 }
-                if ( pProcHeap->active.compare_exchange_strong( oldActive, newActive, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                if ( pProcHeap->active.compare_exchange_strong( oldActive, newActive, atomics::memory_order_release, atomics::memory_order_relaxed ))
                     break;
             }
 
@@ -1240,7 +1240,7 @@ namespace michael {
             nCollision = -1;
             do {
                 ++nCollision;
-                newAnchor = oldAnchor = pDesc->anchor.load(CDS_ATOMIC::memory_order_acquire);
+                newAnchor = oldAnchor = pDesc->anchor.load(atomics::memory_order_acquire);
 
                 assert( oldAnchor.avail < pDesc->nCapacity );
                 pAddr = pDesc->pSB + oldAnchor.avail * (unsigned long long) pDesc->nBlockSize;
@@ -1256,7 +1256,7 @@ namespace michael {
                         newAnchor.count -= nMoreCredits;
                     }
                 }
-            } while ( !pDesc->anchor.compare_exchange_strong( oldAnchor, newAnchor, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ));
+            } while ( !pDesc->anchor.compare_exchange_strong( oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
             if ( nCollision )
                 pProcHeap->stat.incActiveAnchorCASFailureCount( nCollision );
@@ -1297,7 +1297,7 @@ namespace michael {
             do {
                 ++nCollision;
 
-                newAnchor = oldAnchor = pDesc->anchor.load(CDS_ATOMIC::memory_order_acquire);
+                newAnchor = oldAnchor = pDesc->anchor.load(atomics::memory_order_acquire);
                 if ( oldAnchor.state == SBSTATE_EMPTY ) {
                     free_superblock( pDesc );
                     goto retry;
@@ -1307,7 +1307,7 @@ namespace michael {
                 newAnchor.count -= nMoreCredits + 1;
                 newAnchor.state = (nMoreCredits > 0) ? SBSTATE_ACTIVE : SBSTATE_FULL;
                 newAnchor.tag += 1;
-            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed) );
+            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed) );
 
             if ( nCollision )
                 pProcHeap->stat.incPartialDescCASFailureCount( nCollision );
@@ -1322,13 +1322,13 @@ namespace michael {
             do {
                 ++nCollision;
 
-                newAnchor = oldAnchor = pDesc->anchor.load(CDS_ATOMIC::memory_order_acquire);
+                newAnchor = oldAnchor = pDesc->anchor.load(atomics::memory_order_acquire);
 
                 assert( oldAnchor.avail < pDesc->nCapacity );
                 pAddr = pDesc->pSB + oldAnchor.avail * pDesc->nBlockSize;
                 newAnchor.avail = reinterpret_cast<free_block_header *>( pAddr )->nNextFree;
                 ++newAnchor.tag;
-            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed) );
+            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed) );
 
             if ( nCollision )
                 pProcHeap->stat.incPartialAnchorCASFailureCount( nCollision );
@@ -1356,7 +1356,7 @@ namespace michael {
             assert( pDesc != nullptr );
             pDesc->pSB = new_superblock_buffer( pProcHeap );
 
-            anchor_tag anchor = pDesc->anchor.load(CDS_ATOMIC::memory_order_relaxed);
+            anchor_tag anchor = pDesc->anchor.load(atomics::memory_order_relaxed);
             anchor.tag += 1;
 
             // Make single-linked list of free blocks in superblock
@@ -1374,10 +1374,10 @@ namespace michael {
 
             anchor.count = pDesc->nCapacity - 1 - (newActive.credits() + 1);
             anchor.state = SBSTATE_ACTIVE;
-            pDesc->anchor.store(anchor, CDS_ATOMIC::memory_order_relaxed);
+            pDesc->anchor.store(anchor, atomics::memory_order_relaxed);
 
             active_tag curActive;
-            if ( pProcHeap->active.compare_exchange_strong( curActive, newActive, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
+            if ( pProcHeap->active.compare_exchange_strong( curActive, newActive, atomics::memory_order_release, atomics::memory_order_relaxed )) {
                 pProcHeap->stat.incAllocFromNew();
                 //reinterpret_cast<block_header *>( pDesc->pSB )->set( pDesc, 0 );
                 return reinterpret_cast<block_header *>( pDesc->pSB );
@@ -1398,11 +1398,11 @@ namespace michael {
             if ( nProcessorId >= m_nProcessorCount )
                 nProcessorId = 0;
 
-            processor_desc * pDesc = m_arrProcDesc[ nProcessorId ].load( CDS_ATOMIC::memory_order_relaxed );
+            processor_desc * pDesc = m_arrProcDesc[ nProcessorId ].load( atomics::memory_order_relaxed );
             while ( !pDesc ) {
 
                 processor_desc * pNewDesc = new_processor_desc( nProcessorId );
-                if ( m_arrProcDesc[nProcessorId].compare_exchange_strong( pDesc, pNewDesc, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) ) {
+                if ( m_arrProcDesc[nProcessorId].compare_exchange_strong( pDesc, pNewDesc, atomics::memory_order_release, atomics::memory_order_relaxed ) ) {
                     pDesc = pNewDesc;
                     break;
                 }
@@ -1421,7 +1421,7 @@ namespace michael {
             active_tag  newActive;
             newActive.set( pDesc, nCredits - 1 );
 
-            if ( pProcHeap->active.compare_exchange_strong( nullActive, newActive, CDS_ATOMIC::memory_order_seq_cst, CDS_ATOMIC::memory_order_relaxed ) )
+            if ( pProcHeap->active.compare_exchange_strong( nullActive, newActive, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ) )
                 return;
 
             // Someone installed another active superblock.
@@ -1431,10 +1431,10 @@ namespace michael {
             anchor_tag  newAnchor;
 
             do {
-                newAnchor = oldAnchor = pDesc->anchor.load(CDS_ATOMIC::memory_order_acquire);
+                newAnchor = oldAnchor = pDesc->anchor.load(atomics::memory_order_acquire);
                 newAnchor.count += nCredits;
                 newAnchor.state = SBSTATE_PARTIAL;
-            } while ( !pDesc->anchor.compare_exchange_weak( oldAnchor, newAnchor, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ));
+            } while ( !pDesc->anchor.compare_exchange_weak( oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
             pDesc->pProcHeap->add_partial( pDesc );
         }
@@ -1509,13 +1509,13 @@ namespace michael {
                     m_AlignedHeap.free( pDesc );
                 }
 
-                superblock_desc * pPartial = pProcHeap->pPartial.load(CDS_ATOMIC::memory_order_relaxed);
+                superblock_desc * pPartial = pProcHeap->pPartial.load(atomics::memory_order_relaxed);
                 if ( pPartial ) {
                     free( pPartial->pSB );
                     m_AlignedHeap.free( pPartial );
                 }
 
-                pDesc = pProcHeap->active.load(CDS_ATOMIC::memory_order_relaxed).ptr();
+                pDesc = pProcHeap->active.load(atomics::memory_order_relaxed).ptr();
                 if ( pDesc ) {
                     free( pDesc->pSB );
                     m_AlignedHeap.free( pDesc );
@@ -1530,13 +1530,13 @@ namespace michael {
                     m_AlignedHeap.free( pDesc );
                 }
 
-                superblock_desc * pPartial = pProcHeap->pPartial.load(CDS_ATOMIC::memory_order_relaxed);
+                superblock_desc * pPartial = pProcHeap->pPartial.load(atomics::memory_order_relaxed);
                 if ( pPartial ) {
                     pageHeap.free( pPartial->pSB );
                     m_AlignedHeap.free( pPartial );
                 }
 
-                pDesc = pProcHeap->active.load(CDS_ATOMIC::memory_order_relaxed).ptr();
+                pDesc = pProcHeap->active.load(atomics::memory_order_relaxed).ptr();
                 if ( pDesc ) {
                     pageHeap.free( pDesc->pSB );
                     m_AlignedHeap.free( pDesc );
@@ -1575,9 +1575,9 @@ namespace michael {
                 pDesc = new( m_AlignedHeap.alloc(sizeof(superblock_desc), c_nAlignment ) ) superblock_desc;
                 assert( (uptr_atomic_t(pDesc) & (c_nAlignment - 1)) == 0 );
 
-                anchor = pDesc->anchor.load( CDS_ATOMIC::memory_order_relaxed );
+                anchor = pDesc->anchor.load( atomics::memory_order_relaxed );
                 anchor.tag = 0;
-                pDesc->anchor.store( anchor, CDS_ATOMIC::memory_order_relaxed );
+                pDesc->anchor.store( anchor, atomics::memory_order_relaxed );
 
                 pProcHeap->stat.incDescAllocCount();
             }
@@ -1586,9 +1586,9 @@ namespace michael {
             assert( pDesc->nCapacity <= c_nMaxBlockInSuperBlock );
             pDesc->pProcHeap = pProcHeap;
 
-            anchor = pDesc->anchor.load( CDS_ATOMIC::memory_order_relaxed );
+            anchor = pDesc->anchor.load( atomics::memory_order_relaxed );
             anchor.avail = 1;
-            pDesc->anchor.store( anchor, CDS_ATOMIC::memory_order_relaxed );
+            pDesc->anchor.store( anchor, atomics::memory_order_relaxed );
 
             return pDesc;
         }
@@ -1663,7 +1663,7 @@ namespace michael {
 
             m_nProcessorCount = m_Topology.processor_count();
             m_arrProcDesc = new( m_AlignedHeap.alloc(sizeof(processor_desc *) * m_nProcessorCount, c_nAlignment ))
-                CDS_ATOMIC::atomic<processor_desc *>[ m_nProcessorCount ];
+                atomics::atomic<processor_desc *>[ m_nProcessorCount ];
             memset( m_arrProcDesc, 0, sizeof(processor_desc *) * m_nProcessorCount )    ;   // ?? memset for atomic<>
         }
 
@@ -1674,7 +1674,7 @@ namespace michael {
         ~Heap()
         {
             for ( unsigned int i = 0; i < m_nProcessorCount; ++i ) {
-                processor_desc * pDesc = m_arrProcDesc[i].load(CDS_ATOMIC::memory_order_relaxed);
+                processor_desc * pDesc = m_arrProcDesc[i].load(atomics::memory_order_relaxed);
                 if ( pDesc )
                     free_processor_desc( pDesc );
             }
@@ -1739,7 +1739,7 @@ namespace michael {
 
             pProcHeap->stat.incDeallocatedBytes( pDesc->nBlockSize );
 
-            oldAnchor = pDesc->anchor.load(CDS_ATOMIC::memory_order_acquire);
+            oldAnchor = pDesc->anchor.load(atomics::memory_order_acquire);
             do {
                 newAnchor = oldAnchor;
                 reinterpret_cast<free_block_header *>( pBlock )->nNextFree = oldAnchor.avail;
@@ -1758,7 +1758,7 @@ namespace michael {
                 }
                 else
                     newAnchor.count += 1;
-            } while ( !pDesc->anchor.compare_exchange_strong( oldAnchor, newAnchor, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
+            } while ( !pDesc->anchor.compare_exchange_strong( oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed ) );
 
             pProcHeap->stat.incFreeCount();
 
@@ -1897,7 +1897,7 @@ namespace michael {
         {
             size_t nProcHeapCount = m_SizeClassSelector.size();
             for ( unsigned int nProcessor = 0; nProcessor < m_nProcessorCount; ++nProcessor ) {
-                processor_desc * pProcDesc = m_arrProcDesc[nProcessor].load(CDS_ATOMIC::memory_order_relaxed);
+                processor_desc * pProcDesc = m_arrProcDesc[nProcessor].load(atomics::memory_order_relaxed);
                 if ( pProcDesc ) {
                     for ( unsigned int i = 0; i < nProcHeapCount; ++i ) {
                         processor_heap_base * pProcHeap = pProcDesc->arrProcHeap + i;

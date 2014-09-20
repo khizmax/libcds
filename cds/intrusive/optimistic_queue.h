@@ -117,8 +117,8 @@ namespace cds { namespace intrusive {
             */
             static void is_empty( const node_type * pNode )
             {
-                assert( pNode->m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
-                assert( pNode->m_pPrev.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
+                assert( pNode->m_pNext.load( atomics::memory_order_relaxed ) == nullptr );
+                assert( pNode->m_pPrev.load( atomics::memory_order_relaxed ) == nullptr );
             }
         };
 
@@ -408,7 +408,7 @@ namespace cds { namespace intrusive {
                             fix_list( pTail, pHead );
                             continue;
                         }
-                        if ( m_pHead.compare_exchange_weak( pHead, pFirstNodePrev, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
+                        if ( m_pHead.compare_exchange_weak( pHead, pFirstNodePrev, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                             // dequeue success
                             break;
                         }
@@ -513,7 +513,7 @@ namespace cds { namespace intrusive {
             node_type * pTail = guards.protect( 0, m_pTail, node_to_value() )  ;   // Read the tail
             while( true ) {
                 pNew->m_pNext.store( pTail, memory_model::memory_order_release );
-                if ( m_pTail.compare_exchange_strong( pTail, pNew, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) ) {     // Try to CAS the tail
+                if ( m_pTail.compare_exchange_strong( pTail, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {     // Try to CAS the tail
                     pTail->m_pPrev.store( pNew, memory_model::memory_order_release )     ;           // Success, write prev
                     ++m_ItemCounter;
                     m_Stat.onEnqueue();

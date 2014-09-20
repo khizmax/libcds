@@ -16,11 +16,11 @@ namespace cds { namespace gc { namespace hrc {
 
         /// Retired node descriptor
         struct retired_node {
-            CDS_ATOMIC::atomic<ContainerNode *> m_pNode        ;    ///< node to destroy
+            atomics::atomic<ContainerNode *> m_pNode        ;    ///< node to destroy
             free_retired_ptr_func               m_funcFree     ;    ///< pointer to the destructor function
             size_t                              m_nNextFree    ;    ///< Next free item in retired array
-            CDS_ATOMIC::atomic<unsigned int>    m_nClaim       ;    ///< Access to reclaimed node
-            CDS_ATOMIC::atomic<bool>            m_bDone        ;    ///< the record is in work (concurrent access flag)
+            atomics::atomic<unsigned int>    m_nClaim       ;    ///< Access to reclaimed node
+            atomics::atomic<bool>            m_bDone        ;    ///< the record is in work (concurrent access flag)
 
             /// Default ctor
             retired_node()
@@ -45,16 +45,16 @@ namespace cds { namespace gc { namespace hrc {
             /// Compares two \ref retired_node
             static bool Less( const retired_node& p1, const retired_node& p2 )
             {
-                return p1.m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) < p2.m_pNode.load( CDS_ATOMIC::memory_order_relaxed );
+                return p1.m_pNode.load( atomics::memory_order_relaxed ) < p2.m_pNode.load( atomics::memory_order_relaxed );
             }
 
             /// Assignment operator
             retired_node& set( ContainerNode * pNode, free_retired_ptr_func func )
             {
-                m_bDone.store( false, CDS_ATOMIC::memory_order_relaxed );
-                m_nClaim.store( 0, CDS_ATOMIC::memory_order_relaxed );
+                m_bDone.store( false, atomics::memory_order_relaxed );
+                m_nClaim.store( 0, atomics::memory_order_relaxed );
                 m_funcFree = func;
-                m_pNode.store( pNode, CDS_ATOMIC::memory_order_release );
+                m_pNode.store( pNode, atomics::memory_order_release );
                 CDS_COMPILER_RW_BARRIER;
                 return *this;
             }
@@ -63,7 +63,7 @@ namespace cds { namespace gc { namespace hrc {
             void free()
             {
                 assert( m_funcFree != nullptr );
-                m_funcFree( m_pNode.load( CDS_ATOMIC::memory_order_relaxed ));
+                m_funcFree( m_pNode.load( atomics::memory_order_relaxed ));
             }
         };
 
@@ -116,7 +116,7 @@ namespace cds { namespace gc { namespace hrc {
                 size_t nCount = 0;
                 const size_t nCapacity = capacity();
                 for ( size_t i = 0; i < nCapacity; ++i ) {
-                    if ( m_arr[i].m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) != nullptr )
+                    if ( m_arr[i].m_pNode.load( atomics::memory_order_relaxed ) != nullptr )
                         ++nCount;
                 }
                 return nCount;
@@ -128,7 +128,7 @@ namespace cds { namespace gc { namespace hrc {
                 assert( !isFull());
 
                 size_t n = m_nFreeList;
-                assert( m_arr[n].m_pNode.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
+                assert( m_arr[n].m_pNode.load( atomics::memory_order_relaxed ) == nullptr );
                 m_nFreeList = m_arr[n].m_nNextFree;
                 CDS_DEBUG_DO( m_arr[n].m_nNextFree = m_nEndFreeList ; )
                 m_arr[n].set( p, pFunc );
@@ -138,7 +138,7 @@ namespace cds { namespace gc { namespace hrc {
             void pop( size_t n )
             {
                 assert( n < capacity() );
-                m_arr[n].m_pNode.store( nullptr, CDS_ATOMIC::memory_order_release );
+                m_arr[n].m_pNode.store( nullptr, atomics::memory_order_release );
                 m_arr[n].m_nNextFree = m_nFreeList;
                 m_nFreeList = n;
             }

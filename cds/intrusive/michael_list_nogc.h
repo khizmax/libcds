@@ -20,7 +20,7 @@ namespace cds { namespace intrusive {
             typedef gc::nogc        gc  ;   ///< Garbage collector
             typedef Tag             tag ;   ///< tag
 
-            typedef CDS_ATOMIC::atomic< node * >   atomic_ptr  ;    ///< atomic marked pointer
+            typedef atomics::atomic< node * >   atomic_ptr  ;    ///< atomic marked pointer
 
             atomic_ptr m_pNext ; ///< pointer to the next node in the container
 
@@ -121,7 +121,7 @@ namespace cds { namespace intrusive {
             link_checker::is_empty( pNode );
 
             pNode->m_pNext.store( pos.pCur, memory_model::memory_order_relaxed );
-            return pos.pPrev->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+            return pos.pPrev->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
         //@endcond
 

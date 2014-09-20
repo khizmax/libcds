@@ -117,7 +117,7 @@ namespace cds { namespace intrusive {
             void clear()
             {
                 assert( m_arrNext == nullptr );
-                m_pNext.store( marked_ptr(), CDS_ATOMIC::memory_order_release );
+                m_pNext.store( marked_ptr(), atomics::memory_order_release );
             }
 
             //@cond
@@ -248,7 +248,7 @@ namespace cds { namespace intrusive {
         */
         class xorshift {
             //@cond
-            CDS_ATOMIC::atomic<unsigned int>    m_nSeed;
+            atomics::atomic<unsigned int>    m_nSeed;
             //@endcond
         public:
             /// The upper bound of generator's return value. The generator produces random number in range <tt>[0..c_nUpperBound)</tt>
@@ -257,7 +257,7 @@ namespace cds { namespace intrusive {
             /// Initializes the generator instance
             xorshift()
             {
-                m_nSeed.store( (unsigned int) cds::OS::Timer::random_seed(), CDS_ATOMIC::memory_order_relaxed );
+                m_nSeed.store( (unsigned int) cds::OS::Timer::random_seed(), atomics::memory_order_relaxed );
             }
 
             /// Main generator function
@@ -276,11 +276,11 @@ namespace cds { namespace intrusive {
                     return level;
                 }
                 */
-                unsigned int x = m_nSeed.load( CDS_ATOMIC::memory_order_relaxed );
+                unsigned int x = m_nSeed.load( atomics::memory_order_relaxed );
                 x ^= x << 13;
                 x ^= x >> 17;
                 x ^= x << 5;
-                m_nSeed.store( x, CDS_ATOMIC::memory_order_relaxed );
+                m_nSeed.store( x, atomics::memory_order_relaxed );
                 unsigned int nLevel = ((x & 0x00000001) != 0) ? 0 : cds::bitop::LSB( (~(x >> 1)) & 0x7FFFFFFF );
                 assert( nLevel < c_nUpperBound );
                 return nLevel;
@@ -298,7 +298,7 @@ namespace cds { namespace intrusive {
         class turbo_pascal
         {
             //@cond
-            CDS_ATOMIC::atomic<unsigned int>    m_nSeed;
+            atomics::atomic<unsigned int>    m_nSeed;
             //@endcond
         public:
             /// The upper bound of generator's return value. The generator produces random number in range <tt>[0..c_nUpperBound)</tt>
@@ -307,7 +307,7 @@ namespace cds { namespace intrusive {
             /// Initializes the generator instance
             turbo_pascal()
             {
-                m_nSeed.store( (unsigned int) cds::OS::Timer::random_seed(), CDS_ATOMIC::memory_order_relaxed );
+                m_nSeed.store( (unsigned int) cds::OS::Timer::random_seed(), atomics::memory_order_relaxed );
             }
 
             /// Main generator function
@@ -330,8 +330,8 @@ namespace cds { namespace intrusive {
                     upper 16 bits) so we traverse from highest bit down (i.e., test
                     sign), thus hardly ever use lower bits.
                 */
-                unsigned int x = m_nSeed.load( CDS_ATOMIC::memory_order_relaxed ) * 134775813 + 1;
-                m_nSeed.store( x, CDS_ATOMIC::memory_order_relaxed );
+                unsigned int x = m_nSeed.load( atomics::memory_order_relaxed ) * 134775813 + 1;
+                m_nSeed.store( x, atomics::memory_order_relaxed );
                 unsigned int nLevel = ( x & 0x80000000 ) ? (31 - cds::bitop::MSBnz( (x & 0x7FFFFFFF) | 1 )) : 0;
                 assert( nLevel < c_nUpperBound );
                 return nLevel;
@@ -588,7 +588,7 @@ namespace cds { namespace intrusive {
                 head_node( unsigned int nHeight )
                 {
                     for ( size_t i = 0; i < sizeof(m_Tower) / sizeof(m_Tower[0]); ++i )
-                        m_Tower[i].store( typename node_type::marked_ptr(), CDS_ATOMIC::memory_order_relaxed );
+                        m_Tower[i].store( typename node_type::marked_ptr(), atomics::memory_order_relaxed );
 
                     node_type::make_tower( nHeight, m_Tower );
                 }

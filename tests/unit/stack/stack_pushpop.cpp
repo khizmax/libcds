@@ -29,7 +29,7 @@ namespace stack {
 
     class Stack_PushPop: public CppUnitMini::TestCase
     {
-        CDS_ATOMIC::atomic<size_t>  m_nWorkingProducers;
+        atomics::atomic<size_t>  m_nWorkingProducers;
         static size_t const c_nValArraySize = 1024;
 
         template <class Stack>
@@ -85,7 +85,7 @@ namespace stack {
                 }
 
 
-                getTest().m_nWorkingProducers.fetch_sub(1, CDS_ATOMIC::memory_order_release);
+                getTest().m_nWorkingProducers.fetch_sub(1, atomics::memory_order_release);
             }
         };
 
@@ -134,7 +134,7 @@ namespace stack {
                 memset( m_arrPop, 0, sizeof(m_arrPop));
 
                 SimpleValue v;
-                while ( !(getTest().m_nWorkingProducers.load(CDS_ATOMIC::memory_order_acquire) == 0 && m_Stack.empty()) ) {
+                while ( !(getTest().m_nWorkingProducers.load(atomics::memory_order_acquire) == 0 && m_Stack.empty()) ) {
                     if ( m_Stack.pop( v )) {
                         ++m_nPopCount;
                         if ( v.nNo < sizeof(m_arrPop)/sizeof(m_arrPop[0]) )
@@ -236,7 +236,7 @@ namespace stack {
         template <class Stack>
         void test( Stack& testStack )
         {
-            m_nWorkingProducers.store(s_nPushThreadCount, CDS_ATOMIC::memory_order_release);
+            m_nWorkingProducers.store(s_nPushThreadCount, atomics::memory_order_release);
             size_t const nPushCount = s_nStackSize / s_nPushThreadCount;
 
             CppUnitMini::ThreadPool pool( *this );

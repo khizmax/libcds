@@ -23,13 +23,13 @@ namespace cds {
                 \li HazardPointer - type of hazard pointer. It is \ref hazard_pointer for Michael's Hazard Pointer reclamation schema
         */
         template <typename HazardPointer>
-        class HPGuardT: protected CDS_ATOMIC::atomic<HazardPointer>
+        class HPGuardT: protected atomics::atomic<HazardPointer>
         {
         public:
             typedef HazardPointer   hazard_ptr ;    ///< Hazard pointer type
         private:
             //@cond
-            typedef CDS_ATOMIC::atomic<hazard_ptr>  base_class;
+            typedef atomics::atomic<hazard_ptr>  base_class;
             //@endcond
 
         protected:
@@ -52,7 +52,7 @@ namespace cds {
             T * operator =( T * p ) CDS_NOEXCEPT
             {
                 // We use atomic store with explicit memory order because other threads may read this hazard pointer concurrently
-                base_class::store( reinterpret_cast<hazard_ptr>(p), CDS_ATOMIC::memory_order_release );
+                base_class::store( reinterpret_cast<hazard_ptr>(p), atomics::memory_order_release );
                 return p;
             }
 
@@ -79,7 +79,7 @@ namespace cds {
             */
             hazard_ptr get() const CDS_NOEXCEPT
             {
-                return base_class::load( CDS_ATOMIC::memory_order_acquire );
+                return base_class::load( atomics::memory_order_acquire );
             }
 
             /// Clears HP
@@ -89,7 +89,7 @@ namespace cds {
             void clear() CDS_NOEXCEPT
             {
                 // memory order is not necessary here
-                base_class::store( nullptr, CDS_ATOMIC::memory_order_relaxed );
+                base_class::store( nullptr, atomics::memory_order_relaxed );
                 //CDS_COMPILER_RW_BARRIER;
             }
         };

@@ -7,7 +7,7 @@
 #include <cds/details/defs.h>
 #include <cds/details/aligned_type.h>
 
-namespace cds { namespace cxx11_atomics {
+namespace cds { namespace cxx11_atomic {
     typedef enum memory_order {
         memory_order_relaxed,
         memory_order_consume,
@@ -17,7 +17,7 @@ namespace cds { namespace cxx11_atomics {
         memory_order_seq_cst
     } memory_order;
 
-}}  // namespace cds::cxx11_atomics
+}}  // namespace cds::cxx11_atomic
 
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)
@@ -51,7 +51,7 @@ namespace cds { namespace cxx11_atomics {
 // In C++11, make_unsigned is declared in <type_traits>
 #include <boost/type_traits/make_unsigned.hpp>  // for make_unsigned
 
-namespace cds { namespace cxx11_atomics {
+namespace cds { namespace cxx11_atomic {
 
     // forward declarations
     template <class T>
@@ -2271,7 +2271,7 @@ namespace cds { namespace cxx11_atomics {
         platform::signal_fence( order );
     }
 
-}}  // namespace cds::cxx11_atomics
+}}  // namespace cds::cxx11_atomic
 
 //@endcond
 #endif // #ifndef __CDS_COMPILER_CXX11_ATOMIC_H

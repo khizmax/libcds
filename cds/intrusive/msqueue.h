@@ -204,12 +204,12 @@ namespace cds { namespace intrusive {
                 node_type * t = m_pTail.load(memory_model::memory_order_acquire);
                 if ( h == t ) {
                     // It is needed to help enqueue
-                    m_pTail.compare_exchange_strong( t, pNext, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                    m_pTail.compare_exchange_strong( t, pNext, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     m_Stat.onBadTail();
                     continue;
                 }
 
-                if ( m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                if ( m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     break;
 
                 m_Stat.onDequeueRace();
@@ -334,13 +334,13 @@ namespace cds { namespace intrusive {
                 node_type * pNext = t->m_pNext.load(memory_model::memory_order_acquire);
                 if ( pNext != nullptr ) {
                     // Tail is misplaced, advance it
-                    m_pTail.compare_exchange_weak( t, pNext, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                    m_pTail.compare_exchange_weak( t, pNext, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     m_Stat.onBadTail();
                     continue;
                 }
 
                 node_type * tmp = nullptr;
-                if ( t->m_pNext.compare_exchange_strong( tmp, pNew, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                if ( t->m_pNext.compare_exchange_strong( tmp, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     break;
 
                 m_Stat.onEnqueueRace();
@@ -349,7 +349,7 @@ namespace cds { namespace intrusive {
             ++m_ItemCounter;
             m_Stat.onEnqueue();
 
-            if ( !m_pTail.compare_exchange_strong( t, pNew, memory_model::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed ))
+            if ( !m_pTail.compare_exchange_strong( t, pNew, memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ))
                 m_Stat.onAdvanceTailFailed();
             return true;
         }

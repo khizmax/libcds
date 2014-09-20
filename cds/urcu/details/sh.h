@@ -40,15 +40,15 @@ namespace cds { namespace urcu { namespace details {
         thread_record * pRec = get_thread_record();
         assert( pRec != nullptr );
 
-        uint32_t tmp = pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_relaxed );
+        uint32_t tmp = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
         if ( (tmp & rcu_class::c_nNestMask) == 0 ) {
             pRec->m_nAccessControl.store(
-                sh_singleton<RCUtag>::instance()->global_control_word(CDS_ATOMIC::memory_order_acquire),
-                CDS_ATOMIC::memory_order_release
+                sh_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_acquire),
+                atomics::memory_order_release
             );
         }
         else {
-            pRec->m_nAccessControl.fetch_add( 1, CDS_ATOMIC::memory_order_release );
+            pRec->m_nAccessControl.fetch_add( 1, atomics::memory_order_release );
         }
         CDS_COMPILER_RW_BARRIER;
     }
@@ -60,7 +60,7 @@ namespace cds { namespace urcu { namespace details {
         assert( pRec != nullptr);
 
         CDS_COMPILER_RW_BARRIER;
-        pRec->m_nAccessControl.fetch_sub( 1, CDS_ATOMIC::memory_order_release );
+        pRec->m_nAccessControl.fetch_sub( 1, atomics::memory_order_release );
     }
 
     template <typename RCUtag>
@@ -69,7 +69,7 @@ namespace cds { namespace urcu { namespace details {
         thread_record * pRec = get_thread_record();
         assert( pRec != nullptr);
 
-        return (pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_relaxed ) & rcu_class::c_nNestMask) != 0;
+        return (pRec->m_nAccessControl.load( atomics::memory_order_relaxed ) & rcu_class::c_nNestMask) != 0;
     }
 
 
@@ -99,9 +99,9 @@ namespace cds { namespace urcu { namespace details {
     {
         thread_record * pRec = cds::threading::getRCU<RCUtag>();
         if ( pRec ) {
-            CDS_ATOMIC::atomic_signal_fence( CDS_ATOMIC::memory_order_acquire );
-            pRec->m_bNeedMemBar.store( false, CDS_ATOMIC::memory_order_relaxed );
-            CDS_ATOMIC::atomic_signal_fence( CDS_ATOMIC::memory_order_release );
+            atomics::atomic_signal_fence( atomics::memory_order_acquire );
+            pRec->m_bNeedMemBar.store( false, atomics::memory_order_relaxed );
+            atomics::atomic_signal_fence( atomics::memory_order_release );
         }
     }
 
@@ -118,21 +118,21 @@ namespace cds { namespace urcu { namespace details {
         OS::ThreadId const nullThreadId = OS::c_NullThreadId;
 
         // Send "need membar" signal to all RCU threads
-        for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            OS::ThreadId tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire);
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
+            OS::ThreadId tid = pRec->m_list.m_idOwner.load( atomics::memory_order_acquire);
             if ( tid != nullThreadId ) {
-                pRec->m_bNeedMemBar.store( true, CDS_ATOMIC::memory_order_release );
+                pRec->m_bNeedMemBar.store( true, atomics::memory_order_release );
                 raise_signal( tid );
             }
         }
 
         // Wait while all RCU threads process the signal
-        for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            OS::ThreadId tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire);
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
+            OS::ThreadId tid = pRec->m_list.m_idOwner.load( atomics::memory_order_acquire);
             if ( tid != nullThreadId ) {
                 bkOff.reset();
-                while ( (tid = pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire )) != nullThreadId
-                     && pRec->m_bNeedMemBar.load( CDS_ATOMIC::memory_order_acquire ))
+                while ( (tid = pRec->m_list.m_idOwner.load( atomics::memory_order_acquire )) != nullThreadId
+                     && pRec->m_bNeedMemBar.load( atomics::memory_order_acquire ))
                 {
                     // Some versions of OSes can lose signals
                     // So, we resend the signal
@@ -146,9 +146,9 @@ namespace cds { namespace urcu { namespace details {
     template <typename RCUtag>
     bool sh_singleton<RCUtag>::check_grace_period( thread_record * pRec ) const
     {
-        uint32_t const v = pRec->m_nAccessControl.load( CDS_ATOMIC::memory_order_acquire );
+        uint32_t const v = pRec->m_nAccessControl.load( atomics::memory_order_acquire );
         return (v & signal_handling_rcu::c_nNestMask)
-            && ((( v ^ m_nGlobalControl.load( CDS_ATOMIC::memory_order_relaxed )) & ~signal_handling_rcu::c_nNestMask ));
+            && ((( v ^ m_nGlobalControl.load( atomics::memory_order_relaxed )) & ~signal_handling_rcu::c_nNestMask ));
     }
 
     template <typename RCUtag>
@@ -157,8 +157,8 @@ namespace cds { namespace urcu { namespace details {
     {
         OS::ThreadId const nullThreadId = OS::c_NullThreadId;
 
-        for ( thread_record * pRec = m_ThreadList.head( CDS_ATOMIC::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            while ( pRec->m_list.m_idOwner.load( CDS_ATOMIC::memory_order_acquire) != nullThreadId && check_grace_period( pRec ))
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
+            while ( pRec->m_list.m_idOwner.load( atomics::memory_order_acquire) != nullThreadId && check_grace_period( pRec ))
                 bkOff();
         }
     }

@@ -21,7 +21,7 @@ namespace cds {
     template <typename T>
     class ref_counter
     {
-        CDS_ATOMIC::atomic<T>   m_nRefCount    ;        ///< The reference counter
+        atomics::atomic<T>   m_nRefCount    ;        ///< The reference counter
 
     public:
         typedef T   ref_counter_type  ; ///< The reference counter type
@@ -35,7 +35,7 @@ namespace cds {
         /// Get current value of reference counter.
         T   value() const CDS_NOEXCEPT
         {
-            return m_nRefCount.load( CDS_ATOMIC::memory_order_relaxed );
+            return m_nRefCount.load( atomics::memory_order_relaxed );
         }
 
         /// Current value of reference counter
@@ -47,14 +47,14 @@ namespace cds {
         /// Atomic increment
         void    inc() CDS_NOEXCEPT
         {
-            m_nRefCount.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
+            m_nRefCount.fetch_add( 1, atomics::memory_order_relaxed );
         }
 
         /// Atomic decrement. Return \p true if reference counter is 0, otherwise \p false
         bool    dec() CDS_NOEXCEPT
         {
-            if ( m_nRefCount.fetch_sub( 1, CDS_ATOMIC::memory_order_relaxed ) == 1 ) {
-                CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_release );
+            if ( m_nRefCount.fetch_sub( 1, atomics::memory_order_relaxed ) == 1 ) {
+                atomics::atomic_thread_fence( atomics::memory_order_release );
                 return true;
             }
             return false;

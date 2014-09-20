@@ -40,7 +40,7 @@ namespace cds { namespace intrusive { namespace skip_list {
         ~node()
         {
             release_tower();
-            m_pNext.store( marked_ptr(), CDS_ATOMIC::memory_order_relaxed );
+            m_pNext.store( marked_ptr(), atomics::memory_order_relaxed );
         }
 
         /// Constructs a node of height \p nHeight
@@ -63,7 +63,7 @@ namespace cds { namespace intrusive { namespace skip_list {
                 m_arrNext = nullptr;
                 m_nHeight = 1;
                 for ( unsigned int i = 0; i < nHeight; ++i )
-                    pTower[i].store( marked_ptr(), CDS_ATOMIC::memory_order_release );
+                    pTower[i].store( marked_ptr(), atomics::memory_order_release );
             }
             return pTower;
         }
@@ -120,9 +120,9 @@ namespace cds { namespace intrusive { namespace skip_list {
                 while ( true ) {
                     marked_ptr pNextMarked( aGuards.protect( 0, next(i) ));
                     node * pNext = pNextMarked.ptr();
-                    if ( pNext && pNext->m_bDeleted.load(CDS_ATOMIC::memory_order_acquire) ) {
+                    if ( pNext && pNext->m_bDeleted.load(atomics::memory_order_acquire) ) {
                         marked_ptr p = aGuards.protect( 1, pNext->next(i) );
-                        next(i).compare_exchange_strong( pNextMarked, p, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed );
+                        next(i).compare_exchange_strong( pNextMarked, p, atomics::memory_order_acquire, atomics::memory_order_relaxed );
                         continue;
                     }
                     else {
@@ -137,13 +137,13 @@ namespace cds { namespace intrusive { namespace skip_list {
             unsigned int const nHeight = height();
             if ( bConcurrent ) {
                 for (unsigned int i = 0; i < nHeight; ++i ) {
-                    marked_ptr pNext = next(i).load(CDS_ATOMIC::memory_order_relaxed);
-                    while ( !next(i).compare_exchange_weak( pNext, marked_ptr(), CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
+                    marked_ptr pNext = next(i).load(atomics::memory_order_relaxed);
+                    while ( !next(i).compare_exchange_weak( pNext, marked_ptr(), atomics::memory_order_release, atomics::memory_order_relaxed ) );
                 }
             }
             else {
                 for (unsigned int i = 0; i < nHeight; ++i )
-                    next(i).store( marked_ptr(), CDS_ATOMIC::memory_order_relaxed );
+                    next(i).store( marked_ptr(), atomics::memory_order_relaxed );
             }
         }
     };
@@ -173,7 +173,7 @@ namespace cds { namespace intrusive { namespace skip_list {
                 : m_pHead( new head_tower() )
             {
                 for ( size_t i = 0; i < sizeof(m_pHead->m_Tower) / sizeof(m_pHead->m_Tower[0]); ++i )
-                    m_pHead->m_Tower[i].store( typename node_type::marked_ptr(), CDS_ATOMIC::memory_order_relaxed );
+                    m_pHead->m_Tower[i].store( typename node_type::marked_ptr(), atomics::memory_order_relaxed );
 
                 m_pHead->make_tower( nHeight, m_pHead->m_Tower );
             }

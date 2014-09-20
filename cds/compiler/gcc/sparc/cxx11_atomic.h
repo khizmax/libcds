@@ -40,7 +40,7 @@
 #define CDS_SPARC_MB_SEQ_CST    CDS_SPARC_MB_FULL
 
 //@cond
-namespace cds { namespace cxx11_atomics {
+namespace cds { namespace cxx11_atomic {
     namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace gcc { CDS_CXX11_INLINE_NAMESPACE namespace Sparc {
 
         static inline void fence_before( memory_order order ) CDS_NOEXCEPT
@@ -596,7 +596,7 @@ namespace cds { namespace cxx11_atomics {
     using namespace gcc::Sparc;
 #endif
     }   // namespace platform
-}}  // namespace cds::cxx11_atomics
+}}  // namespace cds::cxx11_atomic
 //@endcond
 
 #undef CDS_SPARC_MB_ACQ

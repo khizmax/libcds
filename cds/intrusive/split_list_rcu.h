@@ -235,7 +235,7 @@ namespace cds { namespace intrusive {
     protected:
         ordered_list_wrapper    m_List              ;   ///< Ordered list containing split-list items
         bucket_table            m_Buckets           ;   ///< bucket table
-        CDS_ATOMIC::atomic<size_t> m_nBucketCountLog2  ;   ///< log2( current bucket count )
+        atomics::atomic<size_t> m_nBucketCountLog2  ;   ///< log2( current bucket count )
         item_counter            m_ItemCounter       ;   ///< Item counter
         hash                    m_HashFunctor       ;   ///< Hash functor
 
@@ -260,7 +260,7 @@ namespace cds { namespace intrusive {
 
         size_t bucket_no( size_t nHash ) const
         {
-            return nHash & ( (1 << m_nBucketCountLog2.load(CDS_ATOMIC::memory_order_relaxed)) - 1 );
+            return nHash & ( (1 << m_nBucketCountLog2.load(atomics::memory_order_relaxed)) - 1 );
         }
 
         static size_t parent_bucket( size_t nBucket )
@@ -338,10 +338,10 @@ namespace cds { namespace intrusive {
 
         void    inc_item_count()
         {
-            size_t sz = m_nBucketCountLog2.load(CDS_ATOMIC::memory_order_relaxed);
+            size_t sz = m_nBucketCountLog2.load(atomics::memory_order_relaxed);
             if ( ( ++m_ItemCounter >> sz ) > m_Buckets.load_factor() && ((size_t)(1 << sz )) < m_Buckets.capacity() )
             {
-                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, CDS_ATOMIC::memory_order_seq_cst, CDS_ATOMIC::memory_order_relaxed );
+                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, atomics::memory_order_seq_cst, atomics::memory_order_relaxed );
             }
         }
 

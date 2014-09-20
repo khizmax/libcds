@@ -147,7 +147,7 @@ namespace set2 {
         typedef key_thread  key_type;
         typedef size_t      value_type;
 
-        CDS_ATOMIC::atomic<size_t>      m_nInsThreadCount;
+        atomics::atomic<size_t>      m_nInsThreadCount;
 
         // Inserts keys from [0..N)
         template <class Set>
@@ -210,7 +210,7 @@ namespace set2 {
                     }
                 }
 
-                getTest().m_nInsThreadCount.fetch_sub( 1, CDS_ATOMIC::memory_order_release );
+                getTest().m_nInsThreadCount.fetch_sub( 1, atomics::memory_order_release );
             }
         };
 
@@ -336,7 +336,7 @@ namespace set2 {
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -350,7 +350,7 @@ namespace set2 {
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -409,7 +409,7 @@ namespace set2 {
                                     ++m_nExtractFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -423,7 +423,7 @@ namespace set2 {
                                     ++m_nExtractFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -491,7 +491,7 @@ namespace set2 {
                                 xp.release();
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -515,7 +515,7 @@ namespace set2 {
                                 xp.release();
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -545,7 +545,7 @@ namespace set2 {
             typedef InsertThread<Set> insert_thread;
             typedef DeleteThread<Set> delete_thread;
 
-            m_nInsThreadCount.store( c_nInsThreadCount, CDS_ATOMIC::memory_order_release );
+            m_nInsThreadCount.store( c_nInsThreadCount, atomics::memory_order_release );
 
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new insert_thread( pool, testSet ), c_nInsThreadCount );
@@ -586,7 +586,7 @@ namespace set2 {
             typedef DeleteThread<Set> delete_thread;
             typedef ExtractThread< typename Set::gc, Set > extract_thread;
 
-            m_nInsThreadCount.store( c_nInsThreadCount, CDS_ATOMIC::memory_order_release );
+            m_nInsThreadCount.store( c_nInsThreadCount, atomics::memory_order_release );
 
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new insert_thread( pool, testSet ), c_nInsThreadCount );

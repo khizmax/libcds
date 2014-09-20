@@ -450,12 +450,12 @@ namespace opt {
             //@cond
 
             // For new C++11 (cds-1.1.0)
-            static const CDS_ATOMIC::memory_order memory_order_relaxed    = CDS_ATOMIC::memory_order_relaxed;
-            static const CDS_ATOMIC::memory_order memory_order_consume    = CDS_ATOMIC::memory_order_consume;
-            static const CDS_ATOMIC::memory_order memory_order_acquire    = CDS_ATOMIC::memory_order_acquire;
-            static const CDS_ATOMIC::memory_order memory_order_release    = CDS_ATOMIC::memory_order_release;
-            static const CDS_ATOMIC::memory_order memory_order_acq_rel    = CDS_ATOMIC::memory_order_acq_rel;
-            static const CDS_ATOMIC::memory_order memory_order_seq_cst    = CDS_ATOMIC::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_consume    = atomics::memory_order_consume;
+            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_acquire;
+            static const atomics::memory_order memory_order_release    = atomics::memory_order_release;
+            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_acq_rel;
+            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_seq_cst;
             //@endcond
         };
 
@@ -469,12 +469,12 @@ namespace opt {
             //@cond
 
             // For new C++11 (cds-1.1.0)
-            static const CDS_ATOMIC::memory_order memory_order_relaxed    = CDS_ATOMIC::memory_order_seq_cst;
-            static const CDS_ATOMIC::memory_order memory_order_consume    = CDS_ATOMIC::memory_order_seq_cst;
-            static const CDS_ATOMIC::memory_order memory_order_acquire    = CDS_ATOMIC::memory_order_seq_cst;
-            static const CDS_ATOMIC::memory_order memory_order_release    = CDS_ATOMIC::memory_order_seq_cst;
-            static const CDS_ATOMIC::memory_order memory_order_acq_rel    = CDS_ATOMIC::memory_order_seq_cst;
-            static const CDS_ATOMIC::memory_order memory_order_seq_cst    = CDS_ATOMIC::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_consume    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_release    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_seq_cst;
             //@endcond
         };
     } // namespace v

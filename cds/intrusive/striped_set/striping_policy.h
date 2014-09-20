@@ -153,8 +153,8 @@ namespace cds { namespace intrusive { namespace striped_set {
         static owner_t const c_nOwnerMask = (((owner_t) 1) << (sizeof(owner_t) * 8 - 1)) - 1;
 
         lock_array_ptr                  m_arrLocks  ;   ///< Lock array. The capacity of array is specified in constructor.
-        CDS_ATOMIC::atomic< owner_t >   m_Owner     ;   ///< owner mark (thread id + boolean flag)
-        CDS_ATOMIC::atomic<size_t>      m_nCapacity ;   ///< Lock array capacity
+        atomics::atomic< owner_t >   m_Owner     ;   ///< owner mark (thread id + boolean flag)
+        atomics::atomic<size_t>      m_nCapacity ;   ///< Lock array capacity
         spinlock_type                   m_access    ;   ///< access to m_arrLocks
         //@endcond
 
@@ -169,7 +169,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         lock_array_ptr create_lock_array( size_t nCapacity )
         {
-            m_nCapacity.store( nCapacity, CDS_ATOMIC::memory_order_relaxed );
+            m_nCapacity.store( nCapacity, atomics::memory_order_relaxed );
             return lock_array_ptr( lock_array_allocator().New( nCapacity ), lock_array_disposer() );
         }
 
@@ -182,7 +182,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             while ( true ) {
                 // wait while resizing
                 while ( true ) {
-                    who = m_Owner.load( CDS_ATOMIC::memory_order_acquire );
+                    who = m_Owner.load( atomics::memory_order_acquire );
                     if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask) )
                         break;
                     bkoff();
@@ -197,7 +197,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 lock_type& lock = pLocks->at( nHash & (pLocks->size() - 1));
                 lock.lock();
 
-                who = m_Owner.load( CDS_ATOMIC::memory_order_acquire );
+                who = m_Owner.load( atomics::memory_order_acquire );
                 if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask) ) && m_arrLocks == pLocks )
                     return lock;
                 lock.unlock();
@@ -213,7 +213,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             while ( true ) {
                 // wait while resizing
                 while ( true ) {
-                    who = m_Owner.load( CDS_ATOMIC::memory_order_acquire );
+                    who = m_Owner.load( atomics::memory_order_acquire );
                     if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask) )
                         break;
                     bkoff();
@@ -227,7 +227,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 pLocks->lock_all();
 
-                who = m_Owner.load( CDS_ATOMIC::memory_order_acquire );
+                who = m_Owner.load( atomics::memory_order_acquire );
                 if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask) ) && m_arrLocks == pLocks )
                     return pLocks;
 
@@ -247,7 +247,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             back_off bkoff;
             for (unsigned int nAttempts = 0; nAttempts < 32; ++nAttempts ) {
                 owner_t ownNull = 0;
-                if ( m_Owner.compare_exchange_strong( ownNull, (me << 1) | 1, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed )) {
+                if ( m_Owner.compare_exchange_strong( ownNull, (me << 1) | 1, atomics::memory_order_acquire, atomics::memory_order_relaxed )) {
                     lock_array_ptr pOldLocks = m_arrLocks;
                     size_t const nLockCount = pOldLocks->size();
                     for ( size_t i = 0; i < nLockCount; ++i ) {
@@ -267,7 +267,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         void release_resize()
         {
-            m_Owner.store( 0, CDS_ATOMIC::memory_order_release );
+            m_Owner.store( 0, atomics::memory_order_release );
         }
         //@endcond
     public:
@@ -338,7 +338,7 @@ namespace cds { namespace intrusive { namespace striped_set {
         */
         size_t lock_count() const
         {
-            return m_nCapacity.load( CDS_ATOMIC::memory_order_relaxed );
+            return m_nCapacity.load( atomics::memory_order_relaxed );
         }
 
         /// Resize for new capacity

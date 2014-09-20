@@ -72,7 +72,7 @@ namespace cds { namespace urcu {
     protected:
         //@cond
         buffer_type                     m_Buffer;
-        CDS_ATOMIC::atomic<uint64_t>    m_nCurEpoch;
+        atomics::atomic<uint64_t>    m_nCurEpoch;
         lock_type                       m_Lock;
         size_t const                    m_nCapacity;
         //@endcond
@@ -164,7 +164,7 @@ namespace cds { namespace urcu {
         virtual void retire_ptr( retired_ptr& p )
         {
             if ( p.m_p ) {
-                epoch_retired_ptr ep( p, m_nCurEpoch.load( CDS_ATOMIC::memory_order_relaxed ));
+                epoch_retired_ptr ep( p, m_nCurEpoch.load( atomics::memory_order_relaxed ));
                 push_buffer( ep );
             }
         }
@@ -173,7 +173,7 @@ namespace cds { namespace urcu {
         template <typename ForwardIterator>
         void batch_retire( ForwardIterator itFirst, ForwardIterator itLast )
         {
-            uint64_t nEpoch = m_nCurEpoch.load( CDS_ATOMIC::memory_order_relaxed );
+            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
             while ( itFirst != itLast ) {
                 epoch_retired_ptr ep( *itFirst, nEpoch );
                 ++itFirst;
@@ -184,7 +184,7 @@ namespace cds { namespace urcu {
         /// Wait to finish a grace period and then clear the buffer
         void synchronize()
         {
-            epoch_retired_ptr ep( retired_ptr(), m_nCurEpoch.load( CDS_ATOMIC::memory_order_relaxed ));
+            epoch_retired_ptr ep( retired_ptr(), m_nCurEpoch.load( atomics::memory_order_relaxed ));
             synchronize( ep );
         }
 
@@ -192,12 +192,12 @@ namespace cds { namespace urcu {
         bool synchronize( epoch_retired_ptr& ep )
         {
             uint64_t nEpoch;
-            CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_acquire );
+            atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
                 cds::lock::scoped_lock<lock_type> sl( m_Lock );
                 if ( ep.m_p && m_Buffer.push( ep ) && m_Buffer.size() < capacity())
                     return false;
-                nEpoch = m_nCurEpoch.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
+                nEpoch = m_nCurEpoch.fetch_add( 1, atomics::memory_order_relaxed );
 
                 back_off bkOff;
                 base_class::force_membar_all_threads( bkOff );

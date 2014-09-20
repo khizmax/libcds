@@ -21,7 +21,7 @@
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
-// warning C4251: 'cds::gc::hzp::GarbageCollector::m_pListHead' : class 'cds::cxx11_atomics::atomic<T>'
+// warning C4251: 'cds::gc::hzp::GarbageCollector::m_pListHead' : class 'cds::cxx11_atomic::atomic<T>'
 // needs to have dll-interface to be used by clients of class 'cds::gc::hzp::GarbageCollector'
 #   pragma warning(disable: 4251)
 #endif
@@ -75,8 +75,8 @@ namespace cds { namespace gc {
             friend class gc::HRC;
 
             unsigned_ref_counter        m_RC        ;    ///< reference counter
-            CDS_ATOMIC::atomic<bool>    m_bTrace    ;    ///< \p true - node is tracing by Scan
-            CDS_ATOMIC::atomic<bool>    m_bDeleted  ;    ///< \p true - node is deleted
+            atomics::atomic<bool>    m_bTrace    ;    ///< \p true - node is tracing by Scan
+            atomics::atomic<bool>    m_bDeleted  ;    ///< \p true - node is deleted
 
         protected:
             //@cond
@@ -106,12 +106,12 @@ namespace cds { namespace gc {
             /// Returns the mark whether the node is deleted
             bool            isDeleted() const CDS_NOEXCEPT
             {
-                return m_bDeleted.load( CDS_ATOMIC::memory_order_acquire );
+                return m_bDeleted.load( atomics::memory_order_acquire );
             }
 
         protected:
             //@cond
-            void clean( CDS_ATOMIC::memory_order order ) CDS_NOEXCEPT
+            void clean( atomics::memory_order order ) CDS_NOEXCEPT
             {
                 m_bDeleted.store( false, order );
                 m_bTrace.store( false, order );
@@ -294,7 +294,7 @@ namespace cds { namespace gc {
             {
                 thread_list_node *  m_pNext     ; ///< next list record
                 ThreadGC *          m_pOwner    ; ///< Owner of record
-                CDS_ATOMIC::atomic<cds::OS::ThreadId>   m_idOwner   ; ///< Id of thread owned; 0 - record is free
+                atomics::atomic<cds::OS::ThreadId>   m_idOwner   ; ///< Id of thread owned; 0 - record is free
                 bool                m_bFree        ; ///< Node is help-scanned
 
                 //@cond
@@ -309,13 +309,13 @@ namespace cds { namespace gc {
                 ~thread_list_node()
                 {
                     assert( m_pOwner == nullptr );
-                    assert( m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == cds::OS::c_NullThreadId );
+                    assert( m_idOwner.load( atomics::memory_order_relaxed ) == cds::OS::c_NullThreadId );
                 }
                 //@endcond
             };
 
         private:
-            CDS_ATOMIC::atomic<thread_list_node *> m_pListHead  ;  ///< Head of thread list
+            atomics::atomic<thread_list_node *> m_pListHead  ;  ///< Head of thread list
 
             static GarbageCollector *    m_pGC    ;    ///< HRC garbage collector instance
 
@@ -545,7 +545,7 @@ namespace cds { namespace gc {
             /// Retire (deferred delete) node \p pNode guarded by \p hp hazard pointer
             void retireNode( ContainerNode * pNode, details::HPGuard& hp, details::free_retired_ptr_func pFunc )
             {
-                assert( !pNode->m_bDeleted.load( CDS_ATOMIC::memory_order_relaxed ) );
+                assert( !pNode->m_bDeleted.load( atomics::memory_order_relaxed ) );
                 assert( pNode == hp );
 
                 retireNode( pNode, pFunc );
@@ -555,10 +555,10 @@ namespace cds { namespace gc {
             /// Retire (deferred delete) node \p pNode. Do not use this function directly!
             void retireNode( ContainerNode * pNode, details::free_retired_ptr_func pFunc )
             {
-                assert( !pNode->m_bDeleted.load( CDS_ATOMIC::memory_order_relaxed ) );
+                assert( !pNode->m_bDeleted.load( atomics::memory_order_relaxed ) );
 
-                pNode->m_bDeleted.store( true, CDS_ATOMIC::memory_order_release );
-                pNode->m_bTrace.store( false, CDS_ATOMIC::memory_order_release );
+                pNode->m_bDeleted.store( true, atomics::memory_order_release );
+                pNode->m_bTrace.store( false, atomics::memory_order_release );
 
                 m_pDesc->m_arrRetired.push( pNode, pFunc );
 
@@ -580,8 +580,8 @@ namespace cds { namespace gc {
                 details::retired_vector::iterator itEnd = m_pDesc->m_arrRetired.end();
                 for ( details::retired_vector::iterator it = m_pDesc->m_arrRetired.begin(); it != itEnd; ++it ) {
                     details::retired_node& node = *it;
-                    ContainerNode * pNode = node.m_pNode.load(CDS_ATOMIC::memory_order_acquire);
-                    if ( pNode && !node.m_bDone.load(CDS_ATOMIC::memory_order_acquire) )
+                    ContainerNode * pNode = node.m_pNode.load(atomics::memory_order_acquire);
+                    if ( pNode && !node.m_bDone.load(atomics::memory_order_acquire) )
                         pNode->cleanUp( this );
                 }
             }

@@ -93,10 +93,10 @@ namespace cds { namespace algo {
             Each data structure based on flat combining contains a class derived from \p %publication_record
         */
         struct publication_record {
-            CDS_ATOMIC::atomic<unsigned int>    nRequest;   ///< Request field (depends on data structure)
-            CDS_ATOMIC::atomic<unsigned int>    nState;     ///< Record state: inactive, active, removed
+            atomics::atomic<unsigned int>    nRequest;   ///< Request field (depends on data structure)
+            atomics::atomic<unsigned int>    nState;     ///< Record state: inactive, active, removed
             unsigned int                        nAge;       ///< Age of the record
-            CDS_ATOMIC::atomic<publication_record *> pNext; ///< Next record in publication list
+            atomics::atomic<publication_record *> pNext; ///< Next record in publication list
             void *                              pOwner;    ///< [internal data] Pointer to \ref kernel object that manages the publication list
 
             /// Initializes publication record
@@ -111,13 +111,13 @@ namespace cds { namespace algo {
             /// Returns the value of \p nRequest field
             unsigned int op() const
             {
-                return nRequest.load( CDS_ATOMIC::memory_order_relaxed );
+                return nRequest.load( atomics::memory_order_relaxed );
             }
 
             /// Checks if the operation is done
             bool is_done() const
             {
-                return nRequest.load( CDS_ATOMIC::memory_order_relaxed ) == req_Response;
+                return nRequest.load( atomics::memory_order_relaxed ) == req_Response;
             }
         };
 
@@ -543,7 +543,7 @@ namespace cds { namespace algo {
                     if ( pRec->nState.load(memory_model::memory_order_relaxed) == active && pRec->pOwner ) {
                         // record is active and kernel is alive
                         unsigned int nState = active;
-                        pRec->nState.compare_exchange_strong( nState, removed, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                        pRec->nState.compare_exchange_strong( nState, removed, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     }
                     else {
                         // record is not in publication list or kernel already deleted
@@ -577,7 +577,7 @@ namespace cds { namespace algo {
                             pRec->pNext = p;
                             // Failed CAS changes p
                         } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
-                            memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ));
+                            memory_model::memory_order_release, atomics::memory_order_relaxed ));
                         m_Stat.onActivatPubRecord();
                     }
                 }
@@ -746,7 +746,7 @@ namespace cds { namespace algo {
                         if ( pPrev ) {
                             publication_record * pNext = p->pNext.load( memory_model::memory_order_acquire );
                             if ( pPrev->pNext.compare_exchange_strong( p, pNext,
-                                memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                                memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             {
                                 p->nState.store( inactive, memory_model::memory_order_release );
                                 p = pNext;
@@ -767,7 +767,7 @@ namespace cds { namespace algo {
                 if ( pPrev ) {
                     publication_record * pNext = p->pNext.load( memory_model::memory_order_acquire );
                     if ( pPrev->pNext.compare_exchange_strong( p, pNext,
-                        memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                        memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     {
                         cxx11_allocator().Delete( static_cast<publication_record_type *>( p ));
                         m_Stat.onDeletePubRecord();

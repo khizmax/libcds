@@ -22,7 +22,7 @@ namespace cds { namespace intrusive {
             typedef cds::gc::nogc   gc          ;   ///< Garbage collector
             typedef Tag             tag         ;   ///< tag
 
-            typedef CDS_ATOMIC::atomic<node * > atomic_ptr;
+            typedef atomics::atomic<node * > atomic_ptr;
             typedef atomic_ptr                  tower_item_type;
 
         protected:
@@ -103,12 +103,12 @@ namespace cds { namespace intrusive {
             void clear()
             {
                 assert( m_arrNext == nullptr );
-                m_pNext.store( nullptr, CDS_ATOMIC::memory_order_release );
+                m_pNext.store( nullptr, atomics::memory_order_release );
             }
 
             bool is_cleared() const
             {
-                return m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr
+                return m_pNext.load( atomics::memory_order_relaxed ) == nullptr
                     && m_arrNext == nullptr
                     && m_nHeight <= 1
 ;
@@ -137,7 +137,7 @@ namespace cds { namespace intrusive {
 
         public: // for internal use only!!!
             iterator( node_type& refHead )
-                : m_pNode( refHead[0].load( CDS_ATOMIC::memory_order_relaxed ) )
+                : m_pNode( refHead[0].load( atomics::memory_order_relaxed ) )
             {}
 
             static iterator from_node( node_type * pNode )
@@ -176,7 +176,7 @@ namespace cds { namespace intrusive {
             iterator& operator ++()
             {
                 if ( m_pNode )
-                    m_pNode = m_pNode->next(0).load( CDS_ATOMIC::memory_order_relaxed );
+                    m_pNode = m_pNode->next(0).load( atomics::memory_order_relaxed );
                 return *this;
             }
 
@@ -443,7 +443,7 @@ namespace cds { namespace intrusive {
             head_node( unsigned int nHeight )
             {
                 for ( size_t i = 0; i < sizeof(m_Tower) / sizeof(m_Tower[0]); ++i )
-                    m_Tower[i].store( nullptr, CDS_ATOMIC::memory_order_relaxed );
+                    m_Tower[i].store( nullptr, atomics::memory_order_relaxed );
 
                 node_type::make_tower( nHeight, m_Tower );
             }
@@ -456,8 +456,8 @@ namespace cds { namespace intrusive {
             void clear()
             {
                 for (unsigned int i = 0; i < sizeof(m_Tower) / sizeof(m_Tower[0]); ++i )
-                    m_Tower[i].store( nullptr, CDS_ATOMIC::memory_order_relaxed );
-                node_type::m_pNext.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
+                    m_Tower[i].store( nullptr, atomics::memory_order_relaxed );
+                node_type::m_pNext.store( nullptr, atomics::memory_order_relaxed );
             }
         };
         //@endcond
@@ -467,7 +467,7 @@ namespace cds { namespace intrusive {
 
         item_counter                m_ItemCounter       ;   ///< item counter
         random_level_generator      m_RandomLevelGen    ;   ///< random level generator instance
-        CDS_ATOMIC::atomic<unsigned int>    m_nHeight   ;   ///< estimated high level
+        atomics::atomic<unsigned int>    m_nHeight   ;   ///< estimated high level
         mutable stat                m_Stat              ;   ///< internal statistics
 
     protected:
@@ -601,7 +601,7 @@ namespace cds { namespace intrusive {
         void increase_height( unsigned int nHeight )
         {
             unsigned int nCur = m_nHeight.load( memory_model::memory_order_relaxed );
-            while ( nCur < nHeight && !m_nHeight.compare_exchange_weak( nCur, nHeight, memory_model::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed ) );
+            while ( nCur < nHeight && !m_nHeight.compare_exchange_weak( nCur, nHeight, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) );
         }
         //@endcond
 
@@ -618,7 +618,7 @@ namespace cds { namespace intrusive {
             static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
 
             // Barrier for head node
-            CDS_ATOMIC::atomic_thread_fence( memory_model::memory_order_release );
+            atomics::atomic_thread_fence( memory_model::memory_order_release );
         }
 
         /// Clears and destructs the skip-list

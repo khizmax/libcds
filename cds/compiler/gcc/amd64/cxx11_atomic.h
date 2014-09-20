@@ -7,11 +7,11 @@
 #include <cds/compiler/gcc/x86/cxx11_atomic32.h>
 
 //@cond
-namespace cds { namespace cxx11_atomics {
+namespace cds { namespace cxx11_atomic {
     namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace gcc { CDS_CXX11_INLINE_NAMESPACE namespace amd64 {
 #   ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
         // primitives up to 32bit + fences
-        using namespace cds::cxx11_atomics::platform::gcc::x86;
+        using namespace cds::cxx11_atomic::platform::gcc::x86;
 #   endif
 
         //-----------------------------------------------------------------------------
@@ -201,7 +201,7 @@ namespace cds { namespace cxx11_atomics {
 #endif
     }   // namespace platform
 
-}}  // namespace cds::cxx11_atomics
+}}  // namespace cds::cxx11_atomic
 //@endcond
 
 #endif // #ifndef __CDS_COMPILER_GCC_AMD64_CXX11_ATOMIC_H

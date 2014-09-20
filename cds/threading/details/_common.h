@@ -141,7 +141,7 @@ namespace cds {
             cds::algo::elimination::record   m_EliminationRec;
 
             //@cond
-            static CDS_EXPORT_API CDS_ATOMIC::atomic<size_t> s_nLastUsedProcNo;
+            static CDS_EXPORT_API atomics::atomic<size_t> s_nLastUsedProcNo;
             static CDS_EXPORT_API size_t                     s_nProcCount;
             //@endcond
 
@@ -154,7 +154,7 @@ namespace cds {
                 , m_pSHBRCU( nullptr )
                 , m_pSHTRCU( nullptr )
 #endif
-                , m_nFakeProcessorNumber( s_nLastUsedProcNo.fetch_add(1, CDS_ATOMIC::memory_order_relaxed) % s_nProcCount )
+                , m_nFakeProcessorNumber( s_nLastUsedProcNo.fetch_add(1, atomics::memory_order_relaxed) % s_nProcCount )
                 , m_nAttachCount(0)
             {
                 if (cds::gc::HP::isUsed() )

@@ -200,9 +200,9 @@ namespace cds { namespace intrusive {
             typedef typename update_desc_type::update_ptr  update_ptr ; ///< Marked pointer to update descriptor
 
             key_type                         m_Key       ;   ///< Regular key
-            CDS_ATOMIC::atomic<base_class *> m_pLeft     ;   ///< Left subtree
-            CDS_ATOMIC::atomic<base_class *> m_pRight    ;   ///< Right subtree
-            CDS_ATOMIC::atomic<update_ptr>   m_pUpdate   ;   ///< Update descriptor
+            atomics::atomic<base_class *> m_pLeft     ;   ///< Left subtree
+            atomics::atomic<base_class *> m_pRight    ;   ///< Right subtree
+            atomics::atomic<update_ptr>   m_pUpdate   ;   ///< Update descriptor
             //@cond
             uintptr_t                           m_nEmptyUpdate; ///< ABA prevention for m_pUpdate, from 0..2^16 step 4
             //@endcond

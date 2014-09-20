@@ -40,7 +40,7 @@ namespace istack {
 
     class IntrusiveStack_PushPop: public CppUnitMini::TestCase
     {
-        CDS_ATOMIC::atomic<size_t>  m_nWorkingProducers;
+        atomics::atomic<size_t>  m_nWorkingProducers;
         static CDS_CONSTEXPR_CONST size_t c_nValArraySize = 1024;
         static CDS_CONSTEXPR_CONST size_t c_nBadConsumer = 0xbadc0ffe;
 
@@ -99,7 +99,7 @@ namespace istack {
                         ++m_nPushError;
                 }
 
-                getTest().m_nWorkingProducers.fetch_sub( 1, CDS_ATOMIC::memory_order_release );
+                getTest().m_nWorkingProducers.fetch_sub( 1, atomics::memory_order_release );
             }
         };
 
@@ -147,7 +147,7 @@ namespace istack {
                 m_nDirtyPop = 0;
                 memset( m_arrPop, 0, sizeof(m_arrPop));
 
-                while ( !(getTest().m_nWorkingProducers.load(CDS_ATOMIC::memory_order_acquire) == 0 && m_Stack.empty()) ) {
+                while ( !(getTest().m_nWorkingProducers.load(atomics::memory_order_acquire) == 0 && m_Stack.empty()) ) {
                     typename Stack::value_type * p = m_Stack.pop();
                     if ( p ) {
                         p->nConsumer = m_nThreadNo;
@@ -236,7 +236,7 @@ namespace istack {
         template <class Stack>
         void test( Stack& testStack, value_array<typename Stack::value_type>& arrValue )
         {
-            m_nWorkingProducers.store( s_nPushThreadCount, CDS_ATOMIC::memory_order_release );
+            m_nWorkingProducers.store( s_nPushThreadCount, atomics::memory_order_release );
             size_t const nPushCount = s_nStackSize / s_nPushThreadCount;
 
             typename Stack::value_type * pValStart = arrValue.get();

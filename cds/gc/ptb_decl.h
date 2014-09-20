@@ -35,24 +35,24 @@ namespace cds { namespace gc {
         /**
             @headerfile cds/gc/ptb.h
         */
-        template <typename T> using atomic_ref = CDS_ATOMIC::atomic<T *>;
+        template <typename T> using atomic_ref = atomics::atomic<T *>;
 
         /// Atomic type
         /**
             @headerfile cds/gc/ptb.h
         */
-        template <typename T> using atomic_type = CDS_ATOMIC::atomic<T>;
+        template <typename T> using atomic_type = atomics::atomic<T>;
 
         /// Atomic marked pointer
         /**
             @headerfile cds/gc/ptb.h
         */
-        template <typename MarkedPtr> using atomic_marked_ptr = CDS_ATOMIC::atomic<MarkedPtr>;
+        template <typename MarkedPtr> using atomic_marked_ptr = atomics::atomic<MarkedPtr>;
 #else
         template <typename T>
-        class atomic_ref: public CDS_ATOMIC::atomic<T *>
+        class atomic_ref: public atomics::atomic<T *>
         {
-            typedef CDS_ATOMIC::atomic<T *> base_class;
+            typedef atomics::atomic<T *> base_class;
         public:
 #   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             atomic_ref() = default;
@@ -67,9 +67,9 @@ namespace cds { namespace gc {
         };
 
         template <typename T>
-        class atomic_type: public CDS_ATOMIC::atomic<T>
+        class atomic_type: public atomics::atomic<T>
         {
-            typedef CDS_ATOMIC::atomic<T> base_class;
+            typedef atomics::atomic<T> base_class;
         public:
 #   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             atomic_type() = default;
@@ -84,9 +84,9 @@ namespace cds { namespace gc {
         };
 
         template <typename MarkedPtr>
-        class atomic_marked_ptr: public CDS_ATOMIC::atomic<MarkedPtr>
+        class atomic_marked_ptr: public atomics::atomic<MarkedPtr>
         {
-            typedef CDS_ATOMIC::atomic<MarkedPtr> base_class;
+            typedef atomics::atomic<MarkedPtr> base_class;
         public:
 #   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             atomic_marked_ptr() = default;
@@ -172,13 +172,13 @@ namespace cds { namespace gc {
                 to the HP slot repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect( CDS_ATOMIC::atomic<T> const& toGuard )
+            T protect( atomics::atomic<T> const& toGuard )
             {
-                T pCur = toGuard.load(CDS_ATOMIC::memory_order_relaxed);
+                T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
                 do {
                     pRet = assign( pCur );
-                    pCur = toGuard.load(CDS_ATOMIC::memory_order_acquire);
+                    pCur = toGuard.load(atomics::memory_order_acquire);
                 } while ( pRet != pCur );
                 return pCur;
             }
@@ -201,14 +201,14 @@ namespace cds { namespace gc {
                 Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
-            T protect( CDS_ATOMIC::atomic<T> const& toGuard, Func f )
+            T protect( atomics::atomic<T> const& toGuard, Func f )
             {
-                T pCur = toGuard.load(CDS_ATOMIC::memory_order_relaxed);
+                T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
                 do {
                     pRet = pCur;
                     assign( f( pCur ) );
-                    pCur = toGuard.load(CDS_ATOMIC::memory_order_acquire);
+                    pCur = toGuard.load(atomics::memory_order_acquire);
                 } while ( pRet != pCur );
                 return pCur;
             }
@@ -264,7 +264,7 @@ namespace cds { namespace gc {
             /// Get native guarded pointer stored
             guarded_pointer get_native() const
             {
-                return base_class::get_guard()->pPost.load(CDS_ATOMIC::memory_order_relaxed);
+                return base_class::get_guard()->pPost.load(atomics::memory_order_relaxed);
             }
 
         };
@@ -301,12 +301,12 @@ namespace cds { namespace gc {
                 to the slot \p nIndex repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect(size_t nIndex, CDS_ATOMIC::atomic<T> const& toGuard )
+            T protect(size_t nIndex, atomics::atomic<T> const& toGuard )
             {
                 T pRet;
                 do {
-                    pRet = assign( nIndex, toGuard.load(CDS_ATOMIC::memory_order_relaxed) );
-                } while ( pRet != toGuard.load(CDS_ATOMIC::memory_order_acquire));
+                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_relaxed) );
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }
@@ -329,12 +329,12 @@ namespace cds { namespace gc {
                 Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
-            T protect(size_t nIndex, CDS_ATOMIC::atomic<T> const& toGuard, Func f )
+            T protect(size_t nIndex, atomics::atomic<T> const& toGuard, Func f )
             {
                 T pRet;
                 do {
-                    assign( nIndex, f( pRet = toGuard.load(CDS_ATOMIC::memory_order_relaxed) ));
-                } while ( pRet != toGuard.load(CDS_ATOMIC::memory_order_acquire));
+                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_relaxed) ));
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }
@@ -389,7 +389,7 @@ namespace cds { namespace gc {
             /// Get native guarded pointer stored
             guarded_pointer get_native( size_t nIndex ) const
             {
-                return base_class::operator[](nIndex).get_guard()->pPost.load(CDS_ATOMIC::memory_order_relaxed);
+                return base_class::operator[](nIndex).get_guard()->pPost.load(atomics::memory_order_relaxed);
             }
 
             /// Capacity of the guard array

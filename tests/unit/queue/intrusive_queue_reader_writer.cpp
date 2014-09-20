@@ -94,7 +94,7 @@ namespace queue {
                 }
 
                 m_fTime = m_Timer.duration() - m_fTime;
-                getTest().m_nProducerCount.fetch_sub( 1, CDS_ATOMIC::memory_order_release );
+                getTest().m_nProducerCount.fetch_sub( 1, atomics::memory_order_release );
             }
         };
 
@@ -177,7 +177,7 @@ namespace queue {
                     }
                     else {
                         ++m_nPopEmpty;
-                        if ( getTest().m_nProducerCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 && m_Queue.empty() )
+                        if ( getTest().m_nProducerCount.load( atomics::memory_order_acquire ) == 0 && m_Queue.empty() )
                             break;
                     }
                 }
@@ -206,7 +206,7 @@ namespace queue {
 
     protected:
         size_t                  m_nThreadPushCount;
-        CDS_ATOMIC::atomic<size_t>     m_nProducerCount;
+        atomics::atomic<size_t>     m_nProducerCount;
         static CDS_CONSTEXPR_CONST size_t c_nBadConsumer = 0xbadc0ffe;
 
     protected:
@@ -318,7 +318,7 @@ namespace queue {
 
             CppUnitMini::ThreadPool pool( *this );
 
-            m_nProducerCount.store( s_nWriterThreadCount, CDS_ATOMIC::memory_order_release );
+            m_nProducerCount.store( s_nWriterThreadCount, atomics::memory_order_release );
 
             // Writers must be first
             pool.add( new Producer<Queue>( pool, testQueue ), s_nWriterThreadCount );

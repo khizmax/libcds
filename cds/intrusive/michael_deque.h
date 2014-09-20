@@ -113,14 +113,14 @@ namespace cds { namespace intrusive {
             //@cond
             node()
             {
-                m_Links.store( anchor(0,0), CDS_ATOMIC::memory_order_release );
+                m_Links.store( anchor(0,0), atomics::memory_order_release );
             }
 
             explicit node( anchor const& a )
                 : m_Links()
                 , m_nIndex(0)
             {
-                m_Links.store( a, CDS_ATOMIC::memory_order_release );
+                m_Links.store( a, atomics::memory_order_release );
             }
             //@endcond
         };
@@ -240,7 +240,7 @@ namespace cds { namespace intrusive {
             static void is_empty( const node_type * pNode )
             {
 #           ifdef _DEBUG
-                anchor a = pNode->m_Links.load(CDS_ATOMIC::memory_order_relaxed);
+                anchor a = pNode->m_Links.load(atomics::memory_order_relaxed);
                 assert( a.idxLeft == 0 && a.idxRight == 0 );
 #           endif
             }
@@ -490,7 +490,7 @@ namespace cds { namespace intrusive {
 #       endif
 
             mapper_type     m_set;
-            CDS_ATOMIC::atomic<unsigned int>    m_nLastIndex;
+            atomics::atomic<unsigned int>    m_nLastIndex;
 
         public:
 
@@ -795,7 +795,7 @@ namespace cds { namespace intrusive {
             :m_Anchor()
             ,m_Mapper( 4096, 4 )
         {
-            m_Anchor.store( anchor_type( c_nEmptyIndex, c_nEmptyIndex ), CDS_ATOMIC::memory_order_release );
+            m_Anchor.store( anchor_type( c_nEmptyIndex, c_nEmptyIndex ), atomics::memory_order_release );
 
             // GC and node_type::gc must be the same
             static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
@@ -814,7 +814,7 @@ namespace cds { namespace intrusive {
             :m_Anchor()
             ,m_Mapper( nMaxItemCount, nLoadFactor )
         {
-            m_Anchor.store( anchor_type( c_nEmptyIndex, c_nEmptyIndex ), CDS_ATOMIC::memory_order_release );
+            m_Anchor.store( anchor_type( c_nEmptyIndex, c_nEmptyIndex ), atomics::memory_order_release );
 
             // GC and node_type::gc must be the same
             static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");

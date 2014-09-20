@@ -138,10 +138,10 @@ namespace cds { namespace gc {
             @headerfile cds/gc/hrc.h
         */
         template <typename T>
-        class atomic_ref: protected CDS_ATOMIC::atomic<T *>
+        class atomic_ref: protected atomics::atomic<T *>
         {
             //@cond
-            typedef CDS_ATOMIC::atomic<T *> base_class;
+            typedef atomics::atomic<T *> base_class;
             //@endcond
         public:
             //@cond
@@ -158,26 +158,26 @@ namespace cds { namespace gc {
             //@endcond
 
             /// Read reference value
-            T * load( CDS_ATOMIC::memory_order order ) const CDS_NOEXCEPT
+            T * load( atomics::memory_order order ) const CDS_NOEXCEPT
             {
                 return base_class::load( order );
             }
             //@cond
-            T * load( CDS_ATOMIC::memory_order order ) const volatile CDS_NOEXCEPT
+            T * load( atomics::memory_order order ) const volatile CDS_NOEXCEPT
             {
                 return base_class::load( order );
             }
             //@endcond
 
             /// Store new value to reference
-            void store( T * pNew, CDS_ATOMIC::memory_order order ) CDS_NOEXCEPT
+            void store( T * pNew, atomics::memory_order order ) CDS_NOEXCEPT
             {
                 before_store( pNew );
                 T * pOld = base_class::exchange( pNew, order );
                 after_store( pOld, pNew );
             }
             //@cond
-            void store( T * pNew, CDS_ATOMIC::memory_order order ) volatile CDS_NOEXCEPT
+            void store( T * pNew, atomics::memory_order order ) volatile CDS_NOEXCEPT
             {
                 before_store( pNew );
                 T * pOld = base_class::exchange( pNew, order );
@@ -191,7 +191,7 @@ namespace cds { namespace gc {
 
                 \p T - class derived from \ref hrc_gc_HRC_container_node "container_node" type
             */
-            bool compare_exchange_strong( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success, CDS_ATOMIC::memory_order mo_fail ) CDS_NOEXCEPT
+            bool compare_exchange_strong( T *& pOld, T * pNew, atomics::memory_order mo_success, atomics::memory_order mo_fail ) CDS_NOEXCEPT
             {
                 before_cas( pNew );
                 bool bSuccess = base_class::compare_exchange_strong( pOld, pNew, mo_success, mo_fail );
@@ -199,20 +199,20 @@ namespace cds { namespace gc {
                 return bSuccess;
             }
             //@cond
-            bool compare_exchange_strong( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success, CDS_ATOMIC::memory_order mo_fail ) volatile CDS_NOEXCEPT
+            bool compare_exchange_strong( T *& pOld, T * pNew, atomics::memory_order mo_success, atomics::memory_order mo_fail ) volatile CDS_NOEXCEPT
             {
                 before_cas( pNew );
                 bool bSuccess = base_class::compare_exchange_strong( pOld, pNew, mo_success, mo_fail );
                 after_cas( bSuccess, pOld, pNew );
                 return bSuccess;
             }
-            bool compare_exchange_strong( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success ) CDS_NOEXCEPT
+            bool compare_exchange_strong( T *& pOld, T * pNew, atomics::memory_order mo_success ) CDS_NOEXCEPT
             {
-                return compare_exchange_strong( pOld, pNew, mo_success, CDS_ATOMIC::memory_order_relaxed );
+                return compare_exchange_strong( pOld, pNew, mo_success, atomics::memory_order_relaxed );
             }
-            bool compare_exchange_strong( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success ) volatile CDS_NOEXCEPT
+            bool compare_exchange_strong( T *& pOld, T * pNew, atomics::memory_order mo_success ) volatile CDS_NOEXCEPT
             {
-                return compare_exchange_strong( pOld, pNew, mo_success, CDS_ATOMIC::memory_order_relaxed );
+                return compare_exchange_strong( pOld, pNew, mo_success, atomics::memory_order_relaxed );
             }
             //@endcond
 
@@ -222,7 +222,7 @@ namespace cds { namespace gc {
 
                 \p T - class derived from \ref hrc_gc_HRC_container_node "container_node" type
             */
-            bool compare_exchange_weak( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success, CDS_ATOMIC::memory_order mo_fail ) CDS_NOEXCEPT
+            bool compare_exchange_weak( T *& pOld, T * pNew, atomics::memory_order mo_success, atomics::memory_order mo_fail ) CDS_NOEXCEPT
             {
                 before_cas( pNew );
                 bool bSuccess = base_class::compare_exchange_weak( pOld, pNew, mo_success, mo_fail );
@@ -230,20 +230,20 @@ namespace cds { namespace gc {
                 return bSuccess;
             }
             //@cond
-            bool compare_exchange_weak( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success, CDS_ATOMIC::memory_order mo_fail ) volatile CDS_NOEXCEPT
+            bool compare_exchange_weak( T *& pOld, T * pNew, atomics::memory_order mo_success, atomics::memory_order mo_fail ) volatile CDS_NOEXCEPT
             {
                 before_cas( pNew );
                 bool bSuccess = base_class::compare_exchange_weak( pOld, pNew, mo_success, mo_fail );
                 after_cas( bSuccess, pOld, pNew );
                 return bSuccess;
             }
-            bool compare_exchange_weak( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success ) CDS_NOEXCEPT
+            bool compare_exchange_weak( T *& pOld, T * pNew, atomics::memory_order mo_success ) CDS_NOEXCEPT
             {
-                return compare_exchange_weak( pOld, pNew, mo_success, CDS_ATOMIC::memory_order_relaxed );
+                return compare_exchange_weak( pOld, pNew, mo_success, atomics::memory_order_relaxed );
             }
-            bool compare_exchange_weak( T *& pOld, T * pNew, CDS_ATOMIC::memory_order mo_success ) volatile CDS_NOEXCEPT
+            bool compare_exchange_weak( T *& pOld, T * pNew, atomics::memory_order mo_success ) volatile CDS_NOEXCEPT
             {
-                return compare_exchange_weak( pOld, pNew, mo_success, CDS_ATOMIC::memory_order_relaxed );
+                return compare_exchange_weak( pOld, pNew, mo_success, atomics::memory_order_relaxed );
             }
             //@endcond
 
@@ -257,7 +257,7 @@ namespace cds { namespace gc {
             static void after_store( T * pOld, T * pNew ) CDS_NOEXCEPT
             {
                 if ( pNew )
-                    pNew->m_bTrace.store( false, CDS_ATOMIC::memory_order_release );
+                    pNew->m_bTrace.store( false, atomics::memory_order_release );
                 if ( pOld )
                     --pOld->m_RC;
             }
@@ -265,7 +265,7 @@ namespace cds { namespace gc {
             {
                 if ( p ) {
                     ++p->m_RC;
-                    p->m_bTrace.store( false, CDS_ATOMIC::memory_order_release );
+                    p->m_bTrace.store( false, atomics::memory_order_release );
                 }
             }
             static void after_cas( bool bSuccess, T * pOld, T * pNew ) CDS_NOEXCEPT
@@ -290,7 +290,7 @@ namespace cds { namespace gc {
         class atomic_marked_ptr
         {
             //@cond
-            CDS_ATOMIC::atomic< MarkedPtr >     m_a;
+            atomics::atomic< MarkedPtr >     m_a;
             //@endcond
         public:
             /// Marked pointer type
@@ -316,13 +316,13 @@ namespace cds { namespace gc {
 
 
             /// Read reference value
-            marked_ptr load(CDS_ATOMIC::memory_order order) const CDS_NOEXCEPT
+            marked_ptr load(atomics::memory_order order) const CDS_NOEXCEPT
             {
                 return m_a.load(order);
             }
 
             /// Store new value to reference
-            void store( marked_ptr pNew, CDS_ATOMIC::memory_order order ) CDS_NOEXCEPT
+            void store( marked_ptr pNew, atomics::memory_order order ) CDS_NOEXCEPT
             {
                 before_store( pNew.ptr() );
                 marked_ptr pOld = m_a.exchange( pNew, order );
@@ -330,7 +330,7 @@ namespace cds { namespace gc {
             }
 
             /// Store new value to reference
-            void store( typename marked_ptr::pointer_type pNew, CDS_ATOMIC::memory_order order ) CDS_NOEXCEPT
+            void store( typename marked_ptr::pointer_type pNew, atomics::memory_order order ) CDS_NOEXCEPT
             {
                 before_store( pNew );
                 marked_ptr pOld = m_a.exchange( marked_ptr(pNew), order );
@@ -343,7 +343,7 @@ namespace cds { namespace gc {
 
                 \p T - class derived from \ref hrc_gc_HRC_container_node "container_node" type
             */
-            bool compare_exchange_weak( marked_ptr& pOld, marked_ptr pNew, CDS_ATOMIC::memory_order mo_success, CDS_ATOMIC::memory_order mo_fail ) CDS_NOEXCEPT
+            bool compare_exchange_weak( marked_ptr& pOld, marked_ptr pNew, atomics::memory_order mo_success, atomics::memory_order mo_fail ) CDS_NOEXCEPT
             {
                 before_cas( pNew.ptr() );
                 bool bSuccess = m_a.compare_exchange_weak( pOld, pNew, mo_success, mo_fail );
@@ -351,7 +351,7 @@ namespace cds { namespace gc {
                 return bSuccess;
             }
             //@cond
-            bool compare_exchange_weak( marked_ptr& pOld, marked_ptr pNew, CDS_ATOMIC::memory_order mo_success ) CDS_NOEXCEPT
+            bool compare_exchange_weak( marked_ptr& pOld, marked_ptr pNew, atomics::memory_order mo_success ) CDS_NOEXCEPT
             {
                 before_cas( pNew.ptr() );
                 bool bSuccess = m_a.compare_exchange_weak( pOld, pNew, mo_success );
@@ -366,7 +366,7 @@ namespace cds { namespace gc {
 
                 \p T - class derived from \ref hrc_gc_HRC_container_node "container_node" type
             */
-            bool compare_exchange_strong( marked_ptr& pOld, marked_ptr pNew, CDS_ATOMIC::memory_order mo_success, CDS_ATOMIC::memory_order mo_fail ) CDS_NOEXCEPT
+            bool compare_exchange_strong( marked_ptr& pOld, marked_ptr pNew, atomics::memory_order mo_success, atomics::memory_order mo_fail ) CDS_NOEXCEPT
             {
                 // protect pNew
                 before_cas( pNew.ptr() );
@@ -375,7 +375,7 @@ namespace cds { namespace gc {
                 return bSuccess;
             }
             //@cond
-            bool compare_exchange_strong( marked_ptr& pOld, marked_ptr pNew, CDS_ATOMIC::memory_order mo_success ) CDS_NOEXCEPT
+            bool compare_exchange_strong( marked_ptr& pOld, marked_ptr pNew, atomics::memory_order mo_success ) CDS_NOEXCEPT
             {
                 before_cas( pNew.ptr() );
                 bool bSuccess = m_a.compare_exchange_strong( pOld, pNew, mo_success );
@@ -394,7 +394,7 @@ namespace cds { namespace gc {
             static void after_store( typename marked_ptr::pointer_type pOld, typename marked_ptr::pointer_type pNew ) CDS_NOEXCEPT
             {
                 if ( pNew )
-                    pNew->m_bTrace.store( false, CDS_ATOMIC::memory_order_release );
+                    pNew->m_bTrace.store( false, atomics::memory_order_release );
                 if ( pOld )
                     --pOld->m_RC;
             }
@@ -402,7 +402,7 @@ namespace cds { namespace gc {
             {
                 if ( p ) {
                     ++p->m_RC;
-                    p->m_bTrace.store( false, CDS_ATOMIC::memory_order_release );
+                    p->m_bTrace.store( false, atomics::memory_order_release );
                 }
             }
             static void after_cas( bool bSuccess, typename marked_ptr::pointer_type pOld, typename marked_ptr::pointer_type pNew ) CDS_NOEXCEPT
@@ -444,11 +444,11 @@ namespace cds { namespace gc {
             template <typename T>
             T * protect( atomic_ref<T> const& toGuard )
             {
-                T * pCur = toGuard.load(CDS_ATOMIC::memory_order_relaxed);
+                T * pCur = toGuard.load(atomics::memory_order_relaxed);
                 T * pRet;
                 do {
                     pRet = assign( pCur );
-                    pCur = toGuard.load(CDS_ATOMIC::memory_order_acquire);
+                    pCur = toGuard.load(atomics::memory_order_acquire);
                 } while ( pRet != pCur );
                 return pCur;
             }
@@ -473,12 +473,12 @@ namespace cds { namespace gc {
             template <typename T, class Func>
             T * protect( atomic_ref<T> const& toGuard, Func f )
             {
-                T * pCur = toGuard.load(CDS_ATOMIC::memory_order_relaxed);
+                T * pCur = toGuard.load(atomics::memory_order_relaxed);
                 T * pRet;
                 do {
                     pRet = pCur;
                     assign( f( pCur ) );
-                    pCur = toGuard.load(CDS_ATOMIC::memory_order_acquire);
+                    pCur = toGuard.load(atomics::memory_order_acquire);
                 } while ( pRet != pCur );
                 return pCur;
             }
@@ -495,8 +495,8 @@ namespace cds { namespace gc {
             {
                 typename atomic_marked_ptr<T>::marked_ptr p;
                 do {
-                    assign( ( p = link.load(CDS_ATOMIC::memory_order_relaxed)).ptr() );
-                } while ( p != link.load(CDS_ATOMIC::memory_order_acquire) );
+                    assign( ( p = link.load(atomics::memory_order_relaxed)).ptr() );
+                } while ( p != link.load(atomics::memory_order_acquire) );
                 return p;
             }
 
@@ -522,9 +522,9 @@ namespace cds { namespace gc {
             {
                 typename atomic_marked_ptr<T>::marked_ptr pCur;
                 do {
-                    pCur = link.load(CDS_ATOMIC::memory_order_relaxed);
+                    pCur = link.load(atomics::memory_order_relaxed);
                     assign( f( pCur ));
-                } while ( pCur != link.load(CDS_ATOMIC::memory_order_acquire) );
+                } while ( pCur != link.load(atomics::memory_order_acquire) );
                 return pCur;
             }
 
@@ -615,8 +615,8 @@ namespace cds { namespace gc {
             {
                 T * p;
                 do {
-                    p = assign( nIndex, link.load(CDS_ATOMIC::memory_order_relaxed) );
-                } while ( p != link.load(CDS_ATOMIC::memory_order_acquire) );
+                    p = assign( nIndex, link.load(atomics::memory_order_relaxed) );
+                } while ( p != link.load(atomics::memory_order_acquire) );
                 return p;
             }
 
@@ -632,8 +632,8 @@ namespace cds { namespace gc {
             {
                 typename atomic_marked_ptr<T>::marked_ptr p;
                 do {
-                    assign( nIndex, ( p = link.load(CDS_ATOMIC::memory_order_relaxed)).ptr() );
-                } while ( p != link.load(CDS_ATOMIC::memory_order_acquire) );
+                    assign( nIndex, ( p = link.load(atomics::memory_order_relaxed)).ptr() );
+                } while ( p != link.load(atomics::memory_order_acquire) );
                 return p;
             }
 
@@ -659,8 +659,8 @@ namespace cds { namespace gc {
             {
                 T * pRet;
                 do {
-                    assign( nIndex, f( pRet = toGuard.load(CDS_ATOMIC::memory_order_relaxed) ));
-                } while ( pRet != toGuard.load(CDS_ATOMIC::memory_order_acquire));
+                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_relaxed) ));
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }
@@ -687,9 +687,9 @@ namespace cds { namespace gc {
             {
                 typename atomic_marked_ptr<T>::marked_ptr p;
                 do {
-                    p = link.load(CDS_ATOMIC::memory_order_relaxed);
+                    p = link.load(atomics::memory_order_relaxed);
                     assign( nIndex, f( p ) );
-                } while ( p != link.load(CDS_ATOMIC::memory_order_acquire) );
+                } while ( p != link.load(atomics::memory_order_acquire) );
                 return p;
             }
 

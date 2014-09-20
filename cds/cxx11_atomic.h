@@ -38,8 +38,8 @@ namespace cds {
     Using \p CDS_ATOMIC macro you may call <tt>\<atomic\></tt> library functions and classes,
     for example:
     \code
-    CDS_ATOMIC::atomic<int> atomInt;
-    CDS_ATOMIC::atomic_store_explicit( &atomInt, 0, CDS_ATOMIC::memory_order_release );
+    atomics::atomic<int> atomInt;
+    atomics::atomic_store_explicit( &atomInt, 0, atomics::memory_order_release );
     \endcode
 
     \par Microsoft Visual C++
@@ -86,8 +86,8 @@ namespace cds {
     You can compile \p libcds and your projects with <tt>boost.atomic</tt> specifying \p -DCDS_USE_BOOST_ATOMIC
     in compiler's command line.
 */
-namespace cxx11_atomics {
-}} // namespace cds::cxx11_atomics
+namespace cxx11_atomic {
+}} // namespace cds::cxx11_atomic
 
 //@cond
 #if defined(CDS_USE_BOOST_ATOMIC)
@@ -95,7 +95,7 @@ namespace cxx11_atomics {
 #   include <boost/version.hpp>
 #   if BOOST_VERSION >= 105400
 #       include <boost/atomic.hpp>
-#       define CDS_ATOMIC boost
+        namespace atomics = boost;
 #       define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace boost {
 #       define CDS_CXX11_ATOMIC_END_NAMESPACE }
 #   else
@@ -104,13 +104,13 @@ namespace cxx11_atomics {
 #elif defined(CDS_USE_LIBCDS_ATOMIC)
     // libcds atomic
 #   include <cds/compiler/cxx11_atomic.h>
-#   define CDS_ATOMIC cds::cxx11_atomics
-#   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace cds { namespace cxx11_atomics {
+    namespace atomics = cds::cxx11_atomic;
+#   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace cds { namespace cxx11_atomic {
 #   define CDS_CXX11_ATOMIC_END_NAMESPACE }}
 #else
     // Compiler provided C++11 atomic
 #   include <atomic>
-#   define CDS_ATOMIC std
+    namespace atomics = std;
 #   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace std {
 #   define CDS_CXX11_ATOMIC_END_NAMESPACE }
 #endif
@@ -132,7 +132,7 @@ namespace cds {
         class event_counter
         {
             //@cond
-            CDS_ATOMIC::atomic_size_t   m_counter;
+            atomics::atomic_size_t   m_counter;
             //@endcond
 
         public:
@@ -152,7 +152,7 @@ namespace cds {
                 value_type n    //< new value of the counter
             ) CDS_NOEXCEPT
             {
-                m_counter.exchange( n, CDS_ATOMIC::memory_order_relaxed );
+                m_counter.exchange( n, atomics::memory_order_relaxed );
                 return n;
             }
 
@@ -164,7 +164,7 @@ namespace cds {
                 size_t n    ///< addendum
             ) CDS_NOEXCEPT
             {
-                return m_counter.fetch_add( n, CDS_ATOMIC::memory_order_relaxed ) + n;
+                return m_counter.fetch_add( n, atomics::memory_order_relaxed ) + n;
             }
 
             /// Substraction
@@ -175,47 +175,47 @@ namespace cds {
                 size_t n    ///< subtrahend
             ) CDS_NOEXCEPT
             {
-                return m_counter.fetch_sub( n, CDS_ATOMIC::memory_order_relaxed ) - n;
+                return m_counter.fetch_sub( n, atomics::memory_order_relaxed ) - n;
             }
 
             /// Get current value of the counter
             operator size_t () const CDS_NOEXCEPT
             {
-                return m_counter.load( CDS_ATOMIC::memory_order_relaxed );
+                return m_counter.load( atomics::memory_order_relaxed );
             }
 
             /// Preincrement
             size_t operator ++() CDS_NOEXCEPT
             {
-                return m_counter.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed ) + 1;
+                return m_counter.fetch_add( 1, atomics::memory_order_relaxed ) + 1;
             }
             /// Postincrement
             size_t operator ++(int) CDS_NOEXCEPT
             {
-                return m_counter.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
+                return m_counter.fetch_add( 1, atomics::memory_order_relaxed );
             }
 
             /// Predecrement
             size_t operator --() CDS_NOEXCEPT
             {
-                return m_counter.fetch_sub( 1, CDS_ATOMIC::memory_order_relaxed ) - 1;
+                return m_counter.fetch_sub( 1, atomics::memory_order_relaxed ) - 1;
             }
             /// Postdecrement
             size_t operator --(int) CDS_NOEXCEPT
             {
-                return m_counter.fetch_sub( 1, CDS_ATOMIC::memory_order_relaxed );
+                return m_counter.fetch_sub( 1, atomics::memory_order_relaxed );
             }
 
             /// Get current value of the counter
             size_t get() const CDS_NOEXCEPT
             {
-                return m_counter.load( CDS_ATOMIC::memory_order_relaxed );
+                return m_counter.load( atomics::memory_order_relaxed );
             }
 
             /// Resets the counter to 0
             void reset() CDS_NOEXCEPT
             {
-                m_counter.store( 0, CDS_ATOMIC::memory_order_release );
+                m_counter.store( 0, atomics::memory_order_release );
             }
 
         };
@@ -228,7 +228,7 @@ namespace cds {
         class item_counter
         {
         public:
-            typedef CDS_ATOMIC::atomic_size_t   atomic_type ;   ///< atomic type used
+            typedef atomics::atomic_size_t   atomic_type ;   ///< atomic type used
             typedef size_t counter_type    ;   ///< Integral item counter type (size_t)
 
         private:
@@ -243,7 +243,7 @@ namespace cds {
             {}
 
             /// Returns current value of the counter
-            counter_type    value(CDS_ATOMIC::memory_order order = CDS_ATOMIC::memory_order_relaxed) const
+            counter_type    value(atomics::memory_order order = atomics::memory_order_relaxed) const
             {
                 return m_Counter.load( order );
             }
@@ -267,13 +267,13 @@ namespace cds {
             }
 
             /// Increments the counter. Semantics: postincrement
-            counter_type inc(CDS_ATOMIC::memory_order order = CDS_ATOMIC::memory_order_relaxed )
+            counter_type inc(atomics::memory_order order = atomics::memory_order_relaxed )
             {
                 return m_Counter.fetch_add( 1, order );
             }
 
             /// Decrements the counter. Semantics: postdecrement
-            counter_type dec(CDS_ATOMIC::memory_order order = CDS_ATOMIC::memory_order_relaxed)
+            counter_type dec(atomics::memory_order order = atomics::memory_order_relaxed)
             {
                 return m_Counter.fetch_sub( 1, order );
             }
@@ -301,7 +301,7 @@ namespace cds {
             }
 
             /// Resets count to 0
-            void reset(CDS_ATOMIC::memory_order order = CDS_ATOMIC::memory_order_relaxed)
+            void reset(atomics::memory_order order = atomics::memory_order_relaxed)
             {
                 m_Counter.store( 0, order );
             }
@@ -320,7 +320,7 @@ namespace cds {
             typedef size_t counter_type    ;  ///< Counter type
         public:
             /// Returns 0
-            counter_type    value(CDS_ATOMIC::memory_order /*order*/ = CDS_ATOMIC::memory_order_relaxed) const
+            counter_type    value(atomics::memory_order /*order*/ = atomics::memory_order_relaxed) const
             {
                 return 0;
             }
@@ -332,13 +332,13 @@ namespace cds {
             }
 
             /// Dummy increment. Always returns 0
-            size_t inc(CDS_ATOMIC::memory_order /*order*/ = CDS_ATOMIC::memory_order_relaxed)
+            size_t inc(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {
                 return 0;
             }
 
             /// Dummy increment. Always returns 0
-            size_t dec(CDS_ATOMIC::memory_order /*order*/ = CDS_ATOMIC::memory_order_relaxed)
+            size_t dec(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {
                 return 0;
             }
@@ -366,7 +366,7 @@ namespace cds {
             }
 
             /// Dummy function
-            void reset(CDS_ATOMIC::memory_order /*order*/ = CDS_ATOMIC::memory_order_relaxed)
+            void reset(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {}
         };
 

@@ -65,9 +65,9 @@ namespace cds { namespace intrusive {
 
                 while ( true ) {
                     node * pNext = aGuards.protect( 0, m_pNext );
-                    if ( pNext && pNext->m_bDeleted.load(CDS_ATOMIC::memory_order_acquire) ) {
+                    if ( pNext && pNext->m_bDeleted.load(atomics::memory_order_acquire) ) {
                         node * p = aGuards.protect( 1, pNext->m_pNext );
-                        m_pNext.compare_exchange_strong( pNext, p, CDS_ATOMIC::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed );
+                        m_pNext.compare_exchange_strong( pNext, p, atomics::memory_order_acquire, atomics::memory_order_relaxed );
                         continue;
                     }
                     else {
@@ -79,11 +79,11 @@ namespace cds { namespace intrusive {
             virtual void terminate( cds::gc::hrc::ThreadGC * pGC, bool bConcurrent )
             {
                 if ( bConcurrent ) {
-                    node * pNext = m_pNext.load(CDS_ATOMIC::memory_order_relaxed);
-                    do {} while ( !m_pNext.compare_exchange_weak( pNext, nullptr, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
+                    node * pNext = m_pNext.load(atomics::memory_order_relaxed);
+                    do {} while ( !m_pNext.compare_exchange_weak( pNext, nullptr, atomics::memory_order_release, atomics::memory_order_relaxed ) );
                 }
                 else {
-                    m_pNext.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
+                    m_pNext.store( nullptr, atomics::memory_order_relaxed );
                 }
             }
         };
@@ -166,7 +166,7 @@ namespace cds { namespace intrusive {
             */
             static void is_empty( const node_type * pNode )
             {
-                assert( pNode->m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
+                assert( pNode->m_pNext.load( atomics::memory_order_relaxed ) == nullptr );
             }
         };
 

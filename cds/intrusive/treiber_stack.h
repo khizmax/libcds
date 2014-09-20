@@ -32,7 +32,7 @@ namespace cds { namespace intrusive {
         {
             operation_id    idOp;   ///< Op id
             T *             pVal;   ///< for push: pointer to argument; for pop: accepts a return value
-            CDS_ATOMIC::atomic<unsigned int> nStatus; ///< Internal elimination status
+            atomics::atomic<unsigned int> nStatus; ///< Internal elimination status
 
             operation()
                 : pVal( nullptr )
@@ -165,7 +165,7 @@ namespace cds { namespace intrusive {
                 struct bkoff_predicate {
                     operation_desc * pOp;
                     bkoff_predicate( operation_desc * p ): pOp(p) {}
-                    bool operator()() { return pOp->nStatus.load( CDS_ATOMIC::memory_order_acquire ) != op_busy; }
+                    bool operator()() { return pOp->nStatus.load( atomics::memory_order_acquire ) != op_busy; }
                 };
 #           endif
 
@@ -212,7 +212,7 @@ namespace cds { namespace intrusive {
                 bool backoff( operation_desc& op, Stat& stat )
                 {
                     elimination_backoff_type bkoff;
-                    op.nStatus.store( op_busy, CDS_ATOMIC::memory_order_relaxed );
+                    op.nStatus.store( op_busy, atomics::memory_order_relaxed );
 
                     elimination_rec * myRec = cds::algo::elimination::init_record( op );
 
@@ -231,12 +231,12 @@ namespace cds { namespace intrusive {
                                 slot.pRec = nullptr;
                                 slot.lock.unlock();
 
-                                himOp->nStatus.store( op_collided, CDS_ATOMIC::memory_order_release );
+                                himOp->nStatus.store( op_collided, atomics::memory_order_release );
                                 cds::algo::elimination::clear_record();
                                 stat.onActiveCollision( op.idOp );
                                 return true;
                             }
-                            himOp->nStatus.store( op_free, CDS_ATOMIC::memory_order_release );
+                            himOp->nStatus.store( op_free, atomics::memory_order_release );
                         }
                         slot.pRec = myRec;
                         slot.lock.unlock();
@@ -245,13 +245,13 @@ namespace cds { namespace intrusive {
                     // Wait for colliding operation
 #               if defined(CDS_CXX11_LAMBDA_SUPPORT) && !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC10)
                     // MSVC++ 2010 compiler error C2065: 'op_busy' : undeclared identifier
-                    bkoff( [&op]() -> bool { return op.nStatus.load( CDS_ATOMIC::memory_order_acquire ) != op_busy; } );
+                    bkoff( [&op]() -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_busy; } );
 #               else
                     // Local structs is not supported by old compilers (for example, GCC 4.3)
                     //struct bkoff_predicate {
                     //    operation_desc * pOp;
                     //    bkoff_predicate( operation_desc * p ): pOp(p) {}
-                    //    bool operator()() { return pOp->nStatus.load( CDS_ATOMIC::memory_order_acquire ) != op_busy; }
+                    //    bool operator()() { return pOp->nStatus.load( atomics::memory_order_acquire ) != op_busy; }
                     //};
                     bkoff( bkoff_predicate(&op) );
 #               endif
@@ -262,7 +262,7 @@ namespace cds { namespace intrusive {
                             slot.pRec = nullptr;
                     }
 
-                    bool bCollided = op.nStatus.load( CDS_ATOMIC::memory_order_acquire ) == op_collided;
+                    bool bCollided = op.nStatus.load( atomics::memory_order_acquire ) == op_collided;
 
                     if ( !bCollided )
                         stat.onEliminationFailed();
@@ -584,7 +584,7 @@ namespace cds { namespace intrusive {
             node_type * t = m_Top.load(memory_model::memory_order_relaxed);
             while ( true ) {
                 pNew->m_pNext.store( t, memory_model::memory_order_relaxed );
-                if ( m_Top.compare_exchange_weak( t, pNew, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {     // #1 sync-with #2
+                if ( m_Top.compare_exchange_weak( t, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed )) {     // #1 sync-with #2
                     ++m_ItemCounter;
                     m_stat.onPush();
                     return true;
@@ -618,7 +618,7 @@ namespace cds { namespace intrusive {
                     return nullptr;    // stack is empty
 
                 node_type * pNext = t->m_pNext.load(memory_model::memory_order_relaxed);
-                if ( m_Top.compare_exchange_weak( t, pNext, memory_model::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed )) {              // #2
+                if ( m_Top.compare_exchange_weak( t, pNext, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {              // #2
                     clear_links( t );
                     --m_ItemCounter;
                     m_stat.onPop();
@@ -656,7 +656,7 @@ namespace cds { namespace intrusive {
                 pTop = m_Top.load( memory_model::memory_order_relaxed );
                 if ( pTop == nullptr )
                     return;
-                if ( m_Top.compare_exchange_weak( pTop, nullptr, memory_model::memory_order_acq_rel, CDS_ATOMIC::memory_order_relaxed ) ) {    // sync-with #1 and #2
+                if ( m_Top.compare_exchange_weak( pTop, nullptr, memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ) ) {    // sync-with #1 and #2
                     m_ItemCounter.reset();
                     break;
                 }

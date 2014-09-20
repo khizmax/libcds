@@ -77,7 +77,7 @@ namespace cds { namespace urcu {
     protected:
         //@cond
         buffer_type                     m_Buffer;
-        CDS_ATOMIC::atomic<uint64_t>    m_nCurEpoch;
+        atomics::atomic<uint64_t>    m_nCurEpoch;
         lock_type                       m_Lock;
         size_t const                    m_nCapacity;
         disposer_thread                 m_DisposerThread;
@@ -152,7 +152,7 @@ namespace cds { namespace urcu {
                 if ( bDetachAll )
                     pThis->m_ThreadList.detach_all();
 
-                pThis->m_DisposerThread.stop( pThis->m_Buffer, pThis->m_nCurEpoch.load( CDS_ATOMIC::memory_order_acquire ));
+                pThis->m_DisposerThread.stop( pThis->m_Buffer, pThis->m_nCurEpoch.load( atomics::memory_order_acquire ));
 
                 delete pThis;
                 singleton_ptr::s_pRCU = nullptr;
@@ -170,7 +170,7 @@ namespace cds { namespace urcu {
         virtual void retire_ptr( retired_ptr& p )
         {
             if ( p.m_p ) {
-                epoch_retired_ptr ep( p, m_nCurEpoch.load( CDS_ATOMIC::memory_order_acquire ) );
+                epoch_retired_ptr ep( p, m_nCurEpoch.load( atomics::memory_order_acquire ) );
                 push_buffer( ep );
             }
         }
@@ -179,7 +179,7 @@ namespace cds { namespace urcu {
         template <typename ForwardIterator>
         void batch_retire( ForwardIterator itFirst, ForwardIterator itLast )
         {
-            uint64_t nEpoch = m_nCurEpoch.load( CDS_ATOMIC::memory_order_relaxed );
+            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
             while ( itFirst != itLast ) {
                 epoch_retired_ptr p( *itFirst, nEpoch );
                 ++itFirst;
@@ -196,9 +196,9 @@ namespace cds { namespace urcu {
         //@cond
         void synchronize( bool bSync )
         {
-            uint64_t nPrevEpoch = m_nCurEpoch.fetch_add( 1, CDS_ATOMIC::memory_order_release );
+            uint64_t nPrevEpoch = m_nCurEpoch.fetch_add( 1, atomics::memory_order_release );
 
-            CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_acquire );
+            atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
                 cds::lock::scoped_lock<lock_type> sl( m_Lock );
                 flip_and_wait();
@@ -206,7 +206,7 @@ namespace cds { namespace urcu {
 
                 m_DisposerThread.dispose( m_Buffer, nPrevEpoch, bSync );
             }
-            CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_release );
+            atomics::atomic_thread_fence( atomics::memory_order_release );
         }
         void force_dispose()
         {

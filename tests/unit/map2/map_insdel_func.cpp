@@ -31,8 +31,8 @@ namespace map2 {
         struct value_type {
             size_t      nKey;
             size_t      nData;
-            CDS_ATOMIC::atomic<size_t> nEnsureCall;
-            CDS_ATOMIC::atomic<bool>   bInitialized;
+            atomics::atomic<size_t> nEnsureCall;
+            atomics::atomic<bool>   bInitialized;
             cds::OS::ThreadId          threadId     ;   // insert thread id
 
             typedef cds::lock::Spinlock< cds::backoff::pause >   lock_type;
@@ -49,8 +49,8 @@ namespace map2 {
             value_type( value_type const& s )
                 : nKey(s.nKey)
                 , nData(s.nData)
-                , nEnsureCall(s.nEnsureCall.load(CDS_ATOMIC::memory_order_relaxed))
-                , bInitialized( s.bInitialized.load(CDS_ATOMIC::memory_order_relaxed) )
+                , nEnsureCall(s.nEnsureCall.load(atomics::memory_order_relaxed))
+                , bInitialized( s.bInitialized.load(atomics::memory_order_relaxed) )
                 , threadId( cds::OS::getCurrentThreadId() )
             {}
 
@@ -59,8 +59,8 @@ namespace map2 {
             {
                 nKey = v.nKey;
                 nData = v.nData;
-                nEnsureCall.store( v.nEnsureCall.load(CDS_ATOMIC::memory_order_relaxed), CDS_ATOMIC::memory_order_relaxed );
-                bInitialized.store(v.bInitialized.load(CDS_ATOMIC::memory_order_relaxed), CDS_ATOMIC::memory_order_relaxed);
+                nEnsureCall.store( v.nEnsureCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
+                bInitialized.store(v.bInitialized.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed);
 
                 return *this;
             }
@@ -95,7 +95,7 @@ namespace map2 {
                     val.second.nData = val.first * 8;
 
                     ++nTestFunctorRef;
-                    val.second.bInitialized.store( true, CDS_ATOMIC::memory_order_relaxed);
+                    val.second.bInitialized.store( true, atomics::memory_order_relaxed);
                 }
             };
 
@@ -187,10 +187,10 @@ namespace map2 {
                         ++nCreated;
                         val.second.nKey = val.first;
                         val.second.nData = val.first * 8;
-                        val.second.bInitialized.store( true, CDS_ATOMIC::memory_order_relaxed);
+                        val.second.bInitialized.store( true, atomics::memory_order_relaxed);
                     }
                     else {
-                        val.second.nEnsureCall.fetch_add( 1, CDS_ATOMIC::memory_order_relaxed );
+                        val.second.nEnsureCall.fetch_add( 1, atomics::memory_order_relaxed );
                         ++nModified;
                     }
                 }
@@ -304,7 +304,7 @@ namespace map2 {
                 void operator ()( pair_type& item )
                 {
                     while ( true ) {
-                        if ( item.second.bInitialized.load( CDS_ATOMIC::memory_order_relaxed )) {
+                        if ( item.second.bInitialized.load( atomics::memory_order_relaxed )) {
                             cds::lock::scoped_lock< typename value_type::lock_type>    ac( item.second.m_access );
 
                             if ( m_cnt.nKeyExpected == item.second.nKey && m_cnt.nKeyExpected * 8 == item.second.nData )

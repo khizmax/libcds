@@ -271,7 +271,7 @@ namespace cds { namespace intrusive {
 
             marked_node_ptr cur(pos.pCur);
             pNode->m_pNext.store( cur, memory_model::memory_order_relaxed );
-            return pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+            return pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
 
         bool unlink_node( position& pos )
@@ -281,11 +281,11 @@ namespace cds { namespace intrusive {
 
             // Mark the node (logical deleting)
             marked_node_ptr next(pos.pNext, 0);
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
+            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                 // physical deletion may be performed by search function if it detects that a node is logically deleted (marked)
                 // CAS may be successful here or in other thread that searching something
                 marked_node_ptr cur(pos.pCur);
-                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     retire_node( pos.pCur );
                 return true;
             }
@@ -1143,7 +1143,7 @@ try_again:
                 if ( pNext.bits() == 1 ) {
                     // pCur marked i.e. logically deleted. Help the erase/unlink function to unlink pCur node
                     marked_node_ptr cur( pCur.ptr());
-                    if ( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
+                    if ( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                         retire_node( pCur.ptr() );
                     }
                     else {

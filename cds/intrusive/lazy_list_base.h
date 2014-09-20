@@ -45,7 +45,7 @@ namespace cds { namespace intrusive {
             /// Checks if node is marked
             bool is_marked() const
             {
-                return m_pNext.load(CDS_ATOMIC::memory_order_relaxed).bits() != 0;
+                return m_pNext.load(atomics::memory_order_relaxed).bits() != 0;
             }
 
             /// Default ctor
@@ -177,7 +177,7 @@ namespace cds { namespace intrusive {
             */
             static void is_empty( node_type const * pNode )
             {
-                assert( pNode->m_pNext.load( CDS_ATOMIC::memory_order_relaxed ) == nullptr );
+                assert( pNode->m_pNext.load( atomics::memory_order_relaxed ) == nullptr );
             }
         };
 

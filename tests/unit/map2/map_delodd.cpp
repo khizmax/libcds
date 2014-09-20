@@ -147,7 +147,7 @@ namespace map2 {
         typedef size_t      value_type;
         typedef std::pair<key_type const, value_type> pair_type;
 
-        CDS_ATOMIC::atomic<size_t>      m_nInsThreadCount;
+        atomics::atomic<size_t>      m_nInsThreadCount;
 
         // Inserts keys from [0..N)
         template <class Map>
@@ -210,7 +210,7 @@ namespace map2 {
                     }
                 }
 
-                getTest().m_nInsThreadCount.fetch_sub( 1, CDS_ATOMIC::memory_order_acquire );
+                getTest().m_nInsThreadCount.fetch_sub( 1, atomics::memory_order_acquire );
             }
         };
 
@@ -296,7 +296,7 @@ namespace map2 {
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -310,7 +310,7 @@ namespace map2 {
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -369,7 +369,7 @@ namespace map2 {
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -383,7 +383,7 @@ namespace map2 {
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -456,7 +456,7 @@ namespace map2 {
                                 }
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -484,7 +484,7 @@ namespace map2 {
                                 }
                             }
                         }
-                        if ( getTest().m_nInsThreadCount.load( CDS_ATOMIC::memory_order_acquire ) == 0 )
+                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
                             break;
                     }
                 }
@@ -512,7 +512,7 @@ namespace map2 {
             typedef InsertThread<Map> insert_thread;
             typedef DeleteThread<Map> delete_thread;
 
-            m_nInsThreadCount.store( c_nInsThreadCount, CDS_ATOMIC::memory_order_release );
+            m_nInsThreadCount.store( c_nInsThreadCount, atomics::memory_order_release );
 
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new insert_thread( pool, testMap ), c_nInsThreadCount );
@@ -554,7 +554,7 @@ namespace map2 {
             typedef DeleteThread<Map> delete_thread;
             typedef ExtractThread< typename Map::gc, Map > extract_thread;
 
-            m_nInsThreadCount.store( c_nInsThreadCount, CDS_ATOMIC::memory_order_release );
+            m_nInsThreadCount.store( c_nInsThreadCount, atomics::memory_order_release );
 
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new insert_thread( pool, testMap ), c_nInsThreadCount );

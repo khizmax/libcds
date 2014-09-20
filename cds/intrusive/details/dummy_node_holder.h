@@ -39,7 +39,7 @@ namespace cds { namespace intrusive { namespace details {
             {
                 assert( p != nullptr );
 
-                p->m_pNext.store( nullptr, CDS_ATOMIC::memory_order_release );
+                p->m_pNext.store( nullptr, atomics::memory_order_release );
                 allocator_type().Delete( p );
             }
         };

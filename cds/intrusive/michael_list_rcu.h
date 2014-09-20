@@ -165,19 +165,19 @@ namespace cds { namespace intrusive {
 
             marked_node_ptr p( pos.pCur );
             pNode->m_pNext.store( p, memory_model::memory_order_relaxed );
-            return pos.pPrev->compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+            return pos.pPrev->compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
 
         bool unlink_node( position& pos )
         {
             // Mark the node (logical deleting)
             marked_node_ptr next(pos.pNext, 0);
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed )) {
+            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 marked_node_ptr cur(pos.pCur);
-                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     return true;
                 next |= 1;
-                CDS_VERIFY( pos.pCur->m_pNext.compare_exchange_strong( next, next ^ 1, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ));
+                CDS_VERIFY( pos.pCur->m_pNext.compare_exchange_strong( next, next ^ 1, memory_model::memory_order_release, atomics::memory_order_relaxed ));
             }
             return false;
         }

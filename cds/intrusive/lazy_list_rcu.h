@@ -23,7 +23,7 @@ namespace cds { namespace intrusive {
             typedef Tag         tag         ;   ///< tag
 
             typedef cds::details::marked_ptr<node, 1>   marked_ptr          ;   ///< marked pointer
-            typedef CDS_ATOMIC::atomic<marked_ptr>      atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
+            typedef atomics::atomic<marked_ptr>      atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
 
             atomic_marked_ptr   m_pNext ; ///< pointer to the next node in the list
             mutable lock_type   m_Lock  ; ///< Node lock
@@ -31,7 +31,7 @@ namespace cds { namespace intrusive {
             /// Checks if node is marked
             bool is_marked() const
             {
-                return m_pNext.load(CDS_ATOMIC::memory_order_relaxed).bits() != 0;
+                return m_pNext.load(atomics::memory_order_relaxed).bits() != 0;
             }
 
             /// Default ctor
@@ -42,7 +42,7 @@ namespace cds { namespace intrusive {
             /// Clears internal fields
             void clear()
             {
-                m_pNext.store( marked_ptr(), CDS_ATOMIC::memory_order_release );
+                m_pNext.store( marked_ptr(), atomics::memory_order_release );
             }
         };
     }   // namespace lazy_list

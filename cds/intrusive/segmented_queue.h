@@ -209,14 +209,14 @@ namespace cds { namespace intrusive {
         // Segment
         struct segment: public boost::intrusive::slist_base_hook<>
         {
-            CDS_ATOMIC::atomic< cell > *    cells;  // Cell array of size \ref m_nQuasiFactor
+            atomics::atomic< cell > *    cells;  // Cell array of size \ref m_nQuasiFactor
             size_t   version;   // version tag (ABA prevention tag)
             // cell array is placed here in one continuous memory block
 
             // Initializes the segment
             segment( size_t nCellCount )
                 // MSVC warning C4355: 'this': used in base member initializer list
-                : cells( reinterpret_cast< CDS_ATOMIC::atomic< cell > * >( this + 1 ))
+                : cells( reinterpret_cast< atomics::atomic< cell > * >( this + 1 ))
                 , version( 0 )
             {
                 init( nCellCount );
@@ -224,17 +224,17 @@ namespace cds { namespace intrusive {
 
             void init( size_t nCellCount )
             {
-                CDS_ATOMIC::atomic< cell > * pLastCell = cells + nCellCount;
-                for ( CDS_ATOMIC::atomic< cell > * pCell = cells; pCell < pLastCell; ++pCell )
-                    pCell->store( cell(), CDS_ATOMIC::memory_order_relaxed );
-                CDS_ATOMIC::atomic_thread_fence( memory_model::memory_order_release );
+                atomics::atomic< cell > * pLastCell = cells + nCellCount;
+                for ( atomics::atomic< cell > * pCell = cells; pCell < pLastCell; ++pCell )
+                    pCell->store( cell(), atomics::memory_order_relaxed );
+                atomics::atomic_thread_fence( memory_model::memory_order_release );
             }
 
         private:
             segment(); //=delete
         };
 
-        typedef typename opt::details::alignment_setter< CDS_ATOMIC::atomic<segment *>, options::alignment >::type aligned_segment_ptr;
+        typedef typename opt::details::alignment_setter< atomics::atomic<segment *>, options::alignment >::type aligned_segment_ptr;
         //@endcond
 
     protected:
@@ -300,8 +300,8 @@ namespace cds { namespace intrusive {
             bool populated( segment const& s ) const
             {
                 // The lock should be held
-                CDS_ATOMIC::atomic< cell > const * pLastCell = s.cells + quasi_factor();
-                for ( CDS_ATOMIC::atomic< cell > const * pCell = s.cells; pCell < pLastCell; ++pCell ) {
+                atomics::atomic< cell > const * pLastCell = s.cells + quasi_factor();
+                for ( atomics::atomic< cell > const * pCell = s.cells; pCell < pLastCell; ++pCell ) {
                     if ( !pCell->load( memory_model::memory_order_relaxed ).all() )
                         return false;
                 }
@@ -310,8 +310,8 @@ namespace cds { namespace intrusive {
             bool exhausted( segment const& s ) const
             {
                 // The lock should be held
-                CDS_ATOMIC::atomic< cell > const * pLastCell = s.cells + quasi_factor();
-                for ( CDS_ATOMIC::atomic< cell > const * pCell = s.cells; pCell < pLastCell; ++pCell ) {
+                atomics::atomic< cell > const * pLastCell = s.cells + quasi_factor();
+                for ( atomics::atomic< cell > const * pCell = s.cells; pCell < pLastCell; ++pCell ) {
                     if ( !pCell->load( memory_model::memory_order_relaxed ).bits() )
                         return false;
                 }
@@ -474,7 +474,7 @@ namespace cds { namespace intrusive {
                         // Empty cell found, try to enqueue here
                         cell nullCell;
                         if ( pTailSegment->cells[i].compare_exchange_strong( nullCell, cell( &val ),
-                            memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ))
+                            memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         {
                             // Ok to push item
                             m_Stat.onPush();
@@ -641,7 +641,7 @@ namespace cds { namespace intrusive {
                         if ( !item.bits() ) {
                             // Try to mark the cell as deleted
                             if ( pHeadSegment->cells[i].compare_exchange_strong( item, item | 1,
-                                memory_model::memory_order_acquire, CDS_ATOMIC::memory_order_relaxed ))
+                                memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
                                 --m_ItemCounter;
                                 m_Stat.onPop();

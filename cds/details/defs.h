@@ -34,7 +34,7 @@
    schema used. However, any implementation supports common interface for the type of data structure.
 
    To implement any lock-free data structure, two things are needed:
-   - atomic operation library conforming with C++11 memory model. The <b>libcds</b> has such feature, see cds::cxx11_atomics namespace for
+   - atomic operation library conforming with C++11 memory model. The <b>libcds</b> has such feature, see cds::cxx11_atomic namespace for
      details and compiler-specific information.
    - safe memory reclamation (SMR) or garbage collecting (GC) algorithm. The <b>libcds</b> has an implementation of several
      well-known SMR algos, see below.

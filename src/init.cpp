@@ -21,7 +21,7 @@
 
 namespace cds {
 
-    CDS_EXPORT_API CDS_ATOMIC::atomic<size_t> threading::ThreadData::s_nLastUsedProcNo(0);
+    CDS_EXPORT_API atomics::atomic<size_t> threading::ThreadData::s_nLastUsedProcNo(0);
     CDS_EXPORT_API size_t threading::ThreadData::s_nProcCount = 1;
 
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
@@ -45,17 +45,17 @@ namespace cds {
 #endif
 
     namespace details {
-        static CDS_ATOMIC::atomic<size_t> s_nInitCallCount(0);
+        static atomics::atomic<size_t> s_nInitCallCount(0);
 
         bool CDS_EXPORT_API init_first_call()
         {
-            return s_nInitCallCount.fetch_add(1, CDS_ATOMIC::memory_order_relaxed) == 0;
+            return s_nInitCallCount.fetch_add(1, atomics::memory_order_relaxed) == 0;
         }
 
         bool CDS_EXPORT_API fini_last_call()
         {
-            if ( s_nInitCallCount.fetch_sub( 1, CDS_ATOMIC::memory_order_relaxed ) == 1 ) {
-                CDS_ATOMIC::atomic_thread_fence( CDS_ATOMIC::memory_order_release );
+            if ( s_nInitCallCount.fetch_sub( 1, atomics::memory_order_relaxed ) == 1 ) {
+                atomics::atomic_thread_fence( atomics::memory_order_release );
                 return true;
             }
             return false;

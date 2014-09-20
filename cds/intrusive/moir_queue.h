@@ -126,10 +126,10 @@ namespace cds { namespace intrusive {
                 if ( pNext == nullptr )
                     return false    ;    // queue is empty
 
-                if ( base_class::m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
+                if ( base_class::m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                     node_type * t = base_class::m_pTail.load(memory_model::memory_order_acquire);
                     if ( h == t )
-                        base_class::m_pTail.compare_exchange_strong( t, pNext, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                        base_class::m_pTail.compare_exchange_strong( t, pNext, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     break;
                 }
 

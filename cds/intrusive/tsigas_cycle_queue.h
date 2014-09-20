@@ -98,10 +98,10 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef typename options::buffer::template rebind< CDS_ATOMIC::atomic<value_type *> >::other buffer;
+        typedef typename options::buffer::template rebind< atomics::atomic<value_type *> >::other buffer;
         typedef typename opt::details::alignment_setter< buffer, options::alignment >::type aligned_buffer;
         typedef size_t index_type;
-        typedef typename opt::details::alignment_setter< CDS_ATOMIC::atomic<index_type>, options::alignment >::type aligned_index;
+        typedef typename opt::details::alignment_setter< atomics::atomic<index_type>, options::alignment >::type aligned_index;
         //@endcond
 
     protected:
@@ -216,7 +216,7 @@ namespace cds { namespace intrusive {
                     }
 
                     // help the dequeue to update head
-                    m_nHead.compare_exchange_strong( temp, ate, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                    m_nHead.compare_exchange_strong( temp, ate, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     continue;
                 }
 
@@ -226,9 +226,9 @@ namespace cds { namespace intrusive {
                     continue;
 
                 // get actual tail and try to enqueue new node
-                if ( m_buffer[ate].compare_exchange_strong( tt, pNewNode, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) ) {
+                if ( m_buffer[ate].compare_exchange_strong( tt, pNewNode, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
                     if ( temp % 2 == 0 )
-                        m_nTail.compare_exchange_strong( te, temp, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                        m_nTail.compare_exchange_strong( te, temp, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     ++m_ItemCounter;
                     return true;
                 }
@@ -275,7 +275,7 @@ namespace cds { namespace intrusive {
                 // check whether the queue is empty
                 if ( temp == m_nTail.load(memory_model::memory_order_acquire) ) {
                     // help the enqueue to update end
-                    m_nTail.compare_exchange_strong( temp, (temp + 1) & nModulo, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                    m_nTail.compare_exchange_strong( temp, (temp + 1) & nModulo, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     continue;
                 }
 
@@ -285,9 +285,9 @@ namespace cds { namespace intrusive {
                     continue;
 
                 // Get the actual head, null means empty
-                if ( m_buffer[temp].compare_exchange_strong( tt, pNull, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed )) {
+                if ( m_buffer[temp].compare_exchange_strong( tt, pNull, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                     if ( temp % 2 == 0 )
-                        m_nHead.compare_exchange_strong( th, temp, memory_model::memory_order_release, CDS_ATOMIC::memory_order_relaxed );
+                        m_nHead.compare_exchange_strong( th, temp, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     --m_ItemCounter;
                     return reinterpret_cast<value_type *>(reinterpret_cast<intptr_t>( tt ) & ~intptr_t(1));
                 }
