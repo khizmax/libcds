@@ -104,8 +104,6 @@
 #else
 #   if defined(CDS_USE_LIBCDS_ATOMIC)
 #       error "Libcds does not support atomic implementation for the processor architecture. Try to use C++11-compatible compiler and remove CDS_USE_LIBCDS_ATOMIC flag from compiler command line"
-#   elif !defined(CDS_USE_BOOST_ATOMIC) && !defined(CDS_CXX11_ATOMIC_SUPPORT)
-#       error "The current compiler does not support C++11 atomic. Try to use boost.atomic (-DCDS_USE_BOOST_ATOMIC) or C++11 compiler"
 #   else
 #       define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_UNKNOWN
 #       define CDS_BUILD_BITS        32

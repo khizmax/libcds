@@ -91,6 +91,7 @@ namespace cxx11_atomics {
 
 //@cond
 #if defined(CDS_USE_BOOST_ATOMIC)
+    // boost atomic
 #   include <boost/version.hpp>
 #   if BOOST_VERSION >= 105400
 #       include <boost/atomic.hpp>
@@ -100,8 +101,14 @@ namespace cxx11_atomics {
 #   else
 #       error "Boost version 1.54 or above is needed for boost.atomic"
 #   endif
-#elif CDS_CXX11_ATOMIC_SUPPORT == 1 && !defined(CDS_USE_LIBCDS_ATOMIC)
-    // Compiler supports C++11 atomic (conditionally defined in cds/details/defs.h)
+#elif defined(CDS_USE_LIBCDS_ATOMIC)
+    // libcds atomic
+#   include <cds/compiler/cxx11_atomic.h>
+#   define CDS_ATOMIC cds::cxx11_atomics
+#   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace cds { namespace cxx11_atomics {
+#   define CDS_CXX11_ATOMIC_END_NAMESPACE }}
+#else
+    // Compiler provided C++11 atomic
 #   include <cds/compiler/cxx11_atomic_prepatches.h>
 #   include <atomic>
 #   define CDS_ATOMIC std
@@ -109,10 +116,6 @@ namespace cxx11_atomics {
 #   define CDS_CXX11_ATOMIC_END_NAMESPACE }
 #   include <cds/compiler/cxx11_atomic_patches.h>
 #else
-#   include <cds/compiler/cxx11_atomic.h>
-#   define CDS_ATOMIC cds::cxx11_atomics
-#   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace cds { namespace cxx11_atomics {
-#   define CDS_CXX11_ATOMIC_END_NAMESPACE }}
 #endif
 //@endcond
 

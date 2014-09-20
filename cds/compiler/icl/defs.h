@@ -78,11 +78,6 @@
 #   define alignof __alignof__
 #endif
 
-//#if CDS_COMPILER_VERSION < 1600
-//#   include <boost/static_assert.hpp>
-//#   define static_assert(_expr, _msg)     BOOST_STATIC_ASSERT((_expr))
-//#endif
-
 // Memory leaks detection (debug build only)
 //#ifdef _DEBUG
 //#   define _CRTDBG_MAP_ALLOC
@@ -107,12 +102,6 @@
 #else
 #   define CDS_NOEXCEPT_SUPPORT        noexcept
 #   define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-#endif
-
-// C++11 atomic support
-#if CDS_COMPILER_VERSION >= 1300 && CDS_OS_INTERFACE == CDS_OSI_WINDOWS && _MSC_VER >= 1700
-    // Intel C++ 13 supports C++11 atomic standard for VC++ 2012
-#   define CDS_CXX11_ATOMIC_SUPPORT     1
 #endif
 
 

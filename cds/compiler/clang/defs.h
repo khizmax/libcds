@@ -10,16 +10,13 @@
 #define  CDS_COMPILER__NAME    ("clang " __clang_version__)
 #define  CDS_COMPILER__NICK    "clang"
 
-// C++11 atomic support - only for libc++
-// Note: Clang libc++ atomic leads to program crash.
-// So, we use libcds atomic implementation
-//#if __has_feature(cxx_atomic) && defined(_LIBCPP_VERSION)
-//#   define CDS_CXX11_ATOMIC_SUPPORT     1
-//#endif
-
+#if defined(_LIBCPP_VERSION)
+    // Note: Clang libc++ atomic leads to program crash.
+    // So, we use libcds atomic implementation
+#   define CDS_USE_LIBCDS_ATOMIC
+#endif
 
 #include <cds/compiler/gcc/compiler_macro.h>
-
 
 #define alignof __alignof__
 

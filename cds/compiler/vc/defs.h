@@ -87,9 +87,6 @@
 #define CDS_NOEXCEPT_SUPPORT
 #define CDS_NOEXCEPT_SUPPORT_(expr)
 
-// C++11 atomic support
-#define CDS_CXX11_ATOMIC_SUPPORT     1
-
 // Lambda (VC 10 +)
 //#define CDS_CXX11_LAMBDA_SUPPORT
 

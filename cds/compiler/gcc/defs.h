@@ -6,8 +6,8 @@
 // Compiler version
 #define CDS_COMPILER_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
-#if CDS_COMPILER_VERSION < 40300
-#   error "Compiler version error. GCC version 4.3.0 and above is supported"
+#if CDS_COMPILER_VERSION < 40800
+#   error "Compiler version error. GCC version 4.8.0 and above is supported"
 #endif
 
 // Compiler name
@@ -17,14 +17,6 @@
 #   define  CDS_COMPILER__NAME    "GNU C++"
 #endif
 #define  CDS_COMPILER__NICK        "gcc"
-
-// C++11 atomic support
-#if CDS_COMPILER_VERSION >= 40700
-#   define CDS_CXX11_ATOMIC_SUPPORT     1
-#elif defined(CDS_CXX11_ATOMIC_GCC)
-#   define CDS_CXX11_ATOMIC_SUPPORT     1
-#endif
-
 
 #include <cds/compiler/gcc/compiler_macro.h>
 
