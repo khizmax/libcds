@@ -109,13 +109,10 @@ namespace cxx11_atomics {
 #   define CDS_CXX11_ATOMIC_END_NAMESPACE }}
 #else
     // Compiler provided C++11 atomic
-#   include <cds/compiler/cxx11_atomic_prepatches.h>
 #   include <atomic>
 #   define CDS_ATOMIC std
 #   define CDS_CXX11_ATOMIC_BEGIN_NAMESPACE namespace std {
 #   define CDS_CXX11_ATOMIC_END_NAMESPACE }
-#   include <cds/compiler/cxx11_atomic_patches.h>
-#else
 #endif
 //@endcond
 

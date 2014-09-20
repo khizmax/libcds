@@ -830,9 +830,6 @@
     <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h">
       <Filter>Header Files\cds\compiler\gcc\ia64</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic_patches.h">
-      <Filter>Header Files\cds\compiler</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\gcc\cxx11_atomic_patches.h">
       <Filter>Header Files\cds\compiler\gcc</Filter>
     </ClInclude>
@@ -865,12 +862,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\basket_queue.h">
       <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic_prepatches.h">
-      <Filter>Header Files\cds\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\compiler\clang\cxx11_atomic_prepatches.h">
-      <Filter>Header Files\cds\compiler\clang</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\deque_stat.h">
       <Filter>Header Files\cds\intrusive</Filter>
@@ -1221,9 +1212,6 @@
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\icl\compiler_barriers.h">
-      <Filter>Header Files\cds\compiler\icl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\compiler\icl\cxx11_atomic_patches_win.h">
       <Filter>Header Files\cds\compiler\icl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\icl\defs.h">
