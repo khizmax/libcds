@@ -357,7 +357,7 @@ namespace cds { namespace container {
 
         /// Gets minimum key from the set
         /**
-            If the set is empty the function returns \p NULL
+            If the set is empty the function returns \p nullptr
         */
         value_type * get_min() const
         {
@@ -367,7 +367,7 @@ namespace cds { namespace container {
 
         /// Gets maximum key from the set
         /**
-            The function returns \p NULL if the set is empty
+            The function returns \p nullptr if the set is empty
         */
         value_type * get_max() const
         {

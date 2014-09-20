@@ -284,7 +284,7 @@ namespace map {
                     {
                         rcu_lock l;
                         pVal = m.get( nKey );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->first == nKey );
                         CPPUNIT_CHECK( pVal->second.m_val == nKey );
 
@@ -296,13 +296,13 @@ namespace map {
                     ep.release();
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( m.get( nKey ) == NULL );
+                        CPPUNIT_CHECK( m.get( nKey ) == nullptr );
                         CPPUNIT_CHECK( !m.extract( ep, nKey ));
                         CPPUNIT_CHECK( ep.empty() );
 
                         nKey = arr[i+1];
                         pVal = m.get_with( other_item(nKey), other_less() );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->first == nKey );
                         CPPUNIT_CHECK( pVal->second.m_val == nKey );
 
@@ -314,7 +314,7 @@ namespace map {
                     ep.release();
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( m.get_with( other_item(nKey), other_less() ) == NULL );
+                        CPPUNIT_CHECK( m.get_with( other_item(nKey), other_less() ) == nullptr );
                         CPPUNIT_CHECK( !m.extract_with( ep, other_item(nKey), other_less() ));
                         CPPUNIT_CHECK( ep.empty() );
                     }
@@ -323,7 +323,7 @@ namespace map {
                 CPPUNIT_CHECK( check_size( m, 0 ));
                 {
                     rcu_lock l;
-                    CPPUNIT_CHECK( m.get( int(nLimit / 2) ) == NULL );
+                    CPPUNIT_CHECK( m.get( int(nLimit / 2) ) == nullptr );
                     CPPUNIT_CHECK( !m.extract( ep, int(nLimit / 2) ));
                     CPPUNIT_CHECK( ep.empty() );
                 }

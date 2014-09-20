@@ -81,7 +81,7 @@ namespace cds { namespace intrusive {
             - \ref always_check_link - check in debug and release build (not yet implemented for release mode).
 
             When link checking is on, the container tests that the node's link fields
-            must be NULL before inserting the item. If the link is not NULL an assertion is generated
+            must be \p nullptr before inserting the item. If the link is not \p nullptr an assertion is generated
         */
         template <link_check_type Value>
         struct link_checker {

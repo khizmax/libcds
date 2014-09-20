@@ -44,7 +44,7 @@ namespace cds { namespace threading {
             {
                 if ( msvc_internal::s_pThreadData ) {
                     msvc_internal::s_pThreadData->ThreadData::~ThreadData();
-                    msvc_internal::s_pThreadData = NULL;
+                    msvc_internal::s_pThreadData = nullptr;
                 }
             }
 
@@ -69,7 +69,7 @@ namespace cds { namespace threading {
             static bool isThreadAttached()
             {
                 ThreadData * pData = _threadData();
-                return pData != NULL;
+                return pData != nullptr;
             }
 
             /// This method must be called in beginning of thread execution
@@ -103,7 +103,7 @@ namespace cds { namespace threading {
             */
             static gc::HP::thread_gc_impl&   getHZPGC()
             {
-                assert( _threadData()->m_hpManager != NULL );
+                assert( _threadData()->m_hpManager );
                 return *(_threadData()->m_hpManager);
             }
 
@@ -115,7 +115,7 @@ namespace cds { namespace threading {
             */
             static gc::HRC::thread_gc_impl&   getHRCGC()
             {
-                assert( _threadData()->m_hrcManager != NULL );
+                assert( _threadData()->m_hrcManager );
                 return *(_threadData()->m_hrcManager);
             }
 
@@ -127,7 +127,7 @@ namespace cds { namespace threading {
             */
             static gc::PTB::thread_gc_impl&   getPTBGC()
             {
-                assert( _threadData()->m_ptbManager != NULL );
+                assert( _threadData()->m_ptbManager );
                 return *(_threadData()->m_ptbManager);
             }
 

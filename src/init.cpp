@@ -28,20 +28,20 @@ namespace cds {
     CDS_EXPORT_API DWORD cds::threading::wintls::Manager::Holder::m_key = TLS_OUT_OF_INDEXES;
 
     __declspec( thread ) threading::msvc_internal::ThreadDataPlaceholder threading::msvc_internal::s_threadData;
-    __declspec( thread ) threading::ThreadData * threading::msvc_internal::s_pThreadData = NULL;
+    __declspec(thread) threading::ThreadData * threading::msvc_internal::s_pThreadData = nullptr;
 
 #else
     pthread_key_t threading::pthread::Manager::Holder::m_key;
 
 #   if CDS_COMPILER == CDS_COMPILER_GCC || CDS_COMPILER == CDS_COMPILER_CLANG
         __thread threading::gcc_internal::ThreadDataPlaceholder CDS_DATA_ALIGNMENT(8) threading::gcc_internal::s_threadData;
-        __thread threading::ThreadData * threading::gcc_internal::s_pThreadData = NULL;
+        __thread threading::ThreadData * threading::gcc_internal::s_pThreadData = nullptr;
 #   endif
 #endif
 
 #ifdef CDS_CXX11_THREAD_LOCAL_SUPPORT
     thread_local threading::cxx11_internal::ThreadDataPlaceholder CDS_DATA_ALIGNMENT(8) threading::cxx11_internal::s_threadData;
-    thread_local threading::ThreadData * threading::cxx11_internal::s_pThreadData = NULL;
+    thread_local threading::ThreadData * threading::cxx11_internal::s_pThreadData = nullptr;
 #endif
 
     namespace details {

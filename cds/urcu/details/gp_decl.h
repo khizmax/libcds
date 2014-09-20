@@ -120,7 +120,7 @@ namespace cds { namespace urcu { namespace details {
 
         static bool isUsed()
         {
-            return rcu_instance::s_pRCU != NULL;
+            return rcu_instance::s_pRCU != nullptr;
         }
 
     public:

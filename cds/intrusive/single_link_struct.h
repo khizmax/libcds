@@ -160,9 +160,9 @@ namespace cds { namespace intrusive {
             typedef Node node_type;
             //@endcond
 
-            /// Checks if the link field of node \p pNode is NULL
+            /// Checks if the link field of node \p pNode is \p nullptr
             /**
-                An asserting is generated if \p pNode link field is not NULL
+                An asserting is generated if \p pNode link field is not \p nullptr
             */
             static void is_empty( const node_type * pNode )
             {

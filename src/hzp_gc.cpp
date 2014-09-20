@@ -22,7 +22,7 @@ namespace cds { namespace gc {
         /// Max array size of retired pointers
         static const size_t c_nMaxRetireNodeCount = c_nHazardPointerPerThread * c_nMaxThreadCount * 2;
 
-        GarbageCollector *    GarbageCollector::m_pHZPManager = NULL;
+        GarbageCollector *    GarbageCollector::m_pHZPManager = nullptr;
 
         void CDS_STDCALL GarbageCollector::Construct( size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )
         {
@@ -38,7 +38,7 @@ namespace cds { namespace gc {
                     m_pHZPManager->detachAllThread();
 
                 delete m_pHZPManager;
-                m_pHZPManager = NULL;
+                m_pHZPManager = nullptr;
             }
         }
 
@@ -48,7 +48,7 @@ namespace cds { namespace gc {
             size_t nMaxRetiredPtrCount,
             scan_type nScanType
         )
-            : m_pListHead(NULL)
+            : m_pListHead( nullptr )
             ,m_bStatEnabled( true )
             ,m_nHazardPointerCount( nHazardPtrCount == 0 ? c_nHazardPointerPerThread : nHazardPtrCount )
             ,m_nMaxThreadCount( nMaxThreadCount == 0 ? c_nMaxThreadCount : nMaxThreadCount )
@@ -64,7 +64,7 @@ namespace cds { namespace gc {
             hplist_node * pHead = m_pListHead.load( CDS_ATOMIC::memory_order_relaxed );
             m_pListHead.store( nullptr, CDS_ATOMIC::memory_order_relaxed );
 
-            hplist_node * pNext = NULL;
+            hplist_node * pNext = nullptr;
             for ( hplist_node * hprec = pHead; hprec; hprec = pNext ) {
                 assert( hprec->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == nullThreadId
                     || hprec->m_idOwner.load( CDS_ATOMIC::memory_order_relaxed ) == mainThreadId
@@ -138,7 +138,7 @@ namespace cds { namespace gc {
 
         void GarbageCollector::RetireHPRec( details::HPRec * pRec )
         {
-            assert( pRec != NULL );
+            assert( pRec != nullptr );
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_RetireHPRec );
 
             pRec->clear();
@@ -149,7 +149,7 @@ namespace cds { namespace gc {
 
         void GarbageCollector::detachAllThread()
         {
-            hplist_node * pNext = NULL;
+            hplist_node * pNext = nullptr;
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
             for ( hplist_node * hprec = m_pListHead.load(CDS_ATOMIC::memory_order_acquire); hprec; hprec = pNext ) {
                 pNext = hprec->m_pNextNode;

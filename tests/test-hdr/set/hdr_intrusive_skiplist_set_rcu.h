@@ -262,7 +262,7 @@ namespace set {
                         {
                             rcu_lock l;
                             pVal = s.get( i );
-                            CPPUNIT_ASSERT( pVal != NULL );
+                            CPPUNIT_ASSERT( pVal != nullptr );
                             CPPUNIT_CHECK( pVal->nKey == i );
                             CPPUNIT_CHECK( pVal->nVal == i * 2 );
                             pVal->nVal *= 2;
@@ -276,7 +276,7 @@ namespace set {
 
                         {
                             rcu_lock l;
-                            CPPUNIT_CHECK( s.get( i ) == NULL );
+                            CPPUNIT_CHECK( s.get( i ) == nullptr );
                         }
                         CPPUNIT_CHECK( !s.extract( ep, i ) );
                         CPPUNIT_ASSERT( ep.empty() );
@@ -292,7 +292,7 @@ namespace set {
                         {
                             rcu_lock l;
                             value_type * pVal = s.get_with( other_key(i), other_key_less<typename Set::value_type>() );
-                            CPPUNIT_ASSERT( pVal != NULL );
+                            CPPUNIT_ASSERT( pVal != nullptr );
                             CPPUNIT_CHECK( pVal->nKey == i );
                             CPPUNIT_CHECK( pVal->nVal == i * 2 );
                             pVal->nVal *= 2;
@@ -306,7 +306,7 @@ namespace set {
 
                         {
                             rcu_lock l;
-                            CPPUNIT_CHECK( s.get_with( other_key(i), other_key_less<typename Set::value_type>() ) == NULL );
+                            CPPUNIT_CHECK( s.get_with( other_key( i ), other_key_less<typename Set::value_type>() ) == nullptr );
                         }
                         CPPUNIT_CHECK( !s.extract_with( ep, other_key(i), other_key_less<typename Set::value_type>() ));
                     }
@@ -361,7 +361,7 @@ namespace set {
                 CPPUNIT_CHECK( !s.extract_max(ep) );
             }
 
-            CPPUNIT_MSG( PrintStat()(s, NULL) );
+            CPPUNIT_MSG( PrintStat()(s, nullptr) );
         }
 
         template <typename Set>

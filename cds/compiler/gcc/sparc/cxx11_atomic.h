@@ -165,7 +165,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
 
             fence_before(order);
             *pDest = src;
@@ -181,7 +181,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
 
             fence_before(order);
             T v = *pSrc;
@@ -193,7 +193,7 @@ namespace cds { namespace cxx11_atomics {
         static inline bool cas32_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             fence_before( mo_success );
             __asm__ __volatile__(
@@ -226,7 +226,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T exchange32( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             // This primitive could be implemented via "swap" instruction but "swap" is deprecated in UltraSparc
 
@@ -248,7 +248,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
 
             fence_before(order);
             T v = *pSrc;
@@ -264,7 +264,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
 
             fence_before(order);
             *pDest = val;
@@ -276,7 +276,7 @@ namespace cds { namespace cxx11_atomics {
         static inline bool cas64_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             fence_before( mo_success );
             __asm__ __volatile__(
@@ -310,7 +310,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T exchange64( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T cur = load64( pDest, memory_order_relaxed );
             do {} while ( !cas64_strong( pDest, cur, v, order, memory_order_relaxed ));
@@ -329,7 +329,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
 
             fence_before( order );
             *pDest = src;
@@ -345,7 +345,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order == memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
 
             fence_before( order );
             T v = *pSrc;
@@ -357,7 +357,7 @@ namespace cds { namespace cxx11_atomics {
         static inline bool cas8_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             union u32 {
                 uint32_t    w;
@@ -390,7 +390,7 @@ namespace cds { namespace cxx11_atomics {
         static inline bool cas8_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             union u32 {
                 uint32_t    w;
@@ -418,7 +418,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T exchange8( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T cur = load8( pDest, memory_order_relaxed );
             do {} while ( !cas8_strong( pDest, cur, v, order, memory_order_relaxed ));
@@ -438,7 +438,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
 
             fence_before( order );
             T v = *pSrc;
@@ -454,7 +454,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
 
             fence_before(order);
             *pDest = src;
@@ -465,7 +465,7 @@ namespace cds { namespace cxx11_atomics {
         static inline bool cas16_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             union u32 {
                 uint32_t    w;
@@ -498,7 +498,7 @@ namespace cds { namespace cxx11_atomics {
         static inline bool cas16_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             union u32 {
                 uint32_t    w;
@@ -526,7 +526,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T exchange16( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T cur = load16( pDest, memory_order_relaxed );
             do {} while ( !cas16_strong( pDest, cur, v, order, memory_order_relaxed ));
@@ -545,7 +545,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
 
             fence_before(order);
             *pDest = src;
@@ -561,7 +561,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
 
             fence_before( order );
             T * v = *pSrc;

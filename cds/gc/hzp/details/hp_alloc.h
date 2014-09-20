@@ -56,6 +56,14 @@ namespace cds {
                 return p;
             }
 
+            //@cond
+            std::nullptr_t operator=( std::nullptr_t ) CDS_NOEXCEPT
+            {
+                clear();
+                return nullptr;
+            }
+            //@endcond
+
             /// Returns current value of hazard pointer
             /**
                 Loading has acquire semantics
@@ -159,7 +167,7 @@ namespace cds {
                 return m_arr[nIndex];
             }
 
-            /// Clears (sets to NULL) hazard pointer \p nIndex
+            /// Clears (sets to \p nullptr) hazard pointer \p nIndex
             void clear( size_t nIndex ) CDS_NOEXCEPT
             {
                 assert( nIndex < capacity() );

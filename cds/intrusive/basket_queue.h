@@ -758,7 +758,7 @@ namespace cds { namespace intrusive {
 
         /// Dequeues a value from the queue
         /** @anchor cds_intrusive_BasketQueue_dequeue
-            If the queue is empty the function returns \p NULL.
+            If the queue is empty the function returns \p nullptr.
 
             <b>Warning</b>: see MSQueue::deque note about item disposing
         */
@@ -797,7 +797,7 @@ namespace cds { namespace intrusive {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns \p NULL.
+            The function repeatedly calls \ref dequeue until it returns \p nullptr.
             The disposer defined in template \p Options is called for each item
             that can be safely disposed.
         */

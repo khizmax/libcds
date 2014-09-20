@@ -609,7 +609,7 @@ namespace tree {
                     {
                         typename set_type::rcu_lock l;
                         value_type * p = s.get( nKey );
-                        CPPUNIT_ASSERT( p != NULL );
+                        CPPUNIT_ASSERT( p != nullptr );
                         CPPUNIT_CHECK( p->nKey == nKey );
                     }
                     CPPUNIT_ASSERT( s.extract( ep, nKey ));
@@ -619,7 +619,7 @@ namespace tree {
 
                     {
                         typename set_type::rcu_lock l;
-                        CPPUNIT_CHECK( s.get( nKey ) == NULL );
+                        CPPUNIT_CHECK( s.get( nKey ) == nullptr );
                     }
                     CPPUNIT_CHECK( !s.extract( ep, nKey ));
                 }
@@ -632,7 +632,7 @@ namespace tree {
                     {
                         typename set_type::rcu_lock l;
                         value_type * p = s.get_with( wrapped_int(nKey), wrapped_less() );
-                        CPPUNIT_ASSERT( p != NULL );
+                        CPPUNIT_ASSERT( p != nullptr );
                         CPPUNIT_CHECK( p->nKey == nKey );
                     }
                     CPPUNIT_ASSERT( s.extract_with( ep, wrapped_int(nKey), wrapped_less() ));
@@ -642,7 +642,7 @@ namespace tree {
 
                     {
                         typename set_type::rcu_lock l;
-                        CPPUNIT_CHECK( s.get_with( wrapped_int(nKey), wrapped_less() ) == NULL );
+                        CPPUNIT_CHECK( s.get_with( wrapped_int( nKey ), wrapped_less() ) == nullptr );
                     }
                     CPPUNIT_CHECK( !s.extract_with( ep, wrapped_int(nKey), wrapped_less() ));
                 }

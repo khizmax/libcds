@@ -163,7 +163,7 @@ namespace set {
                     {
                         rcu_lock l;
                         pVal = s.get( nKey );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey * 2 );
                     }
@@ -176,7 +176,7 @@ namespace set {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get( nKey ) == NULL );
+                        CPPUNIT_CHECK( s.get( nKey ) == nullptr );
                     }
                     CPPUNIT_CHECK( !s.extract( ep, nKey ));
                 }
@@ -191,7 +191,7 @@ namespace set {
                     {
                         rcu_lock l;
                         pVal = s.get_with( wrapped_item(nKey), wrapped_less() );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey );
                     }
@@ -204,7 +204,7 @@ namespace set {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get_with( wrapped_item(nKey), wrapped_less() ) == NULL );
+                        CPPUNIT_CHECK( s.get_with( wrapped_item( nKey ), wrapped_less() ) == nullptr );
                     }
                     CPPUNIT_CHECK( !s.extract_with( ep, wrapped_item(nKey), wrapped_less() ));
                 }
@@ -241,7 +241,7 @@ namespace set {
                 CPPUNIT_CHECK( !s.extract_max(ep) );
             }
 
-            CPPUNIT_MSG( PrintStat()(s, NULL) );
+            CPPUNIT_MSG( PrintStat()(s, nullptr) );
         }
 
     public:

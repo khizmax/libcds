@@ -115,7 +115,7 @@ namespace cds { namespace gc {
             return *value_cast()( m_guard.template get<guarded_type>() );
         }
 
-        /// Checks if the guarded pointer is \p NULL
+        /// Checks if the guarded pointer is \p nullptr
         bool empty() const CDS_NOEXCEPT
         {
             return m_guard.template get<guarded_type>() == nullptr;

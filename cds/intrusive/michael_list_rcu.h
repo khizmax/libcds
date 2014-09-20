@@ -288,7 +288,7 @@ namespace cds { namespace intrusive {
         /// Returns an iterator that addresses the location succeeding the last element in a list
         /**
             Do not use the value returned by <tt>end</tt> function to access any item.
-            Internally, <tt>end</tt> returning value equals to \p NULL.
+            Internally, <tt>end</tt> returning value equals to \p nullptr.
 
             The returned value can be used only to control reaching the end of the list.
             For empty list \code begin() == end() \endcode
@@ -678,7 +678,7 @@ namespace cds { namespace intrusive {
         /// Finds the key \p val and return the item found
         /** \anchor cds_intrusive_MichaelList_rcu_get
             The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p NULL.
+            If \p val is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 

@@ -260,7 +260,7 @@ namespace cds { namespace intrusive {
             bool operator !=(iterator const& i ) const;
         };
         \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p NULL and should not be dereferenced.
+        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
 
         <b>How to use</b>
 

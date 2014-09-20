@@ -111,9 +111,9 @@ namespace cds { namespace intrusive {
             typedef Node node_type;
             //@endcond
 
-            /// Checks if the link fields of node \p pNode is NULL
+            /// Checks if the link fields of node \p pNode is \p nullptr
             /**
-                An asserting is generated if \p pNode link fields is not NULL
+                An asserting is generated if \p pNode link fields is not \p nullptr
             */
             static void is_empty( const node_type * pNode )
             {
@@ -528,7 +528,7 @@ namespace cds { namespace intrusive {
 
         /// Dequeues a value from the queue
         /** @anchor cds_intrusive_OptimisticQueue_dequeue
-            If the queue is empty the function returns \a NULL
+            If the queue is empty the function returns \p nullptr
 
             \par Warning
             The queue algorithm has following feature: when \p dequeue is called,
@@ -581,7 +581,7 @@ namespace cds { namespace intrusive {
 
         /// Clear the stack
         /**
-            The function repeatedly calls \ref dequeue until it returns NULL.
+            The function repeatedly calls \ref dequeue until it returns \p nullptr.
             The disposer defined in template \p Options is called for each item
             that can be safely disposed.
         */

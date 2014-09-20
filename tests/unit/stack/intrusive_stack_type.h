@@ -88,7 +88,7 @@ namespace istack {
                     m_Impl.pop();
                     return v;
                 }
-                return NULL;
+                return nullptr;
             }
 
             bool empty() const

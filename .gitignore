@@ -1,2 +1,9 @@
 /tools/doxygen.log
 /doc
+/projects/Win/vc12/cds.opensdf
+/projects/Win/vc12/cds.sdf
+/projects/Win/vc12/cds.v12.suo
+/tests/cppunit/*.o
+*.o
+/todo-2.0.txt
+/tests/data/dictionary.txt

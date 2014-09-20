@@ -93,7 +93,7 @@ namespace queue {
                     else
                         pVal = q.dequeue();
 
-                    CPPUNIT_ASSERT( pVal != NULL );
+                    CPPUNIT_ASSERT( pVal != nullptr );
 
                     int nSegment = int( nCount / q.quasi_factor() );
                     int nMin = nSegment * int(q.quasi_factor());
@@ -108,7 +108,7 @@ namespace queue {
                 CPPUNIT_CHECK( misc::check_size( q, 0 ));
 
                 // pop from empty queue
-                CPPUNIT_ASSERT( q.pop() == NULL );
+                CPPUNIT_ASSERT( q.pop() == nullptr );
                 CPPUNIT_CHECK( q.empty() );
                 CPPUNIT_CHECK( misc::check_size( q, 0 ));
 

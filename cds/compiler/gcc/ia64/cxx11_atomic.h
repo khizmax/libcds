@@ -105,7 +105,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire  \
                 || order == memory_order_seq_cst   \
                 ) ; \
-            assert( pSrc != NULL )  ; \
+            assert( pSrc )  ; \
             T val    ; \
             __asm__ __volatile__ ( \
                 "ld" #n_bytes ".acq %[val] = [%[pSrc]]  \n\t" \
@@ -125,7 +125,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release  \
                 || order == memory_order_seq_cst   \
                 ) ; \
-            assert( pDest != NULL )  ; \
+            assert( pDest )  ; \
             if ( order == memory_order_seq_cst ) { \
                 __asm__ __volatile__ ( \
                     "st" #n_bytes ".rel [%[pDest]] = %[val] \n\t" \
@@ -199,7 +199,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T exchange##n_bits( T volatile * pDest, T val, memory_order order ) CDS_NOEXCEPT \
         { \
             static_assert( sizeof(T) == n_bytes, "Illegal size of operand" )   ; \
-            assert( pDest != NULL ) ; \
+            assert( pDest ) ; \
             T current ; \
             switch(order) \
             { \
@@ -295,7 +295,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T fetch32_add( T volatile * pDest, T val, memory_order order) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T cur;
             switch ( val ) {
@@ -324,7 +324,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T fetch32_sub( T volatile * pDest, T val, memory_order order) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
             T cur;
             switch ( val ) {
                 case 1:
@@ -361,7 +361,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T fetch64_add( T volatile * pDest, T val, memory_order order) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T cur;
             switch ( val ) {
@@ -390,7 +390,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T fetch64_sub( T volatile * pDest, T val, memory_order order) CDS_NOEXCEPT
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
             T cur;
             switch ( val ) {
                 case 1:
@@ -424,7 +424,7 @@ namespace cds { namespace cxx11_atomics {
                  || order ==  memory_order_acquire
                  || order == memory_order_seq_cst
             );
-            assert( pSrc != NULL );
+            assert( pSrc );
             T * val;
             __asm__ __volatile__ (
                 "ld8.acq %[val] = [%[pSrc]]  \n\t"
@@ -442,7 +442,7 @@ namespace cds { namespace cxx11_atomics {
                  || order ==  memory_order_release
                  || order == memory_order_seq_cst
             );
-            assert( pDest != NULL );
+            assert( pDest );
 
             if ( order == memory_order_seq_cst ) {
                 __asm__ __volatile__ (
@@ -466,7 +466,7 @@ namespace cds { namespace cxx11_atomics {
         static inline bool cas_ptr_strong( T * volatile * pDest, T *& expected, T * desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T *) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T * current;
 
@@ -523,7 +523,7 @@ namespace cds { namespace cxx11_atomics {
         static inline T * exchange_ptr( T * volatile * pDest, T * val, memory_order order ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T *) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T * current;
             switch(order) {
@@ -558,13 +558,13 @@ namespace cds { namespace cxx11_atomics {
         template <> struct atomic_pointer_sizeof<void> { enum { value = 1 }; };
 
         // It does not work properly
-        // atomic.fetch_add( ... ) returns NULL, why?..
+        // atomic.fetch_add( ... ) returns nullptr, why?..
 //#       define CDS_ATOMIC_fetch_ptr_add_defined
         template <typename T>
         static inline T * fetch_ptr_add( T * volatile * pDest, ptrdiff_t val, memory_order order) CDS_NOEXCEPT
         {
             static_assert( sizeof(T *) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
 
             T * cur;
             val *= atomic_pointer_sizeof<T>::value;
@@ -590,13 +590,13 @@ namespace cds { namespace cxx11_atomics {
         }
 
         // It does not work properly
-        // atomic.fetch_sub( ... ) returns NULL, why?..
+        // atomic.fetch_sub( ... ) returns nullptr, why?..
 //#       define CDS_ATOMIC_fetch_ptr_sub_defined
         template <typename T>
         static inline T * fetch_ptr_sub( T * volatile * pDest, ptrdiff_t val, memory_order order) CDS_NOEXCEPT
         {
             static_assert( sizeof(T *) == 8, "Illegal size of operand" );
-            assert( pDest != NULL );
+            assert( pDest );
             T * cur;
             val *= atomic_pointer_sizeof<T>::value;
             switch ( val ) {

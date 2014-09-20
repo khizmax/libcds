@@ -639,6 +639,7 @@
     <ClInclude Include="..\..\..\cds\algo\elimination_opt.h" />
     <ClInclude Include="..\..\..\cds\algo\elimination_tls.h" />
     <ClInclude Include="..\..\..\cds\algo\flat_combining.h" />
+    <ClInclude Include="..\..\..\cds\algo\int_algo.h" />
     <ClInclude Include="..\..\..\cds\compiler\clang\cxx11_atomic_prepatches.h" />
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h" />
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h" />
@@ -775,6 +776,8 @@
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_unordered_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\resizing_policy.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\striping_policy.h" />
+    <ClInclude Include="..\..\..\cds\lock\array.h" />
+    <ClInclude Include="..\..\..\cds\lock\scoped_lock.h" />
     <ClInclude Include="..\..\..\cds\memory\mapper.h" />
     <ClInclude Include="..\..\..\cds\memory\pool_allocator.h" />
     <ClInclude Include="..\..\..\cds\memory\vyukov_queue_pool.h" />

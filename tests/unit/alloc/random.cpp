@@ -27,7 +27,7 @@ namespace memory {
 
         Item()
             : m_access( false )
-            , m_pszBlock( NULL )
+            , m_pszBlock( nullptr )
         {}
 
         Item& operator =(Item const& i)
@@ -85,11 +85,11 @@ namespace memory {
                     if ( item.m_access.tryLock() ) {
                         if ( item.m_pszBlock ) {
                             m_Alloc.deallocate( item.m_pszBlock, 1 );
-                            item.m_pszBlock = NULL;
+                            item.m_pszBlock = nullptr;
                         }
                         else {
                             size_t nSize;
-                            item.m_pszBlock = m_Alloc.allocate( nSize = m_rndGen(s_nMinBlockSize, s_nMaxBlockSize ), NULL );
+                            item.m_pszBlock = m_Alloc.allocate( nSize = m_rndGen( s_nMinBlockSize, s_nMaxBlockSize ), nullptr );
 
                             if ( nSize < 32 )
                                 memset( item.m_pszBlock, 0, nSize );
@@ -124,7 +124,7 @@ namespace memory {
             for ( size_t i = 0; i < m_Data.size(); ++i ) {
                 if ( m_Data[i].m_pszBlock ) {
                     alloc.deallocate( m_Data[i].m_pszBlock, 1 );
-                    m_Data[i].m_pszBlock = NULL;
+                    m_Data[i].m_pszBlock = nullptr;
                 }
             }
         }

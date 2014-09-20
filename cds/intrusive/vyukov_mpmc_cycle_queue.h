@@ -98,7 +98,7 @@ namespace cds { namespace intrusive {
 
         /// Dequeues an item from queue
         /**
-            If queue is empty, returns \p NULL.
+            If queue is empty, returns \p nullptr.
         */
         value_type * dequeue()
         {

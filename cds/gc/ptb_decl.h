@@ -224,6 +224,13 @@ namespace cds { namespace gc {
                 return base_class::operator =(p);
             }
 
+            //@cond
+            std::nullptr_t assign( std::nullptr_t )
+            {
+                return base_class::operator =(nullptr);
+            }
+            //@endcond
+
             /// Store marked pointer \p p to the guard
             /**
                 The function equals to a simple assignment of <tt>p.ptr()</tt>, no loop is performed.

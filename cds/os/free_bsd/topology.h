@@ -42,7 +42,7 @@ namespace cds { namespace OS {
                 size_t len = sizeof(nCPU);
 
                 /* get the number of CPUs from the system */
-                return ::sysctl(mib, 2, &nCPU, &len, NULL, 0) == 0 && nCPU > 0 ? (unsigned int) nCPU : 1;
+                return ::sysctl( mib, 2, &nCPU, &len, nullptr, 0 ) == 0 && nCPU > 0 ? (unsigned int)nCPU : 1;
             }
 
             /// Get current processor number

@@ -606,7 +606,7 @@ namespace cds { namespace intrusive {
             The function searches an item with key equal to \p val in the set,
             unlinks it from the set, and returns a pointer to unlinked item.
 
-            If the item with key equal to \p val is not found the function return \p NULL.
+            If the item with key equal to \p val is not found the function return \p nullptr.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */

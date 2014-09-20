@@ -22,16 +22,10 @@ namespace cds { namespace OS {
         static inline bool isThreadAlive( ThreadId id )
         {
             HANDLE h = ::OpenThread( SYNCHRONIZE, FALSE, id );
-            if ( h == NULL )
+            if ( h == nullptr )
                 return false;
             ::CloseHandle( h );
             return true;
-        }
-
-        /// Default backoff::yield implementation
-        static inline void    backoff()
-        {
-            std::this_thread::yield();
         }
     }    // namespace Win32
 
@@ -40,7 +34,6 @@ namespace cds { namespace OS {
 
     using Win32::getCurrentThreadId;
     using Win32::isThreadAlive;
-    using Win32::backoff;
 
 }} // namespace cds::OS
 

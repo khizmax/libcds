@@ -961,7 +961,7 @@ namespace michael {
         /// Processor heap's \p active field
         /**
             The \p active field in the processor heap structure is primarily a pointer to the descriptor
-            of the active superblock owned by the processor heap. If the value of \p active is not \p NULL, it is
+            of the active superblock owned by the processor heap. If the value of \p active is not \p nullptr, it is
             guaranteed that the active superblock has at least one block available for reservation.
             Since the addresses of superblock descriptors can be guaranteed to be aligned to some power
             of 2 (e.g., 64), as an optimization, we can carve a credits subfield to hold the number
@@ -969,7 +969,7 @@ namespace michael {
             of credits is n, then the active superblock contains n+1 blocks available for reservation
             through the \p active field. Note that the number of blocks in a superblock is not limited
             to the maximum reservations that can be held in the credits subfield. In a typical malloc operation
-            (i.e., when \p active != \p NULL and \p credits > 0), the thread reads \p active and then
+            (i.e., when \p active != \p nullptr and \p credits > 0), the thread reads \p active and then
             atomically decrements credits while validating that the active superblock is still valid.
         */
         class active_tag {
@@ -1102,7 +1102,7 @@ namespace michael {
             CDS_DATA_ALIGNMENT(8) CDS_ATOMIC::atomic<active_tag> active;   ///< pointer to the descriptor of active superblock owned by processor heap
             processor_desc *    pProcDesc   ;   ///< pointer to parent processor descriptor
             const size_class *  pSizeClass  ;   ///< pointer to size class
-            CDS_ATOMIC::atomic<superblock_desc *>   pPartial    ;   ///< pointer to partial filled superblock (may be NULL)
+            CDS_ATOMIC::atomic<superblock_desc *>   pPartial    ;   ///< pointer to partial filled superblock (may be \p nullptr)
             partial_list        partialList ;   ///< list of partial filled superblocks owned by the processor heap
             unsigned int        nPageIdx    ;   ///< page size-class index, \ref c_nPageSelfAllocation - "small page"
 
@@ -1138,8 +1138,8 @@ namespace michael {
                     }
                 } while ( !pPartial.compare_exchange_weak( pDesc, nullptr, CDS_ATOMIC::memory_order_release, CDS_ATOMIC::memory_order_relaxed ) );
 
-                //assert( pDesc == NULL || free_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_free_list_hook *>(pDesc) ));
-                //assert( pDesc == NULL || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
+                //assert( pDesc == nullptr || free_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_free_list_hook *>(pDesc) ));
+                //assert( pDesc == nullptr || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
                 return pDesc;
             }
 
@@ -1776,13 +1776,13 @@ namespace michael {
         /// Reallocate memory block
         /**
             If \p nNewSize is zero, then the block pointed to by \p pMemory is freed;
-            the return value is \p NULL, and \p pMemory is left pointing at a freed block.
+            the return value is \p nullptr, and \p pMemory is left pointing at a freed block.
 
             If there is not enough available memory to expand the block to the given size,
-            the original block is left unchanged, and \p NULL is returned.
+            the original block is left unchanged, and \p nullptr is returned.
 
             Aligned memory block cannot be realloc'ed: if \p pMemory has been allocated by \ref alloc_aligned,
-            then the return value is \p NULL and the original block is left unchanged.
+            then the return value is \p nullptr and the original block is left unchanged.
         */
         void * realloc(
             void *  pMemory,    ///< Pointer to previously allocated memory block

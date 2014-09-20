@@ -75,7 +75,7 @@ namespace cds { namespace threading {
                 {
                     api_error_code  nErr;
                     void * pData = ::TlsGetValue( m_key );
-                    if ( pData == NULL && (nErr = ::GetLastError()) != ERROR_SUCCESS )
+                    if ( pData == nullptr && (nErr = ::GetLastError()) != ERROR_SUCCESS )
                         throw api_exception( nErr, "TlsGetValue" );
                     return reinterpret_cast<ThreadData *>( pData );
                 }
@@ -89,7 +89,7 @@ namespace cds { namespace threading {
                 static void free()
                 {
                     ThreadData * p = get();
-                    ::TlsSetValue( m_key, NULL );
+                    ::TlsSetValue( m_key, nullptr );
                     if ( p )
                         delete p;
                 }
@@ -104,7 +104,7 @@ namespace cds { namespace threading {
 #           ifdef _DEBUG
                         {
                             ThreadData * p = Holder::get();
-                            assert( p != NULL );
+                            assert( p );
                             return p;
                         }
 #           else
@@ -113,16 +113,16 @@ namespace cds { namespace threading {
                     case do_checkData:
                         return Holder::get();
                     case do_attachThread:
-                        if ( Holder::get() == NULL )
+                        if ( Holder::get() == nullptr )
                             Holder::alloc();
                         return Holder::get();
                     case do_detachThread:
                         Holder::free();
-                        return NULL;
+                        return nullptr;
                     default:
                         assert( false ) ;   // anything forgotten?..
                 }
-                return NULL;
+                return nullptr;
             }
             //@endcond
 
@@ -148,12 +148,12 @@ namespace cds { namespace threading {
             /// Checks whether current thread is attached to \p libcds feature or not.
             static bool isThreadAttached()
             {
-                return _threadData( do_checkData ) != NULL;
+                return _threadData( do_checkData ) != nullptr;
             }
 
             /// This method must be called in beginning of thread execution
             /**
-                If TLS pointer to manager's data is NULL, api_exception is thrown
+                If TLS pointer to manager's data is \p nullptr, api_exception is thrown
                 with code = -1.
                 If an error occurs in call of Win TLS API function, api_exception is thrown
                 with Windows error code.
@@ -161,7 +161,7 @@ namespace cds { namespace threading {
             static void attachThread()
             {
                 ThreadData * pData = _threadData( do_attachThread );
-                assert( pData != NULL );
+                assert( pData );
 
                 if ( pData ) {
                     pData->init();
@@ -172,7 +172,7 @@ namespace cds { namespace threading {
 
             /// This method must be called in end of thread execution
             /**
-                If TLS pointer to manager's data is NULL, api_exception is thrown
+                If TLS pointer to manager's data is \p nullptr, api_exception is thrown
                 with code = -1.
                 If an error occurs in call of Win TLS API function, api_exception is thrown
                 with Windows error code.
@@ -180,7 +180,7 @@ namespace cds { namespace threading {
             static void detachThread()
             {
                 ThreadData * pData = _threadData( do_getData );
-                assert( pData != NULL );
+                assert( pData );
 
                 if ( pData ) {
                     if ( pData->fini() )

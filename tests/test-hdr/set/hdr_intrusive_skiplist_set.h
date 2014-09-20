@@ -310,7 +310,7 @@ namespace set {
                 Set::gc::force_dispose();
             }
 
-            CPPUNIT_MSG( PrintStat()( s, NULL ));
+            CPPUNIT_MSG( PrintStat()(s, nullptr) );
         }
 
         template <typename Set>
@@ -350,13 +350,13 @@ namespace set {
             CPPUNIT_ASSERT( check_size( s, 0 ));
 
             // insert/find test
-            CPPUNIT_ASSERT( s.find( v1.key() ) == NULL );
+            CPPUNIT_ASSERT( s.find( v1.key() ) == nullptr );
             CPPUNIT_ASSERT( s.insert( v1 ));
             CPPUNIT_ASSERT( s.find( v1.key() ) == &v1 );
             CPPUNIT_ASSERT( check_size( s, 1 ));
             CPPUNIT_ASSERT( !s.empty() );
 
-            CPPUNIT_ASSERT( s.find_with( v2.key(), less() ) == NULL );
+            CPPUNIT_ASSERT( s.find_with( v2.key(), less() ) == nullptr );
             CPPUNIT_ASSERT( s.insert( v2 ));
             CPPUNIT_ASSERT( v2.nFindCount == 0 );
             CPPUNIT_ASSERT( s.find_with( key = v2.key(), less(), find_functor() ));
@@ -367,7 +367,7 @@ namespace set {
 
             {
                 find_functor    ff;
-                CPPUNIT_ASSERT( s.find( v3 ) == NULL );
+                CPPUNIT_ASSERT( s.find( v3 ) == nullptr );
                 CPPUNIT_ASSERT( s.insert( v3 ));
                 CPPUNIT_ASSERT( v3.nFindCount == 0 );
                 CPPUNIT_ASSERT( s.find( v3, cds::ref(ff) ));
@@ -442,8 +442,8 @@ namespace set {
             //CPPUNIT_MSG( PrintStat()(s, "Ensure test") );
 
             // get_min test
-            CPPUNIT_CHECK( s.get_min() == NULL );
-            CPPUNIT_CHECK( s.get_max() == NULL );
+            CPPUNIT_CHECK( s.get_min() == nullptr );
+            CPPUNIT_CHECK( s.get_max() == nullptr );
 
             {
                 value_type  v[1000];
@@ -453,7 +453,7 @@ namespace set {
 
                     CPPUNIT_ASSERT( s.insert( v[i] ));
                     value_type * pVal = s.get_min();
-                    CPPUNIT_ASSERT( pVal != NULL );
+                    CPPUNIT_ASSERT( pVal != nullptr );
                     CPPUNIT_CHECK( pVal->nKey == i );
                     CPPUNIT_CHECK( pVal->nVal == i * 2 );
                 }
@@ -475,7 +475,7 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( v[i] ));
 
                     value_type * pVal = s.get_max();
-                    CPPUNIT_ASSERT( pVal != NULL );
+                    CPPUNIT_ASSERT( pVal != nullptr );
                     CPPUNIT_CHECK( pVal->nKey == i );
                     CPPUNIT_CHECK( pVal->nVal == i * 2 );
                 }
@@ -507,7 +507,7 @@ namespace set {
             CPPUNIT_ASSERT( s.begin() == s.end() );
             CPPUNIT_ASSERT( s.cbegin() == s.cend() );
 
-            CPPUNIT_MSG( PrintStat()(s, NULL) );
+            CPPUNIT_MSG( PrintStat()(s, nullptr) );
         }
 
     public:

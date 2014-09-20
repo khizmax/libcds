@@ -373,7 +373,7 @@ namespace ordlist {
                     {
                         rcu_lock lock;
                         value_type * pGet = l.get( a[i] );
-                        CPPUNIT_ASSERT( pGet != NULL );
+                        CPPUNIT_ASSERT( pGet != nullptr );
                         CPPUNIT_CHECK( pGet->first == a[i] );
                         CPPUNIT_CHECK( pGet->second.m_val == a[i] * 2 );
 
@@ -385,7 +385,7 @@ namespace ordlist {
                     ep.release();
                     {
                         rcu_lock lock;
-                        CPPUNIT_CHECK( l.get( a[i]) == NULL );
+                        CPPUNIT_CHECK( l.get( a[i] ) == nullptr );
                         CPPUNIT_CHECK( !l.extract( ep, a[i] ));
                         CPPUNIT_CHECK( ep.empty() );
                     }
@@ -394,7 +394,7 @@ namespace ordlist {
 
                 {
                     rcu_lock lock;
-                    CPPUNIT_CHECK( l.get( a[0] ) == NULL );
+                    CPPUNIT_CHECK( l.get( a[0] ) == nullptr );
                     CPPUNIT_CHECK( !l.extract( ep, a[0] ) );
                     CPPUNIT_CHECK( ep.empty() );
                 }
@@ -409,7 +409,7 @@ namespace ordlist {
                     {
                         rcu_lock lock;
                         value_type * pGet = l.get_with( itm, other_less() );
-                        CPPUNIT_ASSERT( pGet != NULL );
+                        CPPUNIT_ASSERT( pGet != nullptr );
                         CPPUNIT_CHECK( pGet->first == a[i] );
                         CPPUNIT_CHECK( pGet->second.m_val == a[i] * 2 );
 
@@ -421,7 +421,7 @@ namespace ordlist {
                     ep.release();
                     {
                         rcu_lock lock;
-                        CPPUNIT_CHECK( l.get_with( itm, other_less()) == NULL );
+                        CPPUNIT_CHECK( l.get_with( itm, other_less() ) == nullptr );
                         CPPUNIT_CHECK( !l.extract_with( ep, itm, other_less() ));
                         CPPUNIT_CHECK( ep.empty() );
                     }
@@ -430,7 +430,7 @@ namespace ordlist {
 
                 {
                     rcu_lock lock;
-                    CPPUNIT_CHECK( l.get_with( 3.14f, other_less() ) == NULL );
+                    CPPUNIT_CHECK( l.get_with( 3.14f, other_less() ) == nullptr );
                     CPPUNIT_CHECK( !l.extract_with( ep, 3.14f, other_less() ));
                     CPPUNIT_CHECK( ep.empty() );
                 }

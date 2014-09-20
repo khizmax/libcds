@@ -111,7 +111,7 @@ namespace priority_queue {
             // Pop test
             key_type nPrev = c_nMinValue + key_type(pq.capacity()) - 1;
             key_type * p = pq.pop();
-            CPPUNIT_ASSERT( p != NULL );
+            CPPUNIT_ASSERT( p != nullptr );
             CPPUNIT_CHECK_EX( *p == nPrev, "Expected=" << nPrev << ", current=" << *p );
 
             CPPUNIT_ASSERT( pq.size() == pq.capacity() - 1 );
@@ -121,7 +121,7 @@ namespace priority_queue {
             nSize = pq.size();
             while ( pq.size() > 1 ) {
                 p = pq.pop();
-                CPPUNIT_ASSERT( p != NULL );
+                CPPUNIT_ASSERT( p != nullptr );
                 CPPUNIT_CHECK_EX( *p == nPrev - 1, "Expected=" << nPrev - 1 << ", current=" << *p );
                 nPrev = *p;
                 --nSize;
@@ -133,7 +133,7 @@ namespace priority_queue {
             CPPUNIT_ASSERT( pq.size() == 1 );
 
             p = pq.pop();
-            CPPUNIT_ASSERT( p != NULL );
+            CPPUNIT_ASSERT( p != nullptr );
             CPPUNIT_CHECK_EX( *p == c_nMinValue, "Expected=" << c_nMinValue << ", current=" << *p );
 
             CPPUNIT_ASSERT( !pq.full() );

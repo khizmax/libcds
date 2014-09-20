@@ -399,10 +399,10 @@ namespace cds { namespace intrusive {
             myData * p;
 
             p = s1.pop()    ;   // pop i1 from s1
-            p = s1.pop()    ;   // p == NULL, s1 is empty
+            p = s1.pop()    ;   // p == nullptr, s1 is empty
             p = s2.pop()    ;   // pop i1 from s2
             p = s2.pop()    ;   // pop i2 from s2
-            p = s2.pop()    ;   // p == NULL, s2 is empty
+            p = s2.pop()    ;   // p == nullptr, s2 is empty
         }
         \endcode
 
@@ -598,7 +598,7 @@ namespace cds { namespace intrusive {
 
         /// Pop an item from the stack
         /**
-            If stack is empty, returns \p NULL.
+            If stack is empty, returns \p nullptr.
             The disposer is <b>not</b> called for popped item.
             See \ref cds_intrusive_item_destroying "Destroying items of intrusive containers".
         */
@@ -627,7 +627,7 @@ namespace cds { namespace intrusive {
 
                 m_stat.onPopRace();
                 if ( m_Backoff.backoff( op, m_stat )) {
-                    // may return NULL if stack is empty
+                    // may return nullptr if stack is empty
                     return op.pVal;
                 }
             }

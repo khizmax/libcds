@@ -744,7 +744,7 @@ namespace cds { namespace container {
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_LazyKVList_rcu_get
             The function searches the item with \p key and returns the pointer to item found.
-            If \p key is not found it returns \p NULL.
+            If \p key is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p K that can be not the same as \p key_type.
 

@@ -28,7 +28,7 @@ namespace cds { namespace intrusive {
         protected:
             atomic_ptr      m_pNext     ;   ///< Next item in bottom-list (list at level 0)
             unsigned int    m_nHeight   ;   ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
-            atomic_ptr *    m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p NULL
+            atomic_ptr *    m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
 
         public:
             /// Constructs a node of height 1 (a bottom-list node)
@@ -264,7 +264,7 @@ namespace cds { namespace intrusive {
             bool operator !=(iterator const& i ) const;
         };
         \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p NULL and should not be dereferenced.
+        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
 
         <b>How to use</b>
 
@@ -944,7 +944,7 @@ namespace cds { namespace intrusive {
 
         /// Gets minimum key from the set
         /**
-            If the set is empty the function returns \p NULL
+            If the set is empty the function returns \p nullptr
         */
         value_type * get_min() const
         {
@@ -953,7 +953,7 @@ namespace cds { namespace intrusive {
 
         /// Gets maximum key from the set
         /**
-            The function returns \p NULL if the set is empty
+            The function returns \p nullptr if the set is empty
         */
         value_type * get_max() const
         {

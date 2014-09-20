@@ -26,7 +26,7 @@ namespace cds { namespace intrusive { namespace michael_list {
     protected:
         virtual void cleanUp( cds::gc::hrc::ThreadGC * pGC )
         {
-            assert( pGC != NULL );
+            assert( pGC );
             typename gc::GuardArray<2> aGuards( *pGC );
 
             while ( true ) {

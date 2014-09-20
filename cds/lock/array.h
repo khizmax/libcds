@@ -5,7 +5,7 @@
 
 #include <cds/details/allocator.h>
 #include <cds/lock/scoped_lock.h>
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 
 #include <boost/mpl/if.hpp>
 

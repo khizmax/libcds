@@ -40,7 +40,7 @@ namespace cds { namespace intrusive {
         protected:
             atomic_marked_ptr       m_pNext     ;   ///< Next item in bottom-list (list at level 0)
             unsigned int            m_nHeight   ;   ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
-            atomic_marked_ptr *     m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p NULL
+            atomic_marked_ptr *     m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
 
         public:
             /// Constructs a node of height 1 (a bottom-list node)

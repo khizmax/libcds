@@ -97,7 +97,7 @@ namespace cds { namespace container {
             bool operator !=(iterator const& i ) const;
         };
         \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p NULL and should not be dereferenced.
+        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
 
     */
     template <
@@ -718,7 +718,7 @@ namespace cds { namespace container {
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SkipListMap_rcu_get
             The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p NULL.
+            If \p key is not found it returns \p nullptr.
 
             Note the compare functor in \p Traits class' template argument
             should accept a parameter of type \p K that can be not the same as \p key_type.

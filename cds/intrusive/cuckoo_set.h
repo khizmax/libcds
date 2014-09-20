@@ -1582,9 +1582,9 @@ namespace cds { namespace intrusive {
 
             The <tt>insert(x)</tt> successively "kicks out" conflicting items until every key has a slot.
             To add \p x, the method swaps \p x with \p y, the current occupant of <tt>table[0][h0(x)]</tt>.
-            If the prior value was \p NULL, it is done. Otherwise, it swaps the newly nest-less value \p y
+            If the prior value was \p nullptr, it is done. Otherwise, it swaps the newly nest-less value \p y
             for the current occupant of <tt>table[1][h1(y)]</tt> in the same way. As before, if the prior value
-            was \p NULL, it is done. Otherwise, the method continues swapping entries (alternating tables)
+            was \p nullptr, it is done. Otherwise, the method continues swapping entries (alternating tables)
             until it finds an empty slot. We might not find an empty slot, either because the table is full,
             or because the sequence of displacement forms a cycle. We therefore need an upper limit on the
             number of successive displacements we are willing to undertake. When this limit is exceeded,
@@ -2596,7 +2596,7 @@ namespace cds { namespace intrusive {
             The function searches an item with key equal to \p val in the set,
             unlinks it from the set, and returns a pointer to unlinked item.
 
-            If the item with key equal to \p val is not found the function return \p NULL.
+            If the item with key equal to \p val is not found the function return \p nullptr.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
@@ -2641,7 +2641,7 @@ namespace cds { namespace intrusive {
             \endcode
             The functor may be passed by reference with <tt>boost:ref</tt>
 
-            If the item with key equal to \p val is not found the function return \p NULL.
+            If the item with key equal to \p val is not found the function return \p nullptr.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */

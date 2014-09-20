@@ -236,7 +236,7 @@ namespace cds { namespace intrusive {
         /// Returns an iterator that addresses the location succeeding the last element in a list
         /**
             Do not use the value returned by <tt>end</tt> function to access any item.
-            Internally, <tt>end</tt> returning value equals to <tt>NULL</tt>.
+            Internally, <tt>end</tt> returning value equals to \p nullptr.
 
             The returned value can be used only to control reaching the end of the list.
             For empty list \code begin() == end() \endcode
@@ -410,7 +410,7 @@ namespace cds { namespace intrusive {
         /// Finds the key \p val
         /** \anchor cds_intrusive_MichaelList_nogc_find_val
             The function searches the item with key equal to \p val
-            and returns pointer to value found or \p NULL.
+            and returns pointer to value found or \p nullptr.
         */
         template <typename Q>
         value_type * find( Q const & val )

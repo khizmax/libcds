@@ -160,7 +160,7 @@ namespace set2 {
             size_t nFindFailed = 0;
             for ( CppUnitMini::ThreadPool::iterator it = pool.begin(); it != pool.end(); ++it ) {
                 work_thread * pThread = static_cast<work_thread *>( *it );
-                assert( pThread != NULL );
+                assert( pThread != nullptr );
                 nInsertSuccess += pThread->m_nInsertSuccess;
                 nInsertFailed += pThread->m_nInsertFailed;
                 nDeleteSuccess += pThread->m_nDeleteSuccess;

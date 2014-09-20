@@ -393,11 +393,11 @@ namespace set {
 
             CPPUNIT_ASSERT( s.unlink( e1 ) );
             CPPUNIT_ASSERT( s.erase_with( k2, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type() ) == &e2 );
-            CPPUNIT_ASSERT( s.erase( e2 ) == NULL );
+            CPPUNIT_ASSERT( s.erase( e2 ) == nullptr );
             CPPUNIT_ASSERT( e3.nEraseCount == 0 );
             CPPUNIT_ASSERT( s.erase_with( k3, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type(), erase_functor()) == &e3 );
             CPPUNIT_ASSERT( e3.nEraseCount == 1 );
-            CPPUNIT_ASSERT( s.erase( k3, erase_functor()) == NULL );
+            CPPUNIT_ASSERT( s.erase( k3, erase_functor() ) == nullptr );
             CPPUNIT_ASSERT( e3.nEraseCount == 1 );
 
             CPPUNIT_ASSERT( s.insert( e3 ) );

@@ -323,7 +323,7 @@ namespace cds { namespace container {
 
         /// Gets minimum key from the map
         /**
-            If the map is empty the function returns \p NULL
+            If the map is empty the function returns \p nullptr
         */
         value_type * get_min() const
         {
@@ -332,7 +332,7 @@ namespace cds { namespace container {
 
         /// Gets maximum key from the map
         /**
-            The function returns \p NULL if the map is empty
+            The function returns \p nullptr if the map is empty
         */
         value_type * get_max() const
         {

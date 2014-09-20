@@ -222,6 +222,13 @@ namespace cds { namespace gc {
                 return base_class::operator =(p);
             }
 
+            //@cond
+            std::nullptr_t assign( std::nullptr_t )
+            {
+                return base_class::operator =(nullptr);
+            }
+            //@endcond
+
             /// Copy from \p src guard to \p this guard
             void copy( Guard const& src )
             {
@@ -242,7 +249,7 @@ namespace cds { namespace gc {
             /// Clear value of the guard
             void clear()
             {
-                assign( reinterpret_cast<void *>(NULL) );
+                assign( nullptr );
             }
 
             /// Get the value currently protected

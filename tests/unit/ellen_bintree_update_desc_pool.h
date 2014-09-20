@@ -83,7 +83,7 @@ namespace ellen_bintree_pool {
             typedef internal_node_allocator< Other, Alloc > other;
         };
 
-        T * allocate( size_t n, void const * pHint = NULL )
+        T * allocate( size_t n, void const * pHint = nullptr )
         {
             internal_node_counter::onAlloc();
             return base_class::allocate( n, pHint );

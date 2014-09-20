@@ -473,7 +473,7 @@ namespace cds { namespace container {
 
         /// Clear the deque
         /**
-            The function repeatedly calls \ref pop_back until it returns \p NULL.
+            The function repeatedly calls \ref pop_back until it returns \p nullptr.
         */
         void clear()
         {

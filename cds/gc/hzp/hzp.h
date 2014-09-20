@@ -214,7 +214,7 @@ namespace cds {
                 //@cond
                 hplist_node( const GarbageCollector& HzpMgr )
                     : HPRec( HzpMgr ),
-                    m_pNextNode(NULL),
+                    m_pNextNode( nullptr ),
                     m_idOwner( OS::c_NullThreadId ),
                     m_bFree( true )
                 {}
@@ -310,7 +310,7 @@ namespace cds {
             /// Returns pointer to GarbageCollector instance
             static GarbageCollector&   instance()
             {
-                if ( m_pHZPManager == NULL )
+                if ( !m_pHZPManager )
                     throw HZPManagerEmpty();
                 return *m_pHZPManager;
             }
@@ -318,7 +318,7 @@ namespace cds {
             /// Checks if global GC object is constructed and may be used
             static bool isUsed()
             {
-                return m_pHZPManager != NULL;
+                return m_pHZPManager != nullptr;
             }
 
             /// Returns max Hazard Pointer count defined in construction time
@@ -467,7 +467,7 @@ namespace cds {
         public:
             ThreadGC()
                 : m_HzpManager( GarbageCollector::instance() ),
-                m_pHzpRec( NULL )
+                m_pHzpRec( nullptr )
             {}
             ~ThreadGC()
             {
@@ -475,7 +475,7 @@ namespace cds {
             }
 
             /// Checks if thread GC is initialized
-            bool    isInitialized() const   { return m_pHzpRec != NULL ; }
+            bool    isInitialized() const   { return m_pHzpRec != nullptr; }
 
             /// Initialization. Repeat call is available
             void init()
@@ -489,7 +489,7 @@ namespace cds {
             {
                 if ( m_pHzpRec ) {
                     details::HPRec * pRec = m_pHzpRec;
-                    m_pHzpRec = NULL;
+                    m_pHzpRec = nullptr;
                     m_HzpManager.RetireHPRec( pRec );
                 }
             }
@@ -497,14 +497,14 @@ namespace cds {
             /// Initializes HP guard \p guard
             details::HPGuard& allocGuard()
             {
-                assert( m_pHzpRec != NULL );
+                assert( m_pHzpRec );
                 return m_pHzpRec->m_hzp.alloc();
             }
 
             /// Frees HP guard \p guard
             void freeGuard( details::HPGuard& guard )
             {
-                assert( m_pHzpRec != NULL );
+                assert( m_pHzpRec );
                 m_pHzpRec->m_hzp.free( guard );
             }
 
@@ -512,7 +512,7 @@ namespace cds {
             template <size_t Count>
             void allocGuard( details::HPArray<Count>& arr )
             {
-                assert( m_pHzpRec != NULL );
+                assert( m_pHzpRec );
                 m_pHzpRec->m_hzp.alloc( arr );
             }
 
@@ -520,7 +520,7 @@ namespace cds {
             template <size_t Count>
             void freeGuard( details::HPArray<Count>& arr )
             {
-                assert( m_pHzpRec != NULL );
+                assert( m_pHzpRec );
                 m_pHzpRec->m_hzp.free( arr );
             }
 
@@ -601,6 +601,11 @@ namespace cds {
             }
 
             //@cond
+            std::nullptr_t operator =(std::nullptr_t)
+            {
+                return m_hp = nullptr;
+            }
+
             hazard_ptr get() const
             {
                 return m_hp;

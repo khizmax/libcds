@@ -130,7 +130,7 @@ namespace cds { namespace gc {
                     for all x where link[x] of node is reference-counted do
                 retry:
                         node1 := link[x];
-                        if node1 != NULL and node1.m_bDeleted then
+                        if node1 != nullptr and node1.m_bDeleted then
                             node2 := node1->link[x];
                             pGC->CASRef( this->link[x], node1, node2 );
                             pGC->releaseRef( node2 );
@@ -159,11 +159,11 @@ namespace cds { namespace gc {
                 void terminate( ThreadGC * pGC, bool bConcurrent)
                     if !bConcurrent
                         for all this->link where link is reference-counted do
-                            link := NULL;
+                            link := nullptr;
                     else
                         for all this->link where link is reference-counted do
                             repeat node1 := link;
-                            until pGC->CASRef(link,node1,NULL);
+                            until pGC->CASRef(link,node1,nullptr);
                 \endcode
             */
             virtual void    terminate( ThreadGC * pGC, bool bConcurrent ) = 0;
@@ -262,7 +262,7 @@ namespace cds { namespace gc {
 #endif
             };
 
-            /// "Global GC object is NULL" exception
+            /// "Global GC object is nullptr" exception
             CDS_DECLARE_EXCEPTION( HRCGarbageCollectorEmpty, "Global cds::gc::hrc::GarbageCollector is NULL" );
 
             /// Not enough required Hazard Pointer count

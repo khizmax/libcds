@@ -253,12 +253,12 @@ namespace cds { namespace cxx11_atomics {
             // cas
             static bool atomic_compare_exchange_weak_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas8_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas8_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -271,12 +271,12 @@ namespace cds { namespace cxx11_atomics {
             }
             static bool atomic_compare_exchange_strong_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas8_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas8_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -475,12 +475,12 @@ namespace cds { namespace cxx11_atomics {
             // cas
             static bool atomic_compare_exchange_weak_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas16_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas16_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -493,12 +493,12 @@ namespace cds { namespace cxx11_atomics {
             }
             static bool atomic_compare_exchange_strong_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas16_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas16_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -697,12 +697,12 @@ namespace cds { namespace cxx11_atomics {
             // cas
             static bool atomic_compare_exchange_weak_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas32_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas32_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -715,12 +715,12 @@ namespace cds { namespace cxx11_atomics {
             }
             static bool atomic_compare_exchange_strong_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas32_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas32_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -919,12 +919,12 @@ namespace cds { namespace cxx11_atomics {
             // cas
             static bool atomic_compare_exchange_weak_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas64_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas64_weak( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -937,12 +937,12 @@ namespace cds { namespace cxx11_atomics {
             }
             static bool atomic_compare_exchange_strong_explicit( T volatile * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas64_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong_explicit( T * pDest, T * expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas64_strong( primary::ptr(pDest), primary::ref(*expected), primary::val(desired), mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong( T volatile * pDest, T * expected, T desired ) CDS_NOEXCEPT
@@ -1141,12 +1141,12 @@ namespace cds { namespace cxx11_atomics {
             // cas
             static bool atomic_compare_exchange_weak_explicit( T * volatile * pDest, T * * expected, T * desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas_ptr_weak( pDest, *expected, desired, mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak_explicit( T * * pDest, T * * expected, T * desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas_ptr_weak( pDest, *expected, desired, mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_weak( T * volatile * pDest, T ** expected, T * desired ) CDS_NOEXCEPT
@@ -1159,12 +1159,12 @@ namespace cds { namespace cxx11_atomics {
             }
             static bool atomic_compare_exchange_strong_explicit( T * volatile * pDest, T ** expected, T * desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas_ptr_strong( pDest, *expected, desired, mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong_explicit( T ** pDest, T ** expected, T * desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
             {
-                assert( expected != NULL );
+                assert( expected );
                 return platform::cas_ptr_strong( pDest, *expected, desired, mo_success, mo_fail );
             }
             static bool atomic_compare_exchange_strong( T * volatile * pDest, T ** expected, T * desired ) CDS_NOEXCEPT

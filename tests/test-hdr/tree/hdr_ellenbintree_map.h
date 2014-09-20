@@ -511,7 +511,7 @@ namespace tree {
                     {
                         typename map_type::rcu_lock l;
                         typename map_type::value_type * pVal = m.get(nKey);
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->first == nKey);
                     }
                     CPPUNIT_ASSERT( m.extract( ep, nKey ));
@@ -535,7 +535,7 @@ namespace tree {
                     {
                         typename map_type::rcu_lock l;
                         typename map_type::value_type * pVal = m.get_with(wrapped_int(nKey), wrapped_less());
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->first == nKey);
                     }
                     CPPUNIT_ASSERT( m.extract_with( ep, wrapped_int(nKey), wrapped_less() ));

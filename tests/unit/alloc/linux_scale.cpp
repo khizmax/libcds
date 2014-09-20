@@ -57,8 +57,8 @@ namespace memory {
             virtual void test()
             {
                 for ( size_t i = 0; i < s_nPassPerThread; ++i ) {
-                    typename ALLOC::value_type * p = m_Alloc.allocate( m_nSize / sizeof(typename ALLOC::value_type), NULL );
-                    CPPUNIT_ASSERT( p != NULL );
+                    typename ALLOC::value_type * p = m_Alloc.allocate( m_nSize / sizeof( typename ALLOC::value_type ), nullptr );
+                    CPPUNIT_ASSERT( p != nullptr );
                     if ( m_nSize < 32 )
                         memset( p, 0, m_nSize );
                     else {

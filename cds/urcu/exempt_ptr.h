@@ -91,7 +91,7 @@ namespace cds { namespace urcu {
             release();
         }
 
-        /// Checks if the pointer is \p NULL
+        /// Checks if the pointer is \p nullptr
         bool empty() const CDS_NOEXCEPT
         {
             return m_pNode == nullptr;
@@ -170,7 +170,7 @@ namespace cds { namespace urcu {
             release();
         }
 
-        /// Checks if the pointer is \p NULL
+        /// Checks if the pointer is \p nullptr
         bool empty() const CDS_NOEXCEPT
         {
             return m_pNode == nullptr;

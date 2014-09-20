@@ -49,7 +49,7 @@ namespace queue {
                 value_type * pv;
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_ASSERT( pv != NULL );
+                CPPUNIT_ASSERT( pv != nullptr );
                 CPPUNIT_ASSERT( pv->nVal == 1 );
                 CPPUNIT_ASSERT( !q.empty() );
                 CPPUNIT_CHECK( v1.nDisposeCount == 0 );
@@ -58,7 +58,7 @@ namespace queue {
 
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_ASSERT( pv != NULL );
+                CPPUNIT_ASSERT( pv != nullptr );
                 CPPUNIT_ASSERT( pv->nVal == 2 );
                 CPPUNIT_ASSERT( !q.empty() );
                 CPPUNIT_CHECK( v1.nDisposeCount == 1 );
@@ -67,7 +67,7 @@ namespace queue {
 
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_ASSERT( pv != NULL );
+                CPPUNIT_ASSERT( pv != nullptr );
                 CPPUNIT_ASSERT( pv->nVal == 3 );
                 CPPUNIT_ASSERT( q.empty() );
                 CPPUNIT_CHECK( v1.nDisposeCount == 1 );
@@ -75,7 +75,7 @@ namespace queue {
                 CPPUNIT_CHECK( v3.nDisposeCount == 0 );
 
                 pv = q.pop();
-                CPPUNIT_ASSERT( pv == NULL );
+                CPPUNIT_ASSERT( pv == nullptr );
                 CPPUNIT_CHECK( v1.nDisposeCount == 1 );
                 CPPUNIT_CHECK( v2.nDisposeCount == 1 );
                 CPPUNIT_CHECK( v3.nDisposeCount == 0 );
@@ -119,7 +119,7 @@ namespace queue {
                 value_type * pv;
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_ASSERT( pv != NULL );
+                CPPUNIT_ASSERT( pv != nullptr );
                 CPPUNIT_ASSERT( pv->nVal == 1 );
                 CPPUNIT_ASSERT( !q.empty() );
                 CPPUNIT_CHECK( v1.nDisposeCount == 0 );
@@ -129,7 +129,7 @@ namespace queue {
 
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_ASSERT( pv != NULL );
+                CPPUNIT_ASSERT( pv != nullptr );
                 CPPUNIT_ASSERT( pv->nVal == 2 );
                 CPPUNIT_ASSERT( !q.empty() );
                 CPPUNIT_CHECK( v1.nDisposeCount == 0 );
@@ -139,7 +139,7 @@ namespace queue {
 
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_ASSERT( pv != NULL );
+                CPPUNIT_ASSERT( pv != nullptr );
                 CPPUNIT_ASSERT( pv->nVal == 3 );
                 CPPUNIT_ASSERT( !q.empty() );
                 CPPUNIT_CHECK( v1.nDisposeCount == 0 );
@@ -149,7 +149,7 @@ namespace queue {
 
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_ASSERT( pv != NULL );
+                CPPUNIT_ASSERT( pv != nullptr );
                 CPPUNIT_ASSERT( pv->nVal == 4 );
                 CPPUNIT_ASSERT( q.empty() );
                 CPPUNIT_CHECK( v1.nDisposeCount == 1 );
@@ -159,7 +159,7 @@ namespace queue {
 
                 pv = q.pop();
                 Queue::gc::scan();
-                CPPUNIT_CHECK( pv == NULL );
+                CPPUNIT_CHECK( pv == nullptr );
                 CPPUNIT_CHECK( v1.nDisposeCount == 1 );
                 CPPUNIT_CHECK( v2.nDisposeCount == 1 );
                 CPPUNIT_CHECK( v3.nDisposeCount == 1 );
@@ -198,7 +198,7 @@ namespace queue {
 
             value_type * pv;
             pv = q.pop();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 1 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_CHECK( v1.nDisposeCount == 0 );
@@ -206,7 +206,7 @@ namespace queue {
             CPPUNIT_CHECK( v3.nDisposeCount == 0 );
 
             pv = q.pop();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 2 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_CHECK( v1.nDisposeCount == 0 );
@@ -214,7 +214,7 @@ namespace queue {
             CPPUNIT_CHECK( v3.nDisposeCount == 0 );
 
             pv = q.pop();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 3 );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_CHECK( v1.nDisposeCount == 0 );
@@ -222,7 +222,7 @@ namespace queue {
             CPPUNIT_CHECK( v3.nDisposeCount == 0 );
 
             pv = q.pop();
-            CPPUNIT_ASSERT( pv == NULL );
+            CPPUNIT_ASSERT( pv == nullptr );
             CPPUNIT_CHECK( v1.nDisposeCount == 0 );
             CPPUNIT_CHECK( v2.nDisposeCount == 0 );
             CPPUNIT_CHECK( v3.nDisposeCount == 0 );

@@ -245,7 +245,7 @@ namespace set {
                 CPPUNIT_ASSERT( gp.empty() );
             }
 
-            CPPUNIT_MSG( PrintStat()(s, NULL) );
+            CPPUNIT_MSG( PrintStat()(s, nullptr) );
         }
 
         template <class Set, typename PrintStat >
@@ -372,7 +372,7 @@ namespace set {
                 CPPUNIT_ASSERT( s.insert( std::make_pair( i, i * 2) ) != s.end() );
 
                 typename Set::value_type * pVal = s.get_min();
-                CPPUNIT_ASSERT( pVal != NULL );
+                CPPUNIT_ASSERT( pVal != nullptr );
                 CPPUNIT_CHECK( pVal->nKey == i );
                 CPPUNIT_CHECK( pVal->nVal ==  i * 2 );
             }
@@ -381,15 +381,15 @@ namespace set {
             CPPUNIT_ASSERT( s.empty() );
             CPPUNIT_ASSERT( check_size( s, 0 ));
 
-            CPPUNIT_CHECK( s.get_min() == NULL );
-            CPPUNIT_CHECK( s.get_max() == NULL );
+            CPPUNIT_CHECK( s.get_min() == nullptr );
+            CPPUNIT_CHECK( s.get_max() == nullptr );
 
             // iterator test
             for ( int i = 0; i < 500; ++i ) {
                 CPPUNIT_ASSERT( s.insert( std::make_pair( i, i * 2) ) != s.end() );
 
                 typename Set::value_type * pVal = s.get_max();
-                CPPUNIT_ASSERT( pVal != NULL );
+                CPPUNIT_ASSERT( pVal != nullptr );
                 CPPUNIT_CHECK( pVal->nKey == i );
                 CPPUNIT_CHECK( pVal->nVal == i * 2 );
             }

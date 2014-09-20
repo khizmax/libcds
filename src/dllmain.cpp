@@ -14,7 +14,7 @@
 #endif
 
 static cds::OS::ThreadId    s_MainThreadId = 0;
-static HINSTANCE            s_DllInstance = NULL;
+static HINSTANCE            s_DllInstance = nullptr;
 
 #if _WIN32_WINNT < 0x0601
 // For Windows below Windows 7
@@ -28,7 +28,7 @@ static unsigned int     s_nProcessorGroupCount = 1;
 // Array of processor - cell relationship
 // Array size is s_nProcessorCount
 // s_arrProcessorCellRelationship[i] is the cell (the processor group) number for i-th processor
-// static unsigned int *   s_arrProcessorCellRelationship = NULL;
+// static unsigned int *   s_arrProcessorCellRelationship = nullptr;
 
 static void discover_topology()
 {
@@ -38,8 +38,8 @@ static void discover_topology()
 
     LPFN_GLPI glpi;
     bool bDone = false;
-    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL;
-    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = NULL;
+    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = nullptr;
+    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = nullptr;
     DWORD returnLength = 0;
     DWORD logicalProcessorCount = 0;
     DWORD numaNodeCount = 0;
@@ -51,7 +51,7 @@ static void discover_topology()
     s_nProcessorGroupCount = 1;
 
     glpi = (LPFN_GLPI) GetProcAddress( GetModuleHandle("kernel32"), "GetLogicalProcessorInformation" );
-    if (NULL == glpi) {
+    if ( glpi == nullptr ) {
         return;
     }
 
@@ -66,7 +66,7 @@ static void discover_topology()
 
                 buffer = reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION>( ::malloc( returnLength ) );
 
-                if (NULL == buffer) {
+                if ( buffer == nullptr ) {
                     // allocation failed
                     return;
                 }
@@ -167,14 +167,14 @@ namespace cds { namespace OS { namespace Win32 {
     static void prepare_current_processor_call()
     {
         s_fnGetCurrentProcessorNumber = (fnGetCurrentProcessorNumber) GetProcAddress( GetModuleHandle("kernel32"), "GetCurrentProcessorNumber" );
-        if ( s_fnGetCurrentProcessorNumber == NULL )
+        if ( s_fnGetCurrentProcessorNumber == nullptr )
             s_fnGetCurrentProcessorNumber = (fnGetCurrentProcessorNumber) GetProcAddress( GetModuleHandle("ntdll"), "NtGetCurrentProcessorNumber" );
     }
 
     namespace cds { namespace OS { namespace Win32 {
         unsigned int topology::current_processor()
         {
-            if ( s_fnGetCurrentProcessorNumber != NULL )
+            if ( s_fnGetCurrentProcessorNumber != nullptr )
                 return s_fnGetCurrentProcessorNumber();
             return 0;
         }
@@ -203,9 +203,9 @@ BOOL WINAPI DllMain(
         case DLL_PROCESS_DETACH:
 /*
 #if _WIN32_WINNT < 0x0601
-            if ( s_arrProcessorCellRelationship != NULL ) {
+            if ( s_arrProcessorCellRelationship != nullptr ) {
                 delete [] s_arrProcessorCellRelationship;
-                s_arrProcessorCellRelationship = NULL;
+                s_arrProcessorCellRelationship = nullptr;
             }
 #endif
 */

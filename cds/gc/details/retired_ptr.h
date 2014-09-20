@@ -29,10 +29,10 @@ namespace cds { namespace gc {
                 return p1.m_p < p2.m_p;
             }
 
-            /// Default ctor initializes pointer to NULL
+            /// Default ctor initializes pointer to \p nullptr
             retired_ptr()
-                : m_p( NULL )
-                , m_funcFree( NULL )
+                : m_p( nullptr )
+                , m_funcFree( nullptr )
             {}
 
             /// Ctor
@@ -59,8 +59,8 @@ namespace cds { namespace gc {
             /// Invokes destructor function for the pointer
             void free()
             {
-                assert( m_funcFree != NULL );
-                assert( m_p != NULL );
+                assert( m_funcFree );
+                assert( m_p );
                 m_funcFree( m_p );
 
                 CDS_STRICT_DO( m_p = nullptr );

@@ -1295,5 +1295,14 @@
     <ClInclude Include="..\..\..\cds\algo\flat_combining.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\int_algo.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\lock\array.h">
+      <Filter>Header Files\cds\lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\lock\scoped_lock.h">
+      <Filter>Header Files\cds\lock</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

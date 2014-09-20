@@ -3,6 +3,7 @@
 #ifndef _CDS_URCU_DETAILS_SH_H
 #define _CDS_URCU_DETAILS_SH_H
 
+#include <memory.h> //memset
 #include <cds/urcu/details/sh_decl.h>
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
@@ -86,7 +87,7 @@ namespace cds { namespace urcu { namespace details {
         sigaction( m_nSigNo, &sigact, nullptr );
 
         sigaddset( &sigact.sa_mask, m_nSigNo );
-        pthread_sigmask( SIG_UNBLOCK, &sigact.sa_mask, NULL );
+        pthread_sigmask( SIG_UNBLOCK, &sigact.sa_mask, nullptr );
     }
 
     template <typename RCUtag>

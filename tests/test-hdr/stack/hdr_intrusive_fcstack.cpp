@@ -69,19 +69,19 @@ namespace stack {
 
             value_type * pv;
             pv = stack.pop();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 3 );
             CPPUNIT_ASSERT( !stack.empty() );
             pv = stack.pop();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 2 );
             CPPUNIT_ASSERT( !stack.empty() );
             pv = stack.pop();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 1 );
             CPPUNIT_ASSERT( stack.empty() );
             pv = stack.pop();
-            CPPUNIT_ASSERT( pv == NULL );
+            CPPUNIT_ASSERT( pv == nullptr );
 
             CPPUNIT_ASSERT( v1.nDisposeCount == 0 );
             CPPUNIT_ASSERT( v2.nDisposeCount == 0 );

@@ -29,8 +29,8 @@ namespace misc {
                 size_t nCurIdx = 0;
                 while ( nTotalAllocated < s_nAllocPerPass ) {
                     size_t nSize = m_arrSize[nCurIdx] + 4;
-                    char * p = a.allocate( nSize, NULL );
-                    CPPUNIT_ASSERT( p != NULL );
+                    char * p = a.allocate( nSize, nullptr );
+                    CPPUNIT_ASSERT( p != nullptr );
                     memset( p, 0x96, nSize );
                     nTotalAllocated += nSize;
                     a.deallocate( p, 1 );
@@ -67,14 +67,14 @@ namespace misc {
 
             for ( size_t nPass = 0; nPass < s_nPassCount; ++nPass ) {
                 unsigned long long nTotalAllocated = 0;
-                char * pHead = a.allocate( sizeof(void *), NULL );
-                CPPUNIT_ASSERT( pHead != NULL );
+                char * pHead = a.allocate( sizeof(void *), nullptr );
+                CPPUNIT_ASSERT( pHead != nullptr );
                 char * pCur = pHead;
                 size_t nCurIdx = 0;
                 while ( nTotalAllocated < s_nAllocPerPass ) {
                     size_t nSize = m_arrSize[nCurIdx] + sizeof(void *);
-                    char * p = a.allocate( nSize, NULL );
-                    CPPUNIT_ASSERT( p != NULL );
+                    char * p = a.allocate( nSize, nullptr );
+                    CPPUNIT_ASSERT( p != nullptr );
                     memset( p, 0x96, nSize );
                     *((char **) pCur) = p;
                     pCur = p;
@@ -82,10 +82,10 @@ namespace misc {
                     if ( ++nCurIdx > s_nArrSizeSize )
                         nCurIdx = 0;
                 }
-                *((char **) pCur) = NULL;
+                *((char **) pCur) = nullptr;
 
                 pCur = pHead;
-                while ( pCur != NULL ) {
+                while ( pCur != nullptr ) {
                     char * pNext = *((char **) pCur);
                     a.deallocate( pCur, 0 );
                     pCur = pNext;

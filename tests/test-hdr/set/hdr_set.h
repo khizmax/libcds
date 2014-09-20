@@ -436,7 +436,7 @@ namespace set {
                     {
                         rcu_lock l;
                         pVal = s.get( nKey );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey );
 
@@ -448,13 +448,13 @@ namespace set {
                     ep.release();
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get( nKey ) == NULL );
+                        CPPUNIT_CHECK( s.get( nKey ) == nullptr );
                         CPPUNIT_CHECK( !s.extract( ep, nKey ));
                         CPPUNIT_CHECK( ep.empty() );
 
                         nKey = arr[i+1];
                         pVal = s.get_with( other_item(nKey), other_less() );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey );
 
@@ -466,7 +466,7 @@ namespace set {
                     ep.release();
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get_with( other_item(nKey), other_less() ) == NULL );
+                        CPPUNIT_CHECK( s.get_with( other_item( nKey ), other_less() ) == nullptr );
                         CPPUNIT_CHECK( !s.extract_with( ep, other_item(nKey), other_less() ));
                         CPPUNIT_CHECK( ep.empty() );
                     }
@@ -475,7 +475,7 @@ namespace set {
                 CPPUNIT_CHECK( check_size( s, 0 ));
                 {
                     rcu_lock l;
-                    CPPUNIT_CHECK( s.get( int(nLimit / 2) ) == NULL );
+                    CPPUNIT_CHECK( s.get( int( nLimit / 2 ) ) == nullptr );
                     CPPUNIT_CHECK( !s.extract( ep, int(nLimit / 2) ));
                     CPPUNIT_CHECK( ep.empty() );
                 }

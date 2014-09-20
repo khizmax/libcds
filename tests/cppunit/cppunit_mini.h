@@ -140,7 +140,7 @@ namespace CppUnitMini
 
     static TestCase * current_test()
     {
-        assert( m_pCurTestCase != NULL );
+        assert( m_pCurTestCase );
         return m_pCurTestCase;
     }
 

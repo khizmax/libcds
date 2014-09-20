@@ -242,7 +242,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
 
             if ( order != memory_order_seq_cst ) {
                 fence_before( order );
@@ -262,7 +262,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order == memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
 
             T v = *pSrc;
             fence_after_load( order );
@@ -315,7 +315,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
             assert( cds::details::is_aligned( pDest, 2 ));
 
             if ( order != memory_order_seq_cst ) {
@@ -336,7 +336,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
             assert( cds::details::is_aligned( pSrc, 2 ));
 
             T v = *pSrc;
@@ -365,7 +365,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
             assert( cds::details::is_aligned( pDest, 4 ));
 
             if ( order != memory_order_seq_cst ) {
@@ -386,7 +386,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
             assert( cds::details::is_aligned( pSrc, 4 ));
 
             T v = *pSrc;
@@ -458,7 +458,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
             assert( cds::details::is_aligned( pSrc, 8 ));
 
             T v = *pSrc;
@@ -486,7 +486,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
             assert( cds::details::is_aligned( pDest, 8 ));
 
             if ( order != memory_order_seq_cst ) {
@@ -528,7 +528,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_release
                 || order == memory_order_seq_cst
                 );
-            assert( pDest != NULL );
+            assert( pDest );
 
             if ( order != memory_order_seq_cst ) {
                 fence_before( order );
@@ -548,7 +548,7 @@ namespace cds { namespace cxx11_atomics {
                 || order ==  memory_order_acquire
                 || order ==  memory_order_seq_cst
                 );
-            assert( pSrc != NULL );
+            assert( pSrc );
 
             T * v = *pSrc;
             fence_after_load( order );

@@ -241,7 +241,7 @@ namespace cds { namespace intrusive {
 
         /// Dequeues item from the queue
         /** @anchor cds_intrusive_TsigasQueue_dequeue
-            If the queue is empty the function returns \a NULL
+            If the queue is empty the function returns \p nullptr
 
             Dequeue does not call value disposer. You can manually dispose returned value if it is needed.
         */
@@ -261,9 +261,9 @@ namespace cds { namespace intrusive {
                     if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
                         goto TryAgain;
 
-                    // two consecutive NULL means queue empty
+                    // two consecutive nullptr means queue empty
                     if ( temp == m_nTail.load(memory_model::memory_order_acquire) )
-                        return NULL;
+                        return nullptr;
 
                     temp = ( temp + 1 ) & nModulo;
                     tt = m_buffer[ temp ].load(memory_model::memory_order_relaxed);
@@ -325,7 +325,7 @@ namespace cds { namespace intrusive {
             while ( is_free( tt ) ) {
                 if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
                     goto TryAgain;
-                // two consecutive NULL means queue empty
+                // two consecutive nullptr means queue empty
                 if ( temp == m_nTail.load(memory_model::memory_order_relaxed) )
                     return true;
                 temp = ( temp + 1 ) & nModulo;

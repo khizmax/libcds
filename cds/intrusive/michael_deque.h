@@ -915,7 +915,7 @@ namespace cds { namespace intrusive {
 
         /// Pop back
         /**
-            Pops rightmost item from the deque. If the deque is empty then returns \p NULL.
+            Pops rightmost item from the deque. If the deque is empty then returns \p nullptr.
 
             For popped object the disposer specified in \p Options template parameters is called.
         */
@@ -932,7 +932,7 @@ namespace cds { namespace intrusive {
 
         /// Pop front
         /**
-            Pops leftmost item from the deque. If the deque is empty then returns \p NULL.
+            Pops leftmost item from the deque. If the deque is empty then returns \p nullptr.
 
             For popped object the disposer specified in \p Options template parameters is called.
         */
@@ -969,7 +969,7 @@ namespace cds { namespace intrusive {
 
         /// Clear the deque
         /**
-            The function repeatedly calls \ref pop_back until it returns \p NULL.
+            The function repeatedly calls \ref pop_back until it returns \p nullptr.
             The disposer defined in template \p Options is called for each item
             that can be safely disposed.
         */

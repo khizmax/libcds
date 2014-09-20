@@ -10,7 +10,7 @@
 namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Hpux {
 
     size_t topology::s_nProcMapSize = 0;
-    topology::processor_map * topology::s_procMap = NULL;
+    topology::processor_map * topology::s_procMap = nullptr;
 
     void topology::make_processor_map()
     {
@@ -60,17 +60,17 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Hpux {
 
     void topology::init()
     {
-        assert( s_procMap == NULL );
+        assert( s_procMap == nullptr );
         make_processor_map();
     }
 
     void topology::fini()
     {
-        assert( s_procMap != NULL );
+        assert( s_procMap );
         if ( s_procMap ) {
             ::free( s_procMap );
 
-            s_procMap = NULL;
+            s_procMap = nullptr;
         }
     }
 

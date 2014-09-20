@@ -64,7 +64,7 @@ namespace cds { namespace intrusive {
         }
         static node_type * to_node_ptr( value_type * v )
         {
-            return v ? static_cast<node_type *>( v ) : reinterpret_cast<node_type *>( NULL );
+            return v ? static_cast<node_type *>(v) : nullptr;
         }
         static const node_type * to_node_ptr( const value_type& v )
         {
@@ -72,7 +72,7 @@ namespace cds { namespace intrusive {
         }
         static const node_type * to_node_ptr( const value_type * v )
         {
-            return v ? static_cast<const node_type *>( v ) : reinterpret_cast<const node_type *>( NULL );
+            return v ? static_cast<const node_type *>(v) : nullptr;
         }
         static value_type * to_value_ptr( node_type&  n )
         {
@@ -80,7 +80,7 @@ namespace cds { namespace intrusive {
         }
         static value_type * to_value_ptr( node_type *  n )
         {
-            return n ? static_cast<value_type *>( n ) : reinterpret_cast<value_type *>( NULL );
+            return n ? static_cast<value_type *>(n) : nullptr;
         }
         static const value_type * to_value_ptr( const node_type& n )
         {
@@ -88,7 +88,7 @@ namespace cds { namespace intrusive {
         }
         static const value_type * to_value_ptr( const node_type * n )
         {
-            return n ? static_cast<const value_type *>( n ) : reinterpret_cast<const value_type *>( NULL );
+            return n ? static_cast<const value_type *>(n) : nullptr;
         }
     };
 
@@ -104,7 +104,7 @@ namespace cds { namespace intrusive {
         }
         static node_type * to_node_ptr( value_type * v )
         {
-            return v ? to_node_ptr(*v) : reinterpret_cast<node_type *>( NULL );
+            return v ? to_node_ptr( *v ) : nullptr;
         }
         static const node_type * to_node_ptr( const value_type& v )
         {
@@ -112,7 +112,7 @@ namespace cds { namespace intrusive {
         }
         static const node_type * to_node_ptr( const value_type * v )
         {
-            return v ? to_node_ptr(*v) : reinterpret_cast<const node_type *>( NULL );
+            return v ? to_node_ptr( *v ) : nullptr;
         }
         static value_type * to_value_ptr( node_type& n )
         {
@@ -120,7 +120,7 @@ namespace cds { namespace intrusive {
         }
         static value_type * to_value_ptr( node_type * n )
         {
-            return n ? to_value_ptr(*n) : reinterpret_cast<value_type *>( NULL );
+            return n ? to_value_ptr( *n ) : nullptr;
         }
         static const value_type * to_value_ptr( const node_type& n )
         {
@@ -128,7 +128,7 @@ namespace cds { namespace intrusive {
         }
         static const value_type * to_value_ptr( const node_type * n )
         {
-            return n ? to_value_ptr(*n) : reinterpret_cast<const value_type *>( NULL );
+            return n ? to_value_ptr( *n ) : nullptr;
         }
     };
 

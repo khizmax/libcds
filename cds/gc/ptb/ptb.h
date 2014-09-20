@@ -526,6 +526,14 @@ namespace cds { namespace gc {
                     return p;
                 }
 
+                //@cond
+                std::nullptr_t operator=(std::nullptr_t)
+                {
+                    clear();
+                    return nullptr;
+                }
+                //@endcond
+
             public: // for ThreadGC.
                 /*
                     GCC cannot compile code for template versions of ThreasGC::allocGuard/freeGuard,
@@ -587,6 +595,13 @@ namespace cds { namespace gc {
             {
                 return base_class::operator =<T>( p );
             }
+
+            //@cond
+            std::nullptr_t operator=(std::nullptr_t)
+            {
+                return base_class::operator =(nullptr);
+            }
+            //@endcond
         };
 
         /// Array of guards
@@ -649,7 +664,7 @@ namespace cds { namespace gc {
                 m_arr[nIndex].set( p );
             }
 
-            /// Clears (sets to NULL) the guard \p nIndex
+            /// Clears (sets to \p nullptr) the guard \p nIndex
             void clear( size_t nIndex )
             {
                 assert( nIndex < capacity() );

@@ -4,32 +4,29 @@
 #define __CDS_OS_POSIX_THREAD_H
 
 #include <pthread.h>
+#include <signal.h>
 
 namespace cds { namespace OS {
     /// posix-related wrappers
     namespace posix {
 
         /// Posix thread id type
-        typedef std::thread::native_thread_handle ThreadId;
+        typedef std::thread::native_handle_type ThreadId;
 
         /// Get current thread id
-        static inline ThreadId getCurrentThreadId()    { return pthread_self(); }
+        static inline ThreadId getCurrentThreadId()
+        { 
+            return pthread_self(); 
+        }
 
         /// Checks if thread \p id is alive
         static inline bool isThreadAlive( ThreadId id )
         {
             // if sig is zero, error checking is performed but no signal is actually sent.
             // ESRCH - No thread could be found corresponding to that specified by the given thread ID
-            // Unresolved problem: Linux may crash on dead thread_id.  Workaround unknown (except signal handler...)
+            // Unresolved problem: Linux may crash on dead thread_id. Workaround unknown (except signal handler...)
             return pthread_kill( id, 0 ) != ESRCH;
         }
-
-        /// Default back-off thread strategy (yield)
-        static inline void backoff()    
-        { 
-            std::this_thread::yield(); 
-        }
-
     }    // namespace posix
 
     using posix::ThreadId;
@@ -37,7 +34,6 @@ namespace cds { namespace OS {
 
     using posix::getCurrentThreadId;
     using posix::isThreadAlive;
-    using posix::backoff;
 
 }} // namespace cds::OS
 

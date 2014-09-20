@@ -222,7 +222,7 @@ namespace cds {
 #ifndef cds_bitop_complement32_DEFINED
         static inline bool complement32( atomic32u_t * pArg, unsigned int nBit )
         {
-            assert( pArg != NULL );
+            assert( pArg );
             atomic32u_t nVal = *pArg & (1 << nBit);
             *pArg ^= 1 << nBit;
             return nVal != 0;
@@ -232,7 +232,7 @@ namespace cds {
 #ifndef cds_bitop_complement64_DEFINED
         static inline bool complement64( atomic64u_t * pArg, unsigned int nBit )
         {
-            assert( pArg != NULL );
+            assert( pArg );
             atomic64u_t nVal = *pArg & (atomic64u_t(1) << nBit);
             *pArg ^= atomic64u_t(1) << nBit;
             return nVal != 0;

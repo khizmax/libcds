@@ -76,8 +76,8 @@ namespace memory {
                 for ( size_t nPass = 0; nPass < s_nPassPerThread; ++nPass ) {
                     value_type ** pCell = m_arr;
                     for ( size_t i = 0; i < s_nBlockCount; ++i, ++pCell ) {
-                        *pCell = m_Alloc.allocate( nSize, NULL );
-                        CPPUNIT_ASSERT( *pCell != NULL );
+                        *pCell = m_Alloc.allocate( nSize, nullptr );
+                        CPPUNIT_ASSERT( *pCell != nullptr );
 
                         if ( nSize < 32 )
                             memset( *pCell, 0, nSize );

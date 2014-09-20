@@ -322,7 +322,7 @@ namespace cds { namespace container {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns NULL.
+            The function repeatedly calls \ref dequeue until it returns nullptr.
             The disposer defined in template \p Options is called for each item
             that can be safely disposed.
         */

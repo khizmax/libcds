@@ -446,7 +446,7 @@ namespace cds { namespace intrusive {
         /// Finds the key \p val
         /** \anchor cds_intrusive_LazyList_nogc_find_val
             The function searches the item with key equal to \p val
-            and returns pointer to value found or \p NULL.
+            and returns pointer to value found or \p nullptr.
         */
         template <typename Q>
         value_type * find( Q const& val )

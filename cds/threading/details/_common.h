@@ -147,12 +147,12 @@ namespace cds {
 
             //@cond
             ThreadData()
-                : m_pGPIRCU( NULL )
-                , m_pGPBRCU( NULL )
-                , m_pGPTRCU( NULL )
+                : m_pGPIRCU( nullptr )
+                , m_pGPBRCU( nullptr )
+                , m_pGPTRCU( nullptr )
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-                , m_pSHBRCU( NULL )
-                , m_pSHTRCU( NULL )
+                , m_pSHBRCU( nullptr )
+                , m_pSHTRCU( nullptr )
 #endif
                 , m_nFakeProcessorNumber( s_nLastUsedProcNo.fetch_add(1, CDS_ATOMIC::memory_order_relaxed) % s_nProcCount )
                 , m_nAttachCount(0)
@@ -193,12 +193,12 @@ namespace cds {
                     m_ptbManager = nullptr;
                 }
 
-                assert( m_pGPIRCU == NULL );
-                assert( m_pGPBRCU == NULL );
-                assert( m_pGPTRCU == NULL );
+                assert( m_pGPIRCU == nullptr );
+                assert( m_pGPBRCU == nullptr );
+                assert( m_pGPTRCU == nullptr );
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-                assert( m_pSHBRCU == NULL );
-                assert( m_pSHTRCU == NULL );
+                assert( m_pSHBRCU == nullptr );
+                assert( m_pSHTRCU == nullptr );
 #endif
             }
 
@@ -239,24 +239,24 @@ namespace cds {
 
                     if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed() ) {
                         cds::urcu::details::singleton<cds::urcu::general_instant_tag>::detach_thread( m_pGPIRCU );
-                        m_pGPIRCU = NULL;
+                        m_pGPIRCU = nullptr;
                     }
                     if ( cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::isUsed() ) {
                         cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::detach_thread( m_pGPBRCU );
-                        m_pGPBRCU = NULL;
+                        m_pGPBRCU = nullptr;
                     }
                     if ( cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::isUsed() ) {
                         cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::detach_thread( m_pGPTRCU );
-                        m_pGPTRCU = NULL;
+                        m_pGPTRCU = nullptr;
                     }
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
                     if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed() ) {
                         cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::detach_thread( m_pSHBRCU );
-                        m_pSHBRCU = NULL;
+                        m_pSHBRCU = nullptr;
                     }
                     if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed() ) {
                         cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::detach_thread( m_pSHTRCU );
-                        m_pSHTRCU = NULL;
+                        m_pSHTRCU = nullptr;
                     }
 #endif
                     return true;

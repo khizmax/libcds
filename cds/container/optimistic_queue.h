@@ -341,7 +341,7 @@ namespace cds { namespace container {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns NULL.
+            The function repeatedly calls \ref dequeue until it returns \p nullptr.
         */
         void clear()
         {

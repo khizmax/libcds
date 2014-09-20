@@ -278,7 +278,7 @@ namespace cds { namespace container {
             value_ptr operator ->() const
             {
                 typename iterator_base::value_ptr p = iterator_base::operator ->();
-                return p ? &(p->m_Value) : reinterpret_cast<value_ptr>(NULL);
+                return p ? &(p->m_Value) : nullptr;
             }
 
             value_ref operator *() const
@@ -341,7 +341,7 @@ namespace cds { namespace container {
         /// Returns an iterator that addresses the location succeeding the last element in a list
         /**
             Do not use the value returned by <tt>end</tt> function to access any item.
-            Internally, <tt>end</tt> returning value equals to <tt>NULL</tt>.
+            Internally, <tt>end</tt> returning value equals to \p nullptr.
 
             The returned value can be used only to control reaching the end of the list.
             For empty list \code begin() == end() \endcode
@@ -798,7 +798,7 @@ namespace cds { namespace container {
         //@cond
         bool insert_node_at( head_type& refHead, node_type * pNode )
         {
-            assert( pNode != NULL );
+            assert( pNode );
             scoped_node_ptr p(pNode);
             if ( base_class::insert_at( refHead, *pNode )) {
                 p.release();

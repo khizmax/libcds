@@ -169,7 +169,7 @@ namespace map {
                     {
                         rcu_lock l;
                         value_type * pVal = m.get( nKey );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->first == nKey );
                         CPPUNIT_CHECK( pVal->second.m_val == nKey * 2 );
                     }
@@ -182,7 +182,7 @@ namespace map {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( m.get( nKey ) ==  NULL );
+                        CPPUNIT_CHECK( m.get( nKey ) ==  nullptr );
                     }
                     CPPUNIT_CHECK( !m.extract(ep, nKey) );
                 }
@@ -197,7 +197,7 @@ namespace map {
                     {
                         rcu_lock l;
                         value_type * pVal = m.get_with( wrapped_item(nKey), wrapped_less() );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->first == nKey );
                         CPPUNIT_CHECK( pVal->second.m_val == nKey * 2 );
                     }
@@ -210,7 +210,7 @@ namespace map {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( m.get_with( wrapped_item(nKey), wrapped_less() ) ==  NULL );
+                        CPPUNIT_CHECK( m.get_with( wrapped_item(nKey), wrapped_less() ) ==  nullptr );
                     }
                     CPPUNIT_CHECK( !m.extract_with(ep, wrapped_item(nKey), wrapped_less()) );
                 }
@@ -243,7 +243,7 @@ namespace map {
                 CPPUNIT_CHECK( !m.extract_max(ep) );
             }
 
-            CPPUNIT_MSG( PrintStat()(m, NULL) );
+            CPPUNIT_MSG( PrintStat()(m, nullptr) );
         }
 
     public:

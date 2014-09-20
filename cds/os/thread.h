@@ -12,4 +12,13 @@
 #    include <cds/os/posix/thread.h>
 #endif
 
+namespace cds { namespace OS {
+
+    /// Default backoff::yield implementation
+    static inline void    backoff()
+    {
+        std::this_thread::yield();
+    }
+}} // namespace cds::OS
+
 #endif    // #ifndef __CDS_OS_THREAD_H

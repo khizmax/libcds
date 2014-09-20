@@ -22,7 +22,7 @@ namespace cds { namespace OS {
             )
         {
             void * pMem;
-            return ::posix_memalign( &pMem, nAlignment, nSize ) == 0 ? pMem : NULL;
+            return ::posix_memalign( &pMem, nAlignment, nSize ) == 0 ? pMem : nullptr;
         }
 
         /// Frees a block of memory that was allocated with aligned_malloc.

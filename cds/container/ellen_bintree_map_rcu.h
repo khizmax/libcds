@@ -633,7 +633,7 @@ namespace cds { namespace container {
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_EllenBinTreeMap_rcu_get
             The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p NULL.
+            If \p key is not found it returns \p nullptr.
 
             RCU should be locked before call the function.
             Returned pointer is valid while RCU is locked.

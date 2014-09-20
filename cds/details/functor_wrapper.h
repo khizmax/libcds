@@ -68,7 +68,7 @@ namespace cds { namespace details {
 
         func_ref get()
         {
-            assert( m_func != NULL );
+            assert( m_func );
             return *m_func;
         }
     };
@@ -86,7 +86,7 @@ namespace cds { namespace details {
 
         func_ref get()
         {
-            assert( m_func != NULL );
+            assert( m_func );
             return *m_func;
         }
     };
@@ -104,7 +104,7 @@ namespace cds { namespace details {
 
         func_ref get()
         {
-            assert( m_func != NULL );
+            assert( m_func );
             return *m_func;
         }
     };
@@ -122,7 +122,7 @@ namespace cds { namespace details {
 
         func_ref get()
         {
-            assert( m_func != NULL );
+            assert( m_func );
             return *m_func;
         }
     };
@@ -140,7 +140,7 @@ namespace cds { namespace details {
 
         func_ref get()
         {
-            assert( m_func != NULL );
+            assert( m_func );
             return *m_func;
         }
     };

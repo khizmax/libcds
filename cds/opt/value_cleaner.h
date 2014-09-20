@@ -12,7 +12,7 @@ namespace cds { namespace opt {
         The cleaner is a functor called when an item is removed from a container.
         Note, the cleaner should not delete (deallocate) the value \p val passed in.
         However, if the \p value_type type is a structure that contains dynamically allocated
-        field(s), the cleaning functor may deallocate it and iniitalize to default value (usually, \p NULL).
+        field(s), the cleaning functor may deallocate it and iniitalize to default value (usually, \p nullptr).
 
         The interface for type \p value_type is:
         \code

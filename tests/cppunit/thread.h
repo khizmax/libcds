@@ -38,7 +38,7 @@ namespace CppUnitMini {
 
         TestThread( TestThread& src )
             : m_Pool( src.m_Pool )
-            , m_pThread( NULL )
+            , m_pThread( nullptr )
             , m_bTimeElapsed( false )
             , m_nDuration( 0 )
             , m_nThreadNo( 0 )
@@ -77,7 +77,7 @@ namespace CppUnitMini {
     public:
         TestThread( ThreadPool& pool )
             : m_Pool( pool )
-            , m_pThread( NULL )
+            , m_pThread( nullptr )
             , m_nDuration( 0 )
             , m_nThreadNo( 0 )
         {}
@@ -103,8 +103,8 @@ namespace CppUnitMini {
     public:
         ThreadPool( TestCase& tc )
             : m_Test( tc )
-            , m_pBarrierStart( NULL )
-            , m_pBarrierDone( NULL )
+            , m_pBarrierStart( nullptr )
+            , m_pBarrierDone( nullptr )
         {}
         ~ThreadPool();
 

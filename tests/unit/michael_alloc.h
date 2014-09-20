@@ -28,7 +28,7 @@ namespace memory {
         typedef typename std_allocator::value_type      value_type;
 
         // Allocation function
-        pointer allocate( size_type _Count, const void* _Hint = NULL )
+        pointer allocate( size_type _Count, const void* _Hint = nullptr )
         {
             return reinterpret_cast<pointer>( s_MichaelHeap.alloc( sizeof(T) * _Count ));
         }

@@ -45,7 +45,7 @@ namespace cds { namespace threading {
             {
                 if ( cxx11_internal::s_pThreadData ) {
                     ThreadData * p = cxx11_internal::s_pThreadData;
-                    cxx11_internal::s_pThreadData = NULL;
+                    cxx11_internal::s_pThreadData = nullptr;
                     p->ThreadData::~ThreadData();
                 }
             }
@@ -69,7 +69,7 @@ namespace cds { namespace threading {
             /// Checks whether current thread is attached to \p libcds feature or not.
             static bool isThreadAttached()
             {
-                return _threadData() != NULL;
+                return _threadData() != nullptr;
             }
 
             /// This method must be called in beginning of thread execution
@@ -103,7 +103,7 @@ namespace cds { namespace threading {
             */
             static gc::HP::thread_gc_impl&   getHZPGC()
             {
-                assert( _threadData()->m_hpManager != NULL );
+                assert( _threadData()->m_hpManager != nullptr );
                 return *(_threadData()->m_hpManager);
             }
 
@@ -115,7 +115,7 @@ namespace cds { namespace threading {
             */
             static gc::HRC::thread_gc_impl&   getHRCGC()
             {
-                assert( _threadData()->m_hrcManager != NULL );
+                assert( _threadData()->m_hrcManager != nullptr );
                 return *(_threadData()->m_hrcManager);
             }
 
@@ -127,7 +127,7 @@ namespace cds { namespace threading {
             */
             static gc::PTB::thread_gc_impl&   getPTBGC()
             {
-                assert( _threadData()->m_ptbManager != NULL );
+                assert( _threadData()->m_ptbManager != nullptr );
                 return *(_threadData()->m_ptbManager);
             }
 

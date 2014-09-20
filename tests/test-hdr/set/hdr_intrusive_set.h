@@ -610,13 +610,13 @@ namespace set {
                     CPPUNIT_ASSERT( check_size( s, 0 ));
 
                     // insert/find test
-                    CPPUNIT_ASSERT( s.find( v1.key() ) == NULL );
+                    CPPUNIT_ASSERT( s.find( v1.key() ) == nullptr );
                     CPPUNIT_ASSERT( s.insert( v1 ));
                     CPPUNIT_ASSERT( s.find_with( v1.key(), less<value_type>() ) == &v1 );
                     CPPUNIT_ASSERT( check_size( s, 1 ));
                     CPPUNIT_ASSERT( !s.empty() );
 
-                    CPPUNIT_ASSERT( s.find( v2.key() ) == NULL );
+                    CPPUNIT_ASSERT( s.find( v2.key() ) == nullptr );
                     CPPUNIT_ASSERT( s.insert( v2 ));
                     CPPUNIT_ASSERT( v2.nFindCount == 0 );
                     CPPUNIT_ASSERT( s.find( key = v2.key(), find_functor() ));
@@ -627,7 +627,7 @@ namespace set {
 
                     {
                         find_functor    ff;
-                        CPPUNIT_ASSERT( s.find( v3 ) == NULL );
+                        CPPUNIT_ASSERT( s.find( v3 ) == nullptr );
                         CPPUNIT_ASSERT( s.insert( v3 ));
                         CPPUNIT_ASSERT( v3.nFindCount == 0 );
                         CPPUNIT_ASSERT( s.find_with( v3, less<value_type>(), cds::ref(ff) ));
@@ -1002,7 +1002,7 @@ namespace set {
                     {
                         rcu_lock l;
                         pVal = s.get( nKey );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey * 2 );
 
@@ -1014,13 +1014,13 @@ namespace set {
                     ep.release();
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get( nKey ) == NULL );
+                        CPPUNIT_CHECK( s.get( nKey ) == nullptr );
                         CPPUNIT_CHECK( !s.extract( ep, nKey ));
                         CPPUNIT_CHECK( ep.empty() );
 
                         nKey = arr[i+1];
                         pVal = s.get_with( nKey, less<value_type>() );
-                        CPPUNIT_ASSERT( pVal != NULL );
+                        CPPUNIT_ASSERT( pVal != nullptr );
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey * 2 );
 
@@ -1032,7 +1032,7 @@ namespace set {
                     ep.release();
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get_with( nKey, less<value_type>() ) == NULL );
+                        CPPUNIT_CHECK( s.get_with( nKey, less<value_type>() ) == nullptr );
                         CPPUNIT_CHECK( !s.extract_with( ep, nKey, less<value_type>() ));
                         CPPUNIT_CHECK( ep.empty() );
                     }
@@ -1041,7 +1041,7 @@ namespace set {
                 CPPUNIT_CHECK( check_size( s, 0 ));
                 {
                     rcu_lock l;
-                    CPPUNIT_CHECK( s.get( 100 ) == NULL );
+                    CPPUNIT_CHECK( s.get( 100 ) == nullptr );
                     CPPUNIT_CHECK( !s.extract( ep, 100 ));
                     CPPUNIT_CHECK( ep.empty() );
                 }

@@ -27,7 +27,7 @@ namespace lock {
             HANDLE  m_hMutex;
         public:
 
-            Mutex()     { m_hMutex = ::CreateMutex( NULL, false, NULL ) ; }
+            Mutex()     { m_hMutex = ::CreateMutex( nullptr, false, nullptr ); }
             ~Mutex()    { ::CloseHandle( m_hMutex ) ; }
 
             void lock()     { ::WaitForSingleObject( m_hMutex, INFINITE ); }

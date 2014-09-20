@@ -25,7 +25,7 @@
 
 #include <memory>
 #include <cds/details/is_aligned.h>
-#include <cds/int_algo.h>
+#include <cds/algo/int_algo.h>
 
 namespace cds {
     /// OS specific wrappers

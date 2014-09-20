@@ -42,7 +42,7 @@ namespace cds { namespace intrusive {
 #       endif
         protected:
             unsigned int            m_nHeight   ;   ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
-            atomic_marked_ptr *     m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p NULL
+            atomic_marked_ptr *     m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
 
         public:
             /// Constructs a node of height 1 (a bottom-list node)
@@ -423,7 +423,7 @@ namespace cds { namespace intrusive {
             bool operator !=(iterator const& i ) const;
         };
         \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p NULL and should not be dereferenced.
+        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
 
         <b>How to use</b>
 
@@ -674,7 +674,7 @@ namespace cds { namespace intrusive {
 
         static void dispose_node( value_type * pVal )
         {
-            assert( pVal != NULL );
+            assert( pVal );
 
             typename node_builder::node_disposer()( node_traits::to_node_ptr(pVal) );
             disposer()( pVal );
@@ -2080,7 +2080,7 @@ retry:
         /// Finds the key \p val and return the item found
         /** \anchor cds_intrusive_SkipListSet_rcu_get
             The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p NULL.
+            If \p val is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 

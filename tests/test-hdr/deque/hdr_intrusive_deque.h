@@ -76,7 +76,7 @@ namespace deque {
             value_type * pv;
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 1 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 2 ));
@@ -86,7 +86,7 @@ namespace deque {
 
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 2 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 1 ));
@@ -96,7 +96,7 @@ namespace deque {
 
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 3 );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
@@ -106,7 +106,7 @@ namespace deque {
 
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv == NULL );
+            CPPUNIT_ASSERT( pv == nullptr );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
             CPPUNIT_ASSERT( v1.nDisposeCount == 1 );
@@ -131,7 +131,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 1 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 2 ));
@@ -141,7 +141,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 2 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 1 ));
@@ -151,7 +151,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 3 );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
@@ -161,7 +161,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv == NULL );
+            CPPUNIT_ASSERT( pv == nullptr );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
             CPPUNIT_ASSERT( v1.nDisposeCount == 2 );
@@ -186,7 +186,7 @@ namespace deque {
 
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 3 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 2 ));
@@ -196,7 +196,7 @@ namespace deque {
 
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 2 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 1 ));
@@ -206,7 +206,7 @@ namespace deque {
 
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 1 );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
@@ -216,7 +216,7 @@ namespace deque {
 
             pv = q.pop_back();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv == NULL );
+            CPPUNIT_ASSERT( pv == nullptr );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
             CPPUNIT_ASSERT( v1.nDisposeCount == 3 );
@@ -241,7 +241,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 3 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 2 ));
@@ -251,7 +251,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 2 );
             CPPUNIT_ASSERT( !q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 1 ));
@@ -261,7 +261,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv != NULL );
+            CPPUNIT_ASSERT( pv != nullptr );
             CPPUNIT_ASSERT( pv->nVal == 1 );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
@@ -271,7 +271,7 @@ namespace deque {
 
             pv = q.pop_front();
             Deque::gc::scan();
-            CPPUNIT_ASSERT( pv == NULL );
+            CPPUNIT_ASSERT( pv == nullptr );
             CPPUNIT_ASSERT( q.empty() );
             CPPUNIT_ASSERT( check_ic( q.size(), 0 ));
             CPPUNIT_ASSERT( v1.nDisposeCount == 4 );

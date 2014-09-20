@@ -777,7 +777,7 @@ namespace cds { namespace container {
         /// Finds the key \p val and return the item found
         /** \anchor cds_nonintrusive_LazyList_rcu_get
             The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p NULL.
+            If \p val is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 

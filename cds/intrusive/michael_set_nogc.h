@@ -224,7 +224,7 @@ namespace cds { namespace intrusive {
         /// Finds the key \p val
         /** \anchor cds_intrusive_MichaelHashSet_nogc_find_val
             The function searches the item with key equal to \p val
-            and returns pointer to item found, otherwise \p NULL.
+            and returns pointer to item found, otherwise \p nullptr.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.

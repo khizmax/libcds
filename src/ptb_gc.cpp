@@ -133,7 +133,7 @@ namespace cds { namespace gc { namespace ptb {
         };
     }
 
-    GarbageCollector * GarbageCollector::m_pManager = NULL;
+    GarbageCollector * GarbageCollector::m_pManager = nullptr;
 
     void CDS_STDCALL GarbageCollector::Construct(
         size_t nLiberateThreshold
@@ -149,7 +149,7 @@ namespace cds { namespace gc { namespace ptb {
     {
         if ( m_pManager ) {
             delete m_pManager;
-            m_pManager = NULL;
+            m_pManager = nullptr;
         }
     }
 

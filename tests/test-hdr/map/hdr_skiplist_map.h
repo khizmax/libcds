@@ -218,7 +218,7 @@ namespace map {
                 CPPUNIT_ASSERT( m.empty());
             }
 
-            CPPUNIT_MSG( PrintStat()(m, NULL) );
+            CPPUNIT_MSG( PrintStat()(m, nullptr) );
         }
 
         template <class Map, typename PrintStat >
@@ -334,15 +334,15 @@ namespace map {
                 CPPUNIT_ASSERT( m.insert( i, i * 2 ) != m.end() );
 
                 typename Map::value_type * pVal = m.get_min();
-                CPPUNIT_ASSERT( pVal != NULL );
+                CPPUNIT_ASSERT( pVal != nullptr );
                 CPPUNIT_CHECK( pVal->first == i );
                 CPPUNIT_CHECK( pVal->second.m_val == i * 2 );
             }
             m.clear();
             CPPUNIT_ASSERT( m.empty() );
             CPPUNIT_ASSERT( check_size( m, 0 ));
-            CPPUNIT_CHECK( m.get_min() == NULL );
-            CPPUNIT_CHECK( m.get_max() == NULL );
+            CPPUNIT_CHECK( m.get_min() == nullptr );
+            CPPUNIT_CHECK( m.get_max() == nullptr );
 
             // iterator test
 
@@ -350,7 +350,7 @@ namespace map {
                 CPPUNIT_ASSERT( m.insert( i, i * 2 ) != m.end() );
 
                 typename Map::value_type * pVal = m.get_max();
-                CPPUNIT_ASSERT( pVal != NULL );
+                CPPUNIT_ASSERT( pVal != nullptr );
                 CPPUNIT_CHECK( pVal->first == i );
                 CPPUNIT_CHECK( pVal->second.m_val == i * 2 );
             }

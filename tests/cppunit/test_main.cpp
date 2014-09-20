@@ -110,7 +110,7 @@ namespace CppUnitMini
   std::string TestCase::m_strTestDataDir(".");
   Config TestCase::m_Cfg;
 
-  TestCase * TestCase::m_pCurTestCase = NULL;
+  TestCase * TestCase::m_pCurTestCase = nullptr;
 
   TestCase *TestCase::m_root = 0;
   Reporter *TestCase::m_reporter = 0;
@@ -172,7 +172,7 @@ namespace CppUnitMini
 
       char buf[ 4096 ];
 
-      TestCfg * pMap = NULL;
+      TestCfg * pMap = nullptr;
       while ( !s.eof() ) {
           s.getline( buf, sizeof(buf)/sizeof(buf[0]) );
           char * pszStr = buf;

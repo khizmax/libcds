@@ -78,13 +78,13 @@ namespace cds { namespace threading {
     inline cds::urcu::details::thread_data<cds::urcu::signal_buffered_tag> * getRCU<cds::urcu::signal_buffered_tag>()
     {
         ThreadData * p = Manager::thread_data();
-        return p ? p->m_pSHBRCU : NULL;
+        return p ? p->m_pSHBRCU : nullptr;
     }
     template<>
     inline cds::urcu::details::thread_data<cds::urcu::signal_threaded_tag> * getRCU<cds::urcu::signal_threaded_tag>()
     {
         ThreadData * p = Manager::thread_data();
-        return p ? p->m_pSHTRCU : NULL;
+        return p ? p->m_pSHTRCU : nullptr;
     }
 #endif
 

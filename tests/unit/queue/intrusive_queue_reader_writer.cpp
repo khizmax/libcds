@@ -248,7 +248,7 @@ namespace queue {
                 }
                 else {
                     Writer * pWriter = dynamic_cast<Writer *>( *it );
-                    CPPUNIT_ASSERT( pWriter != NULL );
+                    CPPUNIT_ASSERT( pWriter != nullptr );
                     fTimeWriter += pWriter->m_fTime;
                     nPushFailed += pWriter->m_nPushFailed;
                     if ( !boost::is_base_of<cds::bounded_container, Queue>::value ) {

@@ -14,7 +14,7 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace OS_X {
     void topology::init()
     {
         size_t len = sizeof( s_nProcessorCount );
-        if ( sysctlbyname("hw.logicalcpu", &s_nProcessorCount, &len, NULL, 0 ) != 0 )
+        if ( sysctlbyname("hw.logicalcpu", &s_nProcessorCount, &len, nullptr, 0 ) != 0 )
             s_nProcessorCount = 1;
     }
 
