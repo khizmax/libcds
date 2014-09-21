@@ -121,12 +121,6 @@
 #   define CDS_DISABLE_DEFAULT_MOVE_CTOR
 #endif
 
-// Thread support library (thread, mutex, condition variable)
-#define CDS_CXX11_STDLIB_THREAD
-#define CDS_CXX11_STDLIB_MUTEX
-#define CDS_CXX11_STDLIB_CONDITION_VARIABLE
-#define CDS_CXX11_STDLIB_CHRONO
-
 // Full SFINAE support
 //#if CDS_COMPILER_VERSION >= ????
 //#   define CDS_CXX11_SFINAE

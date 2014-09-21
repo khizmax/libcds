@@ -10,7 +10,7 @@
 #define  CDS_COMPILER__NAME    ("clang " __clang_version__)
 #define  CDS_COMPILER__NICK    "clang"
 
-#if defined(_LIBCPP_VERSION)
+#if defined(_LIBCPP_VERSION) && !defined(CDS_USE_BOOST_ATOMIC)
     // Note: Clang libc++ atomic leads to program crash.
     // So, we use libcds atomic implementation
 #   define CDS_USE_LIBCDS_ATOMIC
@@ -21,90 +21,41 @@
 #define alignof __alignof__
 
 // Variadic template support (only if -std=c++0x compile-line option provided)
-#if __has_feature(cxx_variadic_templates)
-#   define CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
-#endif
+#define CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
 
 // Default template arguments for function templates
-#if __has_feature(cxx_default_function_template_args)
-#   define CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
-#endif
+#define CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
 
-#if __has_feature(cxx_deleted_functions)
 // C++11 delete definition ( function declaration = delete)
-#   define CDS_CXX11_DELETE_DEFINITION_SUPPORT
-#endif
+#define CDS_CXX11_DELETE_DEFINITION_SUPPORT
 
-#if __has_feature(cxx_defaulted_functions)
 // C++11 explicitly-defaulted function (= default) [std 8.4.2 [dcl.fct.def.default]]
-#   define CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
-#endif
+#define CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
 
 // Explicit conversion operators
-#if __has_feature(cxx_explicit_conversions)
-#   define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
-#endif
+#define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
 
 // C++11 template alias
-#if __has_feature(cxx_alias_templates)
-#   define CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
-#endif
+#define CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
 
 // C++11 inline namespace
-#if __has_feature(cxx_inline_namespaces)
-#   define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-#endif
+#define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 
 // Lambda
-#if __has_feature(cxx_lambdas)
-#   define CDS_CXX11_LAMBDA_SUPPORT
-#endif
+#define CDS_CXX11_LAMBDA_SUPPORT
 
 // RValue
-#if __has_feature(cxx_rvalue_references)
-#   define CDS_RVALUE_SUPPORT
-#   define CDS_MOVE_SEMANTICS_SUPPORT
-#endif
+#define CDS_RVALUE_SUPPORT
+#define CDS_MOVE_SEMANTICS_SUPPORT
 
-#if __has_feature(cxx_constexpr)
-#   define CDS_CONSTEXPR    constexpr
-#   define CDS_CONSTEXPR_CONST constexpr const
-#else
-#   define CDS_CONSTEXPR
-#   define CDS_CONSTEXPR_CONST const
-#endif
+#define CDS_CONSTEXPR    constexpr
+#define CDS_CONSTEXPR_CONST constexpr const
 
-#if __has_feature(cxx_noexcept)
-#   define CDS_NOEXCEPT_SUPPORT        noexcept
-#   define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-#else
-#   define CDS_NOEXCEPT_SUPPORT
-#   define CDS_NOEXCEPT_SUPPORT_(expr)
-#endif
+#define CDS_NOEXCEPT_SUPPORT        noexcept
+#define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
 
 // C++11 thread_local keyword
-#if __has_feature(cxx_thread_local)         // CLang 3.3
-#   define CDS_CXX11_THREAD_LOCAL_SUPPORT
-#endif
-
-// Thread support library (thread, mutex, condition variable, chrono)
-#if CDS_COMPILER_VERSION >= 30100
-#   if __has_include(<thread>)
-#       define CDS_CXX11_STDLIB_THREAD
-#   endif
-
-#   if __has_include(<chrono>)
-#       define CDS_CXX11_STDLIB_CHRONO
-#   endif
-
-#   if __has_include(<mutex>)
-#       define CDS_CXX11_STDLIB_MUTEX
-#   endif
-
-#   if __has_include(<condition_variable>)
-#       define CDS_CXX11_STDLIB_CONDITION_VARIABLE
-#   endif
-#endif
+#define CDS_CXX11_THREAD_LOCAL_SUPPORT
 
 // Full SFINAE support
 #define CDS_CXX11_SFINAE
