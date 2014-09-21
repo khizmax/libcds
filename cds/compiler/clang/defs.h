@@ -10,6 +10,11 @@
 #define  CDS_COMPILER__NAME    ("clang " __clang_version__)
 #define  CDS_COMPILER__NICK    "clang"
 
+#if CDS_COMPILER_VERSION < 30300
+#   error "Compiler version error. Clang version 3.3.0 and above is supported"
+#endif
+
+
 #if defined(_LIBCPP_VERSION) && !defined(CDS_USE_BOOST_ATOMIC)
     // Note: Clang libc++ atomic leads to program crash.
     // So, we use libcds atomic implementation
