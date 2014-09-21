@@ -1,6 +1,4 @@
 CDS_TESTHDR_OFFSETOF_DEQUE := \
-    tests/test-hdr/deque/hdr_intrusive_michael_deque_hp.cpp \
-    tests/test-hdr/deque/hdr_intrusive_michael_deque_ptb.cpp
 
 CDS_TESTHDR_OFFSETOF_MAP := \
     tests/test-hdr/map/hdr_cuckoo_map.cpp 

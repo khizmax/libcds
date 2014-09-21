@@ -63,8 +63,6 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_striped_map_reg.cpp
 
 CDS_TESTHDR_DEQUE := \
-    tests/test-hdr/deque/hdr_michael_deque_hp.cpp \
-    tests/test-hdr/deque/hdr_michael_deque_ptb.cpp \
     tests/test-hdr/deque/hdr_fcdeque.cpp
 
 CDS_TESTHDR_ORDLIST := \
