@@ -313,10 +313,7 @@ namespace cds {
             void reset(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {}
         };
-
-
     }   // namespace atomicity
-
 }   // namespace cds
 
 #endif // #ifndef __CDS_CXX11_ATOMIC_H

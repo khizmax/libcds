@@ -15,8 +15,8 @@ namespace cds { namespace OS {
 
         /// Get current thread id
         static inline ThreadId getCurrentThreadId()
-        { 
-            return pthread_self(); 
+        {
+            return pthread_self();
         }
 
         /// Checks if thread \p id is alive
