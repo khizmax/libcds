@@ -4,7 +4,6 @@
 #define __CDSUNIT_INTRUSIVE_STACK_TYPES_H
 
 #include <cds/intrusive/treiber_stack.h>
-#include <cds/intrusive/michael_deque.h>
 #include <cds/intrusive/fcstack.h>
 
 #include <cds/gc/hp.h>

@@ -4,7 +4,6 @@
 #define __CDSUNIT_STACK_TYPES_H
 
 #include <cds/container/treiber_stack.h>
-#include <cds/container/michael_deque.h>
 #include <cds/container/fcstack.h>
 #include <cds/container/fcdeque.h>
 
