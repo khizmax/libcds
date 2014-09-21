@@ -545,15 +545,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\tests\test-hdr\deque\hdr_deque.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\deque\hdr_intrusive_deque.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\..\tests\test-hdr\deque\hdr_fcdeque.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\deque\hdr_intrusive_michael_deque_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\deque\hdr_intrusive_michael_deque_ptb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\deque\hdr_michael_deque_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\deque\hdr_michael_deque_ptb.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

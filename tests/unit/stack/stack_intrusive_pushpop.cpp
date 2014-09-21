@@ -2,7 +2,6 @@
 
 #include "cppunit/thread.h"
 #include "stack/intrusive_stack_type.h"
-#include "print_deque_stat.h"
 
 // Multi-threaded stack test for push/pop operation
 namespace istack {

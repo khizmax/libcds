@@ -417,14 +417,8 @@
     <ClInclude Include="..\..\..\tests\cppunit\file_reporter.h" />
     <ClInclude Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.h" />
     <ClInclude Include="..\..\..\tests\unit\michael_alloc.h" />
-    <ClInclude Include="..\..\..\tests\unit\print_cuckoo_stat.h" />
-    <ClInclude Include="..\..\..\tests\unit\print_deque_stat.h" />
     <ClInclude Include="..\..\..\tests\cppunit\test_beans.h" />
     <ClInclude Include="..\..\..\tests\cppunit\thread.h" />
-    <ClInclude Include="..\..\..\tests\unit\print_ellenbintree_stat.h" />
-    <ClInclude Include="..\..\..\tests\unit\print_mspriorityqueue_stat.h" />
-    <ClInclude Include="..\..\..\tests\unit\print_segmentedqueue_stat.h" />
-    <ClInclude Include="..\..\..\tests\unit\print_skip_list_stat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.cpp" />

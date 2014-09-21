@@ -12,7 +12,6 @@
 #include <cds/container/basket_queue.h>
 #include <cds/container/fcqueue.h>
 #include <cds/container/fcdeque.h>
-#include <cds/container/michael_deque.h>
 #include <cds/container/segmented_queue.h>
 
 #include <cds/gc/hp.h>
@@ -22,77 +21,11 @@
 #include "queue/std_queue.h"
 #include "lock/win32_lock.h"
 #include "michael_alloc.h"
-#include "print_deque_stat.h"
 #include "print_segmentedqueue_stat.h"
 
 #include <boost/container/deque.hpp>
 
 namespace queue {
-
-    namespace details {
-        // MichaelDeque, push right/pop left
-        template <typename GC, typename T, CDS_DECL_OPTIONS7>
-        class MichaelDequeR: public cds::container::MichaelDeque< GC, T, CDS_OPTIONS7>
-        {
-            typedef cds::container::MichaelDeque< GC, T, CDS_OPTIONS7> base_class;
-        public:
-            MichaelDequeR( size_t nMaxItemCount )
-                : base_class( (unsigned int) nMaxItemCount, 4 )
-            {}
-            MichaelDequeR()
-                : base_class( 64 * 1024, 4 )
-            {}
-
-            bool push( T const& v )
-            {
-                return base_class::push_back( v );
-            }
-            bool enqueue( T const& v )
-            {
-                return push( v );
-            }
-
-            bool pop( T& v )
-            {
-                return base_class::pop_front( v );
-            }
-            bool deque( T& v )
-            {
-                return pop(v);
-            }
-        };
-
-        // MichaelDeque, push left/pop right
-        template <typename GC, typename T, CDS_DECL_OPTIONS7>
-        class MichaelDequeL: public cds::container::MichaelDeque< GC, T, CDS_OPTIONS7>
-        {
-            typedef cds::container::MichaelDeque< GC, T, CDS_OPTIONS7> base_class;
-        public:
-            MichaelDequeL( size_t nMaxItemCount )
-                : base_class( (unsigned int) nMaxItemCount, 4 )
-            {}
-            MichaelDequeL()
-                : base_class( 64 * 1024, 4 )
-            {}
-
-            bool push( T const& v )
-            {
-                return base_class::push_front( v );
-            }
-            bool enqueue( T const& v )
-            {
-                return push( v );
-            }
-
-            bool pop( T& v )
-            {
-                return base_class::pop_back( v );
-            }
-            bool deque( T& v )
-            {
-                return pop(v);
-            }
-        };
 
         template <typename T, typename Traits=cds::container::fcdeque::type_traits, class Deque=std::deque<T> >
         class FCDequeL: public cds::container::FCDeque<T, Deque, Traits >
@@ -523,53 +456,6 @@ namespace queue {
                 return cds::opt::none();
             }
         };
-
-
-        // MichaelDeque
-        typedef details::MichaelDequeR< cds::gc::HP, Value >    MichaelDequeR_HP;
-        typedef details::MichaelDequeR< cds::gc::HP, Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeR_HP_ic;
-        typedef details::MichaelDequeR< cds::gc::HP, Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >    MichaelDequeR_HP_michaelAlloc;
-        typedef details::MichaelDequeR< cds::gc::HP, Value
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeR_HP_stat;
-
-        typedef details::MichaelDequeR< cds::gc::PTB, Value >    MichaelDequeR_PTB;
-        typedef details::MichaelDequeR< cds::gc::PTB, Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeR_PTB_ic;
-        typedef details::MichaelDequeR< cds::gc::PTB, Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >    MichaelDequeR_PTB_michaelAlloc;
-        typedef details::MichaelDequeR< cds::gc::PTB, Value
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeR_PTB_stat;
-
-        typedef details::MichaelDequeL< cds::gc::HP, Value >    MichaelDequeL_HP;
-        typedef details::MichaelDequeL< cds::gc::HP, Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeL_HP_ic;
-        typedef details::MichaelDequeL< cds::gc::HP, Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >    MichaelDequeL_HP_michaelAlloc;
-        typedef details::MichaelDequeL< cds::gc::HP, Value
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeL_HP_stat;
-
-
-        typedef details::MichaelDequeL< cds::gc::PTB, Value >    MichaelDequeL_PTB;
-        typedef details::MichaelDequeL< cds::gc::PTB, Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeL_PTB_ic;
-        typedef details::MichaelDequeL< cds::gc::PTB, Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >    MichaelDequeL_PTB_michaelAlloc;
-        typedef details::MichaelDequeL< cds::gc::PTB, Value
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeL_PTB_stat;
 
         // BasketQueue
         typedef cds::container::BasketQueue<

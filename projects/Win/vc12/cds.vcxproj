@@ -670,7 +670,6 @@
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_rcu.h" />
-    <ClInclude Include="..\..\..\cds\container\michael_deque.h" />
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\michael_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\michael_map_rcu.h" />
@@ -738,7 +737,6 @@
     <ClInclude Include="..\..\..\cds\gc\ptb_impl.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\deque_stat.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\dummy_node_holder.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_hp.h" />
@@ -746,7 +744,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_ptb.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_rcu.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\michael_deque.h" />
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\michael_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\mspriority_queue.h" />

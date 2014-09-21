@@ -113,37 +113,6 @@
     CPPUNIT_TEST(BasketQueue_PTB_stat) \
     CPPUNIT_TEST(BasketQueue_PTB_seqcst)
 
-
-// MichaelDeque
-#define CDSUNIT_DECLARE_MichaelDeque \
-    TEST_CASE(MichaelDequeL_HP,               cds::intrusive::michael_deque::node< cds::gc::HP > ) \
-    TEST_CASE(MichaelDequeL_HP_ic,            cds::intrusive::michael_deque::node< cds::gc::HP > ) \
-    TEST_CASE(MichaelDequeL_HP_stat,          cds::intrusive::michael_deque::node< cds::gc::HP > ) \
-    TEST_CASE(MichaelDequeL_PTB,              cds::intrusive::michael_deque::node< cds::gc::PTB > ) \
-    TEST_CASE(MichaelDequeL_PTB_ic,           cds::intrusive::michael_deque::node< cds::gc::PTB > ) \
-    TEST_CASE(MichaelDequeL_PTB_stat,         cds::intrusive::michael_deque::node< cds::gc::PTB > ) \
-    TEST_CASE(MichaelDequeR_HP,               cds::intrusive::michael_deque::node< cds::gc::HP > ) \
-    TEST_CASE(MichaelDequeR_HP_ic,            cds::intrusive::michael_deque::node< cds::gc::HP > ) \
-    TEST_CASE(MichaelDequeR_HP_stat,          cds::intrusive::michael_deque::node< cds::gc::HP > ) \
-    TEST_CASE(MichaelDequeR_PTB,              cds::intrusive::michael_deque::node< cds::gc::PTB > ) \
-    TEST_CASE(MichaelDequeR_PTB_ic,           cds::intrusive::michael_deque::node< cds::gc::PTB > ) \
-    TEST_CASE(MichaelDequeR_PTB_stat,         cds::intrusive::michael_deque::node< cds::gc::PTB > )
-
-#define CDSUNIT_TEST_MichaelDeque \
-    CPPUNIT_TEST(MichaelDequeL_HP) \
-    CPPUNIT_TEST(MichaelDequeL_HP_ic) \
-    CPPUNIT_TEST(MichaelDequeL_HP_stat) \
-    CPPUNIT_TEST(MichaelDequeL_PTB) \
-    CPPUNIT_TEST(MichaelDequeL_PTB_ic) \
-    CPPUNIT_TEST(MichaelDequeL_PTB_stat) \
-    CPPUNIT_TEST(MichaelDequeR_HP) \
-    CPPUNIT_TEST(MichaelDequeR_HP_ic) \
-    CPPUNIT_TEST(MichaelDequeR_HP_stat) \
-    CPPUNIT_TEST(MichaelDequeR_PTB) \
-    CPPUNIT_TEST(MichaelDequeR_PTB_ic) \
-    CPPUNIT_TEST(MichaelDequeR_PTB_stat)
-
-
 // TsigasCycleQueue
 #define CDSUNIT_DECLARE_TsigasCycleQueue \
     TEST_BOUNDED(TsigasCycleQueue_dyn) \

@@ -10,7 +10,6 @@
 #include <cds/intrusive/vyukov_mpmc_cycle_queue.h>
 #include <cds/intrusive/basket_queue.h>
 #include <cds/intrusive/fcqueue.h>
-#include <cds/intrusive/michael_deque.h>
 #include <cds/intrusive/segmented_queue.h>
 
 #include <cds/gc/hp.h>
@@ -19,77 +18,12 @@
 
 #include <boost/intrusive/slist.hpp>
 
-#include "print_deque_stat.h"
 #include "print_segmentedqueue_stat.h"
 
 namespace queue {
 
     namespace details {
         struct empty_stat {};
-
-        // MichaelDeque, push right/pop left
-        template <typename GC, typename T, CDS_DECL_OPTIONS10>
-        class MichaelDequeR: public cds::intrusive::MichaelDeque< GC, T, CDS_OPTIONS10>
-        {
-            typedef cds::intrusive::MichaelDeque< GC, T, CDS_OPTIONS10> base_class;
-        public:
-            MichaelDequeR( size_t nMaxItemCount )
-                : base_class( (unsigned int) nMaxItemCount, 4 )
-            {}
-            MichaelDequeR()
-                : base_class( 64 * 1024, 4 )
-            {}
-
-            bool push( T& v )
-            {
-                return base_class::push_back( v );
-            }
-            bool enqueue( T& v )
-            {
-                return push( v );
-            }
-
-            T * pop()
-            {
-                return base_class::pop_front();
-            }
-            T * deque()
-            {
-                return pop();
-            }
-        };
-
-        // MichaelDeque, push left/pop right
-        template <typename GC, typename T, CDS_DECL_OPTIONS10>
-        class MichaelDequeL: public cds::intrusive::MichaelDeque< GC, T, CDS_OPTIONS10>
-        {
-            typedef cds::intrusive::MichaelDeque< GC, T, CDS_OPTIONS10> base_class;
-        public:
-            MichaelDequeL( size_t nMaxItemCount )
-                : base_class( (unsigned int) nMaxItemCount, 4 )
-            {}
-            MichaelDequeL()
-                : base_class( 64 * 1024, 4 )
-            {}
-
-            bool push( T& v )
-            {
-                return base_class::push_front( v );
-            }
-            bool enqueue( T& v )
-            {
-                return push( v );
-            }
-
-            T * pop()
-            {
-                return base_class::pop_back();
-            }
-            T * deque()
-            {
-                return pop();
-            }
-        };
 
         template <typename T, typename Lock=std::mutex>
         class BoostSList
@@ -409,57 +343,6 @@ namespace queue {
                 return cds::opt::none();
             }
         };
-
-
-        // MichaelDeque
-        typedef details::MichaelDequeR< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > >
-        >    MichaelDequeR_HP;
-        typedef details::MichaelDequeR< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeR_HP_ic;
-        typedef details::MichaelDequeR< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeR_HP_stat;
-
-        typedef details::MichaelDequeR< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::PTB > > >
-        >    MichaelDequeR_PTB;
-        typedef details::MichaelDequeR< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeR_PTB_ic;
-        typedef details::MichaelDequeR< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeR_PTB_stat;
-
-        typedef details::MichaelDequeL< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > >
-        >    MichaelDequeL_HP;
-        typedef details::MichaelDequeL< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeL_HP_ic;
-        typedef details::MichaelDequeL< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeL_HP_stat;
-
-
-        typedef details::MichaelDequeL< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::PTB > > >
-        >    MichaelDequeL_PTB;
-        typedef details::MichaelDequeL< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >    MichaelDequeL_PTB_ic;
-        typedef details::MichaelDequeL< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::stat< cds::intrusive::michael_deque::stat<> >
-        >    MichaelDequeL_PTB_stat;
 
         // BasketQueue
         typedef cds::intrusive::BasketQueue< cds::gc::HP, T

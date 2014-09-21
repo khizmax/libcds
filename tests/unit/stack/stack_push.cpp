@@ -2,7 +2,6 @@
 
 #include "cppunit/thread.h"
 #include "stack/stack_type.h"
-#include "print_deque_stat.h"
 
 // Multi-threaded stack test for push operation
 namespace stack {

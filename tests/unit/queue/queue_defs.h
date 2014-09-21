@@ -207,45 +207,6 @@
     CPPUNIT_TEST(RWQueue_Spin_ic) \
     CPPUNIT_TEST(RWQueue_Spin_stat)
 
-
-// MichalDeque
-#define CDSUNIT_DECLARE_MichaelDeque( ITEM_TYPE ) \
-    TEST_BOUNDED(MichaelDequeL_HP, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeL_HP_ic, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeL_HP_michaelAlloc, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeL_HP_stat, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeL_PTB, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeL_PTB_ic, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeL_PTB_michaelAlloc, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeL_PTB_stat, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_HP, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_HP_ic, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_HP_michaelAlloc, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_HP_stat, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_PTB, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_PTB_ic, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_PTB_michaelAlloc, ITEM_TYPE) \
-    TEST_BOUNDED(MichaelDequeR_PTB_stat, ITEM_TYPE)
-
-#define CDSUNIT_TEST_MichaelDeque \
-    CPPUNIT_TEST(MichaelDequeL_HP ) \
-    CPPUNIT_TEST(MichaelDequeL_HP_ic ) \
-    CPPUNIT_TEST(MichaelDequeL_HP_michaelAlloc ) \
-    CPPUNIT_TEST(MichaelDequeL_HP_stat ) \
-    CPPUNIT_TEST(MichaelDequeL_PTB ) \
-    CPPUNIT_TEST(MichaelDequeL_PTB_ic ) \
-    CPPUNIT_TEST(MichaelDequeL_PTB_michaelAlloc ) \
-    CPPUNIT_TEST(MichaelDequeL_PTB_stat ) \
-    CPPUNIT_TEST(MichaelDequeR_HP ) \
-    CPPUNIT_TEST(MichaelDequeR_HP_ic ) \
-    CPPUNIT_TEST(MichaelDequeR_HP_michaelAlloc ) \
-    CPPUNIT_TEST(MichaelDequeR_HP_stat ) \
-    CPPUNIT_TEST(MichaelDequeR_PTB ) \
-    CPPUNIT_TEST(MichaelDequeR_PTB_ic ) \
-    CPPUNIT_TEST(MichaelDequeR_PTB_michaelAlloc ) \
-    CPPUNIT_TEST(MichaelDequeR_PTB_stat )
-
-
 // TsigasCycleQueue
 #define CDSUNIT_DECLARE_TsigasCysleQueue( ITEM_TYPE ) \
     TEST_BOUNDED(TsigasCycleQueue_dyn, ITEM_TYPE) \
