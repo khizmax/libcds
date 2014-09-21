@@ -203,7 +203,6 @@ namespace queue {
         CDSUNIT_DECLARE_FCDeque( SimpleValue )
         CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
         CDSUNIT_DECLARE_RWQueue( SimpleValue )
-        CDSUNIT_DECLARE_MichaelDeque( SimpleValue )
         CDSUNIT_DECLARE_TsigasCysleQueue( SimpleValue )
         CDSUNIT_DECLARE_VyukovMPMCCycleQueue( SimpleValue )
         CDSUNIT_DECLARE_StdQueue( SimpleValue )
@@ -217,7 +216,6 @@ namespace queue {
             CDSUNIT_TEST_FCDeque
             CDSUNIT_TEST_SegmentedQueue
             CDSUNIT_TEST_RWQueue
-            CDSUNIT_TEST_MichaelDeque
             CDSUNIT_TEST_TsigasCysleQueue
             CDSUNIT_TEST_VyukovMPMCCycleQueue
             CDSUNIT_TEST_StdQueue

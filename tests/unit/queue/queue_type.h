@@ -26,7 +26,7 @@
 #include <boost/container/deque.hpp>
 
 namespace queue {
-
+    namespace details {
         template <typename T, typename Traits=cds::container::fcdeque::type_traits, class Deque=std::deque<T> >
         class FCDequeL: public cds::container::FCDeque<T, Deque, Traits >
         {
@@ -95,7 +95,7 @@ namespace queue {
             }
         };
 
-    }
+    } // namespace details
 
     template <typename Value>
     struct Types {
