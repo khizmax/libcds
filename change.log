@@ -1,6 +1,7 @@
 2.0.0
     General release
     - switch to C++11 standard
+    - Removed: MichaelDeque
 
 1.6.0
     General release
