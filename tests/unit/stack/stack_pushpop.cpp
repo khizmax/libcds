@@ -262,7 +262,6 @@ namespace stack {
         CDSUNIT_DECLARE_EliminationStack
         CDSUNIT_DECLARE_FCStack
         CDSUNIT_DECLARE_FCDeque
-        CDSUNIT_DECLARE_MichaelDeque
         CDSUNIT_DECLARE_StdStack
 
         CPPUNIT_TEST_SUITE(Stack_PushPop)
@@ -270,7 +269,6 @@ namespace stack {
             CDSUNIT_TEST_EliminationStack
             CDSUNIT_TEST_FCStack
             CDSUNIT_TEST_FCDeque
-            CDSUNIT_TEST_MichaelDeque
             CDSUNIT_TEST_StdStack
         CPPUNIT_TEST_SUITE_END();
     };

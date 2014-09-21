@@ -361,14 +361,12 @@ namespace istack {
         CDSUNIT_DECLARE_TreiberStack
         CDSUNIT_DECLARE_EliminationStack
         CDSUNIT_DECLARE_FCStack
-        CDSUNIT_DECLARE_MichaelDeque
         CDSUNIT_DECLARE_StdStack
 
         CPPUNIT_TEST_SUITE(IntrusiveStack_PushPop)
             CDSUNIT_TEST_TreiberStack
             CDSUNIT_TEST_EliminationStack
             CDSUNIT_TEST_FCStack
-            CDSUNIT_TEST_MichaelDeque
             CDSUNIT_TEST_StdStack
         CPPUNIT_TEST_SUITE_END();
     };
