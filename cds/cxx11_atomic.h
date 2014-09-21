@@ -8,83 +8,27 @@
 namespace cds {
 
 /// C++11 Atomic library support
-/** @ingroup cds_cxx11_stdlib_wrapper
-    <b>libcds</b> has an implementation of C++11 atomic library (header <tt><cds/cxx11_atomic.h></tt>)
-    specified in <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">N3242, p.29</a>.
+/**
+    \p libcds can use the following implementations of the atomics:
+    - STL <tt><atomic></tt>. This is used by default
+    - \p boost.atomic for boost 1.54 and above. To use it you should define \p CDS_USE_BOOST_ATOMIC for
+      your compiler invocation, for example, for gcc specify \p -DCDS_USE_BOOST_ATOMIC
+      in command line
+    - \p libcds implementation of atomic operation according to C++11 standard as
+      specified in <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">N3242, p.29</a>.
+      \p libcds implementation is not the full standard compliant, it provides only C++ part of standard,
+      for example, \p libcds has no static initialization of the atomic variables and some other C features.
+      However, that imlementation is enough for the library purposes. Supported architecture: x86, amd64,
+      ia64 (Itanium) 64bit, 64bit Sparc. To use \p libcds atomic you should define \p CDS_USE_LIBCDS_ATOMIC
+      in the compiler command line (\p -DCDS_USE_LIBCDS_ATOMIC for gcc/clang).
 
-    This implementation has full support
-    - <tt>atomic<T></tt> class and its specializations for integral types and pointers
-    - <tt>atomic_flag</tt> class
-    - free <tt>atomic_xxx</tt> functions
+      @note For Clang compiler \p libcds do not use compiler-provided <tt><atomic></tt> due some problems.
+      Instead, \p libcds atomic is used by default, or you can try to use \p boost.atomic.
 
-    Exclusions: the following features specified in C++11 standard are not implemented:
-    - Atomic emulation. The library implements only genuine atomic operations for supported processors
-    - Static initialization macros (like \p ATOMIC_FLAG_INIT and others)
-    - \p atomic_init functions
-
-    Internal atomic implementation is used when the standard library provided by compiler
-    has no C++11 <tt>\<atomic\></tt> header or it is not standard compliant,
-    or when \p CDS_USE_LIBCDS_ATOMIC preprocessor macro is explicitly defined in compiler command line.
-    The library defines \p CDS_ATOMIC macro that specifies atomic library namespace:
-    - \p std for compiler-provided <tt>\<atomic\></tt> library
-    - \p boost if you use <tt>boost.atomic</tt> library (see note below)
-    - \p cds::cxx11_atomic if internal \p libcds atomic implementation used
-
-    The library has internal atomic implementation for the following processor architectures:
-    - Intel and AMD x86 (32bit) and amd64 (64bit)
-    - Intel Itanium IA64 (64bit)
-    - UltraSparc (64bit)
-
-    Using \p CDS_ATOMIC macro you may call <tt>\<atomic\></tt> library functions and classes,
-    for example:
-    \code
-    atomics::atomic<int> atomInt;
-    atomics::atomic_store_explicit( &atomInt, 0, atomics::memory_order_release );
-    \endcode
-
-    \par Microsoft Visual C++
-
-    MS Visual C++ has native <tt>\<atomic\></tt> header beginning from Visual C++ 2012.
-    However, MSVC++ 2012 has a quite inefficient implementation on atomic load/store
-    based on \p compare_exchange, so \p libcds does not use MSVC++ 2012 atomics.
-    The \p libcds library defines \p CDS_ATOMIC as
-    - \p cds::cxx11_atomic (internal implementation) for MS VC++ 2008, 2010, and 2012
-    - \p std for MS VC++ 2013 and above.
-
-    \par GCC
-
-    For GCC compiler the macro \p CDS_ATOMIC is defined as:
-    - \p cds::cxx11_atomic by default
-    - \p std if the compiler version is 4.6 and \p CDS_CXX11_ATOMIC_GCC is defined (see below)
-    - \p std for GCC 4.7 and above
-
-    GCC team implements full support for C++11 memory model in version 4.7
-    (see <a href="http://gcc.gnu.org/wiki/Atomic/GCCMM">http://gcc.gnu.org/wiki/Atomic/GCCMM</a>).
-    \p libcds uses its own implementation of C++11 <tt>\<atomic\></tt> library located in
-    file <tt><cds/cxx11_atomic.h></tt> for GCC version up to 4.6. This implementation almost conforms to C++11 standard draft
-    <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">N3242</a> (see exclusions above)
-    that is closest to final version.
-    However, GCC 4.6 has the implementation of <tt>\<atomic\></tt> header in its <tt>libstdc++</tt>
-    that is built on <tt>__sync_xxx</tt> (or <tt>__atomic_xxx</tt>) built-in functions. You can use <b>libcds</b> with GCC 4.6
-    <tt>\<atomic\></tt> specifying \p CDS_CXX11_ATOMIC_GCC macro in g++ command line:
-    \code g++ -DCDS_CXX11_ATOMIC_GCC ... \endcode
-    GCC 4.6 atomic implementation does not support <tt>atomic<T></tt> for <b>any</b> type \p T. The linker
-    generates "undefined symbol" error for <tt>atomic<T></tt> if \p T is not an integral type or a pointer. It is
-    not essential for intrusive and non-intrusive containers represented in \p libcds.
-    However, cds::memory::michael memory allocator cannot be linked with GCC 4.6 <tt>\<atomic\></tt> header.
-    This error has been fixed in GCC 4.7.
-
-    \par Clang
-
-    The macro \p CDS_ATOMIC is defined as \p cds::cxx11_atomic.
-    \p libcds does not yet use native clang atomics.
-
-    \par boost::atomic
-
-    Beginning from version 1.54, <a href="http://boost.org">boost</a> library contains an implementation of atomic
-    sufficient for \p libcds.
-    You can compile \p libcds and your projects with <tt>boost.atomic</tt> specifying \p -DCDS_USE_BOOST_ATOMIC
-    in compiler's command line.
+      The library defines \p atomics alias for atomic namespace:
+      - <tt>namespace atomics = std</tt> for STL
+      - <tt>namespace atomics = boost</tt> for \p boost.atomic
+      - <tt>namespace atomics = cds::cxx11_atomic for library-provided atomic implementation
 */
 namespace cxx11_atomic {
 }} // namespace cds::cxx11_atomic
