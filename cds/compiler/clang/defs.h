@@ -37,9 +37,6 @@
 // C++11 explicitly-defaulted function (= default) [std 8.4.2 [dcl.fct.def.default]]
 #define CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
 
-// Explicit conversion operators
-#define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
-
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 

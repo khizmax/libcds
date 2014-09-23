@@ -6,6 +6,7 @@
 /*
     Required C++11 features:
     - template alias [CDS_CXX11_TEMPLATE_ALIAS_SUPPORT]
+    - explicit conversion operator [CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT]
 */
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC

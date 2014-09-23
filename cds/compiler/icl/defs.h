@@ -106,11 +106,6 @@
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 
-// Explicit conversion operator
-//#if CDS_COMPILER_VERSION >= 1800
-//#   define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
-//#endif
-
 // *************************************************
 // Alignment macro
 

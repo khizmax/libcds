@@ -46,9 +46,6 @@
 // Lambda
 #define CDS_CXX11_LAMBDA_SUPPORT
 
-// Explicit conversion operator
-#define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
-
 // constexpr
 #define CDS_CONSTEXPR    constexpr
 
