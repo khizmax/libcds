@@ -615,7 +615,6 @@ namespace set {
             CPPUNIT_ASSERT( s.empty() );
             CPPUNIT_ASSERT( check_size( s, 0 ));
 
-#       ifdef CDS_EMPLACE_SUPPORT
             // emplace test
             CPPUNIT_ASSERT( s.emplace( 151 )) ;  // key = 151,  val = 151
             CPPUNIT_ASSERT( s.emplace( 174, 471 )) ;    // key = 174, val = 471
@@ -648,7 +647,6 @@ namespace set {
             s.clear();
             CPPUNIT_ASSERT( s.empty() );
             CPPUNIT_ASSERT( check_size( s, 0 ));
-#       endif
         }
 
 
@@ -734,7 +732,6 @@ namespace set {
                 CPPUNIT_ASSERT( it->key() == 50 );
                 CPPUNIT_ASSERT( it->val() == 25 );
 
-#       ifdef CDS_EMPLACE_SUPPORT
                 // emplace test
                 it = s.emplace( 151 ) ;  // key = 151,  val = 151
                 CPPUNIT_ASSERT( it != s.end() );
@@ -765,7 +762,6 @@ namespace set {
                 CPPUNIT_ASSERT( it != s.end() );
                 CPPUNIT_ASSERT( it->key() == 151 );
                 CPPUNIT_ASSERT( it->val() == 151 );
-#       endif
 
                 //s.clear();
                 //CPPUNIT_ASSERT( s.empty() );

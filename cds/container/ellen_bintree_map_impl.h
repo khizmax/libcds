@@ -327,13 +327,9 @@ namespace cds { namespace container {
             return false;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
-
-            @note This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
@@ -345,7 +341,6 @@ namespace cds { namespace container {
             }
             return false;
         }
-#   endif
 
         /// Ensures that the \p key exists in the map
         /**

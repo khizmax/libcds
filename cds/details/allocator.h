@@ -50,19 +50,12 @@ namespace cds {
                 return Construct( allocator_type::allocate(1), src... );
             }
 
-#       ifdef CDS_EMPLACE_SUPPORT
             /// Analogue of <tt>operator new T( std::forward<Args>(args)... )</tt> (move semantics)
-            /**
-                This function is available only for compiler that supports
-                variadic template and move semantics
-            */
             template <typename... Args>
             value_type * MoveNew( Args&&... args )
             {
                 return MoveConstruct( allocator_type::allocate(1), std::forward<Args>(args)... );
             }
-#       endif
-
 
             /// Analogue of operator new T[\p nCount ]
             value_type * NewArray( size_t nCount )
@@ -137,18 +130,12 @@ namespace cds {
                 return new( p ) value_type( src... );
             }
 
-#       ifdef CDS_EMPLACE_SUPPORT
             /// Analogue of placement <tt>operator new( p ) T( std::forward<Args>(args)... )</tt>
-            /**
-                This function is available only for compiler that supports
-                variadic template and move semantics
-            */
             template <typename... Args>
             value_type * MoveConstruct( void * p, Args&&... args )
             {
                 return new( p ) value_type( std::forward<Args>(args)... );
             }
-#       endif
 
             /// Rebinds allocator to other type \p Q instead of \p T
             template <typename Q>

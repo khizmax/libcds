@@ -61,7 +61,6 @@ namespace queue {
         template <class Queue>
         void test_emplace( Queue& q )
         {
-#   ifdef CDS_EMPLACE_SUPPORT
             int     it;
             for ( size_t i = 0; i < 3; ++i ) {
                 CPPUNIT_ASSERT( q.emplace( static_cast<int>( i * 42 )) );
@@ -71,7 +70,6 @@ namespace queue {
                 CPPUNIT_ASSERT( it == static_cast<int>( i * 42 ));
                 CPPUNIT_ASSERT( q.empty() );
             }
-#   endif
         }
 
         template <class Queue>
@@ -128,7 +126,6 @@ namespace queue {
         template <class Queue>
         void test_emplace_ic( Queue& q )
         {
-#   ifdef CDS_EMPLACE_SUPPORT
             int     it = 0;
             for ( size_t i = 0; i < 3; ++i ) {
                 CPPUNIT_ASSERT( q.emplace( (int) i * 10 ) );
@@ -139,7 +136,6 @@ namespace queue {
                 CPPUNIT_ASSERT( q.empty() );
                 CPPUNIT_ASSERT( q.size() == 0 );
             }
-#   endif
         }
 
     public:

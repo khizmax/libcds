@@ -158,7 +158,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                 return false;
             }
 
-#           ifdef CDS_EMPLACE_SUPPORT
             template <typename... Args>
             bool emplace( Args&&... args )
             {
@@ -170,7 +169,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
                 return false;
             }
-#           endif
 
             /// Ensures that the \p item exists in the container
             /**

@@ -372,7 +372,6 @@ namespace cds { namespace container {
             return base_class::insert( std::make_pair( key, mapped_type() ), func );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             \p key_type should be constructible from type \p K
@@ -380,16 +379,12 @@ namespace cds { namespace container {
             The function applies RCU lock internally.
 
             Returns \p true if inserting successful, \p false otherwise.
-
-            @note This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
             return base_class::emplace( std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)));
         }
-#   endif
 
         /// Ensures that the \p key exists in the map
         /**

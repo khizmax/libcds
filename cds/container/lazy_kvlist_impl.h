@@ -216,13 +216,11 @@ namespace cds { namespace container {
             return cxx_allocator().New( key, val );
         }
 
-#ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
         {
             return cxx_allocator().MoveNew( std::forward<Args>(args)... );
         }
-#endif
 
         static void free_node( node_type * pNode )
         {
@@ -504,20 +502,15 @@ namespace cds { namespace container {
             return insert_key_at( head(), key, func );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
-
-            @note This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         bool emplace( Args&&... args )
         {
             return emplace_at( head(), std::forward<Args>(args)... );
         }
-#   endif
 
         /// Ensures that the \p key exists in the list
         /**
@@ -846,13 +839,11 @@ namespace cds { namespace container {
             return false;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         bool emplace_at( head_type& refHead, Args&&... args )
         {
             return insert_node_at( refHead, alloc_node( std::forward<Args>(args)... ));
         }
-#   endif
 
         template <typename K, typename Compare>
         bool erase_at( head_type& refHead, K const& key, Compare cmp )

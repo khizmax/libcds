@@ -51,7 +51,6 @@ namespace cds { namespace container {
                     }
                 }
 
-#       ifdef CDS_EMPLACE_SUPPORT
                 template <typename Q, typename... Args>
                 node_type( unsigned int nHeight, atomic_ptr * pTower, Q&& q, Args&&... args )
                     : m_Value( std::forward<Q>(q), std::forward<Args>(args)... )
@@ -61,10 +60,8 @@ namespace cds { namespace container {
                         base_class::make_tower( nHeight, pTower );
                     }
                 }
-#       endif
 
-            private:
-                node_type() ;   // no default ctor
+                node_type() = delete;   // no default ctor
             };
 
             typedef skip_list::details::node_allocator< node_type, type_traits> node_allocator;
@@ -274,13 +271,9 @@ namespace cds { namespace container {
             return end();
         }
 
-#ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Return an iterator pointing to inserted item if success \ref end() otherwise
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         iterator emplace( Args&&... args )
@@ -291,7 +284,6 @@ namespace cds { namespace container {
             }
             return end();
         }
-#endif
 
         /// Ensures that the item \p val exists in the set
         /**

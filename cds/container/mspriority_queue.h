@@ -193,16 +193,12 @@ namespace cds { namespace container {
             return false;
         }
 
-#ifdef CDS_EMPLACE_SUPPORT
         /// Inserts a item into priority queue
         /**
             If the priority queue is full, the function returns \p false,
             no item has been added.
             Otherwise, the function inserts a new item created from \p args arguments
             into the heap and returns \p true.
-
-            The function is available only for compilers supporting variable template
-            and move semantics C++11 feature.
         */
         template <typename... Args>
         bool emplace( Args&&... args )
@@ -214,7 +210,6 @@ namespace cds { namespace container {
             }
             return false;
         }
-#endif
 
         /// Extracts item with high priority
         /**

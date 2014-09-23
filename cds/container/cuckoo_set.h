@@ -28,15 +28,10 @@ namespace cds { namespace container {
                     : m_val(v)
                 {}
 
-#           ifdef CDS_EMPLACE_SUPPORT
                 template <typename... Args>
                 node_type( Args&&... args )
                     : m_val( std::forward<Args>(args)...)
                 {}
-#           else
-                node_type()
-                {}
-#           endif
             };
 
             struct value_accessor {
@@ -401,13 +396,11 @@ namespace cds { namespace container {
         {
             return cxx_node_allocator().New( v );
         }
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
         {
             return cxx_node_allocator().MoveNew( std::forward<Args>(args)... );
         }
-#   endif
 
         static void free_node( node_type * pNode )
         {
@@ -623,13 +616,9 @@ namespace cds { namespace container {
             return false;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         bool emplace( Args&&... args )
@@ -641,7 +630,6 @@ namespace cds { namespace container {
             }
             return false;
         }
-#   endif
 
         /// Ensures that the \p val exists in the set
         /**

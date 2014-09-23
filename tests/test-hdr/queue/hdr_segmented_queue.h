@@ -146,7 +146,6 @@ namespace queue {
                 }
 
                 //emplace
-#       ifdef CDS_EMPLACE_SUPPORT
                 {
                     size_t nMajor = 0;
                     size_t nMinor = 0;
@@ -183,7 +182,6 @@ namespace queue {
                     CPPUNIT_CHECK( q.empty() );
                     CPPUNIT_CHECK( misc::check_size( q, 0 ));
                 }
-#       endif
 
                 // pop from empty queue
                 {

@@ -221,12 +221,7 @@ namespace cds { namespace container {
 #       endif
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Enqueues data of type \ref cds_container_VyukovMPMCCycleQueue_value_type "value_type" constructed with <tt>std::forward<Args>(args)...</tt>
-        /**
-            This function is available only for compiler that supports
-            variadic template and move semantics
-        */
         template <typename... Args>
         bool emplace( Args&&... args )
         {
@@ -257,9 +252,7 @@ namespace cds { namespace container {
             ++m_ItemCounter;
 
             return true;
-
         }
-#   endif
 
         /// Dequeues an item from queue
         /** @anchor cds_container_VyukovMPMCCycleQueue_dequeue_func

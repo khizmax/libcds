@@ -36,15 +36,10 @@ namespace cds { namespace container {
                     : m_val( std::make_pair( key_type(key), mapped_type(v) ))
                 {}
 
-#           ifdef CDS_EMPLACE_SUPPORT
                 template <typename K, typename... Args>
                 node_type( K&& key, Args&&... args )
                     : m_val( std::forward<K>(key), std::move( mapped_type(std::forward<Args>(args)...)) )
                 {}
-#           else
-                node_type()
-                {}
-#           endif
             };
 
             /*
@@ -356,13 +351,11 @@ namespace cds { namespace container {
         {
             return cxx_node_allocator().New( key );
         }
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename K, typename... Args>
         static node_type * alloc_node( K&& key, Args&&... args )
         {
             return cxx_node_allocator().MoveNew( std::forward<K>( key ), std::forward<Args>(args)... );
         }
-#   endif
 
         static void free_node( node_type * pNode )
         {
@@ -618,13 +611,9 @@ namespace cds { namespace container {
             return false;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
@@ -636,8 +625,6 @@ namespace cds { namespace container {
             }
             return false;
         }
-#   endif
-
 
         /// Ensures that the \p key exists in the map
         /**

@@ -360,15 +360,11 @@ namespace cds { namespace container {
             return bRet;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
             The function applies RCU lock internally.
-
-            @note This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         bool emplace( Args&&... args )
@@ -378,7 +374,6 @@ namespace cds { namespace container {
                 ++m_ItemCounter;
             return bRet;
         }
-#   endif
 
         /// Deletes \p key from the set
         /** \anchor cds_nonintrusive_MichealSet_rcu_erase_val

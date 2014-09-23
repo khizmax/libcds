@@ -197,13 +197,9 @@ namespace cds { namespace container {
             return end();
         }
 
-#ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Return an iterator pointing to inserted item if success \ref end() otherwise
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         iterator emplace( Args&&... args )
@@ -218,7 +214,6 @@ namespace cds { namespace container {
 
             return end();
         }
-#endif
 
         /// Ensures that the item \p val exists in the set
         /**

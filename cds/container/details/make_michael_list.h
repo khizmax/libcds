@@ -28,12 +28,10 @@ namespace cds { namespace container {
                     : m_Value(v)
                 {}
 
-#       ifdef CDS_EMPLACE_SUPPORT
                 template <typename... Args>
                 node_type( Args&&... args )
                     : m_Value( std::forward<Args>(args)... )
                 {}
-#       endif
             };
 
             typedef Traits original_type_traits;

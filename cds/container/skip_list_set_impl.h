@@ -394,13 +394,9 @@ namespace cds { namespace container {
             return bRes;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref cds_containewr_SkipListSet_value_type "value_type" constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
-
-            @note This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         bool emplace( Args&&... args )
@@ -412,7 +408,6 @@ namespace cds { namespace container {
             }
             return false;
         }
-#   endif
 
         /// Delete \p key from the set
         /** \anchor cds_nonintrusive_SkipListSet_erase_val

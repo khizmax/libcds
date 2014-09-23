@@ -110,19 +110,12 @@ namespace cds { namespace intrusive { namespace striped_set {
                 return res.second;
             }
 
-#       ifdef CDS_EMPLACE_SUPPORT
             template <typename Q, typename... Args>
             bool emplace( Q&& key, Args&&... args )
             {
-#           if CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION < 40800 || CDS_COMPILER == CDS_COMPILER_CLANG && !defined(__LIBCPP_VERSION)
-                // GCC < 4.8: std::map has no "emplace" member function. Emulate it
-                std::pair<iterator, bool> res = m_Map.insert( value_type( std::forward<Q>(key), mapped_type( std::forward<Args>(args)...)));
-#           else
                 std::pair<iterator, bool> res = m_Map.emplace( std::forward<Q>(key), std::move(mapped_type( std::forward<Args>(args)...)));
-#           endif
                 return res.second;
             }
-#       endif
 
             template <typename Q, typename Func>
             std::pair<bool, bool> ensure( const Q& key, Func func )

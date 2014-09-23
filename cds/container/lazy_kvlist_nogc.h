@@ -141,13 +141,11 @@ namespace cds { namespace container {
             return cxx_allocator().New( key, val );
         }
 
-#ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
         {
             return cxx_allocator().MoveNew( std::forward<Args>(args)... );
         }
-#endif
 
         static void free_node( node_type * pNode )
         {
@@ -461,20 +459,15 @@ namespace cds { namespace container {
             return std::make_pair( node_to_iterator( ret.first ), ret.second );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns an iterator pointed to inserted value, or \p end() if inserting is failed
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         iterator emplace( Args&&... args )
         {
             return node_to_iterator( emplace_at( head(), std::forward<Args>(args)... ));
         }
-#   endif
 
         /// Find the key \p key
         /** \anchor cds_nonintrusive_LazyKVList_nogc_find
@@ -587,13 +580,11 @@ namespace cds { namespace container {
             return std::make_pair( pItemFound, ret.second );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         node_type * emplace_at( head_type& refHead, Args&&... args )
         {
             return insert_node_at( refHead, alloc_node( std::forward<Args>(args)... ));
         }
-#endif
 
         template <typename K, typename Compare>
         node_type * find_at( head_type& refHead, const K& key, Compare cmp )

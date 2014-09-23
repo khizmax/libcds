@@ -326,7 +326,6 @@ namespace tree {
             CPPUNIT_ASSERT( m.empty() );
             CPPUNIT_ASSERT( check_size( m, 0 ));
 
-#       ifdef CDS_EMPLACE_SUPPORT
             // emplace test
             CPPUNIT_ASSERT( m.emplace(126) ) ; // key = 126, val = 0
             CPPUNIT_ASSERT( m.emplace(137, 731))    ;   // key = 137, val = 731
@@ -351,7 +350,6 @@ namespace tree {
             m.clear();
             CPPUNIT_ASSERT( m.empty() );
             CPPUNIT_ASSERT( check_size( m, 0 ));
-#       endif
         }
 
         template <typename Map>

@@ -238,13 +238,11 @@ namespace cds { namespace container {
         }
 
 
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
         {
             return cxx_node_allocator().MoveNew( std::forward<Args>(args)...);
         }
-#   endif
 
         static void free_node( node_type * pNode )
         {
@@ -537,22 +535,17 @@ namespace cds { namespace container {
             return false;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \p value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
             The function applies RCU lock internally.
-
-            @note This function is available only for compiler that supports
-            variadic template and move semantics.
         */
         template <typename... Args>
         bool emplace( Args&&... args )
         {
             return insert_node( alloc_node( std::forward<Args>(args)...));
         }
-#   endif
 
         /// Ensures that the \p item exists in the set
         /**

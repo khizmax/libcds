@@ -289,7 +289,6 @@ namespace map {
             CPPUNIT_ASSERT( it != m.end() );
             CPPUNIT_ASSERT( it->second.m_val == 120 * 5 );
 
-#       ifdef CDS_EMPLACE_SUPPORT
             // emplace test
             it = m.emplace( 151 ) ;  // key = 151,  val = 0
             CPPUNIT_ASSERT( it != m.end() );
@@ -323,7 +322,6 @@ namespace map {
             CPPUNIT_ASSERT( it != m.end() );
             CPPUNIT_ASSERT( it->first == 151 );
             CPPUNIT_ASSERT( it->second.m_val == 0 );
-#       endif
 
             m.clear();
             CPPUNIT_ASSERT( m.empty() );

@@ -54,11 +54,9 @@ namespace stack {
             CPPUNIT_ASSERT( stack.push(30));
             CPPUNIT_ASSERT( !stack.empty());
 
-#ifdef CDS_EMPLACE_SUPPORT
             CPPUNIT_ASSERT( stack.emplace(100));
             CPPUNIT_ASSERT( stack.pop(v));
             CPPUNIT_ASSERT( v == 100 );
-#endif
 
             stack.clear();
             CPPUNIT_ASSERT( stack.empty() );

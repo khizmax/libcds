@@ -442,7 +442,6 @@ namespace map {
             CPPUNIT_ASSERT( m.empty() );
             CPPUNIT_ASSERT( check_size( m, 0 ));
 
-#       ifdef CDS_EMPLACE_SUPPORT
             // emplace test
             CPPUNIT_ASSERT( m.emplace(126) ) ; // key = 126, val = 0
             CPPUNIT_ASSERT( m.emplace(137, 731))    ;   // key = 137, val = 731
@@ -467,8 +466,6 @@ namespace map {
             m.clear();
             CPPUNIT_ASSERT( m.empty() );
             CPPUNIT_ASSERT( check_size( m, 0 ));
-
-#       endif
         }
 
 
@@ -540,7 +537,6 @@ namespace map {
                 CPPUNIT_ASSERT( it->second.m_val == 120 * 5 );
                 CPPUNIT_ASSERT( m.find_with(120, less()) == m.find(120) );
 
-#           ifdef CDS_EMPLACE_SUPPORT
                 // emplace test
                 it = m.emplace( 151 ) ;  // key = 151,  val = 0
                 CPPUNIT_ASSERT( it != m.end() );
@@ -574,7 +570,6 @@ namespace map {
                 CPPUNIT_ASSERT( it != m.end() );
                 CPPUNIT_ASSERT( it->first == 151 );
                 CPPUNIT_ASSERT( it->second.m_val == 0 );
-#           endif
             }
 
             // iterator test

@@ -39,12 +39,10 @@ namespace cds { namespace container {
                     : m_Data( key, value )
                 {}
 
-#           ifdef CDS_EMPLACE_SUPPORT
                 template <typename Ky, typename... Args>
                 node_type( Ky&& key, Args&&... args )
                     : m_Data( std::forward<Ky>(key), std::move( value_type( std::forward<Args>(args)...)))
                 {}
-#           endif
             };
 
             typedef typename original_type_traits::allocator::template rebind<node_type>::other  allocator_type;

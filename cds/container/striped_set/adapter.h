@@ -270,14 +270,12 @@ namespace cds { namespace container {
                     return res.second;
                 }
 
-#           ifdef CDS_EMPLACE_SUPPORT
                 template <typename... Args>
                 bool emplace( Args&&... args )
                 {
                     std::pair<iterator, bool> res = m_Set.emplace( std::forward<Args>(args)... );
                     return res.second;
                 }
-#           endif
 
                 template <typename Q, typename Func>
                 std::pair<bool, bool> ensure( const Q& val, Func func )
@@ -409,14 +407,12 @@ namespace cds { namespace container {
                     return res.second;
                 }
 
-#           ifdef CDS_EMPLACE_SUPPORT
                 template <typename Q, typename... Args>
                 bool emplace( Q&& key, Args&&... args )
                 {
                     std::pair<iterator, bool> res = m_Map.emplace( std::forward<Q>(key), std::move( mapped_type( std::forward<Args>(args)...)));
                     return res.second;
                 }
-#           endif
 
                 template <typename Q, typename Func>
                 std::pair<bool, bool> ensure( const Q& val, Func func )

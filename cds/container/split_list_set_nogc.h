@@ -63,13 +63,11 @@ namespace cds { namespace container {
             return cxx_node_allocator().New( v );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
         {
             return cxx_node_allocator().MoveNew( std::forward<Args>(args)...);
         }
-#   endif
 
         static void free_node( node_type * pNode )
         {
@@ -269,20 +267,15 @@ namespace cds { namespace container {
             return insert_node( alloc_node( val ) );
         }
 
-#ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Return an iterator pointing to inserted item if success \ref end() otherwise
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         iterator emplace( Args&&... args )
         {
             return insert_node( alloc_node( std::forward<Args>(args)... ) );
         }
-#endif
 
         /// Ensures that the item \p val exists in the set
         /**

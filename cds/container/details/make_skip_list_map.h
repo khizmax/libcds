@@ -42,14 +42,12 @@ namespace cds { namespace container { namespace details {
                 init_tower( nHeight, pTower );
             }
 
-#       ifdef CDS_EMPLACE_SUPPORT
             template <typename Q, typename... Args>
             node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q&& key, Args&&... args )
                 : m_Value( std::forward<Q>(key), std::move( mapped_type( std::forward<Args>(args)... )))
             {
                 init_tower( nHeight, pTower );
             }
-#       endif
 
         private:
             node_type() ;   // no default ctor
@@ -82,7 +80,6 @@ namespace cds { namespace container { namespace details {
                         key, val
                     );
             }
-#       ifdef CDS_EMPLACE_SUPPORT
             template <typename... Args>
             node_type * New( unsigned int nHeight, Args&&... args )
             {
@@ -93,7 +90,6 @@ namespace cds { namespace container { namespace details {
                         std::forward<Args>(args)...
                     );
             }
-#       endif
         };
 
         struct node_deallocator {

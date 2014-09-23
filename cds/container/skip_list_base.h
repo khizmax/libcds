@@ -182,7 +182,6 @@ namespace cds { namespace container {
                         node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>(pMem + c_nNodeSize) : nullptr, v );
                 }
 
-#       ifdef CDS_EMPLACE_SUPPORT
                 template <typename... Args>
                 node_type * New( unsigned int nHeight, Args&&... args )
                 {
@@ -191,7 +190,6 @@ namespace cds { namespace container {
                         node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>(pMem + c_nNodeSize) : nullptr,
                         std::forward<Args>(args)... );
                 }
-#       endif
 
                 void Delete( node_type * p )
                 {

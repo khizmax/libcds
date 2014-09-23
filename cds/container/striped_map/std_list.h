@@ -157,7 +157,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                 return false;
             }
 
-#           ifdef CDS_EMPLACE_SUPPORT
             template <typename K, typename... Args>
             bool emplace( K&& key, Args&&... args )
             {
@@ -173,7 +172,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
                 return false;
             }
-#           endif
 
             template <typename Q, typename Func>
             std::pair<bool, bool> ensure( const Q& key, Func func )

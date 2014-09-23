@@ -371,15 +371,11 @@ namespace cds { namespace container {
             return end();
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             \p key_type should be constructible from type \p K
 
             Returns an iterator pointed to inserted value, or \p end() if inserting is failed
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename K, typename... Args>
         iterator emplace( K&& key, Args&&... args )
@@ -394,7 +390,6 @@ namespace cds { namespace container {
 
             return end();
         }
-#   endif
 
         /// Ensures that the key \p key exists in the map
         /**

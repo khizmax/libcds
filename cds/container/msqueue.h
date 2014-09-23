@@ -39,15 +39,11 @@ namespace cds { namespace container {
                 node_type( const value_type& val )
                     : m_value( val )
                 {}
-#           ifdef CDS_EMPLACE_SUPPORT
+
                 template <typename... Args>
                 node_type( Args&&... args )
                     : m_value( std::forward<Args>(args)...)
                 {}
-#           else
-                node_type()
-                {}
-#           endif
             };
 
             typedef typename options::allocator::template rebind<node_type>::other allocator_type;
@@ -148,13 +144,11 @@ namespace cds { namespace container {
         {
             return cxx_allocator().New( val );
         }
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         static node_type * alloc_node_move( Args&&... args )
         {
             return cxx_allocator().MoveNew( std::forward<Args>( args )... );
         }
-#   endif
         static void free_node( node_type * p )
         {
             node_deallocator()( p );
@@ -306,12 +300,7 @@ namespace cds { namespace container {
             return dequeue( dest, f );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Enqueues data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
-        /**
-            This function is available only for compiler that supports
-            variadic template and move semantics
-        */
         template <typename... Args>
         bool emplace( Args&&... args )
         {
@@ -322,7 +311,6 @@ namespace cds { namespace container {
             }
             return false;
         }
-#   endif
 
         /// Checks if the queue is empty
         bool empty() const

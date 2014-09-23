@@ -94,19 +94,12 @@ namespace cds { namespace intrusive { namespace striped_set {
                 return res.second;
             }
 
-#       ifdef CDS_EMPLACE_SUPPORT
             template <typename... Args>
             bool emplace( Args&&... args )
             {
-#           if CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION < 40800 || CDS_COMPILER == CDS_COMPILER_CLANG && !defined(__LIBCPP_VERSION)
-                // GCC < 4.8: std::set has no "emplace" member function. Emulate it
-                std::pair<iterator, bool> res = m_Set.insert( value_type( std::forward<Args>(args)...));
-#           else
                 std::pair<iterator, bool> res = m_Set.emplace( std::forward<Args>(args)... );
-#           endif
                 return res.second;
             }
-#       endif
 
             template <typename Q, typename Func>
             std::pair<bool, bool> ensure( const Q& val, Func func )

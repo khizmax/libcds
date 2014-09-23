@@ -635,13 +635,9 @@ namespace cds { namespace container {
             return bOk;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \p %value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
-
-            This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename... Args>
         bool emplace( Args&&... args )
@@ -662,7 +658,6 @@ namespace cds { namespace container {
                 base_class::resize();
             return bOk;
         }
-#   endif
 
         /// Ensures that the \p val exists in the set
         /**

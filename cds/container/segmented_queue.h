@@ -206,13 +206,11 @@ namespace cds { namespace container {
             return cxx_node_allocator().New();
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename... Args>
         static value_type * alloc_node_move( Args&&... args )
         {
             return cxx_node_allocator().MoveNew( std::forward<Args>( args )... );
         }
-#   endif
 
         struct dummy_disposer {
             void operator()( value_type * p )
@@ -289,12 +287,7 @@ namespace cds { namespace container {
             return enqueue( data, f );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Enqueues data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
-        /**
-            This function is available only for compiler that supports
-            variadic template and move semantics
-        */
         template <typename... Args>
         bool emplace( Args&&... args )
         {
@@ -305,7 +298,6 @@ namespace cds { namespace container {
             }
             return false;
         }
-#   endif
 
         /// Removes an element from first segment of the queue
         /**

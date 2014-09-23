@@ -36,7 +36,6 @@ namespace cds { namespace container { namespace details {
                 }
             }
 
-#       ifdef CDS_EMPLACE_SUPPORT
             template <typename Q, typename... Args>
             node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q&& q, Args&&... args )
                 : m_Value( std::forward<Q>(q), std::forward<Args>(args)... )
@@ -46,7 +45,6 @@ namespace cds { namespace container { namespace details {
                     base_class::make_tower( nHeight, pTower );
                 }
             }
-#       endif
 
         private:
             node_type() ;   // no default ctor

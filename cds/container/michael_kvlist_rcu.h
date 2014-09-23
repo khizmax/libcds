@@ -228,13 +228,11 @@ namespace cds { namespace container {
             return cxx_allocator().New( key, val );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename K, typename... Args>
         static node_type * alloc_node( K&& key, Args&&... args )
         {
             return cxx_allocator().MoveNew( std::forward<K>(key), std::forward<Args>(args)...);
         }
-#   endif
 
         static void free_node( node_type * pNode )
         {
@@ -516,22 +514,17 @@ namespace cds { namespace container {
             return ensure_at( head(), key, f );
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
             The function makes RCU lock internally.
-
-            @note This function is available only for compiler that supports
-            variadic template and move semantics
         */
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
             return emplace_at( head(), std::forward<K>(key), std::forward<Args>(args)... );
         }
-#   endif
 
         /// Deletes \p key from the list
         /** \anchor cds_nonintrusive_MichaelKVList_rcu_erase
@@ -844,13 +837,11 @@ namespace cds { namespace container {
             return false;
         }
 
-#   ifdef CDS_EMPLACE_SUPPORT
         template <typename K, typename... Args>
         bool emplace_at( head_type& refHead, K&& key, Args&&... args )
         {
             return insert_node_at( refHead, alloc_node( std::forward<K>(key), std::forward<Args>(args)... ));
         }
-#   endif
 
         template <typename K, typename Func>
         std::pair<bool, bool> ensure_at( head_type& refHead, const K& key, Func f )

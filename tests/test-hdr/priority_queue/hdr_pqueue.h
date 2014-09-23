@@ -140,7 +140,6 @@ namespace priority_queue {
 
             // Push test
             for ( value_type * p = pFirst; p < pLast; ++p ) {
-#ifdef CDS_EMPLACE_SUPPORT
                 switch ( pq.size() & 3 ) {
                     case 1:
                         CPPUNIT_ASSERT( pq.emplace( p->k, p->v ));
@@ -151,9 +150,6 @@ namespace priority_queue {
                     default:
                         CPPUNIT_ASSERT( pq.push( *p ));
                 }
-#else
-                CPPUNIT_ASSERT( pq.push( *p ));
-#endif
                 CPPUNIT_ASSERT( !pq.empty() );
                 CPPUNIT_ASSERT( pq.size() == ++nSize );
             }

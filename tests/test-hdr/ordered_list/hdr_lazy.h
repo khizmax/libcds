@@ -363,7 +363,6 @@ namespace ordlist {
             l.clear();
             CPPUNIT_ASSERT( l.empty() );
 
-#ifdef CDS_EMPLACE_SUPPORT
             {
                 int i;
                 // insert test
@@ -385,7 +384,6 @@ namespace ordlist {
                 l.clear();
                 CPPUNIT_ASSERT( l.empty() );
             }
-#endif
 
             // Iterator test
             {
@@ -647,7 +645,6 @@ namespace ordlist {
             l.clear();
             CPPUNIT_ASSERT( l.empty() );
 
-#ifdef CDS_EMPLACE_SUPPORT
             // insert test
             CPPUNIT_ASSERT( l.emplace( 501 ) != l.end());
             CPPUNIT_ASSERT( l.emplace( 251, 152 ) != l.end());
@@ -674,8 +671,6 @@ namespace ordlist {
 
             l.clear();
             CPPUNIT_ASSERT( l.empty() );
-#endif
-
         }
 
         void HP_cmp();
