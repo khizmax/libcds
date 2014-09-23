@@ -39,21 +39,11 @@ namespace cds { namespace details {
         }
     };
 
-#ifdef CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
     template <typename ArgType, typename Predicate, typename Accessor>
     using predicate_wrapper = binary_functor_wrapper< bool, Predicate, ArgType, Accessor>;
 
     template <typename ArgType, typename Compare, typename Accessor>
     using compare_wrapper = binary_functor_wrapper< int, Compare, ArgType, Accessor>;
-#else
-    template <typename ArgType, typename Predicate, typename Accessor>
-    struct predicate_wrapper: public binary_functor_wrapper< bool, Predicate, ArgType, Accessor>
-    {};
-
-    template <typename ArgType, typename Compare, typename Accessor>
-    struct compare_wrapper: public binary_functor_wrapper< int, Compare, ArgType, Accessor >
-    {};
-#endif
 
 }} // namespace cds::details
 

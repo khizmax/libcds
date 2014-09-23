@@ -286,29 +286,7 @@ namespace cds {
             class gc_common
             {
             public:
-#       ifdef CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
                 template <typename MarkedPtr> using atomic_marked_ptr = atomics::atomic<MarkedPtr>;
-#       else
-                template <typename MarkedPtr>
-                class atomic_marked_ptr: public atomics::atomic<MarkedPtr>
-                {
-                    typedef atomics::atomic<MarkedPtr> base_class;
-                public:
-#           ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
-                    atomic_marked_ptr() CDS_NOEXCEPT_DEFAULTED_( noexcept(base_class()) ) = default;
-#           else
-                    atomic_marked_ptr() CDS_NOEXCEPT_( noexcept(base_class()) )
-                        : base_class()
-                    {}
-#           endif
-                    explicit CDS_CONSTEXPR atomic_marked_ptr(MarkedPtr val) CDS_NOEXCEPT_( noexcept(base_class( val )) )
-                        : base_class( val )
-                    {}
-                    explicit CDS_CONSTEXPR atomic_marked_ptr(typename MarkedPtr::value_type * p) CDS_NOEXCEPT_( noexcept(base_class( p )) )
-                        : base_class( p )
-                    {}
-                };
-#       endif
             };
             //@endcond
 

@@ -57,16 +57,11 @@
 #define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
 #define CDS_CONSTEXPR_CONST constexpr const
 
-// C++11 template alias
-#define CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
-
 // C++11 thread_local keyword
 #define CDS_CXX11_THREAD_LOCAL_SUPPORT
 
 // Full SFINAE support
-#if CDS_COMPILER_VERSION >= 40700
-#   define CDS_CXX11_SFINAE
-#endif
+#define CDS_CXX11_SFINAE
 
 // *************************************************
 // Alignment macro

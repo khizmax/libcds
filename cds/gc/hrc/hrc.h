@@ -184,13 +184,7 @@ namespace cds { namespace gc {
             /**
                 This is wrapper for cds::gc::hzp::details::HPArray class
             */
-#ifdef CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
             template <size_t Count> using HPArray = gc::hzp::details::HPArrayT<ContainerNode *, Count >;
-#else
-            template <size_t Count>
-            class HPArray: public gc::hzp::details::HPArrayT<ContainerNode *, Count>
-            {};
-#endif
 
             /// HP record of the thread
             /**

@@ -153,16 +153,8 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-
-#if defined(CDS_CXX11_TEMPLATE_ALIAS_SUPPORT) && !defined(CDS_DOXYGEN_INVOKED)
-        template < typename Node, opt::link_check_type LinkType > using get_link_checker = single_link::get_link_checker< Node, LinkType >;
-#else
         /// Metafunction for selecting appropriate link checking policy
-        template < typename Node, opt::link_check_type LinkType >
-        struct get_link_checker: public single_link::get_link_checker< Node, LinkType >
-        {};
-
-#endif
+        template < typename Node, opt::link_check_type LinkType > using get_link_checker = single_link::get_link_checker< Node, LinkType >;
 
         /// Basket queue internal statistics. May be used for debugging or profiling
         /**

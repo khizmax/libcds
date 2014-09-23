@@ -40,9 +40,6 @@
 // Explicit conversion operators
 #define CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT
 
-// C++11 template alias
-#define CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
-
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 

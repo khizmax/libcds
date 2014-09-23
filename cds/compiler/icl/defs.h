@@ -103,9 +103,6 @@
 // Variadic template support (ICL 12.1+)
 #define CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT     1
 
-// C++11 template alias
-#define CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
-
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 

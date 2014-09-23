@@ -3,6 +3,11 @@
 #ifndef __CDS_ARH_COMPILER_DEFS_H
 #define __CDS_ARH_COMPILER_DEFS_H
 
+/*
+    Required C++11 features:
+    - template alias [CDS_CXX11_TEMPLATE_ALIAS_SUPPORT]
+*/
+
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   include <cds/compiler/vc/defs.h>
 #elif CDS_COMPILER == CDS_COMPILER_GCC

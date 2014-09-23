@@ -176,13 +176,7 @@ namespace cds {
         };
 
         /// Specialization of HPArrayT class for hazard_pointer type
-#ifdef CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
         template <size_t Count> using HPArray = HPArrayT<hazard_pointer, Count >;
-#else
-        template <size_t Count>
-        class HPArray: public HPArrayT<hazard_pointer, Count>
-        {};
-#endif
 
         /// Allocator of hazard pointers for the thread
         /**

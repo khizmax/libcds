@@ -46,14 +46,8 @@ namespace cds { namespace container {
                 }
             };
 
-#ifdef CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
             template <typename Pred, typename ReturnValue>
             using predicate_wrapper = cds::details::binary_functor_wrapper< ReturnValue, Pred, node_type, value_accessor >;
-#else
-            template <typename Pred, typename ReturnValue>
-            struct predicate_wrapper: public cds::details::binary_functor_wrapper< ReturnValue, Pred, node_type, value_accessor >
-            {};
-#endif
 
             struct intrusive_traits: public original_type_traits
             {

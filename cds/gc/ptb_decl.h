@@ -30,7 +30,6 @@ namespace cds { namespace gc {
         /// Native guarded pointer type
         typedef void * guarded_pointer;
 
-#ifdef CDS_CXX11_TEMPLATE_ALIAS_SUPPORT
         /// Atomic reference
         /**
             @headerfile cds/gc/ptb.h
@@ -48,61 +47,6 @@ namespace cds { namespace gc {
             @headerfile cds/gc/ptb.h
         */
         template <typename MarkedPtr> using atomic_marked_ptr = atomics::atomic<MarkedPtr>;
-#else
-        template <typename T>
-        class atomic_ref: public atomics::atomic<T *>
-        {
-            typedef atomics::atomic<T *> base_class;
-        public:
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
-            atomic_ref() = default;
-#   else
-            atomic_ref()
-                : base_class()
-            {}
-#   endif
-            explicit CDS_CONSTEXPR atomic_ref(T * p) CDS_NOEXCEPT
-                : base_class( p )
-            {}
-        };
-
-        template <typename T>
-        class atomic_type: public atomics::atomic<T>
-        {
-            typedef atomics::atomic<T> base_class;
-        public:
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
-            atomic_type() = default;
-#   else
-            atomic_type() CDS_NOEXCEPT
-                : base_class()
-            {}
-#   endif
-            explicit CDS_CONSTEXPR atomic_type(T const & v) CDS_NOEXCEPT
-                : base_class( v )
-            {}
-        };
-
-        template <typename MarkedPtr>
-        class atomic_marked_ptr: public atomics::atomic<MarkedPtr>
-        {
-            typedef atomics::atomic<MarkedPtr> base_class;
-        public:
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
-            atomic_marked_ptr() = default;
-#   else
-            atomic_marked_ptr()
-                : base_class()
-            {}
-#   endif
-            explicit CDS_CONSTEXPR atomic_marked_ptr(MarkedPtr val) CDS_NOEXCEPT
-                : base_class( val )
-            {}
-            explicit CDS_CONSTEXPR atomic_marked_ptr(typename MarkedPtr::value_type * p) CDS_NOEXCEPT
-                : base_class( p )
-            {}
-        };
-#endif
 
         /// Thread GC implementation for internal usage
         typedef ptb::ThreadGC   thread_gc_impl;
