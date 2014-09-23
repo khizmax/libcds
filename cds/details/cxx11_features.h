@@ -15,12 +15,5 @@
 #   define CDS_DELETE_SPECIFIER
 #endif
 
-// =default function specifier
-#ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
-#   define CDS_DEFAULT_SPECIFIER    =default
-#else
-#   define CDS_DEFAULT_SPECIFIER
-#endif
-
 //@endcond
 #endif // #ifndef __CDS_DETAILS_CXX11_FEATURES_H

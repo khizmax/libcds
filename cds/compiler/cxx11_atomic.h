@@ -1284,12 +1284,7 @@ namespace cds { namespace cxx11_atomic {
             atomic_noncopyable& operator=(const atomic_noncopyable&);
             //atomic_noncopyable& operator=(const atomic_noncopyable&) volatile;
         protected:
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             atomic_noncopyable() = default;
-#   else
-            atomic_noncopyable()
-            {}
-#   endif
         };
 #endif
 
@@ -1425,12 +1420,7 @@ namespace cds { namespace cxx11_atomic {
                 return atomic_ops::atomic_fetch_xor_explicit( &m_val, val, order );
             }
 
-#ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             atomic_integral() = default;
-#else
-            atomic_integral() CDS_NOEXCEPT
-            {}
-#endif
             CDS_CONSTEXPR atomic_integral(T val) CDS_NOEXCEPT
                 : m_val(val)
                 {}
@@ -1630,12 +1620,7 @@ namespace cds { namespace cxx11_atomic {
             return compare_exchange_strong( expected, desired, success_order, memory_order_relaxed );
         }
 
-#ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
         atomic() = default;
-#else
-        atomic()
-        {}
-#endif
         CDS_CONSTEXPR atomic(T val)
             : m_data( val )
             {}
@@ -1658,7 +1643,7 @@ namespace cds { namespace cxx11_atomic {
         }
     };
 
-#if defined(CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT) && defined(CDS_CXX11_DELETE_DEFINITION_SUPPORT)
+#if defined(CDS_CXX11_DELETE_DEFINITION_SUPPORT)
 #   define CDS_DECLARE_ATOMIC_INTEGRAL( _type ) \
     template <> \
     struct atomic<_type>: public details::atomic_integral<_type> \
@@ -1815,12 +1800,7 @@ namespace cds { namespace cxx11_atomic {
             return atomic_ops::atomic_fetch_sub_explicit( &m_ptr, offset, order );
         }
 
-#ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
         atomic() = default;
-#else
-        atomic() CDS_NOEXCEPT
-        {}
-#endif
         CDS_CONSTEXPR atomic(T * val) CDS_NOEXCEPT
             : m_ptr( val )
         {}
@@ -2201,14 +2181,7 @@ namespace cds { namespace cxx11_atomic {
             return platform::atomic_flag_tas( &m_Flag, order );
         }
 
-#ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
         atomic_flag() = default;
-#elif CDS_COMPILER != CDS_COMPILER_MSVC
-        // MS VC generate error C2552 "non-aggregates cannot be initialized with initializer list"
-        // when atomic_flag initializes with ATOMIC_FLAG_INIT
-        atomic_flag()
-        {}
-#endif
 
 #ifdef CDS_CXX11_DELETE_DEFINITION_SUPPORT
         atomic_flag(const atomic_flag&) = delete;

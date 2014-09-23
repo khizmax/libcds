@@ -36,9 +36,6 @@
 // C++11 delete definition ( function declaration = delete)
 #define CDS_CXX11_DELETE_DEFINITION_SUPPORT
 
-// C++11 explicitly-defaulted function (= default) [std 8.4.2 [dcl.fct.def.default]]
-#define CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
-
 // Lambda
 #define CDS_CXX11_LAMBDA_SUPPORT
 

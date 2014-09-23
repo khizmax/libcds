@@ -1397,7 +1397,6 @@ PREDEFINED             = CDS_BUILD_BITS=32 \
                          cds_std=std \
                          CDS_URCU_SIGNAL_HANDLING_ENABLED \
                          CDS_CXX11_DELETE_DEFINITION_SUPPORT \
-                         CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT \
                          CDS_CXX11_INLINE_NAMESPACE_SUPPORT \
                          CDS_CXX11_INLINE_NAMESPACE=inline \
                          CDS_CXX11_DECLTYPE_SUPPORT \

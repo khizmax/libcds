@@ -52,7 +52,6 @@ namespace cds {
                 *this |= nMask;
             }
 
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             /// Copy constructor
             marked_ptr( marked_ptr const& src ) CDS_NOEXCEPT_DEFAULTED = default;
             /// Copy-assignment operator
@@ -63,19 +62,6 @@ namespace cds {
             marked_ptr& operator =( marked_ptr&& p ) CDS_NOEXCEPT_DEFAULTED = default;
             //@endcond
 #       endif
-#   else
-            /// Copy constructor
-            marked_ptr( marked_ptr const& src ) CDS_NOEXCEPT
-                : m_ptr( src.m_ptr )
-            {}
-
-            /// Copy-assignment operator
-            marked_ptr& operator =( marked_ptr const& p ) CDS_NOEXCEPT
-            {
-                m_ptr = p.m_ptr;
-                return *this;
-            }
-#   endif
 
             //TODO: make move ctor
 

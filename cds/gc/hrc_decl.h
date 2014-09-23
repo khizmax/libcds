@@ -145,13 +145,7 @@ namespace cds { namespace gc {
             //@endcond
         public:
             //@cond
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             atomic_ref() = default;
-#   else
-            atomic_ref() CDS_NOEXCEPT
-                : base_class()
-            {}
-#   endif
             explicit CDS_CONSTEXPR atomic_ref(T * p) CDS_NOEXCEPT
                 : base_class( p )
             {}

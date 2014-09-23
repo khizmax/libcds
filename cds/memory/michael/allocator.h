@@ -967,7 +967,6 @@ namespace michael {
                 , nCredits(0)
             {}
 
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             active_tag( active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
             ~active_tag() CDS_NOEXCEPT_DEFAULTED = default;
             active_tag& operator=(active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
@@ -975,7 +974,6 @@ namespace michael {
             active_tag( active_tag&& ) CDS_NOEXCEPT_DEFAULTED = default;
             active_tag& operator=(active_tag&&) CDS_NOEXCEPT_DEFAULTED = default;
 #       endif
-#   endif
 
             /// Returns pointer to superblock descriptor
             superblock_desc * ptr() const
@@ -1026,7 +1024,6 @@ namespace michael {
             active_tag() CDS_NOEXCEPT
                 : pDesc( nullptr )
             {}
-#   ifdef CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
             // Clang 3.1: error: first argument to atomic operation must be a pointer to a trivially-copyable type
             //active_tag() CDS_NOEXCEPT_DEFAULTED = default;
             active_tag( active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
@@ -1036,7 +1033,6 @@ namespace michael {
             active_tag( active_tag&& ) CDS_NOEXCEPT_DEFAULTED = default;
             active_tag& operator=(active_tag&&) CDS_NOEXCEPT_DEFAULTED = default;
 #       endif
-#   endif
             superblock_desc *    ptr() const
             {
                 return pDesc.ptr();
