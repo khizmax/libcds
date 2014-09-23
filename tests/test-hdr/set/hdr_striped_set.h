@@ -510,15 +510,6 @@ namespace set {
 #       endif
         }
 
-        //*******************************************
-        // If erase_with && find_with are supported
-#ifndef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
-        template <class Set>
-        void test_striped2()
-        {
-            test_striped<Set>();
-        }
-#else
         template <class Set>
         void test_striped2()
         {
@@ -712,7 +703,6 @@ namespace set {
             CPPUNIT_ASSERT( check_size( s, 0 ));
 #       endif
         }
-#endif // CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
 
         void Striped_list();
         void Striped_vector();

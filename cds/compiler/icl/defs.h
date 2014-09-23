@@ -91,9 +91,6 @@
 #define CDS_RVALUE_SUPPORT
 #define CDS_MOVE_SEMANTICS_SUPPORT
 
-// Default template arguments for function templates (ICL 12.1+)
-#define CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
-
 // C++11 delete definition ( function declaration = delete)
 #define CDS_CXX11_DELETE_DEFINITION_SUPPORT
 

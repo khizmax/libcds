@@ -732,7 +732,6 @@ namespace cds { namespace container {
 #       endif
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Deletes the item from the set using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_StripedSet_erase "erase(Q const&)"
@@ -754,7 +753,6 @@ namespace cds { namespace container {
             return erase_with( key, pred, empty_erase_functor() );
 #       endif
         }
-#endif
 
         /// Delete \p key from the set
         /** \anchor cds_nonintrusive_StripedSet_erase_func
@@ -789,7 +787,6 @@ namespace cds { namespace container {
             return bOk;
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Deletes the item from the set using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_StripedSet_erase_func "erase(Q const&, Func)"
@@ -818,7 +815,6 @@ namespace cds { namespace container {
                 --base_class::m_ItemCounter;
             return bOk;
         }
-#endif
 
         /// Find the key \p val
         /** \anchor cds_nonintrusive_StripedSet_find_func
@@ -849,7 +845,6 @@ namespace cds { namespace container {
             return base_class::find( val, f );
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Find the key \p val using \p pred predicate
         /**
             The function is an analog of \ref cds_nonintrusive_StripedSet_find_func "find(Q&, Func)"
@@ -867,7 +862,6 @@ namespace cds { namespace container {
         {
             return base_class::find_with( val, pred, f );
         }
-#endif
 
         /// Find the key \p val
         /** \anchor cds_nonintrusive_StripedSet_find_cfunc
@@ -896,7 +890,6 @@ namespace cds { namespace container {
             return base_class::find( val, f );
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Find the key \p val using \p pred predicate
         /**
             The function is an analog of \ref cds_nonintrusive_StripedSet_find_cfunc "find(Q const&, Func)"
@@ -914,7 +907,6 @@ namespace cds { namespace container {
         {
             return base_class::find_with( val, pred, f );
         }
-#endif
 
         /// Find the key \p val
         /** \anchor cds_nonintrusive_StripedSet_find_val
@@ -931,7 +923,6 @@ namespace cds { namespace container {
             return base_class::find( val );
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Find the key \p val using \p pred predicate
         /**
             The function is an analog of \ref cds_nonintrusive_StripedSet_find_val "find(Q const&)"
@@ -949,7 +940,6 @@ namespace cds { namespace container {
         {
             return base_class::find_with( val, pred );
         }
-#endif
 
         /// Clears the set
         /**

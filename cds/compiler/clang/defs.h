@@ -25,9 +25,6 @@
 
 #define alignof __alignof__
 
-// Default template arguments for function templates
-#define CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
-
 // C++11 delete definition ( function declaration = delete)
 #define CDS_CXX11_DELETE_DEFINITION_SUPPORT
 

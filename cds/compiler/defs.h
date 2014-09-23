@@ -8,6 +8,7 @@
     - variadic template [CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT]
     - template alias [CDS_CXX11_TEMPLATE_ALIAS_SUPPORT]
     - explicit conversion operator [CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT]
+    - default template argument for function [CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT]
 */
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC

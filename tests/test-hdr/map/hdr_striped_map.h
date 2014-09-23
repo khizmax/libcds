@@ -533,13 +533,6 @@ namespace map {
             CPPUNIT_MSG( "   Duration=" << timer.duration() );
         }
 
-#ifndef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
-        template <class Map>
-        void test_striped2()
-        {
-            test_striped<Map>();
-        }
-#else
         template <class Map>
         void test_striped2()
         {
@@ -549,7 +542,6 @@ namespace map {
 
             test_striped_with2(m);
         }
-#endif
 
         void Striped_hashmap();
         void Striped_list();

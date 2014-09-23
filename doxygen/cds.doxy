@@ -1396,14 +1396,10 @@ PREDEFINED             = CDS_BUILD_BITS=32 \
                          CDS_DOXYGEN_INVOKED \
                          cds_std=std \
                          CDS_URCU_SIGNAL_HANDLING_ENABLED \
-                         CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT \
-                         CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT \
                          CDS_CXX11_DELETE_DEFINITION_SUPPORT \
                          CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT \
                          CDS_CXX11_INLINE_NAMESPACE_SUPPORT \
                          CDS_CXX11_INLINE_NAMESPACE=inline \
-                         CDS_CXX11_TEMPLATE_ALIAS_SUPPORT \
-                         CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT \
                          CDS_CXX11_DECLTYPE_SUPPORT \
                          CDS_RVALUE_SUPPORT \
                          CDS_MOVE_SEMANTICS_SUPPORT \

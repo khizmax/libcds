@@ -788,7 +788,6 @@ namespace cds { namespace container {
             return base_class::erase( key );
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Deletes the item from the map using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_StripedMap_erase "erase(K const&)"
@@ -810,7 +809,6 @@ namespace cds { namespace container {
             return erase_with( key, pred, typename base_class::empty_erase_functor() );
 #       endif
         }
-#endif
 
         /// Delete \p key from the map
         /** \anchor cds_nonintrusive_StripedMap_erase_func
@@ -836,7 +834,6 @@ namespace cds { namespace container {
             return base_class::erase( key, f );
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Deletes the item from the map using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_StripedMap_erase_func "erase(K const&, Func)"
@@ -854,7 +851,6 @@ namespace cds { namespace container {
         {
             return base_class::erase_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >(), f );
         }
-#endif
 
         /// Find the key \p key
         /** \anchor cds_nonintrusive_StripedMap_find_func
@@ -885,7 +881,6 @@ namespace cds { namespace container {
 #       endif
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Find the key \p val using \p pred predicate
         /**
             The function is an analog of \ref cds_nonintrusive_StripedMap_find_func "find(K const&, Func)"
@@ -909,7 +904,6 @@ namespace cds { namespace container {
             return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >(), cds::ref(fw) );
 #       endif
         }
-#endif
 
         /// Find the key \p key
         /** \anchor cds_nonintrusive_StripedMap_find_val
@@ -923,7 +917,6 @@ namespace cds { namespace container {
             return base_class::find( key );
         }
 
-#ifdef CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
         /// Find the key \p val using \p pred predicate
         /**
             The function is an analog of \ref cds_nonintrusive_StripedMap_find_val "find(K const&)"
@@ -941,7 +934,6 @@ namespace cds { namespace container {
         {
             return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >() );
         }
-#endif
 
         /// Clears the map
         void clear()
