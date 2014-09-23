@@ -50,11 +50,9 @@ namespace tree {
                 : nVal( v.nVal )
             {}
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
             value_type( value_type&& v )
                 : nVal( v.nVal )
             {}
-#endif
 
             value_type& operator=( int n )
             {

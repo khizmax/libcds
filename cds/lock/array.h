@@ -66,12 +66,10 @@ namespace cds { namespace lock {
             : m_nMask( src.m_nMask )
         {}
 
-#   ifdef CDS_RVALUE_SUPPORT
         /// Move constructor
         pow2_select_policy( pow2_select_policy&& src )
             : m_nMask( src.m_nMask )
         {}
-#   endif
 
         /// Returns <tt>nWhat & (nPow2 - 1)</tt>
         size_t operator()( size_t nWhat, size_t ) const
@@ -181,7 +179,6 @@ namespace cds { namespace lock {
             m_arrLocks = create_lock_array( m_nCapacity );
         }
 
-#   ifdef CDS_RVALUE_SUPPORT
         /// Constructs array of lock and move cell selection policy
         /**
             Allocates the array and initializes all locks as unlocked.
@@ -196,7 +193,6 @@ namespace cds { namespace lock {
         {
             m_arrLocks = create_lock_array( m_nCapacity );
         }
-#   endif
 
         /// Destructs array of locks and frees used memory
         ~array()

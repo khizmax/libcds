@@ -601,7 +601,6 @@ namespace cds { namespace container {
         ) : base_class( nCapacity, resizingPolicy )
         {}
 
-#ifdef CDS_RVALUE_SUPPORT
         /// Ctor with resizing policy (move semantics)
         /**
             This constructor initializes m_ResizingPolicy member moving \p resizingPolicy parameter
@@ -612,7 +611,6 @@ namespace cds { namespace container {
             ,resizing_policy&& resizingPolicy  ///< Resizing policy
             ) : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
         {}
-#endif
 
         /// Destructor destroys internal data
         ~StripedMap()

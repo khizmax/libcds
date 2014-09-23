@@ -348,9 +348,7 @@ namespace cds {}
 #   define CDS_NOEXCEPT_DEFAULTED_(expr)  CDS_NOEXCEPT_( expr )
 #endif
 
-#if defined(CDS_MOVE_SEMANTICS_SUPPORT)
-#   define CDS_EMPLACE_SUPPORT
-#endif
+#define CDS_EMPLACE_SUPPORT
 
 #ifdef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 #   define CDS_CXX11_INLINE_NAMESPACE   inline

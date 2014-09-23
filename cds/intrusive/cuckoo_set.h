@@ -2327,7 +2327,6 @@ namespace cds { namespace intrusive {
             allocate_bucket_tables( nInitialSize ? cds::beans::ceil2( nInitialSize ) : c_nDefaultInitialSize );
         }
 
-#   ifdef CDS_MOVE_SEMANTICS_SUPPORT
         /// Constructs the set object with given hash functor tuple (move semantics)
         /**
             The probe set size and threshold are set as default, see CuckooSet()
@@ -2367,7 +2366,6 @@ namespace cds { namespace intrusive {
 
             allocate_bucket_tables( nInitialSize ? cds::beans::ceil2( nInitialSize ) : c_nDefaultInitialSize );
         }
-#   endif   // ifdef CDS_MOVE_SEMANTICS_SUPPORT
 
         /// Destructor
         ~CuckooSet()

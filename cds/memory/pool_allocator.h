@@ -102,19 +102,12 @@ namespace cds { namespace memory {
             return size_t(-1) / sizeof(value_type);
         }
 
-#   if defined(CDS_MOVE_SEMANTICS_SUPPORT)
         template <class U, class... Args>
         void construct(U* p, Args&&... args)
         {
             new((void *)p) U( std::forward<Args>(args)...);
         }
-#   else
-        template <typename Arg>
-        void construct(pointer p, Arg const& val )
-        {
-            new((void *) p) value_type(val);
-        }
-#   endif
+
         template <class U>
         void destroy(U* p)
         {

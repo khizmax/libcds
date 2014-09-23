@@ -167,7 +167,6 @@ namespace cds { namespace container {
             return true;
         }
 
-#   ifdef CDS_MOVE_SEMANTICS_SUPPORT
         /// Inserts a new element in the priority queue (move semantics)
         /**
             The function always returns \p true
@@ -186,7 +185,6 @@ namespace cds { namespace container {
             m_FlatCombining.internal_statistics().onPushMove();
             return true;
         }
-#   endif
 
         /// Removes the top element from priority queue
         /**
@@ -262,12 +260,10 @@ namespace cds { namespace container {
                 assert( pRec->pValPush );
                 m_PQueue.push( *(pRec->pValPush) );
                 break;
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             case op_push_move:
                 assert( pRec->pValPush );
                 m_PQueue.push( std::move( *(pRec->pValPush )) );
                 break;
-#       endif
             case op_pop:
                 assert( pRec->pValPop );
                 pRec->bEmpty = m_PQueue.empty();

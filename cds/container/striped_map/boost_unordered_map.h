@@ -22,13 +22,11 @@ namespace cds { namespace container {
             : public details::boost_map_copy_policies<boost::unordered_map< Key, T, Traits, Alloc > >::swap_item_policy
         {};
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
         // Move policy for map
         template <typename Key, typename T, typename Traits, typename Alloc>
         struct move_item_policy< boost::unordered_map< Key, T, Traits, Alloc > >
             : public details::boost_map_copy_policies<boost::unordered_map< Key, T, Traits, Alloc > >::move_item_policy
         {};
-#endif
     }   // namespace striped_set
 }} // namespace cds::container
 

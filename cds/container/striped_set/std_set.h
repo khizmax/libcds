@@ -27,7 +27,6 @@ namespace cds { namespace container {
         struct swap_item_policy< std::set< T, Traits, Alloc > >: public copy_item_policy< std::set< T, Traits, Alloc > >
         {};
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
         // Move policy for std::set
         template <typename T, typename Traits, typename Alloc>
         struct move_item_policy< std::set< T, Traits, Alloc > >
@@ -40,7 +39,6 @@ namespace cds { namespace container {
                 set.insert( std::move( *itWhat ) );
             }
         };
-#endif
     }   // namespace striped_set
 }} // namespace cds::container
 
@@ -76,9 +74,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 >::copy_policy
                 , cds::container::striped_set::copy_item, cds::container::striped_set::copy_item_policy<container_type>
                 , cds::container::striped_set::swap_item, cds::container::striped_set::swap_item_policy<container_type>
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
                 , cds::container::striped_set::move_item, cds::container::striped_set::move_item_policy<container_type>
-#endif
             >::type copy_item;
             //@endcond
 

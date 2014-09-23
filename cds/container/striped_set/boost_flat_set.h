@@ -31,13 +31,11 @@ namespace cds { namespace container {
             : public details::boost_set_copy_policies< boost::container::flat_set< T, Traits, Alloc > >::swap_item_policy
         {};
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
         // Move policy for boost::container::flat_set
         template <typename T, typename Traits, typename Alloc>
         struct move_item_policy< boost::container::flat_set< T, Traits, Alloc > >
             : public details::boost_set_copy_policies< boost::container::flat_set< T, Traits, Alloc > >::move_item_policy
         {};
-#endif
 
     }   // namespace striped_set
 }} // namespace cds::container

@@ -19,13 +19,9 @@ namespace cds { namespace container {
         template <typename Container>
         struct swap_item_policy;
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
         struct move_item    ;   // move_item_policy tag
         template <typename Container>
         struct move_item_policy;
-#else
-        typedef copy_item move_item ;   // if move semantics is not supported, move_item is synonym for copy_item
-#endif
         //@endcond
 
 #ifdef CDS_DOXYGEN_INVOKED
@@ -215,7 +211,6 @@ namespace cds { namespace container {
 
                 typedef copy_item_policy swap_item_policy;
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
               struct move_item_policy
                 {
                     typedef Set set_type;
@@ -226,7 +221,6 @@ namespace cds { namespace container {
                         set.insert( std::move( *itWhat ) );
                     }
                 };
-#endif
             };
 
             template <class Set, CDS_SPEC_OPTIONS>
@@ -252,9 +246,7 @@ namespace cds { namespace container {
                     >::copy_policy
                     , cds::container::striped_set::copy_item, copy_item_policy<container_type>
                     , cds::container::striped_set::swap_item, swap_item_policy<container_type>
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
                     , cds::container::striped_set::move_item, move_item_policy<container_type>
-#endif
                 >::type copy_item;
 
             private:
@@ -364,7 +356,6 @@ namespace cds { namespace container {
                     }
                 };
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
                 struct move_item_policy {
                     typedef Map map_type;
                     typedef typename map_type::value_type pair_type;
@@ -375,7 +366,6 @@ namespace cds { namespace container {
                         map.insert( std::move( *itWhat ) );
                     }
                 };
-#endif
             };
 
             template <class Map, CDS_SPEC_OPTIONS>
@@ -403,9 +393,7 @@ namespace cds { namespace container {
                     >::copy_policy
                     , cds::container::striped_set::copy_item, copy_item_policy<container_type>
                     , cds::container::striped_set::swap_item, swap_item_policy<container_type>
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
                     , cds::container::striped_set::move_item, move_item_policy<container_type>
-#endif
                 >::type copy_item;
 
             private:

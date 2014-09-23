@@ -970,7 +970,7 @@ namespace michael {
             active_tag( active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
             ~active_tag() CDS_NOEXCEPT_DEFAULTED = default;
             active_tag& operator=(active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
-#       if defined(CDS_MOVE_SEMANTICS_SUPPORT) && !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
+#       if !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
             active_tag( active_tag&& ) CDS_NOEXCEPT_DEFAULTED = default;
             active_tag& operator=(active_tag&&) CDS_NOEXCEPT_DEFAULTED = default;
 #       endif
@@ -1029,7 +1029,7 @@ namespace michael {
             active_tag( active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
             ~active_tag() CDS_NOEXCEPT_DEFAULTED = default;
             active_tag& operator=(active_tag const&) CDS_NOEXCEPT_DEFAULTED = default;
-#       if defined(CDS_MOVE_SEMANTICS_SUPPORT) && !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
+#       if !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
             active_tag( active_tag&& ) CDS_NOEXCEPT_DEFAULTED = default;
             active_tag& operator=(active_tag&&) CDS_NOEXCEPT_DEFAULTED = default;
 #       endif

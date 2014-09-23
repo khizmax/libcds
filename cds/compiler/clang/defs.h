@@ -31,10 +31,6 @@
 // Lambda
 #define CDS_CXX11_LAMBDA_SUPPORT
 
-// RValue
-#define CDS_RVALUE_SUPPORT
-#define CDS_MOVE_SEMANTICS_SUPPORT
-
 #define CDS_CONSTEXPR    constexpr
 #define CDS_CONSTEXPR_CONST constexpr const
 

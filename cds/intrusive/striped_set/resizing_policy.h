@@ -63,12 +63,10 @@ namespace cds { namespace intrusive { namespace striped_set {
             : m_nLoadFactor( src.m_nLoadFactor )
         {}
 
-#   ifdef CDS_RVALUE_SUPPORT
-        /// Move ctor (for the compilers supporting rvalue reference)
+        /// Move ctor
         load_factor_resizing( load_factor_resizing&& src )
             : m_nLoadFactor( src.m_nLoadFactor )
         {}
-#   endif
 
         /// Main policy operator returns \p true when resizing is needed
         template <typename Container, typename Bucket>
@@ -137,12 +135,10 @@ namespace cds { namespace intrusive { namespace striped_set {
             : m_nThreshold( src.m_nThreshold )
         {}
 
-#   ifdef CDS_RVALUE_SUPPORT
-        /// Move ctor (for the compilers supporting rvalue reference)
+        /// Move ctor
         single_bucket_size_threshold( single_bucket_size_threshold&& src )
             : m_nThreshold( src.m_nThreshold )
         {}
-#   endif
 
         /// Main policy operator returns \p true when resizing is needed
         template <typename Container, typename Bucket>

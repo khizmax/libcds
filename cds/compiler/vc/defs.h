@@ -90,10 +90,6 @@
 // Lambda (VC 10 +)
 #define CDS_CXX11_LAMBDA_SUPPORT
 
-// RValue (VC 10+)
-#define CDS_RVALUE_SUPPORT
-#define CDS_MOVE_SEMANTICS_SUPPORT
-
 // C++11 inline namespace
 //#define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 

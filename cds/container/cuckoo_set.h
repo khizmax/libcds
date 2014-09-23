@@ -535,7 +535,6 @@ namespace cds { namespace container {
         : base_class( nInitialSize, nProbesetSize, nProbesetThreshold, h )
         {}
 
-#   ifdef CDS_MOVE_SEMANTICS_SUPPORT
         /// Constructs the set object with given hash functor tuple (move semantics)
         /**
             The probe set size and threshold are set as default, see CuckooSet()
@@ -559,7 +558,6 @@ namespace cds { namespace container {
         )
         : base_class( nInitialSize, nProbesetSize, nProbesetThreshold, std::forward<hash_tuple_type>(h) )
         {}
-#   endif   // ifdef CDS_MOVE_SEMANTICS_SUPPORT
 
         /// Destructor clears the set
         ~CuckooSet()

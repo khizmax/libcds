@@ -174,7 +174,6 @@ namespace cds { namespace container {
             return true;
         }
 
-#   ifdef CDS_MOVE_SEMANTICS_SUPPORT
         /// Inserts a new element at the top of stack (move semantics)
         /**
             The content of the new element initialized to a copy of \p val.
@@ -195,7 +194,6 @@ namespace cds { namespace container {
             m_FlatCombining.internal_statistics().onPushMove();
             return true;
         }
-#   endif
 
         /// Removes the element on top of the stack
         /**
@@ -277,12 +275,10 @@ namespace cds { namespace container {
                 assert( pRec->pValPush );
                 m_Stack.push( *(pRec->pValPush ) );
                 break;
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             case op_push_move:
                 assert( pRec->pValPush );
                 m_Stack.push( std::move( *(pRec->pValPush )) );
                 break;
-#       endif
             case op_pop:
                 assert( pRec->pValPop );
                 pRec->bEmpty = m_Stack.empty();
@@ -334,7 +330,6 @@ namespace cds { namespace container {
                         goto collided;
                     }
                     break;
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
                 case op_push_move:
                     if ( rec2.op() == op_pop ) {
                         assert(rec1.pValPush);
@@ -344,13 +339,10 @@ namespace cds { namespace container {
                         goto collided;
                     }
                     break;
-#       endif
                 case op_pop:
                     switch ( rec2.op() ) {
                     case op_push:
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
                     case op_push_move:
-#       endif
                         return collide( rec2, rec1 );
                     }
             }

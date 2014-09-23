@@ -28,13 +28,11 @@ namespace cds { namespace container {
 
         // Swap policy is not defined for boost::container::set
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
         // Move policy for boost::container::set
         template <typename T, typename Traits, typename Alloc>
         struct move_item_policy< boost::container::set< T, Traits, Alloc > >
             : public details::boost_set_copy_policies< boost::container::set< T, Traits, Alloc > >::move_item_policy
         {};
-#endif
 
     }   // namespace striped_set
 }} // namespace cds::container

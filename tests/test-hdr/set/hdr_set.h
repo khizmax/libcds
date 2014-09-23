@@ -83,8 +83,6 @@ namespace set {
                 return *this;
             }
 
-
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
             item( item&& i )
                 : nKey( i.nKey )
                 , nVal( i.nVal )
@@ -96,7 +94,6 @@ namespace set {
             //    nVal = i.nVal;
             //    return *this;
             //}
-#endif
 
             int key() const
             {

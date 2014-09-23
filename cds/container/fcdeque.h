@@ -192,7 +192,6 @@ namespace cds { namespace container {
             return true;
         }
 
-#   ifdef CDS_MOVE_SEMANTICS_SUPPORT
         /// Inserts a new element at the beginning of the deque container (move semantics)
         /**
             The function always returns \p true
@@ -214,7 +213,6 @@ namespace cds { namespace container {
             m_FlatCombining.internal_statistics().onPushFrontMove();
             return true;
         }
-#   endif
 
         /// Inserts a new element at the end of the deque container
         /**
@@ -238,7 +236,6 @@ namespace cds { namespace container {
             return true;
         }
 
-#   ifdef CDS_MOVE_SEMANTICS_SUPPORT
         /// Inserts a new element at the end of the deque container (move semantics)
         /**
             The function always returns \p true
@@ -260,7 +257,6 @@ namespace cds { namespace container {
             m_FlatCombining.internal_statistics().onPushBackMove();
             return true;
         }
-#   endif
 
         /// Removes the first element in the deque container
         /**
@@ -366,22 +362,18 @@ namespace cds { namespace container {
                 assert( pRec->pValPush );
                 m_Deque.push_front( *(pRec->pValPush) );
                 break;
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             case op_push_front_move:
                 assert( pRec->pValPush );
                 m_Deque.push_front( std::move( *(pRec->pValPush )) );
                 break;
-#       endif
             case op_push_back:
                 assert( pRec->pValPush );
                 m_Deque.push_back( *(pRec->pValPush) );
                 break;
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             case op_push_back_move:
                 assert( pRec->pValPush );
                 m_Deque.push_back( std::move( *(pRec->pValPush )) );
                 break;
-#       endif
             case op_pop_front:
                 assert( pRec->pValPop );
                 pRec->bEmpty = m_Deque.empty();

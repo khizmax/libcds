@@ -34,7 +34,6 @@ namespace map {
                 : m_val( n )
             {}
 
-#ifdef CDS_MOVE_SEMANTICS_SUPPORT
             value_type( value_type&& v )
                 : m_val( v.m_val )
             {}
@@ -48,7 +47,6 @@ namespace map {
                 m_val = v.m_val;
                 return *this;
             }
-#endif
         };
 
         typedef std::pair<key_type const, value_type> pair_type;

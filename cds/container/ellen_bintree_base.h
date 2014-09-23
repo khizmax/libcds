@@ -67,13 +67,11 @@ namespace cds { namespace container {
                 : m_Value( args... )
             {}
 
-#ifdef CDS_RVALUE_SUPPORT
             /// Move constructor
             template <typename... Args>
             node( Args&&... args)
                 : m_Value( std::forward<Args>(args)... )
             {}
-#endif  // CDS_RVALUE_SUPPORT
         };
 
         /// EllenBinTreeMap leaf node

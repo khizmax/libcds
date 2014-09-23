@@ -56,7 +56,7 @@ namespace cds {
             marked_ptr( marked_ptr const& src ) CDS_NOEXCEPT_DEFAULTED = default;
             /// Copy-assignment operator
             marked_ptr& operator =( marked_ptr const& p ) CDS_NOEXCEPT_DEFAULTED = default;
-#       if defined(CDS_MOVE_SEMANTICS_SUPPORT) && !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
+#       if !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
             //@cond
             marked_ptr( marked_ptr&& src ) CDS_NOEXCEPT_DEFAULTED = default;
             marked_ptr& operator =( marked_ptr&& p ) CDS_NOEXCEPT_DEFAULTED = default;

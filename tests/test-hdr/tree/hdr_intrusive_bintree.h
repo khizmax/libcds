@@ -57,13 +57,11 @@ namespace tree {
             {}
 
 #   ifdef _DEBUG
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             base_hook_value( base_hook_value&& s )
                 : Hook()
                 , nKey(s.nKey)
                 , nValue(s.nValue)
             {}
-#       endif
             base_hook_value& operator=( base_hook_value const& s )
             {
                 nKey = s.nKey;
@@ -94,13 +92,11 @@ namespace tree {
                 , nValue(val)
             {}
 #   ifdef _DEBUG
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             member_hook_value( member_hook_value&& s )
                 : nKey(s.nKey)
                 , nValue(s.nValue)
                 , hook()
             {}
-#       endif
             member_hook_value& operator=( member_hook_value const& s )
             {
                 nKey = s.nKey;

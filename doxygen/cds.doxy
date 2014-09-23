@@ -1399,8 +1399,6 @@ PREDEFINED             = CDS_BUILD_BITS=32 \
                          CDS_CXX11_INLINE_NAMESPACE_SUPPORT \
                          CDS_CXX11_INLINE_NAMESPACE=inline \
                          CDS_CXX11_DECLTYPE_SUPPORT \
-                         CDS_RVALUE_SUPPORT \
-                         CDS_MOVE_SEMANTICS_SUPPORT \
                          CDS_NOEXCEPT=noexcept() \
                          CDS_CONSTEXPR=constexpr \
                          CDS_ATOMIC=std \

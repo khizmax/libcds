@@ -81,11 +81,9 @@ namespace cds { namespace opt {
             hash_list( hash_tuple_type const& t)
                 : hash_tuple( t )
             {}
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             hash_list( hash_tuple_type&& t)
                 : hash_tuple( std::forward<hash_tuple_type>(t) )
             {}
-#       endif
 
             template <size_t I, typename T>
             typename std::enable_if< (I == sizeof...(Functors)) >::type apply( size_t * dest, T const& v ) const
@@ -150,11 +148,9 @@ namespace cds { namespace opt {
             hash_list_wrapper( hash_tuple_type const& t)
                 : m_wrappedList( t )
             {}
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             hash_list_wrapper( hash_tuple_type&& t)
                 : m_wrappedList( std::forward<hash_tuple_type>(t) )
             {}
-#       endif
 
             void operator()( size_t * dest, wrapped_type const& what ) const
             {

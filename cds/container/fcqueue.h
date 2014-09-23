@@ -184,7 +184,6 @@ namespace cds { namespace container {
             return enqueue( val );
         }
 
-#   ifdef CDS_MOVE_SEMANTICS_SUPPORT
         /// Inserts a new element at the end of the queue (move semantics)
         /**
             \p val is moved to inserted element
@@ -211,7 +210,6 @@ namespace cds { namespace container {
         {
             return enqueue( val );
         }
-#   endif
 
         /// Removes the next element from the queue
         /**
@@ -298,12 +296,10 @@ namespace cds { namespace container {
                 assert( pRec->pValEnq );
                 m_Queue.push( *(pRec->pValEnq ) );
                 break;
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
             case op_enq_move:
                 assert( pRec->pValEnq );
                 m_Queue.push( std::move( *(pRec->pValEnq )) );
                 break;
-#       endif
             case op_deq:
                 assert( pRec->pValDeq );
                 pRec->bEmpty = m_Queue.empty();
@@ -357,7 +353,6 @@ namespace cds { namespace container {
                         goto collided;
                     }
                     break;
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
                 case op_enq_move:
                     if ( rec2.op() == op_deq ) {
                         assert(rec1.pValEnq);
@@ -367,13 +362,10 @@ namespace cds { namespace container {
                         goto collided;
                     }
                     break;
-#       endif
                 case op_deq:
                     switch ( rec2.op() ) {
                     case op_enq:
-#       ifdef CDS_MOVE_SEMANTICS_SUPPORT
                     case op_enq_move:
-#       endif
                         return collide( rec2, rec1 );
                     }
             }

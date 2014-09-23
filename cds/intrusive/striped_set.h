@@ -456,11 +456,10 @@ namespace cds { namespace intrusive {
             alloc_bucket_table( m_nBucketMask + 1 );
         }
 
-#ifdef CDS_RVALUE_SUPPORT
         /// Ctor with resizing policy (move semantics)
         /**
             This constructor initializes m_ResizingPolicy member moving \p resizingPolicy parameter
-            Move semantics is used. Available only for the compilers that supports C++11 rvalue reference.
+            Move semantics is used.
         */
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
@@ -469,7 +468,7 @@ namespace cds { namespace intrusive {
         : m_Buckets( nullptr )
         , m_nBucketMask( ( nCapacity ? calc_init_capacity(nCapacity) : c_nMinimalCapacity ) - 1 )
         , m_MutexPolicy( m_nBucketMask + 1 )
-        , m_ResizingPolicy( resizingPolicy )
+        , m_ResizingPolicy( std::forward<resizing_policy>( resizingPolicy ) )
         {
             alloc_bucket_table( m_nBucketMask + 1 );
         }
