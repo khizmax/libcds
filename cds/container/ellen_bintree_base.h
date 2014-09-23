@@ -61,7 +61,6 @@ namespace cds { namespace container {
                 : m_Value(v)
             {}
 
-#ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
             /// Copy constructor
             template <typename... Args>
             node( Args const&... args)
@@ -75,7 +74,6 @@ namespace cds { namespace container {
                 : m_Value( std::forward<Args>(args)... )
             {}
 #endif  // CDS_RVALUE_SUPPORT
-#endif  // CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
         };
 
         /// EllenBinTreeMap leaf node

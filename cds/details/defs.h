@@ -350,7 +350,7 @@ namespace cds {}
 #   define CDS_NOEXCEPT_DEFAULTED_(expr)  CDS_NOEXCEPT_( expr )
 #endif
 
-#if defined(CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT) && defined(CDS_MOVE_SEMANTICS_SUPPORT)
+#if defined(CDS_MOVE_SEMANTICS_SUPPORT)
 #   define CDS_EMPLACE_SUPPORT
 #endif
 

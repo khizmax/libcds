@@ -26,8 +26,6 @@
 // ***************************************
 // C++11 features
 
-#define CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
-
 // RValue
 #define CDS_RVALUE_SUPPORT
 #define CDS_MOVE_SEMANTICS_SUPPORT

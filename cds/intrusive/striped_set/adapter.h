@@ -329,7 +329,7 @@ namespace cds { namespace intrusive {
 }} // namespace cds::intrusive
 
 //@cond
-#if defined(CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT) && defined(BOOST_INTRUSIVE_VARIADIC_TEMPLATES)
+#if defined(BOOST_INTRUSIVE_VARIADIC_TEMPLATES)
 #   define CDS_BOOST_INTRUSIVE_DECL_OPTIONS3    typename... BIOptions
 #   define CDS_BOOST_INTRUSIVE_DECL_OPTIONS4    typename... BIOptions
 #   define CDS_BOOST_INTRUSIVE_DECL_OPTIONS5    typename... BIOptions

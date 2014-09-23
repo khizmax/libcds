@@ -688,22 +688,7 @@ namespace michael {
 
         \endcode
     */
-#ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
     template <typename... Options>
-#else
-    template <
-        typename O1 = opt::none,
-        typename O2 = opt::none,
-        typename O3 = opt::none,
-        typename O4 = opt::none,
-        typename O5 = opt::none,
-        typename O6 = opt::none,
-        typename O7 = opt::none,
-        typename O8 = opt::none,
-        typename O9 = opt::none,
-        typename O10= opt::none
-    >
-#endif
     class Heap {
     protected:
 
@@ -727,11 +712,7 @@ namespace michael {
 
     protected:
         //@cond
-#ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
         typedef typename opt::make_options<default_options, Options...>::type   options;
-#else
-        typedef typename opt::make_options<default_options, O1, O2, O3, O4, O5, O6, O7, O8, O9, O10 >::type   options;
-#endif
         //@endcond
 
         //@cond

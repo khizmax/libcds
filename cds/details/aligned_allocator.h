@@ -35,43 +35,12 @@ namespace cds { namespace details {
         /// Underlying aligned allocator type
         typedef typename ALIGNED_ALLOCATOR::template rebind<T>::other   allocator_type;
 
-#   ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
         /// Analogue of operator new T(\p src... )
         template <typename... S>
         T *  New( size_t nAlign, const S&... src )
         {
             return Construct( allocator_type::allocate( nAlign, 1), src... );
         }
-#   else
-        //@cond
-        /// Analogue of operator new T
-        T *  New( size_t nAlign )
-        {
-            return Construct( allocator_type::allocate(nAlign, 1) );
-        }
-
-        /// Analogue of operator new T(\p src )
-        template <typename S>
-        T *  New( size_t nAlign, const S& src )
-        {
-            return Construct( allocator_type::allocate( nAlign, 1), src );
-        }
-
-        /// Analogue of operator new T( \p s1, \p s2 )
-        template <typename S1, typename S2>
-        T *  New( size_t nAlign, const S1& s1, const S2& s2 )
-        {
-            return Construct( allocator_type::allocate( nAlign, 1 ), s1, s2 );
-        }
-
-        /// Analogue of operator new T( \p s1, \p s2, \p s3 )
-        template <typename S1, typename S2, typename S3>
-        T *  New( size_t nAlign, const S1& s1, const S2& s2, const S3& s3 )
-        {
-            return Construct( allocator_type::allocate(nAlign, 1), s1, s2, s3 );
-        }
-        //@endcond
-#   endif
 
         /// Analogue of operator new T[\p nCount ]
         T * NewArray( size_t nAlign, size_t nCount )
@@ -110,41 +79,12 @@ namespace cds { namespace details {
             allocator_type::deallocate( p, nCount );
         }
 
-#   ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
         /// Analogue of placement operator new( \p p ) T( \p src... )
         template <typename... S>
         T * Construct( void * p, const S&... src )
         {
             return new( p ) T( src... );
         }
-#   else
-        /// Analogue of placement operator new( \p p ) T
-        T * Construct( void * p )
-        {
-            return new( p ) T;
-        }
-
-        /// Analogue of placement operator new( \p p ) T( \p src )
-        template <typename S>
-        T * Construct( void * p, const S& src )
-        {
-            return new( p ) T( src );
-        }
-
-        /// Analogue of placement operator new( \p p ) T( \p s1, \p s2 )
-        template <typename S1, typename S2>
-        T *  Construct( void * p, const S1& s1, const S2& s2 )
-        {
-            return new( p ) T( s1, s2 );
-        }
-
-        /// Analogue of placement operator new( \p p ) T( \p s1, \p s2, \p s3 )
-        template <typename S1, typename S2, typename S3>
-        T *  Construct( void * p, const S1& s1, const S2& s2, const S3& s3 )
-        {
-            return new( p ) T( s1, s2, s3 );
-        }
-#   endif
 
         /// Rebinds allocator to other type \p Q instead of \p T
         template <typename Q>

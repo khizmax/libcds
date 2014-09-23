@@ -54,7 +54,6 @@ namespace cds { namespace details {
         }
     };
 
-#ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
     template <typename Result, typename... Args>
     struct functor_wrapper<Result (*)(Args...)>
     {
@@ -72,80 +71,6 @@ namespace cds { namespace details {
             return *m_func;
         }
     };
-#else
-    template <typename Result>
-    struct functor_wrapper<Result (*)()>
-    {
-        typedef Result (* func_ptr)();
-        typedef Result (& func_ref)();
-        func_ptr m_func;
-    public:
-        functor_wrapper( func_ptr f )
-            : m_func(f)
-        {}
-
-        func_ref get()
-        {
-            assert( m_func );
-            return *m_func;
-        }
-    };
-
-    template <typename Result, typename Arg1>
-    struct functor_wrapper<Result (*)(Arg1)>
-    {
-        typedef Result (* func_ptr)(Arg1);
-        typedef Result (& func_ref)(Arg1);
-        func_ptr m_func;
-    public:
-        functor_wrapper( func_ptr f )
-            : m_func(f)
-        {}
-
-        func_ref get()
-        {
-            assert( m_func );
-            return *m_func;
-        }
-    };
-
-    template <typename Result, typename Arg1, typename Arg2>
-    struct functor_wrapper<Result (*)(Arg1, Arg2)>
-    {
-        typedef Result (* func_ptr)(Arg1, Arg2);
-        typedef Result (& func_ref)(Arg1, Arg2);
-        func_ptr m_func;
-    public:
-        functor_wrapper( func_ptr f )
-            : m_func(f)
-        {}
-
-        func_ref get()
-        {
-            assert( m_func );
-            return *m_func;
-        }
-    };
-
-    template <typename Result, typename Arg1, typename Arg2, typename Arg3>
-    struct functor_wrapper<Result (*)(Arg1, Arg2, Arg3)>
-    {
-        typedef Result (* func_ptr)(Arg1, Arg2, Arg3);
-        typedef Result (& func_ref)(Arg1, Arg2, Arg3);
-        func_ptr m_func;
-    public:
-        functor_wrapper( func_ptr f )
-            : m_func(f)
-        {}
-
-        func_ref get()
-        {
-            assert( m_func );
-            return *m_func;
-        }
-    };
-
-#endif
 }}  // namespace cds::details
 //@endcond
 

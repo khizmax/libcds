@@ -704,10 +704,6 @@ namespace opt {
 
 }}  // namespace cds::opt
 
-#ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
-#   include <cds/opt/make_options_var.h>
-#else
-#   include <cds/opt/make_options_std.h>
-#endif
+#include <cds/opt/make_options_var.h>
 
 #endif  // #ifndef __CDS_OPT_OPTIONS_H

@@ -25,9 +25,6 @@
 
 #define alignof __alignof__
 
-// Variadic template support (only if -std=c++0x compile-line option provided)
-#define CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
-
 // Default template arguments for function templates
 #define CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT
 

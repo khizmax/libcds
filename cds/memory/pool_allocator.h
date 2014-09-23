@@ -102,7 +102,7 @@ namespace cds { namespace memory {
             return size_t(-1) / sizeof(value_type);
         }
 
-#   if defined(CDS_MOVE_SEMANTICS_SUPPORT) && defined(CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT)
+#   if defined(CDS_MOVE_SEMANTICS_SUPPORT)
         template <class U, class... Args>
         void construct(U* p, Args&&... args)
         {

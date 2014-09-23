@@ -530,9 +530,6 @@
     <ClInclude Include="..\..\..\cds\opt\hash.h">
       <Filter>Header Files\cds\opt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\opt\make_options_std.h">
-      <Filter>Header Files\cds\opt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\opt\make_options_var.h">
       <Filter>Header Files\cds\opt</Filter>
     </ClInclude>

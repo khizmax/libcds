@@ -100,9 +100,6 @@
 // C++11 explicitly-defaulted function (= default) [std 8.4.2 [dcl.fct.def.default]]
 #define CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT
 
-// Variadic template support (ICL 12.1+)
-#define CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT     1
-
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 

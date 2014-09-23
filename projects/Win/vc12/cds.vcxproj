@@ -911,7 +911,6 @@
     <ClInclude Include="..\..\..\cds\opt\buffer.h" />
     <ClInclude Include="..\..\..\cds\opt\compare.h" />
     <ClInclude Include="..\..\..\cds\opt\hash.h" />
-    <ClInclude Include="..\..\..\cds\opt\make_options_std.h" />
     <ClInclude Include="..\..\..\cds\opt\make_options_var.h" />
     <ClInclude Include="..\..\..\cds\opt\options.h" />
     <ClInclude Include="..\..\..\cds\opt\permutation.h" />

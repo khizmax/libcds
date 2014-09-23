@@ -43,43 +43,12 @@ namespace cds {
             /// Element type
             typedef T   value_type;
 
-#       ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
             /// Analogue of operator new T(\p src... )
             template <typename... S>
             value_type *  New( S const&... src )
             {
                 return Construct( allocator_type::allocate(1), src... );
             }
-#       else
-            //@cond
-            /// Analogue of operator new T
-            value_type *  New()
-            {
-                return Construct( allocator_type::allocate(1) );
-            }
-
-            /// Analogue of operator new T(\p src )
-            template <typename S>
-            value_type *  New( S const& src )
-            {
-                return Construct( allocator_type::allocate(1), src );
-            }
-
-            /// Analogue of operator new T( \p s1, \p s2 )
-            template <typename S1, typename S2>
-            value_type *  New( S1 const& s1, S2 const& s2 )
-            {
-                return Construct( allocator_type::allocate(1), s1, s2 );
-            }
-
-            /// Analogue of operator new T( \p s1, \p s2, \p s3 )
-            template <typename S1, typename S2, typename S3>
-            value_type *  New( S1 const& s1, S2 const& s2, S3 const& s3 )
-            {
-                return Construct( allocator_type::allocate(1), s1, s2, s3 );
-            }
-            //@endcond
-#       endif
 
 #       ifdef CDS_EMPLACE_SUPPORT
             /// Analogue of <tt>operator new T( std::forward<Args>(args)... )</tt> (move semantics)
@@ -117,7 +86,6 @@ namespace cds {
                 return p;
             }
 
-#       ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
 #       if CDS_COMPILER == CDS_COMPILER_INTEL
             //@cond
             value_type * NewBlock( size_t nSize )
@@ -138,29 +106,6 @@ namespace cds {
             {
                 return Construct( heap_alloc( nSize ), src... );
             }
-#       else
-            //@cond
-            value_type * NewBlock( size_t nSize )
-            {
-                return Construct( heap_alloc( nSize ));
-            }
-            template <typename S>
-            value_type * NewBlock( size_t nSize, S const& arg )
-            {
-                return Construct( heap_alloc( nSize ), arg );
-            }
-            template <typename S1, typename S2>
-            value_type * NewBlock( size_t nSize, S1 const& arg1, S2 const& arg2 )
-            {
-                return Construct( heap_alloc( nSize ), arg1, arg2 );
-            }
-            template <typename S1, typename S2, typename S3>
-            value_type * NewBlock( size_t nSize, S1 const& arg1, S2 const& arg2, S3 const& arg3 )
-            {
-                return Construct( heap_alloc( nSize ), arg1, arg2, arg3 );
-            }
-            //@endcond
-#       endif
 
             /// Analogue of operator delete
             void Delete( value_type * p )
@@ -177,7 +122,6 @@ namespace cds {
                 allocator_type::deallocate( p, nCount );
             }
 
-#       ifdef CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT
 #       if CDS_COMPILER == CDS_COMPILER_INTEL
             //@cond
             value_type * Construct( void * p )
@@ -192,37 +136,6 @@ namespace cds {
             {
                 return new( p ) value_type( src... );
             }
-#       else
-            //@cond
-            /// Analogue of placement operator new( \p p ) T
-            value_type * Construct( void * p )
-            {
-                return new( p ) value_type;
-            }
-
-
-            /// Analogue of placement operator new( \p p ) T( \p src )
-            template <typename S>
-            value_type * Construct( void * p, S const& src )
-            {
-                return new( p ) value_type( src );
-            }
-
-            /// Analogue of placement operator new( \p p ) T( \p s1, \p s2 )
-            template <typename S1, typename S2>
-            value_type *  Construct( void * p, S1 const& s1, S2 const& s2 )
-            {
-                return new( p ) value_type( s1, s2 );
-            }
-
-            /// Analogue of placement operator new( \p p ) T( \p s1, \p s2, \p s3 )
-            template <typename S1, typename S2, typename S3>
-            value_type *  Construct( void * p, S1 const& s1, S2 const& s2, S3 const& s3 )
-            {
-                return new( p ) value_type( s1, s2, s3 );
-            }
-            //@endcond
-#       endif
 
 #       ifdef CDS_EMPLACE_SUPPORT
             /// Analogue of placement <tt>operator new( p ) T( std::forward<Args>(args)... )</tt>
