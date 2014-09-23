@@ -335,8 +335,6 @@ namespace cds {}
 
 // Compiler-specific defines
 #include <cds/compiler/defs.h>
-// New C++11 features
-#include <cds/details/cxx11_features.h>
 
 #define CDS_NOEXCEPT            CDS_NOEXCEPT_SUPPORT
 #define CDS_NOEXCEPT_( expr )   CDS_NOEXCEPT_SUPPORT_( expr )

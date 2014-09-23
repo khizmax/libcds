@@ -1276,23 +1276,8 @@ namespace cds { namespace cxx11_atomic {
             }
         };
 
-#ifndef CDS_CXX11_DELETE_DEFINITION_SUPPORT
-        class atomic_noncopyable
-        {
-        private:
-            atomic_noncopyable(const atomic_noncopyable&);
-            atomic_noncopyable& operator=(const atomic_noncopyable&);
-            //atomic_noncopyable& operator=(const atomic_noncopyable&) volatile;
-        protected:
-            atomic_noncopyable() = default;
-        };
-#endif
-
         template <typename T>
         struct atomic_integral
-#ifndef CDS_CXX11_DELETE_DEFINITION_SUPPORT
-            : atomic_noncopyable
-#endif
         {
         private:
             typename cds::details::aligned_type<T, sizeof(T)>::type volatile m_val;
@@ -1425,11 +1410,10 @@ namespace cds { namespace cxx11_atomic {
                 : m_val(val)
                 {}
 
-#ifdef CDS_CXX11_DELETE_DEFINITION_SUPPORT
             atomic_integral(const atomic_integral&) = delete;
             atomic_integral& operator=(const atomic_integral&) = delete;
             atomic_integral& operator=(const atomic_integral&) volatile = delete;
-#endif
+
             T operator=(T val) volatile CDS_NOEXCEPT
             {
                 store(val);
@@ -1533,9 +1517,6 @@ namespace cds { namespace cxx11_atomic {
 
     template <class T>
     struct atomic
-#ifndef CDS_CXX11_DELETE_DEFINITION_SUPPORT
-        : details::atomic_noncopyable
-#endif
     {
     private:
         typedef details::atomic_generic_ops<T, sizeof(T), typename details::select_primary_type<T>::type >  atomic_ops;
@@ -1625,11 +1606,9 @@ namespace cds { namespace cxx11_atomic {
             : m_data( val )
             {}
 
-#ifdef CDS_CXX11_DELETE_DEFINITION_SUPPORT
         atomic(const atomic&) = delete;
         atomic& operator=(const atomic&) = delete;
         atomic& operator=(const atomic&) volatile = delete;
-#endif
 
         T operator=(T val) volatile CDS_NOEXCEPT
         {
@@ -1643,7 +1622,6 @@ namespace cds { namespace cxx11_atomic {
         }
     };
 
-#if defined(CDS_CXX11_DELETE_DEFINITION_SUPPORT)
 #   define CDS_DECLARE_ATOMIC_INTEGRAL( _type ) \
     template <> \
     struct atomic<_type>: public details::atomic_integral<_type> \
@@ -1659,20 +1637,6 @@ namespace cds { namespace cxx11_atomic {
         _type operator=(_type val) volatile CDS_NOEXCEPT { return base_class::operator=(val); } \
         _type operator=(_type val) CDS_NOEXCEPT { return base_class::operator=(val); } \
     };
-#else
-#   define CDS_DECLARE_ATOMIC_INTEGRAL( _type ) \
-    template <> \
-    struct atomic<_type>: public details::atomic_integral<_type> \
-    { \
-    private: \
-        typedef details::atomic_integral<_type>   base_class  ; \
-    public: \
-        atomic() {} \
-        atomic(_type val) CDS_NOEXCEPT : base_class(val) {} \
-        _type operator=(_type val) volatile CDS_NOEXCEPT { return base_class::operator=(val); } \
-        _type operator=(_type val) CDS_NOEXCEPT { return base_class::operator=(val); } \
-    };
-#endif
 
     CDS_DECLARE_ATOMIC_INTEGRAL(char)
     CDS_DECLARE_ATOMIC_INTEGRAL(signed char)
@@ -1696,9 +1660,6 @@ namespace cds { namespace cxx11_atomic {
 
     template <typename T>
     class atomic<T *>
-#ifndef CDS_CXX11_DELETE_DEFINITION_SUPPORT
-        : details::atomic_noncopyable
-#endif
     {
     private:
         T * volatile m_ptr;
@@ -1805,11 +1766,9 @@ namespace cds { namespace cxx11_atomic {
             : m_ptr( val )
         {}
 
-#ifdef CDS_CXX11_DELETE_DEFINITION_SUPPORT
         atomic(const atomic&) = delete;
         atomic& operator=(const atomic&) = delete;
         atomic& operator=(const atomic&) volatile = delete;
-#endif
 
         T * operator=(T * val) volatile CDS_NOEXCEPT
         {
@@ -2183,19 +2142,9 @@ namespace cds { namespace cxx11_atomic {
 
         atomic_flag() = default;
 
-#ifdef CDS_CXX11_DELETE_DEFINITION_SUPPORT
         atomic_flag(const atomic_flag&) = delete;
         atomic_flag& operator=(const atomic_flag&) = delete;
         atomic_flag& operator=(const atomic_flag&) volatile = delete;
-#elif CDS_COMPILER != CDS_COMPILER_MSVC
-    // MS VC generate error C2552 "non-aggregates cannot be initialized with initializer list"
-    // when atomic_flag initializes with ATOMIC_FLAG_INIT
-    private:
-        atomic_flag(const atomic_flag&);
-        atomic_flag& operator=(const atomic_flag&);
-        atomic_flag& operator=(const atomic_flag&) volatile;
-    public:
-#endif
 
         platform::atomic_flag_type volatile m_Flag;
     } atomic_flag;

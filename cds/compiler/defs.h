@@ -10,6 +10,7 @@
     - explicit conversion operator [CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT]
     - default template argument for function [CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT]
     - explicit default functions (=default) [CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT]
+    - =delete [CDS_CXX11_DELETE_DEFINITION_SUPPORT]
 */
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC

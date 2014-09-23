@@ -33,9 +33,6 @@
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 
-// C++11 delete definition ( function declaration = delete)
-#define CDS_CXX11_DELETE_DEFINITION_SUPPORT
-
 // Lambda
 #define CDS_CXX11_LAMBDA_SUPPORT
 

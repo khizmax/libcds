@@ -336,11 +336,9 @@ CDS_CXX11_ATOMIC_BEGIN_NAMESPACE
             : m_atomic( p )
         {}
 
-#   ifdef CDS_CXX11_DELETE_DEFINITION_SUPPORT
         atomic(const atomic&) = delete;
         atomic& operator=(const atomic&) = delete;
         atomic& operator=(const atomic&) volatile = delete;
-#   endif
 
         marked_ptr operator=(marked_ptr val) volatile CDS_NOEXCEPT
         {
