@@ -1,7 +1,8 @@
 2.0.0
     General release
     - switch to C++11 standard
-    - Removed: MichaelDeque
+    - Removed: MichaelDeque, reason: the implementation is heavy-weighted, inefficient,
+      and, seems, unstable.
 
 1.6.0 23.09.2014
     General release
