@@ -183,7 +183,7 @@ namespace cds { namespace opt {
             >::type type;
         };
 
-        template <typename T, CDS_DECL_OPTIONS>
+        template <typename T, typename... Options>
         struct make_comparator_from_option_list
         {
             struct default_traits {
