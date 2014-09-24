@@ -658,6 +658,7 @@
     <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h" />
+    <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_hp.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_impl.h" />

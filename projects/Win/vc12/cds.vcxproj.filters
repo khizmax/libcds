@@ -1274,5 +1274,8 @@
     <ClInclude Include="..\..\..\cds\lock\scoped_lock.h">
       <Filter>Header Files\cds\lock</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

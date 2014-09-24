@@ -472,7 +472,6 @@ namespace cds { namespace intrusive {
         {
             alloc_bucket_table( m_nBucketMask + 1 );
         }
-#endif
 
         /// Destructor destroys internal data
         ~StripedSet()

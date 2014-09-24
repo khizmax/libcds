@@ -40,14 +40,12 @@ namespace cds { namespace container {
                 explicit node_type( Q const& v )
                     : m_Value(v)
                 {}
-#       ifdef CDS_EMPLACE_SUPPORT
                 template <typename Q, typename... Args>
                 explicit node_type( Q&& q, Args&&... args )
                     : m_Value( std::forward<Q>(q), std::forward<Args>(args)... )
                 {}
-#       endif
-            private:
-                node_type() ;   // no default ctor
+
+                node_type() = delete;
             };
 
             typedef typename cds::opt::select_default<
@@ -150,14 +148,12 @@ namespace cds { namespace container {
                     : m_Value(v)
                 {}
 
-#       ifdef CDS_EMPLACE_SUPPORT
                 template <typename Q, typename... Args>
                 explicit node_type( Q&& q, Args&&... args )
                     : m_Value( std::forward<Q>(q), std::forward<Args>(args)... )
                 {}
-#       endif
-            private:
-                node_type() ;   // no default ctor
+
+                node_type() = delete;
             };
 
             typedef typename cds::opt::select_default<
