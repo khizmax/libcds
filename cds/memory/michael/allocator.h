@@ -967,12 +967,12 @@ namespace michael {
                 , nCredits(0)
             {}
 
-            active_tag( active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
-            ~active_tag() CDS_NOEXCEPT_DEFAULTED = default;
-            active_tag& operator=(active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
+            active_tag( active_tag const& ) CDS_NOEXCEPT = default;
+            ~active_tag() CDS_NOEXCEPT = default;
+            active_tag& operator=(active_tag const& ) CDS_NOEXCEPT = default;
 #       if !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
-            active_tag( active_tag&& ) CDS_NOEXCEPT_DEFAULTED = default;
-            active_tag& operator=(active_tag&&) CDS_NOEXCEPT_DEFAULTED = default;
+            active_tag( active_tag&& ) CDS_NOEXCEPT = default;
+            active_tag& operator=(active_tag&&) CDS_NOEXCEPT = default;
 #       endif
 
             /// Returns pointer to superblock descriptor
@@ -1025,13 +1025,13 @@ namespace michael {
                 : pDesc( nullptr )
             {}
             // Clang 3.1: error: first argument to atomic operation must be a pointer to a trivially-copyable type
-            //active_tag() CDS_NOEXCEPT_DEFAULTED = default;
-            active_tag( active_tag const& ) CDS_NOEXCEPT_DEFAULTED = default;
-            ~active_tag() CDS_NOEXCEPT_DEFAULTED = default;
-            active_tag& operator=(active_tag const&) CDS_NOEXCEPT_DEFAULTED = default;
+            //active_tag() CDS_NOEXCEPT = default;
+            active_tag( active_tag const& ) CDS_NOEXCEPT = default;
+            ~active_tag() CDS_NOEXCEPT = default;
+            active_tag& operator=(active_tag const&) CDS_NOEXCEPT = default;
 #       if !defined(CDS_DISABLE_DEFAULT_MOVE_CTOR)
-            active_tag( active_tag&& ) CDS_NOEXCEPT_DEFAULTED = default;
-            active_tag& operator=(active_tag&&) CDS_NOEXCEPT_DEFAULTED = default;
+            active_tag( active_tag&& ) CDS_NOEXCEPT = default;
+            active_tag& operator=(active_tag&&) CDS_NOEXCEPT = default;
 #       endif
             superblock_desc *    ptr() const
             {

@@ -338,15 +338,6 @@ namespace cds {}
 
 #define CDS_NOEXCEPT            CDS_NOEXCEPT_SUPPORT
 #define CDS_NOEXCEPT_( expr )   CDS_NOEXCEPT_SUPPORT_( expr )
-#ifndef CDS_NOEXCEPT_DEFAULTED
-    // Some compilers do not allow noexcept specification in defaulted function
-    // For example, GCC 4.6.x raise following error:
-    //  void foo() noexcept = default
-    //  error: function ‘foo’ defaulted on its first declaration must not have an exception-specification
-    // For such compiler empty CDS_NOEXCEPT_DEFAULTED must be defined
-#   define CDS_NOEXCEPT_DEFAULTED         CDS_NOEXCEPT
-#   define CDS_NOEXCEPT_DEFAULTED_(expr)  CDS_NOEXCEPT_( expr )
-#endif
 
 #ifdef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 #   define CDS_CXX11_INLINE_NAMESPACE   inline
