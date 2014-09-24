@@ -328,8 +328,4 @@ namespace cds { namespace intrusive {
     } // namespace striped_set
 }} // namespace cds::intrusive
 
-//@cond
-//#if defined(BOOST_INTRUSIVE_VARIADIC_TEMPLATES)
-//@endcond
-
 #endif // #ifndef __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H

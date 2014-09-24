@@ -1392,7 +1392,7 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator 
 # instead of the = operator.
 
-PREDEFINED             = CDS_BUILD_BITS=32 \
+PREDEFINED             = CDS_BUILD_BITS=64 \
                          CDS_DOXYGEN_INVOKED \
                          cds_std=std \
                          CDS_URCU_SIGNAL_HANDLING_ENABLED \
