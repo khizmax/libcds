@@ -9,11 +9,11 @@
 //@cond
 namespace cds { namespace intrusive { namespace striped_set {
 
-    template <typename T, CDS_BOOST_INTRUSIVE_DECL_OPTIONS5, typename... Options>
-    class adapt< boost::intrusive::slist< T, CDS_BOOST_INTRUSIVE_OPTIONS5 >, Options... >
+    template <typename T, typename... BIOptons, typename... Options>
+    class adapt< boost::intrusive::slist< T, BIOptons... >, Options... >
     {
     public:
-        typedef boost::intrusive::slist< T, CDS_BOOST_INTRUSIVE_OPTIONS5 >  container_type  ;   ///< underlying intrusive container type
+        typedef boost::intrusive::slist< T, BIOptons... >  container_type  ;   ///< underlying intrusive container type
 
     private:
         /// Adapted intrusive container
