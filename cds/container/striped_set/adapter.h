@@ -169,7 +169,7 @@ namespace cds { namespace container {
             <hr>
 
         */
-        template < typename Container, CDS_DECL_OPTIONS >
+        template < typename Container, typename... Options>
         class adapt
         {
         public:
@@ -223,7 +223,7 @@ namespace cds { namespace container {
                 };
             };
 
-            template <class Set, CDS_SPEC_OPTIONS>
+            template <class Set, typename... Options>
             class boost_set_adapter: public striped_set::adapted_container
             {
             public:
@@ -241,7 +241,7 @@ namespace cds { namespace container {
                     typename cds::opt::value<
                         typename cds::opt::find_option<
                             cds::opt::copy_policy< cds::container::striped_set::move_item >
-                            , CDS_OPTIONS
+                            , Options...
                         >::type
                     >::copy_policy
                     , cds::container::striped_set::copy_item, copy_item_policy<container_type>
@@ -366,7 +366,7 @@ namespace cds { namespace container {
                 };
             };
 
-            template <class Map, CDS_SPEC_OPTIONS>
+            template <class Map, typename... Options>
             class boost_map_adapter: public striped_set::adapted_container
             {
             public:
@@ -386,7 +386,7 @@ namespace cds { namespace container {
                     typename cds::opt::value<
                     typename cds::opt::find_option<
                         cds::opt::copy_policy< cds::container::striped_set::move_item >
-                        , CDS_OPTIONS
+                        , Options...
                     >::type
                     >::copy_policy
                     , cds::container::striped_set::copy_item, copy_item_policy<container_type>

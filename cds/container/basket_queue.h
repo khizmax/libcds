@@ -14,7 +14,7 @@ namespace cds { namespace container {
 
     //@cond
     namespace details {
-        template <typename GC, typename T, CDS_DECL_OPTIONS7>
+        template <typename GC, typename T, typename... Options>
         struct make_basket_queue
         {
             typedef GC gc;
@@ -30,8 +30,8 @@ namespace cds { namespace container {
             };
 
             typedef typename opt::make_options<
-                typename cds::opt::find_type_traits< default_options, CDS_OPTIONS7 >::type
-                ,CDS_OPTIONS7
+                typename cds::opt::find_type_traits< default_options, Options... >::type
+                ,Options...
             >::type   options;
 
             struct node_type: public intrusive::basket_queue::node< gc >
@@ -139,24 +139,24 @@ namespace cds { namespace container {
         - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
             or opt::v::sequential_consistent (sequentially consisnent memory model).
     */
-    template <typename GC, typename T, CDS_DECL_OPTIONS7>
+    template <typename GC, typename T, typename... Options>
     class BasketQueue:
 #ifdef CDS_DOXYGEN_INVOKED
         intrusive::BasketQueue< GC, intrusive::basket_queue::node< T >, Options... >
 #else
-        details::make_basket_queue< GC, T, CDS_OPTIONS7 >::type
+        details::make_basket_queue< GC, T, Options... >::type
 #endif
     {
         //@cond
-        typedef details::make_basket_queue< GC, T, CDS_OPTIONS7 > options;
+        typedef details::make_basket_queue< GC, T, Options... > options;
         typedef typename options::type base_class;
         //@endcond
 
     public:
         /// Rebind template arguments
-        template <typename GC2, typename T2, CDS_DECL_OTHER_OPTIONS7>
+        template <typename GC2, typename T2, typename... Options2>
         struct rebind {
-            typedef BasketQueue< GC2, T2, CDS_OTHER_OPTIONS7> other   ;   ///< Rebinding result
+            typedef BasketQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
         };
 
     public:

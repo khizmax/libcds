@@ -209,14 +209,14 @@ namespace cds { namespace container {
             This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             \p Options list see \ref cds_container_EllenBinTreeSet "EllenBinTreeSet".
         */
-        template <CDS_DECL_OPTIONS11>
+        template <typename... Options>
         struct make_set_traits {
 #   ifdef CDS_DOXYGEN_INVOKED
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS11 >::type
-                ,CDS_OPTIONS11
+                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                ,Options...
             >::type   type;
 #   endif
         };
@@ -226,14 +226,14 @@ namespace cds { namespace container {
             This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             \p Options list see \ref cds_container_EllenBinTreeMap "EllenBinTreeMap".
         */
-        template <CDS_DECL_OPTIONS11>
+        template <typename... Options>
         struct make_map_traits {
 #   ifdef CDS_DOXYGEN_INVOKED
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS11 >::type
-                ,CDS_OPTIONS11
+                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                ,Options...
             >::type   type;
 #   endif
         };

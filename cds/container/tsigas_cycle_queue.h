@@ -12,7 +12,7 @@ namespace cds { namespace container {
 
     //@cond
     namespace details {
-        template <typename T, CDS_DECL_OPTIONS7>
+        template <typename T, typename... Options>
         struct make_tsigas_cycle_queue
         {
             typedef T value_type;
@@ -26,8 +26,8 @@ namespace cds { namespace container {
             };
 
             typedef typename opt::make_options<
-                typename cds::opt::find_type_traits< default_options, CDS_OPTIONS7 >::type
-                ,CDS_OPTIONS7
+                typename cds::opt::find_type_traits< default_options, Options... >::type
+                ,Options...
             >::type   options;
 
             typedef typename options::allocator::template rebind<value_type>::other allocator_type;
@@ -98,16 +98,16 @@ namespace cds { namespace container {
         dynamic_queue    dynQueue( 1024 );
         \endcode
     */
-    template <typename T, CDS_DECL_OPTIONS7>
+    template <typename T, typename... Options>
     class TsigasCycleQueue:
 #ifdef CDS_DOXYGEN_INVOKED
         intrusive::TsigasCycleQueue< T, Options... >
 #else
-        details::make_tsigas_cycle_queue< T, CDS_OPTIONS7 >::type
+        details::make_tsigas_cycle_queue< T, Options... >::type
 #endif
     {
         //@cond
-        typedef details::make_tsigas_cycle_queue< T, CDS_OPTIONS7 > options;
+        typedef details::make_tsigas_cycle_queue< T, Options... > options;
         typedef typename options::type base_class;
         //@endcond
     public:
@@ -119,9 +119,9 @@ namespace cds { namespace container {
         typedef typename base_class::memory_model       memory_model    ; ///< Memory ordering. See cds::opt::memory_model option
 
         /// Rebind template arguments
-        template <typename T2, CDS_DECL_OTHER_OPTIONS7>
+        template <typename T2, typename... Options2>
         struct rebind {
-            typedef TsigasCycleQueue< T2, CDS_OTHER_OPTIONS7> other   ;   ///< Rebinding result
+            typedef TsigasCycleQueue< T2, Options2...> other   ;   ///< Rebinding result
         };
 
     protected:

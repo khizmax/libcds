@@ -140,10 +140,10 @@ namespace cds { namespace intrusive {
         //@endcond
 
         //@cond
-        template < typename HookType, CDS_DECL_OPTIONS2>
+        template < typename HookType, typename... Options>
         struct hook
         {
-            typedef typename opt::make_options< default_hook, CDS_OPTIONS2>::type  options;
+            typedef typename opt::make_options< default_hook, Options...>::type  options;
             typedef typename options::gc    gc;
             typedef typename options::tag   tag;
             typedef node<gc, tag>           node_type;
@@ -157,8 +157,8 @@ namespace cds { namespace intrusive {
             - opt::gc - garbage collector used.
             - opt::tag - a tag
         */
-        template < CDS_DECL_OPTIONS2 >
-        struct base_hook: public hook< opt::base_hook_tag, CDS_OPTIONS2 >
+        template < typename... Options >
+        struct base_hook: public hook< opt::base_hook_tag, Options... >
         {};
 
         /// Member hook
@@ -170,8 +170,8 @@ namespace cds { namespace intrusive {
             - opt::gc - garbage collector used.
             - opt::tag - a tag
         */
-        template < size_t MemberOffset, CDS_DECL_OPTIONS2 >
-        struct member_hook: public hook< opt::member_hook_tag, CDS_OPTIONS2 >
+        template < size_t MemberOffset, typename... Options >
+        struct member_hook: public hook< opt::member_hook_tag, Options... >
         {
             //@cond
             static const size_t c_nMemberOffset = MemberOffset;
@@ -187,8 +187,8 @@ namespace cds { namespace intrusive {
             - opt::gc - garbage collector used.
             - opt::tag - a tag
         */
-        template <typename NodeTraits, CDS_DECL_OPTIONS2 >
-        struct traits_hook: public hook< opt::traits_hook_tag, CDS_OPTIONS2 >
+        template <typename NodeTraits, typename... Options >
+        struct traits_hook: public hook< opt::traits_hook_tag, Options... >
         {
             //@cond
             typedef NodeTraits node_traits;
@@ -563,14 +563,14 @@ namespace cds { namespace intrusive {
             This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             \p Options list see \ref SkipListSet.
         */
-        template <CDS_DECL_OPTIONS13>
+        template <typename... Options>
         struct make_traits {
 #   ifdef CDS_DOXYGEN_INVOKED
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS13 >::type
-                ,CDS_OPTIONS13
+                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                ,Options...
             >::type   type;
 #   endif
         };

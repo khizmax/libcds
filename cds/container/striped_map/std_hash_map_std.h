@@ -64,8 +64,8 @@ namespace cds { namespace container {
 namespace cds { namespace intrusive { namespace striped_set {
 
     /// std::unordered_map  adapter for hash map bucket
-    template <typename Key, typename T, class Hash, class Pred, class Alloc, CDS_SPEC_OPTIONS>
-    class adapt< std::unordered_map< Key, T, Hash, Pred, Alloc>, CDS_OPTIONS >
+    template <typename Key, typename T, class Hash, class Pred, class Alloc, typename... Options>
+    class adapt< std::unordered_map< Key, T, Hash, Pred, Alloc>, Options... >
     {
     public:
         typedef std::unordered_map< Key, T, Hash, Pred, Alloc>  container_type  ;   ///< underlying container type
@@ -90,7 +90,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 typename cds::opt::value<
                     typename cds::opt::find_option<
                         cds::opt::copy_policy< cds::container::striped_set::move_item >
-                        , CDS_OPTIONS
+                        , Options...
                     >::type
                 >::copy_policy
                 , cds::container::striped_set::copy_item, cds::container::striped_set::copy_item_policy<container_type>

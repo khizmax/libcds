@@ -60,7 +60,7 @@ namespace cds { namespace intrusive {
         dynamic_queue    dynQueue( 1024 );
         \endcode
     */
-    template <typename T, CDS_DECL_OPTIONS7>
+    template <typename T, typename... Options>
     class TsigasCycleQueue: public cds::bounded_container
     {
         //@cond
@@ -77,16 +77,16 @@ namespace cds { namespace intrusive {
     public:
         //@cond
         typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, CDS_OPTIONS7>::type
-            ,CDS_OPTIONS7
+            typename cds::opt::find_type_traits< default_options, Options...>::type
+            ,Options...
         >::type   options;
         //@endcond
 
     public:
         /// Rebind template arguments
-        template <typename T2, CDS_DECL_OTHER_OPTIONS7>
+        template <typename T2, typename... Options2>
         struct rebind {
-            typedef TsigasCycleQueue< T2, CDS_OTHER_OPTIONS7> other   ;   ///< Rebinding result
+            typedef TsigasCycleQueue< T2, Options2...> other   ;   ///< Rebinding result
         };
 
     public:

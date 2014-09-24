@@ -103,7 +103,7 @@ namespace cds { namespace intrusive {
         > barQueue;
         \endcode
     */
-    template <typename GC, typename T, CDS_DECL_OPTIONS9>
+    template <typename GC, typename T, typename... Options>
     class MSQueue
     {
         //@cond
@@ -123,8 +123,8 @@ namespace cds { namespace intrusive {
     public:
         //@cond
         typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, CDS_OPTIONS9 >::type
-            ,CDS_OPTIONS9
+            typename cds::opt::find_type_traits< default_options, Options... >::type
+            ,Options...
         >::type   options;
         //@endcond
 
@@ -143,9 +143,9 @@ namespace cds { namespace intrusive {
         typedef typename options::memory_model  memory_model ;   ///< Memory ordering. See cds::opt::memory_model option
 
         /// Rebind template arguments
-        template <typename GC2, typename T2, CDS_DECL_OTHER_OPTIONS9>
+        template <typename GC2, typename T2, typename... Options2>
         struct rebind {
-            typedef MSQueue< GC2, T2, CDS_OTHER_OPTIONS9> other   ;   ///< Rebinding result
+            typedef MSQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
         };
 
     protected:

@@ -14,7 +14,7 @@ namespace cds { namespace container {
         using cds::intrusive::treiber_stack::stat;
         using cds::intrusive::treiber_stack::empty_stat;
 
-        template <typename GC, typename T, CDS_DECL_OPTIONS11>
+        template <typename GC, typename T, typename... Options>
         struct make_treiber_stack
         {
             typedef T value_type;
@@ -35,8 +35,8 @@ namespace cds { namespace container {
             };
 
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< default_options, CDS_OPTIONS11 >::type
-                ,CDS_OPTIONS11
+                typename cds::opt::find_type_traits< default_options, Options... >::type
+                ,Options...
             >::type   options;
 
             typedef GC gc;
@@ -119,25 +119,25 @@ namespace cds { namespace container {
         - opt::elimination_backoff - back-off strategy to wait for elimination, default is cds::backoff::delay<>
         - opt::lock_type - a lock type used in elimination back-off, default is cds::lock::Spin.
     */
-    template < typename GC, typename T, CDS_DECL_OPTIONS11 >
+    template < typename GC, typename T, typename... Options >
     class TreiberStack
         : public
 #ifdef CDS_DOXYGEN_INVOKED
         intrusive::TreiberStack< GC, cds::intrusive::single_link::node< T >, Options... >
 #else
-        treiber_stack::make_treiber_stack< GC, T, CDS_OPTIONS11 >::type
+        treiber_stack::make_treiber_stack< GC, T, Options... >::type
 #endif
     {
         //@cond
-        typedef treiber_stack::make_treiber_stack< GC, T, CDS_OPTIONS11 > options;
+        typedef treiber_stack::make_treiber_stack< GC, T, Options... > options;
         typedef typename options::type base_class;
         //@endcond
 
     public:
         /// Rebind template arguments
-        template <typename GC2, typename T2, CDS_DECL_OTHER_OPTIONS11>
+        template <typename GC2, typename T2, typename... Options2>
         struct rebind {
-            typedef TreiberStack< GC2, T2, CDS_OTHER_OPTIONS11> other   ;   ///< Rebinding result
+            typedef TreiberStack< GC2, T2, Options2...> other   ;   ///< Rebinding result
         };
 
     public:

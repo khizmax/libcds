@@ -51,14 +51,14 @@ namespace cds { namespace container {
 
             See \ref MSPriorityQueue, \ref type_traits, \ref cds::opt::make_options.
         */
-        template <CDS_DECL_OPTIONS9>
+        template <typename... Options>
         struct make_traits {
 #   ifdef CDS_DOXYGEN_INVOKED
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS9 >::type
-                ,CDS_OPTIONS9
+                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                ,Options...
             >::type   type;
 #   endif
         };

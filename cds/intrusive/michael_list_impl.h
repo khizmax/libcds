@@ -204,12 +204,12 @@ namespace cds { namespace intrusive {
 
         //@cond
         // Rebind options (split-list support)
-        template <CDS_DECL_OPTIONS7>
+        template <typename... Options>
         struct rebind_options {
             typedef MichaelList<
                 gc
                 , value_type
-                , typename cds::opt::make_options< options, CDS_OPTIONS7>::type
+                , typename cds::opt::make_options< options, Options...>::type
             >   type;
         };
         //@endcond

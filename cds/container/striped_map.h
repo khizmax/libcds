@@ -16,10 +16,10 @@ namespace cds { namespace container {
 
     //@cond
     namespace details {
-        template <class Container, CDS_DECL_OPTIONS9>
+        template <class Container, typename... Options>
         class make_striped_map
         {
-            typedef StripedSet< Container, CDS_OPTIONS9>    billet;
+            typedef StripedSet< Container, Options...>    billet;
             typedef typename billet::options                billet_options;
             typedef typename billet_options::hash           billet_hash;
 
@@ -492,16 +492,16 @@ namespace cds { namespace container {
         </table>
 
     **/
-    template <class Container, CDS_DECL_OPTIONS9>
+template <class Container, typename... Options>
     class StripedMap
 #ifdef CDS_DOXYGEN_INVOKED
-        : protected StripedSet<Container, CDS_OPTIONS9>
+        : protected StripedSet<Container, Options...>
 #else
-        : protected details::make_striped_map< Container, CDS_OPTIONS9>::type
+        : protected details::make_striped_map< Container, Options...>::type
 #endif
     {
         //@cond
-        typedef typename details::make_striped_map< Container, CDS_OPTIONS9>::type base_class;
+        typedef typename details::make_striped_map< Container, Options...>::type base_class;
         //@endcond
 
     public:

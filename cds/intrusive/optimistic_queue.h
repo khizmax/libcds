@@ -49,10 +49,10 @@ namespace cds { namespace intrusive {
         //@endcond
 
         //@cond
-        template < typename HookType, CDS_DECL_OPTIONS2>
+        template < typename HookType, typename... Options>
         struct hook
         {
-            typedef typename opt::make_options< default_hook, CDS_OPTIONS2>::type  options;
+            typedef typename opt::make_options< default_hook, Options...>::type  options;
             typedef typename options::gc    gc;
             typedef typename options::tag   tag;
             typedef node<gc, tag> node_type;
@@ -66,8 +66,8 @@ namespace cds { namespace intrusive {
             - opt::gc - garbage collector used.
             - opt::tag - tag
         */
-        template < CDS_DECL_OPTIONS2 >
-        struct base_hook: public hook< opt::base_hook_tag, CDS_OPTIONS2 >
+        template < typename... Options >
+        struct base_hook: public hook< opt::base_hook_tag, Options... >
         {};
 
         /// Member hook
@@ -79,8 +79,8 @@ namespace cds { namespace intrusive {
             - opt::gc - garbage collector used.
             - opt::tag - tag
         */
-        template < size_t MemberOffset, CDS_DECL_OPTIONS2 >
-        struct member_hook: public hook< opt::member_hook_tag, CDS_OPTIONS2 >
+        template < size_t MemberOffset, typename... Options >
+        struct member_hook: public hook< opt::member_hook_tag, Options... >
         {
             //@cond
             static const size_t c_nMemberOffset = MemberOffset;
@@ -96,8 +96,8 @@ namespace cds { namespace intrusive {
             - opt::gc - garbage collector used.
             - opt::tag - tag
         */
-        template <typename NodeTraits, CDS_DECL_OPTIONS2 >
-        struct traits_hook: public hook< opt::traits_hook_tag, CDS_OPTIONS2 >
+        template <typename NodeTraits, typename... Options >
+        struct traits_hook: public hook< opt::traits_hook_tag, Options... >
         {
             //@cond
             typedef NodeTraits node_traits;
@@ -285,7 +285,7 @@ namespace cds { namespace intrusive {
 
         \endcode
     */
-    template <typename GC, typename T, CDS_DECL_OPTIONS9>
+    template <typename GC, typename T, typename... Options>
     class OptimisticQueue
     {
         //@cond
@@ -305,8 +305,8 @@ namespace cds { namespace intrusive {
     public:
         //@cond
         typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, CDS_OPTIONS9 >::type
-            ,CDS_OPTIONS9
+            typename cds::opt::find_type_traits< default_options, Options... >::type
+            ,Options...
         >::type   options;
 
         typedef typename std::conditional<
@@ -340,9 +340,9 @@ namespace cds { namespace intrusive {
 #endif
 
         /// Rebind template arguments
-        template <typename GC2, typename T2, CDS_DECL_OTHER_OPTIONS9>
+        template <typename GC2, typename T2, typename... Options2>
         struct rebind {
-            typedef OptimisticQueue< GC2, T2, CDS_OTHER_OPTIONS9> other   ;   ///< Rebinding result
+            typedef OptimisticQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
         };
 
     protected:

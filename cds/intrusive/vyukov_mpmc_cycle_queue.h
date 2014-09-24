@@ -54,12 +54,12 @@ namespace cds { namespace intrusive {
 
         \endcode
     */
-    template <typename T, CDS_DECL_OPTIONS6>
+    template <typename T, typename... Options>
     class VyukovMPMCCycleQueue
-        : private container::VyukovMPMCCycleQueue< T *, CDS_OPTIONS6 >
+        : private container::VyukovMPMCCycleQueue< T *, Options... >
     {
         //@cond
-        typedef container::VyukovMPMCCycleQueue< T *, CDS_OPTIONS6 > base_class;
+        typedef container::VyukovMPMCCycleQueue< T *, Options... > base_class;
         //@endcond
     public:
         typedef T value_type    ;   ///< type of data stored in the queue
@@ -73,9 +73,9 @@ namespace cds { namespace intrusive {
 
     public:
         /// Rebind template arguments
-        template <typename T2, CDS_DECL_OTHER_OPTIONS6>
+        template <typename T2, typename... Options2>
         struct rebind {
-            typedef VyukovMPMCCycleQueue< T2, CDS_OTHER_OPTIONS6> other   ;   ///< Rebinding result
+            typedef VyukovMPMCCycleQueue< T2, Options2...> other   ;   ///< Rebinding result
         };
 
     public:

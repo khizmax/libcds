@@ -193,8 +193,8 @@ namespace cds { namespace opt {
 
             typedef typename make_comparator< T,
                 typename opt::make_options<
-                    typename opt::find_type_traits< default_traits, CDS_OPTIONS >::type
-                    ,CDS_OPTIONS
+                    typename opt::find_type_traits< default_traits, Options... >::type
+                    ,Options...
                 >::type
             >::type type;
         };

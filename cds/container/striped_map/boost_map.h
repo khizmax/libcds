@@ -38,12 +38,12 @@ namespace cds { namespace container {
 namespace cds { namespace intrusive { namespace striped_set {
 
     /// std::set adapter for hash set bucket
-    template <typename Key, typename T, class Traits, class Alloc, CDS_SPEC_OPTIONS>
-    class adapt< boost::container::map< Key, T, Traits, Alloc>, CDS_OPTIONS >
+    template <typename Key, typename T, class Traits, class Alloc, typename... Options>
+    class adapt< boost::container::map< Key, T, Traits, Alloc>, Options... >
     {
     public:
         typedef boost::container::map< Key, T, Traits, Alloc>     container_type          ;   ///< underlying container type
-        typedef cds::container::striped_set::details::boost_map_adapter< container_type, CDS_OPTIONS >    type;
+        typedef cds::container::striped_set::details::boost_map_adapter< container_type, Options... >    type;
     };
 }}} // namespace cds::intrusive::striped_set
 

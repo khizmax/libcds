@@ -39,7 +39,7 @@ namespace cds { namespace container {
 
         This queue has no intrusive counterpart.
     */
-    template <typename T, CDS_DECL_OPTIONS6>
+    template <typename T, typename... Options>
     class RWQueue
     {
         //@cond
@@ -56,16 +56,16 @@ namespace cds { namespace container {
     public:
         //@cond
         typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, CDS_OPTIONS6 >::type
-            ,CDS_OPTIONS6
+            typename cds::opt::find_type_traits< default_options, Options... >::type
+            ,Options...
         >::type   options;
         //@endcond
 
     public:
         /// Rebind template arguments
-        template <typename T2, CDS_DECL_OTHER_OPTIONS6>
+        template <typename T2, typename... Options2>
         struct rebind {
-            typedef RWQueue< T2, CDS_OTHER_OPTIONS6> other   ;   ///< Rebinding result
+            typedef RWQueue< T2, Options2...> other   ;   ///< Rebinding result
         };
 
     public:

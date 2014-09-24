@@ -61,14 +61,14 @@ namespace cds { namespace container {
                 List of all available memory ordering see opt::memory_model.
                 Default is cds::opt::v:relaxed_ordering
         */
-        template <CDS_DECL_OPTIONS7>
+        template <typename... Options>
         struct make_traits {
 #   ifdef CDS_DOXYGEN_INVOKED
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS7 >::type
-                ,CDS_OPTIONS7
+                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                ,Options...
             >::type   type;
 #   endif
         };

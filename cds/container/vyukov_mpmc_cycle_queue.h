@@ -56,7 +56,7 @@ namespace cds { namespace container {
         > myQueue;
         \endcode
     */
-    template <typename T, CDS_DECL_OPTIONS6>
+    template <typename T, typename... Options>
     class VyukovMPMCCycleQueue
         : public cds::bounded_container
     {
@@ -75,8 +75,8 @@ namespace cds { namespace container {
     public:
         //@cond
         typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, CDS_OPTIONS6 >::type
-            ,CDS_OPTIONS6
+            typename cds::opt::find_type_traits< default_options, Options... >::type
+            ,Options...
         >::type   options;
         //@endcond
 
@@ -91,9 +91,9 @@ namespace cds { namespace container {
         typedef typename options::memory_model  memory_model ;  ///< Memory ordering. See cds::opt::memory_model option
 
         /// Rebind template arguments
-        template <typename T2, CDS_DECL_OTHER_OPTIONS6>
+        template <typename T2, typename... Options2>
         struct rebind {
-            typedef VyukovMPMCCycleQueue< T2, CDS_OTHER_OPTIONS6> other   ;   ///< Rebinding result
+            typedef VyukovMPMCCycleQueue< T2, Options2...> other   ;   ///< Rebinding result
         };
 
     protected:

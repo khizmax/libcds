@@ -116,19 +116,19 @@ namespace map2 {
         }
     };
 
-    template <typename K, typename V, CDS_DECL_OPTIONS10>
+    template <typename K, typename V, typename... Options>
     class CuckooStripedMap:
         public cc::CuckooMap< K, V,
             typename cc::cuckoo::make_traits<
                 co::mutex_policy< cc::cuckoo::striping<> >
-                ,CDS_OPTIONS10
+                ,Options...
             >::type
         >
     {
     public:
         typedef typename cc::cuckoo::make_traits<
             co::mutex_policy< cc::cuckoo::striping<> >
-            ,CDS_OPTIONS10
+            ,Options...
         >::type cuckoo_traits;
 
         typedef cc::CuckooMap< K, V, cuckoo_traits > cuckoo_base_class;
@@ -145,19 +145,19 @@ namespace map2 {
         }
     };
 
-    template <typename K, typename V, CDS_DECL_OPTIONS10>
+    template <typename K, typename V, typename... Options>
     class CuckooRefinableMap:
         public cc::CuckooMap< K, V,
             typename cc::cuckoo::make_traits<
                 co::mutex_policy< cc::cuckoo::refinable<> >
-                ,CDS_OPTIONS10
+                ,Options...
             >::type
         >
     {
     public:
         typedef typename cc::cuckoo::make_traits<
             co::mutex_policy< cc::cuckoo::refinable<> >
-            ,CDS_OPTIONS10
+            ,Options...
         >::type cuckoo_traits;
 
         typedef cc::CuckooMap< K, V, cuckoo_traits > cuckoo_base_class;
@@ -3773,18 +3773,18 @@ namespace map2 {
         // StripedHashMap
 
         // for sequential containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class StripedHashMap_seq:
             public cc::StripedMap< BucketEntry,
                 co::mutex_policy< cc::striped_set::striping<> >
                 ,co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
-                , CDS_OPTIONS7
+                , Options...
             >
         {
             typedef cc::StripedMap< BucketEntry,
                 co::mutex_policy< cc::striped_set::striping<> >
                 ,co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -3796,18 +3796,18 @@ namespace map2 {
         };
 
         // for non-sequential ordered containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class StripedHashMap_ord:
             public cc::StripedMap< BucketEntry,
                 co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::striping<> >
-                , CDS_OPTIONS7
+                , Options...
             >
         {
             typedef cc::StripedMap< BucketEntry,
                co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::striping<> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -3877,18 +3877,18 @@ namespace map2 {
         // RefinableHashMap
 
         // for sequential containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class RefinableHashMap_seq:
             public cc::StripedMap< BucketEntry,
                 co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::refinable<> >
-                , CDS_OPTIONS7
+                , Options...
             >
         {
             typedef cc::StripedMap< BucketEntry,
                co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::refinable<> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -3900,18 +3900,18 @@ namespace map2 {
         };
 
         // for non-sequential ordered containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class RefinableHashMap_ord:
             public cc::StripedMap< BucketEntry,
                 co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::refinable<> >
-                , CDS_OPTIONS7
+                , Options...
             >
         {
             typedef cc::StripedMap< BucketEntry,
                co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::refinable<> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -5180,17 +5180,17 @@ namespace map2 {
     }
 
 
-    template <typename K, typename V, CDS_SPEC_OPTIONS10>
-    static inline void print_stat( CuckooStripedMap< K, V, CDS_OPTIONS10 > const& m )
+    template <typename K, typename V, typename... Options>
+    static inline void print_stat( CuckooStripedMap< K, V, Options... > const& m )
     {
-        typedef CuckooStripedMap< K, V, CDS_OPTIONS10 > map_type;
+        typedef CuckooStripedMap< K, V, Options... > map_type;
         print_stat( static_cast<typename map_type::cuckoo_base_class const&>(m) );
     }
 
-    template <typename K, typename V, CDS_SPEC_OPTIONS10>
-    static inline void print_stat( CuckooRefinableMap< K, V, CDS_OPTIONS10 > const& m )
+    template <typename K, typename V, typename... Options>
+    static inline void print_stat( CuckooRefinableMap< K, V, Options... > const& m )
     {
-        typedef CuckooRefinableMap< K, V, CDS_OPTIONS10 > map_type;
+        typedef CuckooRefinableMap< K, V, Options... > map_type;
         print_stat( static_cast<typename map_type::cuckoo_base_class const&>(m) );
     }
 

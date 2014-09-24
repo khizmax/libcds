@@ -59,9 +59,9 @@ namespace cds { namespace intrusive {
 
             See \ref MichaelHashSet, \ref type_traits.
         */
-        template <CDS_DECL_OPTIONS3>
+        template <typename... Options>
         struct make_traits {
-            typedef typename cds::opt::make_options< type_traits, CDS_OPTIONS3>::type type  ;   ///< Result of metafunction
+            typedef typename cds::opt::make_options< type_traits, Options...>::type type  ;   ///< Result of metafunction
         };
 
         //@cond

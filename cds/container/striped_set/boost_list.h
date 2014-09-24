@@ -63,8 +63,8 @@ namespace cds { namespace container {
 namespace cds { namespace intrusive { namespace striped_set {
 
     /// boost::container::list adapter for hash set bucket
-    template <typename T, class Alloc, CDS_SPEC_OPTIONS>
-    class adapt< boost::container::list<T, Alloc>, CDS_OPTIONS >
+    template <typename T, class Alloc, typename... Options>
+    class adapt< boost::container::list<T, Alloc>, Options... >
     {
     public:
         typedef boost::container::list<T, Alloc>     container_type          ;   ///< underlying container type
@@ -83,13 +83,13 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         private:
             //@cond
-            typedef typename cds::opt::details::make_comparator_from_option_list< value_type, CDS_OPTIONS >::type key_comparator;
+            typedef typename cds::opt::details::make_comparator_from_option_list< value_type, Options... >::type key_comparator;
 
             typedef typename cds::opt::select<
                 typename cds::opt::value<
                     typename cds::opt::find_option<
                         cds::opt::copy_policy< cds::container::striped_set::move_item >
-                        , CDS_OPTIONS
+                        , Options...
                     >::type
                 >::copy_policy
                 , cds::container::striped_set::copy_item, cds::container::striped_set::copy_item_policy<container_type>

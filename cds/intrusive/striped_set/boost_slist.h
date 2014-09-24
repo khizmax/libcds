@@ -9,8 +9,8 @@
 //@cond
 namespace cds { namespace intrusive { namespace striped_set {
 
-    template <typename T, CDS_BOOST_INTRUSIVE_DECL_OPTIONS5, CDS_SPEC_OPTIONS>
-    class adapt< boost::intrusive::slist< T, CDS_BOOST_INTRUSIVE_OPTIONS5 >, CDS_OPTIONS >
+    template <typename T, CDS_BOOST_INTRUSIVE_DECL_OPTIONS5, typename... Options>
+    class adapt< boost::intrusive::slist< T, CDS_BOOST_INTRUSIVE_OPTIONS5 >, Options... >
     {
     public:
         typedef boost::intrusive::slist< T, CDS_BOOST_INTRUSIVE_OPTIONS5 >  container_type  ;   ///< underlying intrusive container type
@@ -24,7 +24,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             typedef typename container_type::iterator       iterator ;   ///< container iterator
             typedef typename container_type::const_iterator const_iterator ;    ///< container const iterator
 
-            typedef typename cds::opt::details::make_comparator_from_option_list< value_type, CDS_OPTIONS >::type key_comparator;
+            typedef typename cds::opt::details::make_comparator_from_option_list< value_type, Options... >::type key_comparator;
 
         private:
 

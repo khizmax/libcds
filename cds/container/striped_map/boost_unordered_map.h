@@ -33,12 +33,12 @@ namespace cds { namespace container {
 namespace cds { namespace intrusive { namespace striped_set {
 
     /// boost::unordered_map  adapter for hash map bucket
-    template <typename Key, typename T, class Hash, class Pred, class Alloc, CDS_SPEC_OPTIONS>
-    class adapt< boost::unordered_map< Key, T, Hash, Pred, Alloc>, CDS_OPTIONS >
+    template <typename Key, typename T, class Hash, class Pred, class Alloc, typename... Options>
+    class adapt< boost::unordered_map< Key, T, Hash, Pred, Alloc>, Options... >
     {
     public:
         typedef boost::unordered_map< Key, T, Hash, Pred, Alloc>  container_type  ;   ///< underlying container type
-        typedef cds::container::striped_set::details::boost_map_adapter< container_type, CDS_OPTIONS >    type;
+        typedef cds::container::striped_set::details::boost_map_adapter< container_type, Options... >    type;
     };
 }}} // namespace cds::intrusive::striped_set
 

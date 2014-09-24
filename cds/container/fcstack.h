@@ -67,14 +67,14 @@ namespace cds { namespace container {
             - \p opt::enable_elimination - enable/disable operation \ref cds_elimination_description "elimination"
                 By default, the elimination is disabled.
         */
-        template <CDS_DECL_OPTIONS8>
+        template <typename... Options>
         struct make_traits {
 #   ifdef CDS_DOXYGEN_INVOKED
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS8 >::type
-                ,CDS_OPTIONS8
+                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                ,Options...
             >::type   type;
 #   endif
         };

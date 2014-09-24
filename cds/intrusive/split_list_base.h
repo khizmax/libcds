@@ -137,9 +137,9 @@ namespace cds { namespace intrusive {
 
             See \ref MichaelHashSet, \ref type_traits.
         */
-        template <CDS_DECL_OPTIONS6>
+        template <typename... Options>
         struct make_traits {
-            typedef typename cds::opt::make_options< type_traits, CDS_OPTIONS6>::type type  ;   ///< Result of metafunction
+            typedef typename cds::opt::make_options< type_traits, Options...>::type type  ;   ///< Result of metafunction
         };
 
 
@@ -157,7 +157,7 @@ namespace cds { namespace intrusive {
             - \p opt::allocator - allocator used to allocate bucket table. Default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::memory_model - memory model used. Possible types are opt::v::sequential_consistent, opt::v::relaxed_ordering
         */
-        template <typename GC, typename Node, CDS_DECL_OPTIONS2>
+        template <typename GC, typename Node, typename... Options>
         class static_bucket_table
         {
             //@cond
@@ -166,7 +166,7 @@ namespace cds { namespace intrusive {
                 typedef CDS_DEFAULT_ALLOCATOR       allocator;
                 typedef opt::v::relaxed_ordering    memory_model;
             };
-            typedef typename opt::make_options< default_options, CDS_OPTIONS2 >::type   options;
+            typedef typename opt::make_options< default_options, Options... >::type   options;
             //@endcond
 
         public:
@@ -269,7 +269,7 @@ namespace cds { namespace intrusive {
             - \p opt::allocator - allocator used to allocate bucket table. Default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::memory_model - memory model used. Possible types are opt::v::sequential_consistent, opt::v::relaxed_ordering
         */
-        template <typename GC, typename Node, CDS_DECL_OPTIONS2>
+        template <typename GC, typename Node, typename... Options>
         class expandable_bucket_table
         {
             //@cond
@@ -278,7 +278,7 @@ namespace cds { namespace intrusive {
                 typedef CDS_DEFAULT_ALLOCATOR       allocator;
                 typedef opt::v::relaxed_ordering    memory_model;
             };
-            typedef typename opt::make_options< default_options, CDS_OPTIONS2 >::type   options;
+            typedef typename opt::make_options< default_options, Options... >::type   options;
             //@endcond
         public:
             typedef GC      gc          ;   ///< Garbage collector
@@ -530,19 +530,19 @@ namespace cds { namespace intrusive {
 
         //@cond
         namespace details {
-            template <bool Value, typename GC, typename Node, CDS_DECL_OPTIONS2>
+            template <bool Value, typename GC, typename Node, typename... Options>
             struct bucket_table_selector;
 
-            template <typename GC, typename Node, CDS_SPEC_OPTIONS2>
-            struct bucket_table_selector< true, GC, Node, CDS_OPTIONS2>
+            template <typename GC, typename Node, typename... Options>
+            struct bucket_table_selector< true, GC, Node, Options...>
             {
-                typedef expandable_bucket_table<GC, Node, CDS_OPTIONS2>    type;
+                typedef expandable_bucket_table<GC, Node, Options...>    type;
             };
 
-            template <typename GC, typename Node, CDS_SPEC_OPTIONS2>
-            struct bucket_table_selector< false, GC, Node, CDS_OPTIONS2>
+            template <typename GC, typename Node, typename... Options>
+            struct bucket_table_selector< false, GC, Node, Options...>
             {
-                typedef static_bucket_table<GC, Node, CDS_OPTIONS2>    type;
+                typedef static_bucket_table<GC, Node, Options...>    type;
             };
 
             template <typename GC, class Alloc >

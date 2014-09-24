@@ -202,12 +202,12 @@ namespace cds { namespace intrusive {
 
         //@cond
         // Rebind options (split-list support)
-        template <CDS_DECL_OPTIONS8>
+        template <typename... Options>
         struct rebind_options {
             typedef LazyList<
                 gc
                 , value_type
-                , typename cds::opt::make_options< options, CDS_OPTIONS8>::type
+                , typename cds::opt::make_options< options, Options...>::type
             >   type;
         };
         //@endcond

@@ -59,8 +59,8 @@ namespace cds { namespace container {
 namespace cds { namespace intrusive { namespace striped_set {
 
     /// std::set adapter for hash set bucket
-    template <typename Key, typename T, class Traits, class Alloc, CDS_SPEC_OPTIONS>
-    class adapt< std::map< Key, T, Traits, Alloc>, CDS_OPTIONS >
+    template <typename Key, typename T, class Traits, class Alloc, typename... Options>
+    class adapt< std::map< Key, T, Traits, Alloc>, Options... >
     {
     public:
         typedef std::map< Key, T, Traits, Alloc>     container_type          ;   ///< underlying container type
@@ -85,7 +85,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 typename cds::opt::value<
                     typename cds::opt::find_option<
                         cds::opt::copy_policy< cds::container::striped_set::move_item >
-                        , CDS_OPTIONS
+                        , Options...
                     >::type
                 >::copy_policy
                 , cds::container::striped_set::copy_item, cds::container::striped_set::copy_item_policy<container_type>

@@ -253,7 +253,7 @@ namespace cds { namespace intrusive {
             See intrusive::striped_set::adapt metafunction for the description of interface that the bucket container must provide
             to be \p %StripedSet compatible.
     */
-    template <class Container, CDS_DECL_OPTIONS9>
+    template <class Container, typename... Options>
     class StripedSet
     {
     public:
@@ -269,13 +269,13 @@ namespace cds { namespace intrusive {
         };
 
         typedef typename cds::opt::make_options<
-            typename cds::opt::find_type_traits< default_options, CDS_OPTIONS9 >::type
-            ,CDS_OPTIONS9
+            typename cds::opt::find_type_traits< default_options, Options... >::type
+            ,Options...
         >::type   options;
         //@endcond
 
         typedef Container                           underlying_container_type   ;   ///< original intrusive container type for the bucket
-        typedef typename cds::intrusive::striped_set::adapt< underlying_container_type, CDS_OPTIONS9 >::type   bucket_type ;   ///< container type adapted for hash set
+        typedef typename cds::intrusive::striped_set::adapt< underlying_container_type, Options... >::type   bucket_type ;   ///< container type adapted for hash set
         typedef typename bucket_type::value_type    value_type  ;   ///< value type stored in the set
 
         typedef typename options::hash              hash            ; ///< Hash functor

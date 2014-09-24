@@ -10,8 +10,8 @@
 //@cond
 namespace cds { namespace intrusive { namespace striped_set {
 
-    template <typename T, CDS_BOOST_INTRUSIVE_DECL_OPTIONS10, CDS_SPEC_OPTIONS>
-    class adapt< boost::intrusive::unordered_set< T, CDS_BOOST_INTRUSIVE_OPTIONS10 >, CDS_OPTIONS >
+    template <typename T, CDS_BOOST_INTRUSIVE_DECL_OPTIONS10, typename... Options>
+    class adapt< boost::intrusive::unordered_set< T, CDS_BOOST_INTRUSIVE_OPTIONS10 >, Options... >
     {
     public:
         typedef boost::intrusive::unordered_set< T, CDS_BOOST_INTRUSIVE_OPTIONS10 >  container_type  ;   ///< underlying intrusive container type
@@ -27,7 +27,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             typedef typename opt::value<
                 typename opt::find_option<
                     opt::buffer< opt::v::static_buffer< cds::any_type, 256 > >,
-                    CDS_OPTIONS
+                    Options...
                 >::type
             >::buffer    initial_buffer_type;
             typedef typename initial_buffer_type::template rebind< typename container_type::bucket_type >::other    buffer_type;

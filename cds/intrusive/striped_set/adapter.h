@@ -171,7 +171,7 @@ namespace cds { namespace intrusive {
             <hr>
 
         */
-        template < typename Container, CDS_DECL_OPTIONS >
+        template < typename Container, typename... Options >
         class adapt
         {
         public:

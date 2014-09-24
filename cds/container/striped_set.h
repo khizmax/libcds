@@ -488,11 +488,11 @@ namespace cds { namespace container {
                 </tr>
             </table>
     */
-    template <class Container, CDS_DECL_OPTIONS9>
-    class StripedSet: protected intrusive::StripedSet<Container, CDS_OPTIONS9>
+    template <class Container, typename... Options>
+    class StripedSet: protected intrusive::StripedSet<Container, Options...>
     {
         //@cond
-        typedef intrusive::StripedSet<Container, CDS_OPTIONS9>  base_class;
+        typedef intrusive::StripedSet<Container, Options...>  base_class;
         //@endcond
     public:
         //@cond

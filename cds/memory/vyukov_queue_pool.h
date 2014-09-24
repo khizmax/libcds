@@ -68,11 +68,11 @@ namespace cds { namespace memory {
         pool_allocator().deallocate( p , 1 );
         \endcode
     */
-    template <typename T, CDS_DECL_OPTIONS6>
+    template <typename T, typename... Options>
     class vyukov_queue_pool
     {
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, CDS_OPTIONS6 > queue_type  ;   ///< Queue type
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Options... > queue_type  ;   ///< Queue type
 
     protected:
         //@cond
@@ -80,7 +80,7 @@ namespace cds { namespace memory {
         {
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
         };
-        typedef typename opt::make_options< default_options, CDS_OPTIONS6 >::type   options;
+        typedef typename opt::make_options< default_options, Options... >::type   options;
         //@endcond
 
     public:
@@ -233,11 +233,11 @@ namespace cds { namespace memory {
         \endcode
 
     */
-    template <typename T, CDS_DECL_OPTIONS6>
+    template <typename T, typename... Options>
     class lazy_vyukov_queue_pool
     {
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, CDS_OPTIONS6 > queue_type  ;   ///< Queue type
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Options... > queue_type  ;   ///< Queue type
 
     protected:
         //@cond
@@ -245,7 +245,7 @@ namespace cds { namespace memory {
         {
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
         };
-        typedef typename opt::make_options< default_options, CDS_OPTIONS6 >::type   options;
+        typedef typename opt::make_options< default_options, Options... >::type   options;
         //@endcond
 
     public:
@@ -372,11 +372,11 @@ namespace cds { namespace memory {
         pool_allocator().deallocate( p , 1 );
         \endcode
     */
-    template <typename T, CDS_DECL_OPTIONS6>
+    template <typename T, typename... Options>
     class bounded_vyukov_queue_pool
     {
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, CDS_OPTIONS6 > queue_type  ;   ///< Queue type
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Options... > queue_type  ;   ///< Queue type
 
     protected:
         //@cond
@@ -384,7 +384,7 @@ namespace cds { namespace memory {
         {
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
         };
-        typedef typename opt::make_options< default_options, CDS_OPTIONS6 >::type   options;
+        typedef typename opt::make_options< default_options, Options... >::type   options;
         //@endcond
 
     public:

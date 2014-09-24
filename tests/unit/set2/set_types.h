@@ -80,19 +80,19 @@ namespace set2 {
     typedef cds::urcu::gc< cds::urcu::signal_threaded<> >  rcu_sht;
 #endif
 
-    template <typename V, CDS_DECL_OPTIONS10>
+    template <typename V, typename... Options>
     class CuckooStripedSet:
         public cc::CuckooSet< V,
             typename cc::cuckoo::make_traits<
                 co::mutex_policy< cc::cuckoo::striping<> >
-                ,CDS_OPTIONS10
+                ,Options...
             >::type
         >
     {
     public:
         typedef typename cc::cuckoo::make_traits<
             co::mutex_policy< cc::cuckoo::striping<> >
-            ,CDS_OPTIONS10
+            ,Options...
         >::type cuckoo_traits;
 
         typedef cc::CuckooSet< V, cuckoo_traits > cuckoo_base_class;
@@ -109,19 +109,19 @@ namespace set2 {
         }
     };
 
-    template <typename V, CDS_DECL_OPTIONS10>
+    template <typename V, typename... Options>
     class CuckooRefinableSet:
         public cc::CuckooSet< V,
             typename cc::cuckoo::make_traits<
                 co::mutex_policy< cc::cuckoo::refinable<> >
-                ,CDS_OPTIONS10
+                ,Options...
             >::type
         >
     {
     public:
         typedef typename cc::cuckoo::make_traits<
             co::mutex_policy< cc::cuckoo::refinable<> >
-            ,CDS_OPTIONS10
+            ,Options...
         >::type cuckoo_traits;
 
         typedef cc::CuckooSet< V, cuckoo_traits > cuckoo_base_class;
@@ -3374,18 +3374,18 @@ namespace set2 {
         // StripedSet
 
         // for sequential containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class StripedHashSet_seq:
             public cc::StripedSet< BucketEntry,
                 co::mutex_policy< cc::striped_set::striping<> >
                 ,co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
-                , CDS_OPTIONS7
+                , Options...
             >
         {
             typedef cc::StripedSet< BucketEntry,
                 co::mutex_policy< cc::striped_set::striping<> >
                 ,co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -3403,18 +3403,18 @@ namespace set2 {
         };
 
         // for non-sequential ordered containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class StripedHashSet_ord:
             public cc::StripedSet< BucketEntry,
                 co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::striping<> >
-                , CDS_OPTIONS7
+                , Options...
             >
         {
             typedef cc::StripedSet< BucketEntry,
                co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::striping<> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -3509,18 +3509,18 @@ namespace set2 {
         // RefinableSet
 
         // for sequential containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class RefinableHashSet_seq:
             public cc::StripedSet< BucketEntry,
             co::mutex_policy< cc::striped_set::refinable<> >
             ,co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
-            , CDS_OPTIONS7
+            , Options...
             >
         {
             typedef cc::StripedSet< BucketEntry,
                 co::mutex_policy< cc::striped_set::refinable<> >
                 ,co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -3538,18 +3538,18 @@ namespace set2 {
         };
 
         // for non-sequential ordered containers
-        template <class BucketEntry, CDS_DECL_OPTIONS7>
+        template <class BucketEntry, typename... Options>
         class RefinableHashSet_ord:
             public cc::StripedSet< BucketEntry,
                 co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::refinable<> >
-                , CDS_OPTIONS7
+                , Options...
             >
         {
             typedef cc::StripedSet< BucketEntry,
                 co::resizing_policy<cc::striped_set::load_factor_resizing<0> >
                 ,co::mutex_policy< cc::striped_set::refinable<> >
-                , CDS_OPTIONS7
+                , Options...
             > base_class;
             typedef typename base_class::resizing_policy resizing_policy_t;
 
@@ -4731,17 +4731,17 @@ namespace set2 {
         CPPUNIT_MSG( s.statistics() << s.mutex_policy_statistics() );
     }
 
-    template <typename V, CDS_SPEC_OPTIONS10>
-    static inline void print_stat( CuckooStripedSet< V, CDS_OPTIONS10 > const& s )
+    template <typename V, typename... Options>
+    static inline void print_stat( CuckooStripedSet< V, Options... > const& s )
     {
-        typedef CuckooStripedSet< V, CDS_OPTIONS10 > set_type;
+        typedef CuckooStripedSet< V, Options... > set_type;
         print_stat( static_cast<typename set_type::cuckoo_base_class const&>(s) );
     }
 
-    template <typename V, CDS_SPEC_OPTIONS10>
-    static inline void print_stat( CuckooRefinableSet< V, CDS_OPTIONS10 > const& s )
+    template <typename V, typename... Options>
+    static inline void print_stat( CuckooRefinableSet< V, Options... > const& s )
     {
-        typedef CuckooRefinableSet< V, CDS_OPTIONS10 > set_type;
+        typedef CuckooRefinableSet< V, Options... > set_type;
         print_stat( static_cast<typename set_type::cuckoo_base_class const&>(s) );
     }
 

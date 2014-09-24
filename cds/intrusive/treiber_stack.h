@@ -431,7 +431,7 @@ namespace cds { namespace intrusive {
         > stack_t;
         \endcode
     */
-    template <typename GC, typename T, CDS_DECL_OPTIONS13>
+    template <typename GC, typename T, typename... Options>
     class TreiberStack
     {
         //@cond
@@ -457,16 +457,16 @@ namespace cds { namespace intrusive {
     public:
         //@cond
         typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, CDS_OPTIONS13 >::type
-            ,CDS_OPTIONS13
+            typename cds::opt::find_type_traits< default_options, Options... >::type
+            ,Options...
         >::type   options;
         //@endcond
 
     public:
         /// Rebind template arguments
-        template <typename GC2, typename T2, CDS_DECL_OTHER_OPTIONS13>
+        template <typename GC2, typename T2, typename... Options2>
         struct rebind {
-            typedef TreiberStack< GC2, T2, CDS_OTHER_OPTIONS13> other   ;   ///< Rebinding result
+            typedef TreiberStack< GC2, T2, Options2...> other   ;   ///< Rebinding result
         };
 
     public:

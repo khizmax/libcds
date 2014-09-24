@@ -19,9 +19,9 @@ namespace cds { namespace container {
         /**
             This is a synonym for intrusive::michael_set::make_traits
         */
-        template <CDS_DECL_OPTIONS3>
+        template <typename... Options>
         struct make_traits {
-            typedef typename intrusive::michael_set::make_traits<CDS_OPTIONS3>::type type  ;   ///< Result of metafunction
+            typedef typename intrusive::michael_set::make_traits<Options...>::type type  ;   ///< Result of metafunction
         };
 
         //@cond

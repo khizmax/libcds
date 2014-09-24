@@ -239,10 +239,10 @@ namespace cds { namespace intrusive {
             typedef opt::none   tag;
         };
 
-        template < typename HookType, CDS_DECL_OPTIONS3>
+        template < typename HookType, typename... Options>
         struct hook
         {
-            typedef typename opt::make_options< default_hook, CDS_OPTIONS3>::type  options;
+            typedef typename opt::make_options< default_hook, Options...>::type  options;
 
             typedef typename options::probeset_type probeset_type;
             typedef typename options::tag tag;
@@ -261,8 +261,8 @@ namespace cds { namespace intrusive {
             - cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
             - opt::tag - tag to distinguish different nodes in one struct. Default is opt::none
         */
-        template < CDS_DECL_OPTIONS3 >
-        struct base_hook: public hook< opt::base_hook_tag, CDS_OPTIONS3 >
+        template < typename... Options >
+        struct base_hook: public hook< opt::base_hook_tag, Options... >
         {};
 
         /// Member hook
@@ -275,8 +275,8 @@ namespace cds { namespace intrusive {
             - cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
             - opt::tag - tag to distinguish different nodes in one struct. Default is opt::none
         */
-        template < size_t MemberOffset, CDS_DECL_OPTIONS3 >
-        struct member_hook: public hook< opt::member_hook_tag, CDS_OPTIONS3 >
+        template < size_t MemberOffset, typename... Options >
+        struct member_hook: public hook< opt::member_hook_tag, Options... >
         {
             //@cond
             static const size_t c_nMemberOffset = MemberOffset;
@@ -293,8 +293,8 @@ namespace cds { namespace intrusive {
             - cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
             - opt::tag - tag to distinguish different nodes in one struct. Default is opt::none
         */
-        template <typename NodeTraits, CDS_DECL_OPTIONS3 >
-        struct traits_hook: public hook< opt::traits_hook_tag, CDS_OPTIONS3 >
+        template <typename NodeTraits, typename... Options >
+        struct traits_hook: public hook< opt::traits_hook_tag, Options... >
         {
             //@cond
             typedef NodeTraits node_traits;
@@ -1167,11 +1167,11 @@ namespace cds { namespace intrusive {
             This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             \p Options list see \ref CuckooSet.
         */
-        template <CDS_DECL_OPTIONS11>
+        template <typename... Options>
         struct make_traits {
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< cuckoo::type_traits, CDS_OPTIONS10 >::type
-                ,CDS_OPTIONS11
+                typename cds::opt::find_type_traits< cuckoo::type_traits, Options... >::type
+                ,Options...
             >::type   type ;    ///< Result of metafunction
         };
 

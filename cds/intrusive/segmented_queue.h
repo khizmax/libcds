@@ -127,14 +127,14 @@ namespace cds { namespace intrusive {
             - \p opt::permutation_generator - a random permutation generator for sequence [0, quasi_factor),
                 default is cds::opt::v::random2_permutation<int>
         */
-        template <CDS_DECL_OPTIONS9>
+        template <typename... Options>
         struct make_traits {
 #   ifdef CDS_DOXYGEN_INVOKED
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, CDS_OPTIONS9 >::type
-                ,CDS_OPTIONS9
+                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                ,Options...
             >::type   type;
 #   endif
         };

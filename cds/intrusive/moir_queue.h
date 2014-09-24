@@ -85,11 +85,11 @@ namespace cds { namespace intrusive {
 
         \endcode
     */
-    template <typename GC, typename T, CDS_DECL_OPTIONS9>
-    class MoirQueue: public MSQueue< GC, T, CDS_OPTIONS9 >
+    template <typename GC, typename T, typename... Options>
+    class MoirQueue: public MSQueue< GC, T, Options... >
     {
         //@cond
-        typedef MSQueue< GC, T, CDS_OPTIONS9 > base_class;
+        typedef MSQueue< GC, T, Options... > base_class;
         typedef typename base_class::node_type node_type;
         //@endcond
 
@@ -103,9 +103,9 @@ namespace cds { namespace intrusive {
         //@endcond
 
         /// Rebind template arguments
-        template <typename GC2, typename T2, CDS_DECL_OTHER_OPTIONS9>
+        template <typename GC2, typename T2, typename... Options2>
         struct rebind {
-            typedef MoirQueue< GC2, T2, CDS_OTHER_OPTIONS9> other   ;   ///< Rebinding result
+            typedef MoirQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
         };
 
     protected:
