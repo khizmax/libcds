@@ -161,14 +161,6 @@ namespace cds { namespace intrusive {
                 /// Operation descriptor used in elimination back-off
                 typedef treiber_stack::operation< T >  operation_desc;
 
-#           if !(defined(CDS_CXX11_LAMBDA_SUPPORT) && !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC10))
-                struct bkoff_predicate {
-                    operation_desc * pOp;
-                    bkoff_predicate( operation_desc * p ): pOp(p) {}
-                    bool operator()() { return pOp->nStatus.load( atomics::memory_order_acquire ) != op_busy; }
-                };
-#           endif
-
                 /// Elimination back-off data
                 struct elimination_data {
                     elimination_random_engine   randEngine; ///< random engine
@@ -243,19 +235,7 @@ namespace cds { namespace intrusive {
                     }
 
                     // Wait for colliding operation
-#               if defined(CDS_CXX11_LAMBDA_SUPPORT) && !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC10)
-                    // MSVC++ 2010 compiler error C2065: 'op_busy' : undeclared identifier
                     bkoff( [&op]() -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_busy; } );
-#               else
-                    // Local structs is not supported by old compilers (for example, GCC 4.3)
-                    //struct bkoff_predicate {
-                    //    operation_desc * pOp;
-                    //    bkoff_predicate( operation_desc * p ): pOp(p) {}
-                    //    bool operator()() { return pOp->nStatus.load( atomics::memory_order_acquire ) != op_busy; }
-                    //};
-                    bkoff( bkoff_predicate(&op) );
-#               endif
-
                     {
                         slot_scoped_lock l( slot.lock );
                         if ( slot.pRec == myRec )

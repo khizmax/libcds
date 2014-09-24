@@ -239,13 +239,6 @@ namespace cds { namespace intrusive {
             };
         };
 
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_erase_functor {
-            void operator()( value_type const & item )
-            {}
-        };
-#   endif
-
         struct clean_disposer {
             void operator()( value_type * p )
             {
@@ -1043,11 +1036,7 @@ namespace cds { namespace intrusive {
         bool erase_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
             position pos;
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_at( refHead, val, cmp, [](value_type const&){}, pos );
-#       else
-            return erase_at( refHead, val, cmp, empty_erase_functor(), pos );
-#       endif
         }
 
         template <typename Q, typename Compare>

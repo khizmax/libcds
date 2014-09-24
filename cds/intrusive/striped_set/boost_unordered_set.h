@@ -34,13 +34,6 @@ namespace cds { namespace intrusive { namespace striped_set {
             typedef cds::intrusive::striped_set::load_factor_resizing<256>   default_resizing_policy;
 
         private:
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-            struct empty_insert_functor {
-                void operator()( value_type& )
-                {}
-            };
-#       endif
-
             template <typename Compare>
             struct equal_from_compare
             {
@@ -174,11 +167,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 value_type& val = *itWhat;
                 from.base_container().erase( itWhat );
-#           ifdef CDS_CXX11_LAMBDA_SUPPORT
                 insert( val, []( value_type& ) {} );
-#           else
-                insert( val, empty_insert_functor() );
-#           endif
             }
         };
 

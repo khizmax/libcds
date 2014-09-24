@@ -464,13 +464,8 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return m_List.find_at( pHead, sv, cmp,
                 [&f](value_type& item, split_list::details::search_value_type<Q>& val){ cds::unref(f)(item, val.val ); });
-#       else
-            split_list::details::find_functor_wrapper<Func> ffw( f );
-            return m_List.find_at( pHead, sv, cmp, cds::ref(ffw) );
-#       endif
         }
 
         template <typename Q, typename Compare>

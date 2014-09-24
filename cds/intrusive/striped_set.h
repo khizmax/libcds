@@ -305,24 +305,6 @@ namespace cds { namespace intrusive {
         typedef typename mutex_policy::scoped_cell_lock     scoped_cell_lock;
         typedef typename mutex_policy::scoped_full_lock     scoped_full_lock;
         typedef typename mutex_policy::scoped_resize_lock   scoped_resize_lock;
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-
-        struct empty_erase_functor  {
-            void operator()( value_type const& )
-            {}
-        };
-
-        struct empty_find_functor {
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {}
-        };
-#   endif
         //@endcond
 
     protected:
@@ -489,11 +471,7 @@ namespace cds { namespace intrusive {
         */
         bool insert( value_type& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert( val, []( value_type& ) {} );
-#       else
-            return insert( val, empty_insert_functor() );
-#       endif
         }
 
         /// Inserts new node
@@ -611,11 +589,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * erase( Q const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase( val, [](value_type const&) {} );
-#       else
-            return erase( val, empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the set using \p pred predicate for searching
@@ -628,11 +602,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         value_type * erase_with( Q const& val, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_with( val, pred, [](value_type const&) {} );
-#       else
-            return erase_with( val, pred, empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the set
@@ -782,11 +752,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool find( Q const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find( val, [](value_type&, Q const& ) {} );
-#       else
-            return find( val, empty_find_functor() );
-#       endif
         }
 
         /// Find the key \p val using \p pred predicate
@@ -799,11 +765,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool find_with( Q const& val, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find_with( val, pred, [](value_type& , Q const& ) {} );
-#       else
-            return find_with( val, pred, empty_find_functor() );
-#       endif
         }
 
         /// Clears the set

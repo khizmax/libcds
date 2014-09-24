@@ -29,9 +29,6 @@
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 
-// Lambda
-#define CDS_CXX11_LAMBDA_SUPPORT
-
 // constexpr
 #define CDS_CONSTEXPR    constexpr
 

@@ -93,41 +93,6 @@ namespace cds { namespace container {
         typedef typename base_class::atomic_node_ptr head_type;
         //@endcond
 
-    private:
-        //@cond
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct ensure_functor
-        {
-            node_type * m_pItemFound;
-
-            ensure_functor()
-                : m_pItemFound( nullptr )
-            {}
-
-            void operator ()(bool, node_type& item, node_type& )
-            {
-                m_pItemFound = &item;
-            }
-        };
-
-        template <typename Func>
-        class find_functor: protected cds::details::functor_wrapper<Func>
-        {
-            typedef cds::details::functor_wrapper<Func> base_class;
-        public:
-            find_functor( Func f )
-                : base_class(f)
-            {}
-
-            template <typename Q>
-            void operator ()( node_type& node, Q&  )
-            {
-                base_class::get()( node.m_Data );
-            }
-        };
-#   endif
-        //@endcond
-
     protected:
         //@cond
         template <typename K>
@@ -547,13 +512,7 @@ namespace cds { namespace container {
             scoped_node_ptr pNode( alloc_node( key ));
             node_type * pItemFound = nullptr;
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode, [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; });
-#       else
-            ensure_functor func;
-            std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode, boost::ref(func) );
-            pItemFound = func.m_pItemFound;
-#       endif
             assert( pItemFound != nullptr );
 
             if ( ret.first && ret.second )
@@ -577,12 +536,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare typename Func>
         bool find_at( head_type& refHead, K& key, Compare cmp, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_at( refHead, key, cmp, [&f]( node_type& node, K const& ){ cds::unref(f)( node.m_Data ); });
-#       else
-            find_functor<Func>  wrapper( f );
-            return base_class::find_at( refHead, key, cmp, cds::ref(wrapper) );
-#       endif
         }
         */
         //@endcond

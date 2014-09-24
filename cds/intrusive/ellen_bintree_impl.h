@@ -318,53 +318,6 @@ namespace cds { namespace intrusive {
             m_Root.m_pLeft.store( &m_LeafInf1, memory_model::memory_order_relaxed );
             m_Root.m_pRight.store( &m_LeafInf2, memory_model::memory_order_release );
         }
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct trivial_equal_functor {
-            template <typename Q>
-            bool operator()( Q const& , leaf_node const& ) const
-            {
-                return true;
-            }
-        };
-
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-
-        struct assign_guard_functor {
-            typename gc::Guard&    m_guard;
-            assign_guard_functor( typename gc::Guard& guard )
-                : m_guard(guard)
-            {}
-
-            template <typename Q>
-            void operator()( value_type& val, Q& )
-            {
-                m_guard.assign( &val );
-            }
-
-            void operator()( value_type& val )
-            {
-                m_guard.assign( &val );
-            }
-        };
-
-#   endif
-
-#   if !defined(CDS_CXX11_LAMBDA_SUPPORT) || (CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC10)
-        struct unlink_equal_functor {
-            bool operator()( value_type const& v, leaf_node const& n ) const
-            {
-                return &v == node_traits::to_value_ptr( n );
-            }
-        };
-        struct empty_erase_functor  {
-            void operator()( value_type const& )
-            {}
-        };
-#   endif
         //@endcond
 
     public:
@@ -390,11 +343,7 @@ namespace cds { namespace intrusive {
         */
         bool insert( value_type& val )
         {
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert( val, []( value_type& ) {} );
-#   else
-            return insert( val, empty_insert_functor() );
-#   endif
         }
 
         /// Inserts new node
@@ -532,14 +481,9 @@ namespace cds { namespace intrusive {
         */
         bool unlink( value_type& val )
         {
-#       if defined(CDS_CXX11_LAMBDA_SUPPORT) && !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC10)
-            // vc10 generates an error for the lambda - it sees cds::intrusive::node_traits but not class-defined node_traits
             return erase_( val, node_compare(),
                 []( value_type const& v, leaf_node const& n ) -> bool { return &v == node_traits::to_value_ptr( n ); },
                 [](value_type const&) {} );
-#       else
-            return erase_( val, node_compare(), unlink_equal_functor(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the tree
@@ -553,13 +497,9 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool erase( const Q& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [](value_type const&) {} );
-#       else
-            return erase_( val, node_compare(), trivial_equal_functor(), empty_erase_functor() );
-#       endif
         }
 
         /// Delete the item from the tree with comparing functor \p pred
@@ -580,13 +520,9 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [](value_type const&) {} );
-#       else
-            return erase_( val, compare_functor(), trivial_equal_functor(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the tree
@@ -611,13 +547,9 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Func>
         bool erase( Q const& val, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 f );
-#       else
-            return erase_( val, node_compare(), trivial_equal_functor(), f );
-#       endif
         }
 
         /// Delete the item from the tree with comparing functor \p pred
@@ -638,13 +570,9 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 f );
-#       else
-            return erase_( val, compare_functor(), trivial_equal_functor(), f );
-#       endif
         }
 
         /// Extracts an item with minimal key from the tree
@@ -1444,14 +1372,9 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool extract_( typename gc::Guard& guard, Q const& key )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( key, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [&guard]( value_type& found ) { guard.assign( &found ); } );
-#       else
-            assign_guard_functor f( guard );
-            return erase_( key, node_compare(), trivial_equal_functor(), cds::ref(f) );
-#       endif
         }
 
         template <typename Q, typename Less>
@@ -1464,14 +1387,9 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( key, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [&guard]( value_type& found ) { guard.assign( &found ); } );
-#       else
-            assign_guard_functor f( guard );
-            return erase_( key, compare_functor(), trivial_equal_functor(), cds::ref(f) );
-#       endif
         }
 
         bool extract_max_( typename gc::Guard& guard )
@@ -1612,23 +1530,13 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool get_( typename gc::Guard& guard, Q const& val ) const
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find_( val, [&guard]( value_type& found, Q const& ) { guard.assign( &found ); } );
-#       else
-            assign_guard_functor f(guard);
-            return find_( val, cds::ref(f) );
-#       endif
         }
 
         template <typename Q, typename Less>
         bool get_with_( typename gc::Guard& guard, Q const& val, Less pred ) const
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find_with_( val, pred, [&guard]( value_type& found, Q const& ) { guard.assign( &found ); } );
-#       else
-            assign_guard_functor f(guard);
-            return find_with_( val, pred, cds::ref(f) );
-#       endif
         }
 
         //@endcond

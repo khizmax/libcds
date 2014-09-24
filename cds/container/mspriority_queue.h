@@ -133,30 +133,8 @@ namespace cds { namespace container {
             {
                 cxx_allocator().Delete( p );
             }
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-            void operator()( value_type& p ) const
-            {
-                cxx_allocator().Delete( &p );
-            }
-#       endif
         };
         typedef std::unique_ptr<value_type, value_deleter> scoped_ptr;
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        template <typename Func>
-        struct clear_wrapper
-        {
-            Func& func;
-            clear_wrapper( Func& f ): func(f) {}
-
-            void operator()( value_type& src ) const
-            {
-                cds::unref(func)( src );
-                value_deleter()( &src );
-            }
-        };
-#   endif
-
         //@endcond
 
     public:
@@ -264,11 +242,7 @@ namespace cds { namespace container {
         */
         void clear()
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             base_class::clear_with( []( value_type& src ) { cxx_allocator().Delete( &src ); });
-#       else
-            base_class::clear_with( value_deleter() );
-#       endif
         }
 
         /// Clears the queue (not atomic)
@@ -288,12 +262,7 @@ namespace cds { namespace container {
         template <typename Func>
         void clear_with( Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             base_class::clear_with( [&f]( value_type& val ) { cds::unref(f)(val); value_deleter()( &val ); } );
-#       else
-            clear_wrapper<Func> c(f);
-            base_class::clear_with( cds::ref(c));
-#       endif
         }
 
         /// Checks is the priority queue is empty

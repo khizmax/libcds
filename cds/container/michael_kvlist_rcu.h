@@ -141,79 +141,6 @@ namespace cds { namespace container {
             cds::urcu::details::conventional_exempt_pair_cast<node_type, value_type>
         > exempt_ptr;
 
-    private:
-        //@cond
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        template <typename Func>
-        class insert_functor: protected cds::details::functor_wrapper<Func>
-        {
-            typedef cds::details::functor_wrapper<Func> base_class;
-        public:
-            insert_functor ( Func f )
-                : base_class( f )
-            {}
-
-            void operator()( node_type& node )
-            {
-                base_class::get()( node.m_Data );
-            }
-        };
-
-        template <typename Func>
-        class ensure_functor: protected cds::details::functor_wrapper<Func>
-        {
-            typedef cds::details::functor_wrapper<Func> base_class;
-        public:
-            ensure_functor( Func f )
-                : base_class(f)
-            {}
-
-            void operator ()( bool bNew, node_type& node, node_type& )
-            {
-                base_class::get()( bNew, node.m_Data );
-            }
-        };
-
-        template <typename Func>
-        class find_functor: protected cds::details::functor_wrapper<Func>
-        {
-            typedef cds::details::functor_wrapper<Func> base_class;
-        public:
-            find_functor( Func f )
-                : base_class(f)
-            {}
-
-            template <typename Q>
-            void operator ()( node_type& node, Q&  )
-            {
-                base_class::get()( node.m_Data );
-            }
-        };
-
-        struct empty_find_functor
-        {
-            template <typename Q>
-            void operator ()( node_type& node, Q& val ) const
-            {}
-        };
-
-        template <typename Func>
-        struct erase_functor
-        {
-            Func m_func;
-
-            erase_functor( Func f )
-                : m_func( f )
-            {}
-
-            void operator ()( node_type const & node )
-            {
-                cds::unref(m_func)( const_cast<value_type&>(node.m_Data) );
-            }
-        };
-#   endif // ifndef CDS_CXX11_LAMBDA_SUPPORT
-        //@endcond
-
     protected:
         //@cond
         template <typename K>
@@ -824,13 +751,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-            if ( base_class::insert_at( refHead, *pNode, [&f](node_type& node){ cds::unref(f)( node.m_Data ); }))
-#       else
-            insert_functor<Func>  wrapper( f );
-            if ( base_class::insert_at( refHead, *pNode, cds::ref(wrapper) ))
-#       endif
-            {
+            if ( base_class::insert_at( refHead, *pNode, [&f](node_type& node){ cds::unref(f)( node.m_Data ); })) {
                 pNode.release();
                 return true;
             }
@@ -848,13 +769,8 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode,
                 [&f]( bool bNew, node_type& node, node_type& ){ cds::unref(f)( bNew, node.m_Data ); });
-#       else
-            ensure_functor<Func> wrapper( f );
-            std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode, cds::ref(wrapper));
-#       endif
             if ( ret.first && ret.second )
                 pNode.release();
 
@@ -870,12 +786,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         bool erase_at( head_type& refHead, K const& key, Compare cmp, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::erase_at( refHead, key, cmp, [&f]( node_type const & node ){ cds::unref(f)( const_cast<value_type&>(node.m_Data)); });
-#       else
-            erase_functor<Func> wrapper( f );
-            return base_class::erase_at( refHead, key, cmp, cds::ref(wrapper) );
-#       endif
         }
 
         template <typename K, typename Compare>
@@ -887,22 +798,13 @@ namespace cds { namespace container {
         template <typename K, typename Compare>
         bool find_at( head_type& refHead, K const& key, Compare cmp ) const
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_at( refHead, key, cmp, [](node_type&, K const&) {} );
-#       else
-            return base_class::find_at( refHead, key, cmp, empty_find_functor() );
-#       endif
         }
 
         template <typename K, typename Compare, typename Func>
         bool find_at( head_type& refHead, K& key, Compare cmp, Func f ) const
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_at( refHead, key, cmp, [&f](node_type& node, K const&){ cds::unref(f)( node.m_Data ); });
-#       else
-            find_functor<Func>  wrapper( f );
-            return base_class::find_at( refHead, key, cmp, cds::ref(wrapper) );
-#       endif
         }
 
         template <typename K, typename Compare>

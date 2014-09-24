@@ -410,31 +410,6 @@ namespace cds { namespace intrusive {
             node_type *   pCur;
         };
 
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-
-        struct empty_find_functor {
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {}
-        };
-
-        template <typename Func>
-        struct insert_at_ensure_functor {
-            Func m_func;
-            insert_at_ensure_functor( Func f ) : m_func(f) {}
-
-            void operator()( value_type& item )
-            {
-                cds::unref( m_func)( true, item, item );
-            }
-        };
-
-#   endif // ifndef CDS_CXX11_LAMBDA_SUPPORT
-
         class head_node: public node_type
         {
             typename node_type::atomic_ptr   m_Tower[c_nMaxHeight];
@@ -714,12 +689,7 @@ namespace cds { namespace intrusive {
                         bTowerOk = true;
                 }
 
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-                if ( !insert_at_position( val, pNode, pos, empty_insert_functor() ))
-#       else
-                if ( !insert_at_position( val, pNode, pos, []( value_type& ) {} ))
-#       endif
-                {
+                if ( !insert_at_position( val, pNode, pos, []( value_type& ) {} )) {
                     m_Stat.onInsertRetry();
                     continue;
                 }
@@ -768,10 +738,6 @@ namespace cds { namespace intrusive {
             bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
             bool bTowerMade = false;
 
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-            insert_at_ensure_functor<Func> wrapper( func );
-#       endif
-
             position pos;
             while ( true )
             {
@@ -793,12 +759,7 @@ namespace cds { namespace intrusive {
                         bTowerOk = true;
                 }
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { cds::unref(func)( true, item, item ); }))
-#       else
-                if ( !insert_at_position( val, pNode, pos, cds::ref(wrapper) ))
-#       endif
-                {
+                if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { cds::unref(func)( true, item, item ); })) {
                     m_Stat.onInsertRetry();
                     continue;
                 }
@@ -910,12 +871,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * find( Q const& val ) const
         {
-            node_type * pNode =
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                find_with_( val, key_comparator(), [](value_type& , Q const& ) {} );
-#       else
-                find_with_( val, key_comparator(), empty_find_functor() );
-#       endif
+            node_type * pNode = find_with_( val, key_comparator(), [](value_type& , Q const& ) {} );
             if ( pNode )
                 return node_traits::to_value_ptr( pNode );
             return nullptr;
@@ -931,12 +887,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         value_type * find_with( Q const& val, Less pred ) const
         {
-            node_type * pNode =
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
-#       else
-                find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), empty_find_functor() );
-#       endif
+            node_type * pNode = find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
             if ( pNode )
                 return node_traits::to_value_ptr( pNode );
             return nullptr;

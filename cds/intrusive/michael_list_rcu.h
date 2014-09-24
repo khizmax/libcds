@@ -107,28 +107,6 @@ namespace cds { namespace intrusive {
 
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock>   check_deadlock_policy;
 
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_erase_functor {
-            void operator()( value_type const & item )
-            {}
-        };
-
-        struct get_functor {
-            value_type *    pFound;
-
-            get_functor()
-                : pFound( nullptr )
-            {}
-
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {
-                pFound = &item;
-            }
-        };
-
-#   endif
-
         static void clear_links( node_type * pNode )
         {
             pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
@@ -940,11 +918,7 @@ namespace cds { namespace intrusive {
         bool erase_at( atomic_node_ptr& refHead, const Q& val, Compare cmp )
         {
             position pos;
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_at( refHead, val, cmp, [](value_type const&){}, pos );
-#       else
-            return erase_at( refHead, val, cmp, empty_erase_functor(), pos );
-#       endif
         }
 
         template <typename Q, typename Compare >
@@ -991,16 +965,10 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare>
         value_type * get_at( atomic_node_ptr& refHead, Q const& val, Compare cmp ) const
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             value_type * pFound = nullptr;
             return find_at( refHead, val, cmp,
                 [&pFound](value_type& found, Q const& ) { pFound = &found; } )
                 ? pFound : nullptr;
-#       else
-            get_functor gf;
-            return find_at( refHead, val, cmp, cds::ref(gf) )
-                ? gf.pFound : nullptr;
-#       endif
         }
 
         template <typename Q, typename Compare>

@@ -417,63 +417,6 @@ namespace cds { namespace intrusive {
 
             node_type *   pCur  ;   // guarded by guards; needed only for *ensure* function
         };
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-
-        struct empty_erase_functor  {
-            void operator()( value_type const& )
-            {}
-        };
-
-        struct empty_find_functor {
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {}
-        };
-
-        struct get_functor {
-            typename gc::Guard& m_guard;
-
-            get_functor( typename gc::Guard& gp )
-                : m_guard(gp)
-            {}
-
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {
-                m_guard.assign( &item );
-            }
-        };
-
-        template <typename Func>
-        struct insert_at_ensure_functor {
-            Func m_func;
-            insert_at_ensure_functor( Func f ) : m_func(f) {}
-
-            void operator()( value_type& item )
-            {
-                cds::unref( m_func)( true, item, item );
-            }
-        };
-
-        struct copy_value_functor {
-            template <typename Q>
-            void operator()( Q& dest, value_type const& src ) const
-            {
-                dest = src;
-            }
-        };
-
-        struct dummy_copy_functor {
-            template <typename Q>
-            void operator()( Q&, value_type const&) const {}
-        };
-#   endif // ifndef CDS_CXX11_LAMBDA_SUPPORT
-
         //@endcond
 
     protected:
@@ -895,12 +838,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare>
         bool get_with_( typename gc::Guard& guard, Q const& val, Compare cmp )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find_with_( val, cmp, [&guard](value_type& found, Q const& ) { guard.assign(&found); } );
-#       else
-            get_functor gf(guard);
-            return find_with_( val, cmp, cds::ref(gf) );
-#       endif
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -946,14 +884,7 @@ namespace cds { namespace intrusive {
                 assert( cmp( *node_traits::to_value_ptr( pDel ), val ) == 0 );
 
                 unsigned int nHeight = pDel->height();
-                if ( try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                    [](value_type const&) {}
-#       else
-                    empty_erase_functor()
-#       endif
-                    ))
-                {
+                if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractSuccess();
@@ -980,14 +911,7 @@ namespace cds { namespace intrusive {
                 unsigned int nHeight = pDel->height();
                 gDel.assign( node_traits::to_value_ptr(pDel) );
 
-                if ( try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                    [](value_type const&) {}
-#       else
-                    empty_erase_functor()
-#       endif
-                    ))
-                {
+                if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractMinSuccess();
@@ -1014,14 +938,7 @@ namespace cds { namespace intrusive {
                 unsigned int nHeight = pDel->height();
                 gDel.assign( node_traits::to_value_ptr(pDel) );
 
-                if ( try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                    [](value_type const&) {}
-#       else
-                    empty_erase_functor()
-#       endif
-                    ))
-                {
+                if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractMaxSuccess();
@@ -1117,11 +1034,7 @@ namespace cds { namespace intrusive {
         */
         bool insert( value_type& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert( val, []( value_type& ) {} );
-#       else
-            return insert( val, empty_insert_functor() );
-#       endif
         }
 
         /// Inserts new node
@@ -1226,10 +1139,6 @@ namespace cds { namespace intrusive {
             bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
             bool bTowerMade = false;
 
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-            insert_at_ensure_functor<Func> wrapper( func );
-#       endif
-
             position pos;
             while ( true )
             {
@@ -1251,12 +1160,7 @@ namespace cds { namespace intrusive {
                         bTowerOk = true;
                 }
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { cds::unref(func)( true, item, item ); }))
-#       else
-                if ( !insert_at_position( val, pNode, pos, cds::ref(wrapper) ))
-#       endif
-                {
+                if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { cds::unref(func)( true, item, item ); })) {
                     m_Stat.onInsertRetry();
                     continue;
                 }
@@ -1301,14 +1205,7 @@ namespace cds { namespace intrusive {
             typename gc::Guard gDel;
             gDel.assign( node_traits::to_value_ptr(pDel) );
 
-            if ( node_traits::to_value_ptr( pDel ) == &val && try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                [](value_type const&) {}
-#       else
-                empty_erase_functor()
-#       endif
-            ))
-            {
+            if ( node_traits::to_value_ptr( pDel ) == &val && try_remove_at( pDel, pos, [](value_type const&) {} )) {
                 --m_ItemCounter;
                 m_Stat.onRemoveNode( nHeight );
                 m_Stat.onUnlinkSuccess();
@@ -1449,11 +1346,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool erase( Q const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, key_comparator(), [](value_type const&) {} );
-#       else
-            return erase_( val, key_comparator(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the set with comparing functor \p pred
@@ -1468,11 +1361,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool erase_with( Q const& val, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
-#       else
-            return erase_( val, cds::opt::details::make_comparator_from_less<Less>(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the set
@@ -1616,11 +1505,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool find( Q const & val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find_with_( val, key_comparator(), [](value_type& , Q const& ) {} );
-#       else
-            return find_with_( val, key_comparator(), empty_find_functor() );
-#       endif
         }
 
         /// Finds the key \p val with comparing functor \p pred
@@ -1634,11 +1519,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool find_with( Q const& val, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
-#       else
-            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), empty_find_functor() );
-#       endif
         }
 
         /// Finds the key \p val and return the item found

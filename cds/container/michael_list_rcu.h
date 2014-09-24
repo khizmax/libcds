@@ -131,9 +131,6 @@ namespace cds { namespace container {
         typedef typename options::type_traits::compare  intrusive_key_comparator;
 
         typedef typename base_class::atomic_node_ptr      head_type;
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        typedef typename base_class::empty_erase_functor    empty_erase_functor;
-#   endif
         //@endcond
 
     public:
@@ -149,78 +146,6 @@ namespace cds { namespace container {
         {
             return n.m_Value;
         }
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        template <typename Func>
-        struct insert_functor
-        {
-            Func        m_func;
-
-            insert_functor ( Func f )
-                : m_func(f)
-            {}
-
-            void operator()( node_type& node )
-            {
-                cds::unref(m_func)( node_to_value(node) );
-            }
-        };
-
-        template <typename Q, typename Func>
-        struct ensure_functor
-        {
-            Func        m_func;
-            Q const&    m_arg;
-
-            ensure_functor( Q const& arg, Func f )
-                : m_func(f)
-                , m_arg( arg )
-            {}
-
-            void operator ()( bool bNew, node_type& node, node_type& )
-            {
-                cds::unref(m_func)( bNew, node_to_value(node), m_arg );
-            }
-        };
-
-        template <typename Func>
-        struct find_functor
-        {
-            Func    m_func;
-
-            find_functor( Func f )
-                : m_func(f)
-            {}
-
-            template <typename Q>
-            void operator ()( node_type& node, Q& val )
-            {
-                cds::unref(m_func)( node_to_value(node), val );
-            }
-        };
-
-        struct empty_find_functor
-        {
-            template <typename Q>
-            void operator ()( node_type& node, Q& val ) const
-            {}
-        };
-
-        template <typename Func>
-        struct erase_functor
-        {
-            Func        m_func;
-
-            erase_functor( Func f )
-                : m_func(f)
-            {}
-
-            void operator()( node_type const& node )
-            {
-                cds::unref(m_func)( node_to_value(node) );
-            }
-        };
-#endif  // ifndef CDS_CXX11_LAMBDA_SUPPORT
         //@endcond
 
     protected:
@@ -501,11 +426,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool erase( Q const& key )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_at( head(), key, intrusive_key_comparator(),  [](value_type const&){} );
-#       else
-            return erase_at( head(), key, intrusive_key_comparator(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -518,11 +439,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_at( head(), key, typename options::template less_wrapper<Less>::type(), [](value_type const&){} );
-#       else
-            return erase_at( head(), key, typename options::template less_wrapper<Less>::type(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes \p key from the list
@@ -839,20 +756,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
-#       ifdef CDS_BUG_STATIC_MEMBER_IN_LAMBDA
-            // GCC 4.5,4.6,4.7: node_to_value is unaccessible from lambda,
-            // like as MichaelList::node_to_value that requires to capture *this* despite on node_to_value is static function
-            value_type& (* n2v)( node_type& ) = node_to_value;
-            if ( base_class::insert_at( refHead, *pNode, [&f, n2v]( node_type& node ) { cds::unref(f)( n2v(node) ); } ))
-#       else
-            if ( base_class::insert_at( refHead, *pNode, [&f]( node_type& node ) { cds::unref(f)( node_to_value(node) ); } ))
-#       endif
-#   else
-            insert_functor<Func>  wrapper( f );
-            if ( base_class::insert_at( refHead, *pNode, cds::ref(wrapper) ))
-#   endif
-            {
+            if ( base_class::insert_at( refHead, *pNode, [&f]( node_type& node ) { cds::unref(f)( node_to_value(node) ); } )) {
                 pNode.release();
                 return true;
             }
@@ -868,19 +772,7 @@ namespace cds { namespace container {
         template <typename Q, typename Compare, typename Func>
         bool erase_at( head_type& refHead, Q const& key, Compare cmp, Func f )
         {
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
-#       ifdef CDS_BUG_STATIC_MEMBER_IN_LAMBDA
-            // GCC 4.5-4.7: node_to_value is unaccessible from lambda,
-            // like as MichaelList::node_to_value that requires to capture *this* despite on node_to_value is static function
-            value_type const& (* n2v)( node_type const& ) = node_to_value;
-            return base_class::erase_at( refHead, key, cmp, [&f,n2v](node_type const& node){ cds::unref(f)( n2v(node) ); } );
-#       else
             return base_class::erase_at( refHead, key, cmp, [&f](node_type const& node){ cds::unref(f)( node_to_value(node) ); } );
-#       endif
-#   else
-            erase_functor<Func> wrapper( f );
-            return base_class::erase_at( refHead, key, cmp, cds::ref(wrapper) );
-#   endif
         }
 
         template <typename Q, typename Func>
@@ -888,21 +780,8 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
-#       ifdef CDS_BUG_STATIC_MEMBER_IN_LAMBDA
-            // GCC 4.5-4.7: node_to_value is unaccessible from lambda,
-            // like as MichaelList::node_to_value that requires to capture *this* despite on node_to_value is static function
-            value_type& (* n2v)( node_type& ) = node_to_value;
-            std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode,
-                [&f, &key, n2v](bool bNew, node_type& node, node_type&){ cds::unref(f)( bNew, n2v(node), key ); });
-#       else
             std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode,
                 [&f, &key](bool bNew, node_type& node, node_type&){ cds::unref(f)( bNew, node_to_value(node), key ); });
-#       endif
-#   else
-            ensure_functor<Q, Func> wrapper( key, f );
-            std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode, cds::ref(wrapper));
-#   endif
             if ( ret.first && ret.second )
                 pNode.release();
 
@@ -918,29 +797,13 @@ namespace cds { namespace container {
         template <typename Q, typename Compare>
         bool find_at( head_type& refHead, Q const& key, Compare cmp ) const
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_at( refHead, key, cmp, [](node_type&, Q const &) {} );
-#       else
-            return base_class::find_at( refHead, key, cmp, empty_find_functor() );
-#       endif
         }
 
         template <typename Q, typename Compare, typename Func>
         bool find_at( head_type& refHead, Q& val, Compare cmp, Func f ) const
         {
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
-#       ifdef CDS_BUG_STATIC_MEMBER_IN_LAMBDA
-            // GCC 4.5-4.7: node_to_value is unaccessible from lambda,
-            // like as MichaelList::node_to_value that requires to capture *this* despite on node_to_value is static function
-            value_type& (* n2v)( node_type& ) = node_to_value;
-            return base_class::find_at( refHead, val, cmp, [&f, n2v](node_type& node, Q& v){ cds::unref(f)( n2v(node), v ); });
-#       else
             return base_class::find_at( refHead, val, cmp, [&f](node_type& node, Q& v){ cds::unref(f)( node_to_value(node), v ); });
-#       endif
-#   else
-            find_functor<Func>  wrapper( f );
-            return base_class::find_at( refHead, val, cmp, cds::ref(wrapper) );
-#   endif
         }
 
         template <typename Q, typename Compare>

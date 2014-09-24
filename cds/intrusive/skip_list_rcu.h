@@ -597,55 +597,6 @@ namespace cds { namespace intrusive {
         };
 
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock>   check_deadlock_policy;
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-
-        struct empty_erase_functor  {
-            void operator()( value_type const& )
-            {}
-        };
-
-        struct empty_find_functor {
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {}
-        };
-
-        struct get_functor {
-            value_type *    pFound;
-
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {
-                pFound = &item;
-            }
-        };
-
-        template <typename Func>
-        struct insert_at_ensure_functor {
-            Func m_func;
-            insert_at_ensure_functor( Func f ) : m_func(f) {}
-
-            void operator()( value_type& item )
-            {
-                cds::unref( m_func)( true, item, item );
-            }
-        };
-
-        struct copy_value_functor {
-            template <typename Q>
-            void operator()( Q& dest, value_type const& src ) const
-            {
-                dest = src;
-            }
-        };
-
-#   endif // ifndef CDS_CXX11_LAMBDA_SUPPORT
-
         //@endcond
 
     protected:
@@ -1194,14 +1145,7 @@ retry:
 
                 unsigned int const nHeight = pDel->height();
 
-                if ( try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                    [](value_type const&) {}
-#       else
-                    empty_erase_functor()
-#       endif
-                    , true ))
-                {
+                if ( try_remove_at( pDel, pos, [](value_type const&) {}, true )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractSuccess();
@@ -1267,14 +1211,7 @@ retry:
                 pDel = pos.pCur;
                 unsigned int const nHeight = pDel->height();
 
-                if ( try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                    [](value_type const&) {}
-#       else
-                    empty_erase_functor()
-#       endif
-                    , true ))
-                {
+                if ( try_remove_at( pDel, pos, [](value_type const&) {}, true )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractMinSuccess();
@@ -1322,14 +1259,7 @@ retry:
                 pDel = pos.pCur;
                 unsigned int const nHeight = pDel->height();
 
-                if ( try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                    [](value_type const&) {}
-#       else
-                    empty_erase_functor()
-#       endif
-                    , true ))
-                {
+                if ( try_remove_at( pDel, pos, [](value_type const&) {}, true )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractMaxSuccess();
@@ -1521,11 +1451,7 @@ retry:
         */
         bool insert( value_type& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert( val, []( value_type& ) {} );
-#       else
-            return insert( val, empty_insert_functor() );
-#       endif
         }
 
         /// Inserts new node
@@ -1648,10 +1574,6 @@ retry:
                 bool bTowerOk = nHeight > 1 && pNode->get_tower() != nullptr;
                 bool bTowerMade = false;
 
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-                insert_at_ensure_functor<Func> wrapper( func );
-#       endif
-
                 rcu_lock rcuLock;
                 while ( true )
                 {
@@ -1673,12 +1595,7 @@ retry:
                             bTowerOk = true;
                     }
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                    if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { cds::unref(func)( true, item, item ); }))
-#       else
-                    if ( !insert_at_position( val, pNode, pos, cds::ref(wrapper) ))
-#       endif
-                    {
+                    if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { cds::unref(func)( true, item, item ); })) {
                         m_Stat.onInsertRetry();
                         continue;
                     }
@@ -1735,14 +1652,7 @@ retry:
 
                     unsigned int nHeight = pDel->height();
 
-                    if ( node_traits::to_value_ptr( pDel ) == &val && try_remove_at( pDel, pos,
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                        [](value_type const&) {}
-#       else
-                        empty_erase_functor()
-#       endif
-                        , false ))
-                    {
+                    if ( node_traits::to_value_ptr( pDel ) == &val && try_remove_at( pDel, pos, [](value_type const&) {}, false )) {
                         --m_ItemCounter;
                         m_Stat.onRemoveNode( nHeight );
                         m_Stat.onUnlinkSuccess();
@@ -1892,11 +1802,7 @@ retry:
         template <typename Q>
         bool erase( const Q& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return do_erase( val, key_comparator(), [](value_type const&) {} );
-#       else
-            return do_erase( val, key_comparator(), empty_erase_functor() );
-#       endif
         }
 
         /// Delete the item from the set with comparing functor \p pred
@@ -1909,11 +1815,7 @@ retry:
         template <typename Q, typename Less>
         bool erase_with( const Q& val, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return do_erase( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
-#       else
-            return do_erase( val, cds::opt::details::make_comparator_from_less<Less>(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the set
@@ -2051,11 +1953,7 @@ retry:
         template <typename Q>
         bool find( Q const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return do_find_with( val, key_comparator(), [](value_type& , Q const& ) {} );
-#       else
-            return do_find_with( val, key_comparator(), empty_find_functor() );
-#       endif
         }
 
         /// Finds the key \p val with comparing functor \p pred
@@ -2068,13 +1966,7 @@ retry:
         template <typename Q, typename Less>
         bool find_with( Q const& val, Less pred )
         {
-            return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(),
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                [](value_type& , Q const& ) {}
-#       else
-                empty_find_functor()
-#       endif
-            );
+            return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
 
         /// Finds the key \p val and return the item found
@@ -2112,15 +2004,9 @@ retry:
         {
             assert( gc::is_locked());
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             value_type * pFound;
             return do_find_with( val, key_comparator(), [&pFound](value_type& found, Q const& ) { pFound = &found; } )
                 ? pFound : nullptr;
-#       else
-            get_functor gf;
-            return do_find_with( val, key_comparator(), cds::ref(gf) )
-                ? gf.pFound : nullptr;
-#       endif
         }
 
         /// Finds the key \p val and return the item found
@@ -2137,16 +2023,10 @@ retry:
         {
             assert( gc::is_locked());
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             value_type * pFound;
             return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(),
                 [&pFound](value_type& found, Q const& ) { pFound = &found; } )
                 ? pFound : nullptr;
-#       else
-            get_functor gf;
-            return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(), cds::ref(gf) )
-                ? gf.pFound : nullptr;
-#       endif
         }
 
         /// Returns item count in the set

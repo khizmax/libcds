@@ -708,33 +708,6 @@ namespace cds { namespace intrusive {
             m_Root.m_pLeft.store( &m_LeafInf1, memory_model::memory_order_relaxed );
             m_Root.m_pRight.store( &m_LeafInf2, memory_model::memory_order_release );
         }
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct trivial_equal_functor {
-            template <typename Q>
-            bool operator()( Q const& , leaf_node const& ) const
-            {
-                return true;
-            }
-        };
-
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-#   endif
-#   if !defined(CDS_CXX11_LAMBDA_SUPPORT) || (CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC10)
-        struct unlink_equal_functor {
-            bool operator()( value_type const& v, leaf_node const& n ) const
-            {
-                return &v == node_traits::to_value_ptr( n );
-            }
-        };
-        struct empty_erase_functor  {
-            void operator()( value_type const& )
-            {}
-        };
-#   endif
         //@endcond
 
     public:
@@ -762,11 +735,7 @@ namespace cds { namespace intrusive {
         */
         bool insert( value_type& val )
         {
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert( val, []( value_type& ) {} );
-#   else
-            return insert( val, empty_insert_functor() );
-#   endif
         }
 
         /// Inserts new node
@@ -922,14 +891,9 @@ namespace cds { namespace intrusive {
         */
         bool unlink( value_type& val )
         {
-#       if defined(CDS_CXX11_LAMBDA_SUPPORT) && !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC10)
-            // vc10 generates an error for the lambda - it sees cds::intrusive::node_traits but not class-defined node_traits
             return erase_( val, node_compare(),
                 []( value_type const& v, leaf_node const& n ) -> bool { return &v == node_traits::to_value_ptr( n ); },
                 [](value_type const&) {} );
-#       else
-            return erase_( val, node_compare(), unlink_equal_functor(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the tree
@@ -945,13 +909,9 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool erase( const Q& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [](value_type const&) {} );
-#       else
-            return erase_( val, node_compare(), trivial_equal_functor(), empty_erase_functor() );
-#       endif
         }
 
         /// Delete the item from the tree with comparing functor \p pred
@@ -972,13 +932,9 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [](value_type const&) {} );
-#       else
-            return erase_( val, compare_functor(), trivial_equal_functor(), empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the tree
@@ -1005,13 +961,9 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Func>
         bool erase( Q const& val, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 f );
-#       else
-            return erase_( val, node_compare(), trivial_equal_functor(), f );
-#       endif
         }
 
         /// Delete the item from the tree with comparing functor \p pred
@@ -1032,13 +984,9 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 f );
-#       else
-            return erase_( val, compare_functor(), trivial_equal_functor(), f );
-#       endif
         }
 
         /// Extracts an item with minimal key from the tree

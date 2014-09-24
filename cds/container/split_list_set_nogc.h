@@ -81,20 +81,7 @@ namespace cds { namespace container {
             }
         };
         typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
-
         //@endcond
-
-    protected:
-        //@cond
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_ensure_functor
-        {
-            void operator()( bool /*bNew*/, node_type& /*item*/, node_type& /*val*/ )
-            {}
-        };
-#   endif
-        //@endcond
-
 
     public:
         /// Initialize split-ordered list of default capacity
@@ -292,11 +279,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( val ));
 
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             std::pair<typename base_class::iterator, bool> ret = base_class::ensure_( *pNode, [](bool /*bNew*/, node_type& /*item*/, node_type& /*val*/){} );
-#       else
-            std::pair<typename base_class::iterator, bool> ret = base_class::ensure_( *pNode, empty_ensure_functor() );
-#       endif
             if ( ret.first != base_class::end() && ret.second ) {
                 pNode.release();
                 return std::make_pair( iterator(ret.first), ret.second );

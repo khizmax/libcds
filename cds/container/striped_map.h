@@ -8,10 +8,6 @@
 #include <cds/container/striped_set/adapter.h>
 #include <cds/details/binary_functor_wrapper.h>
 
-#ifndef CDS_CXX11_LAMBDA_SUPPORT
-#   include <cds/details/functor_wrapper.h>
-#endif
-
 namespace cds { namespace container {
 
     //@cond
@@ -537,46 +533,6 @@ template <class Container, typename... Options>
                 return p.first;
             }
         };
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-
-        template <typename Func>
-        class find_functor_wrapper: protected cds::details::functor_wrapper<Func>
-        {
-            typedef cds::details::functor_wrapper<Func> base_class;
-        public:
-            find_functor_wrapper() {}
-            find_functor_wrapper( Func f ): base_class(f) {}
-
-            template <typename Q>
-            void operator()( value_type& pair, Q const& /*val*/ )
-            {
-                base_class::get()( pair );
-            }
-        };
-
-        template <typename Q>
-        class insert_value_functor
-        {
-            Q const&    m_val;
-        public:
-            insert_value_functor( Q const & v)
-                : m_val(v)
-            {}
-
-            void operator()( value_type& item )
-            {
-                item.second = m_val;
-            }
-        };
-
-        struct dummy_insert_functor
-        {
-            void operator()( value_type& item )
-            {}
-        };
-#   endif  // #ifndef CDS_CXX11_LAMBDA_SUPPORT
-
         //@endcond
 
     public:
@@ -631,11 +587,7 @@ template <class Container, typename... Options>
         template <typename K>
         bool insert( K const& key )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert_key( key, [](value_type&){} );
-#       else
-            return insert_key( key, dummy_insert_functor() );
-#       endif
         }
 
         /// Inserts new node
@@ -652,12 +604,7 @@ template <class Container, typename... Options>
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert_key( key, [&val](value_type& item) { item.second = val ; } );
-#       else
-            insert_value_functor<V> f(val);
-            return insert_key( key, cds::ref(f) );
-#       endif
         }
 
         /// Inserts new node and initialize it by a functor
@@ -796,11 +743,7 @@ template <class Container, typename... Options>
             ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_erase_with >::type >
         bool erase_with( K const& key, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_with( key, pred, [](value_type const&) {} );
-#       else
-            return erase_with( key, pred, typename base_class::empty_erase_functor() );
-#       endif
         }
 
         /// Delete \p key from the map
@@ -866,12 +809,7 @@ template <class Container, typename... Options>
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find( key, [&f]( value_type& pair, K const& ) mutable { cds::unref(f)(pair); } );
-#       else
-            find_functor_wrapper<Func> fw(f);
-            return base_class::find( key, cds::ref(fw) );
-#       endif
         }
 
         /// Find the key \p val using \p pred predicate
@@ -889,13 +827,8 @@ template <class Container, typename... Options>
             ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_find_with >::type >
         bool find_with( K const& key, Less pred, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >(),
                 [&f]( value_type& pair, K const& ) mutable { cds::unref(f)(pair); } );
-#       else
-            find_functor_wrapper<Func> fw(f);
-            return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >(), cds::ref(fw) );
-#       endif
         }
 
         /// Find the key \p key

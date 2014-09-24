@@ -78,25 +78,6 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct ensure_functor
-        {
-            node_type * m_pItemFound;
-
-            ensure_functor()
-                : m_pItemFound( nullptr )
-            {}
-
-            void operator ()(bool, node_type& item, node_type& )
-            {
-                m_pItemFound = &item;
-            }
-        };
-#   endif
-        //@endcond
-
-    protected:
-        //@cond
         static node_type * alloc_node()
         {
             return cxx_allocator().New();
@@ -430,14 +411,8 @@ namespace cds { namespace container {
             scoped_node_ptr pNode( alloc_node( val ));
             node_type * pItemFound = nullptr;
 
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
             std::pair<bool, bool> ret = base_class::ensure_at( &refHead, *pNode,
                 [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; });
-#   else
-            ensure_functor func;
-            std::pair<bool, bool> ret = base_class::ensure_at( &refHead, *pNode, boost::ref(func) );
-            pItemFound = func.m_pItemFound;
-#   endif
             assert( pItemFound != nullptr );
 
             if ( ret.first && ret.second )

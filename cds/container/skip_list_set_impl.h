@@ -161,83 +161,6 @@ namespace cds { namespace container {
         }
         //@endcond
 
-    protected:
-        //@cond
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        template <typename Func>
-        struct insert_functor
-        {
-            Func        m_func;
-
-            insert_functor ( Func f )
-                : m_func(f)
-            {}
-
-            void operator()( node_type& node )
-            {
-                cds::unref(m_func)( node.m_Value );
-            }
-        };
-
-        template <typename Q, typename Func>
-        struct ensure_functor
-        {
-            Func        m_func;
-            Q const&    m_arg;
-
-            ensure_functor( Q const& arg, Func f )
-                : m_func(f)
-                , m_arg( arg )
-            {}
-
-            void operator ()( bool bNew, node_type& node, node_type& )
-            {
-                cds::unref(m_func)( bNew, node.m_Value, m_arg );
-            }
-        };
-
-        template <typename Func>
-        struct find_functor
-        {
-            Func    m_func;
-
-            find_functor( Func f )
-                : m_func(f)
-            {}
-
-            template <typename Q>
-            void operator ()( node_type& node, Q& val )
-            {
-                cds::unref(m_func)( node.m_Value, val );
-            }
-        };
-
-        struct copy_value_functor {
-            template <typename Q>
-            void operator()( Q& dest, value_type const& src ) const
-            {
-                dest = src;
-            }
-        };
-
-        template <typename Func>
-        struct erase_functor
-        {
-            Func        m_func;
-
-            erase_functor( Func f )
-                : m_func(f)
-            {}
-
-            void operator()( node_type const& node )
-            {
-                cds::unref(m_func)( node.m_Value );
-            }
-        };
-#   endif  // ifndef CDS_CXX11_LAMBDA_SUPPORT
-
-        //@endcond
-
     public:
         /// Default ctor
         SkipListSet()
@@ -334,13 +257,7 @@ namespace cds { namespace container {
         bool insert( Q const& val, Func f )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-            if ( base_class::insert( *sp.get(), [&f]( node_type& val ) { cds::unref(f)( val.m_Value ); } ))
-#       else
-            insert_functor<Func> wrapper(f);
-            if ( base_class::insert( *sp, cds::ref(wrapper) ))
-#       endif
-            {
+            if ( base_class::insert( *sp.get(), [&f]( node_type& val ) { cds::unref(f)( val.m_Value ); } )) {
                 sp.release();
                 return true;
             }
@@ -382,13 +299,8 @@ namespace cds { namespace container {
         std::pair<bool, bool> ensure( const Q& val, Func func )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             std::pair<bool, bool> bRes = base_class::ensure( *sp,
                 [&func, &val](bool bNew, node_type& node, node_type&){ cds::unref(func)( bNew, node.m_Value, val ); });
-#       else
-            ensure_functor<Q, Func> wrapper( val, func );
-            std::pair<bool, bool> bRes = base_class::ensure( *sp, cds::ref(wrapper));
-#       endif
             if ( bRes.first && bRes.second )
                 sp.release();
             return bRes;
@@ -462,12 +374,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         bool erase( Q const& key, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::erase( key, [&f]( node_type const& node) { cds::unref(f)( node.m_Value ); } );
-#       else
-            erase_functor<Func> wrapper(f);
-            return base_class::erase( key, cds::ref(wrapper));
-#       endif
         }
 
         /// Deletes the item from the set using \p pred predicate for searching
@@ -480,14 +387,8 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::erase_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
                 [&f]( node_type const& node) { cds::unref(f)( node.m_Value ); } );
-#       else
-            erase_functor<Func> wrapper(f);
-            return base_class::erase_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                cds::ref(wrapper));
-#       endif
         }
 
         /// Extracts the item from the set with specified \p key
@@ -627,12 +528,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         bool find( Q& val, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find( val, [&f]( node_type& node, Q& v ) { cds::unref(f)( node.m_Value, v ); });
-#       else
-            find_functor<Func> wrapper(f);
-            return base_class::find( val, cds::ref(wrapper));
-#       endif
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -645,13 +541,8 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& val, Less pred, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
                 [&f]( node_type& node, Q& v ) { cds::unref(f)( node.m_Value, v ); } );
-#       else
-            find_functor<Func> wrapper(f);
-            return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(), cds::ref(wrapper));
-#       endif
         }
 
         /// Find the key \p val
@@ -681,12 +572,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         bool find( Q const& val, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find( val, [&f]( node_type& node, Q const& v ) { cds::unref(f)( node.m_Value, v ); });
-#       else
-            find_functor<Func> wrapper(f);
-            return base_class::find( val, cds::ref(wrapper));
-#       endif
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -699,14 +585,8 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& val, Less cmp, Func f )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
                 [&f]( node_type& node, Q const& v ) { cds::unref(f)( node.m_Value, v ); } );
-#       else
-            find_functor<Func> wrapper(f);
-            return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                cds::ref(wrapper));
-#       endif
         }
 
         /// Find the key \p val

@@ -168,28 +168,6 @@ namespace cds { namespace container {
         >::type     key_accessor;
 
         typedef std::unique_ptr< node_type, typename maker::node_deallocator >    scoped_node_ptr;
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct ensure_functor
-        {
-            node_type * pNode;
-            void operator ()( bool bNew, node_type& node, node_type& )
-            {
-                pNode = &node;
-            }
-        };
-
-        struct find_functor
-        {
-            node_type * pNode;
-
-            template <typename Q>
-            void operator ()( node_type& node, Q& )
-            {
-                pNode = &node;
-            }
-        };
-#   endif
         //@endcond
 
     public:
@@ -298,21 +276,12 @@ namespace cds { namespace container {
         std::pair<iterator, bool> ensure( const Q& val )
         {
             scoped_node_ptr sp( node_allocator().New( base_class::random_level(), val ));
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             node_type * pNode;
             std::pair<bool, bool> bRes = base_class::ensure( *sp, [&pNode](bool, node_type& item, node_type&) { pNode = &item; } );
             if ( bRes.first && bRes.second )
                 sp.release();
             assert( pNode );
             return std::make_pair( node_to_iterator( pNode ), bRes.second );
-#       else
-            ensure_functor f;
-            std::pair<bool, bool> bRes = base_class::ensure( *sp, cds::ref(f) );
-            if ( bRes.first && bRes.second )
-                sp.release();
-            assert( f.pNode );
-            return std::make_pair( node_to_iterator( f.pNode ), bRes.second );
-#       endif
         }
 
         /// Searches \p key

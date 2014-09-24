@@ -517,27 +517,6 @@ namespace cds { namespace container {
         typedef typename base_class::scoped_resize_lock scoped_resize_lock;
         //@endcond
 
-    protected:
-        //@cond
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-
-        struct empty_erase_functor  {
-            void operator()( value_type const& )
-            {}
-        };
-
-        struct empty_find_functor {
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {}
-        };
-#   endif
-        //@endcond
-
     public:
         /// Default ctor. The initial capacity is 16.
         StripedSet()
@@ -590,11 +569,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool insert( Q const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert( val, []( value_type& ) {} );
-#       else
-            return insert( val, empty_insert_functor() );
-#       endif
         }
 
         /// Inserts new node
@@ -718,11 +693,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool erase( Q const& key )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase( key, [](value_type const&) {} );
-#       else
-            return erase( key, empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the set using \p pred predicate for searching
@@ -740,11 +711,7 @@ namespace cds { namespace container {
             ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_erase_with >::type >
         bool erase_with( Q const& key, Less pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_with( key, pred, [](value_type const&) {} );
-#       else
-            return erase_with( key, pred, empty_erase_functor() );
-#       endif
         }
 
         /// Delete \p key from the set

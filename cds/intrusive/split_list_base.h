@@ -573,24 +573,6 @@ namespace cds { namespace intrusive {
                 */
             };
 
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-            template <typename Func>
-            class find_functor_wrapper: protected cds::details::functor_wrapper<Func>
-            {
-                typedef cds::details::functor_wrapper<Func> base_class;
-            public:
-                find_functor_wrapper( Func f )
-                    : base_class( f )
-                {}
-
-                template <typename ValueType, typename Q>
-                void operator()( ValueType& item, split_list::details::search_value_type<Q>& val )
-                {
-                    base_class::get()( item, val.val );
-                }
-            };
-#       endif
-
             template <class OrderedList, class Options>
             class rebind_list_options
             {

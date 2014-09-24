@@ -294,13 +294,6 @@ namespace cds { namespace intrusive {
                 m_pos.unlock();
             }
         };
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_erase_functor {
-            void operator()( value_type const & item )
-            {}
-        };
-#   endif
         //@endcond
 
     protected:
@@ -1112,25 +1105,14 @@ namespace cds { namespace intrusive {
         bool erase_at( node_type * pHead, const Q& val, Compare cmp )
         {
             position pos;
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_at( pHead, val, cmp, [](value_type const &){}, pos );
-#       else
-            return erase_at( pHead, val, cmp, empty_erase_functor(), pos );
-#       endif
         }
 
         template <typename Q, typename Compare>
         bool extract_at( node_type * pHead, typename gc::Guard& gp, const Q& val, Compare cmp )
         {
             position pos;
-            if (
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
-                erase_at( pHead, val, cmp, [](value_type const &){}, pos )
-#       else
-                erase_at( pHead, val, cmp, empty_erase_functor(), pos )
-#       endif
-                )
-            {
+            if ( erase_at( pHead, val, cmp, [](value_type const &){}, pos )) {
                 gp.assign( pos.guards.template get<value_type>(position::guard_current_item) );
                 return true;
             }

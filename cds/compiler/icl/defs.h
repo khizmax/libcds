@@ -84,9 +84,6 @@
 #define CDS_NOEXCEPT_SUPPORT        noexcept
 #define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
 
-// Lambda (ICL 12 +)
-#define CDS_CXX11_LAMBDA_SUPPORT
-
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 

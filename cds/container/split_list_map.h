@@ -141,44 +141,11 @@ namespace cds { namespace container {
         //@cond
         typedef typename base_class::maker::type_traits::key_accessor key_accessor;
         typedef typename base_class::node_type node_type;
+        //@endcond
 
     public:
         /// Guarded pointer
         typedef cds::gc::guarded_ptr< gc, node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
-
-
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        template <typename Func>
-        class ensure_functor_wrapper: protected cds::details::functor_wrapper<Func>
-        {
-            typedef cds::details::functor_wrapper<Func> base_class;
-        public:
-            ensure_functor_wrapper() {}
-            ensure_functor_wrapper( Func f ): base_class(f) {}
-
-            template <typename Q>
-            void operator()( bool bNew, value_type& item, const Q& /*val*/ )
-            {
-                base_class::get()( bNew, item );
-            }
-        };
-
-        template <typename Func>
-        class find_functor_wrapper: protected cds::details::functor_wrapper<Func>
-        {
-            typedef cds::details::functor_wrapper<Func> base_class;
-        public:
-            find_functor_wrapper() {}
-            find_functor_wrapper( Func f ): base_class(f) {}
-
-            template <typename Q>
-            void operator()( value_type& pair, Q const& /*val*/ )
-            {
-                base_class::get()( pair );
-            }
-        };
-#   endif   // ifndef CDS_CXX11_LAMBDA_SUPPORT
-        //@endcond
 
     public:
         /// Forward iterator (see SplitListSet::iterator)
@@ -379,15 +346,10 @@ namespace cds { namespace container {
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::ensure( std::make_pair( key, mapped_type() ),
                 [&func](bool bNew, value_type& item, value_type const& /*val*/) {
                     cds::unref(func)( bNew, item );
                 } );
-#   else
-            ensure_functor_wrapper<Func> fw( func );
-            return base_class::ensure( std::make_pair( key, mapped_type() ), cds::ref(fw) );
-#   endif
         }
 
         /// Deletes \p key from the map
@@ -520,12 +482,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find( key, [&f](value_type& pair, K const&){ cds::unref(f)( pair ); } );
-#   else
-            find_functor_wrapper<Func> fw(f);
-            return base_class::find( key, cds::ref(fw) );
-#   endif
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -538,14 +495,9 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool find_with( K const& key, Less pred, Func f )
         {
-#   ifdef CDS_CXX11_LAMBDA_SUPPORT
             return base_class::find_with( key,
                 cds::details::predicate_wrapper<value_type, Less, key_accessor>(),
                 [&f](value_type& pair, K const&){ cds::unref(f)( pair ); } );
-#   else
-            find_functor_wrapper<Func> fw(f);
-            return base_class::find_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>(), cds::ref(fw) );
-#   endif
         }
 
         /// Finds the key \p key

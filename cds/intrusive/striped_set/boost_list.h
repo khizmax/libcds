@@ -46,13 +46,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
             };
 
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-            struct empty_insert_functor {
-                void operator()( value_type& )
-                {}
-            };
-#       endif
-
             template <typename Q, typename Pred>
             iterator find_key( Q const& key, Pred pred)
             {
@@ -192,11 +185,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 value_type& val = *itWhat;
                 from.base_container().erase( itWhat );
-#           ifdef CDS_CXX11_LAMBDA_SUPPORT
                 insert( val, []( value_type& ) {} );
-#           else
-                insert( val, empty_insert_functor() );
-#           endif
             }
 
         };

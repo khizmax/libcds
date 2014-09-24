@@ -87,9 +87,6 @@
 #define CDS_NOEXCEPT_SUPPORT
 #define CDS_NOEXCEPT_SUPPORT_(expr)
 
-// Lambda (VC 10 +)
-#define CDS_CXX11_LAMBDA_SUPPORT
-
 // C++11 inline namespace
 //#define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 

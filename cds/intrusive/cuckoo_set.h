@@ -1904,39 +1904,6 @@ namespace cds { namespace intrusive {
 
         typedef size_t  hash_array[c_nArity]    ;   ///< hash array
 
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_insert_functor {
-            void operator()( value_type& )
-            {}
-        };
-
-        struct empty_erase_functor  {
-            void operator()( value_type const& )
-            {}
-        };
-
-        struct empty_find_functor {
-            template <typename Q>
-            void operator()( value_type& item, Q& val )
-            {}
-        };
-#   endif
-
-#   if !defined(CDS_CXX11_LAMBDA_SUPPORT) || ((CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL ) && _MSC_VER == 1600)
-        template <typename Disposer>
-        class disposer_wrapper: protected cds::details::functor_wrapper<Disposer>
-        {
-            typedef cds::details::functor_wrapper<Disposer> base_class;
-        public:
-            disposer_wrapper( Disposer d): base_class(d) {}
-
-            void operator()( node_type * pNode )
-            {
-                base_class::get()( node_traits::to_value_ptr( pNode ));
-            }
-        };
-#   endif
-
         struct position {
             bucket_iterator     itPrev;
             bucket_iterator     itFound;
@@ -2383,11 +2350,7 @@ namespace cds { namespace intrusive {
         */
         bool insert( value_type& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return insert( val, []( value_type& ) {} );
-#       else
-            return insert( val, empty_insert_functor() );
-#       endif
         }
 
         /// Inserts new node
@@ -2601,11 +2564,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * erase( Q const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase( val, [](value_type const&) {} );
-#       else
-            return erase( val, empty_erase_functor() );
-#       endif
         }
 
         /// Deletes the item from the set using \p pred predicate for searching
@@ -2619,11 +2578,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Predicate>
         value_type * erase_with( Q const& val, Predicate pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return erase_( val, typename predicate_wrapper<Predicate>::type(), [](value_type const&) {} );
-#       else
-            return erase_( val, typename predicate_wrapper<Predicate>::type(), empty_erase_functor() );
-#       endif
         }
 
         /// Delete the item from the set
@@ -2757,11 +2712,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool find( Q const& val )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find( val, [](value_type&, Q const& ) {} );
-#       else
-            return find( val, empty_find_functor() );
-#       endif
         }
 
         /// Find the key \p val using \p pred predicate for comparing
@@ -2775,11 +2726,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Predicate>
         bool find_with( Q const& val, Predicate pred )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return find_with( val, typename predicate_wrapper<Predicate>::type(), [](value_type& , Q const& ) {} );
-#       else
-            return find_with( val, typename predicate_wrapper<Predicate>::type(), empty_find_functor() );
-#       endif
         }
 
         /// Clears the set
@@ -2810,19 +2757,11 @@ namespace cds { namespace intrusive {
             // locks entire array
             scoped_full_lock sl( m_MutexPolicy );
 
-#   if !defined(CDS_CXX11_LAMBDA_SUPPORT) || ((CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL ) && _MSC_VER == 1600)
-            disposer_wrapper<Disposer> disp( oDisposer );
-#       endif
             for ( unsigned int i = 0; i < c_nArity; ++i ) {
                 bucket_entry * pEntry = m_BucketTable[i];
                 bucket_entry * pEnd = pEntry + m_nBucketMask + 1;
                 for ( ; pEntry != pEnd ; ++pEntry ) {
-#       if defined(CDS_CXX11_LAMBDA_SUPPORT) && !((CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER == 1600)
-                    // MSVC 10: error to call nested typedefs node_traits from lambda
                     pEntry->clear( [&oDisposer]( node_type * pNode ){ oDisposer( node_traits::to_value_ptr( pNode )) ; } );
-#       else
-                    pEntry->clear( cds::ref(disp) );
-#       endif
                 }
             }
             m_ItemCounter.reset();

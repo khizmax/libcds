@@ -108,15 +108,6 @@ namespace cds { namespace container {
             {}
         };
 
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct copy_construct {
-            void operator()( value_type& dest, value_type const& src )
-            {
-                new ( &dest ) value_type( src );
-            }
-        };
-#   endif
-
         typedef cds::details::trivial_assign< value_type, value_type > copy_assign;
 
         typedef typename options::buffer::template rebind<cell_type>::other buffer;
@@ -214,11 +205,7 @@ namespace cds { namespace container {
         /// @anchor cds_container_VyukovMPMCCycleQueue_enqueue Enqueues \p data to queue
         bool enqueue(value_type const& data )
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             return enqueue( data, [](value_type& dest, value_type const& src){ new ( &dest ) value_type( src ); });
-#       else
-            return enqueue( data, copy_construct() );
-#       endif
         }
 
         /// Enqueues data of type \ref cds_container_VyukovMPMCCycleQueue_value_type "value_type" constructed with <tt>std::forward<Args>(args)...</tt>

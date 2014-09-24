@@ -206,13 +206,6 @@ namespace cds { namespace intrusive {
                 typedef typename container_type::value_compare  key_comparator;
 
             private:
-#       ifndef CDS_CXX11_LAMBDA_SUPPORT
-                struct empty_insert_functor {
-                    void operator()( value_type& )
-                    {}
-                };
-#       endif
-
                 container_type  m_Set;
 
             public:
@@ -315,11 +308,7 @@ namespace cds { namespace intrusive {
                 {
                     value_type& val = *itWhat;
                     from.base_container().erase( itWhat );
-#           ifdef CDS_CXX11_LAMBDA_SUPPORT
                     insert( val, []( value_type& ) {} );
-#           else
-                    insert( val, empty_insert_functor() );
-#           endif
                 }
             };
         }   // namespace details

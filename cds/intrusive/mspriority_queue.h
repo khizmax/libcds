@@ -204,17 +204,6 @@ namespace cds { namespace intrusive {
         };
         //@endcond
 
-    protected:
-        //@cond
-#   ifndef CDS_CXX11_LAMBDA_SUPPORT
-        struct empty_cleaner
-        {
-            void operator()( value_type const& ) const
-            {}
-        };
-#   endif
-        //@endcond
-
     public:
         typedef typename traits::buffer::template rebind<node>::other   buffer_type ;   ///< Heap array buffer type
 
@@ -341,11 +330,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-#       ifdef CDS_CXX11_LAMBDA_SUPPORT
             clear_with( []( value_type const& src ) {} );
-#       else
-            clear_with( empty_cleaner() );
-#       endif
         }
 
         /// Clears the queue (not atomic)
