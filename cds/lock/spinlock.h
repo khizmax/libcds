@@ -122,7 +122,7 @@ namespace cds {
                 bool bCurrent = false;
                 m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_relaxed );
 
-                CDS_DEBUG_DO(
+                CDS_DEBUG_ONLY(
                     if ( !bCurrent ) {
                         m_dbgOwnerId = OS::getCurrentThreadId();
                     }
@@ -175,7 +175,7 @@ namespace cds {
                 assert( m_spin.load( atomics::memory_order_relaxed ) );
 
                 assert( m_dbgOwnerId == OS::getCurrentThreadId() );
-                CDS_DEBUG_DO( m_dbgOwnerId = OS::c_NullThreadId; )
+                CDS_DEBUG_ONLY( m_dbgOwnerId = OS::c_NullThreadId; )
 
                 m_spin.store( false, atomics::memory_order_release );
             }

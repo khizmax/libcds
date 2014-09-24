@@ -383,8 +383,8 @@ namespace cds {
                 void destroy()
                 {
                     allocator_type al;
-                    CDS_DEBUG_DO( cds::OS::ThreadId const nullThreadId = cds::OS::c_NullThreadId; )
-                    CDS_DEBUG_DO( cds::OS::ThreadId const mainThreadId = cds::OS::getCurrentThreadId() ;)
+                    CDS_DEBUG_ONLY( cds::OS::ThreadId const nullThreadId = cds::OS::c_NullThreadId; )
+                    CDS_DEBUG_ONLY( cds::OS::ThreadId const mainThreadId = cds::OS::getCurrentThreadId() ;)
 
                     thread_record * p = m_pHead.exchange( nullptr, atomics::memory_order_seq_cst );
                     while ( p ) {

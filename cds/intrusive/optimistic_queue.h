@@ -490,8 +490,8 @@ namespace cds { namespace intrusive {
         {
             clear();
             node_type * pHead = m_pHead.load(memory_model::memory_order_relaxed);
-            CDS_DEBUG_DO( node_type * pTail = m_pTail.load(memory_model::memory_order_relaxed); )
-            CDS_DEBUG_DO( assert( pHead == pTail ); )
+            CDS_DEBUG_ONLY( node_type * pTail = m_pTail.load(memory_model::memory_order_relaxed); )
+            CDS_DEBUG_ONLY( assert( pHead == pTail ); )
             assert( pHead != nullptr );
 
             m_pHead.store( nullptr, memory_model::memory_order_relaxed );

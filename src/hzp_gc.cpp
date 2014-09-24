@@ -58,8 +58,8 @@ namespace cds { namespace gc {
 
         GarbageCollector::~GarbageCollector()
         {
-            CDS_DEBUG_DO( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
-            CDS_DEBUG_DO( const cds::OS::ThreadId mainThreadId = cds::OS::getCurrentThreadId() ;)
+            CDS_DEBUG_ONLY( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
+            CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::getCurrentThreadId() ;)
 
             hplist_node * pHead = m_pListHead.load( atomics::memory_order_relaxed );
             m_pListHead.store( nullptr, atomics::memory_order_relaxed );

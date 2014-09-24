@@ -130,7 +130,7 @@ namespace cds { namespace gc { namespace hrc {
                 size_t n = m_nFreeList;
                 assert( m_arr[n].m_pNode.load( atomics::memory_order_relaxed ) == nullptr );
                 m_nFreeList = m_arr[n].m_nNextFree;
-                CDS_DEBUG_DO( m_arr[n].m_nNextFree = m_nEndFreeList ; )
+                CDS_DEBUG_ONLY( m_arr[n].m_nNextFree = m_nEndFreeList ; )
                 m_arr[n].set( p, pFunc );
             }
 

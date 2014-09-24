@@ -462,10 +462,10 @@ namespace cds { namespace intrusive {
             ++m_ItemCounter;
 
             while ( true ) {
-                CDS_DEBUG_DO( size_t nLoopCount = 0);
+                CDS_DEBUG_ONLY( size_t nLoopCount = 0);
                 do {
                     typename permutation_generator::integer_type i = gen;
-                    CDS_DEBUG_DO( ++nLoopCount );
+                    CDS_DEBUG_ONLY( ++nLoopCount );
                     if ( pTailSegment->cells[i].load(memory_model::memory_order_relaxed).all() ) {
                         // Cell is not empty, go next
                         m_Stat.onPushPopulated();
@@ -621,10 +621,10 @@ namespace cds { namespace intrusive {
 
                 bool bHadNullValue = false;
                 cell item;
-                CDS_DEBUG_DO( size_t nLoopCount = 0 );
+                CDS_DEBUG_ONLY( size_t nLoopCount = 0 );
                 do {
                     typename permutation_generator::integer_type i = gen;
-                    CDS_DEBUG_DO( ++nLoopCount );
+                    CDS_DEBUG_ONLY( ++nLoopCount );
 
                     // Guard the item
                     // In segmented queue the cell cannot be reused

@@ -31,18 +31,18 @@ namespace cds { namespace gc { namespace hrc {
         : m_bTrace( false )
         , m_bDeleted( false )
     {
-        CDS_DEBUG_DO( GarbageCollector::instance().dbgNodeConstructed() ; )
+        CDS_DEBUG_ONLY( GarbageCollector::instance().dbgNodeConstructed() ; )
     }
 
     inline ContainerNode::~ContainerNode()
     {
         assert( m_RC == 0 );
-        CDS_DEBUG_DO( GarbageCollector::instance().dbgNodeDestructed() ; )
+        CDS_DEBUG_ONLY( GarbageCollector::instance().dbgNodeDestructed() ; )
     }
 
     inline void GarbageCollector::try_retire( ThreadGC * pThreadGC )
     {
-        CDS_DEBUG_DO( unsigned int nAttempt = 0 );
+        CDS_DEBUG_ONLY( unsigned int nAttempt = 0 );
 
         do {
             pThreadGC->cleanUpLocal();
