@@ -3,6 +3,7 @@
 #ifndef __CPPUNIT_THREAD_H
 #define __CPPUNIT_THREAD_H
 
+#include <cds/details/defs.h>
 #include "cppunit/cppunit_mini.h"
 #include <boost/thread.hpp>
 #include <cds/os/timer.h>

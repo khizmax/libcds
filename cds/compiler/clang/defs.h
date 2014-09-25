@@ -14,7 +14,6 @@
 #   error "Compiler version error. Clang version 3.3.0 and above is supported"
 #endif
 
-
 #if defined(_LIBCPP_VERSION) && !defined(CDS_USE_BOOST_ATOMIC)
     // Note: Clang libc++ atomic leads to program crash.
     // So, we use libcds atomic implementation
@@ -22,6 +21,12 @@
 #endif
 
 #include <cds/compiler/gcc/compiler_macro.h>
+
+#if CDS_COMPILER_VERSION >= 30400 && CDS_COMPILER_VERSION < 30500 && CDS_PROCESSOR_ARCH == CDS_PROCESSOR_AMD64
+    // Error compiling 64bit boost.atomic on clang 3.4 - 3.5
+    // see https://svn.boost.org/trac/boost/ticket/9610
+#   define BOOST_HAS_INT128 1
+#endif
 
 #define alignof __alignof__
 
