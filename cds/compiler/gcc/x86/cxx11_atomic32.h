@@ -7,7 +7,7 @@
 #include <cds/details/is_aligned.h>
 
 //@cond
-namespace cds { namespace cxx11_atomics {
+namespace cds { namespace cxx11_atomic {
     namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace gcc { CDS_CXX11_INLINE_NAMESPACE namespace x86 {
 
         static inline void fence_before( memory_order order ) CDS_NOEXCEPT
@@ -468,7 +468,7 @@ namespace cds { namespace cxx11_atomics {
         }
 
     }}} // namespace platform::gcc::x86
-}}  // namespace cds::cxx11_atomics
+}}  // namespace cds::cxx11_atomic
 //@endcond
 
 #endif // #ifndef __CDS_COMPILER_GCC_X86_CXX11_ATOMIC32_H

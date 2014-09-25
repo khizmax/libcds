@@ -647,6 +647,7 @@
     <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\sparc\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\x86\cxx11_atomic.h" />
+    <ClInclude Include="..\..\..\cds\compiler\gcc\x86\cxx11_atomic32.h" />
     <ClInclude Include="..\..\..\cds\compiler\icl\compiler_barriers.h" />
     <ClInclude Include="..\..\..\cds\compiler\icl\defs.h" />
     <ClInclude Include="..\..\..\cds\compiler\vc\amd64\cxx11_atomic.h" />

@@ -71,22 +71,22 @@ namespace cds { namespace cxx11_atomic {
         template <>
         struct primary_type<1>
         {
-            typedef cds::uint8_t type;
+            typedef std::uint8_t type;
         };
         template <>
         struct primary_type<2>
         {
-            typedef cds::uint16_t type;
+            typedef std::uint16_t type;
         };
         template <>
         struct primary_type<4>
         {
-            typedef cds::uint32_t type;
+            typedef std::uint32_t type;
         };
         template <>
         struct primary_type<8>
         {
-            typedef cds::uint64_t type;
+            typedef std::uint64_t type;
         };
 
         template <typename T, typename Primary>
@@ -1802,28 +1802,28 @@ namespace cds { namespace cxx11_atomic {
     typedef atomic<wchar_t>         atomic_wchar_t;
 
 
-    typedef atomic<cds::int_least8_t>    atomic_int_least8_t;
-    typedef atomic<cds::uint_least8_t>   atomic_uint_least8_t;
-    typedef atomic<cds::int_least16_t>   atomic_int_least16_t;
-    typedef atomic<cds::uint_least16_t>  atomic_uint_least16_t;
-    typedef atomic<cds::int_least32_t>   atomic_int_least32_t;
-    typedef atomic<cds::uint_least32_t>  atomic_uint_least32_t;
-    typedef atomic<cds::int_least64_t>   atomic_int_least64_t;
-    typedef atomic<cds::uint_least64_t>  atomic_uint_least64_t;
-    typedef atomic<cds::int_fast8_t>     atomic_int_fast8_t;
-    typedef atomic<cds::uint_fast8_t>    atomic_uint_fast8_t;
-    typedef atomic<cds::int_fast16_t>    atomic_int_fast16_t;
-    typedef atomic<cds::uint_fast16_t>   atomic_uint_fast16_t;
-    typedef atomic<cds::int_fast32_t>    atomic_int_fast32_t;
-    typedef atomic<cds::uint_fast32_t>   atomic_uint_fast32_t;
-    typedef atomic<cds::int_fast64_t>    atomic_int_fast64_t;
-    typedef atomic<cds::uint_fast64_t>   atomic_uint_fast64_t;
+    typedef atomic<std::int_least8_t>    atomic_int_least8_t;
+    typedef atomic<std::uint_least8_t>   atomic_uint_least8_t;
+    typedef atomic<std::int_least16_t>   atomic_int_least16_t;
+    typedef atomic<std::uint_least16_t>  atomic_uint_least16_t;
+    typedef atomic<std::int_least32_t>   atomic_int_least32_t;
+    typedef atomic<std::uint_least32_t>  atomic_uint_least32_t;
+    typedef atomic<std::int_least64_t>   atomic_int_least64_t;
+    typedef atomic<std::uint_least64_t>  atomic_uint_least64_t;
+    typedef atomic<std::int_fast8_t>     atomic_int_fast8_t;
+    typedef atomic<std::uint_fast8_t>    atomic_uint_fast8_t;
+    typedef atomic<std::int_fast16_t>    atomic_int_fast16_t;
+    typedef atomic<std::uint_fast16_t>   atomic_uint_fast16_t;
+    typedef atomic<std::int_fast32_t>    atomic_int_fast32_t;
+    typedef atomic<std::uint_fast32_t>   atomic_uint_fast32_t;
+    typedef atomic<std::int_fast64_t>    atomic_int_fast64_t;
+    typedef atomic<std::uint_fast64_t>   atomic_uint_fast64_t;
     typedef atomic<intptr_t>             atomic_intptr_t;
     typedef atomic<uintptr_t>            atomic_uintptr_t;
     typedef atomic<size_t>               atomic_size_t;
     typedef atomic<ptrdiff_t>            atomic_ptrdiff_t;
-    typedef atomic<cds::intmax_t>        atomic_intmax_t;
-    typedef atomic<cds::uintmax_t>       atomic_uintmax_t;
+    typedef atomic<std::intmax_t>        atomic_intmax_t;
+    typedef atomic<std::uintmax_t>       atomic_uintmax_t;
 
     template <class T>
     static inline bool atomic_is_lock_free(const volatile atomic<T> * p) CDS_NOEXCEPT

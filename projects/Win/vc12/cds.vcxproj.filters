@@ -1274,5 +1274,8 @@
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\x86\cxx11_atomic32.h">
+      <Filter>Header Files\cds\compiler\gcc\x86</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
