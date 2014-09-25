@@ -22,7 +22,7 @@
 
 #include <cds/compiler/gcc/compiler_macro.h>
 
-#if CDS_COMPILER_VERSION >= 30400 && CDS_COMPILER_VERSION < 30500 && CDS_PROCESSOR_ARCH == CDS_PROCESSOR_AMD64
+#if CDS_COMPILER_VERSION >= 30400 && CDS_COMPILER_VERSION < 30600 && CDS_PROCESSOR_ARCH == CDS_PROCESSOR_AMD64
     // Error compiling 64bit boost.atomic on clang 3.4 - 3.5
     // see https://svn.boost.org/trac/boost/ticket/9610
 #   define BOOST_HAS_INT128 1
