@@ -30,7 +30,7 @@ namespace cds { namespace opt {
 
     namespace v {
         //@cond
-        using cds::details::hash;
+        using std::hash;
 
         /// Metafunction selecting default hash implementation
         /**
@@ -45,7 +45,7 @@ namespace cds { namespace opt {
         template <typename Hash>
         struct hash_selector
         {
-            typedef Hash    type    ;   ///< resulting implementation of hash functor
+            typedef Hash    type;   ///< resulting implementation of hash functor
         };
 
         template <>
