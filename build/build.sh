@@ -467,15 +467,19 @@ fi
 
 echo ---------------------------------
 echo Make debug library
-CXXFLAGS="$compileroptions $cxx_debug_options $EXTRA_CXXFLAGS"
-export CXXFLAGS
-CFLAGS="$compileroptions $cxx_debug_options $EXTRA_CFLAGS $debugflag "
-export CFLAGS
-LDFLAGS="$linkeroptions -shared $ld_debug_options $ld_libs $EXTRA_LDFLAGS "
-export LDFLAGS
+#CXXFLAGS="$compileroptions $cxx_debug_options $EXTRA_CXXFLAGS"
+#export CXXFLAGS
+#CFLAGS="$compileroptions $cxx_debug_options $EXTRA_CFLAGS $debugflag "
+#export CFLAGS
+#LDFLAGS="$linkeroptions -shared $ld_debug_options $EXTRA_LDFLAGS "
+#export LDFLAGS
 
 mkdir -p $OBJ_PATH/debug
 
+CXXFLAGS="$compileroptions $cxx_debug_options $EXTRA_CXXFLAGS" \
+CFLAGS="$compileroptions $cxx_debug_options $EXTRA_CFLAGS $debugflag " \
+LDLIBS="$ld_libs" \
+LDFLAGS="$linkeroptions -shared $ld_debug_options $EXTRA_LDFLAGS " \
 $MAKE -f Makefile \
      platform=$OS_FAMILY \
      BIN_PATH=$BIN_PATH \
@@ -489,15 +493,19 @@ fi
 echo ---------------------------------
 echo Make release library
 
-CXXFLAGS="$compileroptions $cxx_release_options $EXTRA_CXXFLAGS "
-export CXXFLAGS
-CFLAGS="$compileroptions $cxx_release_options $EXTRA_CFLAGS "
-export CFLAGS
-LDFLAGS="$linkeroptions -shared $ld_resease_options $ld_libs $EXTRA_LDFLAGS "
-export LDFLAGS
+#CXXFLAGS="$compileroptions $cxx_release_options $EXTRA_CXXFLAGS "
+#export CXXFLAGS
+#CFLAGS="$compileroptions $cxx_release_options $EXTRA_CFLAGS "
+#export CFLAGS
+#LDFLAGS="$linkeroptions -shared $ld_resease_options $ld_libs $EXTRA_LDFLAGS "
+#export LDFLAGS
 
 mkdir -p $OBJ_PATH/release
 
+CXXFLAGS="$compileroptions $cxx_release_options $EXTRA_CXXFLAGS " \
+CFLAGS="$compileroptions $cxx_release_options $EXTRA_CFLAGS " \
+LDFLAGS="$linkeroptions -shared $ld_resease_options $EXTRA_LDFLAGS " \
+LDLIBS="$ld_libs" \
 $MAKE -f Makefile \
      platform=$OS_FAMILY \
      BIN_PATH=$BIN_PATH \
