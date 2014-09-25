@@ -286,7 +286,7 @@ namespace cds { namespace intrusive {
                 // the heap is empty
                 m_Lock.unlock();
                 m_Stat.onPopFailed();
-                return false;
+                return nullptr;
             }
             counter_type nBottom = m_ItemCounter.reversed_value();
             m_ItemCounter.dec();

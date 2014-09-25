@@ -83,30 +83,30 @@ namespace std {
             return false;
         }
     };
-} // namespace std
 
-CDS_BEGIN_STD_HASH_NAMESPACE
     template <>
     struct hash<set2::key_thread>
     {
         typedef size_t              result_type;
         typedef set2::key_thread    argument_type;
 
-        size_t operator()(set2::key_thread const& k) const
+        size_t operator()( set2::key_thread const& k ) const
         {
-            return CDS_STD_HASH_NAMESPACE::hash<size_t>()( k.nKey );
+            return std::hash<size_t>()(k.nKey);
         }
-        size_t operator()(size_t k) const
+        size_t operator()( size_t k ) const
         {
-            return CDS_STD_HASH_NAMESPACE::hash<size_t>()( k );
+            return std::hash<size_t>()(k);
         }
     };
-CDS_END_STD_HASH_NAMESPACE
 
+} // namespace std
+
+/*
 namespace boost {
     inline size_t hash_value( set2::key_thread const& k )
     {
-        return CDS_STD_HASH_NAMESPACE::hash<size_t>()( k.nKey );
+        return std::hash<size_t>()( k.nKey );
     }
 
     template <>
@@ -125,7 +125,7 @@ namespace boost {
         }
     };
 } // namespace boost
-
+*/
 
 namespace set2 {
 

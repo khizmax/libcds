@@ -720,7 +720,6 @@
     <ClInclude Include="..\..\..\cds\details\binary_functor_wrapper.h" />
     <ClInclude Include="..\..\..\cds\details\bit_reverse_counter.h" />
     <ClInclude Include="..\..\..\cds\details\bounded_container.h" />
-    <ClInclude Include="..\..\..\cds\details\hash_functor_selector.h" />
     <ClInclude Include="..\..\..\cds\details\lib.h" />
     <ClInclude Include="..\..\..\cds\details\numtraits.h" />
     <ClInclude Include="..\..\..\cds\details\static_functor.h" />

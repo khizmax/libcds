@@ -83,32 +83,26 @@ namespace std {
             return false;
         }
     };
+
+    template <>
+    struct hash<map2::key_thread>
+    {
+        typedef size_t              result_type;
+        typedef map2::key_thread    argument_type;
+
+        size_t operator()( map2::key_thread const& k ) const
+        {
+            return std::hash<size_t>()(k.nKey);
+        }
+        size_t operator()( size_t k ) const
+        {
+            return std::hash<size_t>()(k);
+        }
+    };
 } // namespace std
 
-CDS_BEGIN_STD_HASH_NAMESPACE
-template <>
-struct hash<map2::key_thread>
-{
-    typedef size_t              result_type;
-    typedef map2::key_thread    argument_type;
-
-    size_t operator()(map2::key_thread const& k) const
-    {
-        return CDS_STD_HASH_NAMESPACE::hash<size_t>()( k.nKey );
-    }
-    size_t operator()(size_t k) const
-    {
-        return CDS_STD_HASH_NAMESPACE::hash<size_t>()( k );
-    }
-};
-CDS_END_STD_HASH_NAMESPACE
-
+/*
 namespace boost {
-    inline size_t hash_value( map2::key_thread const& k )
-    {
-        return CDS_STD_HASH_NAMESPACE::hash<size_t>()( k.nKey );
-    }
-
     template <>
     struct hash<map2::key_thread>
     {
@@ -125,6 +119,7 @@ namespace boost {
         }
     };
 } // namespace boost
+*/
 
 namespace map2 {
 

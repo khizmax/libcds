@@ -830,9 +830,6 @@
     <ClInclude Include="..\..\..\cds\details\bounded_container.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\hash_functor_selector.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\all.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>

@@ -4,8 +4,8 @@
 #define __CDS_OPT_HASH_H
 
 #include <tuple>
+#include<functional>
 #include <cds/opt/options.h>
-#include <cds/details/hash_functor_selector.h>
 
 namespace cds { namespace opt {
 
@@ -36,10 +36,9 @@ namespace cds { namespace opt {
         /**
             The metafunction selects appropriate hash functor implementation.
             If \p Hash is not equal to opt::none, then result of metafunction is \p Hash.
-            Otherwise, the result is <tt> std::hash<Q> </tt> or <tt> boost::hash<Q> </tt>
-            depending of compiler you use.
+            Otherwise, the result is <tt> std::hash<Q> </tt>.
 
-            Note that default hash function like <tt> std::hash<Q> </tt> or <tt> boost::hash<Q> </tt>
+            Note that default hash function like <tt> std::hash<Q> </tt>
             is generally not suitable for complex type \p Q and its derivatives.
             You should manually provide particular hash functor for such types.
         */
@@ -56,7 +55,7 @@ namespace cds { namespace opt {
                 template <typename Q>
                 size_t operator()( Q const& key ) const
                 {
-                    return hash<Q>()( key );
+                    return std::hash<Q>()( key );
                 }
             };
         };
@@ -107,19 +106,13 @@ namespace cds { namespace opt {
 
     //@cond
     // At least, two functors must be provided. Single functor is not supported
-//#if CDS_COMPILER != CDS_COMPILER_INTEL
-    // Intel C++ compiler does not support
     template <typename Functor> struct hash< std::tuple<Functor> >;
-//#endif
     //@endcond
 
     /// Multi-functor hash option setter - specialization for std::tuple
     template <typename... Functors>
     struct hash< std::tuple<Functors...> >
     {
-//#   if CDS_COMPILER == CDS_COMPILER_INTEL
-        //static_assert( sizeof...(Functors) > 1, "At least, two functors must be provided. Single functor is not supported" );
-//#   endif
         //@cond
         template <typename Base> struct pack: public Base
         {

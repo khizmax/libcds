@@ -2,11 +2,11 @@
 
 // Pass The Buck (PTB) Memory manager implementation
 
+#include <algorithm>   // std::fill
+#include <functional>  // std::hash
+
 #include <cds/gc/ptb/ptb.h>
 #include <cds/algo/int_algo.h>
-
-#include <cds/details/hash_functor_selector.h>
-#include <algorithm>   // std::fill
 
 namespace cds { namespace gc { namespace ptb {
 
@@ -25,7 +25,7 @@ namespace cds { namespace gc { namespace ptb {
             }
             item_type&  bucket( guard_data::guarded_ptr p )
             {
-                return m_Buckets[ cds::details::hash<guard_data::guarded_ptr>()( p ) & (m_nBucketCount - 1)  ];
+                return m_Buckets[ std::hash<guard_data::guarded_ptr>()( p ) & (m_nBucketCount - 1)  ];
             }
 
         public:
