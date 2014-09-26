@@ -102,7 +102,6 @@ namespace std {
 
 } // namespace std
 
-/*
 namespace boost {
     inline size_t hash_value( set2::key_thread const& k )
     {
@@ -125,7 +124,6 @@ namespace boost {
         }
     };
 } // namespace boost
-*/
 
 namespace set2 {
 

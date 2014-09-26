@@ -101,8 +101,11 @@ namespace std {
     };
 } // namespace std
 
-/*
 namespace boost {
+    inline size_t hash_value( map2::key_thread const& k )
+    {
+        return std::hash<size_t>()( k.nKey );
+    }
     template <>
     struct hash<map2::key_thread>
     {
@@ -119,7 +122,6 @@ namespace boost {
         }
     };
 } // namespace boost
-*/
 
 namespace map2 {
 
