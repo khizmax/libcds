@@ -61,7 +61,6 @@ namespace cds { namespace container {
 
         \note There are several specializations of \p %SkipListSet for each \p GC. You should include:
         - <tt><cds/container/skip_list_set_hp.h></tt> for gc::HP garbage collector
-        - <tt><cds/container/skip_list_set_hrc.h></tt> for gc::HRC garbage collector
         - <tt><cds/container/skip_list_set_ptb.h></tt> for gc::PTB garbage collector
         - <tt><cds/container/skip_list_set_rcu.h></tt> for \ref cds_nonintrusive_SkipListSet_rcu "RCU type"
         - <tt><cds/container/skip_list_set_nogc.h></tt> for \ref cds_nonintrusive_SkipListSet_nogc "non-deletable SkipListSet"

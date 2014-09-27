@@ -6,6 +6,6 @@
 #include <cds/container/details/skip_list_base.h>
 #include <cds/intrusive/skip_list_hrc.h>
 #include <cds/container/details/make_skip_list_set.h>
-#include <cds/container/skip_list_set_impl.h>
+#include <cds/container/impl/skip_list_set.h>
 
 #endif  // #ifndef __CDS_CONTAINER_SKIP_LIST_SET_HRC_H
