@@ -4,7 +4,7 @@
 #define __CDS_CONTAINER_LAZY_LIST_BASE_H
 
 #include <cds/container/base.h>
-#include <cds/intrusive/lazy_list_base.h>
+#include <cds/intrusive/details/lazy_list_base.h>
 #include <cds/urcu/options.h>
 
 namespace cds { namespace container {

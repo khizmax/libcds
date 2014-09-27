@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_LAZY_LIST_NOGC_H
 #define __CDS_INTRUSIVE_LAZY_LIST_NOGC_H
 
-#include <cds/intrusive/lazy_list_base.h>
+#include <cds/intrusive/details/lazy_list_base.h>
 #include <cds/gc/nogc.h>
 
 namespace cds { namespace intrusive {

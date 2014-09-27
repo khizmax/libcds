@@ -551,9 +551,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\fcstack.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_base.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_hp.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1279,6 +1276,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h">
       <Filter>Header Files\cds\intrusive\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\lazy_list_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

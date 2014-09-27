@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_LAZY_LIST_RCU_H
 #define __CDS_INTRUSIVE_LAZY_LIST_RCU_H
 
-#include <cds/intrusive/lazy_list_base.h>
+#include <cds/intrusive/details/lazy_list_base.h>
 #include <cds/urcu/details/check_deadlock.h>
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/urcu/exempt_ptr.h>

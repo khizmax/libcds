@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_LAZY_LIST_IMPL_H
 #define __CDS_INTRUSIVE_LAZY_LIST_IMPL_H
 
-#include <cds/intrusive/lazy_list_base.h>
+#include <cds/intrusive/details/lazy_list_base.h>
 #include <cds/gc/guarded_ptr.h>
 
 
