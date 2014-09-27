@@ -1172,9 +1172,6 @@
     <ClInclude Include="..\..\..\cds\algo\bitop.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\numtraits.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\flat_combining.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>

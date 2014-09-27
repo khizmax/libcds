@@ -732,7 +732,6 @@
     <ClInclude Include="..\..\..\cds\details\bit_reverse_counter.h" />
     <ClInclude Include="..\..\..\cds\details\bounded_container.h" />
     <ClInclude Include="..\..\..\cds\details\lib.h" />
-    <ClInclude Include="..\..\..\cds\details\numtraits.h" />
     <ClInclude Include="..\..\..\cds\details\static_functor.h" />
     <ClInclude Include="..\..\..\cds\gc\all.h" />
     <ClInclude Include="..\..\..\cds\gc\exception.h" />

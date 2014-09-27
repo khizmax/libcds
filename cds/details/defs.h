@@ -393,8 +393,6 @@ namespace cds {
  Common things
 **************************************************************************/
 
-#include <cds/details/numtraits.h>
-
 namespace cds {
 
     /// Base of all exceptions in the library
