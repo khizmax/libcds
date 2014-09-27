@@ -557,9 +557,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_hrc.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_impl.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_nogc.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1279,6 +1276,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\lazy_list_base.h">
       <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\impl\lazy_list.h">
+      <Filter>Header Files\cds\intrusive\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

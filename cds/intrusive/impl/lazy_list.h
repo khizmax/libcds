@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_LAZY_LIST_IMPL_H
-#define __CDS_INTRUSIVE_LAZY_LIST_IMPL_H
+#ifndef __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
+#define __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
 
 #include <cds/intrusive/details/lazy_list_base.h>
 #include <cds/gc/guarded_ptr.h>
@@ -1213,4 +1213,4 @@ namespace cds { namespace intrusive {
     };
 }}  // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_LAZY_LIST_IMPL_H
+#endif // __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
