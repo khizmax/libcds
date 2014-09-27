@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "cppunit/cppunit_proxy.h"
-#include <cds/container/michael_list_base.h>
+#include <cds/container/details/michael_list_base.h>
 
 namespace ordlist {
     namespace cc = cds::container;
