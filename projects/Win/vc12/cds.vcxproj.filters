@@ -1130,9 +1130,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_rcu.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\ellen_bintree_base.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_rcu.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1278,6 +1275,9 @@
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\cuckoo_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\ellen_bintree_base.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
   </ItemGroup>

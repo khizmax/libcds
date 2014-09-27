@@ -4,7 +4,7 @@
 #define __CDS_UNIT_ELLEN_BINTREE_UPDATE_DESC_POOL_H
 
 #include <cds/urcu/general_instant.h>
-#include <cds/container/ellen_bintree_base.h>
+#include <cds/container/details/ellen_bintree_base.h>
 #include <cds/memory/vyukov_queue_pool.h>
 #include <cds/memory/pool_allocator.h>
 

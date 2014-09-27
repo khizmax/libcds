@@ -4,7 +4,7 @@
 #define __CDS_CONTAINER_ELLEN_BINTREE_MAP_IMPL_H
 
 #include <type_traits>
-#include <cds/container/ellen_bintree_base.h>
+#include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/impl/ellen_bintree.h>
 #include <cds/details/functor_wrapper.h>
 #include <cds/container/details/guarded_ptr_cast.h>

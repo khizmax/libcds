@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
 #define __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
 
-#include <cds/container/ellen_bintree_base.h>
+#include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/ellen_bintree_rcu.h>
 #include <cds/details/functor_wrapper.h>
 
