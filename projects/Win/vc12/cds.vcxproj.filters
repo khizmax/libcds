@@ -698,9 +698,6 @@
     <ClInclude Include="..\..\..\cds\container\segmented_queue.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\split_list_base.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\split_list_map.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1282,6 +1279,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\impl\skip_list_set.h">
       <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\split_list_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

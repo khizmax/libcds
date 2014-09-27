@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H
 #define __CDS_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H
 
-#include <cds/container/split_list_base.h>
+#include <cds/container/details/split_list_base.h>
 #include <cds/details/allocator.h>
 #include <cds/details/binary_functor_wrapper.h>
 

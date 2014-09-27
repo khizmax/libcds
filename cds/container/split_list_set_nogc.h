@@ -4,7 +4,7 @@
 #define __CDS_CONTAINER_SPLIT_LIST_SET_NOGC_H
 
 #include <cds/intrusive/split_list_nogc.h>
-#include <cds/container/split_list_base.h>
+#include <cds/container/details/split_list_base.h>
 #include <cds/gc/nogc.h>
 #include <cds/container/details/make_split_list_set.h>
 
