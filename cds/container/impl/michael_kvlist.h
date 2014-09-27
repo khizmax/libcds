@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_KVLIST_IMPL_H
-#define __CDS_CONTAINER_MICHAEL_KVLIST_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_MICHAEL_KVLIST_H
+#define __CDS_CONTAINER_IMPL_MICHAEL_KVLIST_H
 
 #include <memory>
 #include <cds/ref.h>
@@ -26,6 +26,12 @@ namespace cds { namespace container {
         - \p Key - key type of an item stored in the list. It should be copy-constructible
         - \p Value - value type stored in a list
         - \p Traits - type traits, default is michael_list::type_traits
+
+        You don't need to include <tt><cds/container/impl/michael_kvlist.h></tt>. Instead, you should include:
+        - <tt><cds/container/michael_kvlist_hp.h></tt> - for gc::HP based Michael's key-value list
+        - <tt><cds/container/michael_kvlist_ptb.h></tt> - for gc::PTB based Michael's key-value list
+        - <tt><cds/container/michael_kvlist_rcu.h></tt> - for for @ref cds_urcu_desc "RCU" based Michael's key-value list
+        - <tt><cds/container/michael_kvlist_nogc.h></tt> - for append-only Michael's key-value list
 
         It is possible to declare option-based list with cds::container::michael_list::make_traits metafunction istead of \p Traits template
         argument. For example, the following traits-based declaration of gc::HP Michael's list
@@ -812,4 +818,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_MICHAEL_KVLIST_IMPL_H
+#endif  // #ifndef __CDS_CONTAINER_IMPL_MICHAEL_KVLIST_H

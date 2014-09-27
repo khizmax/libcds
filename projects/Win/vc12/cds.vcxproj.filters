@@ -653,9 +653,6 @@
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_hrc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\michael_kvlist_impl.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_nogc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1281,6 +1278,9 @@
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\impl\lazy_list.h">
+      <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\michael_kvlist.h">
       <Filter>Header Files\cds\container\impl</Filter>
     </ClInclude>
   </ItemGroup>

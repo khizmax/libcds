@@ -38,9 +38,10 @@ namespace cds { namespace container {
         or <tt> Traits::less </tt> predicate.
 
         You don't need to include <tt><cds/container/impl/lazy_list.h></tt>. Instead, you should do:
-        - <tt><cds/container/lazy_list_hp.h></tt> - for gc::HP-based lazy list
-        - <tt><cds/container/lazy_list_ptb.h></tt> - for gc::PTB-based lazy list
+        - <tt><cds/container/lazy_list_hp.h></tt> - for gc::HP based lazy list
+        - <tt><cds/container/lazy_list_ptb.h></tt> - for gc::PTB based lazy list
         - <tt><cds/container/lazy_list_rcu.h></tt> - for @ref cds_urcu_desc "RCU" based lazy list
+        - <tt><cds/container/lazy_list_nogc.h></tt> - for append-only based lazy list
 
         LazyKVList is a key-value version of lazy non-intrusive list that is closer to the C++ std library approach.
 
