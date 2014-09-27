@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_LAZY_LIST_BASE_H
-#define __CDS_CONTAINER_LAZY_LIST_BASE_H
+#ifndef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
+#define __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
 
 #include <cds/container/details/base.h>
 #include <cds/intrusive/details/lazy_list_base.h>
@@ -124,4 +124,4 @@ namespace cds { namespace container {
 }}  // namespace cds::container
 
 
-#endif  // #ifndef __CDS_CONTAINER_LAZY_LIST_BASE_H
+#endif  // #ifndef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H

@@ -659,6 +659,7 @@
     <ClInclude Include="..\..\..\cds\container\details\cuckoo_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h" />
+    <ClInclude Include="..\..\..\cds\container\details\lazy_list_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h" />
@@ -955,7 +956,6 @@
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hrc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_ptb.h" />
-    <ClInclude Include="..\..\..\cds\container\lazy_list_base.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_hp.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_hrc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_impl.h" />
