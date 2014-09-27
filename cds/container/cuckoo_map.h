@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_CUCKOO_MAP_H
 #define __CDS_CONTAINER_CUCKOO_MAP_H
 
-#include <cds/container/cuckoo_base.h>
+#include <cds/container/details/cuckoo_base.h>
 #include <cds/details/binary_functor_wrapper.h>
 
 namespace cds { namespace container {

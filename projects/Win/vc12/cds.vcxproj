@@ -653,10 +653,10 @@
     <ClInclude Include="..\..\..\cds\compiler\vc\amd64\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\vc\x86\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\container\basket_queue.h" />
-    <ClInclude Include="..\..\..\cds\container\cuckoo_base.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_map.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\base.h" />
+    <ClInclude Include="..\..\..\cds\container\details\cuckoo_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h" />

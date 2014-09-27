@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_CUCKOO_BASE_H
-#define __CDS_CONTAINER_CUCKOO_BASE_H
+#ifndef __CDS_CONTAINER_DETAILS_CUCKOO_BASE_H
+#define __CDS_CONTAINER_DETAILS_CUCKOO_BASE_H
 
 #include <cds/intrusive/cuckoo_set.h>
 
@@ -208,4 +208,4 @@ namespace cds { namespace container {
     }   // namespace cuckoo
 }} // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_CUCKOO_BASE_H
+#endif  // #ifndef __CDS_CONTAINER_DETAILS_CUCKOO_BASE_H
