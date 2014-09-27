@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "cppunit/cppunit_proxy.h"
-#include <cds/intrusive/michael_list_base.h>
+#include <cds/intrusive/details/michael_list_base.h>
 
 namespace ordlist {
     namespace ci = cds::intrusive;

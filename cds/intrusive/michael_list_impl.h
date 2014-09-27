@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_MICHAEL_LIST_IMPL_H
 #define __CDS_INTRUSIVE_MICHAEL_LIST_IMPL_H
 
-#include <cds/intrusive/michael_list_base.h>
+#include <cds/intrusive/details/michael_list_base.h>
 #include <cds/gc/guarded_ptr.h>
 
 namespace cds { namespace intrusive {

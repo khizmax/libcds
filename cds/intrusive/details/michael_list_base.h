@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
-#define __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
+#ifndef __CDS_INTRUSIVE_DETAILS_MICHAEL_LIST_BASE_H
+#define __CDS_INTRUSIVE_DETAILS_MICHAEL_LIST_BASE_H
 
 #include <type_traits>
 #include <cds/intrusive/details/base.h>
@@ -260,4 +260,4 @@ namespace cds { namespace intrusive {
 
 }}   // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
+#endif // #ifndef __CDS_INTRUSIVE_DETAILS_MICHAEL_LIST_BASE_H
