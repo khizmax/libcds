@@ -629,9 +629,6 @@
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hrc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_impl.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_nogc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1281,6 +1278,9 @@
       <Filter>Header Files\cds\container\impl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_set.h">
+      <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\lazy_kvlist.h">
       <Filter>Header Files\cds\container\impl</Filter>
     </ClInclude>
   </ItemGroup>

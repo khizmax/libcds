@@ -670,6 +670,7 @@
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_map.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_set.h" />
+    <ClInclude Include="..\..\..\cds\container\impl\lazy_kvlist.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_rcu.h" />
@@ -952,7 +953,6 @@
     <ClInclude Include="..\..\..\cds\container\fcstack.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hp.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hrc.h" />
-    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_impl.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_base.h" />

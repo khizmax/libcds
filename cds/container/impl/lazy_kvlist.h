@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_LAZY_KVLIST_IMPL_H
-#define __CDS_CONTAINER_LAZY_KVLIST_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_LAZY_KVLIST_H
+#define __CDS_CONTAINER_IMPL_LAZY_KVLIST_H
 
 #include <memory>
 #include <cds/ref.h>
@@ -827,4 +827,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_LAZY_KVLIST_IMPL_H
+#endif  // #ifndef __CDS_CONTAINER_IMPL_LAZY_KVLIST_H
