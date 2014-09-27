@@ -674,9 +674,6 @@
     <ClInclude Include="..\..\..\cds\container\michael_map.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\michael_map_base.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\michael_map_nogc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1282,6 +1279,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\impl\michael_list.h">
       <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\michael_map_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

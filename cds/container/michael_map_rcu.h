@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_MICHAEL_MAP_RCU_H
 #define __CDS_CONTAINER_MICHAEL_MAP_RCU_H
 
-#include <cds/container/michael_map_base.h>
+#include <cds/container/details/michael_map_base.h>
 #include <cds/details/allocator.h>
 
 namespace cds { namespace container {
