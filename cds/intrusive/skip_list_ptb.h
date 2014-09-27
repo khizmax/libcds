@@ -4,6 +4,6 @@
 #define __CDS_INTRUSIVE_SKIP_LIST_PTB_H
 
 #include <cds/gc/ptb.h>
-#include <cds/intrusive/skip_list_impl.h>
+#include <cds/intrusive/impl/skip_list.h>
 
 #endif

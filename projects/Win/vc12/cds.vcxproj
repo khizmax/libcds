@@ -752,6 +752,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\lazy_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\michael_list.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\impl\skip_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\michael_set_rcu.h" />
@@ -759,7 +760,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\options.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hrc.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\skip_list_impl.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_nogc.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_ptb.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_rcu.h" />
