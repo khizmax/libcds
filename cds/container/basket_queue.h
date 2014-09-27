@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <cds/intrusive/basket_queue.h>
-#include <cds/container/base.h>
+#include <cds/container/details/base.h>
 #include <cds/ref.h>
 #include <cds/details/trivial_assign.h>
 

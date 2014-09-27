@@ -4,7 +4,7 @@
 #define __CDS_CONTAINER_ELLEN_BINTREE_BASE_H
 
 #include <cds/intrusive/details/ellen_bintree_base.h>
-#include <cds/container/base.h>
+#include <cds/container/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/details/binary_functor_wrapper.h>
 

@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <cds/intrusive/treiber_stack.h>
-#include <cds/container/base.h>
+#include <cds/container/details/base.h>
 
 namespace cds { namespace container {
 

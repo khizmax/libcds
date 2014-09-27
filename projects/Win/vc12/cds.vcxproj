@@ -656,6 +656,7 @@
     <ClInclude Include="..\..\..\cds\container\cuckoo_base.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_map.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_set.h" />
+    <ClInclude Include="..\..\..\cds\container\details\base.h" />
     <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h" />
@@ -945,7 +946,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\treiber_stack.h" />
     <ClInclude Include="..\..\..\cds\intrusive\tsigas_cycle_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\vyukov_mpmc_cycle_queue.h" />
-    <ClInclude Include="..\..\..\cds\container\base.h" />
     <ClInclude Include="..\..\..\cds\container\fcdeque.h" />
     <ClInclude Include="..\..\..\cds\container\fcpriority_queue.h" />
     <ClInclude Include="..\..\..\cds\container\fcqueue.h" />

@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <cds/intrusive/tsigas_cycle_queue.h>
-#include <cds/container/base.h>
+#include <cds/container/details/base.h>
 #include <cds/details/trivial_assign.h>
 
 namespace cds { namespace container {

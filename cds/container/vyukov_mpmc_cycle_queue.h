@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
 #define __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
 
-#include <cds/container/base.h>
+#include <cds/container/details/base.h>
 #include <cds/opt/buffer.h>
 #include <cds/opt/value_cleaner.h>
 #include <cds/cxx11_atomic.h>
