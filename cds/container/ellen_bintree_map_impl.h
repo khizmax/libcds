@@ -5,7 +5,7 @@
 
 #include <type_traits>
 #include <cds/container/ellen_bintree_base.h>
-#include <cds/intrusive/ellen_bintree_impl.h>
+#include <cds/intrusive/impl/ellen_bintree.h>
 #include <cds/details/functor_wrapper.h>
 #include <cds/container/details/guarded_ptr_cast.h>
 

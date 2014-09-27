@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_ELLEN_BINTREE_IMPL_H
-#define __CDS_INTRUSIVE_ELLEN_BINTREE_IMPL_H
+#ifndef __CDS_INTRUSIVE_IMPL_ELLEN_BINTREE_H
+#define __CDS_INTRUSIVE_IMPL_ELLEN_BINTREE_H
 
 #include <memory>
 #include <cds/intrusive/details/ellen_bintree_base.h>
@@ -42,7 +42,7 @@ namespace cds { namespace intrusive {
         @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
         for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
 
-        @note Do not include <tt><cds/intrusive/ellen_bintree_impl.h></tt> header file explicitly.
+        @note Do not include <tt><cds/intrusive/impl/ellen_bintree.h></tt> header file explicitly.
         There are header file for each GC type:
         - <tt><cds/intrusive/ellen_bintree_hp.h></tt> - for Hazard Pointer GC cds::gc::HP
         - <tt><cds/intrusive/ellen_bintree_ptb.h></tt> - for Pass-the-Buck GC cds::gc::PTB
@@ -1544,4 +1544,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_ELLEN_BINTREE_IMPL_H
+#endif // #ifndef __CDS_INTRUSIVE_IMPL_ELLEN_BINTREE_H

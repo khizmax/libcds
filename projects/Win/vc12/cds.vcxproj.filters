@@ -151,6 +151,9 @@
     <Filter Include="Header Files\cds\algo">
       <UniqueIdentifier>{a85484ff-a066-4ee3-a856-b724b72dd7ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\cds\intrusive\impl">
+      <UniqueIdentifier>{00a14aa8-3035-4b56-bc86-442ca9bf8f44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\dllmain.cpp">
@@ -1193,9 +1196,6 @@
     <ClInclude Include="..\..\..\cds\details\lib.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_impl.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_hp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1276,6 +1276,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h">
       <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h">
+      <Filter>Header Files\cds\intrusive\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
