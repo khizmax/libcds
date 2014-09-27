@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_MICHAEL_SET_BASE_H
 #define __CDS_CONTAINER_MICHAEL_SET_BASE_H
 
-#include <cds/intrusive/michael_set_base.h>
+#include <cds/intrusive/details/michael_set_base.h>
 
 namespace cds { namespace container {
 

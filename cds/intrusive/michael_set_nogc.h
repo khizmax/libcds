@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_MICHAEL_SET_NOGC_H
 #define __CDS_INTRUSIVE_MICHAEL_SET_NOGC_H
 
-#include <cds/intrusive/michael_set_base.h>
+#include <cds/intrusive/details/michael_set_base.h>
 #include <cds/gc/nogc.h>
 #include <cds/details/allocator.h>
 
