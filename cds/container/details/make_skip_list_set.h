@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H
 #define __CDS_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H
 
-#include <cds/container/skip_list_base.h>
+#include <cds/container/details/skip_list_base.h>
 #include <cds/details/binary_functor_wrapper.h>
 
 //@cond

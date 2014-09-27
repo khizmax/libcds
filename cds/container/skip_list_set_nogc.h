@@ -4,7 +4,7 @@
 #define __CDS_CONTAINER_SKIP_LIST_SET_NOGC_H
 
 #include <cds/intrusive/skip_list_nogc.h>
-#include <cds/container/skip_list_base.h>
+#include <cds/container/details/skip_list_base.h>
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/gc/nogc.h>
 #include <cds/details/allocator.h>

@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
 #define __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
 
-#include <cds/container/skip_list_base.h>
+#include <cds/container/details/skip_list_base.h>
 #include <cds/intrusive/skip_list_rcu.h>
 #include <cds/container/details/make_skip_list_map.h>
 #include <cds/details/functor_wrapper.h>

@@ -932,9 +932,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_ptb.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\skip_list_base.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_set_hp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1281,6 +1278,9 @@
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\michael_set_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\skip_list_base.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
   </ItemGroup>
