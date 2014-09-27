@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_LAZY_LIST_IMPL_H
-#define __CDS_CONTAINER_LAZY_LIST_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_LAZY_LIST_H
+#define __CDS_CONTAINER_IMPL_LAZY_LIST_H
 
 #include <memory>
 #include <cds/container/details/guarded_ptr_cast.h>
@@ -24,7 +24,7 @@ namespace cds { namespace container {
         reference. It also has a novel wait-free membership \p find operation
         that does not need to perform cleanup operations and is more efficient.
 
-        It is non-intrusive version of cds::intrusive::LazyList class
+        It is non-intrusive version of cds::intrusive::LazyList class.
 
         Template arguments:
         - \p GC - garbage collector used
@@ -35,7 +35,12 @@ namespace cds { namespace container {
         may be used as main building block for hash set algorithms.
 
         The key is a function (or a part) of type \p T, and this function is specified by <tt> Traits::compare </tt> functor
-        or <tt> Traits::less </tt> predicate
+        or <tt> Traits::less </tt> predicate.
+
+        You don't need to include <tt><cds/container/impl/lazy_list.h></tt>. Instead, you should do:
+        - <tt><cds/container/lazy_list_hp.h></tt> - for gc::HP-based lazy list
+        - <tt><cds/container/lazy_list_ptb.h></tt> - for gc::PTB-based lazy list
+        - <tt><cds/container/lazy_list_rcu.h></tt> - for @ref cds_urcu_desc "RCU" based lazy list
 
         LazyKVList is a key-value version of lazy non-intrusive list that is closer to the C++ std library approach.
 
@@ -825,4 +830,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_LAZY_LIST_IMPL_H
+#endif // #ifndef __CDS_CONTAINER_IMPL_LAZY_LIST_H
