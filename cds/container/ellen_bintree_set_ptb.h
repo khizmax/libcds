@@ -4,6 +4,6 @@
 #define __CDS_CONTAINER_ELLEN_BINTREE_SET_PTB_H
 
 #include <cds/gc/ptb.h>
-#include <cds/container/ellen_bintree_set_impl.h>
+#include <cds/container/impl/ellen_bintree_set.h>
 
 #endif // #ifndef __CDS_CONTAINER_ELLEN_BINTREE_SET_PTB_H

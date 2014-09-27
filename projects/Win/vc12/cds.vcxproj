@@ -666,10 +666,10 @@
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_hp.h" />
-    <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_impl.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_map.h" />
+    <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_set.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_rcu.h" />

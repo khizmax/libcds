@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_ELLEN_BINTREE_SET_IMPL_H
-#define __CDS_CONTAINER_ELLEN_BINTREE_SET_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_ELLEN_BINTREE_SET_H
+#define __CDS_CONTAINER_IMPL_ELLEN_BINTREE_SET_H
 
 #include <type_traits>
 #include <cds/container/details/ellen_bintree_base.h>
@@ -75,7 +75,7 @@ namespace cds { namespace container {
             stored in the tree so single free-list object can be used for several EllenBinTree-based object.
         - opt::stat - internal statistics. Available types: ellen_bintree::stat, ellen_bintree::empty_stat (the default)
 
-        @note Do not include <tt><cds/container/ellen_bintree_set_impl.h></tt> header file directly.
+        @note Do not include <tt><cds/container/impl/ellen_bintree_set.h></tt> header file directly.
         There are header file for each GC type:
         - <tt><cds/container/ellen_bintree_set_hp.h></tt> - for Hazard Pointer GC cds::gc::HP
         - <tt><cds/container/ellen_bintree_set_ptb.h></tt> - for Pass-the-Buck GC cds::gc::PTB
@@ -634,4 +634,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_ELLEN_BINTREE_SET_IMPL_H
+#endif // #ifndef __CDS_CONTAINER_IMPL_ELLEN_BINTREE_SET_H
