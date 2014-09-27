@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_MICHAEL_LIST_HRC_H
 #define __CDS_INTRUSIVE_MICHAEL_LIST_HRC_H
 
-#include <cds/intrusive/michael_list_impl.h>
+#include <cds/intrusive/impl/michael_list.h>
 #include <cds/gc/hrc.h>
 
 namespace cds { namespace intrusive { namespace michael_list {
