@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SKIP_LIST_SET_IMPL_H
-#define __CDS_CONTAINER_SKIP_LIST_SET_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_SKIP_LIST_SET_H
+#define __CDS_CONTAINER_IMPL_SKIP_LIST_SET_H
 
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/gc/guarded_ptr.h>
@@ -714,4 +714,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SKIP_LIST_SET_IMPL_H
+#endif // #ifndef __CDS_CONTAINER_IMPL_SKIP_LIST_SET_H
