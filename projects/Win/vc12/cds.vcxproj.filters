@@ -953,9 +953,6 @@
     <ClInclude Include="..\..\..\cds\container\skip_list_map_hrc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\skip_list_map_impl.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_map_ptb.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1282,6 +1279,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\skip_list_base.h">
       <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\skip_list_map.h">
+      <Filter>Header Files\cds\container\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

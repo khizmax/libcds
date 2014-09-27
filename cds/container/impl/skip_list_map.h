@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SKIP_LIST_MAP_IMPL_H
-#define __CDS_CONTAINER_SKIP_LIST_MAP_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_SKIP_LIST_MAP_H
+#define __CDS_CONTAINER_IMPL_SKIP_LIST_MAP_H
 
 #include <cds/details/functor_wrapper.h>
 #include <cds/gc/guarded_ptr.h>
@@ -64,7 +64,6 @@ namespace cds { namespace container {
 
         \note There are several specializations of \p %SkipListMap for each \p GC. You should include:
         - <tt><cds/container/skip_list_map_hp.h></tt> for gc::HP garbage collector
-        - <tt><cds/container/skip_list_map_hrc.h></tt> for gc::HRC garbage collector
         - <tt><cds/container/skip_list_map_ptb.h></tt> for gc::PTB garbage collector
         - <tt><cds/container/skip_list_map_rcu.h></tt> for \ref cds_nonintrusive_SkipListMap_rcu "RCU type"
         - <tt><cds/container/skip_list_map_nogc.h></tt> for \ref cds_nonintrusive_SkipListMap_nogc "non-deletable SkipListMap"
@@ -671,4 +670,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SKIP_LIST_MAP_IMPL_H
+#endif // #ifndef __CDS_CONTAINER_IMPL_SKIP_LIST_MAP_H
