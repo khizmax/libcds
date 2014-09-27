@@ -8,7 +8,7 @@
 #include <cds/cxx11_atomic.h>
 #include <cds/gc/default_gc.h>
 #include <cds/gc/hrc/gc_fwd.h>
-#include <cds/intrusive/queue_stat.h>
+#include <cds/intrusive/details/queue_stat.h>
 #include <cds/ref.h>
 
 namespace cds { namespace intrusive {

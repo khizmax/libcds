@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <cds/intrusive/details/base.h>
 #include <cds/details/marked_ptr.h>
-#include <cds/intrusive/queue_stat.h>
+#include <cds/intrusive/details/queue_stat.h>
 #include <cds/intrusive/details/single_link_struct.h>
 #include <cds/ref.h>
 #include <cds/intrusive/details/dummy_node_holder.h>

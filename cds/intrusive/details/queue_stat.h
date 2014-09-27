@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_QUEUE_STAT_H
-#define __CDS_INTRUSIVE_QUEUE_STAT_H
+#ifndef __CDS_INTRUSIVE_DETAILS_QUEUE_STAT_H
+#define __CDS_INTRUSIVE_DETAILS_QUEUE_STAT_H
 
 #include <cds/cxx11_atomic.h>
 
@@ -90,4 +90,4 @@ namespace cds { namespace intrusive {
 }}  // namespace cds::intrusive
 
 
-#endif  // #ifndef __CDS_INTRUSIVE_QUEUE_STAT_H
+#endif  // #ifndef __CDS_INTRUSIVE_DETAILS_QUEUE_STAT_H

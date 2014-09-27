@@ -6,7 +6,7 @@
 #include <memory>
 #include <cds/opt/options.h>
 #include <cds/lock/spinlock.h>
-#include <cds/intrusive/queue_stat.h>
+#include <cds/intrusive/details/queue_stat.h>
 #include <cds/details/allocator.h>
 #include <cds/details/trivial_assign.h>
 #include <cds/ref.h>

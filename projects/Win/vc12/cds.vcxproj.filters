@@ -590,9 +590,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\optimistic_queue.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\queue_stat.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\segmented_queue.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1278,6 +1275,9 @@
       <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\node_traits.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\queue_stat.h">
       <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
   </ItemGroup>
