@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_DETAILS_BASE_H
 #define __CDS_INTRUSIVE_DETAILS_BASE_H
 
-#include <cds/intrusive/node_traits.h>
+#include <cds/intrusive/details/node_traits.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/backoff_strategy.h>
 

@@ -1010,9 +1010,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_rcu.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\node_traits.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\options.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1278,6 +1275,9 @@
       <Filter>Header Files\cds\intrusive\impl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_set_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\node_traits.h">
       <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
   </ItemGroup>
