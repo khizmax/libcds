@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_MICHAEL_SET_H
 #define __CDS_CONTAINER_MICHAEL_SET_H
 
-#include <cds/container/michael_set_base.h>
+#include <cds/container/details/michael_set_base.h>
 #include <cds/details/allocator.h>
 
 namespace cds { namespace container {

@@ -665,6 +665,7 @@
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\michael_list_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\michael_map_base.h" />
+    <ClInclude Include="..\..\..\cds\container\details\michael_set_base.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_hp.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_rcu.h" />
@@ -976,7 +977,6 @@
     <ClInclude Include="..\..\..\cds\container\michael_map.h" />
     <ClInclude Include="..\..\..\cds\container\michael_map_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\michael_set.h" />
-    <ClInclude Include="..\..\..\cds\container\michael_set_base.h" />
     <ClInclude Include="..\..\..\cds\container\michael_set_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\moir_queue.h" />
     <ClInclude Include="..\..\..\cds\container\msqueue.h" />

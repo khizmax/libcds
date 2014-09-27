@@ -1,9 +1,9 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_MAP_BASE_H
-#define __CDS_CONTAINER_MICHAEL_MAP_BASE_H
+#ifndef __CDS_CONTAINER_DETAILS_MICHAEL_MAP_BASE_H
+#define __CDS_CONTAINER_DETAILS_MICHAEL_MAP_BASE_H
 
-#include <cds/container/michael_set_base.h>
+#include <cds/container/details/michael_set_base.h>
 
 namespace cds { namespace container {
 
@@ -33,4 +33,4 @@ namespace cds { namespace container {
 }}  // namespace cds::container
 
 
-#endif  // ifndef __CDS_CONTAINER_MICHAEL_MAP_BASE_H
+#endif  // ifndef __CDS_CONTAINER_DETAILS_MICHAEL_MAP_BASE_H
