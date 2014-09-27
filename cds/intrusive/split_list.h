@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_SPLIT_LIST_H
 #define __CDS_INTRUSIVE_SPLIT_LIST_H
 
-#include <cds/intrusive/split_list_base.h>
+#include <cds/intrusive/details/split_list_base.h>
 
 namespace cds { namespace intrusive {
 

@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_SPLIT_LIST_RCU_H
 #define __CDS_INTRUSIVE_SPLIT_LIST_RCU_H
 
-#include <cds/intrusive/split_list_base.h>
+#include <cds/intrusive/details/split_list_base.h>
 #include <cds/details/binary_functor_wrapper.h>
 
 namespace cds { namespace intrusive {

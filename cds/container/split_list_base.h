@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_SPLIT_LIST_BASE_H
 #define __CDS_CONTAINER_SPLIT_LIST_BASE_H
 
-#include <cds/intrusive/split_list_base.h>
+#include <cds/intrusive/details/split_list_base.h>
 
 namespace cds { namespace container {
 

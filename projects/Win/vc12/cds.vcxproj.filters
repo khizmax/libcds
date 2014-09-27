@@ -596,9 +596,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\split_list.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\split_list_base.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\split_list_nogc.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1279,6 +1276,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\impl\skip_list.h">
       <Filter>Header Files\cds\intrusive\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\split_list_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
