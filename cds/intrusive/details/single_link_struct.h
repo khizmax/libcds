@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_DETAILS_SINGLE_LINK_STRUCT_H
 #define __CDS_INTRUSIVE_DETAILS_SINGLE_LINK_STRUCT_H
 
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/gc/default_gc.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/gc/hrc.h>

@@ -4,7 +4,7 @@
 #define __CDS_INTRUSIVE_MICHAEL_LIST_BASE_H
 
 #include <type_traits>
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/marked_ptr.h>

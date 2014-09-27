@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_STRIPED_SET_H
 #define __CDS_INTRUSIVE_STRIPED_SET_H
 
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/intrusive/striped_set/adapter.h>
 #include <cds/intrusive/striped_set/striping_policy.h>
 

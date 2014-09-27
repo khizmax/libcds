@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "cppunit/cppunit_proxy.h"
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 
 namespace queue {
     namespace ci = cds::intrusive;

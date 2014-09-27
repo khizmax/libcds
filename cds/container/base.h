@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_BASE_H
 #define __CDS_CONTAINER_BASE_H
 
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/details/allocator.h>
 
 namespace cds {

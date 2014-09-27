@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_MICHAEL_SET_BASE_H
 #define __CDS_INTRUSIVE_MICHAEL_SET_BASE_H
 
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
 #include <cds/algo/bitop.h>

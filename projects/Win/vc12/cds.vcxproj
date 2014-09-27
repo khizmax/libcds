@@ -736,6 +736,7 @@
     <ClInclude Include="..\..\..\cds\gc\ptb_impl.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\dummy_node_holder.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\single_link_struct.h" />
@@ -916,7 +917,6 @@
     <ClInclude Include="..\..\..\cds\opt\options.h" />
     <ClInclude Include="..\..\..\cds\opt\permutation.h" />
     <ClInclude Include="..\..\..\cds\opt\value_cleaner.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\fcqueue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\fcstack.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_base.h" />

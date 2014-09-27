@@ -4,7 +4,7 @@
 #define __CDSHDR_QUEUE_SEGMENTED_QUEUE_H
 
 #include "cppunit/cppunit_proxy.h"
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/ref.h>
 #include "size_check.h"
 

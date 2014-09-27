@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_BASE_H
-#define __CDS_INTRUSIVE_BASE_H
+#ifndef __CDS_INTRUSIVE_DETAILS_BASE_H
+#define __CDS_INTRUSIVE_DETAILS_BASE_H
 
 #include <cds/intrusive/node_traits.h>
 #include <cds/details/allocator.h>
@@ -157,4 +157,4 @@ namespace intrusive {
 
 }} // namespace cds::intrusuve
 
-#endif  // #ifndef __CDS_INTRUSIVE_BASE_H
+#endif  // #ifndef __CDS_INTRUSIVE_DETAILS_BASE_H

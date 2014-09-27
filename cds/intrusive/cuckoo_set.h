@@ -6,7 +6,7 @@
 #include <memory>
 #include <type_traits>
 #include <mutex>
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
 #include <cds/lock/array.h>

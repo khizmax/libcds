@@ -4,7 +4,7 @@
 #define __CDS_INTRUSIVE_DETAILS_ELLEN_BINTREE_BASE_H
 
 #include <type_traits>
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/opt/options.h>
 #include <cds/urcu/options.h>
 #include <cds/details/marked_ptr.h>

@@ -4,7 +4,7 @@
 #define __CDS_INTRUSIVE_SEGMENTED_QUEUE_H
 
 #include <mutex>
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/algo/int_algo.h>
 #include <cds/lock/spinlock.h>

@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_SPLIT_LIST_BASE_H
 #define __CDS_INTRUSIVE_SPLIT_LIST_BASE_H
 
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/int_algo.h>

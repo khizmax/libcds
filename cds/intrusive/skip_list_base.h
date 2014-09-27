@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_SKIP_LIST_BASE_H
 #define __CDS_INTRUSIVE_SKIP_LIST_BASE_H
 
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/algo/bitop.h>
 #include <cds/os/timer.h>

@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
 #define __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
 
-#include <cds/intrusive/base.h>
+#include <cds/intrusive/details/base.h>
 #include <cds/lock/spinlock.h>
 #include <cds/os/thread.h>
 #include <cds/details/bit_reverse_counter.h>
