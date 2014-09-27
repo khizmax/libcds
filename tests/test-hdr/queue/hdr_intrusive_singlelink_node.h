@@ -3,7 +3,7 @@
 #ifndef CDSTEST_HDR_TEST_INTRUSIVE_SINGLELINK_NODE_H
 #define CDSTEST_HDR_TEST_INTRUSIVE_SINGLELINK_NODE_H
 
-#include <cds/intrusive/single_link_struct.h>
+#include <cds/intrusive/details/single_link_struct.h>
 
 namespace queue {
     namespace ci = cds::intrusive;

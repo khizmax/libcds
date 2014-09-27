@@ -611,9 +611,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\segmented_queue.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\single_link_struct.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\split_list.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1276,6 +1273,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\gcc\x86\cxx11_atomic32.h">
       <Filter>Header Files\cds\compiler\gcc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\single_link_struct.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 #define __CDS_INTRUSIVE_MSQUEUE_H
 
 #include <type_traits>
-#include <cds/intrusive/single_link_struct.h>
+#include <cds/intrusive/details/single_link_struct.h>
 #include <cds/intrusive/queue_stat.h>
 #include <cds/intrusive/details/dummy_node_holder.h>
 

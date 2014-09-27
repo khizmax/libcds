@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_SINGLE_LINK_STRUCT_H
-#define __CDS_INTRUSIVE_SINGLE_LINK_STRUCT_H
+#ifndef __CDS_INTRUSIVE_DETAILS_SINGLE_LINK_STRUCT_H
+#define __CDS_INTRUSIVE_DETAILS_SINGLE_LINK_STRUCT_H
 
 #include <cds/intrusive/base.h>
 #include <cds/gc/default_gc.h>
@@ -224,4 +224,4 @@ namespace cds { namespace intrusive {
 
 
 
-#endif // #ifndef __CDS_INTRUSIVE_SINGLE_LINK_STRUCT_H
+#endif // #ifndef __CDS_INTRUSIVE_DETAILS_SINGLE_LINK_STRUCT_H

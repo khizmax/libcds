@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "cppunit/cppunit_proxy.h"
-#include <cds/intrusive/single_link_struct.h>
+#include <cds/intrusive/details/single_link_struct.h>
 
 namespace stack {
 
