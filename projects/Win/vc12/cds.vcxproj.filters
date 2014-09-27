@@ -665,9 +665,6 @@
     <ClInclude Include="..\..\..\cds\container\michael_list_hrc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\michael_list_impl.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\michael_list_nogc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
@@ -1282,6 +1279,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\michael_list_base.h">
       <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\michael_list.h">
+      <Filter>Header Files\cds\container\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

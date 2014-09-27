@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_LIST_IMPL_H
-#define __CDS_CONTAINER_MICHAEL_LIST_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_MICHAEL_LIST_H
+#define __CDS_CONTAINER_IMPL_MICHAEL_LIST_H
 
 #include <memory>
 #include <cds/container/details/guarded_ptr_cast.h>
@@ -83,7 +83,6 @@ namespace cds { namespace container {
         You should include appropriate .h-file depending on GC you are using:
         - for gc::HP: \code #include <cds/container/michael_list_hp.h> \endcode
         - for gc::PTB: \code #include <cds/container/michael_list_ptb.h> \endcode
-        - for gc::HRC: \code #include <cds/container/michael_list_hrc.h> \endcode
         - for \ref cds_urcu_desc "RCU": \code #include <cds/container/michael_list_rcu.h> \endcode
         - for gc::nogc: \code #include <cds/container/michael_list_nogc.h> \endcode
     */
@@ -797,4 +796,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_MICHAEL_LIST_IMPL_H
+#endif  // #ifndef __CDS_CONTAINER_IMPL_MICHAEL_LIST_H

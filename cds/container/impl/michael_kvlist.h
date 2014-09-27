@@ -27,12 +27,6 @@ namespace cds { namespace container {
         - \p Value - value type stored in a list
         - \p Traits - type traits, default is michael_list::type_traits
 
-        You don't need to include <tt><cds/container/impl/michael_kvlist.h></tt>. Instead, you should include:
-        - <tt><cds/container/michael_kvlist_hp.h></tt> - for gc::HP based Michael's key-value list
-        - <tt><cds/container/michael_kvlist_ptb.h></tt> - for gc::PTB based Michael's key-value list
-        - <tt><cds/container/michael_kvlist_rcu.h></tt> - for for @ref cds_urcu_desc "RCU" based Michael's key-value list
-        - <tt><cds/container/michael_kvlist_nogc.h></tt> - for append-only Michael's key-value list
-
         It is possible to declare option-based list with cds::container::michael_list::make_traits metafunction istead of \p Traits template
         argument. For example, the following traits-based declaration of gc::HP Michael's list
         \code
@@ -84,7 +78,6 @@ namespace cds { namespace container {
         You should include appropriate .h-file depending on GC you are using:
         - for gc::HP: \code #include <cds/container/michael_kvlist_hp.h> \endcode
         - for gc::PTB: \code #include <cds/container/michael_kvlist_ptb.h> \endcode
-        - for gc::HRC: \code #include <cds/container/michael_kvlist_hrc.h> \endcode
         - for \ref cds_urcu_desc "RCU": \code #include <cds/container/michael_kvlist_rcu.h> \endcode
         - for gc::nogc: \code #include <cds/container/michael_kvlist_nogc.h> \endcode
     */

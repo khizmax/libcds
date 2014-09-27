@@ -37,12 +37,6 @@ namespace cds { namespace container {
         The key is a function (or a part) of type \p T, and this function is specified by <tt> Traits::compare </tt> functor
         or <tt> Traits::less </tt> predicate.
 
-        You don't need to include <tt><cds/container/impl/lazy_list.h></tt>. Instead, you should do:
-        - <tt><cds/container/lazy_list_hp.h></tt> - for gc::HP based lazy list
-        - <tt><cds/container/lazy_list_ptb.h></tt> - for gc::PTB based lazy list
-        - <tt><cds/container/lazy_list_rcu.h></tt> - for @ref cds_urcu_desc "RCU" based lazy list
-        - <tt><cds/container/lazy_list_nogc.h></tt> - for append-only based lazy list
-
         LazyKVList is a key-value version of lazy non-intrusive list that is closer to the C++ std library approach.
 
         It is possible to declare option-based list with cds::container::lazy_list::make_traits metafunction istead of \p Traits template
@@ -99,7 +93,6 @@ namespace cds { namespace container {
         You should include appropriate .h-file depending on GC you are using:
         - for gc::HP: \code #include <cds/container/lazy_list_hp.h> \endcode
         - for gc::PTB: \code #include <cds/container/lazy_list_ptb.h> \endcode
-        - for gc::HRC: \code #include <cds/container/lazy_list_hrc.h> \endcode
         - for \ref cds_urcu_desc "RCU": \code #include <cds/container/lazy_list_rcu.h> \endcode
         - for gc::nogc: \code #include <cds/container/lazy_list_nogc.h> \endcode
     */
