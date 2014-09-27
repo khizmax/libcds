@@ -5,7 +5,7 @@
 
 #include <type_traits>
 #include <memory>
-#include <cds/intrusive/skip_list_base.h>
+#include <cds/intrusive/details/skip_list_base.h>
 #include <cds/opt/compare.h>
 #include <cds/ref.h>
 #include <cds/details/binary_functor_wrapper.h>

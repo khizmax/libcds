@@ -3,7 +3,7 @@
 #ifndef __UNIT_PRINT_SKIP_LIST_STAT_H
 #define __UNIT_PRINT_SKIP_LIST_STAT_H
 
-#include <cds/intrusive/skip_list_base.h>
+#include <cds/intrusive/details/skip_list_base.h>
 #include <ostream>
 
 namespace std {
