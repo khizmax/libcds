@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_IMPL_H
-#define __CDS_CONTAINER_ELLEN_BINTREE_MAP_IMPL_H
+#ifndef __CDS_CONTAINER_IMPL_ELLEN_BINTREE_MAP_H
+#define __CDS_CONTAINER_IMPL_ELLEN_BINTREE_MAP_H
 
 #include <type_traits>
 #include <cds/container/details/ellen_bintree_base.h>
@@ -78,7 +78,7 @@ namespace cds { namespace container {
             };
             \endcode
 
-        @note Do not include <tt><cds/container/ellen_bintree_map_impl.h></tt> header file directly.
+        @note Do not include <tt><cds/container/impl/ellen_bintree_map.h></tt> header file directly.
         There are header file for each GC type:
         - <tt><cds/container/ellen_bintree_map_hp.h></tt> - for Hazard Pointer GC cds::gc::HP
         - <tt><cds/container/ellen_bintree_map_ptb.h></tt> - for Pass-the-Buck GC cds::gc::PTB
@@ -551,4 +551,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif //#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_IMPL_H
+#endif //#ifndef __CDS_CONTAINER_IMPL_ELLEN_BINTREE_MAP_H
