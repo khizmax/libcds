@@ -4,11 +4,10 @@
 #define __CDS_CONTAINER_BASKET_QUEUE_H
 
 #include <memory>
+#include <functional>   // ref
 #include <cds/intrusive/basket_queue.h>
 #include <cds/container/details/base.h>
-#include <cds/ref.h>
 #include <cds/details/trivial_assign.h>
-
 
 namespace cds { namespace container {
 
@@ -268,7 +267,7 @@ namespace cds { namespace container {
         bool enqueue( const Type& data, Func f  )
         {
             scoped_node_ptr p( alloc_node());
-            cds::unref(f)( p->m_value, data );
+            f( p->m_value, data );
             if ( base_class::enqueue( *p )) {
                 p.release();
                 return true;
@@ -311,7 +310,7 @@ namespace cds { namespace container {
         {
             typename base_class::dequeue_result res;
             if ( base_class::do_dequeue( res, true )) {
-                cds::unref(f)( dest, node_traits::to_value_ptr( *res.pNext )->m_value );
+                f( dest, node_traits::to_value_ptr( *res.pNext )->m_value );
                 return true;
             }
             return false;

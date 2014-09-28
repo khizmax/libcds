@@ -292,7 +292,7 @@ namespace cds { namespace container {
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
             The user-defined functor is called only if the inserting is success. It may be passed by reference
-            using <tt>boost::ref</tt>
+            using \p std::ref
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
@@ -300,7 +300,7 @@ namespace cds { namespace container {
         bool insert( Q const& val, Func f )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
-            if ( base_class::insert( *sp.get(), [&f]( node_type& val ) { cds::unref(f)( val.m_Value ); } )) {
+            if ( base_class::insert( *sp.get(), [&f]( node_type& val ) { f( val.m_Value ); } )) {
                 sp.release();
                 return true;
             }
@@ -332,7 +332,7 @@ namespace cds { namespace container {
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt>.
+            You may pass \p func argument by reference using \p std::ref
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -345,7 +345,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
             std::pair<bool, bool> bRes = base_class::ensure( *sp,
-                [&func, &val](bool bNew, node_type& node, node_type&){ cds::unref(func)( bNew, node.m_Value, val ); });
+                [&func, &val](bool bNew, node_type& node, node_type&){ func( bNew, node.m_Value, val ); });
             if ( bRes.first && bRes.second )
                 sp.release();
             return bRes;
@@ -425,7 +425,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         bool erase( Q const& key, Func f )
         {
-            return base_class::erase( key, [&f]( node_type const& node) { cds::unref(f)( node.m_Value ); } );
+            return base_class::erase( key, [&f]( node_type const& node) { f( node.m_Value ); } );
         }
 
         /// Deletes the item from the set using \p pred predicate for searching
@@ -439,7 +439,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Less pred, Func f )
         {
             return base_class::erase_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                [&f]( node_type const& node) { cds::unref(f)( node.m_Value ); } );
+                [&f]( node_type const& node) { f( node.m_Value ); } );
         }
 
         /// Extracts the item from the set with specified \p key
@@ -521,7 +521,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -541,7 +541,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         bool find( Q& val, Func f )
         {
-            return base_class::find( val, [&f]( node_type& node, Q& v ) { cds::unref(f)( node.m_Value, v ); });
+            return base_class::find( val, [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); });
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -555,7 +555,7 @@ namespace cds { namespace container {
         bool find_with( Q& val, Less pred, Func f )
         {
             return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                [&f]( node_type& node, Q& v ) { cds::unref(f)( node.m_Value, v ); } );
+                [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
         }
 
         /// Find the key \p val
@@ -570,7 +570,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -587,7 +587,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         bool find( Q const& val, Func f )
         {
-            return base_class::find( val, [&f]( node_type& node, Q const& v ) { cds::unref(f)( node.m_Value, v ); });
+            return base_class::find( val, [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); });
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -601,7 +601,7 @@ namespace cds { namespace container {
         bool find_with( Q const& val, Less pred, Func f )
         {
             return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                [&f]( node_type& node, Q const& v ) { cds::unref(f)( node.m_Value, v ); } );
+                [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); } );
         }
 
         /// Find the key \p val

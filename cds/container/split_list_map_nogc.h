@@ -184,7 +184,7 @@ namespace cds { namespace container {
             to the map's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
             User-defined functor \p func should guarantee that during changing item's value no any other changes
             could be made on this map's item by concurrent threads.
-            The user-defined functor can be passed by reference using <tt>boost::ref</tt>
+            The user-defined functor can be passed by reference using \p std::ref
             and it is called only if the inserting is successful.
 
             The key_type should be constructible from value of type \p K.
@@ -204,7 +204,7 @@ namespace cds { namespace container {
         {
             iterator it = insert( key );
             if ( it != end() )
-                cds::unref( func )( (*it) );
+                func( (*it) );
             return it;
         }
 

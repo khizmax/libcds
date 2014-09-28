@@ -5,7 +5,7 @@
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
-#include <cds/ref.h>
+#include <functional>   // ref
 #include <algorithm>
 
 namespace tree {
@@ -302,7 +302,7 @@ namespace tree {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
                 key = 20;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.stat.nFindFuncCall == 1 );
@@ -313,7 +313,7 @@ namespace tree {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
                 key = 20;
-                CPPUNIT_ASSERT( s.find_with( key, less(), boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find_with( key, less(), std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.stat.nFindFuncCall == 2 );
@@ -323,7 +323,7 @@ namespace tree {
             {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
-                CPPUNIT_ASSERT( s.find_with( 20, less(), boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find_with( 20, less(), std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.stat.nFindFuncCall == 2 );
@@ -341,7 +341,7 @@ namespace tree {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
                 key = 25;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 25 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 2500 );
                 CPPUNIT_ASSERT( f.m_found.stat.nInsertFuncCall == 1 );
@@ -352,7 +352,7 @@ namespace tree {
             {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 100 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureExistFuncCall == 0 );
@@ -365,7 +365,7 @@ namespace tree {
             {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 100 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureExistFuncCall == 1 );
@@ -380,7 +380,7 @@ namespace tree {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
                 key = 13;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 13 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 1300 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureExistFuncCall == 0 );
@@ -409,12 +409,12 @@ namespace tree {
             {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
-                CPPUNIT_ASSERT( s.erase( 20, boost::ref(f) ));
+                CPPUNIT_ASSERT( s.erase( 20, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
 
                 CPPUNIT_ASSERT( s.insert(235))
-                CPPUNIT_ASSERT( s.erase_with( 235, less(), boost::ref(f) ));
+                CPPUNIT_ASSERT( s.erase_with( 235, less(), std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 235 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 2350 );
             }
@@ -441,17 +441,17 @@ namespace tree {
                 copy_found<value_type> f;
                 f.m_found.nKey = 0;
                 key = 151;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 151 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 1510 );
 
                 key = 174;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 174 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 471 );
 
                 key = 190;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 190 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 91 );
             }

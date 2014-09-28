@@ -444,7 +444,7 @@ namespace cds { namespace intrusive {
             where \p val is the item inserted.
             While the functor \p f is working the item \p val is locked.
             The user-defined functor is called only if the inserting is success and may be passed by reference
-            using <tt>boost::ref</tt>.
+            using \p std::ref.
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -474,7 +474,7 @@ namespace cds { namespace intrusive {
             The functor may change non-key fields of the \p item.
             While the functor \p f is calling the item \p item is locked.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p func argument by reference using \p std::ref.
 
             Returns <tt> std::pair<bool, bool>  </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -658,7 +658,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item.
             While the functor \p f is calling the item found \p item is locked.
@@ -696,7 +696,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item.
             While the functor \p f is calling the item found \p item is locked.
@@ -917,7 +917,7 @@ namespace cds { namespace intrusive {
                         }
                         else {
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
-                            cds::unref(f)( val );
+                            f( val );
                             ++m_ItemCounter;
                             return true;
                         }
@@ -950,7 +950,7 @@ namespace cds { namespace intrusive {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // key already in the list
 
-                            cds::unref(func)( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
+                            func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
                             return std::make_pair( iterator( pos.pCur ), false );
                         }
                         else {
@@ -958,7 +958,7 @@ namespace cds { namespace intrusive {
                             link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
-                            cds::unref(func)( true, val, val );
+                            func( true, val, val );
                             ++m_ItemCounter;
                             return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
                         }
@@ -1030,7 +1030,7 @@ namespace cds { namespace intrusive {
                             if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                                 // key found
                                 unlink_node( pos.pPred, pos.pCur, pHead );
-                                cds::unref(f)( *node_traits::to_value_ptr( *pos.pCur ) );
+                                f( *node_traits::to_value_ptr( *pos.pCur ) );
                                 --m_ItemCounter;
                                 nResult = 1;
                             }
@@ -1108,7 +1108,7 @@ namespace cds { namespace intrusive {
                 cds::lock::scoped_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
                 if ( cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
                 {
-                    cds::unref(f)( *node_traits::to_value_ptr( *pos.pCur ), val );
+                    f( *node_traits::to_value_ptr( *pos.pCur ), val );
                     return true;
                 }
             }

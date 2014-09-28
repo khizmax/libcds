@@ -3,11 +3,11 @@
 #ifndef __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H
 #define __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H
 
+#include <functional>   // ref
 #include <cds/opt/options.h>
 #include <cds/intrusive/striped_set/resizing_policy.h>
 #include <cds/opt/hash.h>
 #include <cds/opt/compare.h>    // cds::opt::details::make_comparator - for some adapt specializations
-#include <cds/ref.h>
 
 namespace cds { namespace intrusive {
 
@@ -48,7 +48,7 @@ namespace cds { namespace intrusive {
                 where \p item is the item inserted.
 
                 The user-defined functor \p f is called only if the inserting is success. It can be passed by reference
-                using <tt>boost::ref</tt>
+                using \p std::ref
                 <hr>
 
             <b>Ensures that the \p item exists in the container</b>
@@ -79,7 +79,7 @@ namespace cds { namespace intrusive {
 
                 The functor can change non-key fields of the \p item.
 
-                You can pass \p f argument by reference using <tt>boost::ref</tt>.
+                You can pass \p f argument by reference using \p std::ref
 
                 Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
                 \p second is true if new item has been added or \p false if the item with \p val key
@@ -125,7 +125,7 @@ namespace cds { namespace intrusive {
                 \endcode
                 where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-                You can pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+                You can pass \p f argument by reference using \p std::ref.
 
                 The functor can change non-key fields of \p item.
                 The \p val argument may be non-const since it can be used as \p f functor destination i.e., the functor
@@ -222,7 +222,7 @@ namespace cds { namespace intrusive {
                 {
                     std::pair<iterator, bool> res = m_Set.insert( val );
                     if ( res.second )
-                        cds::unref(f)( val );
+                        f( val );
                     return res.second;
                 }
 
@@ -230,7 +230,7 @@ namespace cds { namespace intrusive {
                 std::pair<bool, bool> ensure( value_type& val, Func f )
                 {
                     std::pair<iterator, bool> res = m_Set.insert( val );
-                    cds::unref(f)( res.second, *res.first, val );
+                    f( res.second, *res.first, val );
                     return std::make_pair( true, res.second );
                 }
 
@@ -250,7 +250,7 @@ namespace cds { namespace intrusive {
                     if (it == m_Set.end())
                         return nullptr;
                     value_type& val = *it;
-                    cds::unref(f)( val );
+                    f( val );
                     m_Set.erase( it );
                     return &val;
                 }
@@ -262,7 +262,7 @@ namespace cds { namespace intrusive {
                     if (it == m_Set.end())
                         return nullptr;
                     value_type& val = *it;
-                    cds::unref(f)( val );
+                    f( val );
                     m_Set.erase( it );
                     return &val;
                 }
@@ -279,7 +279,7 @@ namespace cds { namespace intrusive {
                     iterator it = m_Set.find( key, cmp );
                     if ( it == m_Set.end() )
                         return false;
-                    cds::unref(f)( *it, key );
+                    f( *it, key );
                     return true;
                 }
 

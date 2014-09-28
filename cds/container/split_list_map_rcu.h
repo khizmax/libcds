@@ -318,7 +318,7 @@ namespace cds { namespace container {
             User-defined functor \p func should guarantee that during changing item's value no any other changes
             could be made on this \p item by concurrent threads.
 
-            The user-defined functor can be passed by reference using <tt>boost::ref</tt>
+            The user-defined functor can be passed by reference using \p std::ref
             and it is called only if inserting is successful.
 
             The key_type should be constructible from value of type \p K.
@@ -381,7 +381,7 @@ namespace cds { namespace container {
             however, \p func must guarantee that during changing no any other modifications
             could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt>.
+            You may pass \p func argument by reference using \p std::ref
 
             The function applies RCU lock internally.
 
@@ -395,7 +395,7 @@ namespace cds { namespace container {
             //TODO: pass arguments by reference (make_pair makes copy)
             return base_class::ensure( std::make_pair( key, mapped_type() ),
                 [&func](bool bNew, value_type& item, value_type const& /*val*/) {
-                    cds::unref(func)( bNew, item );
+                    func( bNew, item );
                 } );
         }
 
@@ -530,7 +530,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change \p item.second. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -544,7 +544,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return base_class::find( key, [&f](value_type& pair, K const&){ cds::unref(f)( pair ); } );
+            return base_class::find( key, [&f](value_type& pair, K const&){ f( pair ); } );
         }
 
         /// Finds the key \p key using \p pred predicate for searching
@@ -559,7 +559,7 @@ namespace cds { namespace container {
         {
             return base_class::find_with( key,
                 cds::details::predicate_wrapper<value_type, Less, key_accessor>(),
-                [&f](value_type& pair, K const&){ cds::unref(f)( pair ); } );
+                [&f](value_type& pair, K const&){ f( pair ); } );
         }
 
         /// Finds the key \p key

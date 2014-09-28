@@ -243,8 +243,8 @@ namespace ordlist {
             // passed by ref
             {
                 insert_functor f;
-                CPPUNIT_ASSERT( l.insert( item(25), boost::ref(f)) );
-                CPPUNIT_ASSERT( !l.insert( item(100), boost::ref(f)) );
+                CPPUNIT_ASSERT( l.insert( item( 25 ), std::ref( f ) ) );
+                CPPUNIT_ASSERT( !l.insert( item( 100 ), std::ref( f ) ) );
             }
             // Test insert with function
             CPPUNIT_ASSERT( l.insert( 50, insert_function ));
@@ -265,7 +265,7 @@ namespace ordlist {
                     check_value f(1033);
                     i = 25;
                     CPPUNIT_ASSERT( l.find_with( 25, lt<value_type>() ));
-                    CPPUNIT_ASSERT( l.find_with( i, lt<value_type>(), boost::ref(f) ));
+                    CPPUNIT_ASSERT( l.find_with( i, lt<value_type>(), std::ref( f ) ) );
                 }
                 i = 50;
                 CPPUNIT_ASSERT( l.find( 50 ));
@@ -296,7 +296,7 @@ namespace ordlist {
                 CPPUNIT_ASSERT( ensureResult.first );
                 CPPUNIT_ASSERT( ensureResult.second );
 
-                ensureResult = l.ensure( 200, boost::ref(f) );
+                ensureResult = l.ensure( 200, std::ref( f ) );
                 CPPUNIT_ASSERT( ensureResult.first );
                 CPPUNIT_ASSERT( ensureResult.second );
 
@@ -343,14 +343,14 @@ namespace ordlist {
             {
                 erase_functor ef;
                 CPPUNIT_ASSERT( ef.nEraseCall == 0 );
-                CPPUNIT_ASSERT( l.erase_with( 160, lt<value_type>(), cds::ref(ef) ));
+                CPPUNIT_ASSERT( l.erase_with( 160, lt<value_type>(), std::ref(ef) ));
                 CPPUNIT_ASSERT( ef.nEraseCall == 1 );
-                CPPUNIT_ASSERT( !l.erase_with( 160, lt<value_type>(), cds::ref(ef) ));
+                CPPUNIT_ASSERT( !l.erase_with( 160, lt<value_type>(), std::ref(ef) ));
                 CPPUNIT_ASSERT( ef.nEraseCall == 1 );
 
-                CPPUNIT_ASSERT( l.erase( 250, cds::ref(ef) ));
+                CPPUNIT_ASSERT( l.erase( 250, std::ref(ef) ));
                 CPPUNIT_ASSERT( ef.nEraseCall == 2 );
-                CPPUNIT_ASSERT( !l.erase( 250, cds::ref(ef) ));
+                CPPUNIT_ASSERT( !l.erase( 250, std::ref(ef) ));
                 CPPUNIT_ASSERT( ef.nEraseCall == 2 );
             }
 

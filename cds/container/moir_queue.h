@@ -4,10 +4,10 @@
 #define __CDS_CONTAINER_MOIR_QUEUE_H
 
 #include <memory>
+#include <functional>   // ref
 #include <cds/intrusive/moir_queue.h>
 #include <cds/intrusive/details/queue_stat.h>
 #include <cds/container/details/base.h>
-#include <cds/ref.h>
 #include <cds/details/trivial_assign.h>
 
 namespace cds { namespace container {
@@ -211,7 +211,7 @@ namespace cds { namespace container {
         bool enqueue( const Type& data, Func f  )
         {
             scoped_node_ptr p( alloc_node());
-            unref(f)( node_traits::to_value_ptr( *p )->m_value, data );
+            f( node_traits::to_value_ptr( *p )->m_value, data );
             if ( base_class::enqueue( *p )) {
                 p.release();
                 return true;
@@ -242,7 +242,7 @@ namespace cds { namespace container {
         {
             typename base_class::dequeue_result res;
             if ( base_class::do_dequeue( res )) {
-                unref(f)( dest, node_traits::to_value_ptr( *res.pNext )->m_value );
+                f( dest, node_traits::to_value_ptr( *res.pNext )->m_value );
 
                 base_class::dispose_result( res );
 

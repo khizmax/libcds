@@ -3,7 +3,7 @@
 #ifndef __CDS_DETAILS_FUNCTOR_WRAPPER_H
 #define __CDS_DETAILS_FUNCTOR_WRAPPER_H
 
-#include <cds/ref.h>
+#include <functional>   // ref
 
 //@cond
 namespace cds { namespace details {

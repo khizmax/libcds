@@ -3,8 +3,8 @@
 #ifndef __CDS_CONTAINER_STRIPED_SET_BOOST_SLIST_ADAPTER_H
 #define __CDS_CONTAINER_STRIPED_SET_BOOST_SLIST_ADAPTER_H
 
+#include <functional>   // ref
 #include <cds/container/striped_set/adapter.h>
-#include <cds/ref.h>
 #include <boost/container/slist.hpp>
 
 //@cond
@@ -143,7 +143,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 if ( !pos.second ) {
                     value_type newItem( val );
                     pos.first = m_List.insert_after( pos.first, newItem );
-                    cds::unref( f )( *pos.first );
+                    f( *pos.first );
                     return true;
                 }
 
@@ -171,12 +171,12 @@ namespace cds { namespace intrusive { namespace striped_set {
                     // insert new
                     value_type newItem( val );
                     pos.first = m_List.insert_after( pos.first, newItem );
-                    cds::unref( func )( true, *pos.first, val );
+                    func( true, *pos.first, val );
                     return std::make_pair( true, true );
                 }
                 else {
                     // already exists
-                    cds::unref( func )( false, *(++pos.first), val );
+                    func( false, *(++pos.first), val );
                     return std::make_pair( true, false );
                 }
             }
@@ -190,7 +190,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 // key exists
                 iterator it = pos.first;
-                cds::unref( f )( *(++it) );
+                f( *(++it) );
                 m_List.erase_after( pos.first );
 
                 return true;
@@ -205,7 +205,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 // key exists
                 iterator it = pos.first;
-                cds::unref( f )( *(++it) );
+                f( *(++it) );
                 m_List.erase_after( pos.first );
 
                 return true;
@@ -219,7 +219,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *(++pos.first), val );
+                f( *(++pos.first), val );
                 return true;
             }
 
@@ -231,7 +231,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *(++pos.first), val );
+                f( *(++pos.first), val );
                 return true;
             }
 

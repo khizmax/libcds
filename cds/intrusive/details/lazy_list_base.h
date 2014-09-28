@@ -3,10 +3,10 @@
 #ifndef __CDS_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
 #define __CDS_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
 
+#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/details/marked_ptr.h>
-#include <cds/ref.h>
 #include <cds/details/make_const_type.h>
 #include <boost/type_traits/is_same.hpp>
 #include <cds/lock/spinlock.h>

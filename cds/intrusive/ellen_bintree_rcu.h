@@ -4,9 +4,9 @@
 #define __CDS_INTRUSIVE_ELLEN_BINTREE_RCU_H
 
 #include <memory>
+#include <functional>   // ref
 #include <cds/intrusive/details/ellen_bintree_base.h>
 #include <cds/opt/compare.h>
-#include <cds/ref.h>
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/urcu/details/check_deadlock.h>
 #include <cds/urcu/exempt_ptr.h>
@@ -754,7 +754,7 @@ namespace cds { namespace intrusive {
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this tree's item by concurrent threads.
             The user-defined functor is called only if the inserting is success and may be passed by reference
-            using <tt>boost::ref</tt>
+            using \p std::ref
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
@@ -785,7 +785,7 @@ namespace cds { namespace intrusive {
                             pNewInternal.reset( alloc_internal_node() );
 
                         if ( try_insert( val, pNewInternal.get(), res, updRetire )) {
-                            cds::unref(f)( val );
+                            f( val );
                             pNewInternal.release()  ;   // internal node is linked into the tree and should not be deleted
                             break;
                         }
@@ -821,7 +821,7 @@ namespace cds { namespace intrusive {
             The functor can change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You can pass \p func argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p func argument by value or by reference using \p std::ref.
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -843,7 +843,7 @@ namespace cds { namespace intrusive {
                 search_result res;
                 for ( ;; ) {
                     if ( search( res, val, node_compare() )) {
-                        cds::unref(func)( false, *node_traits::to_value_ptr( res.pLeaf ), val );
+                        func( false, *node_traits::to_value_ptr( res.pLeaf ), val );
                         if ( pNewInternal.get() )
                             m_Stat.onInternalNodeDeleted() ;    // unique_internal_node_ptr deletes internal node
                         m_Stat.onEnsureExist();
@@ -857,7 +857,7 @@ namespace cds { namespace intrusive {
                             pNewInternal.reset( alloc_internal_node() );
 
                         if ( try_insert( val, pNewInternal.get(), res, updRetire )) {
-                            cds::unref(func)( true, val, val );
+                            func( true, val, val );
                             pNewInternal.release()  ;   // internal node is linked into the tree and should not be deleted
                             break;
                         }
@@ -1127,7 +1127,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -1172,7 +1172,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -1674,7 +1674,7 @@ namespace cds { namespace intrusive {
                             {
                                 if ( help_delete( pOp, updRetire )) {
                                     // res.pLeaf is not deleted yet since RCU is blocked
-                                    cds::unref(f)( *node_traits::to_value_ptr( res.pLeaf ));
+                                    f( *node_traits::to_value_ptr( res.pLeaf ));
                                     break;
                                 }
                                 pOp = nullptr;
@@ -1907,7 +1907,7 @@ namespace cds { namespace intrusive {
             search_result    res;
             if ( search( res, val, compare_functor() )) {
                 assert( res.pLeaf );
-                cds::unref(f)( *node_traits::to_value_ptr( res.pLeaf ), val );
+                f( *node_traits::to_value_ptr( res.pLeaf ), val );
 
                 m_Stat.onFindSuccess();
                 return true;
@@ -1924,7 +1924,7 @@ namespace cds { namespace intrusive {
             search_result    res;
             if ( search( res, key, node_compare() )) {
                 assert( res.pLeaf );
-                cds::unref(f)( *node_traits::to_value_ptr( res.pLeaf ), key );
+                f( *node_traits::to_value_ptr( res.pLeaf ), key );
 
                 m_Stat.onFindSuccess();
                 return true;

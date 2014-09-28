@@ -106,7 +106,7 @@ namespace cds { namespace intrusive {
         void dispose_node( node_type * pNode, Disposer disp )
         {
             clear_links( pNode );
-            cds::unref(disp)( node_traits::to_value_ptr( *pNode ));
+            disp( node_traits::to_value_ptr( *pNode ));
         }
 
         template <class Disposer>
@@ -316,7 +316,7 @@ namespace cds { namespace intrusive {
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You can pass \p func argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p func argument by value or by reference using \p std::ref.
 
             Returns <tt> std::pair<bool, bool>  </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -341,7 +341,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item.
             The function \p find does not serialize simultaneous access to the list \p item. If such access is
@@ -380,7 +380,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item.
             The function \p find does not serialize simultaneous access to the list \p item. If such access is
@@ -530,7 +530,7 @@ namespace cds { namespace intrusive {
                 if ( search( refHead, val, key_comparator(), pos ) ) {
                     assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur ) ) == 0 );
 
-                    unref(func)( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
+                    func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
                     return std::make_pair( iterator( pos.pCur ), false );
                 }
                 else {
@@ -538,7 +538,7 @@ namespace cds { namespace intrusive {
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         ++m_ItemCounter;
-                        unref(func)( true, val , val );
+                        func( true, val , val );
                         return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
                     }
                 }
@@ -559,7 +559,7 @@ namespace cds { namespace intrusive {
 
             if ( search( refHead, val, cmp, pos ) ) {
                 assert( pos.pCur != nullptr );
-                unref(f)( *node_traits::to_value_ptr( *pos.pCur ), val );
+                f( *node_traits::to_value_ptr( *pos.pCur ), val );
                 return true;
             }
             return false;

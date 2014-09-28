@@ -1,11 +1,12 @@
 //$$CDS-header$$
 
+#include <functional>
+#include <vector>
+
 #include "set2/set_types.h"
 #include "cppunit/thread.h"
 
 #include <cds/lock/spinlock.h>
-#include <vector>
-#include <boost/ref.hpp>
 
 namespace set2 {
 
@@ -140,7 +141,7 @@ namespace set2 {
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t * p = pKeyFirst; p < pKeyLast; ++p ) {
-                            if ( rSet.insert( *p, cds::ref(func) ) )
+                            if ( rSet.insert( *p, std::ref(func) ) )
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -150,7 +151,7 @@ namespace set2 {
                 else {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t * p = pKeyLast - 1; p >= pKeyFirst; --p ) {
-                            if ( rSet.insert( *p, cds::ref(func) ) )
+                            if ( rSet.insert( *p, std::ref(func) ) )
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -245,7 +246,7 @@ namespace set2 {
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t * p = pKeyFirst; p < pKeyLast; ++p ) {
-                            std::pair<bool, bool> ret = rSet.ensure( *p, cds::ref( func ) );
+                            std::pair<bool, bool> ret = rSet.ensure( *p, std::ref( func ) );
                             if ( ret.first  ) {
                                 if ( ret.second )
                                     ++m_nEnsureCreated;
@@ -260,7 +261,7 @@ namespace set2 {
                 else {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t * p = pKeyLast - 1 ; p >= pKeyFirst; --p ) {
-                            std::pair<bool, bool> ret = rSet.ensure( *p, cds::ref( func ) );
+                            std::pair<bool, bool> ret = rSet.ensure( *p, std::ref( func ) );
                             if ( ret.first  ) {
                                 if ( ret.second )
                                     ++m_nEnsureCreated;
@@ -371,7 +372,7 @@ namespace set2 {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t * p = pKeyFirst; p < pKeyLast; ++p ) {
                             func.m_cnt.nKeyExpected = *p;
-                            if ( rSet.erase( *p, cds::ref(func) ))
+                            if ( rSet.erase( *p, std::ref(func) ))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
@@ -382,7 +383,7 @@ namespace set2 {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t * p = pKeyLast - 1; p >= pKeyFirst; --p ) {
                             func.m_cnt.nKeyExpected = *p;
-                            if ( rSet.erase( *p, cds::ref(func) ))
+                            if ( rSet.erase( *p, std::ref(func) ))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;

@@ -206,7 +206,7 @@ namespace cds { namespace intrusive {
             The functor can change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You can pass \p func argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p func argument by value or by reference using \p std::ref.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
@@ -259,7 +259,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item.
             The functor does not serialize simultaneous access to the set \p item. If such access is
@@ -303,7 +303,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item.
             The functor does not serialize simultaneous access to the set \p item. If such access is

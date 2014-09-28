@@ -6,11 +6,11 @@
 #include <memory>
 #include <type_traits>
 #include <mutex>
+#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
 #include <cds/lock/array.h>
-#include <cds/ref.h>
 #include <cds/os/thread.h>
 #include <cds/details/functor_wrapper.h>
 #include <cds/lock/spinlock.h>
@@ -1316,7 +1316,7 @@ namespace cds { namespace intrusive {
                     for ( node_type * pNode = pHead; pNode; pNode = pNext ) {
                         pNext = pNode->m_pNext;
                         pNode->clear();
-                        cds::unref(disp)( pNode );
+                        disp( pNode );
                     }
 
                     nSize = 0;
@@ -1465,7 +1465,7 @@ namespace cds { namespace intrusive {
                 void clear( Disposer disp )
                 {
                     for ( unsigned int i = 0; i < m_nSize; ++i ) {
-                        cds::unref(disp)( m_arrNode[i] );
+                        disp( m_arrNode[i] );
                     }
                     m_nSize = 0;
                 }
@@ -2035,7 +2035,7 @@ namespace cds { namespace intrusive {
                 unsigned int nTable = contains( arrPos, arrHash, val, pred );
                 if ( nTable != c_nUndefTable ) {
                     node_type& node = *arrPos[nTable].itFound;
-                    cds::unref(f)( *node_traits::to_value_ptr(node) );
+                    f( *node_traits::to_value_ptr(node) );
                     bucket( nTable, arrHash[nTable]).remove( arrPos[nTable].itPrev, arrPos[nTable].itFound );
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
@@ -2057,7 +2057,7 @@ namespace cds { namespace intrusive {
 
             unsigned int nTable = contains( arrPos, arrHash, val, pred );
             if ( nTable != c_nUndefTable ) {
-                cds::unref(f)( *node_traits::to_value_ptr( *arrPos[nTable].itFound ), val );
+                f( *node_traits::to_value_ptr( *arrPos[nTable].itFound ), val );
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -2367,7 +2367,7 @@ namespace cds { namespace intrusive {
             where \p val is the item inserted.
 
             The user-defined functor is called only if the inserting is success and can be passed by reference
-            using <tt>boost::ref</tt>
+            using \p std::ref
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -2393,7 +2393,7 @@ namespace cds { namespace intrusive {
                         bucket_entry& refBucket = bucket( i, arrHash[i] );
                         if ( refBucket.size() < m_nProbesetThreshold ) {
                             refBucket.insert_after( arrPos[i].itPrev, pNode );
-                            cds::unref(f)( val );
+                            f( val );
                             ++m_ItemCounter;
                             m_Stat.onInsertSuccess();
                             return true;
@@ -2404,7 +2404,7 @@ namespace cds { namespace intrusive {
                         bucket_entry& refBucket = bucket( i, arrHash[i] );
                         if ( refBucket.size() < m_nProbesetSize ) {
                             refBucket.insert_after( arrPos[i].itPrev, pNode );
-                            cds::unref(f)( val );
+                            f( val );
                             ++m_ItemCounter;
                             nGoalTable = i;
                             assert( refBucket.size() > 1 );
@@ -2449,7 +2449,7 @@ namespace cds { namespace intrusive {
 
             The functor may change non-key fields of the \p item.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p func argument by reference using \p std::ref.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p key
@@ -2472,7 +2472,7 @@ namespace cds { namespace intrusive {
 
                     unsigned int nTable = contains( arrPos, arrHash, val, key_predicate() );
                     if ( nTable != c_nUndefTable ) {
-                        cds::unref(func)( false, *node_traits::to_value_ptr( *arrPos[nTable].itFound ), val );
+                        func( false, *node_traits::to_value_ptr( *arrPos[nTable].itFound ), val );
                         m_Stat.onEnsureExist();
                         return std::make_pair( true, false );
                     }
@@ -2484,7 +2484,7 @@ namespace cds { namespace intrusive {
                         bucket_entry& refBucket = bucket( i, arrHash[i] );
                         if ( refBucket.size() < m_nProbesetThreshold ) {
                             refBucket.insert_after( arrPos[i].itPrev, pNode );
-                            cds::unref(func)( true, val, val );
+                            func( true, val, val );
                             ++m_ItemCounter;
                             m_Stat.onEnsureSuccess();
                             return std::make_pair( true, true );
@@ -2495,7 +2495,7 @@ namespace cds { namespace intrusive {
                         bucket_entry& refBucket = bucket( i, arrHash[i] );
                         if ( refBucket.size() < m_nProbesetSize ) {
                             refBucket.insert_after( arrPos[i].itPrev, pNode );
-                            cds::unref(func)( true, val, val );
+                            func( true, val, val );
                             ++m_ItemCounter;
                             nGoalTable = i;
                             assert( refBucket.size() > 1 );
@@ -2629,7 +2629,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item.
 
@@ -2672,7 +2672,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item.
 

@@ -274,7 +274,7 @@ namespace cds { namespace container {
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            The user-defined functor can be passed by reference using <tt>boost::ref</tt>
+            The user-defined functor can be passed by reference using \p std::ref
             and it is called only if inserting is successful.
 
             The key_type should be constructible from value of type \p K.
@@ -291,7 +291,7 @@ namespace cds { namespace container {
         bool insert_key( const K& key, Func func )
         {
             scoped_node_ptr pNode( node_allocator().New( random_level(), key ));
-            if ( base_class::insert( *pNode, [&func]( node_type& item ) { cds::unref(func)( item.m_Value ); } )) {
+            if ( base_class::insert( *pNode, [&func]( node_type& item ) { func( item.m_Value ); } )) {
                 pNode.release();
                 return true;
             }
@@ -338,7 +338,7 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \ref value_type.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt>.
+            You may pass \p func argument by reference using \p std::ref
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -349,7 +349,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( node_allocator().New( random_level(), key ));
             std::pair<bool, bool> res = base_class::ensure( *pNode,
-                [&func](bool bNew, node_type& item, node_type const& ){ cds::unref(func)( bNew, item.m_Value ); }
+                [&func](bool bNew, node_type& item, node_type const& ){ func( bNew, item.m_Value ); }
             );
             if ( res.first && res.second )
                 pNode.release();
@@ -399,7 +399,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            return base_class::erase( key, [&f]( node_type& node) { cds::unref(f)( node.m_Value ); } );
+            return base_class::erase( key, [&f]( node_type& node) { f( node.m_Value ); } );
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -414,7 +414,7 @@ namespace cds { namespace container {
         {
             return base_class::erase_with( key,
                 cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >(),
-                [&f]( node_type& node) { cds::unref(f)( node.m_Value ); } );
+                [&f]( node_type& node) { f( node.m_Value ); } );
         }
 
         /// Extracts the item from the map with specified \p key
@@ -536,7 +536,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found.
 
-            You can pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by reference using \p std::ref
 
             The functor may change \p item.second.
 
@@ -545,7 +545,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return base_class::find( key, [&f](node_type& item, K const& ) { cds::unref(f)( item.m_Value );});
+            return base_class::find( key, [&f](node_type& item, K const& ) { f( item.m_Value );});
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -560,7 +560,7 @@ namespace cds { namespace container {
         {
             return base_class::find_with( key,
                 cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >(),
-                [&f](node_type& item, K const& ) { cds::unref(f)( item.m_Value );});
+                [&f](node_type& item, K const& ) { f( item.m_Value );});
         }
 
         /// Find the key \p key

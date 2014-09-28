@@ -5,10 +5,10 @@
 
 #include <type_traits>
 #include <memory>
+#include <functional>   // ref
 #include <cds/gc/nogc.h>
 #include <cds/intrusive/details/skip_list_base.h>
 #include <cds/opt/compare.h>
-#include <cds/ref.h>
 #include <cds/details/binary_functor_wrapper.h>
 
 namespace cds { namespace intrusive {
@@ -534,7 +534,7 @@ namespace cds { namespace intrusive {
                 if ( !pos.pPrev[0]->next(0).compare_exchange_strong( p, pNode, memory_model::memory_order_release, memory_model::memory_order_relaxed ) ) {
                     return false;
                 }
-                cds::unref( f )( val );
+                f( val );
             }
 
             for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel ) {
@@ -562,7 +562,7 @@ namespace cds { namespace intrusive {
             if ( find_position( val, pos, cmp, true, false )) {
                 assert( cmp( *node_traits::to_value_ptr( pos.pCur ), val ) == 0 );
 
-                cds::unref(f)( *node_traits::to_value_ptr( pos.pCur ), val );
+                f( *node_traits::to_value_ptr( pos.pCur ), val );
 
                 m_Stat.onFindFastSuccess();
                 return pos.pCur;
@@ -723,7 +723,7 @@ namespace cds { namespace intrusive {
             The functor can change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You can pass \p func argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p func argument by value or by reference using \p std::ref.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
@@ -747,7 +747,7 @@ namespace cds { namespace intrusive {
                     if ( !bTowerMade )
                         scp.release();
 
-                    cds::unref(func)( false, *node_traits::to_value_ptr(pos.pCur), val );
+                    func( false, *node_traits::to_value_ptr(pos.pCur), val );
                     m_Stat.onEnsureExist();
                     return std::make_pair( true, false );
                 }
@@ -759,7 +759,7 @@ namespace cds { namespace intrusive {
                         bTowerOk = true;
                 }
 
-                if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { cds::unref(func)( true, item, item ); })) {
+                if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { func( true, item, item ); })) {
                     m_Stat.onInsertRetry();
                     continue;
                 }
@@ -784,7 +784,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -829,7 +829,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.

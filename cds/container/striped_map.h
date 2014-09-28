@@ -622,7 +622,7 @@ template <class Container, typename... Options>
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            The user-defined functor can be passed by reference using <tt>boost::ref</tt>
+            The user-defined functor can be passed by reference using \p std::ref
             and it is called only if inserting is successful.
 
             The key_type should be constructible from value of type \p K.
@@ -691,7 +691,7 @@ template <class Container, typename... Options>
 
             The functor may change any fields of the \p item.second that is \ref mapped_type.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt>.
+            You may pass \p func argument by reference using \p std::ref
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -800,7 +800,7 @@ template <class Container, typename... Options>
             \endcode
             where \p item is the item found.
 
-            You can pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by reference using \p std::ref.
 
             The functor may change \p item.second.
 
@@ -809,7 +809,7 @@ template <class Container, typename... Options>
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return base_class::find( key, [&f]( value_type& pair, K const& ) mutable { cds::unref(f)(pair); } );
+            return base_class::find( key, [&f]( value_type& pair, K const& ) mutable { f(pair); } );
         }
 
         /// Find the key \p val using \p pred predicate
@@ -828,7 +828,7 @@ template <class Container, typename... Options>
         bool find_with( K const& key, Less pred, Func f )
         {
             return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >(),
-                [&f]( value_type& pair, K const& ) mutable { cds::unref(f)(pair); } );
+                [&f]( value_type& pair, K const& ) mutable { f(pair); } );
         }
 
         /// Find the key \p key

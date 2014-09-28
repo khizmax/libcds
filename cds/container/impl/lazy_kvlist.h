@@ -4,7 +4,7 @@
 #define __CDS_CONTAINER_IMPL_LAZY_KVLIST_H
 
 #include <memory>
-#include <cds/ref.h>
+#include <functional>   // ref
 #include <cds/details/functor_wrapper.h>
 #include <cds/container/details/guarded_ptr_cast.h>
 
@@ -417,7 +417,7 @@ namespace cds { namespace container {
             to the list's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
             User-defined functor \p func should guarantee that during changing item's value no any other changes
             could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using <tt>boost::ref</tt>
+            The user-defined functor can be passed by reference using \p std::ref
             and it is called only if inserting is successful.
 
             The key_type should be constructible from value of type \p K.
@@ -473,7 +473,7 @@ namespace cds { namespace container {
             however, \p func must guarantee that during changing no any other modifications
             could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt>.
+            You may pass \p func argument by reference using \p std::ref.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -624,7 +624,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change <tt>item.second</tt> that is reference to value of node.
             Note that the function is only guarantee that \p item cannot be deleted during functor is executing.
@@ -760,7 +760,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-            if ( base_class::insert_at( &refHead, *pNode, [&f](node_type& node){ cds::unref(f)( node.m_Data ); } )) {
+            if ( base_class::insert_at( &refHead, *pNode, [&f](node_type& node){ f( node.m_Data ); } )) {
                 pNode.release();
                 return true;
             }
@@ -782,7 +782,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         bool erase_at( head_type& refHead, K const& key, Compare cmp, Func f )
         {
-            return base_class::erase_at( &refHead, key, cmp, [&f](node_type const & node){cds::unref(f)( const_cast<value_type&>(node.m_Data)); });
+            return base_class::erase_at( &refHead, key, cmp, [&f](node_type const & node){f( const_cast<value_type&>(node.m_Data)); });
         }
 
         template <typename K, typename Compare>
@@ -797,7 +797,7 @@ namespace cds { namespace container {
             scoped_node_ptr pNode( alloc_node( key ));
 
             std::pair<bool, bool> ret = base_class::ensure_at( &refHead, *pNode,
-                [&f]( bool bNew, node_type& node, node_type& ){ cds::unref(f)( bNew, node.m_Data ); });
+                [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); });
             if ( ret.first && ret.second )
                 pNode.release();
 
@@ -813,7 +813,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         bool find_at( head_type& refHead, K& key, Compare cmp, Func f )
         {
-            return base_class::find_at( &refHead, key, cmp, [&f]( node_type& node, K& ){ cds::unref(f)( node.m_Data ); });
+            return base_class::find_at( &refHead, key, cmp, [&f]( node_type& node, K& ){ f( node.m_Data ); });
         }
 
         template <typename K, typename Compare>

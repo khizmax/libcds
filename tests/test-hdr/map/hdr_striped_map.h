@@ -7,7 +7,7 @@
 #include "cppunit/cppunit_proxy.h"
 #include <cds/os/timer.h>
 #include <cds/opt/hash.h>
-#include <cds/ref.h>
+#include <functional>   // ref
 #include <algorithm>    // random_shuffle
 
 namespace cds { namespace container {}}
@@ -208,19 +208,19 @@ namespace map {
 
             // find test
             check_value chk(10);
-            CPPUNIT_ASSERT( m.find( 10, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 10, std::ref(chk) ));
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( m.find( 25, boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 25, std::ref( chk ) ) );
             chk.m_nExpected = 90;
-            CPPUNIT_ASSERT( m.find( 30, boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 30, std::ref( chk ) ) );
             chk.m_nExpected = 54;
-            CPPUNIT_ASSERT( m.find( 27, boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 27, std::ref( chk ) ) );
 
             ensureResult = m.ensure( 10, insert_functor<Map>() ) ;   // value = 50
             CPPUNIT_ASSERT( ensureResult.first );
             CPPUNIT_ASSERT( !ensureResult.second );
             chk.m_nExpected = 50;
-            CPPUNIT_ASSERT( m.find( 10, boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 10, std::ref( chk ) ) );
 
             // erase test
             CPPUNIT_ASSERT( !m.find(100) );
@@ -251,20 +251,20 @@ namespace map {
             CPPUNIT_ASSERT( !m.find(29) );
             CPPUNIT_ASSERT( m.insert(29, 290));
             CPPUNIT_ASSERT( check_size( m, 4 ));
-            CPPUNIT_ASSERT( m.erase( 29, boost::ref(ext)));
+            CPPUNIT_ASSERT( m.erase( 29, std::ref( ext ) ) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
             CPPUNIT_ASSERT( nVal == 290 );
             nVal = -1;
-            CPPUNIT_ASSERT( !m.erase( 29, boost::ref(ext)));
+            CPPUNIT_ASSERT( !m.erase( 29, std::ref( ext ) ) );
             CPPUNIT_ASSERT( nVal == -1 );
 
-            CPPUNIT_ASSERT( m.erase( 30, boost::ref(ext)));
+            CPPUNIT_ASSERT( m.erase( 30, std::ref( ext ) ) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 2 ));
             CPPUNIT_ASSERT( nVal == 90 );
             nVal = -1;
-            CPPUNIT_ASSERT( !m.erase( 30, boost::ref(ext)));
+            CPPUNIT_ASSERT( !m.erase( 30, std::ref( ext ) ) );
             CPPUNIT_ASSERT( nVal == -1 );
 
             m.clear();
@@ -280,15 +280,15 @@ namespace map {
             CPPUNIT_ASSERT( check_size( m, 3 ));
 
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( m.find( 126, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 126, std::ref(chk) ));
             chk.m_nExpected = 731;
-            CPPUNIT_ASSERT( m.find( 137, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 137, std::ref(chk) ));
             chk.m_nExpected = 941;
-            CPPUNIT_ASSERT( m.find( 149, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 149, std::ref(chk) ));
 
             CPPUNIT_ASSERT( !m.emplace(126, 621)) ; // already in map
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( m.find( 126, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 126, std::ref(chk) ));
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
 
@@ -412,19 +412,19 @@ namespace map {
 
             // find test
             check_value chk(10);
-            CPPUNIT_ASSERT( m.find( 10, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 10, std::ref(chk) ));
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( m.find_with( 25, less(), boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find_with( 25, less(), std::ref( chk ) ) );
             chk.m_nExpected = 90;
-            CPPUNIT_ASSERT( m.find( 30, boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 30, std::ref( chk ) ) );
             chk.m_nExpected = 54;
-            CPPUNIT_ASSERT( m.find( 27, boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 27, std::ref( chk ) ) );
 
             ensureResult = m.ensure( 10, insert_functor<Map>() ) ;   // value = 50
             CPPUNIT_ASSERT( ensureResult.first );
             CPPUNIT_ASSERT( !ensureResult.second );
             chk.m_nExpected = 50;
-            CPPUNIT_ASSERT( m.find( 10, boost::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 10, std::ref( chk ) ) );
 
             // erase test
             CPPUNIT_ASSERT( !m.find(100) );
@@ -454,20 +454,20 @@ namespace map {
 
             CPPUNIT_ASSERT( !m.find(29) );
             CPPUNIT_ASSERT( m.insert(29, 290))
-            CPPUNIT_ASSERT( m.erase_with( 29, less(), boost::ref(ext)));
+                CPPUNIT_ASSERT( m.erase_with( 29, less(), std::ref( ext ) ) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
             CPPUNIT_ASSERT( nVal == 290 );
             nVal = -1;
-            CPPUNIT_ASSERT( !m.erase_with( 29, less(), boost::ref(ext)));
+            CPPUNIT_ASSERT( !m.erase_with( 29, less(), std::ref( ext ) ) );
             CPPUNIT_ASSERT( nVal == -1 );
 
-            CPPUNIT_ASSERT( m.erase( 30, boost::ref(ext)));
+            CPPUNIT_ASSERT( m.erase( 30, std::ref( ext ) ) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 2 ));
             CPPUNIT_ASSERT( nVal == 90 );
             nVal = -1;
-            CPPUNIT_ASSERT( !m.erase( 30, boost::ref(ext)));
+            CPPUNIT_ASSERT( !m.erase( 30, std::ref( ext ) ) );
             CPPUNIT_ASSERT( nVal == -1 );
 
             m.clear();
@@ -483,15 +483,15 @@ namespace map {
             CPPUNIT_ASSERT( check_size( m, 3 ));
 
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( m.find( 126, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 126, std::ref(chk) ));
             chk.m_nExpected = 731;
-            CPPUNIT_ASSERT( m.find_with( 137, less(), cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find_with( 137, less(), std::ref(chk) ));
             chk.m_nExpected = 941;
-            CPPUNIT_ASSERT( m.find( 149, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 149, std::ref(chk) ));
 
             CPPUNIT_ASSERT( !m.emplace(126, 621)) ; // already in map
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( m.find( 126, cds::ref(chk) ));
+            CPPUNIT_ASSERT( m.find( 126, std::ref(chk) ));
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
 

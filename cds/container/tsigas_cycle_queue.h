@@ -224,7 +224,7 @@ namespace cds { namespace container {
         bool enqueue( const Type& data, Func f  )
         {
             scoped_node_ptr p( alloc_node());
-            unref(f)( *p, data );
+            f( *p, data );
             if ( base_class::enqueue( *p )) {
                 p.release();
                 return true;
@@ -267,7 +267,7 @@ namespace cds { namespace container {
         {
             value_type * p = base_class::dequeue();
             if ( p ) {
-                unref(f)( dest, *p );
+                f( dest, *p );
                 node_disposer()( p );
                 return true;
             }

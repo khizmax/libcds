@@ -4,11 +4,11 @@
 #define __CDS_INTRUSIVE_DETAILS_MICHAEL_LIST_BASE_H
 
 #include <type_traits>
+#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/marked_ptr.h>
-#include <cds/ref.h>
 #include <cds/details/make_const_type.h>
 #include <cds/urcu/options.h>
 

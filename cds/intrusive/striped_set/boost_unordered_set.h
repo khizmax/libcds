@@ -77,7 +77,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair<iterator, bool> res = m_Set.insert( val );
                 if ( res.second )
-                    cds::unref(f)( val );
+                    f( val );
                 return res.second;
             }
 
@@ -85,7 +85,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             std::pair<bool, bool> ensure( value_type& val, Func f )
             {
                 std::pair<iterator, bool> res = m_Set.insert( val );
-                cds::unref(f)( res.second, *res.first, val );
+                f( res.second, *res.first, val );
                 return std::make_pair( true, res.second );
             }
 
@@ -105,7 +105,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 if ( it == m_Set.end() )
                     return nullptr;
                 value_type& val = *it;
-                cds::unref(f)( val );
+                f( val );
                 m_Set.erase( it );
                 return &val;
             }
@@ -117,7 +117,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 if ( it == m_Set.end() )
                     return nullptr;
                 value_type& val = *it;
-                cds::unref(f)( val );
+                f( val );
                 m_Set.erase( it );
                 return &val;
             }
@@ -128,7 +128,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 iterator it = m_Set.find( key, typename container_type::hasher(), typename container_type::key_equal() );
                 if ( it == m_Set.end() )
                     return false;
-                cds::unref(f)( *it, key );
+                f( *it, key );
                 return true;
             }
 
@@ -138,7 +138,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 iterator it = m_Set.find( key, typename container_type::hasher(), equal_from_compare<Less>(pred) );
                 if ( it == m_Set.end() )
                     return false;
-                cds::unref(f)( *it, key );
+                f( *it, key );
                 return true;
             }
 

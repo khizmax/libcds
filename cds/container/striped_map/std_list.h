@@ -3,11 +3,11 @@
 #ifndef __CDS_CONTAINER_STRIPED_MAP_STD_LIST_ADAPTER_H
 #define __CDS_CONTAINER_STRIPED_MAP_STD_LIST_ADAPTER_H
 
-#include <cds/container/striped_set/adapter.h>
-#include <cds/ref.h>
 #include <list>
+#include <functional>   // ref
 #include <algorithm>    // std::lower_bound
 #include <utility>      // std::pair
+#include <cds/container/striped_set/adapter.h>
 
 //@cond
 namespace cds { namespace container {
@@ -145,7 +145,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 if ( it == m_List.end() || key_comparator()( key, it->first ) != 0 ) {
                     //value_type newItem( key );
                     it = m_List.insert( it, value_type( key, mapped_type()) );
-                    cds::unref( f )( *it );
+                    f( *it );
 
 #           ifdef __GLIBCXX__
                     ++m_nSize;
@@ -181,7 +181,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     // insert new
                     value_type newItem( key, mapped_type() );
                     it = m_List.insert( it, newItem );
-                    cds::unref( func )( true, *it );
+                    func( true, *it );
 #           ifdef __GLIBCXX__
                     ++m_nSize;
 #           endif
@@ -189,7 +189,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
                 else {
                     // already exists
-                    cds::unref( func )( false, *it );
+                    func( false, *it );
                     return std::make_pair( true, false );
                 }
             }
@@ -202,7 +202,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it );
+                f( *it );
                 m_List.erase( it );
 #           ifdef __GLIBCXX__
                 --m_nSize;
@@ -219,7 +219,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it );
+                f( *it );
                 m_List.erase( it );
 #           ifdef __GLIBCXX__
                 --m_nSize;
@@ -236,7 +236,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it, val );
+                f( *it, val );
                 return true;
             }
 
@@ -248,7 +248,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it, val );
+                f( *it, val );
                 return true;
             }
 

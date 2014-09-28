@@ -347,7 +347,7 @@ namespace cds { namespace container {
             The argument \p itemValue of user-defined functor \p func is the reference
             to the list's item inserted. User-defined functor \p func should guarantee that during changing
             item's value no any other changes could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using <tt>boost::ref</tt>
+            The user-defined functor can be passed by reference using \p std::ref
             and it is called only if the inserting is success.
 
             The type \p Q should contain the complete key of the node.
@@ -392,7 +392,7 @@ namespace cds { namespace container {
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using <tt>boost::ref</tt>.
+            You may pass \p func argument by reference by \p std::ref
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -564,7 +564,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref
 
             The functor may change non-key fields of \p item. Note that the function is only guarantee
             that \p item cannot be deleted during functor is executing.
@@ -606,7 +606,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+            You may pass \p f argument by reference using \p std::ref
 
             The functor may change non-key fields of \p item. Note that the function is only guarantee
             that \p item cannot be deleted during functor is executing.
@@ -735,7 +735,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-            if ( base_class::insert_at( refHead, *pNode, [&f]( node_type& node ) { cds::unref(f)( node_to_value(node) ); } )) {
+            if ( base_class::insert_at( refHead, *pNode, [&f]( node_type& node ) { f( node_to_value(node) ); } )) {
                 pNode.release();
                 return true;
             }
@@ -751,7 +751,7 @@ namespace cds { namespace container {
         template <typename Q, typename Compare, typename Func>
         bool erase_at( head_type& refHead, Q const& key, Compare cmp, Func f )
         {
-            return base_class::erase_at( refHead, key, cmp, [&f](node_type const& node){ cds::unref(f)( node_to_value(node) ); } );
+            return base_class::erase_at( refHead, key, cmp, [&f](node_type const& node){ f( node_to_value(node) ); } );
         }
 
         template <typename Q, typename Compare>
@@ -766,7 +766,7 @@ namespace cds { namespace container {
             scoped_node_ptr pNode( alloc_node( key ));
 
             std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode,
-                [&f, &key](bool bNew, node_type& node, node_type&){ cds::unref(f)( bNew, node_to_value(node), key ); });
+                [&f, &key](bool bNew, node_type& node, node_type&){ f( bNew, node_to_value(node), key ); });
             if ( ret.first && ret.second )
                 pNode.release();
 
@@ -782,7 +782,7 @@ namespace cds { namespace container {
         template <typename Q, typename Compare, typename Func>
         bool find_at( head_type& refHead, Q& val, Compare cmp, Func f )
         {
-            return base_class::find_at( refHead, val, cmp, [&f](node_type& node, Q& v){ cds::unref(f)( node_to_value(node), v ); });
+            return base_class::find_at( refHead, val, cmp, [&f](node_type& node, Q& v){ f( node_to_value(node), v ); });
         }
 
         template <typename Q, typename Compare>

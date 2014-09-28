@@ -4,11 +4,11 @@
 #define __CDS_INTRUSIVE_BASKET_QUEUE_H
 
 #include <type_traits>
+#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/intrusive/details/queue_stat.h>
 #include <cds/intrusive/details/single_link_struct.h>
-#include <cds/ref.h>
 #include <cds/intrusive/details/dummy_node_holder.h>
 
 namespace cds { namespace intrusive {

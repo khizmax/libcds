@@ -127,7 +127,7 @@ namespace cds { namespace intrusive {
                 void operator ()( T * val );
             };
             \endcode
-            You can pass \p disposer by reference using \p boost::ref.
+            You can pass \p disposer by reference using \p std::ref.
             The disposer will be called immediately for each item.
         */
         template <typename Disposer>
@@ -135,7 +135,7 @@ namespace cds { namespace intrusive {
         {
             value_type * pv;
             while ( (pv = pop()) != nullptr ) {
-                unref(f)( pv );
+                f( pv );
             }
         }
 

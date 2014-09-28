@@ -3,11 +3,11 @@
 #ifndef __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
 #define __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
 
+#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/bounded_container.h>
 #include <cds/opt/buffer.h>
-#include <cds/ref.h>
 
 namespace cds { namespace intrusive {
 
@@ -343,7 +343,7 @@ namespace cds { namespace intrusive {
                 void operator ()( T * val );
             };
             \endcode
-            You can pass \p disposer by reference using \p boost::ref.
+            You can pass \p disposer by reference using \p std::ref.
             The disposer will be called immediately for each item.
         */
         template <typename Disposer>
@@ -351,7 +351,7 @@ namespace cds { namespace intrusive {
         {
             value_type * pv;
             while ( (pv = pop()) != nullptr ) {
-                unref(f)( pv );
+                f( pv );
             }
         }
 

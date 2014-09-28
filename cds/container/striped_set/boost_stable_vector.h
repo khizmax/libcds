@@ -8,11 +8,11 @@
 #   error "For boost::container::stable_vector you must use boost 1.48 or above"
 #endif
 
-#include <cds/container/striped_set/adapter.h>
-#include <cds/ref.h>
-#include <boost/container/stable_vector.hpp>
+#include <functional>   // ref
 #include <algorithm>    // std::lower_bound
 #include <utility>      // std::pair
+#include <cds/container/striped_set/adapter.h>
+#include <boost/container/stable_vector.hpp>
 
 //@cond
 namespace cds { namespace container {
@@ -143,7 +143,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 Therefore, the \p value_type should be comparable with type \p Q and constructible from type \p Q,
 
                 The user-defined functor is called only if the inserting is success. It may be passed by reference
-                using <tt>boost::ref</tt>
+                using \p std::ref
             */
             template <typename Q, typename Func>
             bool insert( const Q& val, Func f )
@@ -152,7 +152,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 if ( it == m_Vector.end() || key_comparator()( val, *it ) != 0 ) {
                     value_type newItem( val );
                     it = m_Vector.insert( it, newItem );
-                    cds::unref( f )( *it );
+                    f( *it );
                     return true;
                 }
                 return false;
@@ -197,7 +197,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 The type \p Q may differ from \ref value_type of items storing in the container.
                 Therefore, the \p value_type should be comparable with type \p Q and constructible from type \p Q,
 
-                You may pass \p func argument by reference using <tt>boost::ref</tt>.
+                You may pass \p func argument by reference using \p std::ref
 
                 Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
                 \p second is true if new item has been added or \p false if the item with \p val key
@@ -211,12 +211,12 @@ namespace cds { namespace intrusive { namespace striped_set {
                     // insert new
                     value_type newItem( val );
                     it = m_Vector.insert( it, newItem );
-                    cds::unref( func )( true, *it, val );
+                    func( true, *it, val );
                     return std::make_pair( true, true );
                 }
                 else {
                     // already exists
-                    cds::unref( func )( false, *it, val );
+                    func( false, *it, val );
                     return std::make_pair( true, false );
                 }
             }
@@ -247,7 +247,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it );
+                f( *it );
                 m_Vector.erase( it );
                 return true;
             }
@@ -260,7 +260,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it );
+                f( *it );
                 m_Vector.erase( it );
                 return true;
             }
@@ -276,7 +276,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 \endcode
                 where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-                You may pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+                You may pass \p f argument by reference using \p std::ref
 
                 The functor may change non-key fields of \p item.
                 The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
@@ -295,7 +295,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it, val );
+                f( *it, val );
                 return true;
             }
 
@@ -307,7 +307,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it, val );
+                f( *it, val );
                 return true;
             }
 

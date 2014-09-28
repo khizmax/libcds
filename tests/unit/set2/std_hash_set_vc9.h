@@ -4,7 +4,6 @@
 #define __CDSUNIT_STD_HASH_SET_VC_H
 
 #include <hash_set>
-//#include <cds/ref.h>
 
 namespace set2 {
 
@@ -58,7 +57,7 @@ namespace set2 {
             AutoLock al( m_lock );
             std::pair<base_class::iterator, bool> pRet = base_class::insert( value_type( key ));
             if ( pRet.second ) {
-                cds::unref(func)( *pRet.first );
+                func( *pRet.first );
                 return true;
             }
             return false;
@@ -70,11 +69,11 @@ namespace set2 {
             AutoLock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( value_type( key ));
             if ( pRet.second ) {
-                cds::unref(func)( true, *pRet.first, key );
+                func( true, *pRet.first, key );
                 return std::make_pair( true, true );
             }
             else {
-                cds::unref(func)( false, *pRet.first, key );
+                func( false, *pRet.first, key );
                 return std::make_pair( true, false );
             }
         }
@@ -92,7 +91,7 @@ namespace set2 {
             AutoLock al( m_lock );
             base_class::iterator it = base_class::find( key );
             if ( it != base_class::end() ) {
-                cds::unref(func)( *it );
+                func( *it );
                 return base_class::erase( it ) != base_class::end();
             }
             return false;

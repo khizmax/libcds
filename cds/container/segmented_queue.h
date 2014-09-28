@@ -4,9 +4,9 @@
 #define __CDS_CONTAINER_SEGMENTED_QUEUE_H
 
 #include <memory>
+#include <functional>   // ref
 #include <cds/intrusive/segmented_queue.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/ref.h>
 
 namespace cds { namespace container {
 
@@ -272,7 +272,7 @@ namespace cds { namespace container {
         bool enqueue( Q const& data, Func f  )
         {
             scoped_node_ptr p( alloc_node() );
-            unref(f)( *p, data );
+            f( *p, data );
             if ( base_class::enqueue( *p )) {
                 p.release();
                 return true;
@@ -320,7 +320,7 @@ namespace cds { namespace container {
         {
             value_type * p = base_class::dequeue();
             if ( p ) {
-                unref(f)( dest, *p );
+                f( dest, *p );
                 gc::template retire< typename maker::node_disposer >( p );
                 return true;
             }

@@ -5,7 +5,7 @@
 
 #include "cppunit/cppunit_proxy.h"
 #include <cds/intrusive/details/base.h>
-#include <cds/ref.h>
+#include <functional>   // ref
 #include "size_check.h"
 
 namespace queue {
@@ -124,10 +124,10 @@ namespace queue {
                     nCount = 0;
                     while ( !q.empty() ) {
                         if ( nCount & 1 ) {
-                            CPPUNIT_ASSERT( q.pop( v, cds::ref(pf) ));
+                            CPPUNIT_ASSERT( q.pop( v, std::ref(pf) ));
                         }
                         else {
-                            CPPUNIT_ASSERT( q.dequeue( v, cds::ref(pf) ));
+                            CPPUNIT_ASSERT( q.dequeue( v, std::ref(pf) ));
                         }
 
                         // It is possible c_nItemCount % quasi_factor() != 0

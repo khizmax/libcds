@@ -370,7 +370,7 @@ namespace cds { namespace container {
             to the list's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
             User-defined functor \p func should guarantee that during changing item's value no any other changes
             could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using <tt>boost::ref</tt>
+            The user-defined functor can be passed by reference using \p std::ref
             and it is called only if the inserting is successful.
 
             The key_type should be constructible from value of type \p K.
@@ -500,7 +500,7 @@ namespace cds { namespace container {
             scoped_node_ptr pNode( alloc_node( key ));
 
             if ( base_class::insert_at( refHead, *pNode )) {
-                cds::unref(f)( pNode->m_Data );
+                f( pNode->m_Data );
                 return pNode.release();
             }
             return nullptr;
@@ -536,7 +536,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare typename Func>
         bool find_at( head_type& refHead, K& key, Compare cmp, Func f )
         {
-            return base_class::find_at( refHead, key, cmp, [&f]( node_type& node, K const& ){ cds::unref(f)( node.m_Data ); });
+            return base_class::find_at( refHead, key, cmp, [&f]( node_type& node, K const& ){ f( node.m_Data ); });
         }
         */
         //@endcond

@@ -370,7 +370,7 @@ namespace set {
                 CPPUNIT_ASSERT( s.find( v3 ) == nullptr );
                 CPPUNIT_ASSERT( s.insert( v3 ));
                 CPPUNIT_ASSERT( v3.nFindCount == 0 );
-                CPPUNIT_ASSERT( s.find( v3, cds::ref(ff) ));
+                CPPUNIT_ASSERT( s.find( v3, std::ref(ff) ));
                 CPPUNIT_ASSERT( v3.nFindCount == 1 );
                 v3.nFindCount = 0;
                 CPPUNIT_ASSERT( check_size( s, 3 ));

@@ -229,7 +229,7 @@ namespace cds { namespace container {
         {
             value_type * pVal = base_class::pop();
             if ( pVal ) {
-                cds::unref(f)( dest, *pVal );
+                f( dest, *pVal );
                 cxx_allocator().Delete( pVal );
                 return true;
             }
@@ -262,7 +262,7 @@ namespace cds { namespace container {
         template <typename Func>
         void clear_with( Func f )
         {
-            base_class::clear_with( [&f]( value_type& val ) { cds::unref(f)(val); value_deleter()( &val ); } );
+            base_class::clear_with( [&f]( value_type& val ) { f(val); value_deleter()( &val ); } );
         }
 
         /// Checks is the priority queue is empty

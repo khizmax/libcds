@@ -6,7 +6,7 @@
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
 #include <algorithm>
-#include <cds/ref.h>
+#include <functional>   // ref
 
 namespace priority_queue {
 
@@ -162,7 +162,7 @@ namespace priority_queue {
 
             {
                 intrusive_pqueue::another_disposer disp;
-                pq.clear_with( cds::ref(disp) );
+                pq.clear_with( std::ref(disp) );
                 CPPUNIT_ASSERT( pq.empty() );
                 CPPUNIT_ASSERT( !pq.full() );
                 CPPUNIT_ASSERT( pq.size() == 0 );

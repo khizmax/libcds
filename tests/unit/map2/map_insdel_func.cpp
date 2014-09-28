@@ -1,12 +1,12 @@
 //$$CDS-header$$
 
+#include <functional>
 #include "map2/map_types.h"
 #include "cppunit/thread.h"
 
 #include <cds/lock/spinlock.h>
 #include <vector>
 #include <algorithm>    // random_shuffle
-#include <boost/ref.hpp>
 
 namespace map2 {
 
@@ -138,7 +138,7 @@ namespace map2 {
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
-                            if ( rMap.insert_key( *it, cds::ref(func) ) )
+                            if ( rMap.insert_key( *it, std::ref(func) ) )
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -148,7 +148,7 @@ namespace map2 {
                 else {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                            if ( rMap.insert_key( *it, cds::ref(func) ) )
+                            if ( rMap.insert_key( *it, std::ref(func) ) )
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -239,7 +239,7 @@ namespace map2 {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
                         //for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
-                            std::pair<bool, bool> ret = rMap.ensure( *it, cds::ref( func ) );
+                            std::pair<bool, bool> ret = rMap.ensure( *it, std::ref( func ) );
                             if ( ret.first  ) {
                                 if ( ret.second )
                                     ++m_nEnsureCreated;
@@ -255,7 +255,7 @@ namespace map2 {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
                         //for ( size_t nItem = c_nMapSize; nItem > 0; --nItem ) {
-                            std::pair<bool, bool> ret = rMap.ensure( *it, cds::ref( func ) );
+                            std::pair<bool, bool> ret = rMap.ensure( *it, std::ref( func ) );
                             if ( ret.first  ) {
                                 if ( ret.second )
                                     ++m_nEnsureCreated;
@@ -360,7 +360,7 @@ namespace map2 {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
                             func.m_cnt.nKeyExpected = *it;
-                            if ( rMap.erase( *it, cds::ref(func) ))
+                            if ( rMap.erase( *it, std::ref(func) ))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
@@ -371,7 +371,7 @@ namespace map2 {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
                             func.m_cnt.nKeyExpected = *it;
-                            if ( rMap.erase( *it, cds::ref(func) ))
+                            if ( rMap.erase( *it, std::ref(func) ))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;

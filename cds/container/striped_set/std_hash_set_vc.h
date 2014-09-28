@@ -95,7 +95,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
                 if ( res.second )
-                    ::cds::unref(f)( *res.first );
+                    ::f( *res.first );
                 return res.second;
             }
 
@@ -103,7 +103,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             std::pair<bool, bool> ensure( const Q& val, Func func )
             {
                 std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
-                ::cds::unref(func)( res.second, *res.first, val );
+                ::func( res.second, *res.first, val );
                 return std::make_pair( true, res.second );
             }
 
@@ -113,7 +113,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 iterator it = m_Set.find( value_type(key) );
                 if ( it == m_Set.end() )
                     return false;
-                ::cds::unref(f)( *it );
+                ::f( *it );
                 m_Set.erase( it );
                 return true;
             }
@@ -124,7 +124,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 iterator it = m_Set.find( value_type(val) );
                 if ( it == m_Set.end() )
                     return false;
-                ::cds::unref(f)( *it, val );
+                ::f( *it, val );
                 return true;
             }
 

@@ -119,27 +119,27 @@ namespace ordlist {
             CPPUNIT_ASSERT( l.find( 100 ));
 
             check_value chk(0);
-            CPPUNIT_ASSERT( l.find( 100, boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find( 100, std::ref( chk ) ) );
 
             CPPUNIT_ASSERT( !l.find_with( 50, lt<key_type>() ));
             CPPUNIT_ASSERT( l.insert( 50, 500 ));
             CPPUNIT_ASSERT( l.find_with( 50, lt<key_type>() ));
             CPPUNIT_ASSERT( !l.insert( 50, 5 ));
             chk.m_nExpected = 500;
-            CPPUNIT_ASSERT( l.find_with( 50, lt<key_type>(), boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find_with( 50, lt<key_type>(), std::ref( chk ) ) );
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( l.find_with( 100, lt<key_type>(), boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find_with( 100, lt<key_type>(), std::ref( chk ) ) );
             CPPUNIT_ASSERT( !l.empty() );
 
             CPPUNIT_ASSERT( !l.find( 150 ));
             CPPUNIT_ASSERT( l.insert_key( 150, insert_functor() ));
             CPPUNIT_ASSERT( l.find( 150 ));
             chk.m_nExpected = 1500;
-            CPPUNIT_ASSERT( l.find( 150, boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find( 150, std::ref( chk ) ) );
             chk.m_nExpected = 0;
-            CPPUNIT_ASSERT( l.find( 100, boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find( 100, std::ref( chk ) ) );
             chk.m_nExpected = 500;
-            CPPUNIT_ASSERT( l.find( 50, boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find( 50, std::ref( chk ) ) );
             CPPUNIT_ASSERT( !l.empty() );
 
             // erase test
@@ -150,7 +150,7 @@ namespace ordlist {
             CPPUNIT_ASSERT( l.find( 50 ));
             {
                 erase_functor ef;
-                l.erase( 50, boost::ref(ef));
+                l.erase( 50, std::ref( ef ) );
                 CPPUNIT_ASSERT( ef.nKey == 50 );
                 CPPUNIT_ASSERT( ef.nVal == 500 );
             }
@@ -162,16 +162,16 @@ namespace ordlist {
             CPPUNIT_ASSERT( bEnsureResult.first );
             CPPUNIT_ASSERT( !bEnsureResult.second );
             chk.m_nExpected = 5000;
-            CPPUNIT_ASSERT( l.find( 100, boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find( 100, std::ref( chk ) ) );
 
             {
                 ensure_functor ef;
-                bEnsureResult = l.ensure( 50, boost::ref( ef ));
+                bEnsureResult = l.ensure( 50, std::ref( ef ) );
             }
             CPPUNIT_ASSERT( bEnsureResult.first );
             CPPUNIT_ASSERT( bEnsureResult.second );
             chk.m_nExpected = 2500;
-            CPPUNIT_ASSERT( l.find( 50, boost::ref( chk ) ));
+            CPPUNIT_ASSERT( l.find( 50, std::ref( chk ) ) );
 
             // erase test
             CPPUNIT_ASSERT( !l.empty() );
@@ -181,7 +181,7 @@ namespace ordlist {
             CPPUNIT_ASSERT( l.erase( 150 ));
             {
                 erase_functor ef;
-                CPPUNIT_ASSERT( l.erase_with( 200, lt<key_type>(), cds::ref(ef)) );
+                CPPUNIT_ASSERT( l.erase_with( 200, lt<key_type>(), std::ref(ef)) );
                 CPPUNIT_ASSERT( ef.nKey == 200 );
                 CPPUNIT_ASSERT( ef.nVal == 2000 );
             }
@@ -202,9 +202,9 @@ namespace ordlist {
             CPPUNIT_ASSERT( !l.emplace( 251, 10) );
 
             check_value cv(0);
-            CPPUNIT_ASSERT( l.find( 501, cds::ref(cv) ));
+            CPPUNIT_ASSERT( l.find( 501, std::ref(cv) ));
             cv.m_nExpected = 152;
-            CPPUNIT_ASSERT( l.find( 251, cds::ref(cv) ));
+            CPPUNIT_ASSERT( l.find( 251, std::ref(cv) ));
 
             l.clear();
             CPPUNIT_ASSERT( l.empty() );
@@ -230,7 +230,7 @@ namespace ordlist {
                 // Check that we have visited all items
                 for ( int i = 0; i < nCount; ++i ) {
                     chk.m_nExpected = i * 3;
-                    CPPUNIT_ASSERT( l.find( i, boost::ref(chk) ));
+                    CPPUNIT_ASSERT( l.find( i, std::ref( chk ) ) );
                 }
 
                 l.clear();
@@ -255,7 +255,7 @@ namespace ordlist {
                 // Check that we have visited all items
                 for ( int i = 0; i < nCount; ++i ) {
                     chk.m_nExpected = i * 7;
-                    CPPUNIT_ASSERT( l.find_with( i, lt<key_type>(),  boost::ref(chk) ));
+                    CPPUNIT_ASSERT( l.find_with( i, lt<key_type>(), std::ref( chk ) ) );
                 }
 
                 l.clear();

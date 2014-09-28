@@ -8,10 +8,10 @@
 #   error "For boost::container::list you must use boost 1.48 or above"
 #endif
 
-#include <cds/container/striped_set/adapter.h>
-#include <cds/ref.h>
-#include <boost/container/list.hpp>
 #include <algorithm>    // std::lower_bound
+#include <functional>   // ref
+#include <cds/container/striped_set/adapter.h>
+#include <boost/container/list.hpp>
 
 //@cond
 namespace cds { namespace container {
@@ -134,7 +134,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 if ( it == m_List.end() || key_comparator()( val, *it ) != 0 ) {
                     value_type newItem( val );
                     it = m_List.insert( it, newItem );
-                    cds::unref( f )( *it );
+                    f( *it );
 
                     return true;
                 }
@@ -163,12 +163,12 @@ namespace cds { namespace intrusive { namespace striped_set {
                     // insert new
                     value_type newItem( val );
                     it = m_List.insert( it, newItem );
-                    cds::unref( func )( true, *it, val );
+                    func( true, *it, val );
                     return std::make_pair( true, true );
                 }
                 else {
                     // already exists
-                    cds::unref( func )( false, *it, val );
+                    func( false, *it, val );
                     return std::make_pair( true, false );
                 }
             }
@@ -181,7 +181,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it );
+                f( *it );
                 m_List.erase( it );
 
                 return true;
@@ -195,7 +195,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it );
+                f( *it );
                 m_List.erase( it );
 
                 return true;
@@ -209,7 +209,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it, val );
+                f( *it, val );
                 return true;
             }
 
@@ -221,7 +221,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *it, val );
+                f( *it, val );
                 return true;
             }
 

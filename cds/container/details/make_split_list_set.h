@@ -16,7 +16,7 @@ namespace cds { namespace container {
 
     namespace details {
 
-#ifdef __CDS_CONTAINER_MICHAEL_LIST_BASE_H
+#ifdef __CDS_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
         // if michael_list included
 
         template <typename GC, typename T, typename Traits>
@@ -117,9 +117,9 @@ namespace cds { namespace container {
             typedef cds::intrusive::MichaelList< gc, node_type, ordered_list_traits >   ordered_list;
             typedef cds::intrusive::SplitListSet< gc, ordered_list, type_traits >       type;
         };
-#endif  // ifdef __CDS_CONTAINER_MICHAEL_LIST_BASE_H
+#endif  // ifdef __CDS_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
 
-#ifdef __CDS_CONTAINER_LAZY_LIST_BASE_H
+#ifdef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
         // if lazy_list included
         template <typename GC, typename T, typename Traits>
         struct make_split_list_set< GC, T, lazy_list_tag, Traits >
@@ -226,7 +226,7 @@ namespace cds { namespace container {
             typedef cds::intrusive::LazyList< gc, node_type, ordered_list_traits >  ordered_list;
             typedef cds::intrusive::SplitListSet< gc, ordered_list, type_traits >   type;
         };
-#endif  // ifdef __CDS_CONTAINER_LAZY_LIST_BASE_H
+#endif  // ifdef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
 
     }   // namespace details
 }}  // namespace cds::container

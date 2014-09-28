@@ -4,8 +4,8 @@
 #define __CDS_INTRUSIVE_TREIBER_STACK_H
 
 #include <type_traits>
+#include <functional>   // ref
 #include <cds/intrusive/details/single_link_struct.h>
-#include <cds/ref.h>
 #include <cds/algo/elimination.h>
 #include <cds/opt/buffer.h>
 #include <cds/lock/spinlock.h>

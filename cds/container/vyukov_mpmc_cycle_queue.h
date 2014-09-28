@@ -3,11 +3,11 @@
 #ifndef __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
 #define __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
 
+#include <functional>   // ref
 #include <cds/container/details/base.h>
 #include <cds/opt/buffer.h>
 #include <cds/opt/value_cleaner.h>
 #include <cds/cxx11_atomic.h>
-#include <cds/ref.h>
 #include <cds/details/trivial_assign.h>
 #include <cds/details/bounded_container.h>
 
@@ -194,7 +194,7 @@ namespace cds { namespace container {
                     pos = m_posEnqueue.load(memory_model::memory_order_relaxed);
             }
 
-            unref(func)( cell->data, data );
+            func( cell->data, data );
 
             cell->sequence.store(pos + 1, memory_model::memory_order_release);
             ++m_ItemCounter;
@@ -280,7 +280,7 @@ namespace cds { namespace container {
                     pos = m_posDequeue.load(memory_model::memory_order_relaxed);
             }
 
-            unref(func)( data, cell->data );
+            func( data, cell->data );
             value_cleaner()( cell->data );
             --m_ItemCounter;
             cell->sequence.store( pos + m_nBufferMask + 1, memory_model::memory_order_release );

@@ -63,7 +63,7 @@ namespace cds { namespace container {
                 Therefore, the \p value_type should be comparable with type \p Q and constructible from type \p Q,
 
                 The user-defined functor is called only if the inserting is success. It can be passed by reference
-                using <tt>boost::ref</tt>
+                using \p std::ref
                 <hr>
 
             <b>Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt></b>
@@ -101,7 +101,7 @@ namespace cds { namespace container {
                 The type \p Q can differ from \ref value_type of items storing in the container.
                 Therefore, the \p value_type should be comparable with type \p Q and constructible from type \p Q,
 
-                You can pass \p func argument by reference using <tt>boost::ref</tt>.
+                You can pass \p func argument by reference using \p std::ref
 
                 Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
                 \p second is true if new item has been added or \p false if the item with \p val key
@@ -140,7 +140,7 @@ namespace cds { namespace container {
                 \endcode
                 where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-                You can pass \p f argument by reference using <tt>boost::ref</tt> or cds::ref.
+                You can pass \p f argument by reference using \p std::ref
 
                 The functor can change non-key fields of \p item.
                 The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
@@ -266,7 +266,7 @@ namespace cds { namespace container {
                 {
                     std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
                     if ( res.second )
-                        cds::unref(f)( const_cast<value_type&>(*res.first) );
+                        f( const_cast<value_type&>(*res.first) );
                     return res.second;
                 }
 
@@ -281,7 +281,7 @@ namespace cds { namespace container {
                 std::pair<bool, bool> ensure( const Q& val, Func func )
                 {
                     std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
-                    cds::unref(func)( res.second, const_cast<value_type&>(*res.first), val );
+                    func( res.second, const_cast<value_type&>(*res.first), val );
                     return std::make_pair( true, res.second );
                 }
 
@@ -291,7 +291,7 @@ namespace cds { namespace container {
                     const_iterator it = m_Set.find( value_type(key) );
                     if ( it == m_Set.end() )
                         return false;
-                    cds::unref(f)( const_cast<value_type&>(*it) );
+                    f( const_cast<value_type&>(*it) );
                     m_Set.erase( it );
                     return true;
                 }
@@ -302,7 +302,7 @@ namespace cds { namespace container {
                     iterator it = m_Set.find( value_type(val) );
                     if ( it == m_Set.end() )
                         return false;
-                    cds::unref(f)( const_cast<value_type&>(*it), val );
+                    f( const_cast<value_type&>(*it), val );
                     return true;
                 }
 
@@ -403,7 +403,7 @@ namespace cds { namespace container {
                 {
                     std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ) );
                     if ( res.second )
-                        cds::unref(f)( *res.first );
+                        f( *res.first );
                     return res.second;
                 }
 
@@ -418,7 +418,7 @@ namespace cds { namespace container {
                 std::pair<bool, bool> ensure( const Q& val, Func func )
                 {
                     std::pair<iterator, bool> res = m_Map.insert( value_type( val, mapped_type() ));
-                    cds::unref(func)( res.second, *res.first );
+                    func( res.second, *res.first );
                     return std::make_pair( true, res.second );
                 }
 
@@ -428,7 +428,7 @@ namespace cds { namespace container {
                     iterator it = m_Map.find( key_type(key) );
                     if ( it == m_Map.end() )
                         return false;
-                    cds::unref(f)( *it );
+                    f( *it );
                     m_Map.erase( it );
                     return true;
                 }
@@ -439,7 +439,7 @@ namespace cds { namespace container {
                     iterator it = m_Map.find( key_type(val) );
                     if ( it == m_Map.end() )
                         return false;
-                    cds::unref(f)( *it, val );
+                    f( *it, val );
                     return true;
                 }
 

@@ -4,7 +4,7 @@
 #define __CDSUNIT_STD_SET_VC_H
 
 #include <set>
-#include <cds/ref.h>
+#include <functional>   // ref
 
 namespace set2 {
     template <typename Value, typename Less, typename Lock,
@@ -41,7 +41,7 @@ namespace set2 {
             AutoLock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( value_type( key ));
             if ( pRet.second ) {
-                cds::unref(func)( *pRet.first );
+                func( *pRet.first );
                 return true;
             }
             return false;
@@ -53,11 +53,11 @@ namespace set2 {
             AutoLock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( value_type( key ));
             if ( pRet.second ) {
-                cds::unref(func)( true, *pRet.first, key );
+                func( true, *pRet.first, key );
                 return std::make_pair( true, true );
             }
             else {
-                cds::unref(func)( false, *pRet.first, key );
+                func( false, *pRet.first, key );
                 return std::make_pair( true, false );
             }
         }
@@ -75,7 +75,7 @@ namespace set2 {
             AutoLock al( m_lock );
             typename base_class::iterator it = base_class::find( value_type(key) );
             if ( it != base_class::end() ) {
-                cds::unref(func)( *it );
+                func( *it );
 
                 base_class::erase( it );
                 return true;

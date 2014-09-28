@@ -8,7 +8,7 @@
 
 #include <cds/opt/hash.h>
 #include <cds/os/timer.h>
-#include <cds/ref.h>
+#include <functional>   // ref
 #include <algorithm>    // random_shuffle
 
 // forward namespace declaration
@@ -367,7 +367,7 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 20;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.nFindCount == 1 );
@@ -376,7 +376,7 @@ namespace set {
                 copy_found<item> f;
                 key = 20;
                 CPPUNIT_ASSERT( s.find( key, find_functor() ) );
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.nFindCount == 2 );
@@ -391,7 +391,7 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 25;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 25 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 2500 );
             }
@@ -400,7 +400,7 @@ namespace set {
             key = 10;
             {
                 copy_found<item> f;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 10 );
                 CPPUNIT_ASSERT( f.m_found.nEnsureCount == 0 );
@@ -412,7 +412,7 @@ namespace set {
             CPPUNIT_ASSERT( check_size( s, 3 ));
             {
                 copy_found<item> f;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 10 );
                 CPPUNIT_ASSERT( f.m_found.nEnsureCount == 1 );
@@ -426,7 +426,7 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 13;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 13 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 1300 );
                 CPPUNIT_ASSERT( f.m_found.nEnsureCount == 0 );
@@ -454,12 +454,12 @@ namespace set {
             CPPUNIT_ASSERT( s.find(20) );
             {
                 copy_found<item> f;
-                CPPUNIT_ASSERT( s.erase( 20, boost::ref(f) ));
+                CPPUNIT_ASSERT( s.erase( 20, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
 
                 CPPUNIT_ASSERT( s.insert(235))
-                    CPPUNIT_ASSERT( s.erase( 235, boost::ref(f) ));
+                    CPPUNIT_ASSERT( s.erase( 235, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 235 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 235 );
             }
@@ -485,17 +485,17 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 151;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 151 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 151 );
 
                 key = 174;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 174 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 471 );
 
                 key = 190;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 190 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 91 );
             }
@@ -559,7 +559,7 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 20;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.nFindCount == 1 );
@@ -568,7 +568,7 @@ namespace set {
                 copy_found<item> f;
                 key = 20;
                 CPPUNIT_ASSERT( s.find_with( 20, less<value_type>(), find_functor() ) );
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.nFindCount == 2 );
@@ -583,7 +583,7 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 25;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 25 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 2500 );
             }
@@ -592,7 +592,7 @@ namespace set {
             key = 10;
             {
                 copy_found<item> f;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 10 );
                 CPPUNIT_ASSERT( f.m_found.nEnsureCount == 0 );
@@ -604,7 +604,7 @@ namespace set {
             CPPUNIT_ASSERT( check_size( s, 3 ));
             {
                 copy_found<item> f;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 10 );
                 CPPUNIT_ASSERT( f.m_found.nEnsureCount == 1 );
@@ -618,7 +618,7 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 13;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 13 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 1300 );
                 CPPUNIT_ASSERT( f.m_found.nEnsureCount == 0 );
@@ -646,12 +646,12 @@ namespace set {
             CPPUNIT_ASSERT( s.find(20) );
             {
                 copy_found<item> f;
-                CPPUNIT_ASSERT( s.erase( 20, boost::ref(f) ));
+                CPPUNIT_ASSERT( s.erase( 20, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
 
                 CPPUNIT_ASSERT( s.insert(235))
-                CPPUNIT_ASSERT( s.erase_with( 235, less<value_type>(), boost::ref(f) ));
+                    CPPUNIT_ASSERT( s.erase_with( 235, less<value_type>(), std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 235 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 235 );
             }
@@ -677,17 +677,17 @@ namespace set {
             {
                 copy_found<item> f;
                 key = 151;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 151 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 151 );
 
                 key = 174;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 174 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 471 );
 
                 key = 190;
-                CPPUNIT_ASSERT( s.find( key, boost::ref(f) ) );
+                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 190 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 91 );
             }

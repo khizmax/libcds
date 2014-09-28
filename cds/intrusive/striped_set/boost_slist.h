@@ -77,7 +77,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // key exists
                 iterator it = pos.first;
                 value_type& val = *(++it);
-                cds::unref( f )( val );
+                f( val );
                 m_List.erase_after( pos.first );
 
                 return &val;
@@ -101,7 +101,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 std::pair< iterator, bool > pos = find_prev_item( val );
                 if ( !pos.second ) {
                     m_List.insert_after( pos.first, val );
-                    cds::unref( f )( val );
+                    f( val );
                     return true;
                 }
 
@@ -116,12 +116,12 @@ namespace cds { namespace intrusive { namespace striped_set {
                 if ( !pos.second ) {
                     // insert new
                     m_List.insert_after( pos.first, val );
-                    cds::unref( f )( true, val, val );
+                    f( true, val, val );
                     return std::make_pair( true, true );
                 }
                 else {
                     // already exists
-                    cds::unref( f )( false, *(++pos.first), val );
+                    f( false, *(++pos.first), val );
                     return std::make_pair( true, false );
                 }
             }
@@ -160,7 +160,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *(++pos.first), key );
+                f( *(++pos.first), key );
                 return true;
             }
 
@@ -172,7 +172,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     return false;
 
                 // key exists
-                cds::unref( f )( *(++pos.first), key );
+                f( *(++pos.first), key );
                 return true;
             }
 

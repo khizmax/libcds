@@ -3,6 +3,7 @@
 #ifndef __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
 #define __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
 
+#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/lock/spinlock.h>
 #include <cds/os/thread.h>
@@ -11,7 +12,6 @@
 #include <cds/opt/buffer.h>
 #include <cds/opt/compare.h>
 #include <cds/details/bounded_container.h>
-#include <cds/ref.h>
 
 namespace cds { namespace intrusive {
 
@@ -353,7 +353,7 @@ namespace cds { namespace intrusive {
             while ( !empty() ) {
                 value_type * pVal = pop();
                 if ( pVal )
-                    cds::unref(f)( *pVal );
+                    f( *pVal );
             }
         }
 

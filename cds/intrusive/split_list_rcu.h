@@ -354,7 +354,7 @@ namespace cds { namespace intrusive {
             assert( pHead != nullptr );
 
             return m_List.find_at( pHead, sv, cmp,
-                [&f](value_type& item, split_list::details::search_value_type<Q>& val){ cds::unref(f)(item, val.val ); });
+                [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); });
         }
 
         template <typename Q, typename Compare>
@@ -496,7 +496,7 @@ namespace cds { namespace intrusive {
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
             The user-defined functor is called only if the inserting is success and may be passed by reference
-            using <tt>boost::ref</tt>
+            using \p std::ref.
 
             The function makes RCU lock internally.
         */
@@ -536,7 +536,7 @@ namespace cds { namespace intrusive {
             The functor can change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You can pass \p func argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p func argument by value or by reference using \p std::ref.
 
             The function makes RCU lock internally.
 
@@ -739,7 +739,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -786,7 +786,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using <tt>boost::ref</tt> or cds::ref.
+            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.

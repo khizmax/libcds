@@ -4,7 +4,7 @@
 #define __CDSUNIT_STD_MAP_GCC_H
 
 #include <map>
-#include <cds/ref.h>
+#include <functional>   // ref
 
 namespace map2 {
 
@@ -42,7 +42,7 @@ namespace map2 {
             AutoLock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type(key, Value() ));
             if ( pRet.second ) {
-                cds::unref(func)( pRet.first->second, val );
+                func( pRet.first->second, val );
                 return true;
             }
             return false;
@@ -54,11 +54,11 @@ namespace map2 {
             AutoLock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type(key, Value() ));
             if ( pRet.second ) {
-                cds::unref(func)( true, *pRet.first );
+                func( true, *pRet.first );
                 return std::make_pair( true, true );
             }
             else {
-                cds::unref(func)( false, *pRet.first );
+                func( false, *pRet.first );
                 return std::make_pair( true, false );
             }
         }
@@ -75,7 +75,7 @@ namespace map2 {
             AutoLock al( m_lock );
             typename base_class::iterator it = base_class::find( key );
             if ( it != base_class::end() ) {
-                cds::unref(func)( (*it) );
+                func( (*it) );
                 base_class::erase( it );
                 return true;
             }

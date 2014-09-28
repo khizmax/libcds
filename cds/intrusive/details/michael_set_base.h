@@ -3,12 +3,12 @@
 #ifndef __CDS_INTRUSIVE_DETAILS_MICHAEL_SET_BASE_H
 #define __CDS_INTRUSIVE_DETAILS_MICHAEL_SET_BASE_H
 
+#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
 #include <cds/algo/bitop.h>
 #include <cds/cxx11_atomic.h>
-#include <cds/ref.h>
 
 namespace cds { namespace intrusive {
 

@@ -4,12 +4,12 @@
 #define __CDS_CONTAINER_RWQUEUE_H
 
 #include <memory>
+#include <functional>   // ref
 #include <cds/opt/options.h>
 #include <cds/lock/spinlock.h>
 #include <cds/intrusive/details/queue_stat.h>
 #include <cds/details/allocator.h>
 #include <cds/details/trivial_assign.h>
-#include <cds/ref.h>
 
 namespace cds { namespace container {
 
@@ -213,7 +213,7 @@ namespace cds { namespace container {
         bool enqueue( Type const& data, Func f  )
         {
             scoped_node_ptr p( alloc_node());
-            unref(f)( p->m_value, data );
+            f( p->m_value, data );
             if ( enqueue_node( p.get() )) {
                 p.release();
                 return true;
@@ -261,7 +261,7 @@ namespace cds { namespace container {
                 node_type * pNewHead = pNode->m_pNext;
                 if ( pNewHead == nullptr )
                     return false;
-                unref(f)( dest, pNewHead->m_value );
+                f( dest, pNewHead->m_value );
                 m_pHead = pNewHead;
             }    // unlock here
             --m_ItemCounter;

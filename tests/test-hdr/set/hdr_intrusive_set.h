@@ -4,7 +4,7 @@
 #include "size_check.h"
 
 #include <cds/opt/hash.h>
-#include <cds/ref.h>
+#include <functional>   // ref
 #include <algorithm>    // random_shuffle
 
 // forward declaration
@@ -263,10 +263,10 @@ namespace set {
                 find_functor    ff;
                 CPPUNIT_ASSERT( !s.find( v3 ));
                 CPPUNIT_ASSERT( v3.nVal != v3.nKey * 100 );
-                CPPUNIT_ASSERT( s.insert( v3, cds::ref(fi) ));
+                CPPUNIT_ASSERT( s.insert( v3, std::ref(fi) ));
                 CPPUNIT_ASSERT( v3.nVal == v3.nKey * 100 );
                 CPPUNIT_ASSERT( v3.nFindCount == 0 );
-                CPPUNIT_ASSERT( s.find( v3, cds::ref(ff) ));
+                CPPUNIT_ASSERT( s.find( v3, std::ref(ff) ));
                 CPPUNIT_ASSERT( v3.nFindCount == 1 );
                 v3.nFindCount = 0;
                 CPPUNIT_ASSERT( check_size( s, 3 ));
@@ -630,7 +630,7 @@ namespace set {
                         CPPUNIT_ASSERT( s.find( v3 ) == nullptr );
                         CPPUNIT_ASSERT( s.insert( v3 ));
                         CPPUNIT_ASSERT( v3.nFindCount == 0 );
-                        CPPUNIT_ASSERT( s.find_with( v3, less<value_type>(), cds::ref(ff) ));
+                        CPPUNIT_ASSERT( s.find_with( v3, less<value_type>(), std::ref(ff) ));
                         CPPUNIT_ASSERT( v3.nFindCount == 1 );
                         v3.nFindCount = 0;
                         CPPUNIT_ASSERT( check_size( s, 3 ));
@@ -749,10 +749,10 @@ namespace set {
                 find_functor    ff;
                 ASSERT_RCU_FIND( !s.find( v3 ));
                 CPPUNIT_ASSERT( v3.nVal != v3.nKey * 100 );
-                CPPUNIT_ASSERT( s.insert( v3, cds::ref(fi) ));
+                CPPUNIT_ASSERT( s.insert( v3, std::ref(fi) ));
                 CPPUNIT_ASSERT( v3.nVal == v3.nKey * 100 );
                 CPPUNIT_ASSERT( v3.nFindCount == 0 );
-                CPPUNIT_ASSERT( s.find_with( v3, less<value_type>(), cds::ref(ff) ));
+                CPPUNIT_ASSERT( s.find_with( v3, less<value_type>(), std::ref(ff) ));
                 CPPUNIT_ASSERT( v3.nFindCount == 1 );
                 v3.nFindCount = 0;
                 CPPUNIT_ASSERT( check_size( s, 3 ));
