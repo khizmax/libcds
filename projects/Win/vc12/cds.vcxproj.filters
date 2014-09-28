@@ -200,9 +200,6 @@
     <ClInclude Include="..\..\..\cds\init.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\ref.h">
-      <Filter>Header Files\cds</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\refcounter.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>

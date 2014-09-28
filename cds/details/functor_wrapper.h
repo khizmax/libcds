@@ -40,11 +40,11 @@ namespace cds { namespace details {
     };
 
     template <typename Functor>
-    struct functor_wrapper< boost::reference_wrapper<Functor> >
+    struct functor_wrapper< std::reference_wrapper<Functor> >
     {
-        boost::reference_wrapper<Functor>    m_func;
+        std::reference_wrapper<Functor>    m_func;
     public:
-        functor_wrapper( boost::reference_wrapper<Functor> f)
+        functor_wrapper( std::reference_wrapper<Functor> f)
         : m_func(f)
         {}
 

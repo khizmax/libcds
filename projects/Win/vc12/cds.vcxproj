@@ -818,7 +818,6 @@
     <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h" />
     <ClInclude Include="..\..\..\src\hzp_const.h" />
     <ClInclude Include="..\..\..\cds\init.h" />
-    <ClInclude Include="..\..\..\cds\ref.h" />
     <ClInclude Include="..\..\..\cds\refcounter.h" />
     <ClInclude Include="..\..\..\cds\version.h" />
     <ClInclude Include="..\..\..\cds\details\aligned_allocator.h" />

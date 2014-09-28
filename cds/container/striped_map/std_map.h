@@ -106,7 +106,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ) );
                 if ( res.second )
-                    ::f( *res.first );
+                    f( *res.first );
                 return res.second;
             }
 

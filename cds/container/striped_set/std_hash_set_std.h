@@ -93,7 +93,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
                 if ( res.second )
-                    ::f( const_cast<value_type&>(*res.first) );
+                    f( const_cast<value_type&>(*res.first) );
                 return res.second;
             }
 
