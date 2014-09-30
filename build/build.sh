@@ -18,7 +18,7 @@ usage()
     echo "Usage: build.sh \"options\""
     echo "       where options may be any of the following:"
     echo "       -t make target"
-    echo "       -c <C compiler name> Possible values are: gcc,clang"
+    echo "       -c <C compiler name> Possible values are: gcc,clang,icc"
     echo "       -x <C++ compiler name> (e.g. g++, CC)"
     echo "       -p <Processor architecture> Possible values are:"
     echo "             x86, amd64 (x86_64), sparc, ia64"
@@ -208,6 +208,11 @@ case $ccompiler in
 			cppcompiler=clang++
 		fi
 		;;
+	icc)
+		if test $cppcompiler = ''; then
+			cppcompiler=icc
+		fi
+		;;
 	*)
 		echo "ERROR: Unknown compiler: $ccompiler"
 		exit $ERROR_EXIT_CODE
@@ -389,19 +394,64 @@ case $ccompiler in
 	    ;;
 	esac
 
-	cppcompiler_version=`$cppcompiler -dumpversion`
-	echo g++ version=$gcc_version
+	#cppcompiler_version=`$cppcompiler -dumpversion`
+	#echo compiler version=$cppcompiler $cppcompiler_version
 
 	# Setup target options
 	# buildCXXflags="-std=gnu++0x $buildCXXflags"
-	cxx_debug_options="-D_DEBUG -O0 -g $cxx_debug_options"
-	cxx_release_options="-DNDEBUG $cxx_release_optimization $cxx_release_options"
+	#cxx_debug_options="-D_DEBUG -O0 -g $cxx_debug_options"
+	#cxx_release_options="-DNDEBUG $cxx_release_optimization $cxx_release_options"
+	;;
+    icc)
+	case $processor_arch in
+	amd64)
+	    case $OS_FAMILY in
+	    linux)
+		buildCXXflags="-fPIC -march=$ArchFlag $amd64_cxx_options"
+		buildCflags="-fPIC -march=$ArchFlag $amd64_cxx_options"
+		buildLDflags="-fPIC"
+		buildTestLDflags="-fPIC"
+		;;
+	    *)
+		echo "Warning: cannot determine compiler flags for processor $processor_arch, OS $OS_FAMILY, and compiler $ccompiler"
+		#exit ${ERROR_EXIT_CODE}
+		;;
+	    esac
+	    ;;
+	x86)
+	    case $OS_FAMILY in
+		linux)
+		    buildCXXflags="-fPIC -march=$ArchFlag"
+		    buildCflags="-fPIC -march=$ArchFlag"
+		    buildLDflags="-fPIC"
+		    buildTestLDflags="-fPIC"
+		    ;;
+		*)
+		    echo "Warning: cannot determine compiler flags for processor $processor_arch, OS $OS_FAMILY, and compiler $ccompiler"
+		    #exit ${ERROR_EXIT_CODE}
+		    ;;
+	    esac
+	    ;;
+	*)
+	    echo "Warning: cannot determine compiler flags for processor $processor_arch and compiler $ccompiler"
+	    #exit ${ERROR_EXIT_CODE}
+	    ;;
+	esac
 	;;
     *)
 	echo "ERROR: Unknown compiler: $ccompiler"
 	exit ${ERROR_EXIT_CODE}
 	;;
 esac
+
+cppcompiler_version=`$cppcompiler -dumpversion`
+echo compiler version=$cppcompiler $cppcompiler_version
+
+# Setup target options
+# buildCXXflags="-std=gnu++0x $buildCXXflags"
+cxx_debug_options="-D_DEBUG -O0 -g $cxx_debug_options"
+cxx_release_options="-DNDEBUG $cxx_release_optimization $cxx_release_options"
+
 
 if test $BOOST_INCLUDE_PATH != ''; then
 	buildCXXflags="$buildCXXflags -I$BOOST_INCLUDE_PATH"

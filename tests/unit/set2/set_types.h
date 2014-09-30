@@ -284,7 +284,7 @@ namespace set2 {
             }
         };
 
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1600
+#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
         struct hash_less: public stdext::hash_compare< key_type, std::less<key_type> >
         {
             typedef stdext::hash_compare< key_type, std::less<key_type> > base_class;
@@ -3474,7 +3474,7 @@ namespace set2 {
             , co::hash< hash2 >
         > StripedSet_set;
 
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1600
+#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
         typedef StripedHashSet_ord<
             stdext::hash_set< key_val, hash_less >
             , co::hash< hash2 >
@@ -3609,7 +3609,7 @@ namespace set2 {
             , co::hash< hash2 >
         > RefinableSet_set;
 
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1600
+#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
         typedef RefinableHashSet_ord<
             stdext::hash_set< key_val, hash_less >
             , co::hash< hash2 >

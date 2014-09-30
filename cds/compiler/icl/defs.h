@@ -36,12 +36,12 @@
 #endif
 
 // Processor architecture
-#if defined(_M_X64) || defined(_M_AMD64)
+#if defined(_M_X64) || defined(_M_AMD64) || defined(__amd64__) || defined(__amd64)
 #   define CDS_BUILD_BITS       64
 #   define CDS_PROCESSOR_ARCH   CDS_PROCESSOR_AMD64
 #   define CDS_PROCESSOR__NAME  "AMD64"
 #   define CDS_PROCESSOR__NICK  "amd64"
-#elif defined(_M_IX86)
+#elif defined(_M_IX86) || defined(__i386__) || defined(__i386)
 #   define CDS_BUILD_BITS       32
 #   define CDS_PROCESSOR_ARCH   CDS_PROCESSOR_X86
 #   define CDS_PROCESSOR__NAME  "Intel x86"

@@ -456,7 +456,7 @@ namespace cds {
     {
         if ( !bCond ) {
             char buf[4096];
-#   if CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL
+#   if CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CS_OSI_WINDOWS)
             _snprintf_s( buf, sizeof(buf)/sizeof(buf[0]), _TRUNCATE, pszMsg, pszFile, nLine );
 #   else
             snprintf( buf, sizeof(buf)/sizeof(buf[0]), pszMsg, pszFile, nLine );

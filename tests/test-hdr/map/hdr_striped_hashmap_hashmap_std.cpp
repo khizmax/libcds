@@ -5,7 +5,7 @@
 #include <cds/container/striped_map.h>
 #include <cds/lock/spinlock.h>
 
-#if !((CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1600)
+#if !((CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600)
 
 namespace map {
 

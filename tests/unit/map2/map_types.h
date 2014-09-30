@@ -3825,7 +3825,7 @@ namespace map2 {
             , co::less< less >
         > StripedMap_list;
 
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1600
+#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
         typedef StripedHashMap_ord<
             stdext::hash_map< Key, Value, stdext::hash_compare<Key, less > >
             , co::hash< hash2 >
@@ -3942,7 +3942,7 @@ namespace map2 {
             , co::hash< hash2 >
         > RefinableMap_map;
 
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1600
+#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
         typedef RefinableHashMap_ord<
             stdext::hash_map< Key, Value, stdext::hash_compare<Key, less > >
             , co::hash< hash2 >

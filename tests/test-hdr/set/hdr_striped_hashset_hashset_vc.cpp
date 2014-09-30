@@ -5,7 +5,7 @@
 #include <cds/container/striped_set.h>
 #include <cds/lock/spinlock.h>
 
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER < 1600
+#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
 
 namespace stdext {
     inline size_t hash_value(set::StripedSetHdrTest::item const& _Keyval)

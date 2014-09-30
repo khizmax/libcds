@@ -60,7 +60,7 @@ namespace misc {
             CPPUNIT_ASSERT( val[3] == nHash + 4 );
             CPPUNIT_ASSERT( val[4] == nHash + 5 );
 
-#if !((CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL) && _MSC_VER == 1700)
+#if !((CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER == 1700)
             // MS VC 11: std::tuple suports up to 5 template params only
 
             cds::opt::hash< std::tuple< hashing, hash2, hash3, hash4, hash5, hash6 > >::pack<cds::opt::none>::hash  h6;

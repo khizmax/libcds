@@ -3,7 +3,7 @@
 #ifndef __CDS_THREADING_DETAILS_MSVC_MANAGER_H
 #define __CDS_THREADING_DETAILS_MSVC_MANAGER_H
 
-#if !( CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL )
+#if !( CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS))
 #   error "threading/details/msvc_manager.h may be used only with Microsoft Visual C++ / Intel C++ compiler"
 #endif
 
