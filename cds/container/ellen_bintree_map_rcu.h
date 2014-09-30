@@ -5,7 +5,6 @@
 
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/ellen_bintree_rcu.h>
-#include <cds/details/functor_wrapper.h>
 
 namespace cds { namespace container {
 

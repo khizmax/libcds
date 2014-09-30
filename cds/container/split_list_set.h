@@ -5,7 +5,6 @@
 
 #include <cds/intrusive/split_list.h>
 #include <cds/container/details/make_split_list_set.h>
-#include <cds/details/functor_wrapper.h>
 
 namespace cds { namespace container {
 

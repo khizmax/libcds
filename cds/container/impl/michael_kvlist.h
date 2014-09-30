@@ -5,7 +5,6 @@
 
 #include <memory>
 #include <functional>   // ref
-#include <cds/details/functor_wrapper.h>
 #include <cds/container/details/guarded_ptr_cast.h>
 
 namespace cds { namespace container {

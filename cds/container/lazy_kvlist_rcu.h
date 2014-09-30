@@ -8,7 +8,6 @@
 #include <cds/container/details/lazy_list_base.h>
 #include <cds/intrusive/lazy_list_rcu.h>
 #include <cds/container/details/make_lazy_kvlist.h>
-#include <cds/details/functor_wrapper.h>
 
 namespace cds { namespace container {
 

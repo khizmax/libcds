@@ -8,7 +8,6 @@
 #include <cds/container/details/michael_list_base.h>
 #include <cds/intrusive/michael_list_rcu.h>
 #include <cds/container/details/make_michael_kvlist.h>
-#include <cds/details/functor_wrapper.h>
 
 namespace cds { namespace container {
 

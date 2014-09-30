@@ -6,7 +6,6 @@
 #include <cds/container/details/skip_list_base.h>
 #include <cds/intrusive/skip_list_rcu.h>
 #include <cds/container/details/make_skip_list_map.h>
-#include <cds/details/functor_wrapper.h>
 
 namespace cds { namespace container {
 

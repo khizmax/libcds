@@ -12,7 +12,6 @@
 #include <cds/opt/hash.h>
 #include <cds/lock/array.h>
 #include <cds/os/thread.h>
-#include <cds/details/functor_wrapper.h>
 #include <cds/lock/spinlock.h>
 
 
