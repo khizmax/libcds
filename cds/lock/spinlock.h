@@ -46,7 +46,7 @@ namespace cds {
             Template parameters:
                 - @p Backoff    backoff strategy. Used when spin lock is locked
         */
-        template <class Backoff >
+        template <typename Backoff >
         class Spinlock
         {
         public:
@@ -54,7 +54,7 @@ namespace cds {
         private:
             atomics::atomic<bool>    m_spin  ;       ///< Spin
 #    ifdef CDS_DEBUG
-            typename OS::ThreadId       m_dbgOwnerId        ;       ///< Owner thread id (only for debug mode)
+            typename OS::ThreadId    m_dbgOwnerId        ;       ///< Owner thread id (only for debug mode)
 #    endif
 
         public:
@@ -73,7 +73,7 @@ namespace cds {
             */
             Spinlock( bool bLocked ) CDS_NOEXCEPT
 #    ifdef CDS_DEBUG
-                :m_dbgOwnerId( bLocked ? OS::getCurrentThreadId() : OS::c_NullThreadId )
+                : m_dbgOwnerId( bLocked ? OS::getCurrentThreadId() : OS::c_NullThreadId )
 #    endif
             {
                 m_spin.store( bLocked, atomics::memory_order_relaxed );
@@ -113,12 +113,6 @@ namespace cds {
             */
             bool try_lock() CDS_NOEXCEPT
             {
-                return tryLock();
-            }
-
-            /// Try to lock the object (synonym for \ref try_lock)
-            bool tryLock() CDS_NOEXCEPT
-            {
                 bool bCurrent = false;
                 m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_relaxed );
 
@@ -135,17 +129,11 @@ namespace cds {
                 Returns \p true if locking is succeeded
                 otherwise (if the spin is already locked) returns \p false
             */
-            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT
+            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT( noexept( backoff_strategy()() ) )
             {
-                return tryLock( nTryCount );
-            }
-
-            /// Try to lock the object (synonym for \ref try_lock)
-            bool tryLock( unsigned int nTryCount ) CDS_NOEXCEPT
-            {
-                Backoff backoff;
+                backoff_strategy backoff;
                 while ( nTryCount-- ) {
-                    if ( tryLock() )
+                    if ( try_lock() )
                         return true;
                     backoff();
                 }
@@ -153,15 +141,15 @@ namespace cds {
             }
 
             /// Lock the spin-lock. Waits infinitely while spin-lock is locked. Debug version: deadlock may be detected
-            void lock() CDS_NOEXCEPT
+            void lock() CDS_NOEXCEPT(noexept( backoff_strategy()() ))
             {
-                Backoff backoff;
+                backoff_strategy backoff;
 
                 // Deadlock detected
                 assert( m_dbgOwnerId != OS::getCurrentThreadId() );
 
                 // TATAS algorithm
-                while ( !tryLock() ) {
+                while ( !try_lock() ) {
                     while ( m_spin.load( atomics::memory_order_relaxed ) ) {
                         backoff();
                     }
@@ -203,11 +191,11 @@ namespace cds {
 
         private:
             atomics::atomic<integral_type>   m_spin      ; ///< spin-lock atomic
-            thread_id                           m_OwnerId   ; ///< Owner thread id. If spin-lock is not locked it usually equals to OS::c_NullThreadId
+            thread_id                        m_OwnerId   ; ///< Owner thread id. If spin-lock is not locked it usually equals to OS::c_NullThreadId
 
         private:
             //@cond
-            void beOwner( thread_id tid ) CDS_NOEXCEPT
+            void take( thread_id tid ) CDS_NOEXCEPT
             {
                 m_OwnerId = tid;
             }
@@ -217,43 +205,43 @@ namespace cds {
                 m_OwnerId = OS::c_NullThreadId;
             }
 
-            bool isOwned( thread_id tid ) const CDS_NOEXCEPT
+            bool is_taken( thread_id tid ) const CDS_NOEXCEPT
             {
                 return m_OwnerId == tid;
             }
 
-            bool    tryLockOwned( thread_id tid ) CDS_NOEXCEPT
+            bool try_taken_lock( thread_id tid ) CDS_NOEXCEPT
             {
-                if ( isOwned( tid )) {
+                if ( is_taken( tid )) {
                     m_spin.fetch_add( 1, atomics::memory_order_relaxed );
                     return true;
                 }
                 return false;
             }
 
-            bool tryAcquireLock() CDS_NOEXCEPT
+            bool try_acquire() CDS_NOEXCEPT
             {
                 integral_type nCurrent = 0;
                 return m_spin.compare_exchange_weak( nCurrent, 1, atomics::memory_order_acquire, atomics::memory_order_relaxed );
             }
 
-            bool tryAcquireLock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( backoff_strategy()() ))
+            bool try_acquire( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( backoff_strategy()() ))
             {
                 backoff_strategy bkoff;
 
                 while ( nTryCount-- ) {
-                    if ( tryAcquireLock() )
+                    if ( try_acquire() )
                         return true;
                     bkoff();
                 }
                 return false;
             }
 
-            void acquireLock() CDS_NOEXCEPT_( noexcept( backoff_strategy()() ))
+            void acquire() CDS_NOEXCEPT_( noexcept( backoff_strategy()() ))
             {
                 // TATAS algorithm
                 backoff_strategy bkoff;
-                while ( !tryAcquireLock() ) {
+                while ( !try_acquire() ) {
                     while ( m_spin.load( atomics::memory_order_relaxed ) )
                         bkoff();
                 }
@@ -294,76 +282,49 @@ namespace cds {
             */
             bool is_locked() const CDS_NOEXCEPT
             {
-                return !( m_spin.load( atomics::memory_order_relaxed ) == 0 || isOwned( cds::OS::getCurrentThreadId() ));
+                return !( m_spin.load( atomics::memory_order_relaxed ) == 0 || is_taken( cds::OS::getCurrentThreadId() ));
             }
 
             /// Try to lock the spin-lock (synonym for \ref try_lock)
-            bool tryLock() CDS_NOEXCEPT
-            {
-                thread_id tid = OS::getCurrentThreadId();
-                if ( tryLockOwned( tid ) )
-                    return true;
-                if ( tryAcquireLock()) {
-                    beOwner( tid );
-                    return true;
-                }
-                return false;
-            }
-
-            /// Try to lock the spin-lock. If spin-lock is free the current thread owns it. Return @p true if locking is success
             bool try_lock() CDS_NOEXCEPT
             {
-                return tryLock();
-            }
-
-            /// Try to lock the object (synonym for \ref try_lock)
-            bool tryLock( unsigned int nTryCount )
-#       if !( (CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 40600 && CDS_COMPILER_VERSION < 40700) || (CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 30100) )
-                // GCC 4.6, clang 3.0 error in noexcept expression:
-                // cannot call member function ‘bool cds::lock::ReentrantSpinT<Integral, Backoff>::tryAcquireLock(unsigned int) without object
-                CDS_NOEXCEPT_( noexcept( tryAcquireLock(nTryCount) ))
-#       endif
-            {
                 thread_id tid = OS::getCurrentThreadId();
-                if ( tryLockOwned( tid ) )
+                if ( try_taken_lock( tid ) )
                     return true;
-                if ( tryAcquireLock( nTryCount )) {
-                    beOwner( tid );
+                if ( try_acquire()) {
+                    take( tid );
                     return true;
                 }
                 return false;
             }
 
-            /// Try to lock the object.
-            /**
-                If the spin-lock is locked the method repeats attempts to own spin-lock up to @p nTryCount times.
-                Between attempts @p backoff() is called.
-                Return @p true if current thread owns the lock @p false otherwise
-            */
-            bool try_lock( unsigned int nTryCount )
-#       if !( (CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 40600 && CDS_COMPILER_VERSION < 40700) || (CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 30100) )
-                // GCC 4.6, clang 3.0 error in noexcept expression:
-                // cannot call member function ‘bool cds::lock::ReentrantSpinT<Integral, Backoff>::tryLock(unsigned int) without object
-                CDS_NOEXCEPT_( noexcept( tryLock(nTryCount) ))
-#       endif
+            /// Try to lock the object
+            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( try_acquire( nTryCount ) ) )
             {
-                return tryLock( nTryCount );
+                thread_id tid = OS::getCurrentThreadId();
+                if ( try_taken_lock( tid ) )
+                    return true;
+                if ( try_acquire( nTryCount )) {
+                    take( tid );
+                    return true;
+                }
+                return false;
             }
 
             /// Lock the object waits if it is busy
             void lock() CDS_NOEXCEPT
             {
                 thread_id tid = OS::getCurrentThreadId();
-                if ( !tryLockOwned( tid ) ) {
-                    acquireLock();
-                    beOwner( tid );
+                if ( !try_taken_lock( tid ) ) {
+                    acquire();
+                    take( tid );
                 }
             }
 
             /// Unlock the spin-lock. Return @p true if the current thread is owner of spin-lock @p false otherwise
             bool unlock() CDS_NOEXCEPT
             {
-                if ( isOwned( OS::getCurrentThreadId() ) ) {
+                if ( is_taken( OS::getCurrentThreadId() ) ) {
                     integral_type n = m_spin.load( atomics::memory_order_relaxed );
                     if ( n > 1 )
                         m_spin.store( n - 1, atomics::memory_order_relaxed );
@@ -377,9 +338,9 @@ namespace cds {
             }
 
             /// Change the owner of locked spin-lock. May be called by thread that is owner of the spin-lock
-            bool changeOwner( OS::ThreadId newOwnerId ) CDS_NOEXCEPT
+            bool change_owner( OS::ThreadId newOwnerId ) CDS_NOEXCEPT
             {
-                if ( isOwned( OS::getCurrentThreadId() ) ) {
+                if ( is_taken( OS::getCurrentThreadId() ) ) {
                     assert( newOwnerId != OS::c_NullThreadId );
                     m_OwnerId = newOwnerId;
                     return true;
@@ -389,10 +350,10 @@ namespace cds {
         };
 
         /// Recursive spin-lock based on atomic32u_t
-        typedef ReentrantSpinT<atomic32u_t, backoff::LockDefault>   ReentrantSpin32;
+        typedef ReentrantSpinT<uint32_t, backoff::LockDefault>   ReentrantSpin32;
 
         /// Recursive spin-lock based on atomic64u_t type
-        typedef ReentrantSpinT<atomic64u_t, backoff::LockDefault>   ReentrantSpin64;
+        typedef ReentrantSpinT<uint64_t, backoff::LockDefault>   ReentrantSpin64;
 
         /// Recursive spin-lock based on atomic32_t type
         typedef ReentrantSpin32                                     ReentrantSpin;

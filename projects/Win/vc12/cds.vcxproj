@@ -827,7 +827,6 @@
     <ClInclude Include="..\..\..\cds\details\bounded_array.h" />
     <ClInclude Include="..\..\..\cds\details\comparator.h" />
     <ClInclude Include="..\..\..\cds\details\defs.h" />
-    <ClInclude Include="..\..\..\cds\details\functor_wrapper.h" />
     <ClInclude Include="..\..\..\cds\details\is_aligned.h" />
     <ClInclude Include="..\..\..\cds\details\make_const_type.h" />
     <ClInclude Include="..\..\..\cds\details\marked_ptr.h" />

@@ -20,7 +20,7 @@ namespace lock {
 
             void lock()     { ::EnterCriticalSection( &m_cs ) ; }
             void unlock()   { ::LeaveCriticalSection( &m_cs)  ; }
-            bool tryLock()  { return ::TryEnterCriticalSection( &m_cs ) != 0 ; }
+            bool try_lock()  { return ::TryEnterCriticalSection( &m_cs ) != 0 ; }
         };
 
         class Mutex {
@@ -32,7 +32,7 @@ namespace lock {
 
             void lock()     { ::WaitForSingleObject( m_hMutex, INFINITE ); }
             void unlock()   { ::ReleaseMutex( m_hMutex ); }
-            bool tryLock()  { return ::WaitForSingleObject( m_hMutex, 0) == WAIT_OBJECT_0; }
+            bool try_lock()  { return ::WaitForSingleObject( m_hMutex, 0) == WAIT_OBJECT_0; }
         };
 
     } // namespace win

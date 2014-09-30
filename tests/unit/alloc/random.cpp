@@ -82,7 +82,7 @@ namespace memory {
                 for ( size_t nPass = 0; nPass < s_nPassPerThread; ) {
                     size_t nIdx = m_rndGen( size_t(0), s_nDataSize - 1 );
                     Item & item = arr.at(nIdx);
-                    if ( item.m_access.tryLock() ) {
+                    if ( item.m_access.try_lock() ) {
                         if ( item.m_pszBlock ) {
                             m_Alloc.deallocate( item.m_pszBlock, 1 );
                             item.m_pszBlock = nullptr;

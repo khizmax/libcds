@@ -9,7 +9,7 @@ namespace lock {
     public:
         void lock()     {}
         void unlock()   {}
-        bool tryLock()  { return true; }
+        bool try_lock()  { return true; }
     };
 }
 
