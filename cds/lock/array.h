@@ -1,4 +1,4 @@
-//$$CDS-header$$
+//$$CDS-header$$-2
 
 #ifndef __CDS_LOCK_ARRAY_H
 #define __CDS_LOCK_ARRAY_H
@@ -212,8 +212,7 @@ namespace cds { namespace lock {
         {
             size_t nCell = m_SelectCellPolicy( hint, size() );
             assert( nCell < size() );
-            lock_type& l = m_arrLocks[ nCell ];
-            l.lock();
+            m_arrLocks[nCell].lock();
             return nCell;
         }
 
@@ -229,8 +228,7 @@ namespace cds { namespace lock {
         {
             size_t nCell = m_SelectCellPolicy( hint, size() );
             assert( nCell < size() );
-            lock_type& l = m_arrLocks[ nCell ];
-            if ( l.try_lock() )
+            if ( m_arrLocks[nCell].try_lock() )
                 return nCell;
             return c_nUnspecifiedCell;
         }
@@ -246,7 +244,7 @@ namespace cds { namespace lock {
         void lock_all()
         {
             lock_type * pLock = m_arrLocks;
-            for ( size_t i = 0; i < size(); ++i, ++pLock )
+            for ( lock_type * pEnd = m_arrLocks + size(); pLock != pEnd; ++pLock )
                 pLock->lock();
         }
 
@@ -254,7 +252,7 @@ namespace cds { namespace lock {
         void unlock_all()
         {
             lock_type * pLock = m_arrLocks;
-            for ( size_t i = 0; i < size(); ++i, ++pLock )
+            for ( lock_type * pEnd = m_arrLocks + size(); pLock != pEnd; ++pLock )
                 pLock->unlock();
         }
 

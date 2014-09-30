@@ -1,4 +1,4 @@
-//$$CDS-header$$
+//$$CDS-header$$-2
 
 #ifndef __CDS_LOCK_SCOPED_LOCK_H
 #define __CDS_LOCK_SCOPED_LOCK_H

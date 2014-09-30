@@ -1,4 +1,4 @@
-//$$CDS-header$$
+//$$CDS-header$$-2
 
 #ifndef __CDS_LOCK_SPINLOCK_H
 #define __CDS_LOCK_SPINLOCK_H
