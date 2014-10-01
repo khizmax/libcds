@@ -355,9 +355,6 @@ namespace cds {
         /// Recursive spin-lock based on atomic32_t type
         typedef ReentrantSpin32                                     ReentrantSpin;
 
-        /// The best (for the current platform) auto spin-lock
-        typedef scoped_lock<Spin>   AutoSpin;
-
     }    // namespace lock
 
     /// Standard (best for the current platform) spin-lock implementation
@@ -371,9 +368,6 @@ namespace cds {
 
     /// 64bit recursive spin-lock shortcut
     typedef lock::ReentrantSpin64   RecursiveSpinLock64;
-
-    /// Auto spin-lock shortcut
-    typedef lock::AutoSpin          AutoSpinLock;
 
 } // namespace cds
 
