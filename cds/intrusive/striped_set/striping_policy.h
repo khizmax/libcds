@@ -46,7 +46,7 @@ namespace cds { namespace intrusive { namespace striped_set {
     public:
         //@cond
         class scoped_cell_lock {
-            cds::lock::scoped_lock< lock_array_type >   m_guard;
+            std::unique_lock< lock_array_type >   m_guard;
 
         public:
             scoped_cell_lock( striping& policy, size_t nHash )
@@ -55,7 +55,7 @@ namespace cds { namespace intrusive { namespace striped_set {
         };
 
         class scoped_full_lock {
-            cds::lock::scoped_lock< lock_array_type >   m_guard;
+            std::unique_lock< lock_array_type >   m_guard;
         public:
             scoped_full_lock( striping& policy )
                 : m_guard( policy.m_Locks )
