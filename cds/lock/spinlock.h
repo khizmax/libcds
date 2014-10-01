@@ -129,7 +129,7 @@ namespace cds {
                 Returns \p true if locking is succeeded
                 otherwise (if the spin is already locked) returns \p false
             */
-            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT( noexept( backoff_strategy()() ) )
+            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT( noexcept( backoff_strategy()() ) )
             {
                 backoff_strategy backoff;
                 while ( nTryCount-- ) {
@@ -141,7 +141,7 @@ namespace cds {
             }
 
             /// Lock the spin-lock. Waits infinitely while spin-lock is locked. Debug version: deadlock may be detected
-            void lock() CDS_NOEXCEPT(noexept( backoff_strategy()() ))
+            void lock() CDS_NOEXCEPT(noexcept( backoff_strategy()() ))
             {
                 backoff_strategy backoff;
 
