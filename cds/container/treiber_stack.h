@@ -93,7 +93,7 @@ namespace cds { namespace container {
         intrusive::TreiberStack.
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::HRC, gc::PTB
+        - \p GC - garbage collector type: gc::HP, gc::PTB
         - \p T - type stored in the stack. It should be default-constructible, copy-constructible, assignable type.
         - \p Options - options
 
@@ -201,12 +201,14 @@ namespace cds { namespace container {
             : base_class( nCollisionCapacity )
         {}
 
+        TreiberStack( TreiberStack const& ) = delete;
+
         /// Clears the stack on destruction
         ~TreiberStack()
         {}
 
         /// Push the item \p val on the stack
-        bool push( const value_type& val )
+        bool push( value_type const& val )
         {
             scoped_node_ptr p( alloc_node(val));
             if ( base_class::push( *p )) {

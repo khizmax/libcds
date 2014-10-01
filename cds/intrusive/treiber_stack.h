@@ -278,19 +278,17 @@ namespace cds { namespace intrusive {
         This approach demonstrates sufficient performance under high load.
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::HRC, gc::PTB
+        - \p GC - garbage collector type: gc::HP, gc::PTB
         - \p T - type to be inserted into the stack
         - \p Options - options
 
         \p Options are:
         - opt::hook - hook used. Possible values are: single_link::base_hook, single_link::member_hook, single_link::traits_hook.
             If the option is not specified, <tt>single_link::base_hook<></tt> is used.
-            For Gidenstam's gc::HRC, only single_link::base_hook is supported.
         - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
         - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used only
             in \ref clear function.
         - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link.
-            Note: for gc::HRC garbage collector, link checking policy is always selected as \ref opt::always_check_link.
         - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
             or opt::v::sequential_consistent (sequentially consisnent memory model).
         - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter
@@ -502,15 +500,6 @@ namespace cds { namespace intrusive {
             // GC and node_type::gc must be the same
             static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
 
-            // For cds::gc::HRC, only base_hook is allowed
-            static_assert((
-                std::conditional<
-                std::is_same<gc, cds::gc::HRC>::value,
-                std::is_same< typename hook::hook_type, opt::base_hook_tag >,
-                boost::true_type
-                >::type::value
-                ), "For cds::gc::HRC, only base_hook is allowed");
-
             static_assert( (!enable_elimination || std::is_same<typename elimination_random_engine::result_type, unsigned int>::value),
                 "Random engine result type must be unsigned int" );
         }
@@ -537,6 +526,8 @@ namespace cds { namespace intrusive {
         {
             init();
         }
+
+        TreiberStack( TreiberStack const& ) = delete;
 
         /// Destructor calls \ref cds_intrusive_TreiberStack_clear "clear" member function
         ~TreiberStack()
