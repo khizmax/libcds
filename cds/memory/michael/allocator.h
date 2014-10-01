@@ -15,6 +15,8 @@
     2011.01.02 khizmax  Created
 */
 
+#include <stdlib.h>
+#include <mutex>        // unique_lock
 #include <cds/init.h>
 #include <cds/memory/michael/options.h>
 #include <cds/memory/michael/bound_check.h>
@@ -30,7 +32,6 @@
 #include <cds/user_setup/cache_line.h>
 #include <cds/details/lib.h>
 
-#include <stdlib.h>
 #include <boost/intrusive/list.hpp>
 
 namespace cds {
@@ -306,7 +307,7 @@ namespace michael {
         typedef details::free_list_locked_hook item_hook;
         typedef Lock lock_type;
     protected:
-        typedef cds::lock::scoped_lock<lock_type>   auto_lock;
+        typedef std::unique_lock<lock_type>   auto_lock;
 
         mutable lock_type   m_access;
         //@endcond
@@ -360,7 +361,7 @@ namespace michael {
         typedef details::partial_list_locked_hook item_hook;
         typedef Lock    lock_type;
     protected:
-        typedef cds::lock::scoped_lock<lock_type>   auto_lock;
+        typedef std::unique_lock<lock_type>   auto_lock;
 
         mutable lock_type   m_access;
         //@endcond

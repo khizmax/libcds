@@ -391,9 +391,9 @@ namespace cds { namespace intrusive {
                 lock_array( size_t nCapacity ): lock_array_type( nCapacity, typename lock_array_type::select_cell_policy(nCapacity) ) {}
             };
 
-            class scoped_lock: public cds::lock::scoped_lock< lock_array_type >
+            class scoped_lock: public std::unique_lock< lock_array_type >
             {
-                typedef cds::lock::scoped_lock< lock_array_type > base_class;
+                typedef std::unique_lock< lock_array_type > base_class;
             public:
                 scoped_lock( lock_array& arrLock, size_t nHash ): base_class( arrLock, nHash ) {}
             };
@@ -464,7 +464,7 @@ namespace cds { namespace intrusive {
             };
 
             class scoped_full_lock {
-                cds::lock::scoped_lock< lock_array_type >   m_guard;
+                std::unique_lock< lock_array_type >   m_guard;
             public:
                 scoped_full_lock( striping& policy )
                     : m_guard( policy.m_Locks[0] )
@@ -650,7 +650,7 @@ namespace cds { namespace intrusive {
             typedef cds::OS::ThreadId   threadId_t;
 
             typedef cds::lock::Spin     spinlock_type;
-            typedef cds::lock::scoped_lock< spinlock_type > scoped_spinlock;
+            typedef std::unique_lock< spinlock_type > scoped_spinlock;
             //@endcond
 
         protected:

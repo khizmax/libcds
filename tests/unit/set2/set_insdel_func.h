@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <vector>
+#include <mutex>    //unique_lock
 
 #include "set2/set_types.h"
 #include "cppunit/thread.h"
@@ -90,7 +91,7 @@ namespace set2 {
 
                 void operator()( keyval_type& val )
                 {
-                    cds::lock::scoped_lock< typename value_type::lock_type>    ac( val.val.m_access );
+                    std::unique_lock< typename value_type::lock_type>    ac( val.val.m_access );
 
                     val.val.nKey  = val.key;
                     val.val.nData = val.key * 8;
@@ -185,7 +186,7 @@ namespace set2 {
 
                 void operator()( bool bNew, keyval_type& val, size_t nKey )
                 {
-                    cds::lock::scoped_lock<typename value_type::lock_type>    ac( val.val.m_access );
+                    std::unique_lock<typename value_type::lock_type>    ac( val.val.m_access );
                     if ( !val.val.bInitialized )
                     {
                         val.val.nKey = val.key;
@@ -312,7 +313,7 @@ namespace set2 {
                     while ( true ) {
                         bool bBkoff = false;
                         {
-                            cds::lock::scoped_lock< typename value_type::lock_type>    ac( item.val.m_access );
+                            std::unique_lock< typename value_type::lock_type>    ac( item.val.m_access );
                             if ( item.val.bInitialized ) {
                                 if ( m_cnt.nKeyExpected == item.val.nKey && m_cnt.nKeyExpected * 8 == item.val.nData )
                                     ++m_cnt.nSuccessItem;

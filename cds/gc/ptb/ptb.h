@@ -3,12 +3,12 @@
 #ifndef __CDS_GC_PTB_PASS_THE_BUCK_H
 #define __CDS_GC_PTB_PASS_THE_BUCK_H
 
+#include <mutex>        // unique_lock
 #include <cds/cxx11_atomic.h>
 #include <cds/gc/details/retired_ptr.h>
 #include <cds/details/aligned_allocator.h>
 #include <cds/details/allocator.h>
 #include <cds/details/noncopyable.h>
-
 #include <cds/lock/spinlock.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
@@ -173,7 +173,7 @@ namespace cds { namespace gc {
                     details::guard_data * pGuard;
 
                     {
-                        cds::lock::scoped_lock<SpinLock> al( m_freeListLock );
+                        std::unique_lock<SpinLock> al( m_freeListLock );
                         pGuard = m_FreeGuardList.load(atomics::memory_order_relaxed);
                         if ( pGuard )
                             m_FreeGuardList.store( pGuard->pNextFree.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
@@ -193,7 +193,7 @@ namespace cds { namespace gc {
                 {
                     pGuard->pPost.store( nullptr, atomics::memory_order_relaxed );
 
-                    cds::lock::scoped_lock<SpinLock> al( m_freeListLock );
+                    std::unique_lock<SpinLock> al( m_freeListLock );
                     pGuard->pNextFree.store( m_FreeGuardList.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
                     m_FreeGuardList.store( pGuard, atomics::memory_order_relaxed );
                 }
@@ -245,7 +245,7 @@ namespace cds { namespace gc {
                         pLast = p;
                     }
 
-                    cds::lock::scoped_lock<SpinLock> al( m_freeListLock );
+                    std::unique_lock<SpinLock> al( m_freeListLock );
                     pLast->pNextFree.store( m_FreeGuardList.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
                     m_FreeGuardList.store( pList, atomics::memory_order_relaxed );
                 }

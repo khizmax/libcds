@@ -3,6 +3,7 @@
 #ifndef __UNIT_QUEUE_STD_QUEUE_H
 #define __UNIT_QUEUE_STD_QUEUE_H
 
+#include <mutex>    //unique_lock
 #include <queue>
 #include <cds/lock/spinlock.h>
 
@@ -17,7 +18,7 @@ namespace queue {
     public:
         bool enqueue( const T& data )
         {
-            cds::lock::scoped_lock<Lock> a(m_Locker);
+            std::unique_lock<Lock> a(m_Locker);
 
             base_class::push( data );
             return true;
@@ -25,7 +26,7 @@ namespace queue {
         bool push( const T& data )  { return enqueue( data ) ; }
         bool dequeue( T& data )
         {
-            cds::lock::scoped_lock<Lock> a(m_Locker);
+            std::unique_lock<Lock> a(m_Locker);
             if ( base_class::empty() )
                 return false;
 

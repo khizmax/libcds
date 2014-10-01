@@ -6,7 +6,6 @@
 #include <mutex>
 #include <cds/urcu/details/gp.h>
 #include <cds/algo/backoff_strategy.h>
-#include <cds/lock/scoped_lock.h>
 
 namespace cds { namespace urcu {
 
@@ -136,7 +135,7 @@ namespace cds { namespace urcu {
         {
             atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
-                cds::lock::scoped_lock<lock_type> sl( m_Lock );
+                std::unique_lock<lock_type> sl( m_Lock );
                 flip_and_wait();
                 flip_and_wait();
             }

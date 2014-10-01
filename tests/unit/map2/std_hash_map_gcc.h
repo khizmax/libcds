@@ -3,6 +3,7 @@
 #ifndef __CDSUNIT_STD_HASH_MAP_GCC_H
 #define __CDSUNIT_STD_HASH_MAP_GCC_H
 
+#include <mutex>    //unique_lock
 #include <unordered_map>
 #include <functional>   // ref
 
@@ -21,7 +22,7 @@ namespace map2 {
     {
     public:
         Lock m_lock;
-        typedef cds::lock::scoped_lock<Lock> AutoLock;
+        typedef std::unique_lock<Lock> AutoLock;
         typedef std::unordered_map<
             Key, Value
             , std::hash<Key>

@@ -1,6 +1,7 @@
 //$$CDS-header$$
 
 #include <functional>
+#include <mutex>    //unique_lock
 #include "map2/map_types.h"
 #include "cppunit/thread.h"
 
@@ -89,7 +90,7 @@ namespace map2 {
 
                 void operator()( pair_type& val )
                 {
-                    cds::lock::scoped_lock< typename value_type::lock_type>    ac( val.second.m_access );
+                    std::unique_lock< typename value_type::lock_type>    ac( val.second.m_access );
 
                     val.second.nKey  = val.first;
                     val.second.nData = val.first * 8;
@@ -182,7 +183,7 @@ namespace map2 {
 
                 void operator()( bool bNew, pair_type& val )
                 {
-                    cds::lock::scoped_lock<typename value_type::lock_type>    ac( val.second.m_access );
+                    std::unique_lock<typename value_type::lock_type>    ac( val.second.m_access );
                     if ( bNew ) {
                         ++nCreated;
                         val.second.nKey = val.first;
@@ -305,7 +306,7 @@ namespace map2 {
                 {
                     while ( true ) {
                         if ( item.second.bInitialized.load( atomics::memory_order_relaxed )) {
-                            cds::lock::scoped_lock< typename value_type::lock_type>    ac( item.second.m_access );
+                            std::unique_lock< typename value_type::lock_type>    ac( item.second.m_access );
 
                             if ( m_cnt.nKeyExpected == item.second.nKey && m_cnt.nKeyExpected * 8 == item.second.nData )
                                 ++m_cnt.nSuccessItem;

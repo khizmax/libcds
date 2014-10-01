@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <functional>   // ref
+#include <mutex>        // unique_lock
 #include <cds/opt/options.h>
 #include <cds/lock/spinlock.h>
 #include <cds/intrusive/details/queue_stat.h>
@@ -106,7 +107,7 @@ namespace cds { namespace container {
     protected:
         //@cond
         typedef typename opt::details::alignment_setter< lock_type, options::alignment >::type aligned_lock_type;
-        typedef cds::lock::scoped_lock<lock_type>   auto_lock;
+        typedef std::unique_lock<lock_type>   auto_lock;
         typedef cds::details::Allocator< node_type, allocator_type >  node_allocator;
 
         item_counter    m_ItemCounter;

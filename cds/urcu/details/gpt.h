@@ -3,6 +3,7 @@
 #ifndef _CDS_URCU_DETAILS_GPT_H
 #define _CDS_URCU_DETAILS_GPT_H
 
+#include <mutex>    //unique_lock
 #include <cds/urcu/details/gp.h>
 #include <cds/urcu/dispose_thread.h>
 #include <cds/algo/backoff_strategy.h>
@@ -200,7 +201,7 @@ namespace cds { namespace urcu {
 
             atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
-                cds::lock::scoped_lock<lock_type> sl( m_Lock );
+                std::unique_lock<lock_type> sl( m_Lock );
                 flip_and_wait();
                 flip_and_wait();
 

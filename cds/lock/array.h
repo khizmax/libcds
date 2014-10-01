@@ -3,10 +3,9 @@
 #ifndef __CDS_LOCK_ARRAY_H
 #define __CDS_LOCK_ARRAY_H
 
+#include <mutex>    //unique_lock
 #include <cds/details/allocator.h>
-#include <cds/lock/scoped_lock.h>
 #include <cds/algo/int_algo.h>
-
 #include <boost/mpl/if.hpp>
 
 namespace cds { namespace lock {
@@ -273,38 +272,44 @@ namespace cds { namespace lock {
         }
     };
 
+}} // namespace cds::lock
+
+//@cond
+namespace std {
+
     /// Specialization \ref scoped_lock for lock::array
     template <typename Lock, typename SelectPolicy, class Alloc>
-    class scoped_lock< cds::lock::array< Lock, SelectPolicy, Alloc > >: public cds::details::noncopyable
+    class unique_lock< cds::lock::array< Lock, SelectPolicy, Alloc > >
     {
     public:
-        typedef cds::lock::array< Lock, SelectPolicy, Alloc >   lock_array_type ;   ///< Lock array type
+        typedef cds::lock::array< Lock, SelectPolicy, Alloc >   lock_array_type;   ///< Lock array type
 
     private:
-        //@cond
         lock_array_type&    m_arrLocks;
         size_t              m_nLockGuarded;
 
-        static const size_t c_nLockAll = ~size_t(0);
-        //@endcond
+        static const size_t c_nLockAll = ~size_t( 0 );
 
     public:
         /// Onws the lock array \p arrLocks and locks a cell determined by \p hint parameter
         template <typename Q>
-        scoped_lock( lock_array_type& arrLocks, Q const& hint )
+        unique_lock( lock_array_type& arrLocks, Q const& hint )
             : m_arrLocks( arrLocks )
-            , m_nLockGuarded( arrLocks.lock( hint ))
+            , m_nLockGuarded( arrLocks.lock( hint ) )
         {}
 
         /// Locks all from \p arrLocks array
-        scoped_lock( lock_array_type& arrLocks )
+        unique_lock( lock_array_type& arrLocks )
             : m_arrLocks( arrLocks )
             , m_nLockGuarded( c_nLockAll )
         {
             arrLocks.lock_all();
         }
 
-        ~scoped_lock()
+        unique_lock() = delete;
+        unique_lock( unique_lock const& ) = delete;
+
+        ~unique_lock()
         {
             if ( m_nLockGuarded == c_nLockAll )
                 m_arrLocks.unlock_all();
@@ -312,7 +317,7 @@ namespace cds { namespace lock {
                 m_arrLocks.unlock( m_nLockGuarded );
         }
     };
-
-}} // namespace cds::lock
+} // namespace std
+//@endcond
 
 #endif // #ifndef __CDS_LOCK_ARRAY_H

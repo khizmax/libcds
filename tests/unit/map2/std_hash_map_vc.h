@@ -5,6 +5,7 @@
 
 #include <hash_map>
 #include <functional>   // ref
+#include <mutex>    //unique_lock
 
 namespace map2 {
     template <typename Key, typename Value, typename Lock, class Alloc = CDS_DEFAULT_ALLOCATOR>
@@ -12,7 +13,7 @@ namespace map2 {
     {
     public:
         Lock m_lock;
-        typedef cds::lock::scoped_lock<Lock> AutoLock;
+        typedef std::unique_lock<Lock> AutoLock;
         typedef stdext::hash_map<Key, Value, stdext::hash_compare<Key, std::less<Key> >, Alloc>   base_class;
     public:
         typedef typename base_class::mapped_type value_type;

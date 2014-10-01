@@ -3,6 +3,7 @@
 #ifndef __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
 #define __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
 
+#include <mutex>        // unique_lock
 #include <cds/intrusive/details/lazy_list_base.h>
 #include <cds/gc/guarded_ptr.h>
 
@@ -1126,7 +1127,7 @@ namespace cds { namespace intrusive {
 
             search( pHead, val, pos, cmp );
             if ( pos.pCur != tail() ) {
-                cds::lock::scoped_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
+                std::unique_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
                 if ( !pos.pCur->is_marked()
                     && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
                 {

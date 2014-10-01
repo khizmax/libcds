@@ -5,6 +5,7 @@
 
 #include <set>
 #include <functional>   // ref
+#include <mutex>    //unique_lock
 
 namespace set2 {
     template <typename Value, typename Less, typename Lock,
@@ -13,7 +14,7 @@ namespace set2 {
     class StdSet: public std::set<Value, Less, Alloc>
     {
         Lock m_lock;
-        typedef cds::lock::scoped_lock<Lock> AutoLock;
+        typedef std::unique_lock<Lock> AutoLock;
         typedef std::set<Value, Less, Alloc> base_class;
     public:
         typedef typename base_class::key_type value_type;

@@ -4,6 +4,7 @@
 #define __CDSUNIT_STD_PQUEUE_H
 
 #include <queue>
+#include <mutex>    //unique_lock
 
 namespace pqueue {
 
@@ -18,21 +19,7 @@ namespace pqueue {
         pqueue_type     m_PQueue;
         mutable Lock    m_Lock;
 
-        struct scoped_lock
-        {
-            Lock&   m_lock;
-
-            scoped_lock( Lock& l )
-                : m_lock(l)
-            {
-                l.lock();
-            }
-
-            ~scoped_lock()
-            {
-                m_lock.unlock();
-            }
-        };
+        typedef std::unique_lock<Lock> scoped_lock;
 
     public:
         bool push( value_type const& val )

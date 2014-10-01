@@ -5,11 +5,11 @@
 
 #include <type_traits>
 #include <functional>   // ref
+#include <mutex>        // unique_lock
 #include <cds/intrusive/details/single_link_struct.h>
 #include <cds/algo/elimination.h>
 #include <cds/opt/buffer.h>
 #include <cds/lock/spinlock.h>
-#include <cds/lock/scoped_lock.h>
 #include <cds/details/type_padding.h>
 
 namespace cds { namespace intrusive {
@@ -183,7 +183,7 @@ namespace cds { namespace intrusive {
                     op_collided = 2
                 };
 
-                typedef cds::lock::scoped_lock< elimination_lock_type > slot_scoped_lock;
+                typedef std::unique_lock< elimination_lock_type > slot_scoped_lock;
 
             public:
                 elimination_backoff()

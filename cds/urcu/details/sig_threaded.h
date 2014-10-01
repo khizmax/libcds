@@ -3,6 +3,7 @@
 #ifndef _CDS_URCU_DETAILS_SIG_THREADED_H
 #define _CDS_URCU_DETAILS_SIG_THREADED_H
 
+#include <mutex>    //unique_lock
 #include <cds/urcu/details/sh.h>
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 
@@ -199,7 +200,7 @@ namespace cds { namespace urcu {
 
             atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
-                cds::lock::scoped_lock<lock_type> sl( m_Lock );
+                std::unique_lock<lock_type> sl( m_Lock );
 
                 back_off bkOff;
                 base_class::force_membar_all_threads( bkOff );

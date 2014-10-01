@@ -4,6 +4,7 @@
 #define __CDSUNIT_STD_HASH_SET_VC_H
 
 #include <hash_set>
+#include <mutex>    //unique_lock
 
 namespace set2 {
 
@@ -27,7 +28,7 @@ namespace set2 {
     {
     public:
         Lock m_lock;
-        typedef cds::lock::scoped_lock<Lock> AutoLock;
+        typedef std::unique_lock<Lock> AutoLock;
         typedef stdext::hash_set<Value, hash_less<Value, Hash, Less >, Alloc> base_class;
 
     public:

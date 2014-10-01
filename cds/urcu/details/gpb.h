@@ -196,7 +196,7 @@ namespace cds { namespace urcu {
             uint64_t nEpoch;
             atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
-                cds::lock::scoped_lock<lock_type> sl( m_Lock );
+                std::unique_lock<lock_type> sl( m_Lock );
                 if ( ep.m_p && m_Buffer.push( ep ) )
                     return false;
                 nEpoch = m_nCurEpoch.fetch_add( 1, atomics::memory_order_relaxed );

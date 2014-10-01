@@ -787,7 +787,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\resizing_policy.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\striping_policy.h" />
     <ClInclude Include="..\..\..\cds\lock\array.h" />
-    <ClInclude Include="..\..\..\cds\lock\scoped_lock.h" />
     <ClInclude Include="..\..\..\cds\memory\mapper.h" />
     <ClInclude Include="..\..\..\cds\memory\pool_allocator.h" />
     <ClInclude Include="..\..\..\cds\memory\vyukov_queue_pool.h" />

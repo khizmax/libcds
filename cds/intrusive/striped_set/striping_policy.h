@@ -145,7 +145,7 @@ namespace cds { namespace intrusive { namespace striped_set {
         typedef cds::OS::ThreadId   threadId_t;
 
         typedef cds::lock::Spin     spinlock_type;
-        typedef cds::lock::scoped_lock< spinlock_type > scoped_spinlock;
+        typedef std::unique_lock< spinlock_type > scoped_spinlock;
         //@endcond
 
     protected:
@@ -273,11 +273,11 @@ namespace cds { namespace intrusive { namespace striped_set {
     public:
         //@cond
         class scoped_cell_lock {
-            cds::lock::scoped_lock< lock_type >   m_guard;
+            std::unique_lock< lock_type >   m_guard;
 
         public:
             scoped_cell_lock( refinable& policy, size_t nHash )
-                : m_guard( policy.acquire( nHash ), true )
+                : m_guard( policy.acquire( nHash ), std::adopt_lock_t() )
             {}
         };
 

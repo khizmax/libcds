@@ -5,6 +5,7 @@
 
 #include <map>
 #include <functional>   // ref
+#include <mutex>    //unique_lock
 
 namespace map2 {
 
@@ -14,7 +15,7 @@ namespace map2 {
     class StdMap: public std::map<Key, Value, std::less<Key>, Alloc>
     {
         Lock m_lock;
-        typedef cds::lock::scoped_lock<Lock> AutoLock;
+        typedef std::unique_lock<Lock> AutoLock;
         typedef std::map<Key, Value, std::less<Key>, Alloc> base_class;
     public:
         typedef typename base_class::mapped_type value_type;

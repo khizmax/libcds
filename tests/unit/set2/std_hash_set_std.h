@@ -5,6 +5,7 @@
 
 #include <unordered_set>
 #include <functional>   // ref
+#include <mutex>    //unique_lock
 
 namespace set2 {
 
@@ -21,7 +22,7 @@ namespace set2 {
     {
     public:
         Lock m_lock;
-        typedef cds::lock::scoped_lock<Lock> AutoLock;
+        typedef std::unique_lock<Lock> AutoLock;
         typedef std::unordered_set<
             Value
             , Hash
