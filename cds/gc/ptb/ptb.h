@@ -8,7 +8,6 @@
 #include <cds/gc/details/retired_ptr.h>
 #include <cds/details/aligned_allocator.h>
 #include <cds/details/allocator.h>
-#include <cds/details/noncopyable.h>
 #include <cds/lock/spinlock.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
@@ -487,7 +486,7 @@ namespace cds { namespace gc {
             };
 
             /// Uninitialized guard
-            class guard: public cds::details::noncopyable
+            class guard
             {
                 friend class ThreadGC;
             protected:
@@ -497,6 +496,8 @@ namespace cds { namespace gc {
                 guard()
                     : m_pGuard( nullptr )
                 {}
+
+                guard( guard const& ) = delete;
 
                 /// Object destructor, does nothing
                 ~guard()
@@ -610,7 +611,7 @@ namespace cds { namespace gc {
             dtor returns the guards allocated back to the pool.
         */
         template <size_t Count>
-        class GuardArray: public cds::details::noncopyable
+        class GuardArray
         {
             details::guard      m_arr[Count]    ;    ///< array of guard
             ThreadGC&           m_gc    ;            ///< ThreadGC object of current thread
@@ -626,6 +627,9 @@ namespace cds { namespace gc {
         public:
             /// Allocates array of guards from \p gc which must be the ThreadGC object of current thread
             GuardArray( ThreadGC& gc )    ;    // inline below
+
+            GuardArray() = delete;
+            GuardArray( GuardArray const& ) = delete;
 
             /// Returns guards allocated back to pool
             ~GuardArray()    ;    // inline below
@@ -888,7 +892,7 @@ namespace cds { namespace gc {
             \li Free guard list: the list of thread-local free guards (linked by \p pNextFree field)
             Free guard list is a subset of thread guard list.
         */
-        class ThreadGC: public cds::details::noncopyable
+        class ThreadGC
         {
             GarbageCollector&   m_gc    ;   ///< reference to GC singleton
             details::guard_data *    m_pList ;   ///< Local list of guards owned by the thread
@@ -900,6 +904,8 @@ namespace cds { namespace gc {
                 , m_pList( nullptr )
                 , m_pFree( nullptr )
             {}
+
+            ThreadGC( ThreadGC const& ) = delete;
 
             /// Dtor calls fini()
             ~ThreadGC()

@@ -17,8 +17,6 @@
 
 #include <cds/gc/hzp/details/hp_alloc.h>
 
-#include <cds/details/noncopyable.h>
-
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
 // warning C4251: 'cds::gc::hzp::GarbageCollector::m_pListHead' : class 'cds::cxx11_atomic::atomic<T>'
@@ -463,7 +461,7 @@ namespace cds { namespace gc {
             on the start of each thread that uses HRC GC. Before terminating the thread linked to HRC GC it is necessary to call
             cds::threading \p Manager::detachThread().
         */
-        class ThreadGC: cds::details::noncopyable
+        class ThreadGC
         {
             GarbageCollector&               m_gc    ; ///< master garbage collector
             details::thread_descriptor *    m_pDesc ; ///< descriptor of GC data for the thread
@@ -476,6 +474,9 @@ namespace cds { namespace gc {
                 : m_gc( GarbageCollector::instance() )
                 , m_pDesc( nullptr )
             {}
+
+            ThreadGC( ThreadGC const& ) = delete;
+
             ~ThreadGC()
             {
                 fini();

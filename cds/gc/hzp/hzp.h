@@ -3,16 +3,13 @@
 #ifndef __CDS_GC_HZP_HZP_H
 #define __CDS_GC_HZP_HZP_H
 
+#include <vector>
 #include <cds/cxx11_atomic.h>
 #include <cds/os/thread.h>
 #include <cds/gc/exception.h>
-
 #include <cds/gc/hzp/details/hp_fwd.h>
 #include <cds/gc/hzp/details/hp_alloc.h>
 #include <cds/gc/hzp/details/hp_retired.h>
-
-#include <vector>
-#include <cds/details/noncopyable.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
@@ -459,7 +456,7 @@ namespace cds {
             on the start of each thread that uses HP GC. Before terminating the thread linked to HP GC it is necessary to call
             \ref cds_threading "cds::threading::Manager::detachThread()".
         */
-        class ThreadGC: cds::details::noncopyable
+        class ThreadGC
         {
             GarbageCollector&   m_HzpManager    ; ///< Hazard Pointer GC singleton
             details::HPRec *    m_pHzpRec       ; ///< Pointer to thread's HZP record
@@ -469,6 +466,9 @@ namespace cds {
                 : m_HzpManager( GarbageCollector::instance() ),
                 m_pHzpRec( nullptr )
             {}
+
+            ThreadGC( ThreadGC const& ) = delete;
+
             ~ThreadGC()
             {
                 fini();

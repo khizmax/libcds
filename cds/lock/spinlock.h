@@ -16,8 +16,6 @@
 #include <cds/os/thread.h>
 #include <cds/algo/backoff_strategy.h>
 
-#include <cds/details/noncopyable.h>
-
 namespace cds {
     /// Synchronization primitives
     namespace lock {

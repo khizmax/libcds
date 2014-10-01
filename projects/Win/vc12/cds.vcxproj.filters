@@ -239,9 +239,6 @@
     <ClInclude Include="..\..\..\cds\details\marked_ptr.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\noncopyable.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\impl\queue_base.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
