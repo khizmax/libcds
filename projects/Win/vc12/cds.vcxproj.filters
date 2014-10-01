@@ -239,16 +239,10 @@
     <ClInclude Include="..\..\..\cds\details\marked_ptr.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\impl\queue_base.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\details\trivial_assign.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\type_padding.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\void_selector.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\default_gc.h">

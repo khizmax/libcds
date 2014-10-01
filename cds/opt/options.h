@@ -14,7 +14,6 @@
 #include <cds/user_setup/allocator.h>
 #include <cds/user_setup/cache_line.h>
 #include <cds/cxx11_atomic.h>
-#include <cds/details/void_selector.h>
 #include <stdlib.h> // rand, srand
 
 namespace cds {
