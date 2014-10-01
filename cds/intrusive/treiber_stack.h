@@ -19,6 +19,67 @@ namespace cds { namespace intrusive {
     */
     namespace treiber_stack {
 
+        /// Stack node
+        /**
+            Template parameters:
+            - GC - garbage collector used
+            - Tag - a tag used to distinguish between different type
+        */
+        template <class GC, typename Tag = opt::none >
+        using node = cds::intrusive::single_link::node< GC, Tag > ;
+
+        /// Base hook
+        /**
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - tag
+        */
+        template < typename... Options >
+        using base_hook = cds::intrusive::single_link::base_hook< Options...>;
+
+        /// Member hook
+        /**
+            \p MemberOffset specifies offset in bytes of \ref node member into your structure.
+            Use \p offsetof macro to define \p MemberOffset
+
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - tag
+        */
+        template < size_t MemberOffset, typename... Options >
+        using member_hook = cds::intrusive::single_link::member_hook< MemberOffset, Options... >;
+
+        /// Traits hook
+        /**
+            \p NodeTraits defines type traits for node.
+            See \ref node_traits for \p NodeTraits interface description
+
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - tag
+        */
+        template <typename NodeTraits, typename... Options >
+        using traits_hook = cds::intrusive::single_link::traits_hook< NodeTraits, Options... >;
+
+        /// TreiberStack default type traits
+        struct traits
+        {
+            typedef cds::backoff::Default           back_off;       ///< Back-off strategy
+            typedef treiber_stack::base_hook<>      hook;           ///< Hook used
+            typedef opt::v::empty_disposer          disposer;       ///< Node disposer
+            typedef atomicity::empty_item_counter   item_counter;   ///< Item counting feature (by default, disabled)
+            typedef opt::v::relaxed_ordering        memory_model;   ///< Memory model (by default, relaxed)
+            typedef treiber_stack::empty_stat       stat;           ///< Internal statistics (by default, no internal statistics)
+            static CDS_CONSTEXPR_CONST opt::link_check_type link_checker = opt::debug_check_link; ///< Link checking, see cds::opt::link_checker
+
+            // Elimination back-off options
+            static CDS_CONSTEXPR_CONST bool enable_elimination = false; ///< Enable elimination (by default, it is disabled)
+            typedef cds::backoff::delay<>          elimination_backoff; ///< Back-off strategy for elimination
+            typedef opt::v::static_buffer< int, 4 > buffer;             ///< Elimination buffer type
+            typedef opt::v::c_rand                  random_engine;      ///< Random number generator for elimination
+            typedef cds::lock::Spin                 lock_type;          ///< Lock type for elimitation
+        };
+
         //@cond
         /// Operation id for the \ref cds_elimination_description "elimination back-off"
         enum operation_id {
@@ -283,8 +344,8 @@ namespace cds { namespace intrusive {
         - \p Options - options
 
         \p Options are:
-        - opt::hook - hook used. Possible values are: single_link::base_hook, single_link::member_hook, single_link::traits_hook.
-            If the option is not specified, <tt>single_link::base_hook<></tt> is used.
+        - opt::hook - hook used. Possible values are: treiber_stack::base_hook, treiber_stack::member_hook, treiber_stack::traits_hook.
+            If the option is not specified, <tt>treiber_stack::base_hook<></tt> is used.
         - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
         - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used only
             in \ref clear function.
@@ -307,15 +368,15 @@ namespace cds { namespace intrusive {
         - opt::elimination_backoff - back-off strategy to wait for elimination, default is cds::backoff::delay<>
         - opt::lock_type - a lock type used in elimination back-off, default is cds::lock::Spin.
 
-        Garbage collecting schema \p GC must be consistent with the single_link::node GC.
+        Garbage collecting schema \p GC must be consistent with the treiber_stack::node GC.
 
         Be careful when you want destroy an item popped, see \ref cds_intrusive_item_destroying "Destroying items of intrusive containers".
 
         @anchor cds_intrusive_TreiberStack_examples
         \par Examples
 
-        Example of how to use \p single_link::base_hook.
-        Your class that objects will be pushed on \p %TreiberStack should be based on \p single_link::node class
+        Example of how to use \p treiber_stack::base_hook.
+        Your class that objects will be pushed on \p %TreiberStack should be based on \p treiber_stack::node class
         \code
         #include <cds/intrusive/stack/treiber_stack.h>
         #include <cds/gc/hp.h>
@@ -323,7 +384,7 @@ namespace cds { namespace intrusive {
         namespace ci = cds::intrusive;
         typedef cds::gc::HP gc;
 
-        struct myData: public ci::single_link::node< gc >
+        struct myData: public ci::treiber_stack::node< gc >
         {
             // ...
         };
@@ -331,18 +392,18 @@ namespace cds { namespace intrusive {
         // Stack type
         typedef ci::TreiberStack< gc,
             myData,
-            ci::opt::hook< ci::single_link::base_hook< gc > >
+            ci::opt::hook< ci::treiber_stack::base_hook< gc > >
         > stack_t;
 
         // Stack with elimination back-off enabled
         typedef ci::TreiberStack< gc,
             myData,
-            ci::opt::hook< ci::single_link::base_hook< gc > >,
-            cds::opt::enable_elimination<true>
+            ci::opt::hook< ci::treiber_stack::base_hook< gc > >,
+            cds::opt::enable_elimination< true >
         > elimination_stack_t;
         \endcode
 
-        Example of how to use \p base_hook with different tags.
+        Example of how to use \p treiber_stack::base_hook with different tags.
         \code
         #include <cds/intrusive/stack/treiber_stack.h>
         #include <cds/gc/hp.h>
@@ -355,14 +416,14 @@ namespace cds { namespace intrusive {
         struct tag2;
 
         struct myData
-            : public ci::single_link::node< gc, tag1 >
-            , public ci::single_link::node< gc, tag2 >
+            : public ci::treiber_stack::node< gc, tag1 >
+            , public ci::treiber_stack::node< gc, tag2 >
         {
             // ...
         };
 
-        typedef ci::TreiberStack< gc, myData, ci::opt::hook< ci::single_link::base_hook< gc, tag1 > > stack1_t;
-        typedef ci::TreiberStack< gc, myData, ci::opt::hook< ci::single_link::base_hook< gc, tag2 > > stack2_t;
+        typedef ci::TreiberStack< gc, myData, ci::opt::hook< ci::treiber_stack::base_hook< gc, tag1 > > stack1_t;
+        typedef ci::TreiberStack< gc, myData, ci::opt::hook< ci::treiber_stack::base_hook< gc, tag2 > > stack2_t;
 
         // You may add myData objects in the objects of type stack1_t and stack2_t independently
         void foo() {
@@ -384,12 +445,12 @@ namespace cds { namespace intrusive {
         }
         \endcode
 
-        Example of how to use \p member_hook.
-        Your class that will be pushed on \p %TreiberStack should have a member of type \p single_link::node
+        Example of how to use \p treiber_stack::member_hook.
+        Your class that will be pushed on \p %TreiberStack should have a member of type \p treiber_stack::node
         \code
+        #include <stddef.h>     // offsetof macro
         #include <cds/intrusive/stack/treiber_stack.h>
         #include <cds/gc/hp.h>
-        #include <stddef.h>     // offsetof macro
 
         namespace ci = cds::intrusive;
         typedef cds::gc::HP gc;
@@ -397,15 +458,12 @@ namespace cds { namespace intrusive {
         struct myData
         {
             // ...
-            ci::single_link::node< gc >      member_hook_;
+            ci::treiber_stack::node< gc >      member_hook_;
             // ...
         };
 
         typedef ci::TreiberStack< gc, myData,
-            ci::opt::hook<
-                ci::single_link::member_hook< offsetof(myData, member_hook_),
-                gc
-            >
+            ci::opt::hook< ci::treiber_stack::member_hook< offsetof(myData, member_hook_), gc >
         > stack_t;
         \endcode
     */
@@ -416,7 +474,7 @@ namespace cds { namespace intrusive {
         struct default_options
         {
             typedef cds::backoff::Default           back_off;
-            typedef single_link::base_hook<>        hook;
+            typedef treiber_stack::base_hook<>      hook;
             typedef opt::v::empty_disposer          disposer;
             typedef atomicity::empty_item_counter   item_counter;
             typedef opt::v::relaxed_ordering        memory_model;
