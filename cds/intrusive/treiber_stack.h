@@ -61,25 +61,6 @@ namespace cds { namespace intrusive {
         template <typename NodeTraits, typename... Options >
         using traits_hook = cds::intrusive::single_link::traits_hook< NodeTraits, Options... >;
 
-        /// TreiberStack default type traits
-        struct traits
-        {
-            typedef cds::backoff::Default           back_off;       ///< Back-off strategy
-            typedef treiber_stack::base_hook<>      hook;           ///< Hook used
-            typedef opt::v::empty_disposer          disposer;       ///< Node disposer
-            typedef atomicity::empty_item_counter   item_counter;   ///< Item counting feature (by default, disabled)
-            typedef opt::v::relaxed_ordering        memory_model;   ///< Memory model (by default, relaxed)
-            typedef treiber_stack::empty_stat       stat;           ///< Internal statistics (by default, no internal statistics)
-            static CDS_CONSTEXPR_CONST opt::link_check_type link_checker = opt::debug_check_link; ///< Link checking, see cds::opt::link_checker
-
-            // Elimination back-off options
-            static CDS_CONSTEXPR_CONST bool enable_elimination = false; ///< Enable elimination (by default, it is disabled)
-            typedef cds::backoff::delay<>          elimination_backoff; ///< Back-off strategy for elimination
-            typedef opt::v::static_buffer< int, 4 > buffer;             ///< Elimination buffer type
-            typedef opt::v::c_rand                  random_engine;      ///< Random number generator for elimination
-            typedef cds::lock::Spin                 lock_type;          ///< Lock type for elimitation
-        };
-
         //@cond
         /// Operation id for the \ref cds_elimination_description "elimination back-off"
         enum operation_id {
@@ -159,6 +140,25 @@ namespace cds { namespace intrusive {
             void onPassiveCollision( operation_id ) {}
             void onEliminationFailed() {}
             //@endcond
+        };
+
+        /// TreiberStack default type traits
+        struct traits
+        {
+            typedef cds::backoff::Default           back_off;       ///< Back-off strategy
+            typedef treiber_stack::base_hook<>      hook;           ///< Hook used
+            typedef opt::v::empty_disposer          disposer;       ///< Node disposer
+            typedef atomicity::empty_item_counter   item_counter;   ///< Item counting feature (by default, disabled)
+            typedef opt::v::relaxed_ordering        memory_model;   ///< Memory model (by default, relaxed)
+            typedef treiber_stack::empty_stat       stat;           ///< Internal statistics (by default, no internal statistics)
+            static CDS_CONSTEXPR_CONST opt::link_check_type link_checker = opt::debug_check_link; ///< Link checking, see cds::opt::link_checker
+
+            // Elimination back-off options
+            static CDS_CONSTEXPR_CONST bool enable_elimination = false; ///< Enable elimination (by default, it is disabled)
+            typedef cds::backoff::delay<>          elimination_backoff; ///< Back-off strategy for elimination
+            typedef opt::v::static_buffer< int, 4 > buffer;             ///< Elimination buffer type
+            typedef opt::v::c_rand                  random_engine;      ///< Random number generator for elimination
+            typedef cds::lock::Spin                 lock_type;          ///< Lock type for elimitation
         };
 
         //@cond
