@@ -12,128 +12,152 @@ namespace stack {
     namespace defs {
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+            >::type
         > Elimination_HP_default;
 
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Elimination_HP_default_relaxed;
 
         // HZP GC + base hook
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::base_hook<
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::base_hook<
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
+            >::type
         > Elimination_HP_base;
 
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::base_hook<
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::base_hook<
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::buffer< ci::opt::v::dynamic_buffer<void *> >
+                ,ci::opt::buffer< ci::opt::v::dynamic_buffer<void *> >
+            >::type
         > Elimination_HP_base_dyn;
 
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::base_hook<
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::base_hook<
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Elimination_HP_base_relaxed;
 
         // HZP GC + base hook + disposer
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
+                >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+            >::type
         > Elimination_HP_base_disposer;
 
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
+                >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Elimination_HP_base_disposer_relaxed;
 
         // HZP GC + member hook
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::member_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
+            >::type
         > Elimination_HP_member;
 
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::member_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::buffer< ci::opt::v::dynamic_buffer<void *> >
+                ,ci::opt::buffer< ci::opt::v::dynamic_buffer<void *> >
+            >::type
         > Elimination_HP_member_dyn;
 
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::member_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Elimination_HP_member_relaxed;
 
         // HZP GC + member hook + disposer
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::member_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+            >::type
         > Elimination_HP_member_disposer;
 
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::member_hook_item<cds::gc::HP>
-            ,cds::opt::enable_elimination<true>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Elimination_HP_member_disposer_relaxed;
     }
 

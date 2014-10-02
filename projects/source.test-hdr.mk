@@ -242,8 +242,6 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_striped_hashset_vector.cpp 
 
 CDS_TESTHDR_STACK := \
-    tests/test-hdr/stack/hdr_intrusive_treiber_stack_hrc.cpp \
-    tests/test-hdr/stack/hdr_intrusive_elimination_stack_hrc.cpp \
     tests/test-hdr/stack/hdr_intrusive_fcstack.cpp \
     tests/test-hdr/stack/hdr_treiber_stack_hp.cpp \
     tests/test-hdr/stack/hdr_treiber_stack_hrc.cpp \

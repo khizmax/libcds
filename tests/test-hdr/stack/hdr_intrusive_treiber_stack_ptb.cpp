@@ -12,81 +12,97 @@ namespace stack {
         // PTB GC + base hook
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::base_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
-            >
+            ,typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
+                >
+            >::type
         > Treiber_PTB_base;
 
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::base_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
-            >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            ,typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
+                >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Treiber_PTB_base_relaxed;
 
         // PTB GC + base hook + disposer
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::base_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+            ,typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
+                >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+            >::type
         > Treiber_PTB_base_disposer;
 
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::base_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            ,typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::base_hook< ci::opt::gc<cds::gc::PTB> >
+                >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Treiber_PTB_base_disposer_relaxed;
 
         // PTB GC + member hook
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::member_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
-                    ci::opt::gc<cds::gc::PTB>
+            ,typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
+                        ci::opt::gc<cds::gc::PTB>
+                    >
                 >
-            >
+            >::type
         > Treiber_PTB_member;
 
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::member_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
-                    ci::opt::gc<cds::gc::PTB>
+            ,typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
+                        ci::opt::gc<cds::gc::PTB>
+                    >
                 >
-            >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Treiber_PTB_member_relaxed;
 
         // PTB GC + member hook + disposer
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::member_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
-                    ci::opt::gc<cds::gc::PTB>
+            , typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
+                        ci::opt::gc<cds::gc::PTB>
+                    >
                 >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+            >::type
         > Treiber_PTB_member_disposer;
 
         typedef cds::intrusive::TreiberStack< cds::gc::PTB,
             TestIntrusiveStack::member_hook_item<cds::gc::PTB>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
-                    ci::opt::gc<cds::gc::PTB>
+            , typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::single_link::member_hook<
+                        offsetof(TestIntrusiveStack::member_hook_item<cds::gc::PTB>, hMember),
+                        ci::opt::gc<cds::gc::PTB>
+                    >
                 >
-            >
-            ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
-            ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+                ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
+                ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
+            >::type
         > Treiber_PTB_member_disposer_relaxed;
     }
 
