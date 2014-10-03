@@ -1401,6 +1401,7 @@ PREDEFINED             = CDS_BUILD_BITS=64 \
                          CDS_CXX11_DECLTYPE_SUPPORT \
                          CDS_NOEXCEPT=noexcept() \
                          CDS_CONSTEXPR=constexpr \
+                         CDS_CONSTEXPR_CONST="constexpr const" \
                          CDS_ATOMIC=std \
                          CDS_DELETE_SPECIFIER="=delete"\
                          CDS_DEFAULT_SPECIFIER="=default"

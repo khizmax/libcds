@@ -497,6 +497,7 @@ namespace cds { namespace gc {
                     : m_pGuard( nullptr )
                 {}
 
+                /// The object is not copy-constructible
                 guard( guard const& ) = delete;
 
                 /// Object destructor, does nothing
@@ -628,7 +629,10 @@ namespace cds { namespace gc {
             /// Allocates array of guards from \p gc which must be the ThreadGC object of current thread
             GuardArray( ThreadGC& gc )    ;    // inline below
 
+            /// The object is not default-constructible
             GuardArray() = delete;
+
+            /// The object is not copy-constructible
             GuardArray( GuardArray const& ) = delete;
 
             /// Returns guards allocated back to pool
@@ -899,12 +903,14 @@ namespace cds { namespace gc {
             details::guard_data *    m_pFree ;   ///< The list of free guard from m_pList
 
         public:
+            /// Default constructor
             ThreadGC()
                 : m_gc( GarbageCollector::instance() )
                 , m_pList( nullptr )
                 , m_pFree( nullptr )
             {}
 
+            /// The object is not copy-constructible
             ThreadGC( ThreadGC const& ) = delete;
 
             /// Dtor calls fini()

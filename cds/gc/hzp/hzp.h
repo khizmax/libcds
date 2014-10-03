@@ -462,11 +462,13 @@ namespace cds {
             details::HPRec *    m_pHzpRec       ; ///< Pointer to thread's HZP record
 
         public:
+            /// Default constructor
             ThreadGC()
                 : m_HzpManager( GarbageCollector::instance() ),
                 m_pHzpRec( nullptr )
             {}
 
+            /// The object is not copy-constructible
             ThreadGC( ThreadGC const& ) = delete;
 
             ~ThreadGC()

@@ -23,7 +23,7 @@ namespace cds { namespace intrusive {
         /**
             Template parameters:
             - GC - garbage collector used
-            - Tag -  this argument serves as \ref cds_intrusive_hook_tag "a tag"
+            - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none >
         using node = cds::intrusive::single_link::node< GC, Tag > ;
@@ -32,7 +32,7 @@ namespace cds { namespace intrusive {
         /**
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - \ref cds_intrusive_hook_tag "a tag"
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         using base_hook = cds::intrusive::single_link::base_hook< Options...>;
@@ -44,7 +44,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - \ref cds_intrusive_hook_tag "a tag"
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         using member_hook = cds::intrusive::single_link::member_hook< MemberOffset, Options... >;
@@ -56,7 +56,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - \ref cds_intrusive_hook_tag "a tag"
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         using traits_hook = cds::intrusive::single_link::traits_hook< NodeTraits, Options... >;
@@ -208,7 +208,7 @@ namespace cds { namespace intrusive {
             This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             Supported \p Options are:
 
-            - opt::hook - hook used. Possible values are: \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook.
+            - opt::hook - hook used. Possible values are: treiber_stack::base_hook, treiber_stack::member_hook, treiber_stack::traits_hook.
                 If the option is not specified, \p %treiber_stack::base_hook<> is used.
             - opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used only
@@ -424,7 +424,7 @@ namespace cds { namespace intrusive {
 
         Template arguments:
         - \p GC - garbage collector type: gc::HP, gc::PTB. 
-            Garbage collecting schema must be consistent with the treiber_stack::node GC.
+            Garbage collecting schema must be consistent with the \p treiber_stack::node GC.
         - \p T - type to be inserted into the stack
         - \p Traits - stack traits, default is \p treiber_stack::traits. You can use \p treiber_stack::make_traits
             metafunction to make your traits or just derive your traits from \p %treiber_stack::traits:
@@ -433,6 +433,13 @@ namespace cds { namespace intrusive {
                 typedef cds::intrusive::treiber_stack::stat<> stat;
             };
             typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, myTraits > myStack;
+
+            // Equivalent make_traits example:
+            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, 
+                typename cds::intrusive::treiber_stack::make_traits< 
+                    cds::opt::stat< cds::intrusive::treiber_stack::stat<> > 
+                >::type
+            > myStack;
             \endcode
 
         @note Be careful when you want destroy an item popped, see \ref cds_intrusive_item_destroying "Destroying items of intrusive containers".
@@ -443,7 +450,7 @@ namespace cds { namespace intrusive {
         Example of how to use \p treiber_stack::base_hook.
         Your class that objects will be pushed on \p %TreiberStack should be based on \p treiber_stack::node class
         \code
-        #include <cds/intrusive/stack/treiber_stack.h>
+        #include <cds/intrusive/treiber_stack.h>
         #include <cds/gc/hp.h>
 
         namespace ci = cds::intrusive;
@@ -457,7 +464,9 @@ namespace cds { namespace intrusive {
         // Stack type
         typedef ci::TreiberStack< gc,
             myData,
-            ci::opt::hook< ci::treiber_stack::base_hook< gc > >
+            typename cds::intrusive::treiber_stack::make_traits<
+                ci::opt::hook< ci::treiber_stack::base_hook< gc > >
+            >::type
         > stack_t;
 
         // Stack with elimination back-off enabled
@@ -472,7 +481,7 @@ namespace cds { namespace intrusive {
 
         Example of how to use \p treiber_stack::base_hook with different tags.
         \code
-        #include <cds/intrusive/stack/treiber_stack.h>
+        #include <cds/intrusive/treiber_stack.h>
         #include <cds/gc/hp.h>
 
         namespace ci = cds::intrusive;
@@ -499,11 +508,11 @@ namespace cds { namespace intrusive {
         typedef ci::TreiberStack< gc, 
             myData, 
             typename ci::treiber_stack::make_traits<
-                ci::opt::hook< ci::treiber_stack::base_hook< gc, tag2 > 
+                ci::opt::hook< ci::treiber_stack::base_hook< gc, tag2 > >
             >::type
         > stack2_t;
 
-        // You may add myData objects in the objects of type stack1_t and stack2_t independently
+        // You may add myData objects into stack1_t and stack2_t independently
         void foo() {
             stack1_t    s1;
             stack2_t    s2;
@@ -527,7 +536,7 @@ namespace cds { namespace intrusive {
         Your class that will be pushed on \p %TreiberStack should have a member of type \p treiber_stack::node
         \code
         #include <stddef.h>     // offsetof macro
-        #include <cds/intrusive/stack/treiber_stack.h>
+        #include <cds/intrusive/treiber_stack.h>
         #include <cds/gc/hp.h>
 
         namespace ci = cds::intrusive;
@@ -543,7 +552,7 @@ namespace cds { namespace intrusive {
         typedef ci::TreiberStack< gc, 
             myData,
             typename ci::treiber_stack::make_traits<
-                ci::opt::hook< ci::treiber_stack::member_hook< offsetof(myData, member_hook_), gc >
+                ci::opt::hook< ci::treiber_stack::member_hook< offsetof(myData, member_hook_), gc >>
             >::type
         > stack_t;
         \endcode
