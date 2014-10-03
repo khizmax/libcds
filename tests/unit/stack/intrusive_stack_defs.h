@@ -10,16 +10,12 @@
     TEST_CASE( Treiber_HP_pause, cds::intrusive::single_link::node< cds::gc::HP >  ) \
     TEST_CASE( Treiber_HP_exp, cds::intrusive::single_link::node< cds::gc::HP >    ) \
     TEST_CASE( Treiber_HP_stat, cds::intrusive::single_link::node< cds::gc::HP >   ) \
-    TEST_CASE( Treiber_HRC, cds::intrusive::single_link::node< cds::gc::HRC >       ) \
     /*TEST_CASE( Treiber_HRC_yield, cds::intrusive::single_link::node< cds::gc::HRC > )*/ \
-    TEST_CASE( Treiber_HRC_pause, cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE( Treiber_HRC_exp, cds::intrusive::single_link::node< cds::gc::HRC >   ) \
-    TEST_CASE( Treiber_HRC_stat, cds::intrusive::single_link::node< cds::gc::HRC >  ) \
-    TEST_CASE( Treiber_PTB, cds::intrusive::single_link::node< cds::gc::PTB >       ) \
-    /*TEST_CASE( Treiber_PTB_yield, cds::intrusive::single_link::node< cds::gc::PTB > )*/ \
-    TEST_CASE( Treiber_PTB_pause, cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_CASE( Treiber_PTB_exp, cds::intrusive::single_link::node< cds::gc::PTB >   ) \
-    TEST_CASE( Treiber_PTB_stat, cds::intrusive::single_link::node< cds::gc::PTB >  )
+    TEST_CASE( Treiber_DHP, cds::intrusive::single_link::node< cds::gc::DHP >       ) \
+    /*TEST_CASE( Treiber_DHP_yield, cds::intrusive::single_link::node< cds::gc::DHP > )*/ \
+    TEST_CASE( Treiber_DHP_pause, cds::intrusive::single_link::node< cds::gc::DHP > ) \
+    TEST_CASE( Treiber_DHP_exp, cds::intrusive::single_link::node< cds::gc::DHP >   ) \
+    TEST_CASE( Treiber_DHP_stat, cds::intrusive::single_link::node< cds::gc::DHP >  )
 
 #define CDSUNIT_TEST_TreiberStack \
     CPPUNIT_TEST( Treiber_HP        ) \
@@ -28,16 +24,11 @@
     CPPUNIT_TEST( Treiber_HP_pause  ) \
     CPPUNIT_TEST( Treiber_HP_exp    ) \
     CPPUNIT_TEST( Treiber_HP_stat   ) \
-    CPPUNIT_TEST( Treiber_HRC       ) \
-    /*CPPUNIT_TEST( Treiber_HRC_yield )*/ \
-    /*CPPUNIT_TEST( Treiber_HRC_pause )*/ \
-    /*CPPUNIT_TEST( Treiber_HRC_exp   )*/ \
-    CPPUNIT_TEST( Treiber_HRC_stat  ) \
-    CPPUNIT_TEST( Treiber_PTB       ) \
-    /*CPPUNIT_TEST( Treiber_PTB_yield )*/ \
-    CPPUNIT_TEST( Treiber_PTB_pause ) \
-    CPPUNIT_TEST( Treiber_PTB_exp   ) \
-    CPPUNIT_TEST( Treiber_PTB_stat  )
+    CPPUNIT_TEST( Treiber_DHP       ) \
+    /*CPPUNIT_TEST( Treiber_DHP_yield )*/ \
+    CPPUNIT_TEST( Treiber_DHP_pause ) \
+    CPPUNIT_TEST( Treiber_DHP_exp   ) \
+    CPPUNIT_TEST( Treiber_DHP_stat  )
 
 #define CDSUNIT_DECLARE_EliminationStack \
     TEST_ELIMINATION( Elimination_HP, cds::intrusive::single_link::node< cds::gc::HP >        ) \
@@ -54,26 +45,19 @@
     TEST_ELIMINATION( Elimination_HP_stat, cds::intrusive::single_link::node< cds::gc::HP >   ) \
     TEST_ELIMINATION( Elimination_HP_dyn, cds::intrusive::single_link::node< cds::gc::HP >    ) \
     TEST_ELIMINATION( Elimination_HP_dyn_stat, cds::intrusive::single_link::node< cds::gc::HP >) \
-    TEST_ELIMINATION( Elimination_HRC, cds::intrusive::single_link::node< cds::gc::HRC >       ) \
-    /*TEST_ELIMINATION( Elimination_HRC_yield, cds::intrusive::single_link::node< cds::gc::HRC > )*/ \
-    TEST_ELIMINATION( Elimination_HRC_pause, cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_ELIMINATION( Elimination_HRC_exp, cds::intrusive::single_link::node< cds::gc::HRC >   ) \
-    TEST_ELIMINATION( Elimination_HRC_stat, cds::intrusive::single_link::node< cds::gc::HRC >  ) \
-    TEST_ELIMINATION( Elimination_HRC_dyn, cds::intrusive::single_link::node< cds::gc::HRC >   ) \
-    TEST_ELIMINATION( Elimination_HRC_dyn_stat, cds::intrusive::single_link::node< cds::gc::HRC >) \
-    TEST_ELIMINATION( Elimination_PTB, cds::intrusive::single_link::node< cds::gc::PTB >       ) \
-    TEST_ELIMINATION( Elimination_PTB_2ms, cds::intrusive::single_link::node< cds::gc::PTB >    ) \
-    TEST_ELIMINATION( Elimination_PTB_2ms_stat, cds::intrusive::single_link::node< cds::gc::PTB >) \
-    TEST_ELIMINATION( Elimination_PTB_5ms, cds::intrusive::single_link::node< cds::gc::PTB >    ) \
-    TEST_ELIMINATION( Elimination_PTB_5ms_stat, cds::intrusive::single_link::node< cds::gc::PTB >) \
-    TEST_ELIMINATION( Elimination_PTB_10ms, cds::intrusive::single_link::node< cds::gc::PTB >    ) \
-    TEST_ELIMINATION( Elimination_PTB_10ms_stat, cds::intrusive::single_link::node< cds::gc::PTB >) \
-    /*TEST_ELIMINATION( Elimination_PTB_yield, cds::intrusive::single_link::node< cds::gc::PTB > )*/ \
-    TEST_ELIMINATION( Elimination_PTB_pause, cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_ELIMINATION( Elimination_PTB_exp, cds::intrusive::single_link::node< cds::gc::PTB >   ) \
-    TEST_ELIMINATION( Elimination_PTB_stat, cds::intrusive::single_link::node< cds::gc::PTB >  ) \
-    TEST_ELIMINATION( Elimination_PTB_dyn, cds::intrusive::single_link::node< cds::gc::PTB >   ) \
-    TEST_ELIMINATION( Elimination_PTB_dyn_stat, cds::intrusive::single_link::node< cds::gc::PTB >)
+    TEST_ELIMINATION( Elimination_DHP, cds::intrusive::single_link::node< cds::gc::DHP >       ) \
+    TEST_ELIMINATION( Elimination_DHP_2ms, cds::intrusive::single_link::node< cds::gc::DHP >    ) \
+    TEST_ELIMINATION( Elimination_DHP_2ms_stat, cds::intrusive::single_link::node< cds::gc::DHP >) \
+    TEST_ELIMINATION( Elimination_DHP_5ms, cds::intrusive::single_link::node< cds::gc::DHP >    ) \
+    TEST_ELIMINATION( Elimination_DHP_5ms_stat, cds::intrusive::single_link::node< cds::gc::DHP >) \
+    TEST_ELIMINATION( Elimination_DHP_10ms, cds::intrusive::single_link::node< cds::gc::DHP >    ) \
+    TEST_ELIMINATION( Elimination_DHP_10ms_stat, cds::intrusive::single_link::node< cds::gc::DHP >) \
+    /*TEST_ELIMINATION( Elimination_DHP_yield, cds::intrusive::single_link::node< cds::gc::DHP > )*/ \
+    TEST_ELIMINATION( Elimination_DHP_pause, cds::intrusive::single_link::node< cds::gc::DHP > ) \
+    TEST_ELIMINATION( Elimination_DHP_exp, cds::intrusive::single_link::node< cds::gc::DHP >   ) \
+    TEST_ELIMINATION( Elimination_DHP_stat, cds::intrusive::single_link::node< cds::gc::DHP >  ) \
+    TEST_ELIMINATION( Elimination_DHP_dyn, cds::intrusive::single_link::node< cds::gc::DHP >   ) \
+    TEST_ELIMINATION( Elimination_DHP_dyn_stat, cds::intrusive::single_link::node< cds::gc::DHP >)
 
 #define CDSUNIT_TEST_EliminationStack \
     CPPUNIT_TEST( Elimination_HP        ) \
@@ -90,78 +74,19 @@
     CPPUNIT_TEST( Elimination_HP_stat   ) \
     CPPUNIT_TEST( Elimination_HP_dyn    ) \
     CPPUNIT_TEST( Elimination_HP_dyn_stat) \
-    CPPUNIT_TEST( Elimination_HRC       ) \
-    /*CPPUNIT_TEST( Elimination_HRC_yield )*/ \
-    /*CPPUNIT_TEST( Elimination_HRC_pause )*/ \
-    /*CPPUNIT_TEST( Elimination_HRC_exp   )*/ \
-    CPPUNIT_TEST( Elimination_HRC_stat  ) \
-    CPPUNIT_TEST( Elimination_HRC_dyn   ) \
-    CPPUNIT_TEST( Elimination_HRC_dyn_stat) \
-    CPPUNIT_TEST( Elimination_PTB       ) \
-    CPPUNIT_TEST( Elimination_PTB_2ms    ) \
-    CPPUNIT_TEST( Elimination_PTB_2ms_stat) \
-    CPPUNIT_TEST( Elimination_PTB_5ms    ) \
-    CPPUNIT_TEST( Elimination_PTB_5ms_stat) \
-    CPPUNIT_TEST( Elimination_PTB_10ms    ) \
-    CPPUNIT_TEST( Elimination_PTB_10ms_stat) \
-    /*CPPUNIT_TEST( Elimination_PTB_yield )*/ \
-    CPPUNIT_TEST( Elimination_PTB_pause ) \
-    CPPUNIT_TEST( Elimination_PTB_exp   ) \
-    CPPUNIT_TEST( Elimination_PTB_stat  ) \
-    CPPUNIT_TEST( Elimination_PTB_dyn   ) \
-    CPPUNIT_TEST( Elimination_PTB_dyn_stat)
-
-#define CDSUNIT_DECLARE_MichaelDeque \
-    TEST_BOUNDED( MichaelDequeL_HP, cds::intrusive::michael_deque::node<cds::gc::HP>          ) \
-    TEST_BOUNDED( MichaelDequeL_HP_seqcst, cds::intrusive::michael_deque::node<cds::gc::HP>   ) \
-    TEST_BOUNDED( MichaelDequeL_HP_ic, cds::intrusive::michael_deque::node<cds::gc::HP>       ) \
-    TEST_BOUNDED( MichaelDequeL_HP_exp, cds::intrusive::michael_deque::node<cds::gc::HP>      ) \
-    TEST_BOUNDED( MichaelDequeL_HP_yield, cds::intrusive::michael_deque::node<cds::gc::HP>    ) \
-    TEST_BOUNDED( MichaelDequeL_HP_stat, cds::intrusive::michael_deque::node<cds::gc::HP>     ) \
-    TEST_BOUNDED( MichaelDequeL_PTB, cds::intrusive::michael_deque::node<cds::gc::PTB>         ) \
-    TEST_BOUNDED( MichaelDequeL_PTB_seqcst, cds::intrusive::michael_deque::node<cds::gc::PTB>  ) \
-    TEST_BOUNDED( MichaelDequeL_PTB_ic, cds::intrusive::michael_deque::node<cds::gc::PTB>      ) \
-    TEST_BOUNDED( MichaelDequeL_PTB_exp, cds::intrusive::michael_deque::node<cds::gc::PTB>     ) \
-    TEST_BOUNDED( MichaelDequeL_PTB_yield, cds::intrusive::michael_deque::node<cds::gc::PTB>   ) \
-    TEST_BOUNDED( MichaelDequeL_PTB_stat, cds::intrusive::michael_deque::node<cds::gc::PTB>    ) \
-    TEST_BOUNDED( MichaelDequeR_HP, cds::intrusive::michael_deque::node<cds::gc::HP>          ) \
-    TEST_BOUNDED( MichaelDequeR_HP_seqcst, cds::intrusive::michael_deque::node<cds::gc::HP>   ) \
-    TEST_BOUNDED( MichaelDequeR_HP_ic, cds::intrusive::michael_deque::node<cds::gc::HP>       ) \
-    TEST_BOUNDED( MichaelDequeR_HP_exp, cds::intrusive::michael_deque::node<cds::gc::HP>      ) \
-    TEST_BOUNDED( MichaelDequeR_HP_yield, cds::intrusive::michael_deque::node<cds::gc::HP>    ) \
-    TEST_BOUNDED( MichaelDequeR_HP_stat, cds::intrusive::michael_deque::node<cds::gc::HP>     ) \
-    TEST_BOUNDED( MichaelDequeR_PTB, cds::intrusive::michael_deque::node<cds::gc::PTB>         ) \
-    TEST_BOUNDED( MichaelDequeR_PTB_seqcst, cds::intrusive::michael_deque::node<cds::gc::PTB>  ) \
-    TEST_BOUNDED( MichaelDequeR_PTB_ic, cds::intrusive::michael_deque::node<cds::gc::PTB>      ) \
-    TEST_BOUNDED( MichaelDequeR_PTB_exp, cds::intrusive::michael_deque::node<cds::gc::PTB>     ) \
-    TEST_BOUNDED( MichaelDequeR_PTB_yield, cds::intrusive::michael_deque::node<cds::gc::PTB>   ) \
-    TEST_BOUNDED( MichaelDequeR_PTB_stat, cds::intrusive::michael_deque::node<cds::gc::PTB>    )
-
-#define CDSUNIT_TEST_MichaelDeque \
-    CPPUNIT_TEST( MichaelDequeL_HP          ) \
-    /*CPPUNIT_TEST( MichaelDequeL_HP_seqcst   )*/ \
-    /*CPPUNIT_TEST( MichaelDequeL_HP_ic       )*/ \
-    /*CPPUNIT_TEST( MichaelDequeL_HP_exp      )*/ \
-    /*CPPUNIT_TEST( MichaelDequeL_HP_yield    )*/ \
-    CPPUNIT_TEST( MichaelDequeL_HP_stat     ) \
-    CPPUNIT_TEST( MichaelDequeL_PTB         ) \
-    /*CPPUNIT_TEST( MichaelDequeL_PTB_seqcst  )*/ \
-    /*CPPUNIT_TEST( MichaelDequeL_PTB_ic      )*/ \
-    /*CPPUNIT_TEST( MichaelDequeL_PTB_exp     )*/ \
-    /*CPPUNIT_TEST( MichaelDequeL_PTB_yield   )*/ \
-    CPPUNIT_TEST( MichaelDequeL_PTB_stat    ) \
-    CPPUNIT_TEST( MichaelDequeR_HP          ) \
-    /*CPPUNIT_TEST( MichaelDequeR_HP_seqcst   )*/ \
-    /*CPPUNIT_TEST( MichaelDequeR_HP_ic       )*/ \
-    /*CPPUNIT_TEST( MichaelDequeR_HP_exp      )*/ \
-    /*CPPUNIT_TEST( MichaelDequeR_HP_yield    )*/ \
-    CPPUNIT_TEST( MichaelDequeR_HP_stat     ) \
-    CPPUNIT_TEST( MichaelDequeR_PTB         ) \
-    /*CPPUNIT_TEST( MichaelDequeR_PTB_seqcst  )*/ \
-    /*CPPUNIT_TEST( MichaelDequeR_PTB_ic      )*/ \
-    /*CPPUNIT_TEST( MichaelDequeR_PTB_exp     )*/ \
-    /*CPPUNIT_TEST( MichaelDequeR_PTB_yield   )*/ \
-    CPPUNIT_TEST( MichaelDequeR_PTB_stat    )
+    CPPUNIT_TEST( Elimination_DHP       ) \
+    CPPUNIT_TEST( Elimination_DHP_2ms    ) \
+    CPPUNIT_TEST( Elimination_DHP_2ms_stat) \
+    CPPUNIT_TEST( Elimination_DHP_5ms    ) \
+    CPPUNIT_TEST( Elimination_DHP_5ms_stat) \
+    CPPUNIT_TEST( Elimination_DHP_10ms    ) \
+    CPPUNIT_TEST( Elimination_DHP_10ms_stat) \
+    /*CPPUNIT_TEST( Elimination_DHP_yield )*/ \
+    CPPUNIT_TEST( Elimination_DHP_pause ) \
+    CPPUNIT_TEST( Elimination_DHP_exp   ) \
+    CPPUNIT_TEST( Elimination_DHP_stat  ) \
+    CPPUNIT_TEST( Elimination_DHP_dyn   ) \
+    CPPUNIT_TEST( Elimination_DHP_dyn_stat)
 
 #define CDSUNIT_DECLARE_FCStack \
     TEST_FCSTACK( FCStack_slist, boost::intrusive::slist_base_hook<> ) \

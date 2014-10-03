@@ -7,8 +7,7 @@
 #include <cds/intrusive/fcstack.h>
 
 #include <cds/gc/hp.h>
-#include <cds/gc/ptb.h>
-#include <cds/gc/hrc.h>
+#include <cds/gc/dhp.h>
 
 #include <mutex>
 #include <cds/lock/spinlock.h>
@@ -67,330 +66,209 @@ namespace istack {
     template <typename T>
     struct Types {
 
+        template <class GC>
+        using base_hook = cds::intrusive::treiber_stack::base_hook < cds::opt::gc< GC > >;
+
     // TreiberStack
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-        >       Treiber_HP;
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T > Treiber_HP;
+        struct traits_Treiber_DHP: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<cds::gc::PTB> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T, traits_Treiber_DHP >Treiber_PTB;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::memory_model<cds::opt::v::sequential_consistent>
-        >       Treiber_HP_seqcst;
+        template <class GC> struct traits_Treiber_seqcst : public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::memory_model<cds::opt::v::sequential_consistent>
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Treiber_seqcst<cds::gc::HP>  > Treiber_HP_seqcst;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_seqcst<cds::gc::DHP> > Treiber_DHP_seqcst;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Treiber_HP_stat;
+        template <class GC> struct traits_Treiber_stat: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Treiber_stat<cds::gc::HP>  > Treiber_HP_stat;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_stat<cds::gc::DHP> > Treiber_DHP_stat;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-        >       Treiber_HRC;
+        template <class GC> struct traits_Treiber_yield: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::back_off<cds::backoff::yield>
+                , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Treiber_yield<cds::gc::HP>  > Treiber_HP_yield;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_yield<cds::gc::DHP> > Treiber_DHP_yield;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Treiber_HRC_stat;
+        template <class GC> struct traits_Treiber_pause: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::back_off<cds::backoff::pause>
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Treiber_pause<cds::gc::HP>  > Treiber_HP_pause;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_pause<cds::gc::DHP> > Treiber_DHP_pause;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-        > Treiber_PTB;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Treiber_PTB_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::back_off<cds::backoff::yield>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Treiber_HP_yield;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Treiber_HP_pause;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
+        template <class GC> struct traits_Treiber_exp: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                ,cds::opt::back_off<
+                    cds::backoff::exponential<
+                        cds::backoff::pause,
+                        cds::backoff::yield
+                    >
                 >
-            >
-        > Treiber_HP_exp;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Treiber_HRC_yield;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::back_off<cds::backoff::pause>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Treiber_HRC_pause;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-        > Treiber_HRC_exp;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Treiber_PTB_yield;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Treiber_PTB_pause;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Treiber_PTB_exp;
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Treiber_exp<cds::gc::HP>  > Treiber_HP_exp;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_exp<cds::gc::DHP> > Treiber_DHP_exp;
 
 
     // Elimination stack
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-        >       Elimination_HP;
+        template <class GC> struct traits_Elimination_on : public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_on<cds::gc::HP>  > Elimination_HP;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_on<cds::gc::DHP> > Elimination_DHP;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-        >       Elimination_HP_2ms;
+        template <class GC> struct traits_Elimination_2ms: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_2ms<cds::gc::HP>  > Elimination_HP_2ms;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_2ms<cds::gc::DHP> > Elimination_DHP_2ms;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_2ms_stat;
+        template <class GC> struct traits_Elimination_2ms_stat: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_2ms_stat<cds::gc::HP>  > Elimination_HP_2ms_stat;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_2ms_stat<cds::gc::DHP> > Elimination_DHP_2ms_stat;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-        >       Elimination_HP_5ms;
+        template <class GC> struct traits_Elimination_5ms: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_5ms<cds::gc::HP>  > Elimination_HP_5ms;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_5ms<cds::gc::DHP> > Elimination_DHP_5ms;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_5ms_stat;
+        template <class GC> struct traits_Elimination_5ms_stat: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_5ms_stat<cds::gc::HP>  > Elimination_HP_5ms_stat;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_5ms_stat<cds::gc::DHP> > Elimination_DHP_5ms_stat;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-        >       Elimination_HP_10ms;
+        template <class GC> struct traits_Elimination_10ms: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_10ms<cds::gc::HP>  > Elimination_HP_10ms;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_10ms<cds::gc::DHP> > Elimination_DHP_10ms;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_10ms_stat;
+        template <class GC> struct traits_Elimination_10ms_stat: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_10ms_stat<cds::gc::HP>  > Elimination_HP_10ms_stat;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_10ms_stat<cds::gc::DHP> > Elimination_DHP_10ms_stat;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HP_dyn;
+        template <class GC> struct traits_Elimination_dyn: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn<cds::gc::HP>  > Elimination_HP_dyn;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_dyn<cds::gc::DHP> > Elimination_DHP_dyn;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::memory_model<cds::opt::v::sequential_consistent>
-        >       Elimination_HP_seqcst;
+        template <class GC> struct traits_Elimination_stat: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_stat<cds::gc::HP>  > Elimination_HP_stat;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_stat<cds::gc::DHP> > Elimination_DHP_stat;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_stat;
+        template <class GC> struct traits_Elimination_dyn_stat: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn_stat<cds::gc::HP>  > Elimination_HP_dyn_stat;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_dyn_stat<cds::gc::DHP> > Elimination_DHP_dyn_stat;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HP_dyn_stat;
+        template <class GC> struct traits_Elimination_yield: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::back_off<cds::backoff::yield>
+                , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_yield<cds::gc::HP>  > Elimination_HP_yield;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_yield<cds::gc::DHP> > Elimination_DHP_yield;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::enable_elimination<true>
-        >       Elimination_HRC;
+        template <class GC> struct traits_Elimination_pause: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::back_off<cds::backoff::pause>
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_pause<cds::gc::HP>  > Elimination_HP_pause;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_pause<cds::gc::DHP> > Elimination_DHP_pause;
 
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HRC_dyn;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HRC_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HRC_dyn_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-        > Elimination_PTB_2ms;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        > Elimination_PTB_2ms_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-        > Elimination_PTB_5ms;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        > Elimination_PTB_5ms_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-        > Elimination_PTB_10ms;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        > Elimination_PTB_10ms_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-        > Elimination_PTB;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        > Elimination_PTB_dyn;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_PTB_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_PTB_dyn_stat;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::yield>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Elimination_HP_yield;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Elimination_HP_pause;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
+        template <class GC> struct traits_Elimination_exp: public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                ,cds::opt::back_off<
+                    cds::backoff::exponential<
+                        cds::backoff::pause,
+                        cds::backoff::yield
+                    >
                 >
-            >
-        > Elimination_HP_exp;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Elimination_HRC_yield;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::pause>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Elimination_HRC_pause;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-        > Elimination_HRC_exp;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Elimination_PTB_yield;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Elimination_PTB_pause;
-
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::single_link::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Elimination_PTB_exp;
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_exp<cds::gc::HP>  > Elimination_HP_exp;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_exp<cds::gc::DHP> > Elimination_DHP_exp;
 
     // FCStack
         typedef cds::intrusive::FCStack< T > FCStack_slist;

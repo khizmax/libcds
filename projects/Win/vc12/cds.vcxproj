@@ -734,6 +734,7 @@
     <ClInclude Include="..\..\..\cds\details\lib.h" />
     <ClInclude Include="..\..\..\cds\details\static_functor.h" />
     <ClInclude Include="..\..\..\cds\gc\all.h" />
+    <ClInclude Include="..\..\..\cds\gc\dhp.h" />
     <ClInclude Include="..\..\..\cds\gc\exception.h" />
     <ClInclude Include="..\..\..\cds\gc\gc_fwd.h" />
     <ClInclude Include="..\..\..\cds\gc\guarded_ptr.h" />

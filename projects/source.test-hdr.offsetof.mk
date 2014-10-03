@@ -78,9 +78,9 @@ CDS_TESTHDR_OFFSETOF_QUEUE := \
 
 CDS_TESTHDR_OFFSETOF_STACK := \
     tests/test-hdr/stack/hdr_intrusive_treiber_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_intrusive_treiber_stack_ptb.cpp \
+    tests/test-hdr/stack/hdr_intrusive_treiber_stack_dhp.cpp \
     tests/test-hdr/stack/hdr_intrusive_elimination_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_intrusive_elimination_stack_ptb.cpp 
+    tests/test-hdr/stack/hdr_intrusive_elimination_stack_dhp.cpp 
 
 CDS_TESTHDR_OFFSETOF_TREE := \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_hp_member.cpp \

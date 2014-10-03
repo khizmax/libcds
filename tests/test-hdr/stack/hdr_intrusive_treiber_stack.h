@@ -115,20 +115,20 @@ namespace stack {
         void Treiber_HP_base_disposer();
         void Treiber_HP_member();
         void Treiber_HP_member_disposer();
-        void Treiber_PTB_base();
-        void Treiber_PTB_base_disposer();
-        void Treiber_PTB_member();
-        void Treiber_PTB_member_disposer();
+        void Treiber_DHP_base();
+        void Treiber_DHP_base_disposer();
+        void Treiber_DHP_member();
+        void Treiber_DHP_member_disposer();
 
         void Treiber_HP_default_relaxed();
         void Treiber_HP_base_relaxed();
         void Treiber_HP_base_disposer_relaxed();
         void Treiber_HP_member_relaxed();
         void Treiber_HP_member_disposer_relaxed();
-        void Treiber_PTB_base_relaxed();
-        void Treiber_PTB_base_disposer_relaxed();
-        void Treiber_PTB_member_relaxed();
-        void Treiber_PTB_member_disposer_relaxed();
+        void Treiber_DHP_base_relaxed();
+        void Treiber_DHP_base_disposer_relaxed();
+        void Treiber_DHP_member_relaxed();
+        void Treiber_DHP_member_disposer_relaxed();
 
         void Elimination_HP_default();
         void Elimination_HP_base();
@@ -137,22 +137,22 @@ namespace stack {
         void Elimination_HP_member();
         void Elimination_HP_member_dyn();
         void Elimination_HP_member_disposer();
-        void Elimination_PTB_base();
-        void Elimination_PTB_base_dyn();
-        void Elimination_PTB_base_disposer();
-        void Elimination_PTB_member();
-        void Elimination_PTB_member_dyn();
-        void Elimination_PTB_member_disposer();
+        void Elimination_DHP_base();
+        void Elimination_DHP_base_dyn();
+        void Elimination_DHP_base_disposer();
+        void Elimination_DHP_member();
+        void Elimination_DHP_member_dyn();
+        void Elimination_DHP_member_disposer();
 
         void Elimination_HP_default_relaxed();
         void Elimination_HP_base_relaxed();
         void Elimination_HP_base_disposer_relaxed();
         void Elimination_HP_member_relaxed();
         void Elimination_HP_member_disposer_relaxed();
-        void Elimination_PTB_base_relaxed();
-        void Elimination_PTB_base_disposer_relaxed();
-        void Elimination_PTB_member_relaxed();
-        void Elimination_PTB_member_disposer_relaxed();
+        void Elimination_DHP_base_relaxed();
+        void Elimination_DHP_base_disposer_relaxed();
+        void Elimination_DHP_member_relaxed();
+        void Elimination_DHP_member_disposer_relaxed();
 
         CPPUNIT_TEST_SUITE(TestIntrusiveStack)
             CPPUNIT_TEST(Treiber_HP_default)
@@ -165,14 +165,14 @@ namespace stack {
             CPPUNIT_TEST(Treiber_HP_member_relaxed)
             CPPUNIT_TEST(Treiber_HP_member_disposer)
             CPPUNIT_TEST(Treiber_HP_member_disposer_relaxed)
-            CPPUNIT_TEST(Treiber_PTB_base)
-            CPPUNIT_TEST(Treiber_PTB_base_relaxed)
-            CPPUNIT_TEST(Treiber_PTB_base_disposer)
-            CPPUNIT_TEST(Treiber_PTB_base_disposer_relaxed)
-            CPPUNIT_TEST(Treiber_PTB_member)
-            CPPUNIT_TEST(Treiber_PTB_member_relaxed)
-            CPPUNIT_TEST(Treiber_PTB_member_disposer)
-            CPPUNIT_TEST(Treiber_PTB_member_disposer_relaxed)
+            CPPUNIT_TEST(Treiber_DHP_base)
+            CPPUNIT_TEST(Treiber_DHP_base_relaxed)
+            CPPUNIT_TEST(Treiber_DHP_base_disposer)
+            CPPUNIT_TEST(Treiber_DHP_base_disposer_relaxed)
+            CPPUNIT_TEST(Treiber_DHP_member)
+            CPPUNIT_TEST(Treiber_DHP_member_relaxed)
+            CPPUNIT_TEST(Treiber_DHP_member_disposer)
+            CPPUNIT_TEST(Treiber_DHP_member_disposer_relaxed)
 
             CPPUNIT_TEST(Elimination_HP_default)
             CPPUNIT_TEST(Elimination_HP_default_relaxed)
@@ -186,16 +186,16 @@ namespace stack {
             CPPUNIT_TEST(Elimination_HP_member_relaxed)
             CPPUNIT_TEST(Elimination_HP_member_disposer)
             CPPUNIT_TEST(Elimination_HP_member_disposer_relaxed)
-            CPPUNIT_TEST(Elimination_PTB_base)
-            CPPUNIT_TEST(Elimination_PTB_base_dyn)
-            CPPUNIT_TEST(Elimination_PTB_base_relaxed)
-            CPPUNIT_TEST(Elimination_PTB_base_disposer)
-            CPPUNIT_TEST(Elimination_PTB_base_disposer_relaxed)
-            CPPUNIT_TEST(Elimination_PTB_member)
-            CPPUNIT_TEST(Elimination_PTB_member_dyn)
-            CPPUNIT_TEST(Elimination_PTB_member_relaxed)
-            CPPUNIT_TEST(Elimination_PTB_member_disposer)
-            CPPUNIT_TEST(Elimination_PTB_member_disposer_relaxed)
+            CPPUNIT_TEST(Elimination_DHP_base)
+            CPPUNIT_TEST(Elimination_DHP_base_dyn)
+            CPPUNIT_TEST(Elimination_DHP_base_relaxed)
+            CPPUNIT_TEST(Elimination_DHP_base_disposer)
+            CPPUNIT_TEST(Elimination_DHP_base_disposer_relaxed)
+            CPPUNIT_TEST(Elimination_DHP_member)
+            CPPUNIT_TEST(Elimination_DHP_member_dyn)
+            CPPUNIT_TEST(Elimination_DHP_member_relaxed)
+            CPPUNIT_TEST(Elimination_DHP_member_disposer)
+            CPPUNIT_TEST(Elimination_DHP_member_disposer_relaxed)
         CPPUNIT_TEST_SUITE_END()
     };
 

@@ -244,11 +244,9 @@ CDS_TESTHDR_SET := \
 CDS_TESTHDR_STACK := \
     tests/test-hdr/stack/hdr_intrusive_fcstack.cpp \
     tests/test-hdr/stack/hdr_treiber_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_treiber_stack_hrc.cpp \
-    tests/test-hdr/stack/hdr_treiber_stack_ptb.cpp \
+    tests/test-hdr/stack/hdr_treiber_stack_dhp.cpp \
     tests/test-hdr/stack/hdr_elimination_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_elimination_stack_hrc.cpp \
-    tests/test-hdr/stack/hdr_elimination_stack_ptb.cpp \
+    tests/test-hdr/stack/hdr_elimination_stack_dhp.cpp \
     tests/test-hdr/stack/hdr_fcstack.cpp
 
 CDS_TESTHDR_TREE := \

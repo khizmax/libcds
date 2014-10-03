@@ -5,7 +5,7 @@
 #include <cds/container/treiber_stack.h>
 
 namespace stack {
-#define TEST(X)     void TestStack::X() { test<defs::X>(); }
+#define TEST(X)         void TestStack::X() { test<defs::X>(); }
 #define TEST_DYN(X)     void TestStack::X() { test_elimination<defs::X>(); }
 
     namespace cs = cds::container;
@@ -13,47 +13,63 @@ namespace stack {
     namespace defs { namespace {
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::enable_elimination<true>
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+            >::type
         > Elimination_HP;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::enable_elimination<true>
-            , cds::opt::buffer< cds::opt::v::dynamic_buffer<void *> >
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                , cds::opt::buffer< cds::opt::v::dynamic_buffer<void *> >
+            >::type
         > Elimination_HP_dyn;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::enable_elimination<true>
-            , cds::opt::buffer< cds::opt::v::dynamic_buffer<void *> >
-            , cds::opt::stat< cs::treiber_stack::stat<> >
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                , cds::opt::buffer< cds::opt::v::dynamic_buffer<void *> >
+                , cds::opt::stat< cs::treiber_stack::stat<> >
+            >::type
         > Elimination_HP_stat;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::enable_elimination<true>
-            , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            >::type
         > Elimination_HP_relaxed;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off< cds::backoff::yield>
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
+                ,cds::opt::back_off< cds::backoff::yield>
+            >::type
         > Elimination_HP_yield;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            , cds::opt::back_off< cds::backoff::yield>
-            ,cds::opt::enable_elimination<true>
-            , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::back_off< cds::backoff::yield>
+                ,cds::opt::enable_elimination<true>
+                , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            >::type
         > Elimination_HP_yield_relaxed;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::back_off< cds::backoff::pause>
-            ,cds::opt::allocator< std::allocator< bool * > >
-            ,cds::opt::enable_elimination<true>
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::back_off< cds::backoff::pause>
+                ,cds::opt::allocator< std::allocator< bool * > >
+                ,cds::opt::enable_elimination<true>
+            >::type
         > Elimination_HP_pause_alloc;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::back_off< cds::backoff::pause>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-            ,cds::opt::allocator< std::allocator< bool * > >
-            ,cds::opt::enable_elimination<true>
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::back_off< cds::backoff::pause>
+                ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+                ,cds::opt::allocator< std::allocator< bool * > >
+                ,cds::opt::enable_elimination<true>
+            >::type
         > Elimination_HP_pause_alloc_relaxed;
 
     }}

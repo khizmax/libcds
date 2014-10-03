@@ -266,7 +266,7 @@ namespace cds { namespace container {
         ~TreiberStack()
         {}
 
-        /// Push the item \p val on the stack
+        /// Pushes copy of \p val on the stack
         bool push( value_type const& val )
         {
             scoped_node_ptr p( alloc_node(val));
@@ -289,19 +289,42 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Pop an item from the stack
+        /// Pops an item from the stack
         /**
-            The value of popped item is stored in \p val.
+            The value of popped item is stored in \p val using assignment operator.
             On success functions returns \p true, \p val contains value popped from the stack.
             If stack is empty the function returns \p false, \p val is unchanged.
         */
         bool pop( value_type& val )
         {
+            return pop_with( [&val]( value_type& src ) { val = src; } );
+        }
+
+        /// Pops an item from the stack with functor
+        /**
+            \p Func interface is:
+            \code
+            void func( value_type& src );
+            \endcond
+            where \p src - item popped.
+
+            The \p %pop_with can be used to move item from the stack to user-provided storage:
+            \code
+            cds::container::TreiberStack<cds::gc::HP, std::string > myStack;
+            //...
+
+            std::string dest;
+            myStack.pop_with( [&dest]( std::string& src ) { dest = std::move( src ); } );
+            \endcode
+        */
+        template <typename Func>
+        bool pop_with( Func f )
+        {
             node_type * p = base_class::pop();
             if ( !p )
                 return false;
 
-            val = p->m_value;
+            f( p->m_value );
             retire_node( p );
 
             return true;

@@ -65,95 +65,67 @@ namespace stack {
         }
 
         void Treiber_HP();
-        void Treiber_HRC();
-        void Treiber_PTB();
+        void Treiber_DHP();
         void Treiber_HP_yield();
-        void Treiber_HRC_yield();
-        void Treiber_PTB_yield();
+        void Treiber_DHP_yield();
         void Treiber_HP_pause_alloc();
-        void Treiber_HRC_pause_alloc();
-        void Treiber_PTB_pause_alloc();
+        void Treiber_DHP_pause_alloc();
 
         void Treiber_HP_relaxed();
-        void Treiber_HRC_relaxed();
-        void Treiber_PTB_relaxed();
+        void Treiber_DHP_relaxed();
         void Treiber_HP_yield_relaxed();
-        void Treiber_HRC_yield_relaxed();
-        void Treiber_PTB_yield_relaxed();
+        void Treiber_DHP_yield_relaxed();
         void Treiber_HP_pause_alloc_relaxed();
-        void Treiber_HRC_pause_alloc_relaxed();
-        void Treiber_PTB_pause_alloc_relaxed();
+        void Treiber_DHP_pause_alloc_relaxed();
 
         void Elimination_HP();
         void Elimination_HP_dyn();
         void Elimination_HP_stat();
-        void Elimination_HRC();
-        void Elimination_HRC_dyn();
-        void Elimination_HRC_stat();
-        void Elimination_PTB();
-        void Elimination_PTB_dyn();
-        void Elimination_PTB_stat();
+        void Elimination_DHP();
+        void Elimination_DHP_dyn();
+        void Elimination_DHP_stat();
         void Elimination_HP_yield();
-        void Elimination_HRC_yield();
-        void Elimination_PTB_yield();
+        void Elimination_DHP_yield();
         void Elimination_HP_pause_alloc();
-        void Elimination_HRC_pause_alloc();
-        void Elimination_PTB_pause_alloc();
+        void Elimination_DHP_pause_alloc();
 
         void Elimination_HP_relaxed();
-        void Elimination_HRC_relaxed();
-        void Elimination_PTB_relaxed();
+        void Elimination_DHP_relaxed();
         void Elimination_HP_yield_relaxed();
-        void Elimination_HRC_yield_relaxed();
-        void Elimination_PTB_yield_relaxed();
+        void Elimination_DHP_yield_relaxed();
         void Elimination_HP_pause_alloc_relaxed();
-        void Elimination_HRC_pause_alloc_relaxed();
-        void Elimination_PTB_pause_alloc_relaxed();
+        void Elimination_DHP_pause_alloc_relaxed();
 
         CPPUNIT_TEST_SUITE(TestStack);
             CPPUNIT_TEST(Treiber_HP)
             CPPUNIT_TEST(Treiber_HP_relaxed)
-            CPPUNIT_TEST(Treiber_HRC)
-            CPPUNIT_TEST(Treiber_HRC_relaxed)
-            CPPUNIT_TEST(Treiber_PTB)
-            CPPUNIT_TEST(Treiber_PTB_relaxed)
+            CPPUNIT_TEST(Treiber_DHP)
+            CPPUNIT_TEST(Treiber_DHP_relaxed)
             CPPUNIT_TEST(Treiber_HP_yield)
             CPPUNIT_TEST(Treiber_HP_yield_relaxed)
-            CPPUNIT_TEST(Treiber_HRC_yield)
-            CPPUNIT_TEST(Treiber_HRC_yield_relaxed)
-            CPPUNIT_TEST(Treiber_PTB_yield)
-            CPPUNIT_TEST(Treiber_PTB_yield_relaxed)
+            CPPUNIT_TEST(Treiber_DHP_yield)
+            CPPUNIT_TEST(Treiber_DHP_yield_relaxed)
             CPPUNIT_TEST(Treiber_HP_pause_alloc)
             CPPUNIT_TEST(Treiber_HP_pause_alloc_relaxed)
-            CPPUNIT_TEST(Treiber_HRC_pause_alloc)
-            CPPUNIT_TEST(Treiber_HRC_pause_alloc_relaxed)
-            CPPUNIT_TEST(Treiber_PTB_pause_alloc)
-            CPPUNIT_TEST(Treiber_PTB_pause_alloc_relaxed)
+            CPPUNIT_TEST(Treiber_DHP_pause_alloc)
+            CPPUNIT_TEST(Treiber_DHP_pause_alloc_relaxed)
 
             CPPUNIT_TEST(Elimination_HP)
             CPPUNIT_TEST(Elimination_HP_dyn)
             CPPUNIT_TEST(Elimination_HP_stat)
             CPPUNIT_TEST(Elimination_HP_relaxed)
-            CPPUNIT_TEST(Elimination_HRC)
-            CPPUNIT_TEST(Elimination_HRC_dyn)
-            CPPUNIT_TEST(Elimination_HRC_stat)
-            CPPUNIT_TEST(Elimination_HRC_relaxed)
-            CPPUNIT_TEST(Elimination_PTB)
-            CPPUNIT_TEST(Elimination_PTB_dyn)
-            CPPUNIT_TEST(Elimination_PTB_stat)
-            CPPUNIT_TEST(Elimination_PTB_relaxed)
+            CPPUNIT_TEST(Elimination_DHP)
+            CPPUNIT_TEST(Elimination_DHP_dyn)
+            CPPUNIT_TEST(Elimination_DHP_stat)
+            CPPUNIT_TEST(Elimination_DHP_relaxed)
             CPPUNIT_TEST(Elimination_HP_yield)
             CPPUNIT_TEST(Elimination_HP_yield_relaxed)
-            CPPUNIT_TEST(Elimination_HRC_yield)
-            CPPUNIT_TEST(Elimination_HRC_yield_relaxed)
-            CPPUNIT_TEST(Elimination_PTB_yield)
-            CPPUNIT_TEST(Elimination_PTB_yield_relaxed)
+            CPPUNIT_TEST(Elimination_DHP_yield)
+            CPPUNIT_TEST(Elimination_DHP_yield_relaxed)
             CPPUNIT_TEST(Elimination_HP_pause_alloc)
             CPPUNIT_TEST(Elimination_HP_pause_alloc_relaxed)
-            CPPUNIT_TEST(Elimination_HRC_pause_alloc)
-            CPPUNIT_TEST(Elimination_HRC_pause_alloc_relaxed)
-            CPPUNIT_TEST(Elimination_PTB_pause_alloc)
-            CPPUNIT_TEST(Elimination_PTB_pause_alloc_relaxed)
+            CPPUNIT_TEST(Elimination_DHP_pause_alloc)
+            CPPUNIT_TEST(Elimination_DHP_pause_alloc_relaxed)
         CPPUNIT_TEST_SUITE_END();
     };
 }   // namespace stack

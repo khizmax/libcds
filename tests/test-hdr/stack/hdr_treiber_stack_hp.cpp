@@ -12,22 +12,38 @@ namespace stack {
     namespace defs { namespace {
 
         typedef cs::TreiberStack< cds::gc::HP, int > Treiber_HP;
-        typedef cs::TreiberStack< cds::gc::HP, int, cds::opt::memory_model<cds::opt::v::relaxed_ordering> > Treiber_HP_relaxed;
-        typedef cs::TreiberStack< cds::gc::HP, int, cds::opt::back_off< cds::backoff::yield> > Treiber_HP_yield;
         typedef cs::TreiberStack< cds::gc::HP, int
-            , cds::opt::back_off< cds::backoff::yield>
-            , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::memory_model<cds::opt::v::relaxed_ordering> 
+            >::type
+        > Treiber_HP_relaxed;
+
+        typedef cs::TreiberStack< cds::gc::HP, int
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::back_off< cds::backoff::yield> 
+            >::type
+        > Treiber_HP_yield;
+
+        typedef cs::TreiberStack< cds::gc::HP, int
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::back_off< cds::backoff::yield>
+                , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            >::type
         > Treiber_HP_yield_relaxed;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::back_off< cds::backoff::pause>
-            ,cds::opt::allocator< std::allocator< bool * > >
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::back_off< cds::backoff::pause>
+                ,cds::opt::allocator< std::allocator< bool * > >
+            >::type
         > Treiber_HP_pause_alloc;
 
         typedef cs::TreiberStack< cds::gc::HP, int
-            ,cds::opt::back_off< cds::backoff::pause>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-            ,cds::opt::allocator< std::allocator< unsigned long > >
+            , typename cs::treiber_stack::make_traits<
+                cds::opt::back_off< cds::backoff::pause>
+                ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+                ,cds::opt::allocator< std::allocator< unsigned long > >
+            >::type
         > Treiber_HP_pause_alloc_relaxed;
     }}
 

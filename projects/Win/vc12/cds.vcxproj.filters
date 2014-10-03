@@ -1262,5 +1262,8 @@
     <ClInclude Include="..\..\..\cds\container\details\split_list_base.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\dhp.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

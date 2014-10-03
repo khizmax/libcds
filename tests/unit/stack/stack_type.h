@@ -8,8 +8,7 @@
 #include <cds/container/fcdeque.h>
 
 #include <cds/gc/hp.h>
-#include <cds/gc/ptb.h>
-#include <cds/gc/hrc.h>
+#include <cds/gc/dhp.h>
 
 #include <mutex>
 #include <cds/lock/spinlock.h>
@@ -118,274 +117,192 @@ namespace stack {
     struct Types {
 
     // TreiberStack
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-        >       Treiber_HP;
+        typedef cds::container::TreiberStack< cds::gc::HP,  T > Treiber_HP;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T > Treiber_DHP;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::memory_model<cds::opt::v::sequential_consistent>
-        >       Treiber_HP_seqcst;
+        struct traits_Treiber_seqcst: public 
+            cds::container::treiber_stack::make_traits< 
+                cds::opt::memory_model<cds::opt::v::sequential_consistent> 
+            >::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Treiber_seqcst > Treiber_HP_seqcst;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Treiber_seqcst > Treiber_DHP_seqcst;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Treiber_HP_stat;
+        struct traits_Treiber_stat: public
+            cds::container::treiber_stack::make_traits<
+                cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            >::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP, T, traits_Treiber_stat > Treiber_HP_stat;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Treiber_stat > Treiber_DHP_stat;
 
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-        >       Treiber_HRC;
+        struct traits_Treiber_yield: public
+            cds::container::treiber_stack::make_traits<
+                cds::opt::back_off<cds::backoff::yield>
+                , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            >::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Treiber_yield > Treiber_HP_yield;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Treiber_yield > Treiber_DHP_yield;
 
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Treiber_HRC_stat;
+        struct traits_Treiber_pause: public
+            cds::container::treiber_stack::make_traits<
+                cds::opt::back_off<cds::backoff::pause>
+            >::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Treiber_pause > Treiber_HP_pause;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Treiber_pause > Treiber_DHP_pause;
 
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-        > Treiber_PTB;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Treiber_PTB_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::back_off<cds::backoff::yield>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Treiber_HP_yield;
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Treiber_HP_pause;
-        typedef cds::container::TreiberStack< cds::gc::HP, T,
-            cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
+        struct traits_Treiber_exp: public
+            cds::container::treiber_stack::make_traits<
+                cds::opt::back_off<
+                    cds::backoff::exponential<
+                        cds::backoff::pause,
+                        cds::backoff::yield
+                    >
                 >
-            >
-        > Treiber_HP_exp;
-
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Treiber_HRC_yield;
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::back_off<cds::backoff::pause>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Treiber_HRC_pause;
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-        > Treiber_HRC_exp;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Treiber_PTB_yield;
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Treiber_PTB_pause;
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Treiber_PTB_exp;
+            >::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Treiber_exp > Treiber_HP_exp;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Treiber_exp > Treiber_DHP_exp;
 
 
     // Elimination stack
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-        >       Elimination_HP;
+        struct traits_Elimination_on : public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_on > Elimination_HP;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_on > Elimination_DHP;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-        >       Elimination_HP_2ms;
+        struct traits_Elimination_stat : public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_stat > Elimination_HP_stat;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_stat > Elimination_DHP_stat;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_2ms_stat;
+        struct traits_Elimination_2ms: public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_2ms >  Elimination_HP_2ms;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_2ms >  Elimination_HP_2ms;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-        >       Elimination_HP_5ms;
+        struct traits_Elimination_2ms_stat : public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_2ms_stat > Elimination_HP_2ms_stat;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_2ms_stat > Elimination_DHP_2ms_stat;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_5ms_stat;
+        struct traits_Elimination_5ms : public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_5ms > Elimination_HP_5ms;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_5ms > Elimination_DHP_5ms;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-        >       Elimination_HP_10ms;
+        struct traits_Elimination_5ms_stat : public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_5ms_stat > Elimination_HP_5ms_stat;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_5ms_stat > Elimination_DHP_5ms_stat;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_10ms_stat;
+        struct traits_Elimination_10ms : public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_10ms > Elimination_HP_10ms;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_10ms > Elimination_DHP_10ms;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HP_dyn;
+        struct traits_Elimination_10ms_stat : public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_10ms_stat > Elimination_HP_10ms;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_10ms_stat > Elimination_DHP_10ms;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::memory_model<cds::opt::v::sequential_consistent>
-        >       Elimination_HP_seqcst;
+        struct traits_Elimination_dyn: public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn > Elimination_HP_dyn;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_dyn > Elimination_DHP_dyn;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HP_stat;
+        struct traits_Elimination_seqcst: public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::memory_model<cds::opt::v::sequential_consistent>
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_seqcst > Elimination_HP_seqcst;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_seqcst > Elimination_DHP_seqcst;
 
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HP_dyn_stat;
+        struct traits_Elimination_dyn_stat: public
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
+                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn_stat > Elimination_HP_dyn_stat;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_dyn_stat > Elimination_DHP_dyn_stat;
 
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::enable_elimination<true>
-        >       Elimination_HRC;
+        struct traits_Elimination_yield: public 
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::back_off<cds::backoff::yield>
+                , cds::opt::memory_model<cds::opt::v::relaxed_ordering>
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_yield > Elimination_HP_yield;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_yield > Elimination_DHP_yield;
 
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HRC_dyn;
+        struct traits_Elimination_pause: public 
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                , cds::opt::back_off<cds::backoff::pause>
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_pause > Elimination_HP_pause;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_pause > Elimination_DHP_pause;
 
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_HRC_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_HRC_dyn_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-        > Elimination_PTB_2ms;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<2> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        > Elimination_PTB_2ms_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-        > Elimination_PTB_5ms;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<5> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        > Elimination_PTB_5ms_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-        > Elimination_PTB_10ms;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::elimination_backoff< cds::backoff::delay_of<10> >
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        > Elimination_PTB_10ms_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-        > Elimination_PTB;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        > Elimination_PTB_dyn;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-        >       Elimination_PTB_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
-        >       Elimination_PTB_dyn_stat;
-
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::yield>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Elimination_HP_yield;
-
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Elimination_HP_pause;
-
-        typedef cds::container::TreiberStack< cds::gc::HP, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
+        struct traits_Elimination_exp: public 
+            cds::container::treiber_stack::make_traits <
+                cds::opt::enable_elimination<true>
+                ,cds::opt::back_off<
+                    cds::backoff::exponential<
+                        cds::backoff::pause,
+                        cds::backoff::yield
+                    >
                 >
-            >
-        > Elimination_HP_exp;
+            > ::type
+        {};
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_exp > Elimination_HP_exp;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_exp > Elimination_DHP_exp;
 
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Elimination_HRC_yield;
-
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::pause>
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Elimination_HRC_pause;
-
-        typedef cds::container::TreiberStack< cds::gc::HRC, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-        > Elimination_HRC_exp;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::yield>
-        >  Elimination_PTB_yield;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<cds::backoff::pause>
-        > Elimination_PTB_pause;
-
-        typedef cds::container::TreiberStack< cds::gc::PTB, T
-            ,cds::opt::enable_elimination<true>
-            ,cds::opt::back_off<
-                cds::backoff::exponential<
-                    cds::backoff::pause,
-                    cds::backoff::yield
-                >
-            >
-            ,cds::opt::memory_model<cds::opt::v::relaxed_ordering>
-        > Elimination_PTB_exp;
 
     // FCStack
         typedef cds::container::FCStack< T > FCStack_deque;
@@ -476,7 +393,7 @@ namespace stack {
 } // namespace stack
 
 namespace std {
-    static inline ostream& operator <<( ostream& o, cds::intrusive::treiber_stack::stat<> const& s )
+    static inline ostream& operator <<( ostream& o, cds::container::treiber_stack::stat<> const& s )
     {
         return o << "\tStatistics:\n"
             << "\t                    Push: " << s.m_PushCount.get()              << "\n"
@@ -490,7 +407,7 @@ namespace std {
             << "\t     m_EliminationFailed: " << s.m_EliminationFailed.get()      << "\n";
     }
 
-    static inline ostream& operator <<( ostream& o, cds::intrusive::treiber_stack::empty_stat const& s )
+    static inline ostream& operator <<(ostream& o, cds::container::treiber_stack::empty_stat const& s)
     {
         return o;
     }
