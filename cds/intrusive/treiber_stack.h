@@ -154,8 +154,8 @@ namespace cds { namespace intrusive {
             /// The functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used only in \ref TreiberStack::clear function
             typedef opt::v::empty_disposer          disposer;
 
-            /// Item counting feature; by default, disabled
-            typedef cds::atomicity::empty_item_counter   item_counter;   
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef cds::atomicity::empty_item_counter   item_counter;
 
             /// C++ memory ordering model
             /** 
@@ -208,7 +208,7 @@ namespace cds { namespace intrusive {
             This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             Supported \p Options are:
 
-            - opt::hook - hook used. Possible values are: treiber_stack::base_hook, treiber_stack::member_hook, treiber_stack::traits_hook.
+            - opt::hook - hook used. Possible values are: \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook.
                 If the option is not specified, \p %treiber_stack::base_hook<> is used.
             - opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used only
@@ -216,7 +216,8 @@ namespace cds { namespace intrusive {
             - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link.
             - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter, i.e.
+                no item counting. Use \p cds::atomicity::item_counter to enable item counting.
             - opt::stat - the type to gather internal statistics.
                 Possible option value are: \p treiber_stack::stat, \p treiber_stack::empty_stat (the default),
                 user-provided class that supports \p treiber_stack::stat interface.
@@ -423,9 +424,9 @@ namespace cds { namespace intrusive {
         This approach demonstrates sufficient performance under high load.
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::PTB. 
-            Garbage collecting schema must be consistent with the \p treiber_stack::node GC.
-        - \p T - type to be inserted into the stack
+        - \p GC - garbage collector type: \p gc::HP, gc::DHP.
+            Garbage collecting schema must be the same as \p treiber_stack::node GC.
+        - \p T - a type the stack contains
         - \p Traits - stack traits, default is \p treiber_stack::traits. You can use \p treiber_stack::make_traits
             metafunction to make your traits or just derive your traits from \p %treiber_stack::traits:
             \code
@@ -533,7 +534,7 @@ namespace cds { namespace intrusive {
         \endcode
 
         Example of how to use \p treiber_stack::member_hook.
-        Your class that will be pushed on \p %TreiberStack should have a member of type \p treiber_stack::node
+        Your class should have a member of type \p treiber_stack::node
         \code
         #include <stddef.h>     // offsetof macro
         #include <cds/intrusive/treiber_stack.h>

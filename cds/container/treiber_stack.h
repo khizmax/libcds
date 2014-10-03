@@ -9,10 +9,13 @@
 
 namespace cds { namespace container {
 
+    /// TreiberStack related definitions
+    /** @ingroup cds_nonintrusive_helper
+    */
     namespace treiber_stack {
         /// Internal statistics
         template <typename Counter = cds::atomicity::event_counter>
-        using stat = cds::intrusive::treiber_stack::stat < Counter >;
+        using stat = cds::intrusive::treiber_stack::stat< Counter >;
 
         /// Dummy internal statistics
         typedef cds::intrusive::treiber_stack::empty_stat empty_stat;
@@ -33,15 +36,15 @@ namespace cds { namespace container {
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
-            /// Item counting feature; by default, disabled
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef cds::atomicity::empty_item_counter  item_counter;
 
             /// Internal statistics (by default, no internal statistics)
             /**
-                Possible option value are: \ref treiber_stack::stat, \ref treiber_stack::empty_stat (the default),
+                Possible types are: \ref treiber_stack::stat, \ref treiber_stack::empty_stat (the default),
                 user-provided class that supports treiber_stack::stat interface.
             */
-            typedef empty_stat                          stat;
+            typedef empty_stat stat;
 
             /** @name Elimination back-off traits
                 The following traits is used only if elimination enabled
@@ -80,10 +83,11 @@ namespace cds { namespace container {
             - opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter, i.e.
+                no item counting. Use \p cds::atomicity::item_counter to enable item counting.
             - opt::stat - the type to gather internal statistics.
                 Possible option value are: \p treiber_stack::stat, \p treiber_stack::empty_stat (the default),
-                user-provided class that supports \p treiber_stack::stat interface.
+                user-provided class that supports \p %treiber_stack::stat interface.
             - opt::enable_elimination - enable elimination back-off for the stack. Default value is \p false.
 
             If elimination back-off is enabled, additional options can be specified:
@@ -154,7 +158,7 @@ namespace cds { namespace container {
             typedef intrusive::TreiberStack< gc, node_type, intrusive_traits > type;
         };
     } // namespace details
-    //@endecond
+    //@endcond
 
     /// Treiber's stack algorithm
     /** @ingroup cds_nonintrusive_stack
@@ -162,15 +166,24 @@ namespace cds { namespace container {
         intrusive::TreiberStack.
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::PTB
-        - \p T - type stored in the stack. It should be default-constructible, copy-constructible, assignable type.
+        - \p GC - garbage collector type: \p gc::HP, gc::DHP
+        - \p T - type stored in the stack.
         - \p Traits - stack traits, default is \p treiber_stack::traits. You can use \p treiber_stack::make_traits
             metafunction to make your traits or just derive your traits from \p %treiber_stack::traits:
             \code
             struct myTraits: public cds::container::treiber_stack::traits {
-                typedef cds::container::treiber_stack::stat<> stat;
+                typedef cds::intrusive::treiber_stack::stat<> stat;
+                typedef cds::atomicity::item_counter  item_counter;
             };
             typedef cds::container::TreiberStack< cds::gc::HP, Foo, myTraits > myStack;
+
+            // Equivalent make_traits example:
+            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, 
+                typename cds::intrusive::treiber_stack::make_traits<
+                    cds::opt::item_counter< cds::atomicity::item_counter >,
+                    cds::opt::stat< cds::intrusive::treiber_stack::stat<> >
+                >::type
+            > myStack;
             \endcode
     */
     template < 
@@ -363,6 +376,5 @@ namespace cds { namespace container {
     };
 
 }}  // namespace cds::container
-
 
 #endif // #ifndef __CDS_CONTAINER_TREIBER_STACK_H

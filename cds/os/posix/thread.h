@@ -29,11 +29,13 @@ namespace cds { namespace OS {
         }
     }    // namespace posix
 
+    //@cond
     using posix::ThreadId;
     constexpr const ThreadId c_NullThreadId = 0;
 
     using posix::getCurrentThreadId;
     using posix::isThreadAlive;
+    //@endcond
 
 }} // namespace cds::OS
 

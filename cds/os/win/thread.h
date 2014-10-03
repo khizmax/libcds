@@ -29,11 +29,13 @@ namespace cds { namespace OS {
         }
     }    // namespace Win32
 
+    //@cond
     using Win32::ThreadId;
     CDS_CONSTEXPR const ThreadId c_NullThreadId = 0;
 
     using Win32::getCurrentThreadId;
     using Win32::isThreadAlive;
+    //@endcond
 
 }} // namespace cds::OS
 
