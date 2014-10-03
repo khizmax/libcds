@@ -23,7 +23,7 @@ namespace cds { namespace intrusive {
         /**
             Template parameters:
             - GC - garbage collector used
-            - Tag - a tag used to distinguish between different type
+            - Tag -  this argument serves as \ref cds_intrusive_hook_tag "a tag"
         */
         template <class GC, typename Tag = opt::none >
         using node = cds::intrusive::single_link::node< GC, Tag > ;
@@ -32,7 +32,7 @@ namespace cds { namespace intrusive {
         /**
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - \ref cds_intrusive_hook_tag "a tag"
         */
         template < typename... Options >
         using base_hook = cds::intrusive::single_link::base_hook< Options...>;
@@ -44,7 +44,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - \ref cds_intrusive_hook_tag "a tag"
         */
         template < size_t MemberOffset, typename... Options >
         using member_hook = cds::intrusive::single_link::member_hook< MemberOffset, Options... >;
@@ -56,7 +56,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - \ref cds_intrusive_hook_tag "a tag"
         */
         template <typename NodeTraits, typename... Options >
         using traits_hook = cds::intrusive::single_link::traits_hook< NodeTraits, Options... >;
@@ -146,7 +146,7 @@ namespace cds { namespace intrusive {
         struct traits
         {
             /// Back-off strategy
-            typedef cds::backoff::Default           back_off;       
+            typedef cds::backoff::Default           back_off;
 
             /// Hook, possible types are treiber_stack::base_hook, treiber_stack::member_hook, treiber_stack::traits_hook
             typedef treiber_stack::base_hook<>      hook;
@@ -548,7 +548,11 @@ namespace cds { namespace intrusive {
         > stack_t;
         \endcode
     */
-    template <typename GC, typename T, typename Traits = treiber_stack::traits >
+    template <
+        typename GC, 
+        typename T, 
+        typename Traits = treiber_stack::traits 
+    >
     class TreiberStack
     {
     public:
@@ -559,7 +563,7 @@ namespace cds { namespace intrusive {
         };
 
     public:
-        typedef GC  gc;                 ///< Garbage collector
+        typedef GC      gc;             ///< Garbage collector
         typedef T       value_type;     ///< type of value stored in the stack
         typedef Traits  traits;         ///< Stack traits
 
@@ -583,7 +587,6 @@ namespace cds { namespace intrusive {
         typedef typename traits::lock_type elimination_lock_type;
         /// Random engine used in elimination back-off
         typedef typename traits::random_engine elimination_random_engine;
-
 
     protected:
         typename node_type::atomic_node_ptr m_Top;  ///< Top of the stack
@@ -615,7 +618,6 @@ namespace cds { namespace intrusive {
             static_assert( (!enable_elimination || std::is_same<typename elimination_random_engine::result_type, unsigned int>::value),
                 "Random engine result type must be unsigned int" );
         }
-
         //@endcond
 
     public:
@@ -639,7 +641,7 @@ namespace cds { namespace intrusive {
             init();
         }
 
-        /// %TreiberStack is not copy-constructible
+        /// \p %TreiberStack is not copy-constructible
         TreiberStack( TreiberStack const& ) = delete;
 
         /// Destructor calls \ref cds_intrusive_TreiberStack_clear "clear" member function

@@ -14,16 +14,24 @@ namespace cds {
     @ingroup cds_intrusive_containers
     The namespace cds::intrusive contains intrusive lock-free containers.
     The idea comes from \p boost::intrusive library, see http://boost.org/doc/ as a good introduction to intrusive approach.
-    The intrusive containers of libcds library is developed as close to boost::intrusive
+    The intrusive containers of libcds library is developed as close to \p boost::intrusive
 
     In terms of lock-free approach, the main advantage of intrusive containers is
     that no memory allocation is performed to maintain container items.
     However, additional requirements is imposed for types and values that can be stored in intrusive container.
     See the container documentation for details.
 
-    Restriction for Gidenstam's garbage collector cds::gc::HRC:
-    the Gidenstam's garbage collector makes additional requirements to type of item in intrusive container.
-    Therefore, for this GC only \p base_hook is allowed as the value of opt::hook option.
+    \anchor cds_intrusive_hook_tag
+    \par Tags
+    Many hooks and nodes for intrusive containers contain template argument \p Tag.
+    This argument serves as a tag, so you can derive from more than one container's node and hence put an object in multiple intrusive containers 
+    at the same time. An incomplete type can serve as a tag. If you specify two hooks, you must specify a different tag for each one. 
+    Example: 
+    \code
+    struct tag1;
+    cds::intrusive::treiber_stack::node< cds::gc::HP, tag<tag1> > 
+    \endcode
+    If no tag is specified еру default \p cds::opt::none will be used.
 
     \anchor cds_intrusive_item_destroying
     \par Destroying items
@@ -125,7 +133,6 @@ namespace cds {
     for any container stored that item. In your intrusive container, instead of protecting by GC's guard a pointer to an node
     you should convert it to the pointer to the item and then protect resulting item pointer.
     Otherwise an unpredictable result may occur.
-
 */
 namespace intrusive {
 
