@@ -341,17 +341,6 @@ namespace cds { namespace intrusive {
         // GC and node_type::gc must be the same
         static_assert((std::is_same<gc, typename node_type::gc>::value), "GC and node_type::gc must be the same");
 
-        struct internal_disposer
-        {
-            void operator()( value_type * p )
-            {
-                assert( p != nullptr );
-
-                MSQueue::clear_links( node_traits::to_node_ptr(p) );
-                disposer()( p );
-            }
-        };
-
         typedef intrusive::node_to_value<MSQueue> node_to_value;
         typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
 
@@ -430,7 +419,13 @@ namespace cds { namespace intrusive {
             // before HP retiring cycle invocation.
             // So, we will never clear m_Dummy
             if ( p != &m_Dummy ) {
-                gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
+                gc::retire( node_traits::to_value_ptr(p),
+                    []( value_type * ptr ) {
+                        assert( ptr != nullptr );
+                        MSQueue::clear_links( node_traits::to_node_ptr( ptr ) );
+                        disposer()(ptr);
+                    }
+                );
             }
         }
         //@endcond
