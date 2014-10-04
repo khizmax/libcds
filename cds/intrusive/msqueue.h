@@ -224,7 +224,7 @@ namespace cds { namespace intrusive {
         Template arguments:
         - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
         - \p T - type to be stored in the queue. A value of type \p T must be derived from \p msqueue::node for \p msqueue::base_hook,
-            or it should has a member of type \p %msqueue::node for \p msqueue::member_hook,
+            or it should have a member of type \p %msqueue::node for \p msqueue::member_hook,
             or it should be convertible to \p %msqueue::node for \p msqueue::traits_hook.
         - \p Traits - queue traits, default is \p queue::traits. You can use \p queue::make_traits
             metafunction to make your traits or just derive your traits from \p %queue::traits:

@@ -440,7 +440,7 @@ namespace cds { namespace intrusive {
             Garbage collecting schema must be the same as \p treiber_stack::node GC.
         - \p T - a type the stack contains. A value of type \p T must be derived 
             from \p treiber_stack::node for \p treiber_stack::base_hook,
-            or it should has a member of type \p %treiber_stack::node for \p treiber_stack::member_hook,
+            or it should have a member of type \p %treiber_stack::node for \p treiber_stack::member_hook,
             or it should be convertible to \p %treiber_stack::node for \p treiber_stack::traits_hook.
         - \p Traits - stack traits, default is \p treiber_stack::traits. You can use \p treiber_stack::make_traits
             metafunction to make your traits or just derive your traits from \p %treiber_stack::traits:
