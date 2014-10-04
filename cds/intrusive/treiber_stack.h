@@ -150,10 +150,10 @@ namespace cds { namespace intrusive {
             /// Back-off strategy
             typedef cds::backoff::Default           back_off;
 
-            /// Hook, possible types are treiber_stack::base_hook, treiber_stack::member_hook, treiber_stack::traits_hook
+            /// Hook, possible types are \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook
             typedef treiber_stack::base_hook<>      hook;
 
-            /// The functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used only in \ref TreiberStack::clear function
+            /// The functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used only in \p TreiberStack::clear() function
             typedef opt::v::empty_disposer          disposer;
 
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
@@ -161,19 +161,19 @@ namespace cds { namespace intrusive {
 
             /// C++ memory ordering model
             /** 
-                Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-                or opt::v::sequential_consistent (sequentially consisnent memory model).
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
-            /// Internal statistics (by default, no internal statistics)
+            /// Internal statistics (by default, disabled)
             /**
-                Possible option value are: \ref treiber_stack::stat, \ref treiber_stack::empty_stat (the default),
-                user-provided class that supports treiber_stack::stat interface.
+                Possible option value are: \p treiber_stack::stat, \p treiber_stack::empty_stat (the default),
+                user-provided class that supports \p %treiber_stack::stat interface.
             */
             typedef treiber_stack::empty_stat       stat;
 
-            /// Link checking, see cds::opt::link_checker
+            /// Link checking, see \p cds::opt::link_checker
             static CDS_CONSTEXPR_CONST opt::link_check_type link_checker = opt::debug_check_link;
 
             /** @name Elimination back-off traits
@@ -205,12 +205,12 @@ namespace cds { namespace intrusive {
             ///@}
         };
 
-        /// Metafunction converting option list to \p TreiberStack traits
+        /// Metafunction converting option list to \p treiber_stack::traits
         /**
             This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             Supported \p Options are:
 
-            - opt::hook - hook used. Possible values are: \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook.
+            - opt::hook - hook used. Possible hooks are: \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook.
                 If the option is not specified, \p %treiber_stack::base_hook<> is used.
             - opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used only
@@ -235,16 +235,15 @@ namespace cds { namespace intrusive {
             - opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
             - opt::lock_type - a lock type used in elimination back-off, default is \p cds::lock::Spin.
 
-            Example: declare \P %TreiberStack with elimination enabled and internal statistics
+            Example: declare \p %TreiberStack with elimination enabled and internal statistics
             \code
             typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, 
                 typename cds::intrusive::treiber_stack::make_traits<
                     cds::opt::enable_elimination< true >,
-                    cds::opt::stat< cds::container::treiber_stack::stat<> >
+                    cds::opt::stat< cds::intrusive::treiber_stack::stat<> >
                 >::type
             > myStack;
             \endcode
-
         */
         template <typename... Options>
         struct make_traits {
@@ -417,7 +416,7 @@ namespace cds { namespace intrusive {
         //@endcond
     } // namespace treiber_stack
 
-    /// Treiber stack
+    /// Treiber intrusive stack
     /** @ingroup cds_intrusive_stack
         Intrusive implementation of well-known Treiber's stack algorithm:
         - R. K. Treiber. Systems programming: Coping with parallelism. Technical Report RJ 5118, IBM Almaden Research Center, April 1986.
@@ -437,9 +436,12 @@ namespace cds { namespace intrusive {
         This approach demonstrates sufficient performance under high load.
 
         Template arguments:
-        - \p GC - garbage collector type: \p gc::HP, gc::DHP.
+        - \p GC - garbage collector type: \p gc::HP, \p gc::DHP.
             Garbage collecting schema must be the same as \p treiber_stack::node GC.
-        - \p T - a type the stack contains
+        - \p T - a type the stack contains. A value of type \p T must be derived 
+            from \p treiber_stack::node for \p treiber_stack::base_hook,
+            or it should has a member of type \p %treiber_stack::node for \p treiber_stack::member_hook,
+            or it should be convertible to \p %treiber_stack::node for \p treiber_stack::traits_hook.
         - \p Traits - stack traits, default is \p treiber_stack::traits. You can use \p treiber_stack::make_traits
             metafunction to make your traits or just derive your traits from \p %treiber_stack::traits:
             \code
@@ -595,9 +597,9 @@ namespace cds { namespace intrusive {
         typedef typename traits::disposer  disposer;    ///< disposer used
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
         typedef typename single_link::get_link_checker< node_type, traits::link_checker >::type link_checker   ;   ///< link checker
-        typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename traits::item_counter   item_counter;   ///< Item counting policy used
-        typedef typename traits::stat           stat;           ///< Internal statistics policy used
+        typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
+        typedef typename traits::item_counter   item_counter;   ///< Item counter class
+        typedef typename traits::stat           stat;           ///< Internal statistics
         typedef typename traits::back_off       back_off;       ///< back-off strategy
 
     public: // related to elimination back-off
