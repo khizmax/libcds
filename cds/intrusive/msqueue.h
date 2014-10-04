@@ -5,48 +5,248 @@
 
 #include <type_traits>
 #include <cds/intrusive/details/single_link_struct.h>
-#include <cds/intrusive/details/queue_stat.h>
-#include <cds/intrusive/details/dummy_node_holder.h>
+#include <cds/cxx11_atomic.h>
 
 namespace cds { namespace intrusive {
 
-    /// Michael & Scott's lock-free queue (intrusive variant)
-    /** @ingroup cds_intrusive_queue
-        Implementation of well-known Michael & Scott's queue algorithm.
+    /// MSQueue related definitions
+    /** @ingroup cds_intrusive_helper
+    */
+    namespace msqueue {
 
-        \par Source:
-            [1998] Maged Michael, Michael Scott "Simple, fast, and practical non-blocking and blocking
-                   concurrent queue algorithms"
+        /// Queue node
+        /**
+            Template parameters:
+            - GC - garbage collector used
+            - Tag - a \ref cds_intrusive_hook_tag "tag"
+        */
+        template <class GC, typename Tag = opt::none >
+        using node = cds::intrusive::single_link::node< GC, Tag > ;
+
+        /// Base hook
+        /**
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
+        */
+        template < typename... Options >
+        using base_hook = cds::intrusive::single_link::base_hook< Options...>;
+
+        /// Member hook
+        /**
+            \p MemberOffset specifies offset in bytes of \ref node member into your structure.
+            Use \p offsetof macro to define \p MemberOffset
+
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
+        */
+        template < size_t MemberOffset, typename... Options >
+        using member_hook = cds::intrusive::single_link::member_hook< MemberOffset, Options... >;
+
+        /// Traits hook
+        /**
+            \p NodeTraits defines type traits for node.
+            See \ref node_traits for \p NodeTraits interface description
+
+            \p Options are:
+            - opt::gc - garbage collector used.
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
+        */
+        template <typename NodeTraits, typename... Options >
+        using traits_hook = cds::intrusive::single_link::traits_hook< NodeTraits, Options... >;
+
+        /// Queue internal statistics. May be used for debugging or profiling
+        /**
+            Template argument \p Counter defines type of counter.
+            Default is \p cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
+            strict event counting.
+            You may use stronger type of counter like as \p cds::atomicity::item_counter,
+            or even integral type, for example, \p int.
+        */
+        template <typename Counter = cds::atomicity::event_counter >
+        struct stat
+        {
+            typedef Counter     counter_type    ;   ///< Counter type
+
+            counter_type m_EnqueueCount      ;  ///< Enqueue call count
+            counter_type m_DequeueCount      ;  ///< Dequeue call count
+            counter_type m_EnqueueRace       ;  ///< Count of enqueue race conditions encountered
+            counter_type m_DequeueRace       ;  ///< Count of dequeue race conditions encountered
+            counter_type m_AdvanceTailError  ;  ///< Count of "advance tail failed" events
+            counter_type m_BadTail           ;  ///< Count of events "Tail is not pointed to the last item in the queue"
+
+            /// Register enqueue call
+            void onEnqueue()                { ++m_EnqueueCount; }
+            /// Register dequeue call
+            void onDequeue()                { ++m_DequeueCount; }
+            /// Register enqueue race event
+            void onEnqueueRace()            { ++m_EnqueueRace; }
+            /// Register dequeue race event
+            void onDequeueRace()            { ++m_DequeueRace; }
+            /// Register "advance tail failed" event
+            void onAdvanceTailFailed()      { ++m_AdvanceTailError; }
+            /// Register event "Tail is not pointed to last item in the queue"
+            void onBadTail()                { ++m_BadTail; }
+
+            //@cond
+            void reset()
+            {
+                m_EnqueueCount.reset();
+                m_DequeueCount.reset();
+                m_EnqueueRace.reset();
+                m_DequeueRace.reset();
+                m_AdvanceTailError.reset();
+                m_BadTail.reset();
+            }
+
+            stat& operator +=( stat const& s )
+            {
+                m_EnqueueCount += s.m_EnqueueCount.get();
+                m_DequeueCount += s.m_DequeueCount.get();
+                m_EnqueueRace += s.m_EnqueueRace.get();
+                m_DequeueRace += s.m_DequeueRace.get();
+                m_AdvanceTailError += s.m_AdvanceTailError.get();
+                m_BadTail += s.m_BadTail.get();
+
+                return *this;
+            }
+            //@endcond
+        };
+
+        /// Dummy queue statistics - no counting is performed, no overhead. Support interface like \p msqueue::stat
+        /** @ingroup cds_intrusive_helper
+        */
+        struct empty_stat
+        {
+            //@cond
+            void onEnqueue()                {}
+            void onDequeue()                {}
+            void onEnqueueRace()            {}
+            void onDequeueRace()            {}
+            void onAdvanceTailFailed()      {}
+            void onBadTail()                {}
+
+            void reset() {}
+            empty_stat& operator +=( empty_stat const& s )
+            {
+                return *this;
+            }
+            //@endcond
+        };
+
+        /// MSQueue default type traits
+        struct traits
+        {
+            /// Back-off strategy
+            typedef cds::backoff::empty         back_off;
+
+            /// Hook, possible types are \p msqueue::base_hook, \p msqueue::member_hook, \p msqueue::traits_hook
+            typedef msqueue::base_hook<>        hook;
+
+            /// The functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used for dequeuing
+            typedef opt::v::empty_disposer      disposer;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef atomicity::empty_item_counter   item_counter;
+
+            /// Internal statistics (by default, disabled)
+            /**
+                Possible option value are: \p msqueue::stat, \p msqueue::empty_stat (the default),
+                user-provided class that supports \p %msqueue::stat interface.
+            */
+            typedef msqueue::empty_stat         stat;
+
+            /// C++ memory ordering model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering    memory_model;
+
+            /// Link checking, see \p cds::opt::link_checker
+            static const opt::link_check_type link_checker = opt::debug_check_link;
+
+            /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+        /// Metafunction converting option list to \p msqueue::traits
+        /**
+            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
+            Supported \p Options are:
+
+            - opt::hook - hook used. Possible hooks are: \p msqueue::base_hook, \p msqueue::member_hook, \p msqueue::traits_hook.
+                If the option is not specified, \p %msqueue::base_hook<> is used.
+            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+                when dequeuing.
+            - opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            - opt::stat - the type to gather internal statistics.
+                Possible statistics types are: \p msqueue::stat, \p msqueue::empty_stat, user-provided class that supports \p %msqueue::stat interface.
+                Default is \p msqueue::empty_stat.
+            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare \p %MSQueue with item counting and internal statistics
+            \code
+            typedef cds::intrusive::MSQueue< cds::gc::HP, Foo, 
+                typename cds::intrusive::msqueue::make_traits<
+                    cds::opt::item_counte< cds::atomicity::item_counter >,
+                    cds::opt::stat< cds::intrusive::msqueue::stat<> >
+                >::type
+            > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
+
+
+    } // namespace msqueue
+
+    /// Michael & Scott's intrusive lock-free queue
+    /** @ingroup cds_intrusive_queue
+        Implementation of well-known Michael & Scott's queue algorithm:
+        - [1998] Maged Michael, Michael Scott "Simple, fast, and practical non-blocking and blocking concurrent queue algorithms"
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::HRC, gc::PTB
-        - \p T - type to be stored in the queue, should be convertible to \ref single_link::node
-        - \p Options - options
+        - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
+        - \p T - type to be stored in the queue. A value of type \p T must be derived from \p msqueue::node for \p msqueue::base_hook,
+            or it should has a member of type \p %msqueue::node for \p msqueue::member_hook,
+            or it should be convertible to \p %msqueue::node for \p msqueue::traits_hook.
+        - \p Traits - queue traits, default is \p queue::traits. You can use \p queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %queue::traits:
+            \code
+            struct myTraits: public cds::intrusive::queue::traits {
+                typedef cds::intrusive::msqueue::stat<> stat;
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::intrusive::MSQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
-        Type of node: \ref single_link::node
-
-        \p Options are:
-        - opt::hook - hook used. Possible values are: single_link::base_hook, single_link::member_hook, single_link::traits_hook.
-            If the option is not specified, <tt>single_link::base_hook<></tt> is used.
-            For Gidenstam's gc::HRC, only single_link::base_hook is supported.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used
-            in \ref dequeue function.
-        - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link
-            Note: for gc::HRC garbage collector, link checking policy is always selected as \ref opt::always_check_link.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter (no item counting feature)
-        - opt::stat - the type to gather internal statistics.
-            Possible option value are: \ref queue_stat, \ref queue_dummy_stat, user-provided class that supports queue_stat interface.
-            Default is \ref queue_dummy_stat.
-        - opt::alignment - the alignment for internal queue data. Default is opt::cache_line_alignment
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-
-        Garbage collecting schema \p GC must be consistent with the single_link::node GC.
+            // Equivalent make_traits example:
+            typedef cds::intrusive::MSQueue< cds::gc::HP, Foo, 
+                typename cds::intrusive::msqueue::make_traits< 
+                    cds::opt::stat< cds::intrusive::msqueue::stat<> >,
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
 
         \par About item disposing
         The Michael & Scott's queue algo has a key feature: even if the queue is empty it contains one item that is "dummy" one from
-        the standpoint of the algo. See \ref dequeue function doc for explanation.
+        the standpoint of the algo. See \p dequeue() function for explanation.
 
         \par Examples
         \code
@@ -57,7 +257,7 @@ namespace cds { namespace intrusive {
         typedef cds::gc::HP hp_gc;
 
         // MSQueue with Hazard Pointer garbage collector, base hook + item disposer:
-        struct Foo: public ci::single_link::node< hp_gc >
+        struct Foo: public ci::msqueue::node< hp_gc >
         {
             // Your data
             ...
@@ -71,85 +271,76 @@ namespace cds { namespace intrusive {
             }
         };
 
-        typedef ci::MSQueue< hp_gc,
-            Foo
+        // Declare traits for the queue
+        struct myTraits: public ci::msqueue::traits {
             ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<hp_gc> >
+                ci::msqueue::base_hook< ci::opt::gc<hp_gc> >
             >
             ,ci::opt::disposer< fooDisposer >
-        > fooQueue;
+        };
 
-        // MSQueue with Hazard Pointer garbage collector,
-        // member hook + item disposer + item counter,
-        // without alignment of internal queue data:
+        // At least, declare the queue type
+        typedef ci::MSQueue< hp_gc, Foo, myTraits > fooQueue;
+
+        // Example 2:
+        //  MSQueue with Hazard Pointer garbage collector,
+        //  member hook + item disposer + item counter,
+        //  without alignment of internal queue data
+        //  Use msqueue::make_traits
         struct Bar
         {
             // Your data
             ...
-            ci::single_link::node< hp_gc > hMember;
+            ci::msqueue::node< hp_gc > hMember;
         };
 
         typedef ci::MSQueue< hp_gc,
-            Foo
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(Bar, hMember)
-                    ,ci::opt::gc<hp_gc>
+            Foo,
+            typename ci::msqueue::make_traits<
+                ci::opt::hook<
+                    ci::msqueue::member_hook<
+                        offsetof(Bar, hMember)
+                        ,ci::opt::gc<hp_gc>
+                    >
                 >
-            >
-            ,ci::opt::disposer< fooDisposer >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-            ,cds::opt::alignment< cds::opt::no_special_alignment >
+                ,ci::opt::disposer< fooDisposer >
+                ,cds::opt::item_counter< cds::atomicity::item_counter >
+                ,cds::opt::alignment< cds::opt::no_special_alignment >
+            >::type
         > barQueue;
         \endcode
     */
-    template <typename GC, typename T, typename... Options>
+    template <typename GC, typename T, typename Traits>
     class MSQueue
     {
-        //@cond
-        struct default_options
-        {
-            typedef cds::backoff::empty             back_off;
-            typedef single_link::base_hook<>        hook;
-            typedef opt::v::empty_disposer          disposer;
-            typedef atomicity::empty_item_counter   item_counter;
-            typedef queue_dummy_stat                stat;
-            typedef opt::v::relaxed_ordering        memory_model;
-            static const opt::link_check_type link_checker = opt::debug_check_link;
-            enum { alignment = opt::cache_line_alignment };
-        };
-        //@endcond
-
     public:
-        //@cond
-        typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, Options... >::type
-            ,Options...
-        >::type   options;
-        //@endcond
+        typedef GC gc;          ///< Garbage collector
+        typedef T  value_type;  ///< type of value stored in the queue
+        typedef Traits traits;  ///< Queue traits
 
-    public:
-        typedef T  value_type   ;   ///< type of value stored in the queue
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
-        typedef typename options::disposer  disposer    ;   ///< disposer used
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
-        typedef typename single_link::get_link_checker< node_type, options::link_checker >::type link_checker   ;   ///< link checker
+        typedef typename traits::hook       hook;       ///< hook type
+        typedef typename hook::node_type    node_type;  ///< node type
+        typedef typename traits::disposer   disposer;   ///< disposer used
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;   ///< node traits
+        typedef typename single_link::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
-        typedef GC gc          ;   ///< Garbage collector
-        typedef typename options::back_off  back_off    ;   ///< back-off strategy
-        typedef typename options::item_counter item_counter ;   ///< Item counting policy used
-        typedef typename options::stat      stat        ;   ///< Internal statistics policy used
-        typedef typename options::memory_model  memory_model ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::back_off   back_off;       ///< back-off strategy
+        typedef typename traits::item_counter item_counter; ///< Item counter class
+        typedef typename traits::stat       stat;           ///< Internal statistics
+        typedef typename traits::memory_model memory_model; ///< Memory ordering. See \p cds::opt::memory_model option
 
         /// Rebind template arguments
-        template <typename GC2, typename T2, typename... Options2>
+        template <typename GC2, typename T2, typename Traits2>
         struct rebind {
-            typedef MSQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
+            typedef MSQueue< GC2, T2, Traits2 > other;   ///< Rebinding result
         };
 
     protected:
         //@cond
+
+        // GC and node_type::gc must be the same
+        static_assert((std::is_same<gc, typename node_type::gc>::value), "GC and node_type::gc must be the same");
+
         struct internal_disposer
         {
             void operator()( value_type * p )
@@ -162,12 +353,9 @@ namespace cds { namespace intrusive {
         };
 
         typedef intrusive::node_to_value<MSQueue> node_to_value;
-        typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, options::alignment >::type aligned_node_ptr;
+        typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
 
-        typedef typename opt::details::alignment_setter<
-            cds::intrusive::details::dummy_node< gc, node_type>,
-            options::alignment
-        >::type    dummy_node_type;
+        typedef typename opt::details::alignment_setter< node_type, traits::alignment >::type dummy_node_type;
 
         aligned_node_ptr    m_pHead ;           ///< Queue's head pointer (cache-line aligned)
         aligned_node_ptr    m_pTail ;           ///< Queue's tail pointer (cache-line aligned)
@@ -194,7 +382,6 @@ namespace cds { namespace intrusive {
                 h = res.guards.protect( 0, m_pHead, node_to_value() );
                 pNext = h->m_pNext.load( memory_model::memory_order_relaxed );
                 res.guards.assign( 1, node_to_value()( pNext ));
-                //pNext = res.guards.protect( 1, h->m_pNext, node_to_value() );
                 if ( m_pHead.load(memory_model::memory_order_acquire) != h )
                     continue;
 
@@ -236,18 +423,14 @@ namespace cds { namespace intrusive {
 
         void dispose_node( node_type * p )
         {
-            if ( p != m_Dummy.get() ) {
+            // Note for he dummy node:
+            // We cannot clear m_Dummy here since it leads to ABA.
+            // On the other hand, we cannot use deferred clear_links( &m_Dummy ) call via
+            // HP retiring cycle since m_Dummy is member of MSQueue and may be destroyed
+            // before HP retiring cycle invocation.
+            // So, we will never clear m_Dummy
+            if ( p != &m_Dummy ) {
                 gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
-            }
-            else {
-                // We cannot clear m_Dummy here since it leads to ABA.
-                // On the other hand, we cannot use deferred clear_links( &m_Dummy ) call via
-                // HP retiring cycle since m_Dummy is member of MSQueue and may be destroyed
-                // before HP retiring cycle invocation.
-                // So, we will never clear m_Dummy for gc::HP and gc::PTB
-                // However, gc::HRC nodes are managed by reference counting, so, we must
-                // call HP retire cycle.
-                m_Dummy.retire();
             }
         }
         //@endcond
@@ -255,26 +438,9 @@ namespace cds { namespace intrusive {
     public:
         /// Initializes empty queue
         MSQueue()
-            : m_pHead( nullptr )
-            , m_pTail( nullptr )
-        {
-            // GC and node_type::gc must be the same
-            static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
-
-            // For cds::gc::HRC, only base_hook is allowed
-            static_assert((
-                std::conditional<
-                    std::is_same<gc, cds::gc::HRC>::value,
-                    std::is_same< typename hook::hook_type, opt::base_hook_tag >,
-                    boost::true_type
-                >::type::value
-            ), "For cds::gc::HRC, only base_hook is allowed");
-
-            // Head/tail initialization should be made via store call
-            // since gc::HRC manages reference counting
-            m_pHead.store( m_Dummy.get(), memory_model::memory_order_relaxed );
-            m_pTail.store( m_Dummy.get(), memory_model::memory_order_relaxed );
-        }
+            : m_pHead( &m_Dummy )
+            , m_pTail( &m_Dummy )
+        {}
 
         /// Destructor clears the queue
         /**
@@ -298,11 +464,11 @@ namespace cds { namespace intrusive {
 
         /// Returns queue's item count
         /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
+            The value returned depends on \p msqueue::traits::item_counter. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the queue
-            is empty. To check queue emptyness use \ref empty() method.
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
+            is empty. To check queue emptyness use \p empty() method.
         */
         size_t size() const
         {
@@ -310,7 +476,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns reference to internal statistics
-        const stat& statistics() const
+        stat const& statistics() const
         {
             return m_Stat;
         }
@@ -359,7 +525,7 @@ namespace cds { namespace intrusive {
             If the queue is empty the function returns \p nullptr.
 
             \par Warning
-            The queue algorithm has following feature: when \p dequeue is called,
+            The queue algorithm has following feature: when \p %dequeue() is called,
             the item returning is still queue's top, and previous top is disposed:
 
             \code
@@ -372,11 +538,11 @@ namespace cds { namespace intrusive {
             |       ...        |
             \endcode
 
-            \p dequeue function returns Item 2, that becomes new top of queue, and calls
+            \p %dequeue() function returns Item 2, that becomes new top of queue, and calls
             the disposer for Item 1, that was queue's top on function entry.
             Thus, you cannot manually delete item returned because it is still included in
             item sequence and it has valuable link field that must not be zeroed.
-            The item may be deleted only in disposer call.
+            The item should be deleted only in garbage collector retire cycle using the disposer.
         */
         value_type * dequeue()
         {
@@ -390,13 +556,13 @@ namespace cds { namespace intrusive {
             return nullptr;
         }
 
-        /// Synonym for \ref cds_intrusive_MSQueue_enqueue "enqueue" function
+        /// Synonym for \ref cds_intrusive_MSQueue_enqueue "enqueue()" function
         bool push( value_type& val )
         {
             return enqueue( val );
         }
 
-        /// Synonym for \ref cds_intrusive_MSQueue_dequeue "dequeue" function
+        /// Synonym for \ref cds_intrusive_MSQueue_dequeue "dequeue()" function
         value_type * pop()
         {
             return dequeue();
@@ -411,8 +577,8 @@ namespace cds { namespace intrusive {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns \p nullptr.
-            The disposer defined in template \p Options is called for each item
+            The function repeatedly calls \p dequeue() until it returns \p nullptr.
+            The disposer defined in template \p Traits is called for each item
             that can be safely disposed.
         */
         void clear()
