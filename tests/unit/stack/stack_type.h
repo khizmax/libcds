@@ -192,7 +192,7 @@ namespace stack {
             > ::type
         {};
         typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_2ms >  Elimination_HP_2ms;
-        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_2ms >  Elimination_HP_2ms;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_2ms >  Elimination_DHP_2ms;
 
         struct traits_Elimination_2ms_stat : public
             cds::container::treiber_stack::make_traits <
@@ -239,8 +239,8 @@ namespace stack {
                 , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
             > ::type
         {};
-        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_10ms_stat > Elimination_HP_10ms;
-        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_10ms_stat > Elimination_DHP_10ms;
+        typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_10ms_stat > Elimination_HP_10ms_stat;
+        typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_10ms_stat > Elimination_DHP_10ms_stat;
 
         struct traits_Elimination_dyn: public
             cds::container::treiber_stack::make_traits <

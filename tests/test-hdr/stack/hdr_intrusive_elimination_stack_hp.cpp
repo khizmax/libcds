@@ -31,7 +31,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::base_hook<
+                    ci::treiber_stack::base_hook<
                         ci::opt::gc<cds::gc::HP>
                     >
                 >
@@ -43,7 +43,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::base_hook<
+                    ci::treiber_stack::base_hook<
                         ci::opt::gc<cds::gc::HP>
                     >
                 >
@@ -56,7 +56,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::base_hook<
+                    ci::treiber_stack::base_hook<
                         ci::opt::gc<cds::gc::HP>
                     >
                 >
@@ -70,7 +70,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
+                    ci::treiber_stack::base_hook< ci::opt::gc<cds::gc::HP> >
                 >
                 ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
             >::type
@@ -81,7 +81,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
+                    ci::treiber_stack::base_hook< ci::opt::gc<cds::gc::HP> >
                 >
                 ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
                 ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
@@ -94,7 +94,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
@@ -107,7 +107,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
@@ -121,7 +121,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
@@ -136,7 +136,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
@@ -150,7 +150,7 @@ namespace stack {
             , typename ci::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
                 ,ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >

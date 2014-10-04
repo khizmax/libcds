@@ -38,7 +38,7 @@ namespace stack {
             CPPUNIT_ASSERT( stack.pop(v) );
             CPPUNIT_ASSERT( v == 3 );
             CPPUNIT_ASSERT( !stack.empty() );
-            CPPUNIT_ASSERT( stack.pop_with( [&v]( value_type& src ) { v = src; } );
+            CPPUNIT_ASSERT( stack.pop_with( [&v]( value_type& src ) { v = src; } ));
             CPPUNIT_ASSERT( v == 2 );
             CPPUNIT_ASSERT( !stack.empty() );
             CPPUNIT_ASSERT( stack.pop(v) );

@@ -14,7 +14,7 @@ namespace cds { namespace container {
     */
     namespace treiber_stack {
         /// Internal statistics
-        template <typename Counter = cds::atomicity::event_counter>
+        template <typename Counter = cds::intrusive::treiber_stack::stat<>::counter_type >
         using stat = cds::intrusive::treiber_stack::stat< Counter >;
 
         /// Dummy internal statistics
@@ -99,6 +99,16 @@ namespace cds { namespace container {
                 Default is \p opt::v::c_rand.
             - opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
             - opt::lock_type - a lock type used in elimination back-off, default is \p cds::lock::Spin.
+
+            Example: declare %TreiberStack with item counting and internal statistics using \p %make_traits
+            \code
+            typedef cds::container::TreiberStack< cds::gc::HP, Foo,
+                typename cds::container::treiber_stack::make_traits<
+                    cds::opt::item_counter< cds::atomicity::item_counter >,
+                    cds::opt::stat< cds::intrusive::treiber_stack::stat<> >
+                >::type
+            > myStack;
+            \endcode
         */
         template <typename... Options>
         struct make_traits {
@@ -208,7 +218,7 @@ namespace cds { namespace container {
         /// Rebind template arguments
         template <typename GC2, typename T2, typename Traits2>
         struct rebind {
-            typedef TreiberStack< GC2, T2, Traits2> other   ;   ///< Rebinding result
+            typedef TreiberStack< GC2, T2, Traits2 > other;   ///< Rebinding result
         };
 
     public:

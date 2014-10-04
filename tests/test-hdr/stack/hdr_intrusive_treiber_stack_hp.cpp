@@ -23,17 +23,19 @@ namespace stack {
         // HZP GC + base hook
         typedef cds::intrusive::TreiberStack< cds::gc::HP,
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::base_hook<
-                    ci::opt::gc<cds::gc::HP>
+            , typename ci::treiber_stack::make_traits<
+                ci::opt::hook<
+                    ci::treiber_stack::base_hook<
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
+            >::type
         > Treiber_HP_base;
 
         struct traits_Treiber_HP_base_relaxed
             : ci::treiber_stack::make_traits <
                 ci::opt::hook<
-                    ci::single_link::base_hook<
+                    ci::treiber_stack::base_hook<
                         ci::opt::gc<cds::gc::HP>
                     >
                 >
@@ -49,7 +51,7 @@ namespace stack {
         struct traits_Treiber_HP_base_disposer
             : ci::treiber_stack::make_traits <
                 ci::opt::hook<
-                    ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
+                    ci::treiber_stack::base_hook< ci::opt::gc<cds::gc::HP> >
                 >
                 ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
             >::type
@@ -63,7 +65,7 @@ namespace stack {
             TestIntrusiveStack::base_hook_item<cds::gc::HP>
             ,typename ci::treiber_stack::make_traits <
                 ci::opt::hook<
-                    ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
+                    ci::treiber_stack::base_hook< ci::opt::gc<cds::gc::HP> >
                 >
                 ,ci::opt::disposer< TestIntrusiveStack::faked_disposer >
                 ,ci::opt::memory_model< ci::opt::v::relaxed_ordering >
@@ -74,7 +76,7 @@ namespace stack {
         struct traits_Treiber_HP_member
             : ci::treiber_stack::make_traits <
                 ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
@@ -89,7 +91,7 @@ namespace stack {
         struct traits_Treiber_HP_member_relaxed
             : ci::treiber_stack::make_traits <
                 ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
@@ -106,7 +108,7 @@ namespace stack {
         struct traits_Treiber_HP_member_disposer
             : ci::treiber_stack::make_traits <
                 ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
@@ -122,7 +124,7 @@ namespace stack {
         struct traits_Treiber_HP_member_disposer_relaxed
             : ci::treiber_stack::make_traits <
                 ci::opt::hook<
-                    ci::single_link::member_hook<
+                    ci::treiber_stack::member_hook<
                         offsetof(TestIntrusiveStack::member_hook_item<cds::gc::HP>, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >

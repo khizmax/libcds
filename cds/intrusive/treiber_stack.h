@@ -4,7 +4,6 @@
 #define __CDS_INTRUSIVE_TREIBER_STACK_H
 
 #include <type_traits>
-#include <functional>   // ref
 #include <mutex>        // unique_lock
 #include <cds/intrusive/details/single_link_struct.h>
 #include <cds/algo/elimination.h>
@@ -124,7 +123,10 @@ namespace cds { namespace intrusive {
                 else
                     ++m_PassivePopCollision;
             }
-            void onEliminationFailed()          { ++m_EliminationFailed;}
+            void onEliminationFailed() 
+            {
+                ++m_EliminationFailed;
+            }
             //@endcond
         };
 
@@ -232,6 +234,17 @@ namespace cds { namespace intrusive {
                 Default is \p opt::v::c_rand.
             - opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
             - opt::lock_type - a lock type used in elimination back-off, default is \p cds::lock::Spin.
+
+            Example: declare \P %TreiberStack with elimination enabled and internal statistics
+            \code
+            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, 
+                typename cds::intrusive::treiber_stack::make_traits<
+                    cds::opt::enable_elimination< true >,
+                    cds::opt::stat< cds::container::treiber_stack::stat<> >
+                >::type
+            > myStack;
+            \endcode
+
         */
         template <typename... Options>
         struct make_traits {
@@ -578,7 +591,7 @@ namespace cds { namespace intrusive {
         typedef Traits  traits;         ///< Stack traits
 
         typedef typename traits::hook      hook;        ///< hook type
-        typedef typename traits::node_type node_type;   ///< node type
+        typedef typename hook::node_type   node_type;   ///< node type
         typedef typename traits::disposer  disposer;    ///< disposer used
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
         typedef typename single_link::get_link_checker< node_type, traits::link_checker >::type link_checker   ;   ///< link checker
@@ -608,6 +621,12 @@ namespace cds { namespace intrusive {
 
         typedef intrusive::node_to_value<TreiberStack>  node_to_value;
         typedef treiber_stack::operation< value_type >  operation_desc;
+
+        // GC and node_type::gc must be the same
+        static_assert( std::is_same<gc, typename node_type::gc>::value, "GC and node_type::gc must be the same");
+
+        static_assert( !enable_elimination || std::is_same<typename elimination_random_engine::result_type, unsigned int>::value,
+                       "Random engine result type must be unsigned int");
         //@endcond
 
     protected:
@@ -619,24 +638,13 @@ namespace cds { namespace intrusive {
 
         template <bool EnableElimination>
         struct elimination_backoff_impl;
-
-        void init()
-        {
-            // GC and node_type::gc must be the same
-            static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
-
-            static_assert( (!enable_elimination || std::is_same<typename elimination_random_engine::result_type, unsigned int>::value),
-                "Random engine result type must be unsigned int" );
-        }
         //@endcond
 
     public:
         /// Constructs empty stack
         TreiberStack()
             : m_Top( nullptr )
-        {
-            init();
-        }
+        {}
 
         /// Constructs empty stack and initializes elimination back-off data
         /**
@@ -647,9 +655,7 @@ namespace cds { namespace intrusive {
         TreiberStack( size_t nCollisionCapacity )
             : m_Top( nullptr )
             , m_Backoff( nCollisionCapacity )
-        {
-            init();
-        }
+        {}
 
         /// \p %TreiberStack is not copy-constructible
         TreiberStack( TreiberStack const& ) = delete;

@@ -57,7 +57,7 @@ namespace stack {
 
         typedef cs::TreiberStack< cds::gc::DHP, int
             , typename cs::treiber_stack::make_traits<
-                ,cds::opt::back_off< cds::backoff::pause>
+                cds::opt::back_off< cds::backoff::pause >
                 ,cds::opt::allocator< std::allocator< bool * > >
                 ,cds::opt::enable_elimination<true>
             >::type

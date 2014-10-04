@@ -73,10 +73,10 @@ namespace istack {
         typedef cds::intrusive::TreiberStack< cds::gc::HP,  T > Treiber_HP;
         struct traits_Treiber_DHP: public
             cds::intrusive::treiber_stack::make_traits <
-                cds::intrusive::opt::hook< base_hook<cds::gc::PTB> >
+                cds::intrusive::opt::hook< base_hook<cds::gc::DHP> >
             > ::type
         {};
-        typedef cds::intrusive::TreiberStack< cds::gc::PTB, T, traits_Treiber_DHP >Treiber_PTB;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_DHP >Treiber_DHP;
 
         template <class GC> struct traits_Treiber_seqcst : public
             cds::intrusive::treiber_stack::make_traits <
@@ -139,6 +139,16 @@ namespace istack {
         {};
         typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_on<cds::gc::HP>  > Elimination_HP;
         typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_on<cds::gc::DHP> > Elimination_DHP;
+
+        template <class GC> struct traits_Elimination_seqcst : public
+            cds::intrusive::treiber_stack::make_traits <
+                cds::intrusive::opt::hook< base_hook<GC> >
+                , cds::opt::enable_elimination<true>
+                , cds::opt::memory_model< cds::opt::v::sequential_consistent >
+            > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_seqcst<cds::gc::HP>  > Elimination_HP_seqcst;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Elimination_seqcst<cds::gc::DHP> > Elimination_DHP_seqcst;
 
         template <class GC> struct traits_Elimination_2ms: public
             cds::intrusive::treiber_stack::make_traits <

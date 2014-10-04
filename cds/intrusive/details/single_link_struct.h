@@ -104,7 +104,7 @@ namespace cds { namespace intrusive {
             typedef typename options::gc    gc;
             typedef typename options::tag   tag;
             typedef node<gc, tag> node_type;
-            typedef HookType     hook_type;
+            typedef HookType      hook_type;
         };
         //@endcond
 
