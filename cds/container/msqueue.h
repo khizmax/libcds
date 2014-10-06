@@ -162,9 +162,9 @@ namespace cds { namespace container {
     template <typename GC, typename T, typename Traits = msqueue::traits>
     class MSQueue:
 #ifdef CDS_DOXYGEN_INVOKED
-        intrusive::MSQueue< GC, cds::intrusive::msqueue::node< T >, Traits >
+        private intrusive::MSQueue< GC, cds::intrusive::msqueue::node< T >, Traits >
 #else
-        details::make_msqueue< GC, T, Traits >::type
+        private details::make_msqueue< GC, T, Traits >::type
 #endif
     {
         //@cond
@@ -254,7 +254,7 @@ namespace cds { namespace container {
         /// Enqueues \p data to queue using a functor
         /**
             \p Func is a functor called to create node.
-            The functor \p f takes one argument - a reference to a new node of type \ref value_type:
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type :
             \code
             cds:container::MSQueue< cds::gc::HP, Foo > myQueue;
             Bar bar;
@@ -347,7 +347,7 @@ namespace cds { namespace container {
 
         /// Clear the queue
         /**
-        The function repeatedly calls \ref dequeue until it returns \p nullptr.
+            The function repeatedly calls \ref dequeue until it returns \p nullptr.
         */
         void clear()
         {

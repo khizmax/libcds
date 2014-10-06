@@ -26,7 +26,7 @@ namespace cds { namespace container {
 
         Template arguments:
         - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
-        - \p T is a type stored in the queue.
+        - \p T - a type stored in the queue.
         - \p Traits - queue traits, default is \p msqueue::traits. You can use \p msqueue::make_traits
             metafunction to make your traits or just derive your traits from \p %msqueue::traits:
             \code
@@ -48,9 +48,9 @@ namespace cds { namespace container {
     template <typename GC, typename T, typename Traits>
     class MoirQueue:
 #ifdef CDS_DOXYGEN_INVOKED
-        intrusive::MoirQueue< GC, intrusive::msqueue::node< T >, Traits >
+        private intrusive::MoirQueue< GC, intrusive::msqueue::node< T >, Traits >
 #else
-        details::make_moir_queue< GC, T, Traits >::type
+        private details::make_moir_queue< GC, T, Traits >::type
 #endif
     {
         //@cond
@@ -66,7 +66,7 @@ namespace cds { namespace container {
         };
 
     public:
-        typedef T value_type ; ///< Value type stored in the stack
+        typedef T value_type ; ///< Value type stored in the queue
         typedef typename base_class::gc                 gc;             ///< Garbage collector
         typedef typename base_class::back_off           back_off;       ///< Back-off strategy
         typedef typename maker::allocator_type          allocator_type; ///< Allocator type used for allocate/deallocate the nodes
@@ -139,9 +139,9 @@ namespace cds { namespace container {
 
         /// Enqueues \p data to queue using a functor
         /**
-            \p Func is a functor called to create node.
-            The functor should initialize creating node 
-            and it \p f takes one argument - a reference to a new node of type \ref value_type:
+            \p Func is a functor calling to create a new node.
+            The functor should initialize creating node
+            and it takes one argument - a reference to a new node of type \ref value_type :
             \code
             cds:container::MoirQueue< cds::gc::HP, Foo > myQueue;
             Bar bar;
@@ -234,8 +234,8 @@ namespace cds { namespace container {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns nullptr.
-            The disposer defined in template \p Options is called for each item
+            The function repeatedly calls \ref dequeue until it returns \p nullptr.
+            The disposer defined in template \p Traits is called for each item
             that can be safely disposed.
         */
         void clear()
