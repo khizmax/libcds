@@ -5,61 +5,45 @@
 
 // MSQueue
 #define CDSUNIT_DECLARE_MSQueue \
-    TEST_CASE(MSQueue_HP,               cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MSQueue_HP_ic,            cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MSQueue_HP_stat,          cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MSQueue_HP_seqcst,        cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MSQueue_HRC,              cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MSQueue_HRC_ic,           cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MSQueue_HRC_stat,         cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MSQueue_HRC_seqcst,       cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MSQueue_PTB,              cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_CASE(MSQueue_PTB_ic,           cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_CASE(MSQueue_PTB_stat,         cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_CASE(MSQueue_PTB_seqcst,       cds::intrusive::single_link::node< cds::gc::PTB > )
+    TEST_CASE(MSQueue_HP,               cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MSQueue_HP_ic,            cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MSQueue_HP_stat,          cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MSQueue_HP_seqcst,        cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MSQueue_DHP,              cds::intrusive::msqueue::node< cds::gc::DHP > ) \
+    TEST_CASE(MSQueue_DHP_ic,           cds::intrusive::msqueue::node< cds::gc::DHP > ) \
+    TEST_CASE(MSQueue_DHP_stat,         cds::intrusive::msqueue::node< cds::gc::DHP > ) \
+    TEST_CASE(MSQueue_DHP_seqcst,       cds::intrusive::msqueue::node< cds::gc::DHP > )
 
 #define CDSUNIT_TEST_MSQueue \
     CPPUNIT_TEST(MSQueue_HP) \
     CPPUNIT_TEST(MSQueue_HP_ic) \
     CPPUNIT_TEST(MSQueue_HP_stat) \
     CPPUNIT_TEST(MSQueue_HP_seqcst) \
-    /*CPPUNIT_TEST(MSQueue_HRC)*/ \
-    /*CPPUNIT_TEST(MSQueue_HRC_ic)*/ \
-    /*CPPUNIT_TEST(MSQueue_HRC_stat)*/ \
-    /*CPPUNIT_TEST(MSQueue_HRC_seqcst)*/ \
-    CPPUNIT_TEST(MSQueue_PTB) \
-    CPPUNIT_TEST(MSQueue_PTB_ic) \
-    CPPUNIT_TEST(MSQueue_PTB_stat) \
-    CPPUNIT_TEST(MSQueue_PTB_seqcst)
+    CPPUNIT_TEST(MSQueue_DHP) \
+    CPPUNIT_TEST(MSQueue_DHP_ic) \
+    CPPUNIT_TEST(MSQueue_DHP_stat) \
+    CPPUNIT_TEST(MSQueue_DHP_seqcst)
 
 // MoirQueue
 #define CDSUNIT_DECLARE_MoirQueue \
-    TEST_CASE(MoirQueue_HP,               cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MoirQueue_HP_ic,            cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MoirQueue_HP_stat,          cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MoirQueue_HP_seqcst,        cds::intrusive::single_link::node< cds::gc::HP > ) \
-    TEST_CASE(MoirQueue_HRC,              cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MoirQueue_HRC_ic,           cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MoirQueue_HRC_stat,         cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MoirQueue_HRC_seqcst,       cds::intrusive::single_link::node< cds::gc::HRC > ) \
-    TEST_CASE(MoirQueue_PTB,              cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_CASE(MoirQueue_PTB_ic,           cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_CASE(MoirQueue_PTB_stat,         cds::intrusive::single_link::node< cds::gc::PTB > ) \
-    TEST_CASE(MoirQueue_PTB_seqcst,       cds::intrusive::single_link::node< cds::gc::PTB > )
+    TEST_CASE(MoirQueue_HP,               cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MoirQueue_HP_ic,            cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MoirQueue_HP_stat,          cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MoirQueue_HP_seqcst,        cds::intrusive::msqueue::node< cds::gc::HP > ) \
+    TEST_CASE(MoirQueue_DHP,              cds::intrusive::msqueue::node< cds::gc::DHP > ) \
+    TEST_CASE(MoirQueue_DHP_ic,           cds::intrusive::msqueue::node< cds::gc::DHP > ) \
+    TEST_CASE(MoirQueue_DHP_stat,         cds::intrusive::msqueue::node< cds::gc::DHP > ) \
+    TEST_CASE(MoirQueue_DHP_seqcst,       cds::intrusive::msqueue::node< cds::gc::DHP > )
 
 #define CDSUNIT_TEST_MoirQueue \
     CPPUNIT_TEST(MoirQueue_HP) \
     CPPUNIT_TEST(MoirQueue_HP_ic) \
     CPPUNIT_TEST(MoirQueue_HP_stat) \
     CPPUNIT_TEST(MoirQueue_HP_seqcst) \
-    /*CPPUNIT_TEST(MoirQueue_HRC)*/ \
-    /*CPPUNIT_TEST(MoirQueue_HRC_ic)*/ \
-    /*CPPUNIT_TEST(MoirQueue_HRC_stat)*/ \
-    /*CPPUNIT_TEST(MoirQueue_HRC_seqcst)*/ \
-    CPPUNIT_TEST(MoirQueue_PTB) \
-    CPPUNIT_TEST(MoirQueue_PTB_ic) \
-    CPPUNIT_TEST(MoirQueue_PTB_stat) \
-    CPPUNIT_TEST(MoirQueue_PTB_seqcst)
+    CPPUNIT_TEST(MoirQueue_DHP) \
+    CPPUNIT_TEST(MoirQueue_DHP_ic) \
+    CPPUNIT_TEST(MoirQueue_DHP_stat) \
+    CPPUNIT_TEST(MoirQueue_DHP_seqcst)
 
 
 // OptimisticQueue

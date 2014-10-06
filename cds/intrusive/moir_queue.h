@@ -12,7 +12,7 @@ namespace cds { namespace intrusive {
         This is slightly optimized Michael & Scott's queue algorithm that overloads \ref dequeue function.
 
         Source:
-            \li [2000] Simon Doherty, Lindsay Groves, Victor Luchangco, Mark Moir
+            - [2000] Simon Doherty, Lindsay Groves, Victor Luchangco, Mark Moir
                 "Formal Verification of a practical lock-free queue algorithm"
 
         Cite from this work about difference from Michael & Scott algo:
@@ -22,8 +22,6 @@ namespace cds { namespace intrusive {
         means that it reads \p Tail every time a dequeuing process loops. Under high load, when operations retry
         frequently, our modification will reduce the number of accesses to global memory. This modification, however,
         introduces the possibility of \p Head and \p Tail “crossing”."
-
-        Type of node: \ref single_link::node
 
         Explanation of template arguments see intrusive::MSQueue.
 
@@ -36,7 +34,7 @@ namespace cds { namespace intrusive {
         typedef cds::gc::HP hp_gc;
 
         // MoirQueue with Hazard Pointer garbage collector, base hook + item disposer:
-        struct Foo: public ci::single_link::node< hp_gc >
+        struct Foo: public ci::msqueue::node< hp_gc >
         {
             // Your data
             ...
@@ -53,10 +51,12 @@ namespace cds { namespace intrusive {
         typedef ci::MoirQueue<
             hp_gc
             ,Foo
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<hp_gc> >
-            >
-            ,ci::opt::disposer< fooDisposer >
+            typename ci::msqueue::make_traits<
+                ,ci::opt::hook<
+                    ci::msqueue::base_hook< ci::opt::gc<hp_gc> >
+                >
+                ,ci::opt::disposer< fooDisposer >
+            >::type
         > fooQueue;
 
         // MoirQueue with Hazard Pointer garbage collector,
@@ -66,30 +66,24 @@ namespace cds { namespace intrusive {
         {
             // Your data
             ...
-            ci::single_link::node< hp_gc > hMember;
+            ci::msqueue::node< hp_gc > hMember;
         };
 
-        typedef ci::MoirQueue<
-            hp_gc
-            ,Foo
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(Bar, hMember)
-                    ,ci::opt::gc<hp_gc>
-                >
-            >
-            ,ci::opt::disposer< fooDisposer >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-            ,cds::opt::alignment< cds::opt::no_special_alignment >
-        > barQueue;
-
+        struct barQueueTraits: public ci::msqueue::traits
+        {
+            typedef ci::msqueue::member_hook< offsetof(Bar, hMember), ,ci::opt::gc<hp_gc> > hook;
+            typedef fooDisposer disposer;
+            typedef cds::atomicity::item_counter item_counter;
+            enum { aligment = cds::opt::no_special_alignment alignment };
+        };
+        typedef ci::MoirQueue< hp_gc, Bar, barQueueTraits > barQueue;
         \endcode
     */
-    template <typename GC, typename T, typename... Options>
-    class MoirQueue: public MSQueue< GC, T, Options... >
+    template <typename GC, typename T, typename Traits = cds::intrusive::msqueue::traits>
+    class MoirQueue: public MSQueue< GC, T, Traits >
     {
         //@cond
-        typedef MSQueue< GC, T, Options... > base_class;
+        typedef MSQueue< GC, T, Traits > base_class;
         typedef typename base_class::node_type node_type;
         //@endcond
 
@@ -103,9 +97,9 @@ namespace cds { namespace intrusive {
         //@endcond
 
         /// Rebind template arguments
-        template <typename GC2, typename T2, typename... Options2>
+        template < typename GC2, typename T2, typename Traits2 >
         struct rebind {
-            typedef MoirQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
+            typedef MoirQueue< GC2, T2, Traits2> other   ;   ///< Rebinding result
         };
 
     protected:
@@ -149,7 +143,7 @@ namespace cds { namespace intrusive {
     public:
         /// Dequeues a value from the queue
         /** @anchor cds_intrusive_MoirQueue_dequeue
-            See warning about item disposing in \ref MSQueue::dequeue.
+            See warning about item disposing in \p MSQueue::dequeue.
         */
         value_type * dequeue()
         {

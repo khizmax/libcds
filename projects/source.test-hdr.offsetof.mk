@@ -70,9 +70,9 @@ CDS_TESTHDR_OFFSETOF_QUEUE := \
     tests/test-hdr/queue/hdr_intrusive_basketqueue_hp.cpp \
     tests/test-hdr/queue/hdr_intrusive_basketqueue_ptb.cpp \
     tests/test-hdr/queue/hdr_intrusive_moirqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_moirqueue_ptb.cpp \
+    tests/test-hdr/queue/hdr_intrusive_moirqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_intrusive_msqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_msqueue_ptb.cpp \
+    tests/test-hdr/queue/hdr_intrusive_msqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_intrusive_optimisticqueue_hp.cpp \
     tests/test-hdr/queue/hdr_intrusive_optimisticqueue_ptb.cpp
 

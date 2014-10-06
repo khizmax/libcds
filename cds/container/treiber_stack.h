@@ -230,7 +230,7 @@ namespace cds { namespace container {
         typedef typename base_class::stat       stat           ;   ///< Internal statistics policy used
 
     protected:
-        typedef typename maker::node_type  node_type   ;   ///< stack node type (derived from intrusive::treiber_stack::node)
+        typedef typename maker::node_type  node_type   ;   ///< stack node type (derived from \p intrusive::treiber_stack::node)
 
         //@cond
         typedef typename maker::cxx_allocator     cxx_allocator;

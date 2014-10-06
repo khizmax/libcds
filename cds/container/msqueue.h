@@ -7,36 +7,102 @@
 #include <functional>   // ref
 #include <cds/intrusive/msqueue.h>
 #include <cds/container/details/base.h>
-#include <cds/details/trivial_assign.h>
 
 namespace cds { namespace container {
 
+    /// MSQueue related definitions
+    /** @ingroup cds_nonintrusive_helper
+    */
+    namespace msqueue {
+        /// Internal statistics
+        template <typename Counter = cds::intrusive::msqueue::stat<>::counter_type >
+        using stat = cds::intrusive::msqueue::stat< Counter >;
+
+        /// Dummy internal statistics
+        typedef cds::intrusive::msqueue::empty_stat empty_stat;
+
+        /// MSQueue default type traits
+        struct traits
+        {
+            /// Node allocator
+            typedef CDS_DEFAULT_ALLOCATOR       allocator;
+
+            /// Back-off strategy
+            typedef cds::backoff::empty         back_off;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef atomicity::empty_item_counter   item_counter;
+
+            /// Internal statistics (by default, disabled)
+            /**
+                Possible option value are: \p msqueue::stat, \p msqueue::empty_stat (the default),
+                user-provided class that supports \p %msqueue::stat interface.
+            */
+            typedef msqueue::empty_stat         stat;
+
+            /// C++ memory ordering model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering    memory_model;
+
+            /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+        /// Metafunction converting option list to \p msqueue::traits
+        /**
+            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
+            Supported \p Options are:
+            - opt::allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
+            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            - opt::stat - the type to gather internal statistics.
+                Possible statistics types are: \p msqueue::stat, \p msqueue::empty_stat, user-provided class that supports \p %msqueue::stat interface.
+                Default is \p %msqueue::empty_stat.
+            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare \p %MSQueue with item counting and internal statistics
+            \code
+            typedef cds::container::MSQueue< cds::gc::HP, Foo, 
+                typename cds::container::msqueue::make_traits<
+                    cds::opt::item_counte< cds::atomicity::item_counter >,
+                    cds::opt::stat< cds::intrusive::msqueue::stat<> >
+                >::type
+            > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
+    } // namespace msqueue
+
     //@cond
     namespace details {
-        template <typename GC, typename T, typename... Options>
+        template <typename GC, typename T, typename Traits>
         struct make_msqueue
         {
             typedef GC gc;
             typedef T value_type;
+            typedef Traits traits;
 
-            struct default_options {
-                typedef cds::backoff::empty     back_off;
-                typedef CDS_DEFAULT_ALLOCATOR   allocator;
-                typedef atomicity::empty_item_counter item_counter;
-                typedef intrusive::queue_dummy_stat stat;
-                typedef opt::v::relaxed_ordering    memory_model;
-                enum { alignment = opt::cache_line_alignment };
-            };
-
-            typedef typename opt::make_options<
-                typename cds::opt::find_type_traits< default_options, Options... >::type
-                ,Options...
-            >::type   options;
-
-            struct node_type: public intrusive::single_link::node< gc >
+            struct node_type: public intrusive::msqueue::node< gc >
             {
                 value_type  m_value;
-                node_type( const value_type& val )
+
+                node_type( value_type const& val )
                     : m_value( val )
                 {}
 
@@ -46,7 +112,7 @@ namespace cds { namespace container {
                 {}
             };
 
-            typedef typename options::allocator::template rebind<node_type>::other allocator_type;
+            typedef typename traits::allocator::template rebind<node_type>::other allocator_type;
             typedef cds::details::Allocator< node_type, allocator_type >           cxx_allocator;
 
             struct node_deallocator
@@ -57,18 +123,13 @@ namespace cds { namespace container {
                 }
             };
 
-            typedef intrusive::MSQueue< gc,
-                node_type
-                ,intrusive::opt::hook<
-                    intrusive::single_link::base_hook< opt::gc<gc> >
-                >
-                ,opt::back_off< typename options::back_off >
-                ,intrusive::opt::disposer< node_deallocator >
-                ,opt::item_counter< typename options::item_counter >
-                ,opt::stat< typename options::stat >
-                ,opt::alignment< options::alignment >
-                ,opt::memory_model< typename options::memory_model >
-            >   type;
+            struct intrusive_traits : public traits
+            {
+                typedef cds::intrusive::base_hook< cds::opt::gc<gc> > hook;
+                typedef node_deallocator disposer;
+            };
+
+            typedef intrusive::MSQueue< gc, node_type, intrusive_traits > type;
         };
     }
     //@endcond
@@ -76,61 +137,64 @@ namespace cds { namespace container {
     /// Michael & Scott lock-free queue
     /** @ingroup cds_nonintrusive_queue
         It is non-intrusive version of Michael & Scott's queue algorithm based on intrusive implementation
-        intrusive::MSQueue.
+        \p cds::intrusive::MSQueue.
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::HRC, gc::PTB
-        - \p T is a type stored in the queue. It should be default-constructible, copy-constructible, assignable type.
-        - \p Options - options
+        - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
+        - \p T is a type stored in the queue.
+        - \p Traits - queue traits, default is \p msqueue::traits. You can use \p msqueue::make_traits
+            metafunction to make your traits or just derive your traits from \p %msqueue::traits:
+            \code
+            struct myTraits: public cds::container::msqueue::traits {
+                typedef cds::intrusive::msqueue::stat<> stat;
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::container::MSQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
-        Permissible \p Options:
-        - opt::allocator - allocator (like \p std::allocator). Default is \ref CDS_DEFAULT_ALLOCATOR
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter
-        - opt::stat - the type to gather internal statistics.
-            Possible option value are: intrusive::queue_stat, intrusive::queue_dummy_stat,
-            user-provided class that supports intrusive::queue_stat interface.
-            Default is \ref intrusive::queue_dummy_stat.
-        - opt::alignment - the alignment for internal queue data. Default is opt::cache_line_alignment
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
+            // Equivalent make_traits example:
+            typedef cds::container::MSQueue< cds::gc::HP, Foo, 
+                typename cds::container::msqueue::make_traits< 
+                    cds::opt::stat< cds::container::msqueue::stat<> >,
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
     */
-    template <typename GC, typename T, typename... Options>
+    template <typename GC, typename T, typename Traits>
     class MSQueue:
 #ifdef CDS_DOXYGEN_INVOKED
-        intrusive::MSQueue< GC, intrusive::single_link::node< T >, Options... >
+        intrusive::MSQueue< GC, cds::intrusive::msqueue::node< T >, Traits >
 #else
-        details::make_msqueue< GC, T, Options... >::type
+        details::make_msqueue< GC, T, Traits >::type
 #endif
     {
         //@cond
-        typedef details::make_msqueue< GC, T, Options... > options;
-        typedef typename options::type base_class;
+        typedef details::make_msqueue< GC, T, Traits > maker;
+        typedef typename maker::type base_class;
         //@endcond
 
     public:
         /// Rebind template arguments
-        template <typename GC2, typename T2, typename... Options2>
+        template <typename GC2, typename T2, typename Traits2>
         struct rebind {
-            typedef MSQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
+            typedef MSQueue< GC2, T2, Traits2> other   ;   ///< Rebinding result
         };
 
     public:
-        typedef T value_type ; ///< Value type stored in the queue
-
-        typedef typename base_class::gc             gc              ; ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ; ///< Back-off strategy used
-        typedef typename options::allocator_type    allocator_type  ; ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ; ///< Item counting policy used
-        typedef typename base_class::stat           stat            ; ///< Internal statistics policy used
-        typedef typename base_class::memory_model   memory_model    ; ///< Memory ordering. See cds::opt::memory_model option
+        typedef T value_type; ///< Value type stored in the queue
+        typedef typename base_class::gc             gc;             ///< Garbage collector used
+        typedef typename base_class::back_off       back_off;       ///< Back-off strategy used
+        typedef typename maker::allocator_type      allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter   item_counter;   ///< Item counting policy used
+        typedef typename base_class::stat           stat;           ///< Internal statistics policy used
+        typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
     protected:
-        typedef typename options::node_type  node_type   ;   ///< queue node type (derived from intrusive::single_link::node)
+        typedef typename maker::node_type  node_type   ;   ///< queue node type (derived from \p intrusive::msqueue::node)
 
         //@cond
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;   // deallocate node
+        typedef typename maker::cxx_allocator     cxx_allocator;
+        typedef typename maker::node_deallocator  node_deallocator;   // deallocate node
         typedef typename base_class::node_traits    node_traits;
         //@endcond
 
@@ -200,29 +264,21 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Enqueues \p data to queue using copy functor
+        /// Enqueues \p data to queue using a functor
         /**
-            \p Func is a functor called to copy value \p data of type \p Type
-            which may be differ from type \ref value_type stored in the queue.
-            The functor's interface is:
+            \p Func is a functor called to create node.
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type:
             \code
-            struct myFunctor {
-                void operator()(value_type& dest, Type const& data)
-                {
-                    // // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
+            cds:container::MSQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.enqueue_with( [&bar]( Foo& dest ) { dest = bar; } );
             \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
-
-            <b>Requirements</b> The functor \p Func should not throw any exception.
         */
-        template <typename Type, typename Func>
-        bool enqueue( Type const& data, Func f  )
+        template <typename Func>
+        bool enqueue_with( Func f )
         {
             scoped_node_ptr p( alloc_node() );
-            f( p->m_value, data );
+            f( p->m_value );
             if ( base_class::enqueue( *p )) {
                 p.release();
                 return true;
@@ -230,33 +286,49 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Dequeues a value using copy functor
-        /**
-            \p Func is a functor called to copy dequeued value to \p dest of type \p Type
-            which may be differ from type \ref value_type stored in the queue.
-            The functor's interface is:
-            \code
-            struct myFunctor {
-                void operator()(Type& dest, value_type const& data)
-                {
-                    // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
-            \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
+        /// Enqueues data of type \ref value_type constructed from <tt>std::forward<Args>(args)...</tt>
+        template <typename... Args>
+        bool emplace( Args&&... args )
+        {
+            scoped_node_ptr p( alloc_node_move( std::forward<Args>( args )... ) );
+            if ( base_class::enqueue( *p ) ) {
+                p.release();
+                return true;
+            }
+            return false;
+        }
 
-            <b>Requirements</b> The functor \p Func should not throw any exception.
+        /// Synonym for \ref enqueue function
+        bool push( value_type const& val )
+        {
+            return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue_with() function
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with( f );
+        }
+
+        /// Dequeues a value using a functor
+        /**
+            \p Func is a functor called to copy dequeued value.
+            The functor takes one argument - a reference to removed node:
+            \code
+            cds:container::MSQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.dequeue_with( [&bar]( Foo& src ) { bar = std::move( src );});
+            \endcode
+            The functor is called only is the queue is not empty.
         */
-        template <typename Type, typename Func>
-        bool dequeue( Type& dest, Func f )
+        template <typename Func>
+        bool dequeue_with( Func f )
         {
             typename base_class::dequeue_result res;
             if ( base_class::do_dequeue( res )) {
-                f( dest, node_traits::to_value_ptr( *res.pNext )->m_value );
-
+                f( node_traits::to_value_ptr( *res.pNext )->m_value );
                 base_class::dispose_result( res );
-
                 return true;
             }
             return false;
@@ -274,42 +346,17 @@ namespace cds { namespace container {
             return dequeue( dest, functor() );
         }
 
-        /// Synonym for \ref enqueue function
-        bool push( value_type const& val )
-        {
-            return enqueue( val );
-        }
-
-        /// Synonym for template version of \ref enqueue function
-        template <typename Type, typename Func>
-        bool push( Type const& data, Func f  )
-        {
-            return enqueue( data, f );
-        }
-
         /// Synonym for \ref dequeue function
         bool pop( value_type& dest )
         {
             return dequeue( dest );
         }
 
-        /// Synonym for template version of \ref dequeue function
-        template <typename Type, typename Func>
-        bool pop( Type& dest, Func f )
+        /// Synonym for \p dequeue_with() function
+        template <typename Func>
+        bool pop_with( Func f )
         {
-            return dequeue( dest, f );
-        }
-
-        /// Enqueues data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
-        template <typename... Args>
-        bool emplace( Args&&... args )
-        {
-            scoped_node_ptr p( alloc_node_move( std::forward<Args>(args)... ) );
-            if ( base_class::enqueue( *p )) {
-                p.release();
-                return true;
-            }
-            return false;
+            return dequeue_with( f );
         }
 
         /// Checks if the queue is empty

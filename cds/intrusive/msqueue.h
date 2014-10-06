@@ -186,7 +186,7 @@ namespace cds { namespace intrusive {
                 To enable item counting use \p cds::atomicity::item_counter
             - opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p msqueue::stat, \p msqueue::empty_stat, user-provided class that supports \p %msqueue::stat interface.
-                Default is \p msqueue::empty_stat.
+                Default is \p %msqueue::empty_stat.
             - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
             - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
@@ -195,6 +195,7 @@ namespace cds { namespace intrusive {
             \code
             typedef cds::intrusive::MSQueue< cds::gc::HP, Foo, 
                 typename cds::intrusive::msqueue::make_traits<
+                    cds::intrusive::opt:hook< cds::intrusive::msqueue::base_hook< cds::opt::gc<cds:gc::HP> >>,
                     cds::opt::item_counte< cds::atomicity::item_counter >,
                     cds::opt::stat< cds::intrusive::msqueue::stat<> >
                 >::type
@@ -226,10 +227,10 @@ namespace cds { namespace intrusive {
         - \p T - type to be stored in the queue. A value of type \p T must be derived from \p msqueue::node for \p msqueue::base_hook,
             or it should have a member of type \p %msqueue::node for \p msqueue::member_hook,
             or it should be convertible to \p %msqueue::node for \p msqueue::traits_hook.
-        - \p Traits - queue traits, default is \p queue::traits. You can use \p queue::make_traits
-            metafunction to make your traits or just derive your traits from \p %queue::traits:
+        - \p Traits - queue traits, default is \p msqueue::traits. You can use \p msqueue::make_traits
+            metafunction to make your traits or just derive your traits from \p %msqueue::traits:
             \code
-            struct myTraits: public cds::intrusive::queue::traits {
+            struct myTraits: public cds::intrusive::msqueue::traits {
                 typedef cds::intrusive::msqueue::stat<> stat;
                 typedef cds::atomicity::item_counter    item_counter;
             };
@@ -343,11 +344,10 @@ namespace cds { namespace intrusive {
 
         typedef intrusive::node_to_value<MSQueue> node_to_value;
         typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
-
         typedef typename opt::details::alignment_setter< node_type, traits::alignment >::type dummy_node_type;
 
-        aligned_node_ptr    m_pHead ;           ///< Queue's head pointer (cache-line aligned)
-        aligned_node_ptr    m_pTail ;           ///< Queue's tail pointer (cache-line aligned)
+        aligned_node_ptr    m_pHead ;           ///< Queue's head pointer
+        aligned_node_ptr    m_pTail ;           ///< Queue's tail pointer
         dummy_node_type     m_Dummy ;           ///< dummy node
         item_counter        m_ItemCounter   ;   ///< Item counter
         stat                m_Stat  ;           ///< Internal statistics
@@ -412,7 +412,7 @@ namespace cds { namespace intrusive {
 
         void dispose_node( node_type * p )
         {
-            // Note for he dummy node:
+            // Note about the dummy node:
             // We cannot clear m_Dummy here since it leads to ABA.
             // On the other hand, we cannot use deferred clear_links( &m_Dummy ) call via
             // HP retiring cycle since m_Dummy is member of MSQueue and may be destroyed

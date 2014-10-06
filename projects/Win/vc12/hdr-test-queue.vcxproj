@@ -543,12 +543,10 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_ptb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_hrc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_ptb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_hrc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_optimisticqueue_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_optimisticqueue_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_hp.cpp" />

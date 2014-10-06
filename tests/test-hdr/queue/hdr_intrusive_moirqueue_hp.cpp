@@ -1,7 +1,6 @@
 //$$CDS-header$$
 
 #include "hdr_intrusive_msqueue.h"
-#include "hdr_intrusive_singlelink_node.h"
 #include <cds/intrusive/moir_queue.h>
 #include <cds/gc/hp.h>
 
@@ -10,162 +9,164 @@ namespace queue {
 #define TEST(X) void IntrusiveQueueHeaderTest::test_##X() { test<X>(); }
 
     namespace {
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+        typedef IntrusiveQueueHeaderTest::base_hook_item< ci::msqueue::node<cds::gc::HP > > base_item_type;
+        typedef IntrusiveQueueHeaderTest::member_hook_item< ci::msqueue::node<cds::gc::HP > > member_item_type;
+
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+            >::type
         > MoirQueue_HP_default;
 
-        /// cds::gc::HP + item counter
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::item_counter< cds::atomicity::item_counter >
+        /// HP + item counter
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::memory_model< co::v::sequential_consistent >
+            >::type
         > MoirQueue_HP_default_ic;
 
-        /// cds::gc::HP + stat
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::stat< ci::queue_stat<> >
+        /// HP + stat
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,co::stat< ci::msqueue::stat<> >
+            >::type
         > MoirQueue_HP_default_stat;
 
-        // cds::gc::HP base hook
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+        // HP base hook
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::hook<
+                    ci::msqueue::base_hook< ci::opt::gc<cds::gc::HP> >
+                >
+                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+            >::type
         > MoirQueue_HP_base;
 
-        // cds::gc::HP member hook
-        typedef ci::MoirQueue< cds::gc::HP,
-            member_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+        // HP member hook
+        typedef ci::MoirQueue< cds::gc::HP, member_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::hook<
+                    ci::msqueue::member_hook<
+                        offsetof( member_item_type, hMember ),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+            >::type
         > MoirQueue_HP_member;
 
-        /// cds::gc::HP base hook + item counter
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,co::item_counter< cds::atomicity::item_counter >
+        /// HP base hook + item counter
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,ci::opt::hook<
+                    ci::msqueue::base_hook< ci::opt::gc<cds::gc::HP> >
+                >
+                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::memory_model< co::v::relaxed_ordering >
+            >::type
         > MoirQueue_HP_base_ic;
 
-        // cds::gc::HP member hook + item counter
-        typedef ci::MoirQueue< cds::gc::HP,
-            member_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+        // HP member hook + item counter
+        typedef ci::MoirQueue< cds::gc::HP, member_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::hook<
+                    ci::msqueue::member_hook<
+                        offsetof( member_item_type, hMember ),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::item_counter< cds::atomicity::item_counter >
+                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,co::item_counter< cds::atomicity::item_counter >
+            >::type
        > MoirQueue_HP_member_ic;
 
-        // cds::gc::HP base hook + stat
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::stat< ci::queue_stat<> >
+        // HP base hook + stat
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::hook<
+                    ci::msqueue::base_hook< ci::opt::gc<cds::gc::HP> >
+                >
+                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,co::stat< ci::msqueue::stat<> >
+            >::type
         > MoirQueue_HP_base_stat;
 
-        // cds::gc::HP member hook + stat
-        typedef ci::MoirQueue< cds::gc::HP,
-            member_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+        // HP member hook + stat
+        typedef ci::MoirQueue< cds::gc::HP, member_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::hook<
+                    ci::msqueue::member_hook<
+                        offsetof( member_item_type, hMember ),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::stat< ci::queue_stat<> >
+                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,co::stat< ci::msqueue::stat<> >
+            >::type
         > MoirQueue_HP_member_stat;
 
-        // cds::gc::HP base hook + alignment
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,co::alignment< 32 >
+        // HP base hook + alignment
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,ci::opt::hook<
+                    ci::msqueue::base_hook< ci::opt::gc<cds::gc::HP> >
+                >
+                ,co::alignment< 32 >
+            >::type
         > MoirQueue_HP_base_align;
 
-        // cds::gc::HP member hook + alignment
-        typedef ci::MoirQueue< cds::gc::HP,
-            member_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
+        // HP member hook + alignment
+        typedef ci::MoirQueue< cds::gc::HP, member_item_type,
+            typename ci::msqueue::make_traits<
+                ci::opt::hook<
+                    ci::msqueue::member_hook<
+                        offsetof( member_item_type, hMember ),
+                        ci::opt::gc<cds::gc::HP>
+                    >
                 >
-            >
-            ,co::alignment< 32 >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                ,co::alignment< 32 >
+                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+            >::type
         > MoirQueue_HP_member_align;
 
-        // cds::gc::HP base hook + no alignment
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::alignment< co::no_special_alignment >
-        > MoirQueue_HP_base_noalign;
+        // HP base hook + no alignment
+        struct traits_MoirQueue_HP_base_noalign : public ci::msqueue::traits {
+            typedef ci::msqueue::base_hook< ci::opt::gc<cds::gc::HP> > hook;
+            typedef IntrusiveQueueHeaderTest::faked_disposer disposer;
+            enum { alignment = co::no_special_alignment };
+        };
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type, traits_MoirQueue_HP_base_noalign > MoirQueue_HP_base_noalign;
 
-        // cds::gc::HP member hook + no alignment
-        typedef ci::MoirQueue< cds::gc::HP,
-            member_hook_item<cds::gc::HP>
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
-                >
-            >
-            ,co::alignment< co::no_special_alignment >
-        > MoirQueue_HP_member_noalign;
+        // HP member hook + no alignment
+        struct traits_MoirQueue_HP_member_noalign : public ci::msqueue::traits {
+            typedef ci::msqueue::member_hook <
+                offsetof( member_item_type, hMember ),
+                ci::opt::gc < cds::gc::HP >
+            > hook;
+            typedef IntrusiveQueueHeaderTest::faked_disposer disposer;
+            enum { alignment = co::no_special_alignment };
+        };
+        typedef ci::MoirQueue< cds::gc::HP, member_item_type, traits_MoirQueue_HP_member_noalign > MoirQueue_HP_member_noalign;
 
 
-        // cds::gc::HP base hook + cache alignment
-        typedef ci::MoirQueue< cds::gc::HP,
-            base_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::base_hook< ci::opt::gc<cds::gc::HP> >
-            >
-            ,co::alignment< co::cache_line_alignment >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-        > MoirQueue_HP_base_cachealign;
+        // HP base hook + cache alignment
+        struct traits_MoirQueue_HP_base_cachealign : public traits_MoirQueue_HP_base_noalign
+        {
+            enum { alignment = co::cache_line_alignment };
+        };
+        typedef ci::MoirQueue< cds::gc::HP, base_item_type, traits_MoirQueue_HP_base_cachealign > MoirQueue_HP_base_cachealign;
 
-        // cds::gc::HP member hook + cache alignment
-        typedef ci::MoirQueue< cds::gc::HP,
-            member_hook_item<cds::gc::HP>
-            ,ci::opt::hook<
-                ci::single_link::member_hook<
-                    offsetof(member_hook_item<cds::gc::HP>, hMember),
-                    ci::opt::gc<cds::gc::HP>
-                >
-            >
-            ,co::alignment< co::cache_line_alignment >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-        > MoirQueue_HP_member_cachealign;
-
+        // HP member hook + cache alignment
+        struct traits_MoirQueue_HP_member_cachealign : public traits_MoirQueue_HP_member_noalign
+        {
+            enum { alignment = co::cache_line_alignment };
+        };
+        typedef ci::MoirQueue< cds::gc::HP, member_item_type, traits_MoirQueue_HP_member_cachealign > MoirQueue_HP_member_cachealign;
     }
 
     TEST(MoirQueue_HP_default)

@@ -11,6 +11,29 @@ namespace queue {
     {
     public:
 
+        template <typename Base>
+        struct base_hook_item : public Base
+        {
+            int nVal;
+            int nDisposeCount;
+
+            base_hook_item()
+                : nDisposeCount( 0 )
+            {}
+        };
+
+        template <typename Member>
+        struct member_hook_item
+        {
+            int nVal;
+            int nDisposeCount;
+            Member hMember;
+
+            member_hook_item()
+                : nDisposeCount( 0 )
+            {}
+        };
+
         struct faked_disposer
         {
             template <typename T>
@@ -260,22 +283,18 @@ namespace queue {
         void test_MSQueue_HP_member_noalign();
         void test_MSQueue_HP_base_cachealign();
         void test_MSQueue_HP_member_cachealign();
-        void test_MSQueue_HRC_base();
-        void test_MSQueue_HRC_base_ic();
-        void test_MSQueue_HRC_base_stat();
-        void test_MSQueue_HRC_base_align();
-        void test_MSQueue_PTB_base();
-        void test_MSQueue_PTB_member();
-        void test_MSQueue_PTB_base_ic();
-        void test_MSQueue_PTB_member_ic();
-        void test_MSQueue_PTB_base_stat();
-        void test_MSQueue_PTB_member_stat();
-        void test_MSQueue_PTB_base_align();
-        void test_MSQueue_PTB_member_align();
-        void test_MSQueue_PTB_base_noalign();
-        void test_MSQueue_PTB_member_noalign();
-        void test_MSQueue_PTB_base_cachealign();
-        void test_MSQueue_PTB_member_cachealign();
+        void test_MSQueue_DHP_base();
+        void test_MSQueue_DHP_member();
+        void test_MSQueue_DHP_base_ic();
+        void test_MSQueue_DHP_member_ic();
+        void test_MSQueue_DHP_base_stat();
+        void test_MSQueue_DHP_member_stat();
+        void test_MSQueue_DHP_base_align();
+        void test_MSQueue_DHP_member_align();
+        void test_MSQueue_DHP_base_noalign();
+        void test_MSQueue_DHP_member_noalign();
+        void test_MSQueue_DHP_base_cachealign();
+        void test_MSQueue_DHP_member_cachealign();
 
         void test_MoirQueue_HP_default();
         void test_MoirQueue_HP_default_ic();
@@ -292,22 +311,18 @@ namespace queue {
         void test_MoirQueue_HP_member_noalign();
         void test_MoirQueue_HP_base_cachealign();
         void test_MoirQueue_HP_member_cachealign();
-        void test_MoirQueue_HRC_base();
-        void test_MoirQueue_HRC_base_ic();
-        void test_MoirQueue_HRC_base_stat();
-        void test_MoirQueue_HRC_base_align();
-        void test_MoirQueue_PTB_base();
-        void test_MoirQueue_PTB_member();
-        void test_MoirQueue_PTB_base_ic();
-        void test_MoirQueue_PTB_member_ic();
-        void test_MoirQueue_PTB_base_stat();
-        void test_MoirQueue_PTB_member_stat();
-        void test_MoirQueue_PTB_base_align();
-        void test_MoirQueue_PTB_member_align();
-        void test_MoirQueue_PTB_base_noalign();
-        void test_MoirQueue_PTB_member_noalign();
-        void test_MoirQueue_PTB_base_cachealign();
-        void test_MoirQueue_PTB_member_cachealign();
+        void test_MoirQueue_DHP_base();
+        void test_MoirQueue_DHP_member();
+        void test_MoirQueue_DHP_base_ic();
+        void test_MoirQueue_DHP_member_ic();
+        void test_MoirQueue_DHP_base_stat();
+        void test_MoirQueue_DHP_member_stat();
+        void test_MoirQueue_DHP_base_align();
+        void test_MoirQueue_DHP_member_align();
+        void test_MoirQueue_DHP_base_noalign();
+        void test_MoirQueue_DHP_member_noalign();
+        void test_MoirQueue_DHP_base_cachealign();
+        void test_MoirQueue_DHP_member_cachealign();
 
         void test_OptimisticQueue_HP_default();
         void test_OptimisticQueue_HP_default_ic();
@@ -395,22 +410,18 @@ namespace queue {
             CPPUNIT_TEST(test_MSQueue_HP_member_noalign)
             CPPUNIT_TEST(test_MSQueue_HP_base_cachealign)
             CPPUNIT_TEST(test_MSQueue_HP_member_cachealign)
-            CPPUNIT_TEST(test_MSQueue_HRC_base)
-            CPPUNIT_TEST(test_MSQueue_HRC_base_ic)
-            CPPUNIT_TEST(test_MSQueue_HRC_base_stat)
-            CPPUNIT_TEST(test_MSQueue_HRC_base_align)
-            CPPUNIT_TEST(test_MSQueue_PTB_base)
-            CPPUNIT_TEST(test_MSQueue_PTB_member)
-            CPPUNIT_TEST(test_MSQueue_PTB_base_ic)
-            CPPUNIT_TEST(test_MSQueue_PTB_member_ic)
-            CPPUNIT_TEST(test_MSQueue_PTB_base_stat)
-            CPPUNIT_TEST(test_MSQueue_PTB_member_stat)
-            CPPUNIT_TEST(test_MSQueue_PTB_base_align)
-            CPPUNIT_TEST(test_MSQueue_PTB_member_align)
-            CPPUNIT_TEST(test_MSQueue_PTB_base_noalign)
-            CPPUNIT_TEST(test_MSQueue_PTB_member_noalign)
-            CPPUNIT_TEST(test_MSQueue_PTB_base_cachealign)
-            CPPUNIT_TEST(test_MSQueue_PTB_member_cachealign)
+            CPPUNIT_TEST(test_MSQueue_DHP_base)
+            CPPUNIT_TEST(test_MSQueue_DHP_member)
+            CPPUNIT_TEST(test_MSQueue_DHP_base_ic)
+            CPPUNIT_TEST(test_MSQueue_DHP_member_ic)
+            CPPUNIT_TEST(test_MSQueue_DHP_base_stat)
+            CPPUNIT_TEST(test_MSQueue_DHP_member_stat)
+            CPPUNIT_TEST(test_MSQueue_DHP_base_align)
+            CPPUNIT_TEST(test_MSQueue_DHP_member_align)
+            CPPUNIT_TEST(test_MSQueue_DHP_base_noalign)
+            CPPUNIT_TEST(test_MSQueue_DHP_member_noalign)
+            CPPUNIT_TEST(test_MSQueue_DHP_base_cachealign)
+            CPPUNIT_TEST(test_MSQueue_DHP_member_cachealign)
 
             CPPUNIT_TEST(test_MoirQueue_HP_default)
             CPPUNIT_TEST(test_MoirQueue_HP_default_ic)
@@ -427,22 +438,18 @@ namespace queue {
             CPPUNIT_TEST(test_MoirQueue_HP_member_noalign)
             CPPUNIT_TEST(test_MoirQueue_HP_base_cachealign)
             CPPUNIT_TEST(test_MoirQueue_HP_member_cachealign)
-            CPPUNIT_TEST(test_MoirQueue_HRC_base)
-            CPPUNIT_TEST(test_MoirQueue_HRC_base_ic)
-            CPPUNIT_TEST(test_MoirQueue_HRC_base_stat)
-            CPPUNIT_TEST(test_MoirQueue_HRC_base_align)
-            CPPUNIT_TEST(test_MoirQueue_PTB_base)
-            CPPUNIT_TEST(test_MoirQueue_PTB_member)
-            CPPUNIT_TEST(test_MoirQueue_PTB_base_ic)
-            CPPUNIT_TEST(test_MoirQueue_PTB_member_ic)
-            CPPUNIT_TEST(test_MoirQueue_PTB_base_stat)
-            CPPUNIT_TEST(test_MoirQueue_PTB_member_stat)
-            CPPUNIT_TEST(test_MoirQueue_PTB_base_align)
-            CPPUNIT_TEST(test_MoirQueue_PTB_member_align)
-            CPPUNIT_TEST(test_MoirQueue_PTB_base_noalign)
-            CPPUNIT_TEST(test_MoirQueue_PTB_member_noalign)
-            CPPUNIT_TEST(test_MoirQueue_PTB_base_cachealign)
-            CPPUNIT_TEST(test_MoirQueue_PTB_member_cachealign)
+            CPPUNIT_TEST(test_MoirQueue_DHP_base)
+            CPPUNIT_TEST(test_MoirQueue_DHP_member)
+            CPPUNIT_TEST(test_MoirQueue_DHP_base_ic)
+            CPPUNIT_TEST(test_MoirQueue_DHP_member_ic)
+            CPPUNIT_TEST(test_MoirQueue_DHP_base_stat)
+            CPPUNIT_TEST(test_MoirQueue_DHP_member_stat)
+            CPPUNIT_TEST(test_MoirQueue_DHP_base_align)
+            CPPUNIT_TEST(test_MoirQueue_DHP_member_align)
+            CPPUNIT_TEST(test_MoirQueue_DHP_base_noalign)
+            CPPUNIT_TEST(test_MoirQueue_DHP_member_noalign)
+            CPPUNIT_TEST(test_MoirQueue_DHP_base_cachealign)
+            CPPUNIT_TEST(test_MoirQueue_DHP_member_cachealign)
 
             CPPUNIT_TEST(test_OptimisticQueue_HP_default)
             CPPUNIT_TEST(test_OptimisticQueue_HP_default_ic)
