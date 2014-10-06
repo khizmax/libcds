@@ -15,8 +15,8 @@
 #include <cds/container/segmented_queue.h>
 
 #include <cds/gc/hp.h>
-#include <cds/gc/hrc.h>
-#include <cds/gc/ptb.h>
+#include <cds/gc/hrc.h> //TODO: remove this line!
+#include <cds/gc/dhp.h>
 
 #include "queue/std_queue.h"
 #include "lock/win32_lock.h"
@@ -101,155 +101,52 @@ namespace queue {
     struct Types {
 
         // MSQueue
-        typedef cds::container::MSQueue<
-            cds::gc::HP , Value
-        >   MSQueue_HP;
+        typedef cds::container::MSQueue<cds::gc::HP,  Value > MSQueue_HP;
+        typedef cds::container::MSQueue<cds::gc::DHP, Value > MSQueue_DHP;
+        typedef cds::container::MoirQueue<cds::gc::HP, Value > MoirQueue_HP;
+        typedef cds::container::MoirQueue<cds::gc::DHP, Value > MoirQueue_DHP;
 
-        typedef cds::container::MSQueue<
-            cds::gc::HP , Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   MSQueue_HP_michaelAlloc;
+        struct traits_MSQueue_michaelAlloc : public cds::container::msqueue::traits
+        {
+            typedef cds::memory::MichaelAllocator<int>  allocator;
+        };
+        typedef cds::container::MSQueue<cds::gc::HP,  Value, traits_MSQueue_michaelAlloc > MSQueue_HP_michaelAlloc;
+        typedef cds::container::MSQueue<cds::gc::DHP, Value, traits_MSQueue_michaelAlloc > MSQueue_DHP_michaelAlloc;
+        typedef cds::container::MoirQueue<cds::gc::HP, Value, traits_MSQueue_michaelAlloc > MoirQueue_HP_michaelAlloc;
+        typedef cds::container::MoirQueue<cds::gc::DHP, Value, traits_MSQueue_michaelAlloc > MoirQueue_DHP_michaelAlloc;
 
-        typedef cds::container::MSQueue<
-            cds::gc::HP, Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   MSQueue_HP_seqcst;
-
-        typedef cds::container::MSQueue< cds::gc::HRC,
-            Value
-        >   MSQueue_HRC;
-
-        typedef cds::container::MSQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   MSQueue_HRC_michaelAlloc;
-
-        typedef cds::container::MSQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   MSQueue_HRC_seqcst;
-
-        typedef cds::container::MSQueue< cds::gc::PTB,
-            Value
-        >   MSQueue_PTB;
-
-        typedef cds::container::MSQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   MSQueue_PTB_michaelAlloc;
-
-        typedef cds::container::MSQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   MSQueue_PTB_seqcst;
+        struct traits_MSQueue_seqcst : public
+            cds::container::msqueue::make_traits <
+                cds::opt::memory_model < cds::opt::v::sequential_consistent >
+            > ::type
+        {};
+        typedef cds::container::MSQueue< cds::gc::HP,  Value, traits_MSQueue_seqcst > MSQueue_HP_seqcst;
+        typedef cds::container::MSQueue< cds::gc::DHP, Value, traits_MSQueue_seqcst > MSQueue_DHP_seqcst;
+        typedef cds::container::MoirQueue< cds::gc::HP, Value, traits_MSQueue_seqcst > MoirQueue_HP_seqcst;
+        typedef cds::container::MoirQueue< cds::gc::DHP, Value, traits_MSQueue_seqcst > MoirQueue_DHP_seqcst;
 
         // MSQueue + item counter
-        typedef cds::container::MSQueue< cds::gc::HP,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   MSQueue_HP_ic;
-
-        typedef cds::container::MSQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   MSQueue_HRC_ic;
-
-        typedef cds::container::MSQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   MSQueue_PTB_ic;
+        struct traits_MSQueue_ic : public
+            cds::container::msqueue::make_traits <
+                cds::opt::item_counter < cds::atomicity::item_counter >
+            >::type
+        {};
+        typedef cds::container::MSQueue< cds::gc::HP,  Value, traits_MSQueue_ic > MSQueue_HP_ic;
+        typedef cds::container::MSQueue< cds::gc::DHP, Value, traits_MSQueue_ic > MSQueue_DHP_ic;
+        typedef cds::container::MoirQueue< cds::gc::HP, Value, traits_MSQueue_ic > MoirQueue_HP_ic;
+        typedef cds::container::MoirQueue< cds::gc::DHP, Value, traits_MSQueue_ic > MoirQueue_DHP_ic;
 
         // MSQueue + stat
-        typedef cds::container::MSQueue< cds::gc::HP,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   MSQueue_HP_stat;
+        struct traits_MSQueue_stat: public 
+            cds::container::msqueue::make_traits <
+                cds::opt::stat< cds::container::msqueue::stat<> >
+            >::type
+        {};
+        typedef cds::container::MSQueue< cds::gc::HP,  Value, traits_MSQueue_stat > MSQueue_HP_stat;
+        typedef cds::container::MSQueue< cds::gc::DHP, Value, traits_MSQueue_stat > MSQueue_DHP_stat;
+        typedef cds::container::MoirQueue< cds::gc::HP, Value, traits_MSQueue_stat > MoirQueue_HP_stat;
+        typedef cds::container::MoirQueue< cds::gc::DHP, Value, traits_MSQueue_stat > MoirQueue_DHP_stat;
 
-        typedef cds::container::MSQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   MSQueue_HRC_stat;
-
-        typedef cds::container::MSQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   MSQueue_PTB_stat;
-
-
-        // MoirQueue
-        typedef cds::container::MoirQueue< cds::gc::HP,
-            Value
-        >   MoirQueue_HP;
-
-        typedef cds::container::MoirQueue< cds::gc::HP,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   MoirQueue_HP_michaelAlloc;
-
-        typedef cds::container::MoirQueue< cds::gc::HP,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   MoirQueue_HP_seqcst;
-
-        typedef cds::container::MoirQueue< cds::gc::HRC,
-            Value
-        >   MoirQueue_HRC;
-
-        typedef cds::container::MoirQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   MoirQueue_HRC_michaelAlloc;
-
-        typedef cds::container::MoirQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   MoirQueue_HRC_seqcst;
-
-        typedef cds::container::MoirQueue< cds::gc::PTB,
-            Value
-        >   MoirQueue_PTB;
-
-        typedef cds::container::MoirQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   MoirQueue_PTB_michaelAlloc;
-
-        typedef cds::container::MoirQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   MoirQueue_PTB_seqcst;
-
-        // MoirQueue + item counter
-        typedef cds::container::MoirQueue< cds::gc::HP,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   MoirQueue_HP_ic;
-
-        typedef cds::container::MoirQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   MoirQueue_HRC_ic;
-
-        typedef cds::container::MoirQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   MoirQueue_PTB_ic;
-
-        // MoirQueue + stat
-        typedef cds::container::MoirQueue< cds::gc::HP,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   MoirQueue_HP_stat;
-
-        typedef cds::container::MoirQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   MoirQueue_HRC_stat;
-
-        typedef cds::container::MoirQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   MoirQueue_PTB_stat;
 
         // OptimisticQueue
         typedef cds::container::OptimisticQueue< cds::gc::HP,
@@ -665,7 +562,7 @@ namespace std {
 
     // cds::intrusive::queue_stat
     template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::queue_stat<Counter> const& s )
+    static inline std::ostream& operator <<( std::ostream& o, cds::container::msqueue::stat<Counter> const& s )
     {
         return o
             << "\tStatistics:\n"
@@ -674,11 +571,10 @@ namespace std {
             << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
             << "\t\t      Dequeue race: " << s.m_DequeueRace.get()  << "\n"
             << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n"
-;
+            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::queue_dummy_stat const& s )
+    static inline std::ostream& operator <<( std::ostream& o, cds::container::msqueue::empty_stat const& s )
     {
         return o;
     }

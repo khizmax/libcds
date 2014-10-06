@@ -13,7 +13,7 @@
 #include <cds/intrusive/segmented_queue.h>
 
 #include <cds/gc/hp.h>
-#include <cds/gc/hrc.h>
+#include <cds/gc/hrc.h> //TODO: remove this line!
 #include <cds/gc/dhp.h>
 
 #include <boost/intrusive/slist.hpp>

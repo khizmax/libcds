@@ -10,16 +10,11 @@
     TEST_CASE( MoirQueue_HP_seqcst, ITEM_TYPE ) \
     TEST_CASE( MoirQueue_HP_ic, ITEM_TYPE ) \
     TEST_CASE( MoirQueue_HP_stat, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_HRC, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_HRC_michaelAlloc, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_HRC_seqcst, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_HRC_ic, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_HRC_stat, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_PTB, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_PTB_michaelAlloc, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_PTB_seqcst, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_PTB_ic, ITEM_TYPE ) \
-    TEST_CASE( MoirQueue_PTB_stat, ITEM_TYPE )
+    TEST_CASE( MoirQueue_DHP, ITEM_TYPE ) \
+    TEST_CASE( MoirQueue_DHP_michaelAlloc, ITEM_TYPE ) \
+    TEST_CASE( MoirQueue_DHP_seqcst, ITEM_TYPE ) \
+    TEST_CASE( MoirQueue_DHP_ic, ITEM_TYPE ) \
+    TEST_CASE( MoirQueue_DHP_stat, ITEM_TYPE )
 
 #define CDSUNIT_TEST_MoirQueue \
     CPPUNIT_TEST(MoirQueue_HP) \
@@ -27,16 +22,11 @@
     CPPUNIT_TEST(MoirQueue_HP_seqcst) \
     CPPUNIT_TEST(MoirQueue_HP_ic) \
     CPPUNIT_TEST(MoirQueue_HP_stat) \
-    CPPUNIT_TEST(MoirQueue_HRC) \
-    CPPUNIT_TEST(MoirQueue_HRC_michaelAlloc) \
-    CPPUNIT_TEST(MoirQueue_HRC_seqcst) \
-    CPPUNIT_TEST(MoirQueue_HRC_ic) \
-    CPPUNIT_TEST(MoirQueue_HRC_stat) \
-    CPPUNIT_TEST(MoirQueue_PTB) \
-    CPPUNIT_TEST(MoirQueue_PTB_michaelAlloc) \
-    CPPUNIT_TEST(MoirQueue_PTB_seqcst) \
-    CPPUNIT_TEST(MoirQueue_PTB_ic) \
-    CPPUNIT_TEST(MoirQueue_PTB_stat)
+    CPPUNIT_TEST(MoirQueue_DHP) \
+    CPPUNIT_TEST(MoirQueue_DHP_michaelAlloc) \
+    CPPUNIT_TEST(MoirQueue_DHP_seqcst) \
+    CPPUNIT_TEST(MoirQueue_DHP_ic) \
+    CPPUNIT_TEST(MoirQueue_DHP_stat)
 
 // MSQueue
 #define CDSUNIT_DECLARE_MSQueue( ITEM_TYPE ) \
@@ -45,16 +35,11 @@
     TEST_CASE( MSQueue_HP_seqcst, ITEM_TYPE  ) \
     TEST_CASE( MSQueue_HP_ic, ITEM_TYPE  ) \
     TEST_CASE( MSQueue_HP_stat, ITEM_TYPE  ) \
-    TEST_CASE( MSQueue_HRC, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_HRC_michaelAlloc, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_HRC_seqcst, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_HRC_ic, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_HRC_stat, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_PTB, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_PTB_michaelAlloc, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_PTB_seqcst, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_PTB_ic, ITEM_TYPE ) \
-    TEST_CASE( MSQueue_PTB_stat, ITEM_TYPE )
+    TEST_CASE( MSQueue_DHP, ITEM_TYPE ) \
+    TEST_CASE( MSQueue_DHP_michaelAlloc, ITEM_TYPE ) \
+    TEST_CASE( MSQueue_DHP_seqcst, ITEM_TYPE ) \
+    TEST_CASE( MSQueue_DHP_ic, ITEM_TYPE ) \
+    TEST_CASE( MSQueue_DHP_stat, ITEM_TYPE )
 
 #define CDSUNIT_TEST_MSQueue \
     CPPUNIT_TEST(MSQueue_HP) \
@@ -62,16 +47,11 @@
     CPPUNIT_TEST(MSQueue_HP_seqcst) \
     CPPUNIT_TEST(MSQueue_HP_ic) \
     CPPUNIT_TEST(MSQueue_HP_stat) \
-    CPPUNIT_TEST(MSQueue_HRC) \
-    CPPUNIT_TEST(MSQueue_HRC_michaelAlloc) \
-    CPPUNIT_TEST(MSQueue_HRC_seqcst) \
-    CPPUNIT_TEST(MSQueue_HRC_ic) \
-    CPPUNIT_TEST(MSQueue_HRC_stat) \
-    CPPUNIT_TEST(MSQueue_PTB) \
-    CPPUNIT_TEST(MSQueue_PTB_michaelAlloc) \
-    CPPUNIT_TEST(MSQueue_PTB_seqcst) \
-    CPPUNIT_TEST(MSQueue_PTB_ic) \
-    CPPUNIT_TEST(MSQueue_PTB_stat)
+    CPPUNIT_TEST(MSQueue_DHP) \
+    CPPUNIT_TEST(MSQueue_DHP_michaelAlloc) \
+    CPPUNIT_TEST(MSQueue_DHP_seqcst) \
+    CPPUNIT_TEST(MSQueue_DHP_ic) \
+    CPPUNIT_TEST(MSQueue_DHP_stat)
 
 
 // OptimisticQueue
