@@ -3,7 +3,7 @@
 #include <cds/container/optimistic_queue.h>
 #include <cds/gc/ptb.h>
 
-#include "queue/queue_test_header.h"
+#include "queue/hdr_queue.h"
 
 namespace queue {
 

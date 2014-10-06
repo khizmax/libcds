@@ -2,7 +2,7 @@
 
 #include <cds/container/rwqueue.h>
 
-#include "queue/queue_test_header.h"
+#include "queue/hdr_queue.h"
 
 namespace queue {
     void Queue_TestHeader::RWQueue_()

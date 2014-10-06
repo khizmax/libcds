@@ -4,7 +4,6 @@
 #define __CDS_CONTAINER_MSQUEUE_H
 
 #include <memory>
-#include <functional>   // ref
 #include <cds/intrusive/msqueue.h>
 #include <cds/container/details/base.h>
 
@@ -98,7 +97,7 @@ namespace cds { namespace container {
             typedef T value_type;
             typedef Traits traits;
 
-            struct node_type: public intrusive::msqueue::node< gc >
+            struct node_type : public intrusive::msqueue::node< gc >
             {
                 value_type  m_value;
 
@@ -108,7 +107,7 @@ namespace cds { namespace container {
 
                 template <typename... Args>
                 node_type( Args&&... args )
-                    : m_value( std::forward<Args>(args)...)
+                    : m_value( std::forward<Args>( args )... )
                 {}
             };
 
@@ -160,7 +159,7 @@ namespace cds { namespace container {
             > myQueue;
             \endcode
     */
-    template <typename GC, typename T, typename Traits>
+    template <typename GC, typename T, typename Traits = msqueue::traits>
     class MSQueue:
 #ifdef CDS_DOXYGEN_INVOKED
         intrusive::MSQueue< GC, cds::intrusive::msqueue::node< T >, Traits >
@@ -190,12 +189,12 @@ namespace cds { namespace container {
         typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
     protected:
-        typedef typename maker::node_type  node_type   ;   ///< queue node type (derived from \p intrusive::msqueue::node)
-
         //@cond
+        typedef typename maker::node_type  node_type;   ///< queue node type (derived from \p intrusive::msqueue::node)
+
         typedef typename maker::cxx_allocator     cxx_allocator;
         typedef typename maker::node_deallocator  node_deallocator;   // deallocate node
-        typedef typename base_class::node_traits    node_traits;
+        typedef typename base_class::node_traits  node_traits;
         //@endcond
 
     protected:
@@ -235,18 +234,6 @@ namespace cds { namespace container {
         /// Destructor clears the queue
         ~MSQueue()
         {}
-
-        /// Returns queue's item count (see \ref intrusive::MSQueue::size for explanation)
-        size_t size() const
-        {
-            return base_class::size();
-        }
-
-        /// Returns reference to internal statistics
-        const stat& statistics() const
-        {
-            return base_class::statistics();
-        }
 
         /// Enqueues \p val value into the queue.
         /**
@@ -298,7 +285,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Synonym for \ref enqueue function
+        /// Synonym for \p enqueue() function
         bool push( value_type const& val )
         {
             return enqueue( val );
@@ -311,6 +298,17 @@ namespace cds { namespace container {
             return enqueue_with( f );
         }
 
+        /// Dequeues a value from the queue
+        /**
+            If queue is not empty, the function returns \p true, \p dest contains copy of
+            dequeued value. The assignment operator for type \ref value_type is invoked.
+            If queue is empty, the function returns \p false, \p dest is unchanged.
+        */
+        bool dequeue( value_type& dest )
+        {
+            return dequeue_with( [&dest]( value_type& src ) { dest = src;  } );
+        }
+
         /// Dequeues a value using a functor
         /**
             \p Func is a functor called to copy dequeued value.
@@ -320,7 +318,7 @@ namespace cds { namespace container {
             Bar bar;
             myQueue.dequeue_with( [&bar]( Foo& src ) { bar = std::move( src );});
             \endcode
-            The functor is called only is the queue is not empty.
+            The functor is called only if the queue is not empty.
         */
         template <typename Func>
         bool dequeue_with( Func f )
@@ -334,19 +332,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Dequeues a value from the queue
-        /**
-            If queue is not empty, the function returns \p true, \p dest contains copy of
-            dequeued value. The assignment operator for type \ref value_type is invoked.
-            If queue is empty, the function returns \p false, \p dest is unchanged.
-        */
-        bool dequeue( value_type& dest )
-        {
-            typedef cds::details::trivial_assign<value_type, value_type> functor;
-            return dequeue( dest, functor() );
-        }
-
-        /// Synonym for \ref dequeue function
+        /// Synonym for \p dequeue() function
         bool pop( value_type& dest )
         {
             return dequeue( dest );
@@ -359,19 +345,31 @@ namespace cds { namespace container {
             return dequeue_with( f );
         }
 
+        /// Clear the queue
+        /**
+        The function repeatedly calls \ref dequeue until it returns \p nullptr.
+        */
+        void clear()
+        {
+            base_class::clear();
+        }
+
         /// Checks if the queue is empty
         bool empty() const
         {
             return base_class::empty();
         }
 
-        /// Clear the queue
-        /**
-            The function repeatedly calls \ref dequeue until it returns \p nullptr.
-        */
-        void clear()
+        /// Returns queue's item count (see \ref intrusive::MSQueue::size for explanation)
+        size_t size() const
         {
-            base_class::clear();
+            return base_class::size();
+        }
+
+        /// Returns reference to internal statistics
+        const stat& statistics() const
+        {
+            return base_class::statistics();
         }
     };
 

@@ -116,6 +116,7 @@ CDS_TESTHDR_PQUEUE := \
     tests/test-hdr/priority_queue/hdr_priority_queue_reg.cpp
 
 CDS_TESTHDR_QUEUE := \
+    tests/test-hdr/queue/hdr_queue_register.cpp \
     tests/test-hdr/queue/hdr_intrusive_basketqueue_hrc.cpp \
     tests/test-hdr/queue/hdr_intrusive_fcqueue.cpp \
     tests/test-hdr/queue/hdr_intrusive_segmented_queue_hp.cpp \
@@ -126,17 +127,16 @@ CDS_TESTHDR_QUEUE := \
     tests/test-hdr/queue/hdr_basketqueue_hzp.cpp \
     tests/test-hdr/queue/hdr_basketqueue_ptb.cpp \
     tests/test-hdr/queue/hdr_fcqueue.cpp \
-    tests/test-hdr/queue/hdr_moirqueue_hzp.cpp \
-    tests/test-hdr/queue/hdr_moirqueue_ptb.cpp \
-    tests/test-hdr/queue/hdr_msqueue_hzp.cpp \
-    tests/test-hdr/queue/hdr_msqueue_ptb.cpp \
+    tests/test-hdr/queue/hdr_moirqueue_hp.cpp \
+    tests/test-hdr/queue/hdr_moirqueue_dhp.cpp \
+    tests/test-hdr/queue/hdr_msqueue_hp.cpp \
+    tests/test-hdr/queue/hdr_msqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_optimistic_hzp.cpp \
     tests/test-hdr/queue/hdr_optimistic_ptb.cpp \
     tests/test-hdr/queue/hdr_rwqueue.cpp \
     tests/test-hdr/queue/hdr_segmented_queue_hp.cpp \
     tests/test-hdr/queue/hdr_segmented_queue_ptb.cpp \
-    tests/test-hdr/queue/hdr_vyukov_mpmc_cyclic.cpp \
-    tests/test-hdr/queue/queue_test_header.cpp 
+    tests/test-hdr/queue/hdr_vyukov_mpmc_cyclic.cpp
 
 CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_intrusive_michael_set_hrc.cpp \

@@ -188,4 +188,3 @@ namespace queue {
     TEST(MSQueue_HP_member_cachealign)
 }
 
-CPPUNIT_TEST_SUITE_REGISTRATION(queue::IntrusiveQueueHeaderTest);

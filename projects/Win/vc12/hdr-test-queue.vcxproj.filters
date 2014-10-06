@@ -49,24 +49,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_vyukovmpmc_cycle_queue.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hrc.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hzp.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_ptb.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hrc.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hzp.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_ptb.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_hzp.cpp">
       <Filter>container</Filter>
     </ClCompile>
@@ -85,15 +67,25 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_vyukov_mpmc_cyclic.cpp">
       <Filter>container</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\queue_test_header.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_dhp.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_dhp.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_queue_register.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_node.h">
@@ -111,7 +103,10 @@
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue.h">
       <Filter>container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\tests\test-hdr\queue\queue_test_header.h">
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue.h">
+      <Filter>container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue_new.h">
       <Filter>container</Filter>
     </ClInclude>
   </ItemGroup>

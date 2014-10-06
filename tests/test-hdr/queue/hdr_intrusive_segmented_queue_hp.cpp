@@ -57,5 +57,3 @@ namespace queue {
     }
 
 } // namespace queue
-
-CPPUNIT_TEST_SUITE_REGISTRATION(queue::HdrIntrusiveSegmentedQueue);

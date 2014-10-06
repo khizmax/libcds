@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include <cds/container/fcqueue.h>
-#include "queue/queue_test_header.h"
+#include "queue/hdr_queue.h"
 
 #include <list>
 

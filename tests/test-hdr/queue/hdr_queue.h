@@ -150,27 +150,16 @@ namespace queue {
         void MSQueue_HP_Counted_relax_align();
         void MSQueue_HP_Counted_seqcst_align();
 
-        void MSQueue_HRC();
-        void MSQueue_HRC_relax();
-        void MSQueue_HRC_seqcst();
-        void MSQueue_HRC_relax_align();
-        void MSQueue_HRC_seqcst_align();
-        void MSQueue_HRC_Counted();
-        void MSQueue_HRC_Counted_relax();
-        void MSQueue_HRC_Counted_seqcst();
-        void MSQueue_HRC_Counted_relax_align();
-        void MSQueue_HRC_Counted_seqcst_align();
-
-        void MSQueue_PTB();
-        void MSQueue_PTB_relax();
-        void MSQueue_PTB_seqcst();
-        void MSQueue_PTB_relax_align();
-        void MSQueue_PTB_seqcst_align();
-        void MSQueue_PTB_Counted();
-        void MSQueue_PTB_Counted_relax();
-        void MSQueue_PTB_Counted_seqcst();
-        void MSQueue_PTB_Counted_relax_align();
-        void MSQueue_PTB_Counted_seqcst_align();
+        void MSQueue_DHP();
+        void MSQueue_DHP_relax();
+        void MSQueue_DHP_seqcst();
+        void MSQueue_DHP_relax_align();
+        void MSQueue_DHP_seqcst_align();
+        void MSQueue_DHP_Counted();
+        void MSQueue_DHP_Counted_relax();
+        void MSQueue_DHP_Counted_seqcst();
+        void MSQueue_DHP_Counted_relax_align();
+        void MSQueue_DHP_Counted_seqcst_align();
 
         void MoirQueue_HP();
         void MoirQueue_HP_relax();
@@ -183,27 +172,16 @@ namespace queue {
         void MoirQueue_HP_Counted_relax_align();
         void MoirQueue_HP_Counted_seqcst_align();
 
-        void MoirQueue_HRC();
-        void MoirQueue_HRC_relax();
-        void MoirQueue_HRC_seqcst();
-        void MoirQueue_HRC_relax_align();
-        void MoirQueue_HRC_seqcst_align();
-        void MoirQueue_HRC_Counted();
-        void MoirQueue_HRC_Counted_relax();
-        void MoirQueue_HRC_Counted_seqcst();
-        void MoirQueue_HRC_Counted_relax_align();
-        void MoirQueue_HRC_Counted_seqcst_align();
-
-        void MoirQueue_PTB();
-        void MoirQueue_PTB_relax();
-        void MoirQueue_PTB_seqcst();
-        void MoirQueue_PTB_relax_align();
-        void MoirQueue_PTB_seqcst_align();
-        void MoirQueue_PTB_Counted();
-        void MoirQueue_PTB_Counted_relax();
-        void MoirQueue_PTB_Counted_seqcst();
-        void MoirQueue_PTB_Counted_relax_align();
-        void MoirQueue_PTB_Counted_seqcst_align();
+        void MoirQueue_DHP();
+        void MoirQueue_DHP_relax();
+        void MoirQueue_DHP_seqcst();
+        void MoirQueue_DHP_relax_align();
+        void MoirQueue_DHP_seqcst_align();
+        void MoirQueue_DHP_Counted();
+        void MoirQueue_DHP_Counted_relax();
+        void MoirQueue_DHP_Counted_seqcst();
+        void MoirQueue_DHP_Counted_relax_align();
+        void MoirQueue_DHP_Counted_seqcst_align();
 
         void OptimisticQueue_HP();
         void OptimisticQueue_HP_relax();
@@ -287,27 +265,16 @@ namespace queue {
             CPPUNIT_TEST(MSQueue_HP_Counted_relax_align);
             CPPUNIT_TEST(MSQueue_HP_Counted_seqcst_align);
 
-            CPPUNIT_TEST(MSQueue_HRC);
-            CPPUNIT_TEST(MSQueue_HRC_relax);
-            CPPUNIT_TEST(MSQueue_HRC_seqcst);
-            CPPUNIT_TEST(MSQueue_HRC_relax_align);
-            CPPUNIT_TEST(MSQueue_HRC_seqcst_align);
-            CPPUNIT_TEST(MSQueue_HRC_Counted);
-            CPPUNIT_TEST(MSQueue_HRC_Counted_relax);
-            CPPUNIT_TEST(MSQueue_HRC_Counted_seqcst);
-            CPPUNIT_TEST(MSQueue_HRC_Counted_relax_align);
-            CPPUNIT_TEST(MSQueue_HRC_Counted_seqcst_align);
-
-            CPPUNIT_TEST(MSQueue_PTB);
-            CPPUNIT_TEST(MSQueue_PTB_relax);
-            CPPUNIT_TEST(MSQueue_PTB_seqcst);
-            CPPUNIT_TEST(MSQueue_PTB_relax_align);
-            CPPUNIT_TEST(MSQueue_PTB_seqcst_align);
-            CPPUNIT_TEST(MSQueue_PTB_Counted);
-            CPPUNIT_TEST(MSQueue_PTB_Counted_relax);
-            CPPUNIT_TEST(MSQueue_PTB_Counted_seqcst);
-            CPPUNIT_TEST(MSQueue_PTB_Counted_relax_align);
-            CPPUNIT_TEST(MSQueue_PTB_Counted_seqcst_align);
+            CPPUNIT_TEST(MSQueue_DHP);
+            CPPUNIT_TEST(MSQueue_DHP_relax);
+            CPPUNIT_TEST(MSQueue_DHP_seqcst);
+            CPPUNIT_TEST(MSQueue_DHP_relax_align);
+            CPPUNIT_TEST(MSQueue_DHP_seqcst_align);
+            CPPUNIT_TEST(MSQueue_DHP_Counted);
+            CPPUNIT_TEST(MSQueue_DHP_Counted_relax);
+            CPPUNIT_TEST(MSQueue_DHP_Counted_seqcst);
+            CPPUNIT_TEST(MSQueue_DHP_Counted_relax_align);
+            CPPUNIT_TEST(MSQueue_DHP_Counted_seqcst_align);
 
             CPPUNIT_TEST(MoirQueue_HP);
             CPPUNIT_TEST(MoirQueue_HP_relax);
@@ -320,27 +287,16 @@ namespace queue {
             CPPUNIT_TEST(MoirQueue_HP_Counted_relax_align);
             CPPUNIT_TEST(MoirQueue_HP_Counted_seqcst_align);
 
-            CPPUNIT_TEST(MoirQueue_HRC);
-            CPPUNIT_TEST(MoirQueue_HRC_relax);
-            CPPUNIT_TEST(MoirQueue_HRC_seqcst);
-            CPPUNIT_TEST(MoirQueue_HRC_relax_align);
-            CPPUNIT_TEST(MoirQueue_HRC_seqcst_align);
-            CPPUNIT_TEST(MoirQueue_HRC_Counted);
-            CPPUNIT_TEST(MoirQueue_HRC_Counted_relax);
-            CPPUNIT_TEST(MoirQueue_HRC_Counted_seqcst);
-            CPPUNIT_TEST(MoirQueue_HRC_Counted_relax_align);
-            CPPUNIT_TEST(MoirQueue_HRC_Counted_seqcst_align);
-
-            CPPUNIT_TEST(MoirQueue_PTB);
-            CPPUNIT_TEST(MoirQueue_PTB_relax);
-            CPPUNIT_TEST(MoirQueue_PTB_seqcst);
-            CPPUNIT_TEST(MoirQueue_PTB_relax_align);
-            CPPUNIT_TEST(MoirQueue_PTB_seqcst_align);
-            CPPUNIT_TEST(MoirQueue_PTB_Counted);
-            CPPUNIT_TEST(MoirQueue_PTB_Counted_relax);
-            CPPUNIT_TEST(MoirQueue_PTB_Counted_seqcst);
-            CPPUNIT_TEST(MoirQueue_PTB_Counted_relax_align);
-            CPPUNIT_TEST(MoirQueue_PTB_Counted_seqcst_align);
+            CPPUNIT_TEST(MoirQueue_DHP);
+            CPPUNIT_TEST(MoirQueue_DHP_relax);
+            CPPUNIT_TEST(MoirQueue_DHP_seqcst);
+            CPPUNIT_TEST(MoirQueue_DHP_relax_align);
+            CPPUNIT_TEST(MoirQueue_DHP_seqcst_align);
+            CPPUNIT_TEST(MoirQueue_DHP_Counted);
+            CPPUNIT_TEST(MoirQueue_DHP_Counted_relax);
+            CPPUNIT_TEST(MoirQueue_DHP_Counted_seqcst);
+            CPPUNIT_TEST(MoirQueue_DHP_Counted_relax_align);
+            CPPUNIT_TEST(MoirQueue_DHP_Counted_seqcst_align);
 
             CPPUNIT_TEST(OptimisticQueue_HP);
             CPPUNIT_TEST(OptimisticQueue_HP_relax);

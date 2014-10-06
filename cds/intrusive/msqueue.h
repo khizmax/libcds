@@ -457,25 +457,6 @@ namespace cds { namespace intrusive {
             dispose_node( pHead );
         }
 
-        /// Returns queue's item count
-        /**
-            The value returned depends on \p msqueue::traits::item_counter. For \p atomicity::empty_item_counter,
-            this function always returns 0.
-
-            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
-            is empty. To check queue emptyness use \p empty() method.
-        */
-        size_t size() const
-        {
-            return m_ItemCounter.value();
-        }
-
-        /// Returns reference to internal statistics
-        stat const& statistics() const
-        {
-            return m_Stat;
-        }
-
         /// Enqueues \p val value into the queue.
         /** @anchor cds_intrusive_MSQueue_enqueue
             The function always returns \p true.
@@ -580,6 +561,26 @@ namespace cds { namespace intrusive {
         {
             while ( dequeue() );
         }
+
+        /// Returns queue's item count
+        /**
+            The value returned depends on \p msqueue::traits::item_counter. For \p atomicity::empty_item_counter,
+            this function always returns 0.
+
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
+            is empty. To check queue emptyness use \p empty() method.
+        */
+        size_t size() const
+        {
+            return m_ItemCounter.value();
+        }
+
+        /// Returns reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
     };
 
 }} // namespace cds::intrusive

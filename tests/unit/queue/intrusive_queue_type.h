@@ -441,7 +441,7 @@ namespace std {
             << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::queue_dummy_stat const& s )
+    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::msqueue::empty_stat const& s )
     {
         return o;
     }

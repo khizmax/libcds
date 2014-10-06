@@ -553,27 +553,26 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_tsigas_cycle_queue.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_vyukovmpmc_cycle_queue.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hrc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hzp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_ptb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hrc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hzp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_ptb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_hzp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_ptb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_queue_register.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_rwqueue.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_vyukov_mpmc_cyclic.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\queue_test_header.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_node.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_singlelink_node.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue_new.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\queue\queue_test_header.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
