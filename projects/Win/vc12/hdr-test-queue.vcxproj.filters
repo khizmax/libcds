@@ -1,25 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hrc.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hzp.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_ptb.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_fcqueue.cpp">
       <Filter>container</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_hp.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_hrc.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_ptb.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_fcqueue.cpp">
@@ -86,11 +71,17 @@
       <Filter>container</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_queue_register.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_node.h">
-      <Filter>intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue.h">
       <Filter>intrusive</Filter>
     </ClInclude>

@@ -535,14 +535,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hrc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hzp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_ptb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_fcqueue.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_fcqueue.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_hrc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_dhp.cpp" />
@@ -566,7 +564,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_vyukov_mpmc_cyclic.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_node.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_singlelink_node.h" />

@@ -68,7 +68,7 @@ CDS_TESTHDR_OFFSETOF_ORDLIST := \
 
 CDS_TESTHDR_OFFSETOF_QUEUE := \
     tests/test-hdr/queue/hdr_intrusive_basketqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_basketqueue_ptb.cpp \
+    tests/test-hdr/queue/hdr_intrusive_basketqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_intrusive_moirqueue_hp.cpp \
     tests/test-hdr/queue/hdr_intrusive_moirqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_intrusive_msqueue_hp.cpp \

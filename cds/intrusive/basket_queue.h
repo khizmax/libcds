@@ -4,12 +4,8 @@
 #define __CDS_INTRUSIVE_BASKET_QUEUE_H
 
 #include <type_traits>
-#include <functional>   // ref
-#include <cds/intrusive/details/base.h>
-#include <cds/details/marked_ptr.h>
-#include <cds/intrusive/details/queue_stat.h>
 #include <cds/intrusive/details/single_link_struct.h>
-#include <cds/intrusive/details/dummy_node_holder.h>
+#include <cds/details/marked_ptr.h>
 
 namespace cds { namespace intrusive {
 
@@ -20,17 +16,18 @@ namespace cds { namespace intrusive {
         /// BasketQueue node
         /**
             Template parameters:
+            Template parameters:
             - GC - garbage collector used
-            - Tag - a tag used to distinguish between different implementation
-        */
+            - Tag - a \ref cds_intrusive_hook_tag "tag"
+            */
         template <class GC, typename Tag = opt::none>
-        struct node: public GC::container_node
+        struct node
         {
             typedef GC      gc  ;   ///< Garbage collector
             typedef Tag     tag ;   ///< tag
 
-            typedef cds::details::marked_ptr<node, 1>   marked_ptr         ;   ///< marked pointer
-            typedef typename gc::template atomic_marked_ptr< marked_ptr>     atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
+            typedef cds::details::marked_ptr<node, 1>                    marked_ptr;        ///< marked pointer
+            typedef typename gc::template atomic_marked_ptr< marked_ptr> atomic_marked_ptr; ///< atomic marked pointer specific for GC
 
             /// Rebind node for other template parameters
             template <class GC2, typename Tag2 = tag>
@@ -45,56 +42,7 @@ namespace cds { namespace intrusive {
             {}
         };
 
-        //@cond
-        // Specialization for HRC GC
-        template <typename Tag>
-        struct node< gc::HRC, Tag>: public gc::HRC::container_node
-        {
-            typedef gc::HRC gc  ;   ///< Garbage collector
-            typedef Tag     tag ;   ///< tag
-
-            typedef cds::details::marked_ptr<node, 1>   marked_ptr         ;   ///< marked pointer
-            typedef typename gc::template atomic_marked_ptr< marked_ptr>     atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
-
-            atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
-
-            node()
-                : m_pNext( nullptr )
-            {}
-
-        protected:
-            virtual void cleanUp( cds::gc::hrc::ThreadGC * pGC )
-            {
-                assert( pGC != nullptr );
-                typename gc::template GuardArray<2> aGuards( *pGC );
-
-                while ( true ) {
-                    marked_ptr pNext = aGuards.protect( 0, m_pNext );
-                    if ( pNext.ptr() && pNext->m_bDeleted.load(atomics::memory_order_acquire) ) {
-                        marked_ptr p = aGuards.protect( 1, pNext->m_pNext );
-                        m_pNext.compare_exchange_strong( pNext, p, atomics::memory_order_acquire, atomics::memory_order_relaxed );
-                        continue;
-                    }
-                    else {
-                        break;
-                    }
-                }
-            }
-
-            virtual void terminate( cds::gc::hrc::ThreadGC * pGC, bool bConcurrent )
-            {
-                if ( bConcurrent ) {
-                    marked_ptr pNext = m_pNext.load(atomics::memory_order_relaxed);
-                    do {} while ( !m_pNext.compare_exchange_weak( pNext, marked_ptr(), atomics::memory_order_release, atomics::memory_order_relaxed ) );
-                }
-                else {
-                    m_pNext.store( marked_ptr(), atomics::memory_order_relaxed );
-                }
-            }
-        };
-        //@endcond
-
-        using single_link::default_hook;
+        using cds::intrusive::single_link::default_hook;
 
         //@cond
         template < typename HookType, typename... Options>
@@ -113,7 +61,7 @@ namespace cds { namespace intrusive {
         /**
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         struct base_hook: public hook< opt::base_hook_tag, Options... >
@@ -126,7 +74,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         struct member_hook: public hook< opt::member_hook_tag, Options... >
@@ -143,7 +91,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         struct traits_hook: public hook< opt::traits_hook_tag, Options... >
@@ -153,25 +101,40 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Metafunction for selecting appropriate link checking policy
-        template < typename Node, opt::link_check_type LinkType > using get_link_checker = single_link::get_link_checker< Node, LinkType >;
-
-        /// Basket queue internal statistics. May be used for debugging or profiling
+        /// BasketQueue internal statistics. May be used for debugging or profiling
         /**
-            Basket queue statistics derives from cds::intrusive::queue_stat
-            and extends it by two additional fields specific for the algorithm.
+            Template argument \p Counter defines type of counter.
+            Default is \p cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
+            strict event counting.
+            You may use stronger type of counter like as \p cds::atomicity::item_counter,
+            or even integral type, for example, \p int.
         */
         template <typename Counter = cds::atomicity::event_counter >
-        struct stat: public cds::intrusive::queue_stat< Counter >
+        struct stat
         {
-            //@cond
-            typedef cds::intrusive::queue_stat< Counter >   base_class;
-            typedef typename base_class::counter_type       counter_type;
-            //@endcond
+            typedef Counter counter_type;   ///< Counter type
 
-            counter_type m_TryAddBasket      ;  ///< Count of attemps adding new item to a basket (only or BasketQueue, for other queue this metric is not used)
-            counter_type m_AddBasketCount    ;  ///< Count of events "Enqueue a new item into basket" (only or BasketQueue, for other queue this metric is not used)
+            counter_type m_EnqueueCount;    ///< Enqueue call count
+            counter_type m_DequeueCount;    ///< Dequeue call count
+            counter_type m_EnqueueRace;     ///< Count of enqueue race conditions encountered
+            counter_type m_DequeueRace;     ///< Count of dequeue race conditions encountered
+            counter_type m_AdvanceTailError;///< Count of "advance tail failed" events
+            counter_type m_BadTail;         ///< Count of events "Tail is not pointed to the last item in the queue"
+            counter_type m_TryAddBasket;    ///< Count of attemps adding new item to a basket (only or BasketQueue, for other queue this metric is not used)
+            counter_type m_AddBasketCount;  ///< Count of events "Enqueue a new item into basket" (only or BasketQueue, for other queue this metric is not used)
 
+            /// Register enqueue call
+            void onEnqueue() { ++m_EnqueueCount; }
+            /// Register dequeue call
+            void onDequeue() { ++m_DequeueCount; }
+            /// Register enqueue race event
+            void onEnqueueRace() { ++m_EnqueueRace; }
+            /// Register dequeue race event
+            void onDequeueRace() { ++m_DequeueRace; }
+            /// Register "advance tail failed" event
+            void onAdvanceTailFailed() { ++m_AdvanceTailError; }
+            /// Register event "Tail is not pointed to last item in the queue"
+            void onBadTail() { ++m_BadTail; }
             /// Register an attempt t add new item to basket
             void onTryAddBasket()           { ++m_TryAddBasket; }
             /// Register event "Enqueue a new item into basket" (only or BasketQueue, for other queue this metric is not used)
@@ -180,36 +143,130 @@ namespace cds { namespace intrusive {
             //@cond
             void reset()
             {
-                base_class::reset();
+                m_EnqueueCount.reset();
+                m_DequeueCount.reset();
+                m_EnqueueRace.reset();
+                m_DequeueRace.reset();
+                m_AdvanceTailError.reset();
+                m_BadTail.reset();
                 m_TryAddBasket.reset();
                 m_AddBasketCount.reset();
             }
 
             stat& operator +=( stat const& s )
             {
-                base_class::operator +=( s );
-                m_TryAddBasket += s.m_TryAddBasket.get();
+                m_EnqueueCount  += s.m_EnqueueCount.get();
+                m_DequeueCount  += s.m_DequeueCount.get();
+                m_EnqueueRace   += s.m_EnqueueRace.get();
+                m_DequeueRace   += s.m_DequeueRace.get();
+                m_AdvanceTailError += s.m_AdvanceTailError.get();
+                m_BadTail       += s.m_BadTail.get();
+                m_TryAddBasket  += s.m_TryAddBasket.get();
                 m_AddBasketCount += s.m_AddBasketCount.get();
                 return *this;
             }
             //@endcond
         };
 
-        /// Dummy basket queue statistics - no counting is performed. Support interface like \ref stat
-        struct dummy_stat: public cds::intrusive::queue_dummy_stat
+        /// Dummy BasketQueue statistics - no counting is performed, no overhead. Support interface like \p basket_queue::stat
+        struct empty_stat
         {
             //@cond
-            void onTryAddBasket()           {}
-            void onAddBasket()              {}
+            void onEnqueue()            {}
+            void onDequeue()            {}
+            void onEnqueueRace()        {}
+            void onDequeueRace()        {}
+            void onAdvanceTailFailed()  {}
+            void onBadTail()            {}
+            void onTryAddBasket()       {}
+            void onAddBasket()          {}
 
             void reset() {}
-            dummy_stat& operator +=( dummy_stat const& )
+            empty_stat& operator +=( empty_stat const& )
             {
                 return *this;
             }
             //@endcond
         };
 
+        /// BasketQueue default type traits
+        struct traits
+        {
+            /// Back-off strategy
+            typedef cds::backoff::empty             back_off;
+
+            /// Hook, possible types are \p basket_queue::base_hook, \p basket_queue::member_hook, \p basket_queue::traits_hook
+            typedef basket_queue::base_hook<>       hook;
+
+            /// The functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used for dequeuing
+            typedef opt::v::empty_disposer          disposer;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef atomicity::empty_item_counter   item_counter;
+
+            /// Internal statistics (by default, disabled)
+            /**
+                Possible option value are: \p basket_queue::stat, \p basket_queue::empty_stat (the default),
+                user-provided class that supports \p %basket_queue::stat interface.
+            */
+            typedef basket_queue::empty_stat        stat;
+
+            /// C++ memory ordering model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering        memory_model;
+
+            /// Link checking, see \p cds::opt::link_checker
+            static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
+
+            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+
+        /// Metafunction converting option list to \p basket_queue::traits
+        /**
+            Supported \p Options are:
+
+            - opt::hook - hook used. Possible hooks are: \p basket_queue::base_hook, \p basket_queue::member_hook, \p basket_queue::traits_hook.
+                If the option is not specified, \p %basket_queue::base_hook<> is used.
+            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+                when dequeuing.
+            - opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            - opt::stat - the type to gather internal statistics.
+                Possible statistics types are: \p basket_queue::stat, \p basket_queue::empty_stat, user-provided class that supports \p %basket_queue::stat interface.
+                Default is \p %basket_queue::empty_stat (internal statistics disabled).
+            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare \p %BasketQueue with item counting and internal statistics
+            \code
+            typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo, 
+                typename cds::intrusive::basket_queue::make_traits<
+                    cds::intrusive::opt:hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc<cds:gc::HP> >>,
+                    cds::opt::item_counte< cds::atomicity::item_counter >,
+                    cds::opt::stat< cds::intrusive::basket_queue::stat<> >
+                >::type
+            > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
     }   // namespace basket_queue
 
     /// Basket lock-free queue (intrusive variant)
@@ -258,38 +315,31 @@ namespace cds { namespace intrusive {
         oldest basket. It may then dequeue any node in the oldest basket.
 
         <b>Template arguments:</b>
-        - \p GC - garbage collector type: gc::HP, gc::HRC, gc::PTB
-        - \p T - type to be stored in the queue, should be convertible to \ref single_link::node
-        - \p Options - options
+        - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
+        - \p T - type of value to be stored in the queue
+        - \p Traits - queue traits, default is \p basket_queue::traits. You can use \p basket_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %basket_queue::traits:
+            \code
+            struct myTraits: public cds::intrusive::basket_queue::traits {
+                typedef cds::intrusive::basket_queue::stat<> stat;
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
-        <b>Type of node</b>: \ref single_link::node
+            // Equivalent make_traits example:
+            typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo, 
+                typename cds::intrusive::basket_queue::make_traits< 
+                    cds::opt::stat< cds::intrusive::basket_queue::stat<> >,
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
 
-        \p Options are:
-        - opt::hook - hook used. Possible values are: basket_queue::base_hook, basket_queue::member_hook, basket_queue::traits_hook.
-            If the option is not specified, <tt>basket_queue::base_hook<></tt> is used.
-            For Gidenstam's gc::HRC, only basket_queue::base_hook is supported.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used
-            in \ref dequeue function.
-        - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link
-            Note: for gc::HRC garbage collector, link checking policy is always selected as \ref opt::always_check_link.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter (no item counting feature)
-        - opt::stat - the type to gather internal statistics.
-            Possible option value are: \ref basket_queue::stat, \ref basket_queue::dummy_stat,
-            user-provided class that supports basket_queue::stat interface.
-            Default is \ref basket_queue::dummy_stat.
-            Generic option intrusive::queue_stat and intrusive::queue_dummy_stat are acceptable too, however,
-            they will be automatically converted to basket_queue::stat and basket_queue::dummy_stat
-            respectively.
-        - opt::alignment - the alignment for internal queue data. Default is opt::cache_line_alignment
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-
-        Garbage collecting schema \p GC must be consistent with the basket_queue::node GC.
+        Garbage collecting schema \p GC must be consistent with the \p basket_queue::node GC.
 
         \par About item disposing
-        Like MSQueue, the Baskets queue algo has a key feature: even if the queue is empty it contains one item that is "dummy" one from
-        the standpoint of the algo. See \ref dequeue function doc for explanation.
+        Like \p MSQueue, the Baskets queue algo has a key feature: even if the queue is empty it contains one item that is "dummy" one from
+        the standpoint of the algo. See \p dequeue() function doc for explanation.
 
         \par Examples
         \code
@@ -314,13 +364,11 @@ namespace cds { namespace intrusive {
             }
         };
 
-        typedef ci::BasketQueue< hp_gc,
-            Foo
-            ,ci::opt::hook<
-                ci::basket_queue::base_hook< ci::opt::gc<hp_gc> >
-            >
-            ,ci::opt::disposer< fooDisposer >
-        > fooQueue;
+        struct fooTraits: public ci::basket_queue::traits {
+            typedef ci::basket_queue::base_hook< ci::opt::gc<hp_gc> > hook;
+            typedef fooDisposer disposer;
+        };
+        typedef ci::BasketQueue< hp_gc, Foo, fooTraits > fooQueue;
 
         // BasketQueue with Hazard Pointer garbage collector,
         // member hook + item disposer + item counter,
@@ -332,111 +380,63 @@ namespace cds { namespace intrusive {
             ci::basket_queue::node< hp_gc > hMember;
         };
 
-        typedef ci::BasketQueue< hp_gc,
-            Foo
-            ,ci::opt::hook<
-                ci::basket_queue::member_hook<
-                    offsetof(Bar, hMember)
-                    ,ci::opt::gc<hp_gc>
+        struct barTraits: public 
+            ci::basket_queue::make_traits<
+                ci::opt::hook<
+                    ci::basket_queue::member_hook<
+                        offsetof(Bar, hMember)
+                        ,ci::opt::gc<hp_gc>
+                    >
                 >
-            >
-            ,ci::opt::disposer< fooDisposer >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-            ,cds::opt::alignment< cds::opt::no_special_alignment >
-        > barQueue;
+                ,ci::opt::disposer< fooDisposer >
+                ,cds::opt::item_counter< cds::atomicity::item_counter >
+                ,cds::opt::alignment< cds::opt::no_special_alignment >
+            >::type
+        {};
+        typedef ci::BasketQueue< hp_gc, Bar, barTraits > barQueue;
         \endcode
     */
-    template <typename GC, typename T, typename... Options>
+    template <typename GC, typename T, typename Traits = basket_queue::traits >
     class BasketQueue
     {
-        //@cond
-        struct default_options
-        {
-            typedef cds::backoff::empty             back_off;
-            typedef basket_queue::base_hook<>       hook;
-            typedef opt::v::empty_disposer          disposer;
-            typedef atomicity::empty_item_counter   item_counter;
-            typedef basket_queue::dummy_stat        stat;
-            typedef opt::v::relaxed_ordering        memory_model;
-            static const opt::link_check_type link_checker = opt::debug_check_link;
-            enum { alignment = opt::cache_line_alignment };
-        };
-        //@endcond
-
     public:
-        //@cond
-        typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, Options... >::type
-            ,Options...
-        >::type   options;
+        typedef GC gc;          ///< Garbage collector
+        typedef T  value_type;  ///< type of value stored in the queue
+        typedef Traits traits;  ///< Queue traits
+        typedef typename traits::hook       hook;       ///< hook type
+        typedef typename hook::node_type    node_type;  ///< node type
+        typedef typename traits::disposer   disposer;   ///< disposer used
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;   ///< node traits
+        typedef typename single_link::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
-        typedef typename std::conditional<
-            std::is_same<typename options::stat, cds::intrusive::queue_stat<> >::value
-            ,basket_queue::stat<>
-            ,typename std::conditional<
-                std::is_same<typename options::stat, cds::intrusive::queue_dummy_stat>::value
-                ,basket_queue::dummy_stat
-                ,typename options::stat
-            >::type
-        >::type stat_type_;
-
-        //@endcond
-
-    public:
-        typedef T  value_type   ;   ///< type of value stored in the queue
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
-        typedef typename options::disposer  disposer    ;   ///< disposer used
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
-        typedef typename basket_queue::get_link_checker< node_type, options::link_checker >::type link_checker   ;   ///< link checker
-
-        typedef GC gc          ;   ///< Garbage collector
-        typedef typename options::back_off  back_off    ;   ///< back-off strategy
-        typedef typename options::item_counter item_counter ;   ///< Item counting policy used
-#ifdef CDS_DOXYGEN_INVOKED
-        typedef typename options::stat      stat        ;   ///< Internal statistics policy used
-#else
-        typedef stat_type_  stat;
-#endif
-        typedef typename options::memory_model  memory_model ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::back_off       back_off;     ///< back-off strategy
+        typedef typename traits::item_counter   item_counter; ///< Item counting policy used
+        typedef typename traits::stat           stat;         ///< Internal statistics policy used
+        typedef typename traits::memory_model   memory_model; ///< Memory ordering. See cds::opt::memory_model option
 
         /// Rebind template arguments
-        template <typename GC2, typename T2, typename... Options2>
+        template <typename GC2, typename T2, typename Traits2>
         struct rebind {
-            typedef BasketQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
+            typedef BasketQueue< GC2, T2, Traits2> other   ;   ///< Rebinding result
         };
 
-        static const size_t m_nHazardPtrCount = 6 ; ///< Count of hazard pointer required for the algorithm
+        static CDS_CONSTEXPR const size_t m_nHazardPtrCount = 6 ; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond
-
-        struct internal_disposer
-        {
-            void operator()( value_type * p )
-            {
-                assert( p != nullptr );
-
-                BasketQueue::clear_links( node_traits::to_node_ptr(p) );
-                disposer()( p );
-            }
-        };
-
         typedef typename node_type::marked_ptr   marked_ptr;
         typedef typename node_type::atomic_marked_ptr atomic_marked_ptr;
 
         typedef intrusive::node_to_value<BasketQueue> node_to_value;
-        typedef typename opt::details::alignment_setter< atomic_marked_ptr, options::alignment >::type aligned_node_ptr;
-        typedef typename opt::details::alignment_setter<
-            cds::intrusive::details::dummy_node< gc, node_type>,
-            options::alignment
-        >::type    dummy_node_type;
+        typedef typename opt::details::alignment_setter< atomic_marked_ptr, traits::alignment >::type aligned_node_ptr;
+        typedef typename opt::details::alignment_setter< node_type, options::alignment >::type dummy_node_type;
 
+        // GC and node_type::gc must be the same
+        static_assert( std::is_same<gc, typename node_type::gc>::value, "GC and node_type::gc must be the same");
         //@endcond
 
         aligned_node_ptr    m_pHead ;           ///< Queue's head pointer (aligned)
         aligned_node_ptr    m_pTail ;           ///< Queue's tail pointer (aligned)
-
         dummy_node_type     m_Dummy ;           ///< dummy node
         item_counter        m_ItemCounter   ;   ///< Item counter
         stat                m_Stat  ;           ///< Internal statistics
@@ -578,6 +578,15 @@ namespace cds { namespace intrusive {
         void dispose_node( node_type * p )
         {
             if ( p != m_Dummy.get() ) {
+                struct internal_disposer
+                {
+                    void operator()( value_type * p )
+                    {
+                        assert( p != nullptr );
+                        BasketQueue::clear_links( node_traits::to_node_ptr( p ) );
+                        disposer()(p);
+                    }
+                };
                 gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
             }
             else
@@ -588,27 +597,10 @@ namespace cds { namespace intrusive {
     public:
         /// Initializes empty queue
         BasketQueue()
-            : m_pHead( nullptr )
-            , m_pTail( nullptr )
+            : m_pHead( &m_Dummy )
+            , m_pTail( &m_Dummy )
             , m_nMaxHops( 3 )
-        {
-            // GC and node_type::gc must be the same
-            static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
-
-            // For cds::gc::HRC, only one base_hook is allowed
-            static_assert((
-                std::conditional<
-                    std::is_same<gc, cds::gc::HRC>::value,
-                    std::is_same< typename hook::hook_type, opt::base_hook_tag >,
-                    boost::true_type
-                >::type::value
-            ), "For cds::gc::HRC, only base_hook is allowed");
-
-            // Head/tail initialization should be made via store call
-            // because of gc::HRC manages reference counting
-            m_pHead.store( marked_ptr(m_Dummy.get()), memory_model::memory_order_relaxed );
-            m_pTail.store( marked_ptr(m_Dummy.get()), memory_model::memory_order_relaxed );
-        }
+        {}
 
         /// Destructor clears the queue
         /**
@@ -638,25 +630,6 @@ namespace cds { namespace intrusive {
             m_pTail.store( marked_ptr( nullptr ), memory_model::memory_order_relaxed );
 
             dispose_node( pHead );
-        }
-
-        /// Returns queue's item count
-        /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
-            this function always returns 0.
-
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the queue
-            is empty. To check queue emptyness use \ref empty() method.
-        */
-        size_t size() const
-        {
-            return m_ItemCounter.value();
-        }
-
-        /// Returns reference to internal statistics
-        const stat& statistics() const
-        {
-            return m_Stat;
         }
 
         /// Enqueues \p val value into the queue.
@@ -748,11 +721,17 @@ namespace cds { namespace intrusive {
             return true;
         }
 
+        /// Synonym for \p enqueue() function
+        bool push( value_type& val )
+        {
+            return enqueue( val );
+        }
+
         /// Dequeues a value from the queue
         /** @anchor cds_intrusive_BasketQueue_dequeue
             If the queue is empty the function returns \p nullptr.
 
-            <b>Warning</b>: see MSQueue::deque note about item disposing
+            @note See \p MSQueue::dequeue() note about item disposing
         */
         value_type * dequeue()
         {
@@ -763,13 +742,7 @@ namespace cds { namespace intrusive {
             return nullptr;
         }
 
-        /// Synonym for \ref cds_intrusive_BasketQueue_enqueue "enqueue" function
-        bool push( value_type& val )
-        {
-            return enqueue( val );
-        }
-
-        /// Synonym for \ref cds_intrusive_BasketQueue_dequeue "dequeue" function
+        /// Synonym for \p dequeue() function
         value_type * pop()
         {
             return dequeue();
@@ -778,8 +751,8 @@ namespace cds { namespace intrusive {
         /// Checks if the queue is empty
         /**
             Note that this function is not \p const.
-            The function is based on \ref dequeue algorithm
-            but really does not dequeued any item.
+            The function is based on \p dequeue() algorithm
+            but really it does not dequeue any item.
         */
         bool empty()
         {
@@ -789,13 +762,32 @@ namespace cds { namespace intrusive {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns \p nullptr.
-            The disposer defined in template \p Options is called for each item
+            The function repeatedly calls \p dequeue() until it returns \p nullptr.
+            The disposer defined in template \p Traits is called for each item
             that can be safely disposed.
         */
         void clear()
         {
             while ( dequeue() );
+        }
+
+        /// Returns queue's item count
+        /**
+            The value returned depends on \p Traits (see basket_queue::traits::item_counter). For \p atomicity::empty_item_counter,
+            this function always returns 0.
+
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
+            is empty. To check queue emptyness use \p empty() method.
+        */
+        size_t size() const
+        {
+            return m_ItemCounter.value();
+        }
+
+        /// Returns reference to internal statistics
+        const stat& statistics() const
+        {
+            return m_Stat;
         }
     };
 

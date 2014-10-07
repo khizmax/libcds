@@ -266,7 +266,7 @@ namespace queue {
         void OptimisticQueue_DHP_Counted_seqcst();
         void OptimisticQueue_DHP_Counted_relax_align();
         void OptimisticQueue_DHP_Counted_seqcst_align();
-
+*/
         void BasketQueue_HP();
         void BasketQueue_HP_relax();
         void BasketQueue_HP_seqcst();
@@ -288,7 +288,7 @@ namespace queue {
         void BasketQueue_DHP_Counted_seqcst();
         void BasketQueue_DHP_Counted_relax_align();
         void BasketQueue_DHP_Counted_seqcst_align();
-
+/*
         void FCQueue_deque();
         void FCQueue_deque_elimination();
         void FCQueue_deque_mutex();
@@ -371,7 +371,7 @@ namespace queue {
             CPPUNIT_TEST(OptimisticQueue_DHP_Counted_seqcst);
             CPPUNIT_TEST(OptimisticQueue_DHP_Counted_relax_align);
             CPPUNIT_TEST(OptimisticQueue_DHP_Counted_seqcst_align);
-
+*/
             CPPUNIT_TEST(BasketQueue_HP);
             CPPUNIT_TEST(BasketQueue_HP_relax);
             CPPUNIT_TEST(BasketQueue_HP_seqcst);
@@ -393,7 +393,7 @@ namespace queue {
             CPPUNIT_TEST(BasketQueue_DHP_Counted_seqcst);
             CPPUNIT_TEST(BasketQueue_DHP_Counted_relax_align);
             CPPUNIT_TEST(BasketQueue_DHP_Counted_seqcst_align);
-
+/*
             CPPUNIT_TEST(FCQueue_deque)
             CPPUNIT_TEST(FCQueue_deque_elimination)
             CPPUNIT_TEST(FCQueue_deque_mutex)

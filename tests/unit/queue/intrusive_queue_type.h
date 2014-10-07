@@ -290,64 +290,69 @@ namespace queue {
         };
 
         // BasketQueue
-        typedef cds::intrusive::BasketQueue< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-        >   BasketQueue_HP;
+        struct traits_BasketQueue_HP : public
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue< cds::gc::HP, T, traits_BasketQueue_HP > BasketQueue_HP;
 
-        typedef cds::intrusive::BasketQueue<cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   BasketQueue_HP_seqcst;
+        struct traits_BasketQueue_HP_seqcst: public 
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
+                , cds::opt::memory_model< cds::opt::v::sequential_consistent >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue<cds::gc::HP, T, traits_BasketQueue_HP_seqcst > BasketQueue_HP_seqcst;
 
-        typedef cds::intrusive::BasketQueue< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HRC > > >
-        >   BasketQueue_HRC;
+        struct traits_BasketQueue_DHP : public
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue< cds::gc::DHP, T, traits_BasketQueue_DHP > BasketQueue_DHP;
 
-        typedef cds::intrusive::BasketQueue< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   BasketQueue_HRC_seqcst;
-
-        typedef cds::intrusive::BasketQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-        >   BasketQueue_PTB;
-
-        typedef cds::intrusive::BasketQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   BasketQueue_PTB_seqcst;
+        struct traits_BasketQueue_DHP_seqcst: public 
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
+                , cds::opt::memory_model< cds::opt::v::sequential_consistent >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue< cds::gc::DHP, T, traits_BasketQueue_DHP_seqcst > BasketQueue_DHP_seqcst;
 
         // BasketQueue + item counter
-        typedef cds::intrusive::BasketQueue< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   BasketQueue_HP_ic;
+        struct traits_BasketQueue_HP_ic : public
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
+                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue< cds::gc::HP, T, traits_BasketQueue_HP_ic > BasketQueue_HP_ic;
 
-        typedef cds::intrusive::BasketQueue< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   BasketQueue_HRC_ic;
-
-        typedef cds::intrusive::BasketQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   BasketQueue_PTB_ic;
+        struct traits_BasketQueue_DHP_ic : public
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
+                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue< cds::gc::DHP, T, traits_BasketQueue_DHP_ic > BasketQueue_DHP_ic;
 
         // BasketQueue + stat
-        typedef cds::intrusive::BasketQueue< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   BasketQueue_HP_stat;
+        struct traits_BasketQueue_HP_stat : public
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
+                , cds::opt::stat< cds::intrusive::basket_queue::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue< cds::gc::HP, T, traits_BasketQueue_HP_stat > BasketQueue_HP_stat;
 
-        typedef cds::intrusive::BasketQueue< cds::gc::HRC, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HRC > > >
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   BasketQueue_HRC_stat;
-
-        typedef cds::intrusive::BasketQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   BasketQueue_PTB_stat;
+        struct traits_BasketQueue_DHP_stat : public
+            cds::intrusive::basket_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
+                , cds::opt::stat< cds::intrusive::basket_queue::stat<> >
+            > ::type
+        {};
+        typedef cds::intrusive::BasketQueue< cds::gc::DHP, T, traits_BasketQueue_DHP_stat > BasketQueue_DHP_stat;
 
         // FCQueue
         class traits_FCQueue_delay2:
@@ -429,22 +434,23 @@ namespace std {
 
     // cds::intrusive::queue_stat
     template <typename Counter>
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::basket_queue::stat<Counter> const& s)
     {
         return o
             << "\tStatistics:\n"
-            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t      Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
+            << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
+            << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
+            << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
+            << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
+            << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n"
+            << "\t\tAdd basket attempts: " << s.m_TryAddBasket.get() << "\n"
+            << "\t\t Add basket success: " << s.m_AddBasketCount.get() << "\n";
     }
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_dummy_stat const& s)
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::basket_queue::empty_stat const& s)
     {
         return o;
     }
-
 
     template <typename Counter>
     static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::msqueue::stat<Counter> const& s )

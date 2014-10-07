@@ -355,79 +355,37 @@ namespace queue {
         };
 
         // BasketQueue
-        typedef cds::container::BasketQueue<
-            cds::gc::HP , Value
-        >   BasketQueue_HP;
 
-        typedef cds::container::BasketQueue<
-            cds::gc::HP , Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   BasketQueue_HP_michaelAlloc;
+        typedef cds::container::BasketQueue< cds::gc::HP , Value > BasketQueue_HP;
+        typedef cds::container::BasketQueue< cds::gc::DHP, Value > BasketQueue_DHP;
 
-        typedef cds::container::BasketQueue<
-            cds::gc::HP, Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   BasketQueue_HP_seqcst;
+        struct traits_BasketQueue_michaelAlloc : public cds::container::basket_queue::traits
+        {
+            typedef memory::MichaelAllocator<int> allocator;
+        };
+        typedef cds::container::BasketQueue< cds::gc::HP,  Value, traits_BasketQueue_michaelAlloc > BasketQueue_HP_michaelAlloc;
+        typedef cds::container::BasketQueue< cds::gc::DHP, Value, traits_BasketQueue_michaelAlloc > BasketQueue_DHP_michaelAlloc;
 
-        typedef cds::container::BasketQueue< cds::gc::HRC,
-            Value
-        >   BasketQueue_HRC;
+        struct traits_BasketQueue_seqcst : public cds::container::basket_queue::traits
+        {
+            typedef cds::opt::v::sequential_consistent mamory_model;
+        };
+        typedef cds::container::BasketQueue< cds::gc::HP,  Value, traits_BasketQueue_seqcst > BasketQueue_HP_seqcst;
+        typedef cds::container::BasketQueue< cds::gc::DHP, Value, traits_BasketQueue_seqcst > BasketQueue_DHP_seqcst;
 
-        typedef cds::container::BasketQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   BasketQueue_HRC_michaelAlloc;
+        struct traits_BasketQueue_ic : public cds::container::basket_queue::traits
+        {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cds::container::BasketQueue< cds::gc::HP,  Value, traits_BasketQueue_ic >BasketQueue_HP_ic;
+        typedef cds::container::BasketQueue< cds::gc::DHP, Value, traits_BasketQueue_ic >BasketQueue_DHP_ic;
 
-        typedef cds::container::BasketQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   BasketQueue_HRC_seqcst;
-
-        typedef cds::container::BasketQueue< cds::gc::PTB,
-            Value
-        >   BasketQueue_PTB;
-
-        typedef cds::container::BasketQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   BasketQueue_PTB_michaelAlloc;
-
-        typedef cds::container::BasketQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   BasketQueue_PTB_seqcst;
-
-        // BasketQueue + item counter
-        typedef cds::container::BasketQueue< cds::gc::HP,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   BasketQueue_HP_ic;
-
-        typedef cds::container::BasketQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   BasketQueue_HRC_ic;
-
-        typedef cds::container::BasketQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   BasketQueue_PTB_ic;
-
-        // BasketQueue + stat
-        typedef cds::container::BasketQueue< cds::gc::HP,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   BasketQueue_HP_stat;
-
-        typedef cds::container::BasketQueue< cds::gc::HRC,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   BasketQueue_HRC_stat;
-
-        typedef cds::container::BasketQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   BasketQueue_PTB_stat;
+        struct traits_BasketQueue_stat : public cds::container::basket_queue::traits
+        {
+            typedef cds::container::basket_queue::stat<> stat;
+        };
+        typedef cds::container::BasketQueue< cds::gc::HP,  Value, traits_BasketQueue_stat > BasketQueue_HP_stat;
+        typedef cds::container::BasketQueue< cds::gc::DHP, Value, traits_BasketQueue_stat > BasketQueue_DHP_stat;
 
 
         // RWQueue
@@ -562,18 +520,20 @@ namespace std {
 
     // cds::intrusive::queue_stat
     template <typename Counter>
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
+    static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::stat<Counter> const& s)
     {
         return o
             << "\tStatistics:\n"
-            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t      Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
+            << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
+            << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
+            << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
+            << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
+            << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n"
+            << "\t\tAdd basket attempts: " << s.m_TryAddBasket.get() << "\n"
+            << "\t\t Add basket success: " << s.m_AddBasketCount.get() << "\n";
     }
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_dummy_stat const& s)
+    static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::empty_stat const& s)
     {
         return o;
     }

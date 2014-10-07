@@ -74,28 +74,20 @@
     TEST_CASE(BasketQueue_HP_ic,            cds::intrusive::basket_queue::node< cds::gc::HP > ) \
     TEST_CASE(BasketQueue_HP_stat,          cds::intrusive::basket_queue::node< cds::gc::HP > ) \
     TEST_CASE(BasketQueue_HP_seqcst,        cds::intrusive::basket_queue::node< cds::gc::HP > ) \
-    TEST_CASE(BasketQueue_HRC,              cds::intrusive::basket_queue::node< cds::gc::HRC > ) \
-    TEST_CASE(BasketQueue_HRC_ic,           cds::intrusive::basket_queue::node< cds::gc::HRC > ) \
-    TEST_CASE(BasketQueue_HRC_stat,         cds::intrusive::basket_queue::node< cds::gc::HRC > ) \
-    TEST_CASE(BasketQueue_HRC_seqcst,       cds::intrusive::basket_queue::node< cds::gc::HRC > ) \
-    TEST_CASE(BasketQueue_PTB,              cds::intrusive::basket_queue::node< cds::gc::PTB > ) \
-    TEST_CASE(BasketQueue_PTB_ic,           cds::intrusive::basket_queue::node< cds::gc::PTB > ) \
-    TEST_CASE(BasketQueue_PTB_stat,         cds::intrusive::basket_queue::node< cds::gc::PTB > ) \
-    TEST_CASE(BasketQueue_PTB_seqcst,       cds::intrusive::basket_queue::node< cds::gc::PTB > )
+    TEST_CASE(BasketQueue_DHP,              cds::intrusive::basket_queue::node< cds::gc::DHP > ) \
+    TEST_CASE(BasketQueue_DHP_ic,           cds::intrusive::basket_queue::node< cds::gc::DHP > ) \
+    TEST_CASE(BasketQueue_DHP_stat,         cds::intrusive::basket_queue::node< cds::gc::DHP > ) \
+    TEST_CASE(BasketQueue_DHP_seqcst,       cds::intrusive::basket_queue::node< cds::gc::DHP > )
 
 #define CDSUNIT_TEST_BasketQueue \
     CPPUNIT_TEST(BasketQueue_HP) \
     CPPUNIT_TEST(BasketQueue_HP_ic) \
     CPPUNIT_TEST(BasketQueue_HP_stat) \
     CPPUNIT_TEST(BasketQueue_HP_seqcst) \
-    /*CPPUNIT_TEST(BasketQueue_HRC)*/ \
-    /*CPPUNIT_TEST(BasketQueue_HRC_ic)*/ \
-    /*CPPUNIT_TEST(BasketQueue_HRC_stat)*/ \
-    /*CPPUNIT_TEST(BasketQueue_HRC_seqcst)*/ \
-    CPPUNIT_TEST(BasketQueue_PTB) \
-    CPPUNIT_TEST(BasketQueue_PTB_ic) \
-    CPPUNIT_TEST(BasketQueue_PTB_stat) \
-    CPPUNIT_TEST(BasketQueue_PTB_seqcst)
+    CPPUNIT_TEST(BasketQueue_DHP) \
+    CPPUNIT_TEST(BasketQueue_DHP_ic) \
+    CPPUNIT_TEST(BasketQueue_DHP_stat) \
+    CPPUNIT_TEST(BasketQueue_DHP_seqcst)
 
 // TsigasCycleQueue
 #define CDSUNIT_DECLARE_TsigasCycleQueue \

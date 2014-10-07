@@ -87,16 +87,11 @@
     TEST_CASE( BasketQueue_HP_seqcst, ITEM_TYPE  ) \
     TEST_CASE( BasketQueue_HP_ic, ITEM_TYPE  ) \
     TEST_CASE( BasketQueue_HP_stat, ITEM_TYPE  ) \
-    TEST_CASE( BasketQueue_HRC, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_HRC_michaelAlloc, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_HRC_seqcst, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_HRC_ic, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_HRC_stat, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_PTB, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_PTB_michaelAlloc, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_PTB_seqcst, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_PTB_ic, ITEM_TYPE ) \
-    TEST_CASE( BasketQueue_PTB_stat, ITEM_TYPE )
+    TEST_CASE( BasketQueue_DHP, ITEM_TYPE ) \
+    TEST_CASE( BasketQueue_DHP_michaelAlloc, ITEM_TYPE ) \
+    TEST_CASE( BasketQueue_DHP_seqcst, ITEM_TYPE ) \
+    TEST_CASE( BasketQueue_DHP_ic, ITEM_TYPE ) \
+    TEST_CASE( BasketQueue_DHP_stat, ITEM_TYPE )
 
 #define CDSUNIT_TEST_BasketQueue \
     CPPUNIT_TEST(BasketQueue_HP) \
@@ -104,16 +99,11 @@
     CPPUNIT_TEST(BasketQueue_HP_seqcst) \
     CPPUNIT_TEST(BasketQueue_HP_ic) \
     CPPUNIT_TEST(BasketQueue_HP_stat) \
-    CPPUNIT_TEST(BasketQueue_HRC) \
-    CPPUNIT_TEST(BasketQueue_HRC_michaelAlloc) \
-    CPPUNIT_TEST(BasketQueue_HRC_seqcst) \
-    CPPUNIT_TEST(BasketQueue_HRC_ic) \
-    CPPUNIT_TEST(BasketQueue_HRC_stat) \
-    CPPUNIT_TEST(BasketQueue_PTB) \
-    CPPUNIT_TEST(BasketQueue_PTB_michaelAlloc) \
-    CPPUNIT_TEST(BasketQueue_PTB_seqcst) \
-    CPPUNIT_TEST(BasketQueue_PTB_ic) \
-    CPPUNIT_TEST(BasketQueue_PTB_stat)
+    CPPUNIT_TEST(BasketQueue_DHP) \
+    CPPUNIT_TEST(BasketQueue_DHP_michaelAlloc) \
+    CPPUNIT_TEST(BasketQueue_DHP_seqcst) \
+    CPPUNIT_TEST(BasketQueue_DHP_ic) \
+    CPPUNIT_TEST(BasketQueue_DHP_stat)
 
 
 // FCQueue

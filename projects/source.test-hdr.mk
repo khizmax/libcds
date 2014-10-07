@@ -117,15 +117,13 @@ CDS_TESTHDR_PQUEUE := \
 
 CDS_TESTHDR_QUEUE := \
     tests/test-hdr/queue/hdr_queue_register.cpp \
-    tests/test-hdr/queue/hdr_intrusive_basketqueue_hrc.cpp \
     tests/test-hdr/queue/hdr_intrusive_fcqueue.cpp \
     tests/test-hdr/queue/hdr_intrusive_segmented_queue_hp.cpp \
     tests/test-hdr/queue/hdr_intrusive_segmented_queue_ptb.cpp \
     tests/test-hdr/queue/hdr_intrusive_tsigas_cycle_queue.cpp \
     tests/test-hdr/queue/hdr_intrusive_vyukovmpmc_cycle_queue.cpp \
-    tests/test-hdr/queue/hdr_basketqueue_hrc.cpp \
-    tests/test-hdr/queue/hdr_basketqueue_hzp.cpp \
-    tests/test-hdr/queue/hdr_basketqueue_ptb.cpp \
+    tests/test-hdr/queue/hdr_basketqueue_hp.cpp \
+    tests/test-hdr/queue/hdr_basketqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_fcqueue.cpp \
     tests/test-hdr/queue/hdr_moirqueue_hp.cpp \
     tests/test-hdr/queue/hdr_moirqueue_dhp.cpp \

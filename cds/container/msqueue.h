@@ -257,7 +257,7 @@ namespace cds { namespace container {
             \p Func is a functor called to create node.
             The functor \p f takes one argument - a reference to a new node of type \ref value_type :
             \code
-            cds:container::MSQueue< cds::gc::HP, Foo > myQueue;
+            cds::container::MSQueue< cds::gc::HP, Foo > myQueue;
             Bar bar;
             myQueue.enqueue_with( [&bar]( Foo& dest ) { dest = bar; } );
             \endcode

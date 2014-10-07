@@ -67,7 +67,7 @@ namespace cds { namespace intrusive {
         template <typename Counter = cds::atomicity::event_counter >
         struct stat
         {
-            typedef Counter     counter_type    ;   ///< Counter type
+            typedef Counter     counter_type;   ///< Counter type
 
             counter_type m_EnqueueCount      ;  ///< Enqueue call count
             counter_type m_DequeueCount      ;  ///< Dequeue call count
@@ -115,8 +115,6 @@ namespace cds { namespace intrusive {
         };
 
         /// Dummy queue statistics - no counting is performed, no overhead. Support interface like \p msqueue::stat
-        /** @ingroup cds_intrusive_helper
-        */
         struct empty_stat
         {
             //@cond
@@ -167,7 +165,7 @@ namespace cds { namespace intrusive {
             /// Link checking, see \p cds::opt::link_checker
             static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
 
-            /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
+            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
             enum { alignment = opt::cache_line_alignment };
         };
 
@@ -186,7 +184,7 @@ namespace cds { namespace intrusive {
                 To enable item counting use \p cds::atomicity::item_counter
             - opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p msqueue::stat, \p msqueue::empty_stat, user-provided class that supports \p %msqueue::stat interface.
-                Default is \p %msqueue::empty_stat.
+                Default is \p %msqueue::empty_stat (internal statistics disabled).
             - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
             - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
@@ -224,7 +222,7 @@ namespace cds { namespace intrusive {
 
         Template arguments:
         - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
-        - \p T - type to be stored in the queue. A value of type \p T must be derived from \p msqueue::node for \p msqueue::base_hook,
+        - \p T - type of value to be stored in the queue. A value of type \p T must be derived from \p msqueue::node for \p msqueue::base_hook,
             or it should have a member of type \p %msqueue::node for \p msqueue::member_hook,
             or it should be convertible to \p %msqueue::node for \p msqueue::traits_hook.
         - \p Traits - queue traits, default is \p msqueue::traits. You can use \p msqueue::make_traits
@@ -335,6 +333,8 @@ namespace cds { namespace intrusive {
         struct rebind {
             typedef MSQueue< GC2, T2, Traits2 > other;   ///< Rebinding result
         };
+
+        static CDS_CONSTEXPR const size_t m_nHazardPtrCount = 2; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond

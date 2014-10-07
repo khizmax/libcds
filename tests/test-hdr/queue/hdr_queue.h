@@ -161,39 +161,6 @@ namespace queue {
         void OptimisticQueue_PTB_Counted_relax_align();
         void OptimisticQueue_PTB_Counted_seqcst_align();
 
-        void BasketQueue_HP();
-        void BasketQueue_HP_relax();
-        void BasketQueue_HP_seqcst();
-        void BasketQueue_HP_relax_align();
-        void BasketQueue_HP_seqcst_align();
-        void BasketQueue_HP_Counted();
-        void BasketQueue_HP_Counted_relax();
-        void BasketQueue_HP_Counted_seqcst();
-        void BasketQueue_HP_Counted_relax_align();
-        void BasketQueue_HP_Counted_seqcst_align();
-
-        void BasketQueue_HRC();
-        void BasketQueue_HRC_relax();
-        void BasketQueue_HRC_seqcst();
-        void BasketQueue_HRC_relax_align();
-        void BasketQueue_HRC_seqcst_align();
-        void BasketQueue_HRC_Counted();
-        void BasketQueue_HRC_Counted_relax();
-        void BasketQueue_HRC_Counted_seqcst();
-        void BasketQueue_HRC_Counted_relax_align();
-        void BasketQueue_HRC_Counted_seqcst_align();
-
-        void BasketQueue_PTB();
-        void BasketQueue_PTB_relax();
-        void BasketQueue_PTB_seqcst();
-        void BasketQueue_PTB_relax_align();
-        void BasketQueue_PTB_seqcst_align();
-        void BasketQueue_PTB_Counted();
-        void BasketQueue_PTB_Counted_relax();
-        void BasketQueue_PTB_Counted_seqcst();
-        void BasketQueue_PTB_Counted_relax_align();
-        void BasketQueue_PTB_Counted_seqcst_align();
-
         void FCQueue_deque();
         void FCQueue_deque_elimination();
         void FCQueue_deque_mutex();
@@ -231,39 +198,6 @@ namespace queue {
             CPPUNIT_TEST(OptimisticQueue_PTB_Counted_seqcst);
             CPPUNIT_TEST(OptimisticQueue_PTB_Counted_relax_align);
             CPPUNIT_TEST(OptimisticQueue_PTB_Counted_seqcst_align);
-
-            CPPUNIT_TEST(BasketQueue_HP);
-            CPPUNIT_TEST(BasketQueue_HP_relax);
-            CPPUNIT_TEST(BasketQueue_HP_seqcst);
-            CPPUNIT_TEST(BasketQueue_HP_relax_align);
-            CPPUNIT_TEST(BasketQueue_HP_seqcst_align);
-            CPPUNIT_TEST(BasketQueue_HP_Counted);
-            CPPUNIT_TEST(BasketQueue_HP_Counted_relax);
-            CPPUNIT_TEST(BasketQueue_HP_Counted_seqcst);
-            CPPUNIT_TEST(BasketQueue_HP_Counted_relax_align);
-            CPPUNIT_TEST(BasketQueue_HP_Counted_seqcst_align);
-
-            CPPUNIT_TEST(BasketQueue_HRC);
-            CPPUNIT_TEST(BasketQueue_HRC_relax);
-            CPPUNIT_TEST(BasketQueue_HRC_seqcst);
-            CPPUNIT_TEST(BasketQueue_HRC_relax_align);
-            CPPUNIT_TEST(BasketQueue_HRC_seqcst_align);
-            CPPUNIT_TEST(BasketQueue_HRC_Counted);
-            CPPUNIT_TEST(BasketQueue_HRC_Counted_relax);
-            CPPUNIT_TEST(BasketQueue_HRC_Counted_seqcst);
-            CPPUNIT_TEST(BasketQueue_HRC_Counted_relax_align);
-            CPPUNIT_TEST(BasketQueue_HRC_Counted_seqcst_align);
-
-            CPPUNIT_TEST(BasketQueue_PTB);
-            CPPUNIT_TEST(BasketQueue_PTB_relax);
-            CPPUNIT_TEST(BasketQueue_PTB_seqcst);
-            CPPUNIT_TEST(BasketQueue_PTB_relax_align);
-            CPPUNIT_TEST(BasketQueue_PTB_seqcst_align);
-            CPPUNIT_TEST(BasketQueue_PTB_Counted);
-            CPPUNIT_TEST(BasketQueue_PTB_Counted_relax);
-            CPPUNIT_TEST(BasketQueue_PTB_Counted_seqcst);
-            CPPUNIT_TEST(BasketQueue_PTB_Counted_relax_align);
-            CPPUNIT_TEST(BasketQueue_PTB_Counted_seqcst_align);
 
             CPPUNIT_TEST(FCQueue_deque)
             CPPUNIT_TEST(FCQueue_deque_elimination)
