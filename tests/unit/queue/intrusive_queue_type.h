@@ -429,6 +429,24 @@ namespace std {
 
     // cds::intrusive::queue_stat
     template <typename Counter>
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
+    {
+        return o
+            << "\tStatistics:\n"
+            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
+            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get() << "\n"
+            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t      Dequeue race: " << s.m_DequeueRace.get() << "\n"
+            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
+            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
+    }
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_dummy_stat const& s)
+    {
+        return o;
+    }
+
+
+    template <typename Counter>
     static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::msqueue::stat<Counter> const& s )
     {
         return o

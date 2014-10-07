@@ -165,7 +165,7 @@ namespace cds { namespace intrusive {
             typedef opt::v::relaxed_ordering    memory_model;
 
             /// Link checking, see \p cds::opt::link_checker
-            static const opt::link_check_type link_checker = opt::debug_check_link;
+            static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
 
             /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
             enum { alignment = opt::cache_line_alignment };
@@ -418,15 +418,18 @@ namespace cds { namespace intrusive {
             // HP retiring cycle since m_Dummy is member of MSQueue and may be destroyed
             // before HP retiring cycle invocation.
             // So, we will never clear m_Dummy
-            if ( p != &m_Dummy ) {
-                gc::retire( node_traits::to_value_ptr(p),
-                    []( value_type * ptr ) {
-                        assert( ptr != nullptr );
-                        MSQueue::clear_links( node_traits::to_node_ptr( ptr ) );
-                        disposer()(ptr);
-                    }
-                );
-            }
+
+            struct disposer_thunk {
+                void operator()( value_type * p ) const
+                {
+                    assert( p != nullptr );
+                    MSQueue::clear_links( node_traits::to_node_ptr( p ) );
+                    disposer()(p);
+                }
+            };
+
+            if ( p != &m_Dummy )
+                gc::template retire<disposer_thunk>( node_traits::to_value_ptr( p ) );
         }
         //@endcond
 
@@ -580,7 +583,6 @@ namespace cds { namespace intrusive {
         {
             return m_Stat;
         }
-
     };
 
 }} // namespace cds::intrusive

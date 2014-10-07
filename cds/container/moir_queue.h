@@ -15,7 +15,7 @@ namespace cds { namespace container {
         struct make_moir_queue: public cds::container::details::make_msqueue< GC, T, Traits >
         {
             typedef cds::container::details::make_msqueue< GC, T, Traits > base_class;
-            typedef cds::intrusive::MoirQueue< GC, base_class::node_type, base_class::intrusive_traits > type;
+            typedef cds::intrusive::MoirQueue< GC, typename base_class::node_type, typename base_class::intrusive_traits > type;
         };
     }
     //@endcond
@@ -45,7 +45,7 @@ namespace cds { namespace container {
             > myQueue;
             \endcode
     */
-    template <typename GC, typename T, typename Traits>
+    template <typename GC, typename T, typename Traits = cds::container::msqueue::traits >
     class MoirQueue:
 #ifdef CDS_DOXYGEN_INVOKED
         private intrusive::MoirQueue< GC, intrusive::msqueue::node< T >, Traits >

@@ -124,8 +124,9 @@ namespace cds { namespace container {
 
             struct intrusive_traits : public traits
             {
-                typedef cds::intrusive::base_hook< cds::opt::gc<gc> > hook;
+                typedef cds::intrusive::msqueue::base_hook< cds::opt::gc<gc> > hook;
                 typedef node_deallocator disposer;
+                static CDS_CONSTEXPR const cds::intrusive::opt::link_check_type link_checker = cds::intrusive::msqueue::traits::link_checker;
             };
 
             typedef intrusive::MSQueue< gc, node_type, intrusive_traits > type;
@@ -159,7 +160,7 @@ namespace cds { namespace container {
             > myQueue;
             \endcode
     */
-    template <typename GC, typename T, typename Traits = msqueue::traits>
+    template <typename GC, typename T, typename Traits = cds::container::msqueue::traits>
     class MSQueue:
 #ifdef CDS_DOXYGEN_INVOKED
         private intrusive::MSQueue< GC, cds::intrusive::msqueue::node< T >, Traits >

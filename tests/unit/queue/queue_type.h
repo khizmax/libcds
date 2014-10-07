@@ -108,7 +108,7 @@ namespace queue {
 
         struct traits_MSQueue_michaelAlloc : public cds::container::msqueue::traits
         {
-            typedef cds::memory::MichaelAllocator<int>  allocator;
+            typedef memory::MichaelAllocator<int>  allocator;
         };
         typedef cds::container::MSQueue<cds::gc::HP,  Value, traits_MSQueue_michaelAlloc > MSQueue_HP_michaelAlloc;
         typedef cds::container::MSQueue<cds::gc::DHP, Value, traits_MSQueue_michaelAlloc > MSQueue_DHP_michaelAlloc;
@@ -561,6 +561,24 @@ namespace queue {
 namespace std {
 
     // cds::intrusive::queue_stat
+    template <typename Counter>
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
+    {
+        return o
+            << "\tStatistics:\n"
+            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
+            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get() << "\n"
+            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t      Dequeue race: " << s.m_DequeueRace.get() << "\n"
+            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
+            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
+    }
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_dummy_stat const& s)
+    {
+        return o;
+    }
+
+
     template <typename Counter>
     static inline std::ostream& operator <<( std::ostream& o, cds::container::msqueue::stat<Counter> const& s )
     {
