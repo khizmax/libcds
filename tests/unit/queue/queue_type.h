@@ -149,56 +149,38 @@ namespace queue {
 
 
         // OptimisticQueue
-        typedef cds::container::OptimisticQueue< cds::gc::HP,
-            Value
-        >   OptimisticQueue_HP;
+        typedef cds::container::OptimisticQueue< cds::gc::HP, Value > OptimisticQueue_HP;
+        typedef cds::container::OptimisticQueue< cds::gc::PTB, Value > OptimisticQueue_PTB;
 
-        typedef cds::container::OptimisticQueue< cds::gc::HP,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   OptimisticQueue_HP_michaelAlloc;
+        struct traits_OptimisticQueue_michaelAlloc : public cds::container::optimistic_queue::traits
+        {
+            typedef memory::MichaelAllocator<int> allocator;
+        };
+        typedef cds::container::OptimisticQueue< cds::gc::HP,  Value, traits_OptimisticQueue_michaelAlloc > OptimisticQueue_HP_michaelAlloc;
+        typedef cds::container::OptimisticQueue< cds::gc::DHP, Value, traits_OptimisticQueue_michaelAlloc > OptimisticQueue_DHP_michaelAlloc;
 
-        typedef cds::container::OptimisticQueue< cds::gc::HP,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   OptimisticQueue_HP_seqcst;
+        struct traits_OptimisticQueue_seqcst : public cds::container::optimistic_queue::traits
+        {
+            typedef cds::opt::v::sequential_consistent memory_model;
+        };
+        typedef cds::container::OptimisticQueue< cds::gc::HP,  Value, traits_OptimisticQueue_seqcst > OptimisticQueue_HP_seqcst;
+        typedef cds::container::OptimisticQueue< cds::gc::DHP, Value, traits_OptimisticQueue_seqcst > OptimisticQueue_DHP_seqcst;
 
-        typedef cds::container::OptimisticQueue< cds::gc::PTB,
-            Value
-        >   OptimisticQueue_PTB;
+        struct traits_OptimisticQueue_ic : public cds::container::optimistic_queue::traits
+        {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cds::container::OptimisticQueue< cds::gc::HP,  Value, traits_OptimisticQueue_ic > OptimisticQueue_HP_ic;
+        typedef cds::container::OptimisticQueue< cds::gc::DHP, Value, traits_OptimisticQueue_ic > OptimisticQueue_DHP_ic;
 
-        typedef cds::container::OptimisticQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::allocator< memory::MichaelAllocator<int> >
-        >   OptimisticQueue_PTB_michaelAlloc;
+        struct traits_OptimisticQueue_stat : public
+            cds::container::optimistic_queue::make_traits <
+                cds::opt::stat < cds::intrusive::queue_stat<> >
+            > ::type
+        {};
+        typedef cds::container::OptimisticQueue< cds::gc::HP,  Value, traits_OptimisticQueue_stat > OptimisticQueue_HP_stat;
+        typedef cds::container::OptimisticQueue< cds::gc::DHP, Value, traits_OptimisticQueue_stat > OptimisticQueue_DHP_stat;
 
-        typedef cds::container::OptimisticQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   OptimisticQueue_PTB_seqcst;
-
-
-        // OptimisticQueue + item counter
-        typedef cds::container::OptimisticQueue< cds::gc::HP,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   OptimisticQueue_HP_ic;
-
-        typedef cds::container::OptimisticQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   OptimisticQueue_PTB_ic;
-
-        // OptimisticQueue + stat
-        typedef cds::container::OptimisticQueue< cds::gc::HP,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   OptimisticQueue_HP_stat;
-
-        typedef cds::container::OptimisticQueue< cds::gc::PTB,
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   OptimisticQueue_PTB_stat;
 
         // TsigasCycleQueue
         class TsigasCycleQueue_dyn

@@ -555,8 +555,8 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_hzp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_ptb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_queue_register.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_rwqueue.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_hp.cpp" />

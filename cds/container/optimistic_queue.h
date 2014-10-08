@@ -4,21 +4,100 @@
 #define __CDS_CONTAINER_OPTIMISTIC_QUEUE_H
 
 #include <memory>
-#include <functional>   // ref
 #include <cds/intrusive/optimistic_queue.h>
 #include <cds/container/details/base.h>
-#include <cds/details/trivial_assign.h>
 
 namespace cds { namespace container {
 
+    /// OptimisticQueue related definitions
+    /** @ingroup cds_nonintrusive_helper
+    */
+    namespace optimistic_queue {
+        /// Internal statistics
+        template <typename Counter = cds::intrusive::optimistic_queue::stat<>::counter_type >
+        using stat = cds::intrusive::optimistic_queue::stat< Counter >;
+
+        /// Dummy internal statistics
+        typedef cds::intrusive::optimistic_queue::empty_stat empty_stat;
+
+        /// MSQueue default type traits
+        struct traits
+        {
+            /// Node allocator
+            typedef CDS_DEFAULT_ALLOCATOR       allocator;
+
+            /// Back-off strategy
+            typedef cds::backoff::empty         back_off;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef atomicity::empty_item_counter   item_counter;
+
+            /// Internal statistics (by default, disabled)
+            /**
+                Possible option value are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat (the default),
+                user-provided class that supports \p %optimistic_queue::stat interface.
+            */
+            typedef optimistic_queue::empty_stat         stat;
+
+            /// C++ memory ordering model
+            /**
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering    memory_model;
+
+            /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+        /// Metafunction converting option list to \p msqueue::traits
+        /**
+            Supported \p Options are:
+            - opt::allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
+            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            - opt::stat - the type to gather internal statistics.
+                Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat, 
+                user-provided class that supports \p %optimistic_queue::stat interface.
+                Default is \p %optimistic_queue::empty_stat.
+            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare \p OptimisticQueue with item counting and internal statistics
+            \code
+                typedef cds::container::OptimisticQueue< cds::gc::HP, Foo,
+                    typename cds::container::optimistic_queue::make_traits<
+                        cds::opt::item_counter< cds::atomicity::item_counter >,
+                        cds::opt::stat< cds::container::optimistic_queue::stat<> >
+                    >::type
+                > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
+    } // namespace optimistic_queue
+
     //@cond
     namespace details {
-        template <typename GC, typename T, typename... Options>
+        template <typename GC, typename T, typename Traits>
         struct make_optimistic_queue
         {
             typedef GC gc;
             typedef T value_type;
+            typedef Traits traits;
 
+            /*
             struct default_options {
                 typedef cds::backoff::empty     back_off;
                 typedef CDS_DEFAULT_ALLOCATOR   allocator;
@@ -27,13 +106,9 @@ namespace cds { namespace container {
                 typedef opt::v::relaxed_ordering    memory_model;
                 enum { alignment = opt::cache_line_alignment };
             };
+            */
 
-            typedef typename opt::make_options<
-                typename cds::opt::find_type_traits< default_options, Options... >::type
-                ,Options...
-            >::type   options;
-
-            struct node_type: public intrusive::optimistic_queue::node< gc >
+            struct node_type: public cds::intrusive::optimistic_queue::node< gc >
             {
                 value_type  m_value;
 
@@ -47,8 +122,8 @@ namespace cds { namespace container {
                 {}
             };
 
-            typedef typename options::allocator::template rebind<node_type>::other allocator_type;
-            typedef cds::details::Allocator< node_type, allocator_type >           cxx_allocator;
+            typedef typename traits::allocator::template rebind<node_type>::other allocator_type;
+            typedef cds::details::Allocator< node_type, allocator_type >          cxx_allocator;
 
             struct node_deallocator
             {
@@ -58,18 +133,14 @@ namespace cds { namespace container {
                 }
             };
 
-            typedef intrusive::OptimisticQueue< gc,
-                node_type
-                ,intrusive::opt::hook<
-                    intrusive::optimistic_queue::base_hook< opt::gc<gc> >
-                >
-                ,opt::back_off< typename options::back_off >
-                ,intrusive::opt::disposer< node_deallocator >
-                ,opt::item_counter< typename options::item_counter >
-                ,opt::stat< typename options::stat >
-                ,opt::alignment< options::alignment >
-                ,opt::memory_model< typename options::memory_model >
-            >   type;
+            struct intrusive_traits : public traits
+            {
+                typedef cds::intrusive::optimistic_queue::base_hook< opt::gc<gc> > hook;
+                typedef node_deallocator disposer;
+                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::optimistic_queue::traits::link_checker;
+            };
+
+            typedef intrusive::OptimisticQueue< gc, node_type, intrusive_traits > type;
         };
     }   // namespace details
     //@endcond
@@ -77,69 +148,67 @@ namespace cds { namespace container {
     /// Optimistic queue
     /** @ingroup cds_nonintrusive_queue
         Implementation of Ladan-Mozes & Shavit optimistic queue algorithm.
-
-        \par Source:
-            [2008] Edya Ladan-Mozes, Nir Shavit "An Optimistic Approach to Lock-Free FIFO Queues"
+            - [2008] Edya Ladan-Mozes, Nir Shavit "An Optimistic Approach to Lock-Free FIFO Queues"
 
         Template arguments:
         - \p GC - garbage collector type: gc::HP, gc::PTB. Note that gc::HRC is <b>not</b> supported
-        - \p T - type to be stored in the queue
-        - \p Options - options
+        - \p T - type of values to be stored in the queue
+        - \p Traits - queue traits, default is \p optimistic_queue::traits. You can use \p optimistic_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %optimistic_queue::traits:
+            \code
+            struct myTraits: public cds::container::optimistic_queue::traits {
+                typedef cds::intrusive::optimistic_queue::stat<> stat;
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::container::OptimisticQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
-        \p Options are:
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::allocator - allocator (like \p std::allocator) used for nodes allocation. Default is \ref CDS_DEFAULT_ALLOCATOR
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter
-        - opt::stat - the type to gather internal statistics for debugging and profiling purposes.
-            Possible option value are: intrusive::optimistic_queue::stat, intrusive::optimistic_queue::dummy_stat (the default),
-            user-provided class that supports intrusive::optimistic_queue::stat interface.
-            Generic option intrusive::queue_stat and intrusive::queue_dummy_stat are acceptable too, however,
-            they will be automatically converted to intrusive::optimistic_queue::stat and intrusive::optimistic_queue::dummy_stat
-            respectively.
-        - opt::alignment - the alignment for internal queue data. Default is opt::cache_line_alignment
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-
-        <b>Warning</b> gc::HRC is not supported for this implementation.
+            // Equivalent make_traits example:
+            typedef cds::container::OptimisticQueue< cds::gc::HP, Foo, 
+                typename cds::container::optimistic_queue::make_traits< 
+                    cds::opt::stat< cds::container::optimistic_queue::stat<> >,
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
     */
-    template <typename GC, typename T, typename... Options>
+    template <typename GC, typename T, typename Traits>
     class OptimisticQueue:
 #ifdef CDS_DOXYGEN_INVOKED
-        intrusive::OptimisticQueue< GC, intrusive::optimistic_queue::node< T >, Options... >
+        private intrusive::OptimisticQueue< GC, cds::intrusive::optimistic_queue::node< T >, Traits >
 #else
-        details::make_optimistic_queue< GC, T, Options... >::type
+        private details::make_optimistic_queue< GC, T, Traits >::type
 #endif
     {
         //@cond
-        typedef details::make_optimistic_queue< GC, T, Options... > options;
-        typedef typename options::type base_class;
+        typedef details::make_optimistic_queue< GC, T, Traits > maker;
+        typedef typename maker::type base_class;
         //@endcond
 
     public:
         /// Rebind template arguments
-        template <typename GC2, typename T2, typename... Options2>
+        template <typename GC2, typename T2, typename Traits2>
         struct rebind {
-            typedef OptimisticQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
+            typedef OptimisticQueue< GC2, T2, Traits2 > other   ;   ///< Rebinding result
         };
 
     public:
-        typedef T value_type ; ///< Value type stored in the stack
+        typedef GC gc;          ///< Garbage collector
+        typedef T value_type;   ///< Value type to be stored in the queue
+        typedef Traits traits;  ///< Queue traits
 
-        typedef typename base_class::gc                 gc              ; ///< Garbage collector used
-        typedef typename base_class::back_off           back_off        ; ///< Back-off strategy used
-        typedef typename options::allocator_type        allocator_type  ; ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename options::options::item_counter item_counter    ; ///< Item counting policy used
-        typedef typename options::options::stat         stat            ; ///< Internal statistics policy used
-        typedef typename base_class::memory_model       memory_model    ; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::back_off           back_off;       ///< Back-off strategy used
+        typedef typename maker::allocator_type          allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter       item_counter;   ///< Item counting policy used
+        typedef typename base_class::stat               stat;           ///< Internal statistics policy used
+        typedef typename base_class::memory_model       memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
 
         static CDS_CONSTEXPR_CONST size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
 
     protected:
-        typedef typename options::node_type  node_type   ;   ///< queue node type (derived from intrusive::optimistic_queue::node)
-
         //@cond
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;   // deallocate node
+        typedef typename maker::node_type           node_type;   ///< queue node type (derived from intrusive::optimistic_queue::node)
+        typedef typename maker::cxx_allocator       cxx_allocator;
+        typedef typename maker::node_deallocator    node_deallocator; // deallocate node
         typedef typename base_class::node_traits    node_traits;
         //@endcond
 
@@ -181,22 +250,10 @@ namespace cds { namespace container {
         ~OptimisticQueue()
         {}
 
-        /// Returns queue's item count (see \ref intrusive::OptimisticQueue::size for explanation)
-        size_t size() const
-        {
-            return base_class::size();
-        }
-
-        /// Returns reference to internal statistics
-        const stat& statistics() const
-        {
-            return base_class::statistics();
-        }
-
         /// Enqueues \p val value into the queue.
         /**
             The function makes queue node in dynamic memory calling copy constructor for \p val
-            and then it calls intrusive::OptimisticQueue::enqueue.
+            and then it calls \p intrusive::OptimisticQueue::enqueue.
             Returns \p true if success, \p false otherwise.
         */
         bool enqueue( const value_type& val )
@@ -209,29 +266,21 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Enqueues \p data to queue using copy functor
+        /// Enqueues \p data to queue using a functor
         /**
-            \p Func is a functor called to copy value \p data of type \p Type
-            which may be differ from type \p T stored in the queue.
-            The functor's interface is:
+            \p Func is a functor called to create node.
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type :
             \code
-            struct myFunctor {
-                void operator()(T& dest, SOURCE const& data)
-                {
-                    // // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
+            cds::container::OptimisticQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.enqueue_with( [&bar]( Foo& dest ) { dest = bar; } );
             \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
-
-            <b>Requirements</b> The functor \p Func should not throw any exception.
         */
-        template <typename Type, typename Func>
-        bool enqueue( const Type& data, Func f  )
+        template <typename Func>
+        bool enqueue_with( Func f )
         {
             scoped_node_ptr p( alloc_node() );
-            f( p->m_value, data );
+            f( p->m_value );
             if ( base_class::enqueue( *p )) {
                 p.release();
                 return true;
@@ -251,30 +300,49 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Dequeues a value using copy functor
-        /**
-            \p Func is a functor called to copy dequeued value to \p dest of type \p Type
-            which may be differ from type \p T stored in the queue.
-            The functor's interface is:
-            \code
-            struct myFunctor {
-                void operator()(Type& dest, T const& data)
-                {
-                    // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
-            \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
+        /// Synonym for \p enqueue() function
+        bool push( const value_type& val )
+        {
+            return enqueue( val );
+        }
 
-            <b>Requirements</b> The functor \p Func should not throw any exception.
+        /// Synonym for \p enqueue_with() function
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with( f );
+        }
+
+        /// Dequeues a value from the queue
+        /**
+            If queue is not empty, the function returns \p true, \p dest contains copy of
+            dequeued value. The assignment operator for type \p value_type is invoked.
+
+            If queue is empty, the function returns \p false, \p dest is unchanged.
         */
-        template <typename Type, typename Func>
-        bool dequeue( Type& dest, Func f )
+        bool dequeue( value_type& dest )
+        {
+            typedef cds::details::trivial_assign<value_type, value_type> functor;
+            return dequeue_with( [&dest]( value_type& src ) { dest = src; } );
+        }
+
+        /// Dequeues a value using a functor
+        /**
+            \p Func is a functor called to copy dequeued value.
+            The functor takes one argument - a reference to removed node:
+            \code
+            cds:container::OptimisticQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.dequeue_with( [&bar]( Foo& src ) { bar = std::move( src );});
+            \endcode
+            The functor is called only if the queue is not empty.
+        */
+        template <typename Func>
+        bool dequeue_with( Func f )
         {
             typename base_class::dequeue_result res;
-            if ( base_class::do_dequeue( res )) {
-                f( dest, node_traits::to_value_ptr( *res.pNext )->m_value );
+            if ( base_class::do_dequeue( res ) ) {
+                f( node_traits::to_value_ptr( *res.pNext )->m_value );
 
                 base_class::dispose_result( res );
 
@@ -283,42 +351,17 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Dequeues a value from the queue
-        /**
-            If queue is not empty, the function returns \p true, \p dest contains copy of
-            dequeued value. The assignment operator for type \ref value_type is invoked.
-            If queue is empty, the function returns \p false, \p dest is unchanged.
-        */
-        bool dequeue( value_type& dest )
-        {
-            typedef cds::details::trivial_assign<value_type, value_type> functor;
-            return dequeue( dest, functor() );
-        }
-
-        /// Synonym for \ref enqueue function
-        bool push( const value_type& val )
-        {
-            return enqueue( val );
-        }
-
-        /// Synonym for template version of \ref enqueue function
-        template <typename Type, typename Func>
-        bool push( const Type& data, Func f  )
-        {
-            return enqueue( data, f );
-        }
-
-        /// Synonym for \ref dequeue function
+        /// Synonym for \ref dequeue() function
         bool pop( value_type& dest )
         {
             return dequeue( dest );
         }
 
-        /// Synonym for template version of \ref dequeue function
-        template <typename Type, typename Func>
-        bool pop( Type& dest, Func f )
+        /// Synonym for template version of \p dequeue_with() function
+        template <typename Func>
+        bool pop_with( Func f )
         {
-            return dequeue( dest, f );
+            return dequeue_with( f );
         }
 
         /// Checks if the queue is empty
@@ -334,6 +377,20 @@ namespace cds { namespace container {
         void clear()
         {
             base_class::clear();
+        }
+
+        /// Returns queue's item count
+        /** \copydetails cds::intrusive::OptimisticQueue::size()
+        */
+        size_t size() const
+        {
+            return base_class::size();
+        }
+
+        /// Returns reference to internal statistics
+        const stat& statistics() const
+        {
+            return base_class::statistics();
         }
     };
 

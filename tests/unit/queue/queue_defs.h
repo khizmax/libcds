@@ -61,11 +61,11 @@
     TEST_CASE(OptimisticQueue_HP_seqcst, ITEM_TYPE ) \
     TEST_CASE(OptimisticQueue_HP_ic, ITEM_TYPE ) \
     TEST_CASE(OptimisticQueue_HP_stat, ITEM_TYPE ) \
-    TEST_CASE(OptimisticQueue_PTB, ITEM_TYPE ) \
-    TEST_CASE(OptimisticQueue_PTB_michaelAlloc, ITEM_TYPE ) \
-    TEST_CASE(OptimisticQueue_PTB_seqcst, ITEM_TYPE ) \
-    TEST_CASE(OptimisticQueue_PTB_ic, ITEM_TYPE ) \
-    TEST_CASE(OptimisticQueue_PTB_stat, ITEM_TYPE )
+    TEST_CASE(OptimisticQueue_DHP, ITEM_TYPE ) \
+    TEST_CASE(OptimisticQueue_DHP_michaelAlloc, ITEM_TYPE ) \
+    TEST_CASE(OptimisticQueue_DHP_seqcst, ITEM_TYPE ) \
+    TEST_CASE(OptimisticQueue_DHP_ic, ITEM_TYPE ) \
+    TEST_CASE(OptimisticQueue_DHP_stat, ITEM_TYPE )
 
 #define CDSUNIT_TEST_OptimisticQueue \
     CPPUNIT_TEST(OptimisticQueue_HP) \
@@ -73,11 +73,11 @@
     CPPUNIT_TEST(OptimisticQueue_HP_seqcst) \
     CPPUNIT_TEST(OptimisticQueue_HP_ic) \
     CPPUNIT_TEST(OptimisticQueue_HP_stat) \
-    CPPUNIT_TEST(OptimisticQueue_PTB) \
-    CPPUNIT_TEST(OptimisticQueue_PTB_michaelAlloc) \
-    CPPUNIT_TEST(OptimisticQueue_PTB_seqcst) \
-    CPPUNIT_TEST(OptimisticQueue_PTB_ic) \
-    CPPUNIT_TEST(OptimisticQueue_PTB_stat)
+    CPPUNIT_TEST(OptimisticQueue_DHP) \
+    CPPUNIT_TEST(OptimisticQueue_DHP_michaelAlloc) \
+    CPPUNIT_TEST(OptimisticQueue_DHP_seqcst) \
+    CPPUNIT_TEST(OptimisticQueue_DHP_ic) \
+    CPPUNIT_TEST(OptimisticQueue_DHP_stat)
 
 
 // BasketQueue

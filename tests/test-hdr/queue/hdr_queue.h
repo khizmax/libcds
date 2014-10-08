@@ -139,28 +139,6 @@ namespace queue {
         }
 
     public:
-        void OptimisticQueue_HP();
-        void OptimisticQueue_HP_relax();
-        void OptimisticQueue_HP_seqcst();
-        void OptimisticQueue_HP_relax_align();
-        void OptimisticQueue_HP_seqcst_align();
-        void OptimisticQueue_HP_Counted();
-        void OptimisticQueue_HP_Counted_relax();
-        void OptimisticQueue_HP_Counted_seqcst();
-        void OptimisticQueue_HP_Counted_relax_align();
-        void OptimisticQueue_HP_Counted_seqcst_align();
-
-        void OptimisticQueue_PTB();
-        void OptimisticQueue_PTB_relax();
-        void OptimisticQueue_PTB_seqcst();
-        void OptimisticQueue_PTB_relax_align();
-        void OptimisticQueue_PTB_seqcst_align();
-        void OptimisticQueue_PTB_Counted();
-        void OptimisticQueue_PTB_Counted_relax();
-        void OptimisticQueue_PTB_Counted_seqcst();
-        void OptimisticQueue_PTB_Counted_relax_align();
-        void OptimisticQueue_PTB_Counted_seqcst_align();
-
         void FCQueue_deque();
         void FCQueue_deque_elimination();
         void FCQueue_deque_mutex();
@@ -177,28 +155,6 @@ namespace queue {
         void RWQueue_Counted();
 
         CPPUNIT_TEST_SUITE(Queue_TestHeader)
-            CPPUNIT_TEST(OptimisticQueue_HP);
-            CPPUNIT_TEST(OptimisticQueue_HP_relax);
-            CPPUNIT_TEST(OptimisticQueue_HP_seqcst);
-            CPPUNIT_TEST(OptimisticQueue_HP_relax_align);
-            CPPUNIT_TEST(OptimisticQueue_HP_seqcst_align);
-            CPPUNIT_TEST(OptimisticQueue_HP_Counted);
-            CPPUNIT_TEST(OptimisticQueue_HP_Counted_relax);
-            CPPUNIT_TEST(OptimisticQueue_HP_Counted_seqcst);
-            CPPUNIT_TEST(OptimisticQueue_HP_Counted_relax_align);
-            CPPUNIT_TEST(OptimisticQueue_HP_Counted_seqcst_align);
-
-            CPPUNIT_TEST(OptimisticQueue_PTB);
-            CPPUNIT_TEST(OptimisticQueue_PTB_relax);
-            CPPUNIT_TEST(OptimisticQueue_PTB_seqcst);
-            CPPUNIT_TEST(OptimisticQueue_PTB_relax_align);
-            CPPUNIT_TEST(OptimisticQueue_PTB_seqcst_align);
-            CPPUNIT_TEST(OptimisticQueue_PTB_Counted);
-            CPPUNIT_TEST(OptimisticQueue_PTB_Counted_relax);
-            CPPUNIT_TEST(OptimisticQueue_PTB_Counted_seqcst);
-            CPPUNIT_TEST(OptimisticQueue_PTB_Counted_relax_align);
-            CPPUNIT_TEST(OptimisticQueue_PTB_Counted_seqcst_align);
-
             CPPUNIT_TEST(FCQueue_deque)
             CPPUNIT_TEST(FCQueue_deque_elimination)
             CPPUNIT_TEST(FCQueue_deque_mutex)

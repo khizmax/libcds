@@ -52,7 +52,6 @@ namespace cds { namespace container {
 
         /// Metafunction converting option list to \p msqueue::traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             Supported \p Options are:
             - opt::allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
             - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
@@ -69,8 +68,8 @@ namespace cds { namespace container {
             \code
             typedef cds::container::MSQueue< cds::gc::HP, Foo, 
                 typename cds::container::msqueue::make_traits<
-                    cds::opt::item_counte< cds::atomicity::item_counter >,
-                    cds::opt::stat< cds::intrusive::msqueue::stat<> >
+                    cds::opt::item_counter< cds::atomicity::item_counter >,
+                    cds::opt::stat< cds::container::msqueue::stat<> >
                 >::type
             > myQueue;
             \endcode
