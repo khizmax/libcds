@@ -3,16 +3,65 @@
 #ifndef __CDS_CONTAINER_RWQUEUE_H
 #define __CDS_CONTAINER_RWQUEUE_H
 
-#include <memory>
-#include <functional>   // ref
 #include <mutex>        // unique_lock
-#include <cds/opt/options.h>
+#include <cds/container/msqueue.h>
 #include <cds/lock/spinlock.h>
-#include <cds/intrusive/details/queue_stat.h>
-#include <cds/details/allocator.h>
-#include <cds/details/trivial_assign.h>
 
 namespace cds { namespace container {
+    /// RWQueue related definitions
+    /** @ingroup cds_nonintrusive_helper
+    */
+    namespace rwqueue {
+        /// RWQueue default type traits
+        struct traits
+        {
+            /// Lock policy
+            typedef cds::lock::Spin  lock_type;
+
+            /// Node allocator
+            typedef CDS_DEFAULT_ALLOCATOR   allocator;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef cds::atomicity::empty_item_counter item_counter;
+
+            /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+        /// Metafunction converting option list to \p rwqueue::traits
+        /**
+            Supported \p Options are:
+            - opt::lock_type - lock policy, default is \p cds::lock::Spin. Any type satisfied \p Mutex C++ concept may be used.
+            - opt::allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter.
+            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare mutex-based \p %RWQueue with item counting
+            \code
+            typedef cds::container::RWQueue< Foo, 
+                typename cds::container::rwqueue::make_traits<
+                    cds::opt::item_counter< cds::atomicity::item_counter >,
+                    cds::opt::lock_type< std::mutex >
+                >::type
+            > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
+
+    } // namespace rwqueue
 
     /// Michael & Scott blocking queue with fine-grained synchronization schema
     /** @ingroup cds_nonintrusive_queue
@@ -25,61 +74,47 @@ namespace cds { namespace container {
                 and blocking concurrent queue algorithms"
 
         <b>Template arguments</b>
-        - \p T - type to be stored in the queue
-        - \p Options - options
+        - \p T - value type to be stored in the queue
+        - \p Traits - queue traits, default is \p rwqueue::traits. You can use \p rwqueue::make_traits
+            metafunction to make your traits or just derive your traits from \p %rwqueue::traits:
+            \code
+            struct myTraits: public cds::container::rwqueue::traits {
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::container::RWQueue< Foo, myTraits > myQueue;
 
-        \p Options are:
-        - opt::allocator - allocator (like \p std::allocator). Default is \ref CDS_DEFAULT_ALLOCATOR
-        - opt::lock_type - type of lock primitive. Default is cds::lock::Spin.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter
-        - opt::stat - the type to gather internal statistics.
-            Possible option value are: queue_stat, queue_dummy_stat, user-provided class that supports queue_stat interface.
-            Default is \ref intrusive::queue_dummy_stat.
-            <tt>RWQueue</tt> uses only \p onEnqueue and \p onDequeue counter.
-        - opt::alignment - the alignment for \p lock_type to prevent false sharing. Default is opt::cache_line_alignment
-
-        This queue has no intrusive counterpart.
+            // Equivalent make_traits example:
+            typedef cds::container::RWQueue< Foo, 
+                typename cds::container::rwqueue::make_traits< 
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
     */
-    template <typename T, typename... Options>
+    template <typename T, typename Traits = rwqueue::traits >
     class RWQueue
     {
-        //@cond
-        struct default_options
-        {
-            typedef lock::Spin  lock_type;
-            typedef CDS_DEFAULT_ALLOCATOR   allocator;
-            typedef atomicity::empty_item_counter item_counter;
-            typedef intrusive::queue_dummy_stat stat;
-            enum { alignment = opt::cache_line_alignment };
-        };
-        //@endcond
-
-    public:
-        //@cond
-        typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, Options... >::type
-            ,Options...
-        >::type   options;
-        //@endcond
-
     public:
         /// Rebind template arguments
-        template <typename T2, typename... Options2>
+        template <typename T2, typename Traits2>
         struct rebind {
-            typedef RWQueue< T2, Options2...> other   ;   ///< Rebinding result
+            typedef RWQueue< T2, Traits2 > other   ;   ///< Rebinding result
         };
 
     public:
-        typedef T   value_type  ;   ///< type of value stored in the queue
+        typedef T       value_type; ///< Type of value to be stored in the queue
+        typedef Traits  traits;     ///< Queue traits
 
-        typedef typename options::lock_type lock_type   ;   ///< Locking primitive used
+        typedef typename traits::lock_type  lock_type;      ///< Locking primitive
+        typedef typename traits::item_counter item_counter; ///< Item counting policy used
+        typedef typename traits::memory_model memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
 
     protected:
         //@cond
         /// Node type
         struct node_type
         {
-            node_type * volatile    m_pNext ;   ///< Pointer to the next node in queue
+            node_type * volatile    m_pNext ;   ///< Pointer to the next node in the queue
             value_type              m_value ;   ///< Value stored in the node
 
             node_type( value_type const& v )
@@ -100,18 +135,15 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef typename options::allocator::template rebind<node_type>::other allocator_type   ; ///< Allocator type used for allocate/deallocate the queue nodes
-        typedef typename options::item_counter item_counter ;   ///< Item counting policy used
-        typedef typename options::stat      stat        ;   ///< Internal statistics policy used
+        typedef typename traits::allocator::template rebind<node_type>::other allocator_type; ///< Allocator type used for allocate/deallocate the queue nodes
 
     protected:
         //@cond
-        typedef typename opt::details::alignment_setter< lock_type, options::alignment >::type aligned_lock_type;
-        typedef std::unique_lock<lock_type>   auto_lock;
+        typedef typename opt::details::alignment_setter< lock_type, traits::alignment >::type aligned_lock_type;
+        typedef std::unique_lock<lock_type> scoped_lock;
         typedef cds::details::Allocator< node_type, allocator_type >  node_allocator;
 
         item_counter    m_ItemCounter;
-        stat            m_Stat;
 
         mutable aligned_lock_type   m_HeadLock;
         node_type * m_pHead;
@@ -146,12 +178,11 @@ namespace cds { namespace container {
         {
             assert( p != nullptr );
             {
-                auto_lock lock( m_TailLock );
+                scoped_lock lock( m_TailLock );
                 m_pTail =
                     m_pTail->m_pNext = p;
             }
             ++m_ItemCounter;
-            m_Stat.onEnqueue();
             return true;
         }
 
@@ -185,37 +216,29 @@ namespace cds { namespace container {
         bool enqueue( value_type const& data )
         {
             scoped_node_ptr p( alloc_node( data ));
-            if ( enqueue_node( p.get() )) {
+            if ( enqueue_node( p )) {
                 p.release();
                 return true;
             }
             return false;
         }
 
-        /// Enqueues \p data to queue using copy functor
+        /// Enqueues \p data to the queue using a functor
         /**
-            \p Func is a functor called to copy value \p data of type \p Type
-            which may be differ from type \p T stored in the queue.
-            The functor's interface is:
+            \p Func is a functor called to create node.
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type :
             \code
-            struct myFunctor {
-                void operator()(T& dest, Type const& data)
-                {
-                    // // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
+            cds::container::RWQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.enqueue_with( [&bar]( Foo& dest ) { dest = bar; } );
             \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
-
-            <b>Requirements</b> The functor \p Func should not throw any exception.
         */
-        template <typename Type, typename Func>
-        bool enqueue( Type const& data, Func f  )
+        template <typename Func>
+        bool enqueue_with( Func f )
         {
-            scoped_node_ptr p( alloc_node());
-            f( p->m_value, data );
-            if ( enqueue_node( p.get() )) {
+            scoped_node_ptr p( alloc_node() );
+            f( p->m_value );
+            if ( enqueue_node( p ) ) {
                 p.release();
                 return true;
             }
@@ -234,92 +257,83 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Dequeues a value using copy functor
-        /**
-            \p Func is a functor called to copy dequeued value to \p dest of type \p Type
-            which may be differ from type \p T stored in the queue.
-            The functor's interface is:
-            \code
-            struct myFunctor {
-                void operator()(Type& dest, T const& data)
-                {
-                    // // Copy \p data to \p dest
-                    dest = data;
-                }
-            };
-            \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
-
-            <b>Requirements</b> The functor \p Func should not throw any exception.
-        */
-        template <typename Type, typename Func>
-        bool dequeue( Type& dest, Func f )
+        /// Synonym for \p enqueue() function
+        bool push( value_type const& val )
         {
-            node_type * pNode;
-            {
-                auto_lock lock( m_HeadLock );
-                pNode = m_pHead;
-                node_type * pNewHead = pNode->m_pNext;
-                if ( pNewHead == nullptr )
-                    return false;
-                f( dest, pNewHead->m_value );
-                m_pHead = pNewHead;
-            }    // unlock here
-            --m_ItemCounter;
-            free_node( pNode );
-            m_Stat.onDequeue();
-            return true;
+            return enqueue( val );
         }
 
-        /** Dequeues a value to \p dest.
+        /// Synonym for \p enqueue_with() function
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with( f );
+        }
 
-            If queue is empty returns \a false, \p dest may be corrupted.
+        /// Dequeues a value to \p dest.
+        /**
+            If queue is empty returns \a false, \p dest can be corrupted.
             If queue is not empty returns \a true, \p dest contains the value dequeued
         */
         bool dequeue( value_type& dest )
         {
-            typedef cds::details::trivial_assign<value_type, value_type> functor;
-            return dequeue( dest, functor() );
+            return dequeue( [&dest]( value_type * src ) { dest = src; } );
         }
 
-        /// Synonym for \ref enqueue
-        bool push( value_type const& data )
+        /// Dequeues a value using a functor
+        /**
+            \p Func is a functor called to copy dequeued value.
+            The functor takes one argument - a reference to removed node:
+            \code
+            cds:container::RWQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.dequeue_with( [&bar]( Foo& src ) { bar = std::move( src );});
+            \endcode
+            The functor is called only if the queue is not empty.
+        */
+        template <typename Func>
+        bool dequeue_with( Func f )
         {
-            return enqueue( data );
+            node_type * pNode;
+            {
+                scoped_lock lock( m_HeadLock );
+                pNode = m_pHead;
+                node_type * pNewHead = pNode->m_pNext;
+                if ( pNewHead == nullptr )
+                    return false;
+                f( pNewHead->m_value );
+                m_pHead = pNewHead;
+            }    // unlock here
+            --m_ItemCounter;
+            free_node( pNode );
+            return true;
         }
 
-        /// Synonym for template version of \ref enqueue function
-        template <typename Type, typename Func>
-        bool push( Type const& data, Func f  )
+        /// Synonym for \p dequeue() function
+        bool pop( value_type& dest )
         {
-            return enqueue( data, f );
+            return dequeue( dest );
         }
 
-        /// Synonym for \ref dequeue
-        bool pop( value_type& data )
+        /// Synonym for \p dequeue_with() function
+        template <typename Func>
+        bool pop_with( Func f )
         {
-            return dequeue( data );
-        }
-
-        /// Synonym for template version of \ref dequeue function
-        template <typename Type, typename Func>
-        bool pop( Type& dest, Func f )
-        {
-            return dequeue( dest, f );
+            return dequeue_with( f );
         }
 
         /// Checks if queue is empty
         bool empty() const
         {
-            auto_lock lock( m_HeadLock );
+            scoped_lock lock( m_HeadLock );
             return m_pHead->m_pNext == nullptr;
         }
 
         /// Clears queue
         void clear()
         {
-            auto_lock lockR( m_HeadLock );
-            auto_lock lockW( m_TailLock );
+            scoped_lock lockR( m_HeadLock );
+            scoped_lock lockW( m_TailLock );
             while ( m_pHead->m_pNext != nullptr ) {
                 node_type * pHead = m_pHead;
                 m_pHead = m_pHead->m_pNext;
@@ -329,23 +343,24 @@ namespace cds { namespace container {
 
         /// Returns queue's item count
         /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
+            The value returned depends on \p rwqueue::traits::item_counter. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the queue
-            is empty. To check queue emptyness use \ref empty() method.
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
+            is empty. To check queue emptyness use \p empty() method.
         */
         size_t    size() const
         {
             return m_ItemCounter.value();
         }
 
+        //@cond
         /// Returns reference to internal statistics
-        stat const& statistics() const
+        cds::container::msqueue::empty_stat statistics() const
         {
-            return m_Stat;
+            return cds::container::msqueue::empty_stat();
         }
-
+        //@endcond
     };
 
 }}  // namespace cds::container

@@ -170,12 +170,12 @@
 #define CDSUNIT_DECLARE_RWQueue( ITEM_TYPE ) \
     TEST_CASE( RWQueue_Spin, ITEM_TYPE ) \
     TEST_CASE( RWQueue_Spin_ic, ITEM_TYPE ) \
-    TEST_CASE( RWQueue_Spin_stat, ITEM_TYPE )
+    TEST_CASE( RWQueue_mutex, ITEM_TYPE )
 
 #define CDSUNIT_TEST_RWQueue \
     CPPUNIT_TEST(RWQueue_Spin) \
     CPPUNIT_TEST(RWQueue_Spin_ic) \
-    CPPUNIT_TEST(RWQueue_Spin_stat)
+    CPPUNIT_TEST(RWQueue_mutex)
 
 // TsigasCycleQueue
 #define CDSUNIT_DECLARE_TsigasCysleQueue( ITEM_TYPE ) \

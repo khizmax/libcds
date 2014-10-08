@@ -151,9 +151,6 @@ namespace queue {
         void Vyukov_MPMCCyclicQueue();
         void Vyukov_MPMCCyclicQueue_Counted();
 
-        void RWQueue_();
-        void RWQueue_Counted();
-
         CPPUNIT_TEST_SUITE(Queue_TestHeader)
             CPPUNIT_TEST(FCQueue_deque)
             CPPUNIT_TEST(FCQueue_deque_elimination)
@@ -163,9 +160,6 @@ namespace queue {
             CPPUNIT_TEST(FCQueue_list_elimination)
             CPPUNIT_TEST(FCQueue_list_mutex)
             CPPUNIT_TEST(FCQueue_list_stat)
-
-            CPPUNIT_TEST(RWQueue_);
-            CPPUNIT_TEST(RWQueue_Counted);
 
             CPPUNIT_TEST(Vyukov_MPMCCyclicQueue);
             CPPUNIT_TEST(Vyukov_MPMCCyclicQueue_Counted);

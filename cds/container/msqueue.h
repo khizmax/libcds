@@ -180,7 +180,9 @@ namespace cds { namespace container {
         };
 
     public:
-        typedef T value_type; ///< Value type stored in the queue
+        typedef T value_type;   ///< Value type stored in the queue
+        typedef Traits traits;  ///< Queue traits
+
         typedef typename base_class::gc             gc;             ///< Garbage collector used
         typedef typename base_class::back_off       back_off;       ///< Back-off strategy used
         typedef typename maker::allocator_type      allocator_type; ///< Allocator type used for allocate/deallocate the nodes
@@ -251,7 +253,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Enqueues \p data to queue using a functor
+        /// Enqueues \p data to the queue using a functor
         /**
             \p Func is a functor called to create node.
             The functor \p f takes one argument - a reference to a new node of type \ref value_type :
@@ -361,6 +363,8 @@ namespace cds { namespace container {
         }
 
         /// Returns queue's item count (see \ref intrusive::MSQueue::size for explanation)
+        /** \copydetails cds::intrusive::MSQueue::size()
+        */
         size_t size() const
         {
             return base_class::size();

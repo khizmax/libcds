@@ -1,28 +1,45 @@
 //$$CDS-header$$
 
 #include <cds/container/rwqueue.h>
+#include <mutex>
 
-#include "queue/hdr_queue.h"
+#include "queue/hdr_queue_new.h"
 
 namespace queue {
-    void Queue_TestHeader::RWQueue_()
+    void HdrTestQueue::RWQueue_default()
     {
-        testNoItemCounter<
-            cds::container::RWQueue<
-                int
-                ,cds::opt::lock_type< cds::SpinLock >
-            >
-        >();
+        test_no_ic< cds::container::RWQueue< int > >();
     }
 
-    void Queue_TestHeader::RWQueue_Counted()
+    void HdrTestQueue::RWQueue_mutex()
     {
-        testWithItemCounter<
-            cds::container::RWQueue<
-            int
-            ,cds::opt::lock_type< cds::SpinLock >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-            >
-        >();
+        struct queue_traits : public cds::container::rwqueue::traits
+        {
+            typedef std::mutex lock_type;
+        };
+
+        test_no_ic< cds::container::RWQueue< int, queue_traits > >();
     }
+
+    void HdrTestQueue::RWQueue_ic()
+    {
+        struct queue_traits : public cds::container::rwqueue::traits
+        {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+
+        test_ic< cds::container::RWQueue< int, queue_traits > >();
+    }
+
+    void HdrTestQueue::RWQueue_ic_mutex()
+    {
+        struct queue_traits : public cds::container::rwqueue::traits
+        {
+            typedef cds::atomicity::item_counter item_counter;
+            typedef std::mutex lock_type;
+        };
+
+        test_ic< cds::container::RWQueue< int, queue_traits > >();
+    }
+
 }

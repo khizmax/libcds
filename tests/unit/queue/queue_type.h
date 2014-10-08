@@ -371,19 +371,20 @@ namespace queue {
 
 
         // RWQueue
-        typedef cds::container::RWQueue<
-            Value
-        > RWQueue_Spin;
+        typedef cds::container::RWQueue< Value > RWQueue_Spin;
 
-        typedef cds::container::RWQueue<
-            Value
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        > RWQueue_Spin_ic;
+        struct traits_RWQueue_Spin_ic : public cds::container::rwqueue::traits
+        {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cds::container::RWQueue< Value, traits_RWQueue_Spin_ic > RWQueue_Spin_ic;
 
-        typedef cds::container::RWQueue<
-            Value
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        > RWQueue_Spin_stat;
+        struct traits_RWQueue_mutex : public 
+            cds::container::rwqueue::make_traits<
+                cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+        typedef cds::container::RWQueue< Value, traits_RWQueue_mutex > traits_RWQueue_mutex;
 
         // FCQueue
         class traits_FCQueue_elimination:
@@ -574,7 +575,7 @@ namespace std {
             << "\t\t      fix list call: " << s.m_FixListCount.get() << "\n";
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::dummy_stat const& s )
+    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::empty_stat const& s )
     {
         return o;
     }

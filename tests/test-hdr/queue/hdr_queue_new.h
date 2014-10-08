@@ -287,7 +287,13 @@ namespace queue {
         void BasketQueue_DHP_Counted_seqcst();
         void BasketQueue_DHP_Counted_relax_align();
         void BasketQueue_DHP_Counted_seqcst_align();
-/*
+
+        void RWQueue_default();
+        void RWQueue_mutex();
+        void RWQueue_ic();
+        void RWQueue_ic_mutex();
+
+        /*
         void FCQueue_deque();
         void FCQueue_deque_elimination();
         void FCQueue_deque_mutex();
@@ -300,8 +306,6 @@ namespace queue {
         void Vyukov_MPMCCyclicQueue();
         void Vyukov_MPMCCyclicQueue_Counted();
 
-        void RWQueue_();
-        void RWQueue_Counted();
 */
 
         CPPUNIT_TEST_SUITE( HdrTestQueue )
@@ -402,12 +406,13 @@ namespace queue {
             CPPUNIT_TEST(FCQueue_list_mutex)
             CPPUNIT_TEST(FCQueue_list_stat)
 
-            CPPUNIT_TEST(RWQueue_);
-            CPPUNIT_TEST(RWQueue_Counted);
-
             CPPUNIT_TEST(Vyukov_MPMCCyclicQueue);
             CPPUNIT_TEST(Vyukov_MPMCCyclicQueue_Counted);
 */
+            CPPUNIT_TEST( RWQueue_default)
+            CPPUNIT_TEST( RWQueue_mutex )
+            CPPUNIT_TEST( RWQueue_ic )
+
         CPPUNIT_TEST_SUITE_END();
 
     };
