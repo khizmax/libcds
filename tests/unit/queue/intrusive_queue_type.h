@@ -153,46 +153,67 @@ namespace queue {
 
 
         // OptimisticQueue
-        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-        >   OptimisticQueue_HP;
+        struct traits_OptimisticQueue_HP : public cds::intrusive::optimistic_queue::traits
+        {
+            typedef cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+        };
+        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T, traits_OptimisticQueue_HP > OptimisticQueue_HP;
 
-        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   OptimisticQueue_HP_seqcst;
+        struct traits_OptimisticQueue_HP_seqcst : public
+            cds::intrusive::optimistic_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
+                , cds::opt::memory_model< cds::opt::v::sequential_consistent >
+            >::type
+        {};
+        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T, traits_OptimisticQueue_HP_seqcst > OptimisticQueue_HP_seqcst;
 
-        typedef cds::intrusive::OptimisticQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-        >   OptimisticQueue_PTB;
+        struct traits_OptimisticQueue_DHP : public cds::intrusive::optimistic_queue::traits
+        {
+            typedef cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+        };
+        typedef cds::intrusive::OptimisticQueue< cds::gc::DHP, T, traits_OptimisticQueue_DHP > OptimisticQueue_DHP;
 
-        typedef cds::intrusive::OptimisticQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::memory_model< cds::opt::v::sequential_consistent >
-        >   OptimisticQueue_PTB_seqcst;
-
+        struct traits_OptimisticQueue_DHP_seqcst: public
+            cds::intrusive::optimistic_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
+                , cds::opt::memory_model< cds::opt::v::sequential_consistent >
+            >::type
+        {};
+        typedef cds::intrusive::OptimisticQueue< cds::gc::DHP, T, traits_OptimisticQueue_DHP_seqcst > OptimisticQueue_DHP_seqcst;
 
         // OptimisticQueue + item counter
-        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   OptimisticQueue_HP_ic;
+        struct traits_OptimisticQueue_HP_ic: public 
+            cds::intrusive::optimistic_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
+                , cds::opt::item_counter< cds::atomicity::item_counter >
+            >::type
+        {};
+        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T, traits_OptimisticQueue_HP_ic > OptimisticQueue_HP_ic;
 
-        typedef cds::intrusive::OptimisticQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
-        >   OptimisticQueue_PTB_ic;
+        struct traits_OptimisticQueue_DHP_ic: public
+            cds::intrusive::optimistic_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
+                , cds::opt::item_counter< cds::atomicity::item_counter >
+            >::type
+        {};
+        typedef cds::intrusive::OptimisticQueue< cds::gc::DHP, T, traits_OptimisticQueue_DHP_ic > OptimisticQueue_DHP_ic;
 
         // OptimisticQueue + stat
-        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   OptimisticQueue_HP_stat;
+        struct traits_OptimisticQueue_HP_stat: public 
+            cds::intrusive::optimistic_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
+                , cds::opt::stat< cds::intrusive::optimistic_queue::stat<> >
+            >::type
+        {};
+        typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T, traits_OptimisticQueue_HP_stat > OptimisticQueue_HP_stat;
 
-        typedef cds::intrusive::OptimisticQueue< cds::gc::PTB, T
-            ,cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::PTB > > >
-            ,cds::opt::stat< cds::intrusive::queue_stat<> >
-        >   OptimisticQueue_PTB_stat;
+        struct traits_OptimisticQueue_DHP_stat: public 
+            cds::intrusive::optimistic_queue::make_traits <
+                cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
+                , cds::opt::stat< cds::intrusive::optimistic_queue::stat<> >
+            >::type
+        {};
+        typedef cds::intrusive::OptimisticQueue< cds::gc::DHP, T, traits_OptimisticQueue_DHP_stat > OptimisticQueue_DHP_stat;
 
         // TsigasCycleQueue
         class TsigasCycleQueue_dyn

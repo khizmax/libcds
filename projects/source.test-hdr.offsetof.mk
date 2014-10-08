@@ -74,7 +74,7 @@ CDS_TESTHDR_OFFSETOF_QUEUE := \
     tests/test-hdr/queue/hdr_intrusive_msqueue_hp.cpp \
     tests/test-hdr/queue/hdr_intrusive_msqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_intrusive_optimisticqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_optimisticqueue_ptb.cpp
+    tests/test-hdr/queue/hdr_intrusive_optimisticqueue_dhp.cpp
 
 CDS_TESTHDR_OFFSETOF_STACK := \
     tests/test-hdr/stack/hdr_intrusive_treiber_stack_hp.cpp \

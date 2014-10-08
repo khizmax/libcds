@@ -339,18 +339,18 @@ namespace queue {
         void test_OptimisticQueue_HP_member_noalign();
         void test_OptimisticQueue_HP_base_cachealign();
         void test_OptimisticQueue_HP_member_cachealign();
-        void test_OptimisticQueue_PTB_base();
-        void test_OptimisticQueue_PTB_member();
-        void test_OptimisticQueue_PTB_base_ic();
-        void test_OptimisticQueue_PTB_member_ic();
-        void test_OptimisticQueue_PTB_base_stat();
-        void test_OptimisticQueue_PTB_member_stat();
-        void test_OptimisticQueue_PTB_base_align();
-        void test_OptimisticQueue_PTB_member_align();
-        void test_OptimisticQueue_PTB_base_noalign();
-        void test_OptimisticQueue_PTB_member_noalign();
-        void test_OptimisticQueue_PTB_base_cachealign();
-        void test_OptimisticQueue_PTB_member_cachealign();
+        void test_OptimisticQueue_DHP_base();
+        void test_OptimisticQueue_DHP_member();
+        void test_OptimisticQueue_DHP_base_ic();
+        void test_OptimisticQueue_DHP_member_ic();
+        void test_OptimisticQueue_DHP_base_stat();
+        void test_OptimisticQueue_DHP_member_stat();
+        void test_OptimisticQueue_DHP_base_align();
+        void test_OptimisticQueue_DHP_member_align();
+        void test_OptimisticQueue_DHP_base_noalign();
+        void test_OptimisticQueue_DHP_member_noalign();
+        void test_OptimisticQueue_DHP_base_cachealign();
+        void test_OptimisticQueue_DHP_member_cachealign();
 
         void test_BasketQueue_HP_default();
         void test_BasketQueue_HP_default_ic();
@@ -462,18 +462,18 @@ namespace queue {
             CPPUNIT_TEST(test_OptimisticQueue_HP_member_noalign)
             CPPUNIT_TEST(test_OptimisticQueue_HP_base_cachealign)
             CPPUNIT_TEST(test_OptimisticQueue_HP_member_cachealign)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_base)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_member)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_base_ic)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_member_ic)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_base_stat)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_member_stat)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_base_align)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_member_align)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_base_noalign)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_member_noalign)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_base_cachealign)
-            CPPUNIT_TEST(test_OptimisticQueue_PTB_member_cachealign)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_base)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_member)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_base_ic)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_member_ic)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_base_stat)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_member_stat)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_base_align)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_member_align)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_base_noalign)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_member_noalign)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_base_cachealign)
+            CPPUNIT_TEST(test_OptimisticQueue_DHP_member_cachealign)
 
             CPPUNIT_TEST(test_BasketQueue_HP_default)
             CPPUNIT_TEST(test_BasketQueue_HP_default_ic)

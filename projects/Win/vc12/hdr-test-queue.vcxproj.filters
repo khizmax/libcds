@@ -19,9 +19,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_optimisticqueue_hp.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_optimisticqueue_ptb.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_hp.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
@@ -79,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hp.cpp">
       <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_optimisticqueue_dhp.cpp">
+      <Filter>intrusive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

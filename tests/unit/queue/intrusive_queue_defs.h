@@ -52,20 +52,20 @@
     TEST_CASE(OptimisticQueue_HP_ic,            cds::intrusive::optimistic_queue::node< cds::gc::HP > ) \
     TEST_CASE(OptimisticQueue_HP_stat,          cds::intrusive::optimistic_queue::node< cds::gc::HP > ) \
     TEST_CASE(OptimisticQueue_HP_seqcst,        cds::intrusive::optimistic_queue::node< cds::gc::HP > ) \
-    TEST_CASE(OptimisticQueue_PTB,              cds::intrusive::optimistic_queue::node< cds::gc::PTB > ) \
-    TEST_CASE(OptimisticQueue_PTB_ic,           cds::intrusive::optimistic_queue::node< cds::gc::PTB > ) \
-    TEST_CASE(OptimisticQueue_PTB_stat,         cds::intrusive::optimistic_queue::node< cds::gc::PTB > ) \
-    TEST_CASE(OptimisticQueue_PTB_seqcst,       cds::intrusive::optimistic_queue::node< cds::gc::PTB > )
+    TEST_CASE(OptimisticQueue_DHP,              cds::intrusive::optimistic_queue::node< cds::gc::DHP > ) \
+    TEST_CASE(OptimisticQueue_DHP_ic,           cds::intrusive::optimistic_queue::node< cds::gc::DHP > ) \
+    TEST_CASE(OptimisticQueue_DHP_stat,         cds::intrusive::optimistic_queue::node< cds::gc::DHP > ) \
+    TEST_CASE(OptimisticQueue_DHP_seqcst,       cds::intrusive::optimistic_queue::node< cds::gc::DHP > )
 
 #define CDSUNIT_TEST_OptimisticQueue \
     CPPUNIT_TEST(OptimisticQueue_HP) \
     CPPUNIT_TEST(OptimisticQueue_HP_ic) \
     CPPUNIT_TEST(OptimisticQueue_HP_stat) \
     CPPUNIT_TEST(OptimisticQueue_HP_seqcst) \
-    CPPUNIT_TEST(OptimisticQueue_PTB) \
-    CPPUNIT_TEST(OptimisticQueue_PTB_ic) \
-    CPPUNIT_TEST(OptimisticQueue_PTB_stat) \
-    CPPUNIT_TEST(OptimisticQueue_PTB_seqcst)
+    CPPUNIT_TEST(OptimisticQueue_DHP) \
+    CPPUNIT_TEST(OptimisticQueue_DHP_ic) \
+    CPPUNIT_TEST(OptimisticQueue_DHP_stat) \
+    CPPUNIT_TEST(OptimisticQueue_DHP_seqcst)
 
 
 // BasketQueue

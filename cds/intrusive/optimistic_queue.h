@@ -4,16 +4,13 @@
 #define __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
 
 #include <type_traits>
-#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/gc/default_gc.h>
-#include <cds/gc/hrc/gc_fwd.h>
-#include <cds/intrusive/details/queue_stat.h>
 
 namespace cds { namespace intrusive {
 
-    /// Optimistic queue related definitions
+    /// OptimisticQueue related definitions
     /** @ingroup cds_intrusive_helper
     */
     namespace optimistic_queue {
@@ -64,7 +61,7 @@ namespace cds { namespace intrusive {
         /**
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         struct base_hook: public hook< opt::base_hook_tag, Options... >
@@ -72,12 +69,12 @@ namespace cds { namespace intrusive {
 
         /// Member hook
         /**
-            \p MemberOffset defines offset in bytes of \ref node member into your structure.
+            \p MemberOffset specifies offset in bytes of \ref node member into your structure.
             Use \p offsetof macro to define \p MemberOffset
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         struct member_hook: public hook< opt::member_hook_tag, Options... >
@@ -94,7 +91,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         struct traits_hook: public hook< opt::traits_hook_tag, Options... >
@@ -151,36 +148,59 @@ namespace cds { namespace intrusive {
         /// OptimisticQueue internal statistics. May be used for debugging or profiling
         /**
             Template argument \p Counter defines type of counter.
-            Default is cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
+            Default is \p cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
             strict event counting.
-            You may use stronger type of counter like as cds::atomicity::item_counter,
+            You may use stronger type of counter like as \p cds::atomicity::item_counter,
             or even integral type, for example, \p int.
-
-            The class extends intrusive::queue_stat interface for OptimisticQueue.
         */
         template <typename Counter = cds::atomicity::event_counter >
-        struct stat: public cds::intrusive::queue_stat<Counter>
+        struct stat
         {
-            //@cond
-            typedef cds::intrusive::queue_stat<Counter> base_class;
-            typedef typename base_class::counter_type    counter_type;
-            //@endcond
+            typedef Counter     counter_type;   ///< Counter type
 
-            counter_type    m_FixListCount  ;   ///< Count of fix list event
+            counter_type m_EnqueueCount;  ///< Enqueue call count
+            counter_type m_DequeueCount;  ///< Dequeue call count
+            counter_type m_EnqueueRace;  ///< Count of enqueue race conditions encountered
+            counter_type m_DequeueRace;  ///< Count of dequeue race conditions encountered
+            counter_type m_AdvanceTailError;  ///< Count of "advance tail failed" events
+            counter_type m_BadTail;  ///< Count of events "Tail is not pointed to the last item in the queue"
+            counter_type    m_FixListCount;   ///< Count of fix list event
 
+            /// Register enqueue call
+            void onEnqueue() { ++m_EnqueueCount; }
+            /// Register dequeue call
+            void onDequeue() { ++m_DequeueCount; }
+            /// Register enqueue race event
+            void onEnqueueRace() { ++m_EnqueueRace; }
+            /// Register dequeue race event
+            void onDequeueRace() { ++m_DequeueRace; }
+            /// Register "advance tail failed" event
+            void onAdvanceTailFailed() { ++m_AdvanceTailError; }
+            /// Register event "Tail is not pointed to last item in the queue"
+            void onBadTail() { ++m_BadTail; }
             /// Register fix list event
             void onFixList()    { ++m_FixListCount; }
 
             //@cond
             void reset()
             {
-                base_class::reset();
+                m_EnqueueCount.reset();
+                m_DequeueCount.reset();
+                m_EnqueueRace.reset();
+                m_DequeueRace.reset();
+                m_AdvanceTailError.reset();
+                m_BadTail.reset();
                 m_FixListCount.reset();
             }
 
             stat& operator +=( stat const& s )
             {
-                base_class::operator +=( s );
+                m_EnqueueCount += s.m_EnqueueCount.get();
+                m_DequeueCount += s.m_DequeueCount.get();
+                m_EnqueueRace += s.m_EnqueueRace.get();
+                m_DequeueRace += s.m_DequeueRace.get();
+                m_AdvanceTailError += s.m_AdvanceTailError.get();
+                m_BadTail += s.m_BadTail.get();
                 m_FixListCount += s.m_FixListCount.get();
                 return *this;
             }
@@ -188,64 +208,143 @@ namespace cds { namespace intrusive {
         };
 
         /// Dummy OptimisticQueue statistics - no counting is performed. Support interface like \ref optimistic_queue::stat
-        struct dummy_stat: public cds::intrusive::queue_dummy_stat
+        struct empty_stat
         {
             //@cond
+            void onEnqueue() {}
+            void onDequeue() {}
+            void onEnqueueRace() {}
+            void onDequeueRace() {}
+            void onAdvanceTailFailed() {}
+            void onBadTail() {}
             void onFixList() {}
 
             void reset() {}
-            dummy_stat& operator +=( dummy_stat const& )
+            empty_stat& operator +=( empty_stat const& )
             {
                 return *this;
             }
             //@endcond
         };
 
+        /// OptimisticQueue default type traits
+        struct traits
+        {
+            /// Back-off strategy
+            typedef cds::backoff::empty             back_off;
+
+            /// Hook, possible types are \p optimistic_queue::base_hook, \p optimistic_queue::member_hook, \p optimistic_queue::traits_hook
+            typedef optimistic_queue::base_hook<>   hook;
+
+            /// The functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used for dequeuing
+            typedef opt::v::empty_disposer          disposer;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef cds::atomicity::empty_item_counter   item_counter;
+
+            /// C++ memory ordering model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering        memory_model;
+
+            /// Internal statistics (by default, disabled)
+            /**
+                Possible option value are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat (the default),
+                user-provided class that supports \p %optimistic_queue::stat interface.
+            */
+            typedef optimistic_queue::empty_stat    stat;
+
+            /// Link checking, see \p cds::opt::link_checker
+            static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
+
+            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+        /// Metafunction converting option list to \p optimistic_queue::traits
+        /**
+            Supported \p Options are:
+
+            - opt::hook - hook used. Possible hooks are: \p optimistic_queue::base_hook, \p optimistic_queue::member_hook, \p optimistic_queue::traits_hook.
+                If the option is not specified, \p %optimistic_queue::base_hook<> is used.
+            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+                when dequeuing.
+            - opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
+            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            - opt::stat - the type to gather internal statistics.
+                Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat, 
+                user-provided class that supports \p %optimistic_queue::stat interface.
+                Default is \p %optimistic_queue::empty_stat (internal statistics disabled).
+            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare \p %OptimisticQueue with item counting and internal statistics
+            \code
+            typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo, 
+                typename cds::intrusive::optimistic_queue::make_traits<
+                    cds::intrusive::opt:hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc<cds:gc::HP> >>,
+                    cds::opt::item_counte< cds::atomicity::item_counter >,
+                    cds::opt::stat< cds::intrusive::optimistic_queue::stat<> >
+                >::type
+            > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
     }   // namespace optimistic_queue
 
-    /// Optimistic queue
+    /// Optimistic intruive lock-free queue
     /** @ingroup cds_intrusive_queue
         Implementation of Ladan-Mozes & Shavit optimistic queue algorithm.
-
-        \par Source:
             [2008] Edya Ladan-Mozes, Nir Shavit "An Optimistic Approach to Lock-Free FIFO Queues"
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::PTB. Note that gc::HRC is <b>not</b> supported
-        - \p T - type to be stored in the queue
-        - \p Options - options
+        - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
+        - \p T - type of value to be stored in the queue. A value of type \p T must be derived from \p optimistic_queue::node for \p optimistic_queue::base_hook,
+            or it should have a member of type \p %optimistic_queue::node for \p optimistic_queue::member_hook,
+            or it should be convertible to \p %optimistic_queue::node for \p optimistic_queue::traits_hook.
+        - \p Traits - queue traits, default is \p optimistic_queue::traits. You can use \p optimistic_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %optimistic_queue::traits:
+            \code
+            struct myTraits: public cds::intrusive::optimistic_queue::traits {
+                typedef cds::intrusive::optimistic_queue::stat<> stat;
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
-        Type of node: \ref optimistic_queue::node.
-
-        \p Options are:
-        - opt::hook - hook used. Possible values are: optimistic_queue::base_hook, optimistic_queue::member_hook, optimistic_queue::traits_hook.
-            If the option is not specified, <tt>optimistic_queue::base_hook<></tt> is used.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used
-            in \ref dequeue function.
-        - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter
-        - opt::stat - the type to gather internal statistics.
-            Possible option value are: optimistic_queue::stat, optimistic_queue::dummy_stat,
-            user-provided class that supports optimistic_queue::stat interface.
-            Generic option intrusive::queue_stat and intrusive::queue_dummy_stat are acceptable too, however,
-            they will be automatically converted to optimistic_queue::stat and optimistic_queue::dummy_stat
-            respectively.
-            Default is \ref optimistic_queue::dummy_stat.
-        - opt::alignment - the alignment for internal queue data. Default is opt::cache_line_alignment
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
+            // Equivalent make_traits example:
+            typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo, 
+                typename cds::intrusive::optimistic_queue::make_traits< 
+                    cds::opt::stat< cds::intrusive::optimistic_queue::stat<> >,
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
 
         Garbage collecting schema \p GC must be consistent with the optimistic_queue::node GC.
 
         \par About item disposing
         The optimistic queue algo has a key feature: even if the queue is empty it contains one item that is "dummy" one from
-        the standpoint of the algo. See \ref dequeue function for explanation.
+        the standpoint of the algo. See \p dequeue() function for explanation.
 
         \par Examples
         \code
-        #include <cds/intrusive/optimistic_queue.h>
         #include <cds/gc/hp.h>
+        #include <cds/intrusive/optimistic_queue.h>
 
         namespace ci = cds::inrtusive;
         typedef cds::gc::HP hp_gc;
@@ -258,11 +357,13 @@ namespace cds { namespace intrusive {
         };
 
         typedef ci::OptimisticQueue< hp_gc,
-            Foo
-            ,ci::opt::hook<
-                ci::optimistic_queue::base_hook< ci::opt::gc< hp_gc > >
-            >
-            ,cds::opt::item_counter< cds::atomicity::item_counter >
+            Foo,
+            typename ci::optimistic_queue::make_traits<
+                ci::opt::hook<
+                    ci::optimistic_queue::base_hook< ci::opt::gc< hp_gc > >
+                >
+                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            >::type
         > FooQueue;
 
         // Optimistic queue with Hazard Pointer garbage collector, member hook, no item counter:
@@ -274,103 +375,59 @@ namespace cds { namespace intrusive {
         };
 
         typedef ci::OptimisticQueue< hp_gc,
-            Bar
-            ,ci::opt::hook<
-                ci::optimistic_queue::member_hook<
-                    offsetof(Bar, hMember)
-                    ,ci::opt::gc< hp_gc >
+            Bar,
+            typename ci::optimistic_queue::make_traits<
+                ci::opt::hook<
+                    ci::optimistic_queue::member_hook<
+                        offsetof(Bar, hMember)
+                        ,ci::opt::gc< hp_gc >
+                    >
                 >
-            >
+            >::type
         > BarQueue;
-
         \endcode
     */
-    template <typename GC, typename T, typename... Options>
+    template <typename GC, typename T, typename Traits = optimistic_queue::traits >
     class OptimisticQueue
     {
-        //@cond
-        struct default_options
-        {
-            typedef cds::backoff::empty             back_off;
-            typedef optimistic_queue::base_hook<>   hook;
-            typedef opt::v::empty_disposer          disposer;
-            typedef atomicity::empty_item_counter   item_counter;
-            typedef opt::v::relaxed_ordering        memory_model;
-            typedef optimistic_queue::dummy_stat    stat;
-            static const opt::link_check_type link_checker = opt::debug_check_link;
-            enum { alignment = opt::cache_line_alignment };
-        };
-        //@endcond
-
     public:
-        //@cond
-        typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, Options... >::type
-            ,Options...
-        >::type   options;
+        typedef GC gc;          ///< Garbage collector
+        typedef T  value_type;  ///< type of value to be stored in the queue
+        typedef Traits traits;  ///< Queue traits
 
-        typedef typename std::conditional<
-            std::is_same<typename options::stat, cds::intrusive::queue_stat<> >::value
-            ,optimistic_queue::stat<>
-            ,typename std::conditional<
-                std::is_same<typename options::stat, cds::intrusive::queue_dummy_stat>::value
-                ,optimistic_queue::dummy_stat
-                ,typename options::stat
-            >::type
-        >::type stat_type_;
-
-        //@endcond
-
-    public:
-        typedef T  value_type   ;   ///< type of value stored in the queue
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
-        typedef typename options::disposer  disposer    ;   ///< disposer used
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
-        typedef typename optimistic_queue::get_link_checker< node_type, options::link_checker >::type link_checker   ;   ///< link checker
-
-        typedef GC gc          ;   ///< Garbage collector
-        typedef typename options::back_off  back_off    ;   ///< back-off strategy
-        typedef typename options::item_counter item_counter ;   ///< Item counting policy used
-        typedef typename options::memory_model  memory_model      ;   ///< Memory ordering. See cds::opt::memory_model option
-#ifdef CDS_DOXYGEN_INVOKED
-        typedef typename options::stat      stat        ;   ///< Internal statistics policy used
-#else
-        typedef stat_type_  stat;
-#endif
+        typedef typename traits::hook       hook;       ///< hook type
+        typedef typename hook::node_type    node_type;  ///< node type
+        typedef typename traits::disposer   disposer;   ///< disposer used
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;    ///< node traits
+        typedef typename optimistic_queue::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
+        typedef typename traits::back_off  back_off;        ///< back-off strategy
+        typedef typename traits::item_counter item_counter; ///< Item counting policy used
+        typedef typename traits::memory_model  memory_model;///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::stat      stat;            ///< Internal statistics policy used
 
         /// Rebind template arguments
-        template <typename GC2, typename T2, typename... Options2>
+        template <typename GC2, typename T2, typename Traits2>
         struct rebind {
-            typedef OptimisticQueue< GC2, T2, Options2...> other   ;   ///< Rebinding result
+            typedef OptimisticQueue< GC2, T2, Traits2 > other   ;   ///< Rebinding result
         };
 
     protected:
         //@cond
-
-        struct internal_disposer
-        {
-            void operator ()( value_type * p )
-            {
-                assert( p != nullptr );
-
-                OptimisticQueue::clear_links( node_traits::to_node_ptr(*p) );
-                disposer()( p );
-            }
-        };
-
         typedef intrusive::node_to_value<OptimisticQueue> node_to_value;
-        typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, options::alignment >::type aligned_node_ptr;
+        typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
+
+        // GC and node_type::gc must be the same
+        static_assert((std::is_same<gc, typename node_type::gc>::value), "GC and node_type::gc must be the same");
+
         //@endcond
 
         aligned_node_ptr m_pTail ;   ///< Pointer to tail node
         aligned_node_ptr m_pHead ;   ///< Pointer to head node
-        node_type        m_Dummy ;           ///< dummy node
-
+        node_type        m_Dummy ;   ///< dummy node
         item_counter        m_ItemCounter   ;   ///< Item counter
         stat                m_Stat          ;   ///< Internal statistics
 
-        static CDS_CONSTEXPR_CONST size_t c_nHazardPtrCount = 5 ; ///< Count of hazard pointer required for the algorithm
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 5 ; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond
@@ -464,6 +521,16 @@ namespace cds { namespace intrusive {
             assert( p != nullptr );
 
             if ( p != &m_Dummy ) {
+                struct internal_disposer
+                {
+                    void operator ()( value_type * p )
+                    {
+                        assert( p != nullptr );
+
+                        OptimisticQueue::clear_links( node_traits::to_node_ptr( *p ) );
+                        disposer()(p);
+                    }
+                };
                 gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
             }
         }
@@ -473,18 +540,9 @@ namespace cds { namespace intrusive {
     public:
         /// Constructor creates empty queue
         OptimisticQueue()
-            : m_pTail( nullptr )
-            , m_pHead( nullptr )
-        {
-            // GC and node_type::gc must be the same
-            static_assert(( std::is_same<gc, typename node_type::gc>::value ), "GC and node_type::gc must be the same");
-
-            // cds::gc::HRC is not allowed
-            static_assert(( !std::is_same<gc, cds::gc::HRC>::value ), "cds::gc::HRC is not allowed here");
-
-            m_pTail.store( &m_Dummy, memory_model::memory_order_relaxed );
-            m_pHead.store( &m_Dummy, memory_model::memory_order_relaxed );
-        }
+            : m_pTail( &m_Dummy )
+            , m_pHead( &m_Dummy )
+        {}
 
         ~OptimisticQueue()
         {
@@ -517,7 +575,7 @@ namespace cds { namespace intrusive {
                     pTail->m_pPrev.store( pNew, memory_model::memory_order_release )     ;           // Success, write prev
                     ++m_ItemCounter;
                     m_Stat.onEnqueue();
-                    break ;                             // Enqueue done!
+                    break ;     // Enqueue done!
                 }
                 guards.assign( 0, node_traits::to_value_ptr( pTail ) )   ;  // pTail has been changed by CAS above
                 m_Stat.onEnqueueRace();
@@ -561,19 +619,19 @@ namespace cds { namespace intrusive {
             return nullptr;
         }
 
-        /// Synonym for @ref cds_intrusive_OptimisticQueue_enqueue "enqueue"
+        /// Synonym for \p enqueue()
         bool push( value_type& val )
         {
             return enqueue( val );
         }
 
-        /// Synonym for \ref cds_intrusive_OptimisticQueue_dequeue "dequeue"
+        /// Synonym for \p dequeue()
         value_type * pop()
         {
             return dequeue();
         }
 
-        /// Checks if queue is empty
+        /// Checks if the queue is empty
         bool empty() const
         {
             return m_pTail.load(memory_model::memory_order_relaxed) == m_pHead.load(memory_model::memory_order_relaxed);
@@ -582,7 +640,7 @@ namespace cds { namespace intrusive {
         /// Clear the stack
         /**
             The function repeatedly calls \ref dequeue until it returns \p nullptr.
-            The disposer defined in template \p Options is called for each item
+            The disposer defined in template \p Traits is called for each item
             that can be safely disposed.
         */
         void clear()
@@ -593,11 +651,11 @@ namespace cds { namespace intrusive {
 
         /// Returns queue's item count
         /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
-            this function always returns 0.
+            The value returned depends on \p optimistic_queue::traits::item_counter. 
+            For \p atomicity::empty_item_counter, this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the queue
-            is empty. To check queue emptyness use \ref empty() method.
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
+            is empty. To check queue emptyness use \p empty() method.
         */
         size_t size() const
         {

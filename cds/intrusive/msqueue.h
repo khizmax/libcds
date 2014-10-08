@@ -171,7 +171,6 @@ namespace cds { namespace intrusive {
 
         /// Metafunction converting option list to \p msqueue::traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             Supported \p Options are:
 
             - opt::hook - hook used. Possible hooks are: \p msqueue::base_hook, \p msqueue::member_hook, \p msqueue::traits_hook.
@@ -211,8 +210,6 @@ namespace cds { namespace intrusive {
             >::type type;
 #   endif
         };
-
-
     } // namespace msqueue
 
     /// Michael & Scott's intrusive lock-free queue
@@ -314,7 +311,7 @@ namespace cds { namespace intrusive {
     {
     public:
         typedef GC gc;          ///< Garbage collector
-        typedef T  value_type;  ///< type of value stored in the queue
+        typedef T  value_type;  ///< type of value to be stored in the queue
         typedef Traits traits;  ///< Queue traits
 
         typedef typename traits::hook       hook;       ///< hook type
