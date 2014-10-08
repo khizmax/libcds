@@ -124,8 +124,9 @@ namespace cds { namespace container {
 
             struct intrusive_traits : public traits
             {
-                typedef intrusive::basket_queue::base_hook< opt::gc<gc> > hook;
+                typedef cds::intrusive::basket_queue::base_hook< opt::gc<gc> > hook;
                 typedef node_deallocator disposer;
+                static CDS_CONSTEXPR const cds::intrusive::opt::link_check_type link_checker = cds::intrusive::basket_queue::traits::link_checker;
             };
 
             typedef cds::intrusive::BasketQueue< gc, node_type, intrusive_traits > type;
@@ -209,7 +210,7 @@ namespace cds { namespace container {
 #endif
     {
         //@cond
-        typedef details::make_basket_queue< GC, T, Options... > maker;
+        typedef details::make_basket_queue< GC, T, Traits > maker;
         typedef typename maker::type base_class;
         //@endcond
 
@@ -369,7 +370,6 @@ namespace cds { namespace container {
             typename base_class::dequeue_result res;
             if ( base_class::do_dequeue( res, true )) {
                 f( node_traits::to_value_ptr( *res.pNext )->m_value );
-                base_class::dispose_result( res );
                 return true;
             }
             return false;

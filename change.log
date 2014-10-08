@@ -5,7 +5,7 @@
       and, seems, unstable.
     - Added: cds::container::TreiberStack::pop_with( Func )
     - Added: member functions enqueue_with(Func), dequeue_with(Func) to cds::container::MSQueue, 
-      cds::container::MoirQueue.
+      cds::container::MoirQueue, cds::container::BasketQueue.
 
 1.6.0 23.09.2014
     General release

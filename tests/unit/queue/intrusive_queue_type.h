@@ -434,6 +434,24 @@ namespace std {
 
     // cds::intrusive::queue_stat
     template <typename Counter>
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
+    {
+        return o
+            << "\tStatistics:\n"
+            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
+            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get() << "\n"
+            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t      Dequeue race: " << s.m_DequeueRace.get() << "\n"
+            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
+            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
+    }
+    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_dummy_stat const& s)
+    {
+        return o;
+    }
+
+
+    template <typename Counter>
     static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::basket_queue::stat<Counter> const& s)
     {
         return o
@@ -486,21 +504,6 @@ namespace std {
     }
 
     static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::dummy_stat const& s )
-    {
-        return o;
-    }
-
-    // cds::intrusive::basket_queue::stat
-    template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::basket_queue::stat<Counter> const& s )
-    {
-        return o
-            << static_cast<cds::intrusive::queue_stat<Counter> const&>( s )
-            << "\t\tTry Add basket count: " << s.m_TryAddBasket.get() << "\n"
-            << "\t\t    Add basket count: " << s.m_AddBasketCount.get() << "\n";
-    }
-
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::basket_queue::dummy_stat const& s )
     {
         return o;
     }

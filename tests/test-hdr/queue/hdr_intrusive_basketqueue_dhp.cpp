@@ -44,7 +44,7 @@ namespace queue {
             typename ci::basket_queue::make_traits<
                 ci::opt::hook<
                     ci::basket_queue::member_hook<
-                        offsetof(basket_queue::member_hook_item<cds::gc::DHP>, hMember),
+                        offsetof( member_hook_item, hMember),
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >
@@ -69,7 +69,7 @@ namespace queue {
             typename ci::basket_queue::make_traits<
                 ci::opt::hook<
                     ci::basket_queue::member_hook<
-                        offsetof(basket_queue::member_hook_item<cds::gc::DHP>, hMember),
+                        offsetof(member_hook_item, hMember),
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >
@@ -94,7 +94,7 @@ namespace queue {
             typename ci::basket_queue::make_traits<
                 ci::opt::hook<
                     ci::basket_queue::member_hook<
-                        offsetof(basket_queue::member_hook_item<cds::gc::DHP>, hMember),
+                        offsetof(member_hook_item, hMember),
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >
@@ -120,7 +120,7 @@ namespace queue {
                 ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
                 ,ci::opt::hook<
                     ci::basket_queue::member_hook<
-                        offsetof(basket_queue::member_hook_item<cds::gc::DHP>, hMember),
+                        offsetof(member_hook_item, hMember),
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >
@@ -145,7 +145,7 @@ namespace queue {
             typename ci::basket_queue::make_traits<
                 ci::opt::hook<
                     ci::basket_queue::member_hook<
-                        offsetof(basket_queue::member_hook_item<cds::gc::DHP>, hMember),
+                        offsetof(member_hook_item, hMember),
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >

@@ -279,13 +279,13 @@ CDS_TESTHDR_MISC := \
     tests/test-hdr/misc/thread_init_fini.cpp
 
 CDS_TESTHDR_SOURCES := \
+    $(CDS_TESTHDR_QUEUE) \
+    $(CDS_TESTHDR_STACK) \
     $(CDS_TESTHDR_MAP) \
     $(CDS_TESTHDR_DEQUE) \
     $(CDS_TESTHDR_ORDLIST) \
     $(CDS_TESTHDR_PQUEUE) \
-    $(CDS_TESTHDR_QUEUE) \
     $(CDS_TESTHDR_SET) \
-    $(CDS_TESTHDR_STACK) \
     $(CDS_TESTHDR_TREE) \
     $(CDS_TESTHDR_MISC)
     

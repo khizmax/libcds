@@ -429,7 +429,7 @@ namespace cds { namespace intrusive {
 
         typedef intrusive::node_to_value<BasketQueue> node_to_value;
         typedef typename opt::details::alignment_setter< atomic_marked_ptr, traits::alignment >::type aligned_node_ptr;
-        typedef typename opt::details::alignment_setter< node_type, options::alignment >::type dummy_node_type;
+        typedef typename opt::details::alignment_setter< node_type, traits::alignment >::type dummy_node_type;
 
         // GC and node_type::gc must be the same
         static_assert( std::is_same<gc, typename node_type::gc>::value, "GC and node_type::gc must be the same");
@@ -577,7 +577,7 @@ namespace cds { namespace intrusive {
 
         void dispose_node( node_type * p )
         {
-            if ( p != m_Dummy.get() ) {
+            if ( p != &m_Dummy ) {
                 struct internal_disposer
                 {
                     void operator()( value_type * p )
@@ -589,8 +589,6 @@ namespace cds { namespace intrusive {
                 };
                 gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
             }
-            else
-                m_Dummy.retire();
         }
         //@endcond
 

@@ -70,7 +70,7 @@ namespace queue {
             typename ci::basket_queue::make_traits<
                 ci::opt::hook<
                     ci::basket_queue::member_hook<
-                        offsetof(basket_queue::member_hook_item<cds::gc::HP>, hMember),
+                        offsetof( member_hook_item, hMember),
                         ci::opt::gc<cds::gc::HP>
                     >
                 >

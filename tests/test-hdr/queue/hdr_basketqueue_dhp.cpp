@@ -74,7 +74,7 @@ namespace queue {
                 ,cds::opt::alignment< 16 >
             >::type
         > queue_type;
-        test_ic< queue_type >();
+        test_no_ic< queue_type >();
     }
 
     void HdrTestQueue::BasketQueue_DHP_Counted_relax_align()
@@ -86,7 +86,7 @@ namespace queue {
             enum { alignment = 32 };
         };
         typedef cds::container::BasketQueue < cds::gc::DHP, int, traits > queue_type;
-        test_ic< queue_type >( 0 );
+        test_ic< queue_type >();
     }
 
     void HdrTestQueue::BasketQueue_DHP_seqcst_align()
@@ -109,7 +109,7 @@ namespace queue {
                 ,cds::opt::alignment< cds::opt::cache_line_alignment >
             > ::type
         > queue_type;
-        test_no_ic< queue_type >();
+        test_ic< queue_type >();
     }
 
 }   // namespace queue
