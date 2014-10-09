@@ -99,11 +99,11 @@ namespace stack {
 
     void TestFCStack::FCStack_deque_elimination()
     {
-        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int> >,
-            cds::container::fcstack::make_traits<
-                cds::opt::enable_elimination< true >
-            >::type
-        > stack_type;
+        struct stack_traits : public cds::container::fcstack::traits
+        {
+            static CDS_CONSTEXPR const bool enable_elimination = true;
+        };
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int> >, stack_traits > stack_type;
         test<stack_type>();
     }
 

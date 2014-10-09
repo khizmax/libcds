@@ -144,22 +144,23 @@ namespace stack {
     void TestIntrusiveFCStack::FCStack_slist_mutex()
     {
         typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
-        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >,
-            cds::intrusive::fcstack::make_traits<
-                cds::opt::lock_type< std::mutex >
-            >::type
-        > stack_type;
+        struct stack_traits : public cds::intrusive::fcstack::traits
+        {
+            typedef std::mutex lock_type;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
         test<stack_type>();
     }
 
     void TestIntrusiveFCStack::FCStack_slist_elimination()
     {
         typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
-        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >,
-            cds::intrusive::fcstack::make_traits<
-                cds::opt::enable_elimination< true >
-            >::type
-        > stack_type;
+        struct stack_traits : public
+            cds::intrusive::fcstack::make_traits <
+                cds::opt::enable_elimination < true >
+            > ::type
+        {};
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
         test<stack_type>();
     }
 
