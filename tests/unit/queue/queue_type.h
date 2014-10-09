@@ -27,7 +27,7 @@
 
 namespace queue {
     namespace details {
-        template <typename T, typename Traits=cds::container::fcdeque::type_traits, class Deque=std::deque<T> >
+        template <typename T, typename Traits=cds::container::fcdeque::traits, class Deque=std::deque<T> >
         class FCDequeL: public cds::container::FCDeque<T, Deque, Traits >
         {
             typedef cds::container::FCDeque<T, Deque, Traits > base_class;
@@ -61,7 +61,7 @@ namespace queue {
             }
         };
 
-        template <typename T, typename Traits=cds::container::fcdeque::type_traits, class Deque = std::deque<T> >
+        template <typename T, typename Traits=cds::container::fcdeque::traits, class Deque = std::deque<T> >
         class FCDequeR: public cds::container::FCDeque<T, Deque, Traits >
         {
             typedef cds::container::FCDeque<T, Deque, Traits > base_class;
@@ -437,7 +437,7 @@ namespace queue {
         typedef details::FCDequeL< Value, traits_FCDeque_elimination > FCDequeL_elimination;
         typedef details::FCDequeL< Value, traits_FCDeque_elimination_stat > FCDequeL_elimination_stat;
 
-        typedef details::FCDequeL< Value, cds::container::fcdeque::type_traits, boost::container::deque<Value> > FCDequeL_boost;
+        typedef details::FCDequeL< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeL_boost;
         typedef details::FCDequeL< Value, traits_FCDeque_stat, boost::container::deque<Value> > FCDequeL_boost_stat;
         typedef details::FCDequeL< Value, traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeL_boost_elimination;
         typedef details::FCDequeL< Value, traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeL_boost_elimination_stat;
@@ -448,7 +448,7 @@ namespace queue {
         typedef details::FCDequeR< Value, traits_FCDeque_elimination > FCDequeR_elimination;
         typedef details::FCDequeR< Value, traits_FCDeque_elimination_stat > FCDequeR_elimination_stat;
 
-        typedef details::FCDequeR< Value, cds::container::fcdeque::type_traits, boost::container::deque<Value> > FCDequeR_boost;
+        typedef details::FCDequeR< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeR_boost;
         typedef details::FCDequeR< Value, traits_FCDeque_stat, boost::container::deque<Value> > FCDequeR_boost_stat;
         typedef details::FCDequeR< Value, traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeR_boost_elimination;
         typedef details::FCDequeR< Value, traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeR_boost_elimination_stat;

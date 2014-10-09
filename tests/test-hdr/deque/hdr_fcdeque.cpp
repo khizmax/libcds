@@ -112,12 +112,12 @@ namespace deque {
 
         void fcDeque_mutex()
         {
-            typedef cds::container::FCDeque<int, std::deque<int>,
-                cds::container::fcdeque::make_traits<
-                    cds::opt::enable_elimination< true >
-                    ,cds::opt::lock_type< std::mutex >
-                >::type
-            > deque_type;
+            struct deque_traits : public cds::container::fcdeque::traits
+            {
+                static CDS_CONSTEXPR const bool enable_elimination = true;
+                typedef std::mutex lock_type;
+            };
+            typedef cds::container::FCDeque<int, std::deque<int>, deque_traits > deque_type;
             test<deque_type>();
         }
 

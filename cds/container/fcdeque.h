@@ -57,18 +57,17 @@ namespace cds { namespace container {
         };
 
         /// FCDeque type traits
-        struct type_traits: public cds::algo::flat_combining::type_traits
+        struct traits: public cds::algo::flat_combining::type_traits
         {
             typedef empty_stat      stat;   ///< Internal statistics
-            static CDS_CONSTEXPR_CONST bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"
+            static CDS_CONSTEXPR const bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"
         };
 
         /// Metafunction converting option list to traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             \p Options are:
             - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
-            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
+            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::delay_of<2>
             - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::stat - internal statistics, possible type: \ref stat, \ref empty_stat (the default)
             - \p opt::memory_model - C++ memory ordering model.
@@ -84,7 +83,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -104,12 +103,12 @@ namespace cds { namespace container {
         - \p T - a value type stored in the deque
         - \p Deque - sequential deque implementation, for example, \p std::deque<T> (the default)
             or \p boost::container::deque
-        - \p Trats - type traits of flat combining, default is \p fcdeque::type_traits.
-            \p fcdeque::make_traits metafunction can be used to construct specialized \p %type_traits
+        - \p Trats - type traits of flat combining, default is \p fcdeque::traits.
+            \p fcdeque::make_traits metafunction can be used to construct specialized \p %fcdeque::traits
     */
     template <typename T,
         class Deque = std::deque<T>,
-        typename Traits = fcdeque::type_traits
+        typename Traits = fcdeque::traits
     >
     class FCDeque
 #ifndef CDS_DOXYGEN_INVOKED
@@ -119,10 +118,10 @@ namespace cds { namespace container {
     public:
         typedef T           value_type;     ///< Value type
         typedef Deque       deque_type;     ///< Sequential deque class
-        typedef Traits      type_traits;    ///< Deque type traits
+        typedef Traits      traits;         ///< Deque type traits
 
-        typedef typename type_traits::stat  stat;   ///< Internal statistics type
-        static CDS_CONSTEXPR_CONST bool c_bEliminationEnabled = type_traits::enable_elimination; ///< \p true if elimination is enabled
+        typedef typename traits::stat  stat;   ///< Internal statistics type
+        static CDS_CONSTEXPR_CONST bool c_bEliminationEnabled = traits::enable_elimination; ///< \p true if elimination is enabled
 
     protected:
         //@cond
@@ -149,7 +148,7 @@ namespace cds { namespace container {
         //@endcond
 
         /// Flat combining kernel
-        typedef cds::algo::flat_combining::kernel< fc_record, type_traits > fc_kernel;
+        typedef cds::algo::flat_combining::kernel< fc_record, traits > fc_kernel;
 
     protected:
         //@cond
