@@ -3,6 +3,12 @@
 #ifndef __CDS_COMPILER_CLANG_DEFS_H
 #define __CDS_COMPILER_CLANG_DEFS_H
 
+/*
+    Known issues:
+        Error compiling 64bit boost.atomic on clang 3.4 - 3.5, see https://svn.boost.org/trac/boost/ticket/9610
+        Solution: use boost 1.56 +
+*/
+
 // Compiler version
 #define CDS_COMPILER_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
 
@@ -21,12 +27,6 @@
 #endif
 
 #include <cds/compiler/gcc/compiler_macro.h>
-
-#if CDS_COMPILER_VERSION >= 30400 && CDS_COMPILER_VERSION < 30600 && CDS_PROCESSOR_ARCH == CDS_PROCESSOR_AMD64
-    // Error compiling 64bit boost.atomic on clang 3.4 - 3.5
-    // see https://svn.boost.org/trac/boost/ticket/9610
-#   define BOOST_HAS_INT128 1
-#endif
 
 #define alignof __alignof__
 
