@@ -3,7 +3,7 @@
 #ifndef __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
 #define __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
 
-#include <functional>   // ref
+#include <mutex>  // std::unique_lock
 #include <cds/intrusive/details/base.h>
 #include <cds/lock/spinlock.h>
 #include <cds/os/thread.h>
@@ -54,11 +54,11 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Type traits for MSPriorityQueue
-        struct type_traits {
+        /// MSPriorityQueue traits
+        struct traits {
             /// Storage type
             /**
-                The storage type for the heap array. Default is cds::opt::v::dynamic_buffer.
+                The storage type for the heap array. Default is \p cds::opt::v::dynamic_buffer.
 
                 You may specify any type of buffer's value since at instantiation time
                 the \p buffer::rebind member metafunction is called to change type
@@ -72,7 +72,7 @@ namespace cds { namespace intrusive {
             */
             typedef opt::none           compare;
 
-            /// specifies binary predicate used for priority comparing.
+            /// Specifies binary predicate used for priority comparing.
             /**
                 Default is \p std::less<T>.
             */
@@ -86,7 +86,7 @@ namespace cds { namespace intrusive {
 
             /// Internal statistics
             /**
-                Possible types: mspriority_queue::empty_stat (the default), mspriority_queue::stat
+                Possible types: \p mspriority_queue::empty_stat (the default, no overhead), \p mspriority_queue::stat
                 or any other with interface like \p %mspriority_queue::stat
             */
             typedef empty_stat      stat;
@@ -94,9 +94,17 @@ namespace cds { namespace intrusive {
 
         /// Metafunction converting option list to traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-
-            See \ref MSPriorityQueue, \ref type_traits, \ref cds::opt::make_options.
+            \p Options:
+            - \p opt::buffer - the buffer type for heap array. Possible type are: \p opt::v::static_buffer, \p opt::v::dynamic_buffer.
+                Default is \p %opt::v::dynamic_buffer.
+                You may specify any type of values for the buffer since at instantiation time
+                the \p buffer::rebind member metafunction is called to change the type of values stored in the buffer.
+            - \p opt::compare - priority compare functor. No default functor is provided.
+                If the option is not specified, the \p opt::less is used.
+            - \p opt::less - specifies binary predicate used for priority compare. Default is \p std::less<T>.
+            - \p opt::lock_type - lock type. Default is \p cds::lock::Spin.
+            - \p opt::back_off - back-off strategy. Default is \p cds::backoff::yield
+            - \p opt::stat - internal statistics. Available types: \p mspriority_queue::stat, \p mspriority_queue::empty_stat (the default, no overhead)
         */
         template <typename... Options>
         struct make_traits {
@@ -104,7 +112,7 @@ namespace cds { namespace intrusive {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -133,24 +141,12 @@ namespace cds { namespace intrusive {
         single-lock algorithm.
 
         Template parameters:
-        - \p T - type to be stored in the list. The priority is a part of \p T type.
-        - \p Traits - type traits. See mspriority_queue::type_traits for explanation.
-
-        It is possible to declare option-based queue with cds::container::mspriority_queue::make_traits
-        metafunction instead of \p Traits template argument.
-        Template argument list \p Options of \p %cds::container::mspriority_queue::make_traits metafunction are:
-        - opt::buffer - the buffer type for heap array. Possible type are: opt::v::static_buffer, opt::v::dynamic_buffer.
-            Default is \p %opt::v::dynamic_buffer.
-            You may specify any type of values for the buffer since at instantiation time
-            the \p buffer::rebind member metafunction is called to change the type of values stored in the buffer.
-        - opt::compare - priority compare functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for priority compare. Default is \p std::less<T>.
-        - opt::lock_type - lock type. Default is cds::lock::Spin.
-        - opt::back_off - back-off strategy. Default is cds::backoff::yield
-        - opt::stat - internal statistics. Available types: mspriority_queue::stat, mspriority_queue::empty_stat (the default)
+        - \p T - type to be stored in the queue. The priority is a part of \p T type.
+        - \p Traits - type traits. See \p mspriority_queue::traits for explanation.
+            It is possible to declare option-based queue with \p cds::container::mspriority_queue::make_traits
+            metafunction instead of \p Traits template argument.
     */
-    template <typename T, class Traits>
+    template <typename T, class Traits = mspriority_queue::traits >
     class MSPriorityQueue: public cds::bounded_container
     {
     public:
@@ -372,9 +368,8 @@ namespace cds { namespace intrusive {
         /// Returns current size of priority queue
         size_t size() const
         {
-            m_Lock.lock();
+            std::unique_lock l( m_Lock );
             size_t nSize = (size_t) m_ItemCounter.value();
-            m_Lock.unlock();
             return nSize;
         }
 
