@@ -129,8 +129,8 @@ CDS_TESTHDR_QUEUE := \
     tests/test-hdr/queue/hdr_moirqueue_dhp.cpp \
     tests/test-hdr/queue/hdr_msqueue_hp.cpp \
     tests/test-hdr/queue/hdr_msqueue_dhp.cpp \
-    tests/test-hdr/queue/hdr_optimistic_hzp.cpp \
-    tests/test-hdr/queue/hdr_optimistic_ptb.cpp \
+    tests/test-hdr/queue/hdr_optimistic_hp.cpp \
+    tests/test-hdr/queue/hdr_optimistic_dhp.cpp \
     tests/test-hdr/queue/hdr_rwqueue.cpp \
     tests/test-hdr/queue/hdr_segmented_queue_hp.cpp \
     tests/test-hdr/queue/hdr_segmented_queue_ptb.cpp \

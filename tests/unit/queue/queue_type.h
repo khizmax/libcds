@@ -150,7 +150,7 @@ namespace queue {
 
         // OptimisticQueue
         typedef cds::container::OptimisticQueue< cds::gc::HP, Value > OptimisticQueue_HP;
-        typedef cds::container::OptimisticQueue< cds::gc::PTB, Value > OptimisticQueue_PTB;
+        typedef cds::container::OptimisticQueue< cds::gc::DHP, Value > OptimisticQueue_DHP;
 
         struct traits_OptimisticQueue_michaelAlloc : public cds::container::optimistic_queue::traits
         {
@@ -175,7 +175,7 @@ namespace queue {
 
         struct traits_OptimisticQueue_stat : public
             cds::container::optimistic_queue::make_traits <
-                cds::opt::stat < cds::intrusive::queue_stat<> >
+                cds::opt::stat < cds::intrusive::optimistic_queue::stat<> >
             > ::type
         {};
         typedef cds::container::OptimisticQueue< cds::gc::HP,  Value, traits_OptimisticQueue_stat > OptimisticQueue_HP_stat;
@@ -384,7 +384,7 @@ namespace queue {
                 cds::opt::lock_type< std::mutex >
             >::type
         {};
-        typedef cds::container::RWQueue< Value, traits_RWQueue_mutex > traits_RWQueue_mutex;
+        typedef cds::container::RWQueue< Value, traits_RWQueue_mutex > RWQueue_mutex;
 
         // FCQueue
         class traits_FCQueue_elimination:
@@ -500,7 +500,7 @@ namespace queue {
 // *********************************************
 // Queue statistics
 namespace std {
-
+    /*
     template <typename Counter>
     static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
     {
@@ -517,6 +517,7 @@ namespace std {
     {
         return o;
     }
+    */
 
     template <typename Counter>
     static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::stat<Counter> const& s)

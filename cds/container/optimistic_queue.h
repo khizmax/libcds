@@ -97,17 +97,6 @@ namespace cds { namespace container {
             typedef T value_type;
             typedef Traits traits;
 
-            /*
-            struct default_options {
-                typedef cds::backoff::empty     back_off;
-                typedef CDS_DEFAULT_ALLOCATOR   allocator;
-                typedef atomicity::empty_item_counter item_counter;
-                typedef intrusive::optimistic_queue::dummy_stat stat;
-                typedef opt::v::relaxed_ordering    memory_model;
-                enum { alignment = opt::cache_line_alignment };
-            };
-            */
-
             struct node_type: public cds::intrusive::optimistic_queue::node< gc >
             {
                 value_type  m_value;
@@ -171,7 +160,7 @@ namespace cds { namespace container {
             > myQueue;
             \endcode
     */
-    template <typename GC, typename T, typename Traits>
+    template <typename GC, typename T, typename Traits = optimistic_queue::traits >
     class OptimisticQueue:
 #ifdef CDS_DOXYGEN_INVOKED
         private intrusive::OptimisticQueue< GC, cds::intrusive::optimistic_queue::node< T >, Traits >
@@ -322,7 +311,6 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            typedef cds::details::trivial_assign<value_type, value_type> functor;
             return dequeue_with( [&dest]( value_type& src ) { dest = src; } );
         }
 

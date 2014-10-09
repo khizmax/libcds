@@ -36,8 +36,6 @@ namespace cds { namespace container {
             - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter.
             - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
-            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
             Example: declare mutex-based \p %RWQueue with item counting
             \code
@@ -107,7 +105,6 @@ namespace cds { namespace container {
 
         typedef typename traits::lock_type  lock_type;      ///< Locking primitive
         typedef typename traits::item_counter item_counter; ///< Item counting policy used
-        typedef typename traits::memory_model memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
 
     protected:
         //@cond
@@ -216,7 +213,7 @@ namespace cds { namespace container {
         bool enqueue( value_type const& data )
         {
             scoped_node_ptr p( alloc_node( data ));
-            if ( enqueue_node( p )) {
+            if ( enqueue_node( p.get() )) {
                 p.release();
                 return true;
             }
@@ -238,7 +235,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr p( alloc_node() );
             f( p->m_value );
-            if ( enqueue_node( p ) ) {
+            if ( enqueue_node( p.get() )) {
                 p.release();
                 return true;
             }
@@ -277,7 +274,7 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            return dequeue( [&dest]( value_type * src ) { dest = src; } );
+            return dequeue_with( [&dest]( value_type& src ) { dest = src; } );
         }
 
         /// Dequeues a value using a functor
