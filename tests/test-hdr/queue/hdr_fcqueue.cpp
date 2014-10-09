@@ -72,11 +72,11 @@ namespace queue {
 
     void Queue_TestHeader::FCQueue_list_stat()
     {
-        typedef cds::container::FCQueue<int, std::queue< int, std::list<int> >,
-            cds::container::fcqueue::make_traits<
-            cds::opt::stat< cds::container::fcqueue::stat<> >
-            >::type
-        > queue_type;
+        struct queue_traits : public cds::container::fcqueue::traits 
+        {
+            typedef cds::container::fcqueue::stat<> stat;
+        };
+        typedef cds::container::FCQueue<int, std::queue< int, std::list<int> >, queue_traits > queue_type;
         testFCQueue<queue_type>();
     }
 

@@ -168,12 +168,12 @@ namespace queue {
     void TestIntrusiveFCQueue::FCQueue_base_stat()
     {
         typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
-        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >,
-            cds::intrusive::fcqueue::make_traits<
-                cds::intrusive::opt::disposer< disposer >
-                ,cds::opt::stat< cds::intrusive::fcqueue::stat<> >
-            >::type
-        > queue_type;
+        struct queue_traits : public cds::intrusive::fcqueue::traits
+        {
+            typedef TestIntrusiveFCQueue::disposer disposer;
+            typedef cds::intrusive::fcqueue::stat<> stat;
+        };
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, queue_traits > queue_type;
 
         test<queue_type>();
     }
@@ -181,12 +181,13 @@ namespace queue {
     void TestIntrusiveFCQueue::FCQueue_base_elimination()
     {
         typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
-        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >,
-            cds::intrusive::fcqueue::make_traits<
+        struct queue_traits : public
+            cds::intrusive::fcqueue::make_traits <
                 cds::intrusive::opt::disposer< disposer >
-                ,cds::opt::enable_elimination< true >
-            >::type
-        > queue_type;
+                ,cds::opt::enable_elimination < true >
+            > ::type
+        {};
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, queue_traits > queue_type;
 
         test<queue_type>();
     }
