@@ -253,7 +253,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Enqueues \p data to the queue using a functor
+        /// Enqueues data to the queue using a functor
         /**
             \p Func is a functor called to create node.
             The functor \p f takes one argument - a reference to a new node of type \ref value_type :

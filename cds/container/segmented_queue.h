@@ -24,7 +24,7 @@ namespace cds { namespace container {
         typedef cds::intrusive::segmented_queue::empty_stat empty_stat;
 
         /// SegmentedQueue default type traits
-        struct type_traits {
+        struct traits {
 
             /// Item allocator. Default is \ref CDS_DEFAULT_ALLOCATOR
             typedef CDS_DEFAULT_ALLOCATOR   node_allocator;
@@ -58,7 +58,7 @@ namespace cds { namespace container {
 
          /// Metafunction converting option list to traits for SegmentedQueue
         /**
-            The metafunction can be useful if a few fields in \ref type_traits should be changed.
+            The metafunction can be useful if a few fields in \p segmented_queue::traits should be changed.
             For example:
             \code
             typedef cds::container::segmented_queue::make_traits<
@@ -66,21 +66,21 @@ namespace cds { namespace container {
             >::type my_segmented_queue_traits;
             \endcode
             This code creates \p %SegmentedQueue type traits with item counting feature,
-            all other \p type_traits members left unchanged.
+            all other \p segmented_queue::traits members left unchanged.
 
             \p Options are:
             - \p opt::node_allocator - node allocator.
-            - \p opt::stat - internal statistics, possible type: \ref stat, \ref empty_stat (the default)
-            - \p opt::item_counter - item counting feature. Note that atomicity::empty_item_counetr is not suitable
+            - \p opt::stat - internal statistics, possible type: \p segmented_queue::stat, \p segmented_queue::empty_stat (the default)
+            - \p opt::item_counter - item counting feature. Note that \p atomicity::empty_item_counetr is not suitable
                 for segmented queue.
             - \p opt::memory_model - memory model, default is \p opt::v::relaxed_ordering.
                 See option description for the full list of possible models
-            - \p opt::alignment - the alignmentfor critical data, see option description for explanation
+            - \p opt::alignment - the alignment of critical data, see option description for explanation
             - \p opt::allocator - the allocator used to maintain segments.
             - \p opt::lock_type - a mutual exclusion lock type used to maintain internal list of allocated
                 segments. Default is \p cds::opt::Spin, \p std::mutex is also suitable.
             - \p opt::permutation_generator - a random permutation generator for sequence [0, quasi_factor),
-                default is cds::opt::v::random2_permutation<int>
+                default is \p cds::opt::v::random2_permutation<int>
         */
         template <typename... Options>
         struct make_traits {
@@ -88,7 +88,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -114,7 +114,8 @@ namespace cds { namespace container {
                 }
             };
 
-            struct intrusive_type_traits: public original_type_traits {
+            struct intrusive_type_traits: public original_type_traits 
+            {
                 typedef node_disposer   disposer;
             };
 
@@ -161,11 +162,11 @@ namespace cds { namespace container {
         Template parameters:
         - \p GC - a garbage collector, possible types are cds::gc::HP, cds::gc::PTB
         - \p T - the type of values stored in the queue
-        - \p Traits - queue type traits, default is segmented_queue::type_traits.
-            segmented_queue::make_traits metafunction can be used to construct your
+        - \p Traits - queue type traits, default is \p segmented_queue::type_traits.
+            \p segmented_queue::make_traits metafunction can be used to construct your
             type traits.
     */
-    template <class GC, typename T, typename Traits = segmented_queue::type_traits >
+    template <class GC, typename T, typename Traits = segmented_queue::traits >
     class SegmentedQueue:
 #ifdef CDS_DOXYGEN_INVOKED
         public cds::intrusive::SegmentedQueue< GC, T, Traits >
@@ -178,11 +179,11 @@ namespace cds { namespace container {
         typedef typename maker::type base_class;
         //@endcond
     public:
-        typedef GC  gc          ;   ///< Garbage collector
-        typedef T   value_type  ;   ///< type of the value stored in the queue
-        typedef Traits options  ;   ///< Queue's traits
+        typedef GC  gc;         ///< Garbage collector
+        typedef T   value_type; ///< type of the value stored in the queue
+        typedef Traits traits;  ///< Queue traits
 
-        typedef typename options::node_allocator node_allocator;   ///< Node allocator
+        typedef typename traits::node_allocator node_allocator;   ///< Node allocator
         typedef typename base_class::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
         typedef typename base_class::item_counter  item_counter;   ///< Item counting policy, see cds::opt::item_counter option setter
         typedef typename base_class::stat          stat        ;   ///< Internal statistics policy
@@ -211,11 +212,6 @@ namespace cds { namespace container {
         {
             return cxx_node_allocator().MoveNew( std::forward<Args>( args )... );
         }
-
-        struct dummy_disposer {
-            void operator()( value_type * p )
-            {}
-        };
         //@endcond
 
     public:
@@ -246,45 +242,40 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Synonym for <tt>enqueue(value_type const&)</tt> function
-        bool push( value_type const& val )
-        {
-            return enqueue( val );
-        }
-
-        /// Inserts a new element at last segment of the queue using copy functor
+        /// Enqueues data to the queue using a functor
         /**
-            \p Func is a functor called to copy value \p data of type \p Q
-            which may be differ from type \ref value_type stored in the queue.
-            The functor's interface is:
+            \p Func is a functor called to create node.
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type :
             \code
-            struct myFunctor {
-                void operator()(value_type& dest, Q const& data)
-                {
-                    // // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
+            cds::container::SegmentedQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.enqueue_with( [&bar]( Foo& dest ) { dest = bar; } );
             \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
         */
-        template <typename Q, typename Func>
-        bool enqueue( Q const& data, Func f  )
+        template <typename Func>
+        bool enqueue_with( Func f )
         {
             scoped_node_ptr p( alloc_node() );
-            f( *p, data );
-            if ( base_class::enqueue( *p )) {
+            f( *p );
+            if ( base_class::enqueue( *p ) ) {
                 p.release();
                 return true;
             }
             return false;
         }
 
-        /// Synonym for <tt>enqueue(Q const&, Func)</tt> function
-        template <typename Q, typename Func>
-        bool push( Q const& data, Func f )
+
+        /// Synonym for \p enqueue() member function
+        bool push( value_type const& val )
         {
-            return enqueue( data, f );
+            return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue_with() member function
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with( f );
         }
 
         /// Enqueues data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
@@ -299,41 +290,6 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Removes an element from first segment of the queue
-        /**
-            \p Func is a functor called to copy dequeued value to \p dest of type \p Q
-            which may be differ from type \ref value_type stored in the queue.
-            The functor's interface is:
-            \code
-            struct myFunctor {
-                void operator()(Q& dest, value_type const& data)
-                {
-                    // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
-            \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
-        */
-        template <typename Q, typename Func>
-        bool dequeue( Q& dest, Func f )
-        {
-            value_type * p = base_class::dequeue();
-            if ( p ) {
-                f( dest, *p );
-                gc::template retire< typename maker::node_disposer >( p );
-                return true;
-            }
-            return false;
-        }
-
-        /// Synonym for <tt>dequeue( Q&, Func )</tt> function
-        template <typename Q, typename Func>
-        bool pop( Q& dest, Func f )
-        {
-            return dequeue( dest, f );
-        }
-
         /// Dequeues a value from the queue
         /**
             If queue is not empty, the function returns \p true, \p dest contains copy of
@@ -342,11 +298,40 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            typedef cds::details::trivial_assign<value_type, value_type> functor;
-            return dequeue( dest, functor() );
+            return dequeue_with( [&dest]( value_type& src ) { dest = src; });
         }
 
-        /// Synonym for <tt>dequeue(value_type&)</tt> function
+        /// Dequeues a value using a functor
+        /**
+            \p Func is a functor called to copy dequeued value.
+            The functor takes one argument - a reference to removed node:
+            \code
+            cds:container::MSQueue< cds::gc::HP, Foo > myQueue;
+            Bar bar;
+            myQueue.dequeue_with( [&bar]( Foo& src ) { bar = std::move( src );});
+            \endcode
+            The functor is called only if the queue is not empty.
+        */
+        template <typename Func>
+        bool dequeue_with( Func f )
+        {
+            value_type * p = base_class::dequeue();
+            if ( p ) {
+                f( *p );
+                gc::template retire< typename maker::node_disposer >( p );
+                return true;
+            }
+            return false;
+        }
+
+        /// Synonym for \p dequeue_with() function
+        template <typename Q, typename Func>
+        bool pop_with( Func f )
+        {
+            return dequeue_with( f );
+        }
+
+        /// Synonym for \p dequeue() function
         bool pop( value_type& dest )
         {
             return dequeue( dest );

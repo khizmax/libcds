@@ -15,7 +15,6 @@
 #include <cds/container/segmented_queue.h>
 
 #include <cds/gc/hp.h>
-#include <cds/gc/hrc.h> //TODO: remove this line!
 #include <cds/gc/dhp.h>
 
 #include "queue/std_queue.h"

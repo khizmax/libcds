@@ -8,23 +8,24 @@ namespace queue {
 
     void HdrIntrusiveSegmentedQueue::SegmQueue_HP()
     {
-        typedef cds::intrusive::SegmentedQueue< cds::gc::HP, item,
-            cds::intrusive::segmented_queue::make_traits<
-                cds::intrusive::opt::disposer< Disposer >
-            >::type
-        > queue_type;
+        struct queue_traits : public cds::intrusive::segmented_queue::traits
+        {
+            typedef Disposer disposer;
+        };
+        typedef cds::intrusive::SegmentedQueue< cds::gc::HP, item, queue_traits > queue_type;
 
         test<queue_type>();
     }
 
     void HdrIntrusiveSegmentedQueue::SegmQueue_HP_mutex()
     {
-        typedef cds::intrusive::SegmentedQueue< cds::gc::HP, item,
-            cds::intrusive::segmented_queue::make_traits<
+        struct queue_traits : public
+            cds::intrusive::segmented_queue::make_traits <
                 cds::intrusive::opt::disposer< Disposer >
-                ,cds::opt::lock_type< std::mutex >
-            >::type
-        > queue_type;
+                ,cds::opt::lock_type < std::mutex >
+            > ::type
+        {};
+        typedef cds::intrusive::SegmentedQueue< cds::gc::HP, item, queue_traits > queue_type;
 
         test<queue_type>();
     }

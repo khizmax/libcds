@@ -24,7 +24,8 @@ namespace cds { namespace intrusive {
 
         /// SegmentedQueue internal statistics. May be used for debugging or profiling
         template <typename Counter = cds::atomicity::event_counter >
-        struct stat {
+        struct stat 
+        {
             typedef Counter  counter_type;  ///< Counter type
 
             counter_type    m_nPush;            ///< Push count
@@ -69,8 +70,8 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// SegmentedQueue default type traits
-        struct type_traits {
+        /// SegmentedQueue default traits
+        struct traits {
             /// Element disposer that is called when the item to be dequeued. Default is opt::v::empty_disposer (no disposer)
             typedef opt::v::empty_disposer disposer;
 
@@ -103,7 +104,7 @@ namespace cds { namespace intrusive {
 
         /// Metafunction converting option list to traits for SegmentedQueue
         /**
-            The metafunction can be useful if a few fields in \ref type_traits should be changed.
+            The metafunction can be useful if a few fields in \p segmented_queue::traits should be changed.
             For example:
             \code
             typedef cds::intrusive::segmented_queue::make_traits<
@@ -111,21 +112,21 @@ namespace cds { namespace intrusive {
             >::type my_segmented_queue_traits;
             \endcode
             This code creates \p %SegmentedQueue type traits with item counting feature,
-            all other \p type_traits members left unchanged.
+            all other \p %segmented_queue::traits members left unchanged.
 
             \p Options are:
             - \p opt::disposer - the functor used for dispose removed items.
-            - \p opt::stat - internal statistics, possible type: \ref stat, \ref empty_stat (the default)
-            - \p opt::item_counter - item counting feature. Note that atomicity::empty_item_counetr is not suitable
+            - \p opt::stat - internal statistics, possible type: \p segmented_queue::stat, \p segmented_queue::empty_stat (the default)
+            - \p opt::item_counter - item counting feature. Note that \p atomicity::empty_item_counetr is not suitable
                 for segmented queue.
             - \p opt::memory_model - memory model, default is \p opt::v::relaxed_ordering.
                 See option description for the full list of possible models
             - \p opt::alignment - the alignment for critical data, see option description for explanation
-            - \p opt::allocator - the allocator used t maintain segments.
+            - \p opt::allocator - the allocator to be used for maintaining segments.
             - \p opt::lock_type - a mutual exclusion lock type used to maintain internal list of allocated
                 segments. Default is \p cds::opt::Spin, \p std::mutex is also suitable.
             - \p opt::permutation_generator - a random permutation generator for sequence [0, quasi_factor),
-                default is cds::opt::v::random2_permutation<int>
+                default is \p cds::opt::v::random2_permutation<int>
         */
         template <typename... Options>
         struct make_traits {
@@ -133,7 +134,7 @@ namespace cds { namespace intrusive {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -177,27 +178,27 @@ namespace cds { namespace intrusive {
         Template parameters:
         - \p GC - a garbage collector, possible types are cds::gc::HP, cds::gc::PTB
         - \p T - the type of values stored in the queue
-        - \p Traits - queue type traits, default is segmented_queue::type_traits.
-            segmented_queue::make_traits metafunction can be used to construct the
+        - \p Traits - queue type traits, default is \p segmented_queue::traits.
+            \p segmented_queue::make_traits metafunction can be used to construct the
             type traits.
 
         The queue stores the pointers to enqueued items so no special node hooks are needed.
     */
-    template <class GC, typename T, typename Traits = segmented_queue::type_traits >
+    template <class GC, typename T, typename Traits = segmented_queue::traits >
     class SegmentedQueue
     {
     public:
-        typedef GC  gc          ;   ///< Garbage collector
-        typedef T   value_type  ;   ///< type of the value stored in the queue
-        typedef Traits options  ;   ///< Queue's traits
+        typedef GC  gc;         ///< Garbage collector
+        typedef T   value_type; ///< type of the value stored in the queue
+        typedef Traits traits;  ///< Queue traits
 
-        typedef typename options::disposer      disposer    ;   ///< value disposer, called only in \p clear() when the element to be dequeued
-        typedef typename options::allocator     allocator   ;   ///< Allocator maintaining the segments
-        typedef typename options::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::item_counter  item_counter;   ///< Item counting policy, see cds::opt::item_counter option setter
-        typedef typename options::stat          stat        ;   ///< Internal statistics policy
-        typedef typename options::lock_type     lock_type   ;   ///< Type of mutex for maintaining an internal list of allocated segments.
-        typedef typename options::permutation_generator permutation_generator; ///< Random permutation generator for sequence [0, quasi-factor)
+        typedef typename traits::disposer      disposer    ;   ///< value disposer, called only in \p clear() when the element to be dequeued
+        typedef typename traits::allocator     allocator;   ///< Allocator maintaining the segments
+        typedef typename traits::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::item_counter  item_counter;   ///< Item counting policy, see cds::opt::item_counter option setter
+        typedef typename traits::stat          stat;   ///< Internal statistics policy
+        typedef typename traits::lock_type     lock_type;   ///< Type of mutex for maintaining an internal list of allocated segments.
+        typedef typename traits::permutation_generator permutation_generator; ///< Random permutation generator for sequence [0, quasi-factor)
 
         static const size_t m_nHazardPtrCount = 2 ; ///< Count of hazard pointer required for the algorithm
 
@@ -234,7 +235,7 @@ namespace cds { namespace intrusive {
             segment(); //=delete
         };
 
-        typedef typename opt::details::alignment_setter< atomics::atomic<segment *>, options::alignment >::type aligned_segment_ptr;
+        typedef typename opt::details::alignment_setter< atomics::atomic<segment *>, traits::alignment >::type aligned_segment_ptr;
         //@endcond
 
     protected:

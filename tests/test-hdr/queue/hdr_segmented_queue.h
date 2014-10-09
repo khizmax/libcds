@@ -5,7 +5,6 @@
 
 #include "cppunit/cppunit_proxy.h"
 #include <cds/intrusive/details/base.h>
-#include <functional>   // ref
 #include "size_check.h"
 
 namespace queue {
@@ -22,27 +21,6 @@ namespace queue {
 
         struct other_item {
             size_t  nVal;
-        };
-
-        struct push_functor {
-            void operator()( item& dest, other_item const& src ) const
-            {
-                dest.nVal = src.nVal;
-            }
-        };
-
-        struct pop_functor {
-            size_t nCount;
-
-            void operator()( other_item& dest, item const& src )
-            {
-                dest.nVal = src.nVal;
-                ++nCount;
-            }
-
-            pop_functor()
-                : nCount(0)
-            {}
         };
 
         template <typename Queue>
@@ -108,26 +86,25 @@ namespace queue {
                     other_item itm;
                     itm.nVal = i;
                     if ( i & 1 ) {
-                        CPPUNIT_ASSERT( q.push( itm, push_functor() ));
+                        CPPUNIT_ASSERT( q.push_with( [&itm]( item& dest ) { dest.nVal = itm.nVal; } ));
                     }
                     else {
-                        CPPUNIT_ASSERT( q.enqueue( itm, push_functor() ));
+                        CPPUNIT_ASSERT( q.enqueue_with( [&itm]( item& dest ) { dest.nVal = itm.nVal; } ));
                     }
                     CPPUNIT_CHECK( misc::check_size( q, i + 1 ));
                     CPPUNIT_CHECK( !q.empty() );
                 }
 
                 {
-                    pop_functor pf;
                     other_item v;
 
                     nCount = 0;
                     while ( !q.empty() ) {
                         if ( nCount & 1 ) {
-                            CPPUNIT_ASSERT( q.pop( v, std::ref(pf) ));
+                            CPPUNIT_ASSERT( q.pop_with( [&v, &nCount]( item& src ) {v.nVal = src.nVal; ++nCount; } ));
                         }
                         else {
-                            CPPUNIT_ASSERT( q.dequeue( v, std::ref(pf) ));
+                            CPPUNIT_ASSERT( q.dequeue_with( [&v, &nCount]( item& src ) {v.nVal = src.nVal; ++nCount; } ));
                         }
 
                         // It is possible c_nItemCount % quasi_factor() != 0
@@ -217,10 +194,10 @@ namespace queue {
         void SegmQueue_HP_shuffle();
         void SegmQueue_HP_stat();
 
-        void SegmQueue_PTB();
-        void SegmQueue_PTB_mutex();
-        void SegmQueue_PTB_shuffle();
-        void SegmQueue_PTB_stat();
+        void SegmQueue_DHP();
+        void SegmQueue_DHP_mutex();
+        void SegmQueue_DHP_shuffle();
+        void SegmQueue_DHP_stat();
 
         CPPUNIT_TEST_SUITE(HdrSegmentedQueue)
             CPPUNIT_TEST( SegmQueue_HP )
@@ -228,10 +205,10 @@ namespace queue {
             CPPUNIT_TEST( SegmQueue_HP_shuffle )
             CPPUNIT_TEST( SegmQueue_HP_stat )
 
-            CPPUNIT_TEST( SegmQueue_PTB )
-            CPPUNIT_TEST( SegmQueue_PTB_mutex )
-            CPPUNIT_TEST( SegmQueue_PTB_shuffle )
-            CPPUNIT_TEST( SegmQueue_PTB_stat )
+            CPPUNIT_TEST( SegmQueue_DHP )
+            CPPUNIT_TEST( SegmQueue_DHP_mutex )
+            CPPUNIT_TEST( SegmQueue_DHP_shuffle )
+            CPPUNIT_TEST( SegmQueue_DHP_stat )
         CPPUNIT_TEST_SUITE_END()
 
     };

@@ -185,10 +185,10 @@ namespace queue {
         void SegmQueue_HP_shuffle();
         void SegmQueue_HP_stat();
 
-        void SegmQueue_PTB();
-        void SegmQueue_PTB_mutex();
-        void SegmQueue_PTB_shuffle();
-        void SegmQueue_PTB_stat();
+        void SegmQueue_DHP();
+        void SegmQueue_DHP_mutex();
+        void SegmQueue_DHP_shuffle();
+        void SegmQueue_DHP_stat();
 
         CPPUNIT_TEST_SUITE(HdrIntrusiveSegmentedQueue)
             CPPUNIT_TEST( SegmQueue_HP )
@@ -196,10 +196,10 @@ namespace queue {
             CPPUNIT_TEST( SegmQueue_HP_shuffle )
             CPPUNIT_TEST( SegmQueue_HP_stat )
 
-            CPPUNIT_TEST( SegmQueue_PTB )
-            CPPUNIT_TEST( SegmQueue_PTB_mutex )
-            CPPUNIT_TEST( SegmQueue_PTB_shuffle )
-            CPPUNIT_TEST( SegmQueue_PTB_stat )
+            CPPUNIT_TEST( SegmQueue_DHP )
+            CPPUNIT_TEST( SegmQueue_DHP_mutex )
+            CPPUNIT_TEST( SegmQueue_DHP_shuffle )
+            CPPUNIT_TEST( SegmQueue_DHP_stat )
         CPPUNIT_TEST_SUITE_END()
     };
 

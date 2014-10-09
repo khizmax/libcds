@@ -2,19 +2,19 @@
 
 #include "hdr_segmented_queue.h"
 #include <cds/container/segmented_queue.h>
-#include <cds/gc/hp.h>
+#include <cds/gc/dhp.h>
 
 namespace queue {
 
-    void HdrSegmentedQueue::SegmQueue_HP()
+    void HdrSegmentedQueue::SegmQueue_DHP()
     {
-        typedef cds::container::SegmentedQueue< cds::gc::HP, item > queue_type;
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, item > queue_type;
         test<queue_type>();
     }
 
-    void HdrSegmentedQueue::SegmQueue_HP_mutex()
+    void HdrSegmentedQueue::SegmQueue_DHP_mutex()
     {
-        typedef cds::container::SegmentedQueue< cds::gc::HP, item,
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, item,
             cds::container::segmented_queue::make_traits<
                 cds::opt::lock_type< std::mutex >
             >::type
@@ -23,19 +23,19 @@ namespace queue {
         test<queue_type>();
     }
 
-    void HdrSegmentedQueue::SegmQueue_HP_shuffle()
+    void HdrSegmentedQueue::SegmQueue_DHP_shuffle()
     {
         struct queue_traits : public cds::container::segmented_queue::traits
         {
             typedef cds::atomicity::item_counter item_counter;
             typedef cds::opt::v::random_shuffle_permutation<> permutation_generator;
         };
-        typedef cds::container::SegmentedQueue< cds::gc::HP, item, queue_traits > queue_type;
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, item, queue_traits > queue_type;
 
         test<queue_type>();
     }
 
-    void HdrSegmentedQueue::SegmQueue_HP_stat()
+    void HdrSegmentedQueue::SegmQueue_DHP_stat()
     {
         struct queue_traits : public
             cds::container::segmented_queue::make_traits <
@@ -44,7 +44,7 @@ namespace queue {
                 , cds::opt::stat < cds::container::segmented_queue::stat<> >
             > ::type
         {};
-        typedef cds::container::SegmentedQueue< cds::gc::HP, item, queue_traits > queue_type;
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, item, queue_traits > queue_type;
 
         test<queue_type>();
     }

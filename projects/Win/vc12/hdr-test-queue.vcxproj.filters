@@ -22,9 +22,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_hp.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_ptb.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_tsigas_cycle_queue.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
@@ -35,9 +32,6 @@
       <Filter>container</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_hp.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_ptb.cpp">
       <Filter>container</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_vyukov_mpmc_cyclic.cpp">
@@ -80,15 +74,18 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_hp.cpp">
       <Filter>container</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue.h">
       <Filter>intrusive</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue.h">
-      <Filter>intrusive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_singlelink_node.h">
       <Filter>intrusive</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue.h">
