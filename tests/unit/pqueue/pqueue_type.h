@@ -408,9 +408,11 @@ namespace pqueue {
 #endif
 
         // FCPriorityQueue
-        typedef cds::container::fcpqueue::make_traits<
-            cds::opt::stat< cds::container::fcpqueue::stat<> >
-        >::type traits_FCPQueue_stat;
+        struct traits_FCPQueue_stat : public
+            cds::container::fcpqueue::make_traits <
+            cds::opt::stat < cds::container::fcpqueue::stat<> >
+            > ::type
+        {};
 
         typedef cds::container::FCPriorityQueue< Value >    FCPQueue_vector;
         typedef cds::container::FCPriorityQueue< Value

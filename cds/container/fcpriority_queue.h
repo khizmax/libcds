@@ -43,23 +43,22 @@ namespace cds { namespace container {
             //@endcond
         };
 
-        /// FCPriorityQueue type traits
-        struct type_traits: public cds::algo::flat_combining::type_traits
+        /// FCPriorityQueue traits
+        struct traits: public cds::algo::flat_combining::type_traits
         {
             typedef empty_stat      stat;   ///< Internal statistics
         };
 
         /// Metafunction converting option list to traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             \p Options are:
             - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
-            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
+            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::delay_of<2>
             - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
-            - \p opt::stat - internal statistics, possible type: \ref stat, \ref empty_stat (the default)
+            - \p opt::stat - internal statistics, possible type: \p fcpqueue::stat, \p fcpqueue::empty_stat (the default)
             - \p opt::memory_model - C++ memory ordering model.
-                List of all available memory ordering see opt::memory_model.
-                Default is cds::opt::v:relaxed_ordering
+                List of all available memory ordering see \p opt::memory_model.
+                Default is \p cds::opt::v:relaxed_ordering
         */
         template <typename... Options>
         struct make_traits {
@@ -67,7 +66,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -86,12 +85,12 @@ namespace cds { namespace container {
         Template parameters:
         - \p T - a value type stored in the queue
         - \p PriorityQueue - sequential priority queue implementation, default is \p std::priority_queue<T>
-        - \p Traits - type traits of flat combining, default is \p fcpqueue::type_traits.
-            \p fcpqueue::make_traits metafunction can be used to construct specialized \p %type_traits
+        - \p Traits - type traits of flat combining, default is \p fcpqueue::traits.
+            \p fcpqueue::make_traits metafunction can be used to construct specialized \p %fcpqueue::traits
     */
     template <typename T,
         class PriorityQueue = std::priority_queue<T>,
-        typename Traits = fcpqueue::type_traits
+        typename Traits = fcpqueue::traits
     >
     class FCPriorityQueue
 #ifndef CDS_DOXYGEN_INVOKED
@@ -101,9 +100,9 @@ namespace cds { namespace container {
     public:
         typedef T               value_type;          ///< Value type
         typedef PriorityQueue   priority_queue_type; ///< Sequential priority queue class
-        typedef Traits          type_traits;         ///< Priority queue type traits
+        typedef Traits          traits;              ///< Priority queue type traits
 
-        typedef typename type_traits::stat  stat;    ///< Internal statistics type
+        typedef typename traits::stat  stat;    ///< Internal statistics type
 
     protected:
         //@cond
@@ -127,7 +126,7 @@ namespace cds { namespace container {
         //@endcond
 
         /// Flat combining kernel
-        typedef cds::algo::flat_combining::kernel< fc_record, type_traits > fc_kernel;
+        typedef cds::algo::flat_combining::kernel< fc_record, traits > fc_kernel;
 
     protected:
         //@cond

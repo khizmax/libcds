@@ -13,6 +13,10 @@ namespace priority_queue {
 
     void PQueueHdrTest::FCPQueue_vector_stat()
     {
+        struct pqueue_traits : public cds::container::fcpqueue::traits
+        {
+            typedef cds::container::fcpqueue::stat<> stat;
+        };
         typedef cds::container::FCPriorityQueue<
             PQueueHdrTest::value_type
             ,std::priority_queue<
@@ -20,9 +24,7 @@ namespace priority_queue {
                 ,std::vector<PQueueHdrTest::value_type>
                 ,PQueueHdrTest::less
             >
-            ,cds::container::fcpqueue::make_traits<
-                cds::opt::stat< cds::container::fcpqueue::stat<> >
-            >::type
+            ,pqueue_traits
         > pqueue_type;
         test_fcpqueue<pqueue_type>();
     }
