@@ -25,31 +25,44 @@ namespace cds { namespace container {
         using cds::intrusive::mspriority_queue::empty_stat;
 #endif
 
-        /// Type traits for MSPriorityQueue
+        /// MSPriorityQueue traits
         /**
-            The type traits for cds::container::MSPriorityQueue is the same as for
-            cds::intrusive::MSPriorityQueue (see cds::intrusive::mspriority_queue::type_traits)
+            The traits for \p %cds::container::MSPriorityQueue is the same as for
+            \p cds::intrusive::MSPriorityQueue (see \p cds::intrusive::mspriority_queue::traits)
             plus some additional properties.
         */
-        struct type_traits: public cds::intrusive::mspriority_queue::type_traits
+        struct traits: public cds::intrusive::mspriority_queue::traits
         {
             /// The allocator use to allocate memory for values
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
 
             /// Move policy
             /**
-                The move policy used in MSPriorityQueue::pop functions
+                The move policy used in \p MSPriorityQueue::pop functions
                 to move item's value.
-                Default is opt::v::assignment_move_policy.
+                Default is \p opt::v::assignment_move_policy.
             */
             typedef cds::opt::v::assignment_move_policy  move_policy;
         };
 
         /// Metafunction converting option list to traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-
-            See \ref MSPriorityQueue, \ref type_traits, \ref cds::opt::make_options.
+            \p Options are:
+            - \p opt::buffer - the buffer type for heap array. Possible type are: \p opt::v::static_buffer, \p opt::v::dynamic_buffer.
+                Default is \p %opt::v::dynamic_buffer.
+                You may specify any type of values for the buffer since at instantiation time
+                the \p buffer::rebind member metafunction is called to change the type of values stored in the buffer.
+            - \p opt::compare - priority compare functor. No default functor is provided.
+                If the option is not specified, the \p opt::less is used.
+            - \p opt::less - specifies binary predicate used for priority compare. Default is \p std::less<T>.
+            - \p opt::lock_type - lock type. Default is \p cds::lock::Spin.
+            - \p opt::back_off - back-off strategy. Default is \p cds::backoff::yield
+            - \p opt::allocator - allocator (like \p std::allocator) for the values of queue's items.
+                Default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p opt::move_policy - policy for moving item's value. Default is \p opt::v::assignment_move_policy.
+                If the compiler supports move semantics it would be better to specify the move policy
+                based on the move semantics for type \p T.
+            - \p opt::stat - internal statistics. Available types: \p mspriority_queue::stat, \p mspriority_queue::empty_stat (the default, no overhead)
         */
         template <typename... Options>
         struct make_traits {
@@ -57,7 +70,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -86,28 +99,11 @@ namespace cds { namespace container {
 
         Template parameters:
         - \p T - type to be stored in the list. The priority is a part of \p T type.
-        - \p Traits - type traits. See mspriority_queue::type_traits for explanation.
-
-        It is possible to declare option-based queue with cds::container::mspriority_queue::make_traits
-        metafunction instead of \p Traits template argument.
-        Template argument list \p Options of \p %cds::container::mspriority_queue::make_traits metafunction are:
-        - opt::buffer - the buffer type for heap array. Possible type are: opt::v::static_buffer, opt::v::dynamic_buffer.
-            Default is \p %opt::v::dynamic_buffer.
-            You may specify any type of values for the buffer since at instantiation time
-            the \p buffer::rebind member metafunction is called to change the type of values stored in the buffer.
-        - opt::compare - priority compare functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for priority compare. Default is \p std::less<T>.
-        - opt::lock_type - lock type. Default is cds::lock::Spin.
-        - opt::back_off - back-off strategy. Default is cds::backoff::yield
-        - opt::allocator - allocator (like \p std::allocator) for the values of queue's items.
-            Default is \ref CDS_DEFAULT_ALLOCATOR
-        - opt::move_policy - policy for moving item's value. Default is opt::v::assignment_move_policy.
-            If the compiler supports move semantics it would be better to specify the move policy
-            based on the move semantics for type \p T.
-        - opt::stat - internal statistics. Available types: mspriority_queue::stat, mspriority_queue::empty_stat (the default)
+        - \p Traits - the traits. See \p mspriority_queue::traits for explanation.
+             It is possible to declare option-based queue with \p mspriority_queue::make_traits
+             metafunction instead of \p Traits template argument.
     */
-    template <typename T, class Traits>
+    template <typename T, class Traits = mspriority_queue::traits >
     class MSPriorityQueue: protected cds::intrusive::MSPriorityQueue< T, Traits >
     {
         //@cond
@@ -152,7 +148,7 @@ namespace cds { namespace container {
             clear();
         }
 
-        /// Inserts a item into priority queue
+        /// Inserts an item into priority queue
         /**
             If the priority queue is full, the function returns \p false,
             no item has been added.
@@ -165,6 +161,28 @@ namespace cds { namespace container {
         {
             scoped_ptr pVal( cxx_allocator().New( val ));
             if ( base_class::push( *(pVal.get()) )) {
+                pVal.release();
+                return true;
+            }
+            return false;
+        }
+
+        /// Inserts an item into the queue using a functor
+        /**
+            \p Func is a functor called to create node.
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type :
+            \code
+            cds::container::MSPriorityQueue< Foo > myQueue;
+            Bar bar;
+            myQueue.push_with( [&bar]( Foo& dest ) { dest = bar; } );
+            \endcode
+        */
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            scoped_ptr pVal( cxx_allocator().New() );
+            f( *pVal );
+            if ( base_class::push( *pVal )) {
                 pVal.release();
                 return true;
             }
@@ -200,36 +218,34 @@ namespace cds { namespace container {
 
             The function is equivalent of such call:
             \code
-                pop_with( dest, move_policy() );
+                pop_with( dest, [&dest]( value_type& src ) { move_policy()(dest, src); } );
             \endcode
         */
         bool pop( value_type& dest )
         {
-            return pop_with( dest, move_policy() );
+            return pop_with( [&dest]( value_type& src ) { move_policy()(dest, src); } );
         }
 
-        /// Extracts item with high priority
+        /// Extracts an item with high priority
         /**
             If the priority queue is empty, the function returns \p false.
             Otherwise, it returns \p true and \p dest contains the copy of extracted item.
             The item is deleted from the heap.
 
-            The function uses \p MoveFunc \p f to move extracted value from the heap's top
-            to \p dest. The interface of \p MoveFunc is:
+            \p Func is a functor called to copy popped value.
+            The functor takes one argument - a reference to removed node:
             \code
-            struct move_functor {
-                void operator()( Q& dest, T& src );
-            };
+            cds:container::MSPriorityQueue< Foo > myQueue;
+            Bar bar;
+            myQueue.pop_with( [&bar]( Foo& src ) { bar = std::move( src );});
             \endcode
-            In \p MoveFunc you may use move semantics for \p src argument
-            since \p src will be destroyed.
         */
-        template <typename Q, typename MoveFunc>
-        bool pop_with( Q& dest, MoveFunc f )
+        template <typename Func>
+        bool pop_with( Func f )
         {
             value_type * pVal = base_class::pop();
             if ( pVal ) {
-                f( dest, *pVal );
+                f( *pVal );
                 cxx_allocator().Delete( pVal );
                 return true;
             }
@@ -238,16 +254,16 @@ namespace cds { namespace container {
 
         /// Clears the queue (not atomic)
         /**
-            This function is no atomic, but thread-safe
+            This function is not atomic, but thread-safe
         */
         void clear()
         {
-            base_class::clear_with( []( value_type& src ) { cxx_allocator().Delete( &src ); });
+            base_class::clear_with( []( value_type& src ) { value_deleter()(&src); } );
         }
 
         /// Clears the queue (not atomic)
         /**
-            This function is no atomic, but thread-safe.
+            This function is not atomic, but thread-safe.
 
             For each item removed the functor \p f is called.
             \p Func interface is:
@@ -257,7 +273,6 @@ namespace cds { namespace container {
                     void operator()( value_type& item );
                 };
             \endcode
-            A lambda function or a function pointer can be used as \p f.
         */
         template <typename Func>
         void clear_with( Func f )

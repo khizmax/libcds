@@ -3,14 +3,15 @@
     - switch to C++11 standard
     - Removed: MichaelDeque, reason: the implementation is heavy-weighted, inefficient,
       and, seems, unstable.
-    - Added: cds::container::TreiberStack::pop_with(Func)
-    - Added: member functions enqueue_with(Func), dequeue_with(Func) to 
+    - Added: new member function pop_with(Func) to cds::container::TreiberStack
+    - Added: new member functions enqueue_with(Func), dequeue_with(Func) to 
              cds::container::MSQueue
              cds::container::MoirQueue
              cds::container::BasketQueue
              cds::container::OptimisticQueue
              cds::container::RWQueue
              cds::container::SegmentedQueue
+    - Added: new member functions push_with(Func) and pop_with(Func) to cds::container::MSPriorityQueue
 
 1.6.0 23.09.2014
     General release

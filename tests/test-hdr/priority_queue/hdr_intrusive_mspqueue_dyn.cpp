@@ -2,7 +2,6 @@
 
 #include "priority_queue/hdr_intrusive_pqueue.h"
 #include <cds/intrusive/mspriority_queue.h>
-#include <mutex>
 
 namespace priority_queue {
     namespace intrusive_pqueue {
@@ -18,35 +17,36 @@ namespace priority_queue {
 
     void IntrusivePQueueHdrTest::MSPQueue_dyn()
     {
-        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type,
-            cds::intrusive::mspriority_queue::make_traits<
-                cds::opt::buffer< buffer_type >
-            >::type
-        > pqueue;
+        struct pqueue_traits : public cds::intrusive::mspriority_queue::traits
+        {
+            typedef buffer_type buffer;
+        };
+        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type, pqueue_traits > pqueue;
 
         test_msq_dyn<pqueue>();
     }
 
     void IntrusivePQueueHdrTest::MSPQueue_dyn_cmp()
     {
-        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type,
-            cds::intrusive::mspriority_queue::make_traits<
-                cds::opt::buffer< buffer_type >
-                ,cds::opt::compare< IntrusivePQueueHdrTest::compare >
-            >::type
-        > pqueue;
+        struct pqueue_traits : public cds::intrusive::mspriority_queue::traits
+        {
+            typedef buffer_type buffer;
+            typedef IntrusivePQueueHdrTest::compare compare;
+        };
+        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type, pqueue_traits > pqueue;
 
         test_msq_dyn<pqueue>();
     }
 
     void IntrusivePQueueHdrTest::MSPQueue_dyn_less()
     {
-        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type,
-            cds::intrusive::mspriority_queue::make_traits<
+        struct pqueue_traits : public
+            cds::intrusive::mspriority_queue::make_traits <
                 cds::opt::buffer< buffer_type >
-                ,cds::opt::less< std::less<IntrusivePQueueHdrTest::key_type> >
-            >::type
-        > pqueue;
+                , cds::opt::less < std::less<IntrusivePQueueHdrTest::key_type> >
+            > ::type
+        {};
+        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type, pqueue_traits > pqueue;
 
         test_msq_dyn<pqueue>();
     }

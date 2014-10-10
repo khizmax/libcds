@@ -325,7 +325,7 @@ namespace cds { namespace container {
         }
 
         /// Synonym for \p dequeue_with() function
-        template <typename Q, typename Func>
+        template <typename Func>
         bool pop_with( Func f )
         {
             return dequeue_with( f );

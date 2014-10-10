@@ -14,7 +14,6 @@
 #include <deque>
 #include <boost/container/stable_vector.hpp>
 #include <boost/container/deque.hpp>
-#include <mutex>
 #include <cds/lock/spinlock.h>
 
 #include "print_ellenbintree_stat.h"
@@ -40,61 +39,67 @@ namespace pqueue {
         };
 
 
-
         // MSPriorityQueue
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
-                co::buffer< co::v::static_buffer< char, c_nBoundedCapacity > >
-            >::type
-        > MSPriorityQueue_static_less;
+        struct traits_MSPriorityQueue_static_less : public
+            cc::mspriority_queue::make_traits <
+                co::buffer < co::v::static_buffer< char, c_nBoundedCapacity > >
+            > ::type
+        {};
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_static_less > MSPriorityQueue_static_less;
 
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
-                co::buffer< co::v::static_buffer< char, c_nBoundedCapacity > >
-                ,co::stat< cc::mspriority_queue::stat<> >
-            >::type
-        > MSPriorityQueue_static_less_stat;
+        struct traits_MSPriorityQueue_static_less_stat : public cc::mspriority_queue::traits
+        {
+            typedef co::v::static_buffer< char, c_nBoundedCapacity > buffer;
+            typedef cc::mspriority_queue::stat<> stat;
+        };
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_static_less_stat > MSPriorityQueue_static_less_stat;
 
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
+        struct traits_MSPriorityQueue_static_cmp : public
+            cc::mspriority_queue::make_traits <
                 co::buffer< co::v::static_buffer< char, c_nBoundedCapacity > >
-                ,co::compare< cmp >
-            >::type
-        > MSPriorityQueue_static_cmp;
+                , co::compare < cmp >
+            > ::type
+        {};
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_static_cmp > MSPriorityQueue_static_cmp;
 
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
+        struct traits_MSPriorityQueue_static_mutex : public
+            cc::mspriority_queue::make_traits<
                 co::buffer< co::v::static_buffer< char, c_nBoundedCapacity > >
-                ,co::lock_type<std::mutex>
+                , co::lock_type<std::mutex>
             >::type
-        > MSPriorityQueue_static_mutex;
+        {};
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_static_mutex > MSPriorityQueue_static_mutex;
 
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
+        struct traits_MSPriorityQueue_dyn_less : public
+            cc::mspriority_queue::make_traits<
                 co::buffer< co::v::dynamic_buffer< char > >
             >::type
-        > MSPriorityQueue_dyn_less;
+        {};
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_less > MSPriorityQueue_dyn_less;
 
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
+        struct traits_MSPriorityQueue_dyn_less_stat : public
+            cc::mspriority_queue::make_traits <
                 co::buffer< co::v::dynamic_buffer< char > >
-                ,co::stat< cc::mspriority_queue::stat<> >
-            >::type
-        > MSPriorityQueue_dyn_less_stat;
+                , co::stat < cc::mspriority_queue::stat<> >
+            > ::type
+        {};
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_less_stat > MSPriorityQueue_dyn_less_stat;
 
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
+        struct traits_MSPriorityQueue_dyn_cmp : public
+            cc::mspriority_queue::make_traits <
                 co::buffer< co::v::dynamic_buffer< char > >
-                ,co::compare< cmp >
-            >::type
-        > MSPriorityQueue_dyn_cmp;
+                , co::compare < cmp >
+            > ::type
+        {};
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_cmp > MSPriorityQueue_dyn_cmp;
 
-        typedef cc::MSPriorityQueue< Value,
-            typename cc::mspriority_queue::make_traits<
+        struct traits_MSPriorityQueue_dyn_mutex : public
+            cc::mspriority_queue::make_traits <
                 co::buffer< co::v::dynamic_buffer< char > >
-                ,co::lock_type<std::mutex>
-            >::type
-        > MSPriorityQueue_dyn_mutex;
+                , co::lock_type < std::mutex >
+            > ::type
+        {};
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_mutex > MSPriorityQueue_dyn_mutex;
 
 
         // Priority queue based on EllenBinTreeSet

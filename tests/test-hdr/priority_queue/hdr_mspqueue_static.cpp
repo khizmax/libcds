@@ -2,7 +2,6 @@
 
 #include "priority_queue/hdr_pqueue.h"
 #include <cds/container/mspriority_queue.h>
-#include <mutex>
 
 namespace priority_queue {
     namespace pqueue {

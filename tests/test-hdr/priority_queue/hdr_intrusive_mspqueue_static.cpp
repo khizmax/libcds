@@ -2,7 +2,6 @@
 
 #include "priority_queue/hdr_intrusive_pqueue.h"
 #include <cds/intrusive/mspriority_queue.h>
-#include <mutex>
 
 namespace priority_queue {
     namespace intrusive_pqueue {
@@ -66,13 +65,13 @@ namespace priority_queue {
 
     void IntrusivePQueueHdrTest::MSPQueue_st_cmp_mtx()
     {
-        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type,
-            cds::intrusive::mspriority_queue::make_traits<
-                cds::opt::buffer< buffer_type >
-                ,cds::opt::compare< IntrusivePQueueHdrTest::compare >
-                ,cds::opt::lock_type<std::mutex>
-            >::type
-        > pqueue;
+        struct pqueue_traits : public cds::intrusive::mspriority_queue::traits
+        {
+            typedef buffer_type buffer;
+            typedef IntrusivePQueueHdrTest::compare compare;
+            typedef std::mutex lock_type;
+        };
+        typedef cds::intrusive::MSPriorityQueue< IntrusivePQueueHdrTest::key_type, pqueue_traits > pqueue;
 
         test_msq_stat<pqueue>();
     }

@@ -2,7 +2,6 @@
 
 #include "priority_queue/hdr_pqueue.h"
 #include <cds/container/mspriority_queue.h>
-#include <mutex>
 
 namespace priority_queue {
     namespace pqueue {
@@ -53,13 +52,13 @@ namespace priority_queue {
 
     void PQueueHdrTest::MSPQueue_dyn_cmpless()
     {
-        typedef cds::container::MSPriorityQueue< PQueueHdrTest::value_type,
-            cds::container::mspriority_queue::make_traits<
-                cds::opt::buffer< buffer_type >
-                ,cds::opt::less< PQueueHdrTest::less >
-                ,cds::opt::compare< PQueueHdrTest::compare >
-            >::type
-        > pqueue;
+        struct pqueue_traits : public cds::container::mspriority_queue::traits
+        {
+            typedef buffer_type buffer;
+            typedef PQueueHdrTest::less less;
+            typedef PQueueHdrTest::compare compare;
+        };
+        typedef cds::container::MSPriorityQueue< PQueueHdrTest::value_type, pqueue_traits > pqueue;
 
         test_msq_dyn<pqueue>();
     }

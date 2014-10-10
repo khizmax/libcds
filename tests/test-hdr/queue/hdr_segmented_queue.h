@@ -99,12 +99,13 @@ namespace queue {
                     other_item v;
 
                     nCount = 0;
+                    size_t nFuncCount = 0;
                     while ( !q.empty() ) {
                         if ( nCount & 1 ) {
-                            CPPUNIT_ASSERT( q.pop_with( [&v, &nCount]( item& src ) {v.nVal = src.nVal; ++nCount; } ));
+                            CPPUNIT_ASSERT( q.pop_with( [&v, &nFuncCount]( item& src ) {v.nVal = src.nVal; ++nFuncCount; } ));
                         }
                         else {
-                            CPPUNIT_ASSERT( q.dequeue_with( [&v, &nCount]( item& src ) {v.nVal = src.nVal; ++nCount; } ));
+                            CPPUNIT_ASSERT( q.dequeue_with( [&v, &nFuncCount]( item& src ) {v.nVal = src.nVal; ++nFuncCount; } ));
                         }
 
                         // It is possible c_nItemCount % quasi_factor() != 0
@@ -114,7 +115,7 @@ namespace queue {
                         CPPUNIT_CHECK_EX( nMin <= v.nVal && v.nVal <= nMax, nMin << " <= " << v.nVal << " <= " << nMax );
 
                         ++nCount;
-                        CPPUNIT_CHECK( pf.nCount == nCount );
+                        CPPUNIT_CHECK( nFuncCount == nCount );
                         CPPUNIT_CHECK( misc::check_size( q, c_nItemCount - nCount ));
                     }
                     CPPUNIT_CHECK( nCount == c_nItemCount );

@@ -368,7 +368,7 @@ namespace cds { namespace intrusive {
         /// Returns current size of priority queue
         size_t size() const
         {
-            std::unique_lock l( m_Lock );
+            std::unique_lock<lock_type> l( m_Lock );
             size_t nSize = (size_t) m_ItemCounter.value();
             return nSize;
         }

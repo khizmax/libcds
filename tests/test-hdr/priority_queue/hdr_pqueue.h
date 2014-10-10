@@ -114,14 +114,6 @@ namespace priority_queue {
             }
         };
 
-        struct move_functor
-        {
-            void operator()( int& dest, value_type const& src ) const
-            {
-                dest = src.k;
-            }
-        };
-
     protected:
         template <class PQueue>
         void test_bounded_with( PQueue& pq )
@@ -141,6 +133,9 @@ namespace priority_queue {
             // Push test
             for ( value_type * p = pFirst; p < pLast; ++p ) {
                 switch ( pq.size() & 3 ) {
+                    case 0:
+                        CPPUNIT_ASSERT( pq.push_with( [p]( value_type& dest ) { dest = *p; } ));
+                        break;
                     case 1:
                         CPPUNIT_ASSERT( pq.emplace( p->k, p->v ));
                         break;
@@ -182,7 +177,7 @@ namespace priority_queue {
                     nPrev = kv.k;
                 }
                 else {
-                    CPPUNIT_ASSERT( pq.pop_with( key, move_functor() ));
+                    CPPUNIT_ASSERT( pq.pop_with( [&key]( value_type& src ) { key = src.k;  } ) );
                     CPPUNIT_CHECK_EX( key == nPrev - 1, "Expected=" << nPrev - 1 << ", current=" << key );
                     nPrev = key;
                 }

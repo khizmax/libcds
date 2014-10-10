@@ -20,7 +20,7 @@ namespace stack {
 
     namespace details {
 
-        template <typename T, typename Traits=cds::container::fcdeque::type_traits>
+        template <typename T, typename Traits=cds::container::fcdeque::traits>
         class FCDequeL: public cds::container::FCDeque<T, std::deque<T>, Traits >
         {
             typedef cds::container::FCDeque<T, std::deque<T>, Traits > base_class;
@@ -46,7 +46,7 @@ namespace stack {
             }
         };
 
-        template <typename T, typename Traits=cds::container::fcdeque::type_traits>
+        template <typename T, typename Traits=cds::container::fcdeque::traits>
         class FCDequeR: public cds::container::FCDeque<T, std::deque<T>, Traits >
         {
             typedef cds::container::FCDeque<T, std::deque<T>, Traits > base_class;
