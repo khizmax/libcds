@@ -76,7 +76,7 @@ namespace set {
         typedef ci::StripedSet<
             bi::splay_set<
                 member_item_type
-                , bi::member_hook< member_item_type, bsplay_set_member_hook, &member_item_type::hMember>
+                , bi::member_hook< member_item_type, splay_set_member_hook, &member_item_type::hMember>
                 , bi::compare<IntrusiveStripedSetHdrTest::less<member_item_type> >
             >
             ,co::mutex_policy< ci::striped_set::refinable<> >
