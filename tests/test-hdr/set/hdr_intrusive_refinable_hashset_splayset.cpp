@@ -8,8 +8,15 @@ namespace set {
     namespace bi = boost::intrusive;
 
     namespace {
-        typedef IntrusiveStripedSetHdrTest::base_item< bi::splay_set_base_hook<> > base_item_type;
-        typedef IntrusiveStripedSetHdrTest::member_item< bi::splay_set_member_hook<> > member_item_type;
+#   if BOOST_VERSION < 105600
+        typedef bi::splay_set_member_hook<> splay_set_member_hook;
+        typedef bi::splay_set_base_hook<> splay_set_base_hook;
+#else
+        typedef bi::bs_set_base_hook<> splay_set_member_hook;
+        typedef bi::bs_set_member_hook<> splay_set_base_hook;
+#endif
+        typedef IntrusiveStripedSetHdrTest::base_item< splay_set_base_hook > base_item_type;
+        typedef IntrusiveStripedSetHdrTest::member_item< splay_set_member_hook > member_item_type;
     }
 
     void IntrusiveStripedSetHdrTest::Refinable_splay_set_basehook()
@@ -54,7 +61,7 @@ namespace set {
         typedef ci::StripedSet<
             bi::splay_set<
                 member_item_type
-                , bi::member_hook< member_item_type, bi::splay_set_member_hook<>, &member_item_type::hMember>
+                , bi::member_hook< member_item_type, splay_set_member_hook, &member_item_type::hMember>
                 , bi::compare<IntrusiveStripedSetHdrTest::less<member_item_type> >
             >
             ,co::mutex_policy< ci::striped_set::refinable<> >
@@ -69,7 +76,7 @@ namespace set {
         typedef ci::StripedSet<
             bi::splay_set<
                 member_item_type
-                , bi::member_hook< member_item_type, bi::splay_set_member_hook<>, &member_item_type::hMember>
+                , bi::member_hook< member_item_type, bsplay_set_member_hook, &member_item_type::hMember>
                 , bi::compare<IntrusiveStripedSetHdrTest::less<member_item_type> >
             >
             ,co::mutex_policy< ci::striped_set::refinable<> >
@@ -85,7 +92,7 @@ namespace set {
         typedef ci::StripedSet<
             bi::splay_set<
                 member_item_type
-                , bi::member_hook< member_item_type, bi::splay_set_member_hook<>, &member_item_type::hMember>
+                , bi::member_hook< member_item_type, splay_set_member_hook, &member_item_type::hMember>
                 , bi::compare<IntrusiveStripedSetHdrTest::less<member_item_type> >
             >
             ,co::mutex_policy< ci::striped_set::refinable<> >
