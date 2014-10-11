@@ -1046,9 +1046,6 @@
     <ClInclude Include="..\..\..\cds\gc\gc_fwd.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\details\dummy_node_holder.h">
-      <Filter>Header Files\cds\intrusive\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\urcu\details\sh.h">
       <Filter>Header Files\cds\urcu\details</Filter>
     </ClInclude>
@@ -1197,9 +1194,6 @@
       <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\node_traits.h">
-      <Filter>Header Files\cds\intrusive\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\details\queue_stat.h">
       <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\skip_list_base.h">
