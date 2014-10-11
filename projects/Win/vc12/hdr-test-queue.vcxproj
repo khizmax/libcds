@@ -561,6 +561,7 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_rwqueue.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_tsigas_cycle_queue.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_vyukov_mpmc_cyclic.cpp" />
   </ItemGroup>
   <ItemGroup>

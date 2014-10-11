@@ -3,13 +3,89 @@
 #ifndef __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
 #define __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
 
-#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/cxx11_atomic.h>
 #include <cds/details/bounded_container.h>
 #include <cds/opt/buffer.h>
 
 namespace cds { namespace intrusive {
+
+    /// TsigasCycleQueue related definitions
+    /** @ingroup cds_intrusive_helper
+    */
+    namespace tsigas_queue {
+
+        /// TsigasCycleQueue default traits
+        struct traits
+        {
+            /// Buffer type for cyclic array
+            /*
+                The type of element for the buffer is not important: the queue rebinds
+                buffer for required type via \p rebind metafunction.
+
+                For \p TsigasCycleQueue queue the buffer size should have power-of-2 size.
+            */
+            typedef cds::opt::v::dynamic_buffer< void * > buffer;
+
+            /// Back-off strategy
+            typedef cds::backoff::empty         back_off;
+
+            /// The functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used for dequeuing
+            typedef opt::v::empty_disposer      disposer;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef atomicity::empty_item_counter item_counter;
+
+            /// C++ memory ordering model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering    memory_model;
+
+            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+        /// Metafunction converting option list to \p tsigas_queue::traits
+        /**
+            Supported \p Options are:
+            - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
+                \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
+                element in the buffer is not important: it will be changed via \p rebind metafunction.
+            - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+                when dequeuing.
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare \p %TsigasCycleQueue with item counting and static iternal buffer of size 1024:
+            \code
+            typedef cds::intrusive::TsigasCycleQueue< Foo, 
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
+                    cds::opt::item_counte< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
+
+
+    } //namespace tsigas_queue
 
     /// Non-blocking cyclic queue discovered by Philippas Tsigas and Yi Zhang
     /** @ingroup cds_intrusive_queue
@@ -19,21 +95,25 @@ namespace cds { namespace intrusive {
             for Shared Memory Multiprocessor Systems"
 
         Template arguments:
-        - T - data stored in queue. The queue stores pointers to passed data of type \p T.
+        - \p T - value type to be stored in queue. The queue stores pointers to passed data of type \p T.
             <b>Restriction</b>: the queue can manage at least two-byte aligned data: the least significant bit (LSB)
             of any pointer stored in the queue must be zero since the algorithm may use LSB
             as a flag that marks the free cell.
-        - Options - options
+        - \p Traits - queue traits, default is \p tsigas_queue::traits. You can use \p tsigas_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %tsigas_queue::traits:
+            \code
+            struct myTraits: public cds::intrusive::tsigas_queue::traits {
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::intrusive::TsigasCycleQueue< Foo, myTraits > myQueue;
 
-        \p Options are:
-        - opt::buffer - buffer to store items. Mandatory option, see option description for full list of possible types.
-        - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. This option is used
-            only in \ref clear function.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::alignment - the alignment for internal queue data. Default is opt::cache_line_alignment
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
+            // Equivalent make_traits example:
+            typedef cds::intrusive::TsigasCycleQueue< Foo, 
+                typename cds::intrusive::tsigas_queue::make_traits< 
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
 
         This queue algorithm does not require any garbage collector.
 
@@ -46,62 +126,47 @@ namespace cds { namespace intrusive {
         };
 
         // Queue of Foo pointers, capacity is 1024, statically allocated buffer:
-        typedef cds::intrusive::TsigasCycleQueue<
-            Foo
-            ,cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > >
-        > static_queue;
+        struct queue_traits: public cds::intrusive::tsigas_queue::traits
+        {
+            typedef cds::opt::v::static_buffer< Foo, 1024 > buffer;
+        };
+        typedef cds::intrusive::TsigasCycleQueue< Foo, queue_traits > static_queue;
         static_queue    stQueue;
 
-        // Queue of Foo pointers, capacity is 1024, dynamically allocated buffer:
-        typedef cds::intrusive::TsigasCycleQueue<
-            Foo
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer< Foo > >
+        // Queue of Foo pointers, capacity is 1024, dynamically allocated buffer, with item counting:
+        typedef cds::intrusive::TsigasCycleQueue< Foo,
+            typename cds::intrusive::tsigas_queue::make_traits<
+                cds::opt::buffer< cds::opt::v::dynamic_buffer< Foo > >,
+                cds::opt::item_counter< cds::atomicity::item_counter >
+            >::type
         > dynamic_queue;
         dynamic_queue    dynQueue( 1024 );
         \endcode
     */
-    template <typename T, typename... Options>
+    template <typename T, typename Traits = tsigas_queue::traits >
     class TsigasCycleQueue: public cds::bounded_container
     {
-        //@cond
-        struct default_options
-        {
-            typedef cds::backoff::empty         back_off;
-            typedef opt::v::empty_disposer      disposer;
-            typedef atomicity::empty_item_counter item_counter;
-            typedef opt::v::relaxed_ordering    memory_model;
-            enum { alignment = opt::cache_line_alignment };
-        };
-        //@endcond
-
-    public:
-        //@cond
-        typedef typename opt::make_options<
-            typename cds::opt::find_type_traits< default_options, Options...>::type
-            ,Options...
-        >::type   options;
-        //@endcond
-
     public:
         /// Rebind template arguments
-        template <typename T2, typename... Options2>
+        template <typename T2, typename Traits2>
         struct rebind {
-            typedef TsigasCycleQueue< T2, Options2...> other   ;   ///< Rebinding result
+            typedef TsigasCycleQueue< T2, Traits2 > other   ;   ///< Rebinding result
         };
 
     public:
-        typedef T value_type    ;   ///< type of value stored in the queue
-        typedef typename options::item_counter  item_counter;   ///< Item counter type
-        typedef typename options::disposer      disposer    ;   ///< Item disposer
-        typedef typename options::back_off      back_off    ;   ///< back-off strategy used
-        typedef typename options::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef T value_type;   ///< type of value to be stored in the queue
+        typedef Traits traits;  ///< Queue traits
+        typedef typename traits::item_counter  item_counter;    ///< Item counter type
+        typedef typename traits::disposer      disposer;        ///< Item disposer
+        typedef typename traits::back_off      back_off;        ///< back-off strategy used
+        typedef typename traits::memory_model  memory_model;    ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::buffer::template rebind< atomics::atomic<value_type *> >::other buffer; ///< Internal buffer
 
     protected:
         //@cond
-        typedef typename options::buffer::template rebind< atomics::atomic<value_type *> >::other buffer;
-        typedef typename opt::details::alignment_setter< buffer, options::alignment >::type aligned_buffer;
+        typedef typename opt::details::alignment_setter< buffer, traits::alignment >::type aligned_buffer;
         typedef size_t index_type;
-        typedef typename opt::details::alignment_setter< atomics::atomic<index_type>, options::alignment >::type aligned_index;
+        typedef typename opt::details::alignment_setter< atomics::atomic<index_type>, traits::alignment >::type aligned_index;
         //@endcond
 
     protected:
@@ -114,25 +179,20 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        static CDS_CONSTEXPR value_type * free0() CDS_NOEXCEPT
-        {
-            return nullptr;
-        }
-        static CDS_CONSTEXPR value_type * free1() CDS_NOEXCEPT
-        {
-            return (value_type*) 1;
-        }
+        static CDS_CONSTEXPR value_type * const free0 = nullptr;
+        static CDS_CONSTEXPR value_type * const free1 = free0 + 1;
+
         static bool is_free( const value_type * p ) CDS_NOEXCEPT
         {
-            return p == free0() || p == free1();
+            return p == free0 || p == free1;
         }
 
-        size_t buffer_capacity() const CDS_NOEXCEPT
+        size_t CDS_CONSTEXPR buffer_capacity() const CDS_NOEXCEPT
         {
             return m_buffer.capacity();
         }
 
-        index_type modulo() const CDS_NOEXCEPT
+        index_type CDS_CONSTEXPR modulo() const CDS_NOEXCEPT
         {
             return buffer_capacity() - 1;
         }
@@ -141,7 +201,7 @@ namespace cds { namespace intrusive {
     public:
         /// Initialize empty queue of capacity \p nCapacity
         /**
-            For cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            If internal buffer type is \p cds::opt::v::static_buffer, the \p nCapacity parameter is ignored.
 
             Note that the real capacity of queue is \p nCapacity - 2.
         */
@@ -159,25 +219,9 @@ namespace cds { namespace intrusive {
             clear();
         }
 
-        /// Returns queue's item count
-        /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
-            this function always returns 0.
-        */
-        size_t size() const CDS_NOEXCEPT
-        {
-            return m_ItemCounter.value();
-        }
-
-        /// Returns capacity of cyclic buffer
-        size_t capacity() const CDS_NOEXCEPT
-        {
-            return buffer_capacity() - 2;
-        }
-
-        /// Enqueues item from the queue
+        /// Enqueues an item to the queue
         /** @anchor cds_intrusive_TsigasQueue_enqueue
-            Returns \p true if success, \p false otherwise (for example, if queue is full)
+            Returns \p true if success, \p false if queue is full
         */
         bool enqueue( value_type& data )
         {
@@ -220,7 +264,7 @@ namespace cds { namespace intrusive {
                     continue;
                 }
 
-                if ( tt == free1() )
+                if ( tt == free1 )
                     pNewNode = reinterpret_cast<value_type *>(reinterpret_cast<intptr_t>( pNewNode ) | 1);
                 if ( te != m_nTail.load(memory_model::memory_order_relaxed) )
                     continue;
@@ -243,7 +287,7 @@ namespace cds { namespace intrusive {
         /** @anchor cds_intrusive_TsigasQueue_dequeue
             If the queue is empty the function returns \p nullptr
 
-            Dequeue does not call value disposer. You can manually dispose returned value if it is needed.
+            Dequeue does not call value disposer. You may manually dispose returned value if it is needed.
         */
         value_type * dequeue()
         {
@@ -279,7 +323,7 @@ namespace cds { namespace intrusive {
                     continue;
                 }
 
-                pNull = (reinterpret_cast<ptr_atomic_t>( tt ) & 1) ? free0() : free1();
+                pNull = (reinterpret_cast<ptr_atomic_t>( tt ) & 1) ? free0 : free1;
 
                 if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
                     continue;
@@ -299,13 +343,13 @@ namespace cds { namespace intrusive {
             return nullptr;
         }
 
-        /// Synonym of \ref cds_intrusive_TsigasQueue_enqueue "enqueue"
+        /// Synonym for \p enqueue()
         bool push( value_type& data )
         {
             return enqueue( data );
         }
 
-        /// Synonym of \ref cds_intrusive_TsigasQueue_dequeue "dequeue"
+        /// Synonym for \p dequeue()
         value_type * pop()
         {
             return dequeue();
@@ -336,15 +380,10 @@ namespace cds { namespace intrusive {
 
         /// Clears queue in lock-free manner.
         /**
-            \p f parameter is a functor to dispose removed items.
-            The interface of \p DISPOSER is:
+            \p f parameter is a functor to dispose removed items:
             \code
-            struct myDisposer {
-                void operator ()( T * val );
-            };
+            myQueue.clear( []( value_type * p ) { delete p; } );
             \endcode
-            You can pass \p disposer by reference using \p std::ref.
-            The disposer will be called immediately for each item.
         */
         template <typename Disposer>
         void clear( Disposer f )
@@ -357,11 +396,28 @@ namespace cds { namespace intrusive {
 
         /// Clears the queue
         /**
-            This function uses the disposer that is specified in \p Options.
+            This function uses the disposer that is specified in \p Traits,
+            see \p tsigas_queue::traits::disposer.
         */
         void clear()
         {
             clear( disposer() );
+        }
+
+        /// Returns queue's item count
+        /**
+            The value returned depends on \p tsigas_queue::traits::item_counter. 
+            For \p atomicity::empty_item_counter, the function always returns 0.
+        */
+        size_t size() const CDS_NOEXCEPT
+        {
+            return m_ItemCounter.value();
+        }
+
+        /// Returns capacity of internal cyclic buffer
+        size_t CDS_CONSTEXPR capacity() const CDS_NOEXCEPT
+        {
+            return buffer_capacity() - 2;
         }
     };
 

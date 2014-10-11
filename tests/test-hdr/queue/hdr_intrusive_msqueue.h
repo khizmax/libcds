@@ -380,8 +380,8 @@ namespace queue {
         void test_BasketQueue_DHP_base_cachealign();
         void test_BasketQueue_DHP_member_cachealign();
 
-        void test_TsigasCycleQueue_stat();
-        void test_TsigasCycleQueue_stat_ic();
+        void test_TsigasCycleQueue_static();
+        void test_TsigasCycleQueue_static_ic();
         void test_TsigasCycleQueue_dyn();
         void test_TsigasCycleQueue_dyn_ic();
 
@@ -503,8 +503,8 @@ namespace queue {
             CPPUNIT_TEST(test_BasketQueue_DHP_base_cachealign)
             CPPUNIT_TEST(test_BasketQueue_DHP_member_cachealign)
 
-            CPPUNIT_TEST(test_TsigasCycleQueue_stat)
-            CPPUNIT_TEST(test_TsigasCycleQueue_stat_ic)
+            CPPUNIT_TEST(test_TsigasCycleQueue_static)
+            CPPUNIT_TEST(test_TsigasCycleQueue_static_ic)
             CPPUNIT_TEST(test_TsigasCycleQueue_dyn)
             CPPUNIT_TEST(test_TsigasCycleQueue_dyn_ic)
 

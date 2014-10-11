@@ -34,7 +34,7 @@ namespace cds { namespace opt {
 
     namespace v {
 
-        /// Static buffer (\ref opt::buffer option)
+        /// Static buffer (see \p cds::opt::buffer option)
         /**
             One of available type for opt::buffer type-option.
 
@@ -132,7 +132,7 @@ namespace cds { namespace opt {
 
         /// Dynamically allocated buffer
         /**
-            One of available opt::buffer type-option.
+            One of available \p cds::opt::buffer type-option.
 
             This buffer maintains dynamically allocated array.
             Allocation is performed at construction time.

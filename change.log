@@ -11,6 +11,7 @@
              cds::container::OptimisticQueue
              cds::container::RWQueue
              cds::container::SegmentedQueue
+             cds::container::TsigasCycleQueue
     - Added: new member functions push_with(Func) and pop_with(Func) to cds::container::MSPriorityQueue
 
 1.6.0 23.09.2014

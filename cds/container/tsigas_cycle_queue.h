@@ -6,31 +6,95 @@
 #include <memory>
 #include <cds/intrusive/tsigas_cycle_queue.h>
 #include <cds/container/details/base.h>
-#include <cds/details/trivial_assign.h>
 
 namespace cds { namespace container {
 
+    /// TsigasCycleQueue related definitions
+    /** @ingroup cds_nonintrusive_helper
+    */
+    namespace tsigas_queue {
+
+        /// TsigasCycleQueue default traits
+        struct traits
+        {
+            /// Buffer type for cyclic array
+            /*
+            The type of element for the buffer is not important: the queue rebinds
+            buffer for required type via \p rebind metafunction.
+
+            For \p TsigasCycleQueue queue the buffer size should have power-of-2 size.
+            */
+            typedef cds::opt::v::dynamic_buffer< void * > buffer;
+
+            /// Node allocator
+            typedef CDS_DEFAULT_ALLOCATOR       allocator;
+
+            /// Back-off strategy
+            typedef cds::backoff::empty         back_off;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef atomicity::empty_item_counter item_counter;
+
+            /// C++ memory ordering model
+            /**
+            Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+            or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering    memory_model;
+
+            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
+            enum { alignment = opt::cache_line_alignment };
+        };
+
+        /// Metafunction converting option list to \p tsigas_queue::traits
+        /**
+            Supported \p Options are:
+            - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
+                \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
+                element in the buffer is not important: it will be changed via \p rebind metafunction.
+            - \p opt::allocator - allocator (like \p std::allocator) used for allocating queue items. Default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+                when dequeuing.
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+
+            Example: declare \p %TsigasCycleQueue with item counting and static iternal buffer of size 1024:
+            \code
+            typedef cds::container::TsigasCycleQueue< Foo, 
+                typename cds::container::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
+                    cds::opt::item_counte< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
+        */
+        template <typename... Options>
+        struct make_traits {
+#   ifdef CDS_DOXYGEN_INVOKED
+            typedef implementation_defined type;   ///< Metafunction result
+#   else
+            typedef typename cds::opt::make_options<
+                typename cds::opt::find_type_traits< traits, Options... >::type
+                , Options...
+            >::type type;
+#   endif
+        };
+
+    } // namespace tsigas_queue
+
     //@cond
     namespace details {
-        template <typename T, typename... Options>
+        template <typename T, typename Traits>
         struct make_tsigas_cycle_queue
         {
             typedef T value_type;
+            typedef Traits traits;
 
-            struct default_options {
-                typedef cds::backoff::empty     back_off;
-                typedef CDS_DEFAULT_ALLOCATOR   allocator;
-                typedef atomicity::empty_item_counter item_counter;
-                typedef opt::v::relaxed_ordering    memory_model;
-                enum { alignment = opt::cache_line_alignment };
-            };
-
-            typedef typename opt::make_options<
-                typename cds::opt::find_type_traits< default_options, Options... >::type
-                ,Options...
-            >::type   options;
-
-            typedef typename options::allocator::template rebind<value_type>::other allocator_type;
+            typedef typename traits::allocator::template rebind<value_type>::other allocator_type;
             typedef cds::details::Allocator< value_type, allocator_type >           cxx_allocator;
 
             struct node_deallocator
@@ -42,38 +106,41 @@ namespace cds { namespace container {
             };
             typedef node_deallocator node_disposer;
 
-            typedef intrusive::TsigasCycleQueue<
-                value_type
-                ,opt::buffer< typename options::buffer >
-                ,opt::back_off< typename options::back_off >
-                ,intrusive::opt::disposer< node_disposer >
-                ,opt::item_counter< typename options::item_counter >
-                ,opt::alignment< options::alignment >
-                ,opt::memory_model< typename options::memory_model >
-            >   type;
-        };
+            struct intrusive_traits: public traits
+            {
+                typedef node_deallocator disposer;
+            };
 
-    }
+            typedef intrusive::TsigasCycleQueue< value_type, intrusive_traits > type;
+        };
+    } // namespace
     //@endcond
 
-    /// Non-blocking cyclic queue discovered by Philippas Tsigas and Yi Zhang
+    /// Non-blocking cyclic bounded queue
     /** @ingroup cds_nonintrusive_queue
-        It is non-intrusive implementation of Tsigas & Zhang cyclic queue based on intrusive::TsigasCycleQueue.
+        It is non-intrusive implementation of Tsigas & Zhang cyclic queue based on \p intrusive::TsigasCycleQueue.
 
         Source:
-        \li [2000] Philippas Tsigas, Yi Zhang "A Simple, Fast and Scalable Non-Blocking Concurrent FIFO Queue
+        - [2000] Philippas Tsigas, Yi Zhang "A Simple, Fast and Scalable Non-Blocking Concurrent FIFO Queue
             for Shared Memory Multiprocessor Systems"
 
-        \p T is a type stored in the queue. It should be default-constructible, copy-constructible, assignable type.
+        Template arguments:
+        - \p T is a type stored in the queue.
+        - \p Traits - queue traits, default is \p tsigas_queue::traits. You can use \p tsigas_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %tsigas_queue::traits:
+            \code
+            struct myTraits: public cds::container::tsigas_queue::traits {
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::container::TsigasCycleQueue< Foo, myTraits > myQueue;
 
-        Available \p Options:
-        - opt::buffer - buffer to store items. Mandatory option, see option description for full list of possible types.
-        - opt::allocator - allocator (like \p std::allocator). Default is \ref CDS_DEFAULT_ALLOCATOR
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::alignment - the alignment for internal queue data. Default is opt::cache_line_alignment
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
+            // Equivalent make_traits example:
+            typedef cds::container::TsigasCycleQueue< cds::gc::HP, Foo, 
+                typename cds::container::tsigas_queue::make_traits< 
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
 
         \par Examples:
         \code
@@ -84,51 +151,54 @@ namespace cds { namespace container {
         };
 
         // Queue of Foo, capacity is 1024, statically allocated buffer:
-        typedef cds::intrusive::TsigasCycleQueue<
-            Foo
-            ,cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > >
+        typedef cds::container::TsigasCycleQueue< Foo, 
+            typename cds::container::tsigas_queue::make_traits<
+                cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > >
+            >::type
         > static_queue;
         static_queue    stQueue;
 
         // Queue of Foo, capacity is 1024, dynamically allocated buffer:
-        typedef cds::intrusive::TsigasCycleQueue<
-            Foo
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer< Foo > >
+        typedef cds::container::TsigasCycleQueue< Foo
+            typename cds::container::tsigas_queue::make_traits<
+                cds::opt::buffer< cds::opt::v::dynamic_buffer< Foo > >
+            >::type
         > dynamic_queue;
         dynamic_queue    dynQueue( 1024 );
         \endcode
     */
-    template <typename T, typename... Options>
+    template <typename T, typename Traits = tsigas_queue::traits>
     class TsigasCycleQueue:
 #ifdef CDS_DOXYGEN_INVOKED
-        intrusive::TsigasCycleQueue< T, Options... >
+        intrusive::TsigasCycleQueue< T, Traits >
 #else
-        details::make_tsigas_cycle_queue< T, Options... >::type
+        details::make_tsigas_cycle_queue< T, Traits >::type
 #endif
     {
         //@cond
-        typedef details::make_tsigas_cycle_queue< T, Options... > options;
-        typedef typename options::type base_class;
+        typedef details::make_tsigas_cycle_queue< T, Traits > maker;
+        typedef typename maker::type base_class;
         //@endcond
     public:
-        typedef T value_type ; ///< Value type stored in the stack
+        typedef T value_type ;  ///< Value type stored in the stack
+        typedef Traits traits;  ///< Queue traits
 
-        typedef typename base_class::back_off           back_off        ; ///< Back-off strategy used
-        typedef typename options::allocator_type        allocator_type  ; ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename options::options::item_counter item_counter    ; ///< Item counting policy used
-        typedef typename base_class::memory_model       memory_model    ; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::back_off       back_off;       ///< Back-off strategy used
+        typedef typename maker::allocator_type  allocator_type; ///< Allocator type used for allocate/deallocate the items
+        typedef typename traits::item_counter   item_counter;   ///< Item counting policy used
+        typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
 
         /// Rebind template arguments
-        template <typename T2, typename... Options2>
+        template <typename T2, typename Traits2>
         struct rebind {
-            typedef TsigasCycleQueue< T2, Options2...> other   ;   ///< Rebinding result
+            typedef TsigasCycleQueue< T2, Traits2> other   ;   ///< Rebinding result
         };
 
     protected:
         //@cond
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;   // deallocate node
-        typedef typename options::node_disposer     node_disposer;
+        typedef typename maker::cxx_allocator     cxx_allocator;
+        typedef typename maker::node_deallocator  node_deallocator;   // deallocate node
+        typedef typename maker::node_disposer     node_disposer;
         //@endcond
 
     protected:
@@ -157,40 +227,26 @@ namespace cds { namespace container {
                 free_node( pNode );
             }
         };
-        typedef std::unique_ptr< value_type, node_disposer2 >     scoped_node_ptr;
+        typedef std::unique_ptr< value_type, node_disposer2 > scoped_node_ptr;
         //@endcond
 
     public:
         /// Initialize empty queue of capacity \p nCapacity
         /**
-            For cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            If internal buffer type is \p cds::opt::v::static_buffer, the \p nCapacity parameter is ignored.
 
-            Note that the real capacity of queue is \p nCapacity - 2.
+            Note, the real capacity of queue is \p nCapacity - 2.
         */
         TsigasCycleQueue( size_t nCapacity = 0 )
             : base_class( nCapacity )
         {}
 
-        /// Returns queue's item count (see \ref intrusive::TsigasCycleQueue::size for explanation)
-        size_t size() const
-        {
-            return base_class::size();
-        }
-
-        /// Returns capacity of cyclic buffer
-        /**
-            Warning: real capacity of queue is two less than returned value of this function.
-        */
-        size_t capacity() const
-        {
-            return base_class::capacity();
-        }
-
         /// Enqueues \p val value into the queue.
         /**
             The function makes queue node in dynamic memory calling copy constructor for \p val
-            and then it calls intrusive::TsigasCycleQueue::enqueue.
-            Returns \p true if success, \p false otherwise.
+            and then it calls \p intrusive::TsigasCycleQueue::enqueue.
+
+            Returns \p true if success, \p false if the queue is full.
         */
         bool enqueue( value_type const& val )
         {
@@ -202,29 +258,21 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Enqueues \p data to queue using copy functor
+        /// Enqueues data to the queue using a functor
         /**
-            \p Func is a functor called to copy value \p data of type \p Type
-            which may be differ from type \p T stored in the queue.
-            The functor's interface is:
+            \p Func is a functor called to create node.
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type :
             \code
-            struct myFunctor {
-                void operator()(T& dest, SOURCE const& data)
-                {
-                    // // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
+            cds::container::TsigasCysleQueue< Foo > myQueue;
+            Bar bar;
+            myQueue.enqueue_with( [&bar]( Foo& dest ) { dest = bar; } );
             \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
-
-            <b>Requirements</b> The functor \p Func should not throw any exception.
         */
-        template <typename Type, typename Func>
-        bool enqueue( const Type& data, Func f  )
+        template <typename Func>
+        bool enqueue_with( Func f )
         {
-            scoped_node_ptr p( alloc_node());
-            f( *p, data );
+            scoped_node_ptr p( alloc_node() );
+            f( *p );
             if ( base_class::enqueue( *p )) {
                 p.release();
                 return true;
@@ -244,31 +292,38 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Dequeues a value using copy functor
-        /**
-            \p Func is a functor called to copy dequeued value to \p dest of type \p Type
-            which may be differ from type \p T stored in the queue.
-            The functor's interface is:
-            \code
-            struct myFunctor {
-                void operator()(Type& dest, T const& data)
-                {
-                    // // Code to copy \p data to \p dest
-                    dest = data;
-                }
-            };
-            \endcode
-            You may use \p boost:ref construction to pass functor \p f by reference.
+        /// Synonym for template version of \p enqueue() function
+        bool push( value_type const& data )
+        {
+            return enqueue( data );
+        }
 
-            <b>Requirements</b> The functor \p Func should not throw any exception.
+        /// Synonym for \p enqueue_with() function
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with( f );
+        }
+
+
+        /// Dequeues a value using a functor
+        /**
+            \p Func is a functor called to copy dequeued value.
+            The functor takes one argument - a reference to removed node:
+            \code
+            cds:container::TsigasCycleQueue< Foo > myQueue;
+            Bar bar;
+            myQueue.dequeue_with( [&bar]( Foo& src ) { bar = std::move( src );});
+            \endcode
+            The functor is called only if the queue is not empty.
         */
-        template <typename Type, typename Func>
-        bool dequeue( Type& dest, Func f )
+        template <typename Func>
+        bool dequeue_with( Func f )
         {
             value_type * p = base_class::dequeue();
             if ( p ) {
-                f( dest, *p );
-                node_disposer()( p );
+                f( *p );
+                free_node( p );
                 return true;
             }
             return false;
@@ -282,34 +337,20 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            typedef cds::details::trivial_assign<value_type, value_type> functor;
-            return dequeue( dest, functor() );
+            return dequeue_with( [&dest]( value_type& src ) { dest = src; } );
         }
 
-        /// Synonym for \ref enqueue function
-        bool push( const value_type& val )
-        {
-            return enqueue( val );
-        }
-
-        /// Synonym for template version of \ref enqueue function
-        template <typename Type, typename Func>
-        bool push( const Type& data, Func f  )
-        {
-            return enqueue( data, f );
-        }
-
-        /// Synonym for \ref dequeue function
+        /// Synonym for \p dequeue() function
         bool pop( value_type& dest )
         {
             return dequeue( dest );
         }
 
-        /// Synonym for template version of \ref dequeue function
-        template <typename Type, typename Func>
-        bool pop( Type& dest, Func f )
+        /// Synonym for \p dequeue_with() function
+        template <typename Func>
+        bool pop_with( Func f )
         {
-            return dequeue( dest, f );
+            return dequeue_with( f );
         }
 
         /// Checks if the queue is empty
@@ -320,11 +361,25 @@ namespace cds { namespace container {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns \p nullptr.
+            The function repeatedly calls \p dequeue() until it returns \p nullptr.
         */
         void clear()
         {
             base_class::clear();
+        }
+
+        /// Returns queue's item count
+        /** \copydetails cds::intrusive::TsigasCycleQueue::size()
+        */
+        size_t size() const
+        {
+            return base_class::size();
+        }
+
+        /// Returns capacity of cyclic buffer
+        size_t capacity() const
+        {
+            return base_class::capacity();
         }
     };
 

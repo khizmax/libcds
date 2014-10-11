@@ -134,6 +134,7 @@ CDS_TESTHDR_QUEUE := \
     tests/test-hdr/queue/hdr_rwqueue.cpp \
     tests/test-hdr/queue/hdr_segmented_queue_hp.cpp \
     tests/test-hdr/queue/hdr_segmented_queue_dhp.cpp \
+    tests/test-hdr/queue/hdr_tsigas_cycle_queue.cpp \
     tests/test-hdr/queue/hdr_vyukov_mpmc_cyclic.cpp
 
 CDS_TESTHDR_SET := \

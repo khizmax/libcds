@@ -17,32 +17,33 @@ namespace queue {
             {}
         };
 
-        typedef ci::TsigasCycleQueue<
-            item
-            ,co::buffer< co::v::static_buffer< int, 1024 > >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::memory_model< co::v::sequential_consistent >
-        > TsigasCycleQueue_stat;
+        struct traits_TsigasCycleQueue_static : public cds::intrusive::tsigas_queue::traits
+        {
+            typedef co::v::static_buffer< int, 1024 > buffer;
+            typedef IntrusiveQueueHeaderTest::faked_disposer disposer;
+            typedef co::v::sequential_consistent memory_model;
+        };
+        typedef ci::TsigasCycleQueue< item, traits_TsigasCycleQueue_static > TsigasCycleQueue_static;
 
-        typedef ci::TsigasCycleQueue<
-            item
-            ,co::buffer< co::v::static_buffer< int, 1024 > >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::item_counter< cds::atomicity::item_counter >
-            ,co::memory_model< co::v::relaxed_ordering >
-        > TsigasCycleQueue_stat_ic;
+        struct traits_traits_TsigasCycleQueue_static_ic : public traits_TsigasCycleQueue_static
+        {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef ci::TsigasCycleQueue< item, traits_traits_TsigasCycleQueue_static_ic > TsigasCycleQueue_static_ic;
 
         class TsigasCycleQueue_dyn
-            : public ci::TsigasCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+            : public ci::TsigasCycleQueue< item,
+                typename ci::tsigas_queue::make_traits<
+                    co::buffer< co::v::dynamic_buffer< int > >
+                    ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                >::type
             >
         {
-            typedef ci::TsigasCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+            typedef ci::TsigasCycleQueue< item,
+                typename ci::tsigas_queue::make_traits<
+                   co::buffer< co::v::dynamic_buffer< int > >
+                    , ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                >::type
             > base_class;
         public:
             TsigasCycleQueue_dyn()
@@ -51,18 +52,20 @@ namespace queue {
         };
 
         class TsigasCycleQueue_dyn_ic
-            : public ci::TsigasCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-                ,co::item_counter< cds::atomicity::item_counter >
+            : public ci::TsigasCycleQueue< item,
+                typename ci::tsigas_queue::make_traits<
+                    co::buffer< co::v::dynamic_buffer< int > >
+                    ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                    ,co::item_counter< cds::atomicity::item_counter >
+                >::type
             >
         {
-            typedef ci::TsigasCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-                ,co::item_counter< cds::atomicity::item_counter >
+            typedef ci::TsigasCycleQueue< item,
+                typename ci::tsigas_queue::make_traits<
+                    co::buffer< co::v::dynamic_buffer< int > >
+                    , ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                    , co::item_counter< cds::atomicity::item_counter >
+                >::type
             > base_class;
         public:
             TsigasCycleQueue_dyn_ic()
@@ -71,8 +74,8 @@ namespace queue {
         };
     }
 
-    TEST(TsigasCycleQueue_stat)
-    TEST(TsigasCycleQueue_stat_ic)
+    TEST(TsigasCycleQueue_static)
+    TEST(TsigasCycleQueue_static_ic)
     TEST(TsigasCycleQueue_dyn)
     TEST(TsigasCycleQueue_dyn_ic)
 

@@ -216,12 +216,16 @@ namespace queue {
 
         // TsigasCycleQueue
         class TsigasCycleQueue_dyn
-            : public cds::intrusive::TsigasCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+            : public cds::intrusive::TsigasCycleQueue< T, 
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                >::type
             >
         {
-            typedef cds::intrusive::TsigasCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+            typedef cds::intrusive::TsigasCycleQueue< T,
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                >::type
             > base_class;
         public:
             TsigasCycleQueue_dyn()
@@ -239,14 +243,18 @@ namespace queue {
         };
 
         class TsigasCycleQueue_dyn_ic
-            : public cds::intrusive::TsigasCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            : public cds::intrusive::TsigasCycleQueue< T,
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    ,cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
             >
         {
-            typedef cds::intrusive::TsigasCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            typedef cds::intrusive::TsigasCycleQueue< T,
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    ,cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
             > base_class;
         public:
             TsigasCycleQueue_dyn_ic()
@@ -264,12 +272,16 @@ namespace queue {
 
         // VyukovMPMCCycleQueue
         class VyukovMPMCCycleQueue_dyn
-            : public cds::intrusive::VyukovMPMCCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+            : public cds::intrusive::VyukovMPMCCycleQueue< T,
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                >::type
             >
         {
-            typedef cds::intrusive::VyukovMPMCCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+            typedef cds::intrusive::VyukovMPMCCycleQueue< T,
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                >::type
             > base_class;
         public:
             VyukovMPMCCycleQueue_dyn()
@@ -286,14 +298,18 @@ namespace queue {
         };
 
         class VyukovMPMCCycleQueue_dyn_ic
-            : public cds::intrusive::VyukovMPMCCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            : public cds::intrusive::VyukovMPMCCycleQueue< T,
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    ,cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
             >
         {
-            typedef cds::intrusive::VyukovMPMCCycleQueue< T
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            typedef cds::intrusive::VyukovMPMCCycleQueue< T,
+                typename cds::intrusive::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    ,cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
             > base_class;
         public:
             VyukovMPMCCycleQueue_dyn_ic()

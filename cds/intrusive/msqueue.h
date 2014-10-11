@@ -133,7 +133,7 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// MSQueue default type traits
+        /// MSQueue default traits
         struct traits
         {
             /// Back-off strategy
@@ -173,19 +173,19 @@ namespace cds { namespace intrusive {
         /**
             Supported \p Options are:
 
-            - opt::hook - hook used. Possible hooks are: \p msqueue::base_hook, \p msqueue::member_hook, \p msqueue::traits_hook.
+            - \p opt::hook - hook used. Possible hooks are: \p msqueue::base_hook, \p msqueue::member_hook, \p msqueue::traits_hook.
                 If the option is not specified, \p %msqueue::base_hook<> is used.
-            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
-            - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+            - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
                 when dequeuing.
-            - opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
-            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+            - \p opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
-            - opt::stat - the type to gather internal statistics.
+            - \p opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p msqueue::stat, \p msqueue::empty_stat, user-provided class that supports \p %msqueue::stat interface.
                 Default is \p %msqueue::empty_stat (internal statistics disabled).
-            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
-            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
             Example: declare \p %MSQueue with item counting and internal statistics

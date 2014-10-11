@@ -199,6 +199,53 @@ namespace queue {
             }
         }
 
+        template <class Queue>
+        void test_bounded_no_ic()
+        {
+            Queue   q;
+            test_with( q );
+            test_emplace( q );
+
+            CPPUNIT_ASSERT( q.empty() );
+            size_t nCapacity = q.capacity();
+            for ( size_t i = 0; i < nCapacity; ++i ) {
+                CPPUNIT_CHECK_EX( q.push( static_cast<int>(i) ), "capacity=" << nCapacity << ", i=" << i );
+            }
+            // The queue is full
+            CPPUNIT_CHECK( !q.empty() );
+            CPPUNIT_ASSERT( !q.push_with( [nCapacity]( int& itm ) { itm = nCapacity; } ) );
+            int n = -1;
+            CPPUNIT_CHECK( q.pop(n) );
+            CPPUNIT_CHECK( n == 0 );
+            CPPUNIT_ASSERT( q.push( nCapacity ) );
+            CPPUNIT_ASSERT( !q.push( nCapacity ) );
+        }
+
+        template <class Queue>
+        void test_bounded_ic()
+        {
+            Queue   q;
+            test_ic_with( q );
+            test_emplace_ic( q );
+
+            CPPUNIT_ASSERT( q.empty() );
+            size_t nCapacity = q.capacity();
+            for ( size_t i = 0; i < nCapacity; ++i ) {
+                CPPUNIT_CHECK_EX( q.push( static_cast<int>(i) ), "capacity=" << nCapacity << ", i=" << i );
+            }
+            // The queue is full
+            CPPUNIT_CHECK( !q.empty() );
+            CPPUNIT_CHECK( q.size() == nCapacity );
+            CPPUNIT_ASSERT( !q.push_with( [nCapacity]( int& itm ) { itm = nCapacity; } ) );
+            int n = -1;
+            CPPUNIT_CHECK( q.pop( n ) );
+            CPPUNIT_CHECK( n == 0 );
+            CPPUNIT_ASSERT( q.push( nCapacity ) );
+            CPPUNIT_CHECK( q.size() == nCapacity );
+            CPPUNIT_ASSERT( !q.push( nCapacity ) );
+            CPPUNIT_CHECK( q.size() == nCapacity );
+        }
+
     public:
         void MSQueue_HP();
         void MSQueue_HP_relax();
@@ -293,20 +340,15 @@ namespace queue {
         void RWQueue_ic();
         void RWQueue_ic_mutex();
 
-        /*
-        void FCQueue_deque();
-        void FCQueue_deque_elimination();
-        void FCQueue_deque_mutex();
-        void FCQueue_deque_stat();
-        void FCQueue_list();
-        void FCQueue_list_elimination();
-        void FCQueue_list_mutex();
-        void FCQueue_list_stat();
+        void TsigasCycleQueue_static();
+        void TsigasCycleQueue_static_ic();
+        void TsigasCycleQueue_dyn();
+        void TsigasCycleQueue_dyn_ic();
 
+        /*
         void Vyukov_MPMCCyclicQueue();
         void Vyukov_MPMCCyclicQueue_Counted();
-
-*/
+        */
 
         CPPUNIT_TEST_SUITE( HdrTestQueue )
             CPPUNIT_TEST(MSQueue_HP);
@@ -396,16 +438,13 @@ namespace queue {
             CPPUNIT_TEST(BasketQueue_DHP_Counted_seqcst);
             CPPUNIT_TEST(BasketQueue_DHP_Counted_relax_align);
             CPPUNIT_TEST(BasketQueue_DHP_Counted_seqcst_align);
-/*
-            CPPUNIT_TEST(FCQueue_deque)
-            CPPUNIT_TEST(FCQueue_deque_elimination)
-            CPPUNIT_TEST(FCQueue_deque_mutex)
-            CPPUNIT_TEST(FCQueue_deque_stat)
-            CPPUNIT_TEST(FCQueue_list)
-            CPPUNIT_TEST(FCQueue_list_elimination)
-            CPPUNIT_TEST(FCQueue_list_mutex)
-            CPPUNIT_TEST(FCQueue_list_stat)
 
+            CPPUNIT_TEST( TsigasCycleQueue_static )
+            CPPUNIT_TEST( TsigasCycleQueue_static_ic )
+            CPPUNIT_TEST( TsigasCycleQueue_dyn )
+            CPPUNIT_TEST( TsigasCycleQueue_dyn_ic )
+
+/*
             CPPUNIT_TEST(Vyukov_MPMCCyclicQueue);
             CPPUNIT_TEST(Vyukov_MPMCCyclicQueue_Counted);
 */

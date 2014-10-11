@@ -182,15 +182,18 @@ namespace queue {
 
 
         // TsigasCycleQueue
+
         class TsigasCycleQueue_dyn
-            : public cds::container::TsigasCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+            : public cds::container::TsigasCycleQueue< Value,
+                typename cds::container::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                >::type
             >
         {
-            typedef cds::container::TsigasCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+            typedef cds::container::TsigasCycleQueue< Value,
+                typename cds::container::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                >::type
             > base_class;
         public:
             TsigasCycleQueue_dyn()
@@ -208,16 +211,18 @@ namespace queue {
         };
 
         class TsigasCycleQueue_dyn_michaelAlloc
-            : public cds::container::TsigasCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::allocator< memory::MichaelAllocator<int> >
+            : public cds::container::TsigasCycleQueue< Value,
+                typename cds::container::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    ,cds::opt::allocator< memory::MichaelAllocator<int> >
+                >::type
             >
         {
-            typedef cds::container::TsigasCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::allocator< memory::MichaelAllocator<int> >
+            typedef cds::container::TsigasCycleQueue< Value,
+                typename cds::container::tsigas_queue::make_traits<
+                   cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    , cds::opt::allocator< memory::MichaelAllocator<int> >
+                >::type
             > base_class;
         public:
             TsigasCycleQueue_dyn_michaelAlloc()
@@ -235,16 +240,18 @@ namespace queue {
         };
 
         class TsigasCycleQueue_dyn_ic
-            : public cds::container::TsigasCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            : public cds::container::TsigasCycleQueue< Value,
+                typename cds::container::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    ,cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
             >
         {
-            typedef cds::container::TsigasCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
+            typedef cds::container::TsigasCycleQueue< Value,
+                typename cds::container::tsigas_queue::make_traits<
+                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    ,cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
             > base_class;
         public:
             TsigasCycleQueue_dyn_ic()
