@@ -38,10 +38,7 @@ namespace cds { namespace urcu {
         - \p Backoff - back-off schema, default is cds::backoff::Default
     */
     template <
-        class Buffer = cds::container::VyukovMPMCCycleQueue<
-            epoch_retired_ptr
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer< epoch_retired_ptr > >
-        >
+        class Buffer = cds::container::VyukovMPMCCycleQueue< epoch_retired_ptr >
         ,class Lock = std::mutex
         ,class DisposerThread = dispose_thread<Buffer>
         ,class Backoff = cds::backoff::Default

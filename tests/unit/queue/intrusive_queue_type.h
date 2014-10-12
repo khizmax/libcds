@@ -271,18 +271,14 @@ namespace queue {
         };
 
         // VyukovMPMCCycleQueue
-        class VyukovMPMCCycleQueue_dyn
-            : public cds::intrusive::VyukovMPMCCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                >::type
-            >
+        struct traits_VyukovMPMCCycleQueue_dyn : public cds::intrusive::vyukov_queue::traits
         {
-            typedef cds::intrusive::VyukovMPMCCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                >::type
-            > base_class;
+            typedef cds::opt::v::dynamic_buffer< int > buffer;
+        };
+        class VyukovMPMCCycleQueue_dyn
+            : public cds::intrusive::VyukovMPMCCycleQueue< T, traits_VyukovMPMCCycleQueue_dyn >
+        {
+            typedef cds::intrusive::VyukovMPMCCycleQueue< T, traits_VyukovMPMCCycleQueue_dyn > base_class;
         public:
             VyukovMPMCCycleQueue_dyn()
                 : base_class( 1024 * 64 )
@@ -297,20 +293,14 @@ namespace queue {
             }
         };
 
-        class VyukovMPMCCycleQueue_dyn_ic
-            : public cds::intrusive::VyukovMPMCCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                    ,cds::opt::item_counter< cds::atomicity::item_counter >
-                >::type
-            >
+        struct traits_VyukovMPMCCycleQueue_dyn_ic : public traits_VyukovMPMCCycleQueue_dyn
         {
-            typedef cds::intrusive::VyukovMPMCCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                    ,cds::opt::item_counter< cds::atomicity::item_counter >
-                >::type
-            > base_class;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        class VyukovMPMCCycleQueue_dyn_ic
+            : public cds::intrusive::VyukovMPMCCycleQueue< T, traits_VyukovMPMCCycleQueue_dyn_ic >
+        {
+            typedef cds::intrusive::VyukovMPMCCycleQueue< T, traits_VyukovMPMCCycleQueue_dyn_ic > base_class;
         public:
             VyukovMPMCCycleQueue_dyn_ic()
                 : base_class( 1024 * 64 )

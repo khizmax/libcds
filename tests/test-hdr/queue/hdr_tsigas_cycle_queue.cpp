@@ -53,7 +53,7 @@ namespace queue {
     {
         class queue_type
             : public cds::container::TsigasCycleQueue< int,
-            typename cds::container::tsigas_queue::make_traits<
+                typename cds::container::tsigas_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
                     , cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type

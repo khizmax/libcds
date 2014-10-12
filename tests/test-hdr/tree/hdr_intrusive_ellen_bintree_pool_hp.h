@@ -18,13 +18,12 @@ namespace tree {
         typedef node_types::internal_node_type                              internal_node;
         typedef node_types::update_desc_type                                update_desc;
 
-
         // Internal node pool based on Vyukov's queue
-        typedef cds::memory::lazy_vyukov_queue_pool<
-            internal_node,
-            cds::opt::buffer< cds::opt::v::dynamic_buffer< cds::any_type > >
-        > internal_node_pool_type;
-
+        struct internal_node_pool_traits : public cds::memory::vyukov_queue_pool_traits
+        {
+            typedef cds::opt::v::dynamic_buffer< cds::any_type > buffer;
+        };
+        typedef cds::memory::lazy_vyukov_queue_pool< internal_node, internal_node_pool_traits > internal_node_pool_type;
         extern internal_node_pool_type s_InternalNodePool;
 
         struct internal_node_pool_accessor {
@@ -37,11 +36,11 @@ namespace tree {
         };
 
         // Update descriptor pool based on Vyukov's queue
-        typedef cds::memory::vyukov_queue_pool<
-            update_desc,
-            cds::opt::buffer< cds::opt::v::static_buffer< cds::any_type, 16 > >
-        > update_desc_pool_type;
-
+        struct update_desc_pool_traits : public cds::memory::vyukov_queue_pool_traits
+        {
+            typedef cds::opt::v::static_buffer< cds::any_type, 16 > buffer;
+        };
+        typedef cds::memory::vyukov_queue_pool< update_desc, update_desc_pool_traits > update_desc_pool_type;
         extern update_desc_pool_type s_UpdateDescPool;
 
         struct update_desc_pool_accessor {

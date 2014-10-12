@@ -268,16 +268,14 @@ namespace queue {
         };
 
         // VyukovMPMCCycleQueue
-        class VyukovMPMCCycleQueue_dyn
-            : public cds::container::VyukovMPMCCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-            >
+        struct traits_VyukovMPMCCycleQueue_dyn : public cds::container::vyukov_queue::traits
         {
-            typedef cds::container::VyukovMPMCCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-            > base_class;
+            typedef cds::opt::v::dynamic_buffer< int > buffer;
+        };
+        class VyukovMPMCCycleQueue_dyn
+            : public cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn >
+        {
+            typedef cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn > base_class;
         public:
             VyukovMPMCCycleQueue_dyn()
                 : base_class( 1024 * 64 )
@@ -292,16 +290,14 @@ namespace queue {
             }
         };
 
-        class VyukovMPMCCycleQueue_dyn_michaelAlloc
-            : public cds::container::VyukovMPMCCycleQueue<
-            Value
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int, memory::MichaelAllocator<int> > >
-            >
+        struct traits_VyukovMPMCCycleQueue_dyn_michaelAlloc : public cds::container::vyukov_queue::traits
         {
-            typedef cds::container::VyukovMPMCCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int, memory::MichaelAllocator<int> > >
-            > base_class;
+            typedef cds::opt::v::dynamic_buffer< int, memory::MichaelAllocator<int> > buffer;
+        };
+        class VyukovMPMCCycleQueue_dyn_michaelAlloc
+            : public cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn_michaelAlloc >
+        {
+            typedef cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn_michaelAlloc > base_class;
         public:
             VyukovMPMCCycleQueue_dyn_michaelAlloc()
                 : base_class( 1024 * 64 )
@@ -316,18 +312,14 @@ namespace queue {
             }
         };
 
-        class VyukovMPMCCycleQueue_dyn_ic
-            : public cds::container::VyukovMPMCCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
-            >
+        struct traits_VyukovMPMCCycleQueue_dyn_ic : public traits_VyukovMPMCCycleQueue_dyn
         {
-            typedef cds::container::VyukovMPMCCycleQueue<
-                Value
-                ,cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
-            > base_class;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        class VyukovMPMCCycleQueue_dyn_ic
+            : public cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn_ic >
+        {
+            typedef cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn_ic > base_class;
         public:
             VyukovMPMCCycleQueue_dyn_ic()
                 : base_class( 1024 * 64 )

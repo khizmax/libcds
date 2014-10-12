@@ -21,10 +21,7 @@ namespace cds { namespace urcu {
     */
     template <
 #ifdef CDS_DOXGEN_INVOKED
-        class Buffer = cds::container::VyukovMPMCCycleQueue<
-            retired_ptr
-            ,cds::opt::buffer< cds::opt::v::dynamic_buffer< retired_ptr > >
-        >
+        class Buffer = cds::container::VyukovMPMCCycleQueue< retired_ptr >
         ,class Lock = std::mutex
         ,class Backoff = cds::backoff::Default
 #else

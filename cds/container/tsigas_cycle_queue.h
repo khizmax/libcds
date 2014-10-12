@@ -19,10 +19,10 @@ namespace cds { namespace container {
         {
             /// Buffer type for cyclic array
             /*
-            The type of element for the buffer is not important: the queue rebinds
-            buffer for required type via \p rebind metafunction.
+                The type of element for the buffer is not important: the queue rebinds
+                buffer for required type via \p rebind metafunction.
 
-            For \p TsigasCycleQueue queue the buffer size should have power-of-2 size.
+                For \p TsigasCycleQueue queue the buffer size should have power-of-2 size.
             */
             typedef cds::opt::v::dynamic_buffer< void * > buffer;
 
@@ -37,8 +37,8 @@ namespace cds { namespace container {
 
             /// C++ memory ordering model
             /**
-            Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-            or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
@@ -54,8 +54,6 @@ namespace cds { namespace container {
                 element in the buffer is not important: it will be changed via \p rebind metafunction.
             - \p opt::allocator - allocator (like \p std::allocator) used for allocating queue items. Default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
-            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
-                when dequeuing.
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
             - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
@@ -304,7 +302,6 @@ namespace cds { namespace container {
         {
             return enqueue_with( f );
         }
-
 
         /// Dequeues a value using a functor
         /**

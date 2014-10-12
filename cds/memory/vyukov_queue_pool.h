@@ -8,12 +8,20 @@
 
 namespace cds { namespace memory {
 
+    /// \p vyukov_queue_pool traits
+    /** @ingroup cds_memory_pool
+    */
+    struct vyukov_queue_pool_traits : public cds::intrusive::vyukov_queue::traits
+    {
+        /// Allocator type
+        typedef CDS_DEFAULT_ALLOCATOR allocator;
+    };
     /// Free-list based on bounded lock-free queue cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
-        - \p Options - the options of cds::intrusive::VyukovMPMCCycleQueue class plus
-            cds::opt::allocator option.
+        - \p Traits - traits for cds::intrusive::VyukovMPMCCycleQueue class plus
+            cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
         \b Internals
 
@@ -37,7 +45,11 @@ namespace cds { namespace memory {
         #include <cds/memory/pool_allocator.h>
 
         // Pool of Foo object of size 1024.
-        typedef cds::memory::vyukov_queue_pool< Foo, cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > > pool_type;
+        struct pool_traits: public cds::memory::vyukov_queue_pool_traits
+        {
+            typedef cds::opt::v::static_buffer< Foo, 1024 > buffer;
+        };
+        typedef cds::memory::vyukov_queue_pool< Foo, pool_traits > pool_type;
         static pool_type thePool;
 
         struct pool_accessor {
@@ -68,24 +80,16 @@ namespace cds { namespace memory {
         pool_allocator().deallocate( p , 1 );
         \endcode
     */
-    template <typename T, typename... Options>
+    template <typename T, typename Traits = vyukov_queue_pool_traits >
     class vyukov_queue_pool
     {
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Options... > queue_type  ;   ///< Queue type
-
-    protected:
-        //@cond
-        struct default_options: public queue_type::options
-        {
-            typedef CDS_DEFAULT_ALLOCATOR   allocator;
-        };
-        typedef typename opt::make_options< default_options, Options... >::type   options;
-        //@endcond
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Traits > queue_type  ;   ///< Queue type
 
     public:
         typedef T  value_type ; ///< Value type
-        typedef typename options::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef Traits traits;  ///< Traits type
+        typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
 
     protected:
         //@cond
@@ -173,12 +177,13 @@ namespace cds { namespace memory {
         }
     };
 
+
     /// Lazy free-list based on bounded lock-free queue cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
-        - \p Options - the options of cds::intrusive::VyukovMPMCCycleQueue class plus
-            cds::opt::allocator option.
+        - \p Traits - traits for cds::intrusive::VyukovMPMCCycleQueue class plus
+            cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
         \b Internals
 
@@ -201,7 +206,7 @@ namespace cds { namespace memory {
         #include <cds/memory/pool_allocator.h>
 
         // Pool of Foo object of size 1024.
-        typedef cds::memory::lazy_vyukov_queue_pool< Foo, cds::opt::buffer< cds::opt::v::dynamic_buffer< Foo > > pool_type;
+        typedef cds::memory::lazy_vyukov_queue_pool< Foo > pool_type;
         static pool_type thePool( 1024 );
 
         struct pool_accessor {
@@ -233,24 +238,16 @@ namespace cds { namespace memory {
         \endcode
 
     */
-    template <typename T, typename... Options>
+    template <typename T, typename Traits = vyukov_queue_pool_traits>
     class lazy_vyukov_queue_pool
     {
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Options... > queue_type  ;   ///< Queue type
-
-    protected:
-        //@cond
-        struct default_options: public queue_type::options
-        {
-            typedef CDS_DEFAULT_ALLOCATOR   allocator;
-        };
-        typedef typename opt::make_options< default_options, Options... >::type   options;
-        //@endcond
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Traits > queue_type  ;   ///< Queue type
 
     public:
         typedef T  value_type ; ///< Value type
-        typedef typename options::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef Traits traits;  ///< Pool traits
+        typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
 
     protected:
         //@cond
@@ -316,19 +313,19 @@ namespace cds { namespace memory {
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
-        - \p Options - the options of cds::intrusive::VyukovMPMCCycleQueue class plus
-            cds::opt::allocator option.
+        - \p Traits - traits for cds::intrusive::VyukovMPMCCycleQueue class plus
+            cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
         \b Internals
 
         At construction time, the free-list allocates the array of N items
-        and stores them into queue, where N is the queue capacity.
+        and stores them into the queue, where N is the queue capacity.
         When allocating the free-list tries to pop an object from
         internal queue i.e. from preallocated pool. If success the popped object is returned.
         Otherwise a \p std::bad_alloc exception is raised.
         So, the pool can contain up to \p N items.
-        When deallocating, the object is pushed into queue.
-        In debug mode the \ref deallocate member function asserts
+        When deallocating, the object is pushed into the queue.
+        In debug mode \p deallocate() member function asserts
         that the pointer is from preallocated pool.
 
         \b Usage
@@ -341,7 +338,11 @@ namespace cds { namespace memory {
         #include <cds/memory/pool_allocator.h>
 
         // Pool of Foo object of size 1024.
-        typedef cds::memory::bounded_vyukov_queue_pool< Foo, cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > > pool_type;
+        struct pool_traits: public cds::memory::vyukov_queue_pool_traits
+        {
+            typedef cds::opt::v::static_buffer< Foo, 1024 > buffer;
+        };
+        typedef cds::memory::bounded_vyukov_queue_pool< Foo, pool_traits > pool_type;
         static pool_type thePool;
 
         struct pool_accessor {
@@ -372,24 +373,16 @@ namespace cds { namespace memory {
         pool_allocator().deallocate( p , 1 );
         \endcode
     */
-    template <typename T, typename... Options>
+    template <typename T, typename Traits = vyukov_queue_pool_traits >
     class bounded_vyukov_queue_pool
     {
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Options... > queue_type  ;   ///< Queue type
-
-    protected:
-        //@cond
-        struct default_options: public queue_type::options
-        {
-            typedef CDS_DEFAULT_ALLOCATOR   allocator;
-        };
-        typedef typename opt::make_options< default_options, Options... >::type   options;
-        //@endcond
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Traits > queue_type  ;   ///< Queue type
 
     public:
-        typedef T  value_type ; ///< Value type
-        typedef typename options::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef T  value_type;  ///< Value type
+        typedef Traits traits;  ///< Pool traits
+        typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
 
     protected:
         //@cond

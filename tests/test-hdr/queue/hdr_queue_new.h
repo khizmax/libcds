@@ -345,10 +345,10 @@ namespace queue {
         void TsigasCycleQueue_dyn();
         void TsigasCycleQueue_dyn_ic();
 
-        /*
-        void Vyukov_MPMCCyclicQueue();
-        void Vyukov_MPMCCyclicQueue_Counted();
-        */
+        void VyukovMPMCCycleQueue_static();
+        void VyukovMPMCCycleQueue_static_ic();
+        void VyukovMPMCCycleQueue_dyn();
+        void VyukovMPMCCycleQueue_dyn_ic();
 
         CPPUNIT_TEST_SUITE( HdrTestQueue )
             CPPUNIT_TEST(MSQueue_HP);
@@ -444,10 +444,11 @@ namespace queue {
             CPPUNIT_TEST( TsigasCycleQueue_dyn )
             CPPUNIT_TEST( TsigasCycleQueue_dyn_ic )
 
-/*
-            CPPUNIT_TEST(Vyukov_MPMCCyclicQueue);
-            CPPUNIT_TEST(Vyukov_MPMCCyclicQueue_Counted);
-*/
+            CPPUNIT_TEST( VyukovMPMCCycleQueue_static )
+            CPPUNIT_TEST( VyukovMPMCCycleQueue_static_ic )
+            CPPUNIT_TEST( VyukovMPMCCycleQueue_dyn )
+            CPPUNIT_TEST( VyukovMPMCCycleQueue_dyn_ic )
+
             CPPUNIT_TEST( RWQueue_default)
             CPPUNIT_TEST( RWQueue_mutex )
             CPPUNIT_TEST( RWQueue_ic )

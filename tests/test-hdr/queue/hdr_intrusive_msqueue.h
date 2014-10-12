@@ -385,8 +385,8 @@ namespace queue {
         void test_TsigasCycleQueue_dyn();
         void test_TsigasCycleQueue_dyn_ic();
 
-        void test_VyukovMPMCCycleQueue_stat();
-        void test_VyukovMPMCCycleQueue_stat_ic();
+        void test_VyukovMPMCCycleQueue_static();
+        void test_VyukovMPMCCycleQueue_static_ic();
         void test_VyukovMPMCCycleQueue_dyn();
         void test_VyukovMPMCCycleQueue_dyn_ic();
 
@@ -508,8 +508,8 @@ namespace queue {
             CPPUNIT_TEST(test_TsigasCycleQueue_dyn)
             CPPUNIT_TEST(test_TsigasCycleQueue_dyn_ic)
 
-            CPPUNIT_TEST(test_VyukovMPMCCycleQueue_stat);
-            CPPUNIT_TEST(test_VyukovMPMCCycleQueue_stat_ic);
+            CPPUNIT_TEST(test_VyukovMPMCCycleQueue_static);
+            CPPUNIT_TEST(test_VyukovMPMCCycleQueue_static_ic);
             CPPUNIT_TEST(test_VyukovMPMCCycleQueue_dyn);
             CPPUNIT_TEST(test_VyukovMPMCCycleQueue_dyn_ic);
 

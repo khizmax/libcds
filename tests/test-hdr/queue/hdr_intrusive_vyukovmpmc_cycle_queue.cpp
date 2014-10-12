@@ -17,53 +17,47 @@ namespace queue {
             {}
         };
 
-        typedef ci::VyukovMPMCCycleQueue<
-            item
-            ,co::buffer< co::v::static_buffer< int, 1024 > >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::memory_model< co::v::sequential_consistent >
-        > VyukovMPMCCycleQueue_stat;
-
-        typedef ci::VyukovMPMCCycleQueue<
-            item
-            ,co::buffer< co::v::static_buffer< int, 1024 > >
-            ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            ,co::item_counter< cds::atomicity::item_counter >
-            ,co::memory_model< co::v::relaxed_ordering >
-        > VyukovMPMCCycleQueue_stat_ic;
-
-        class VyukovMPMCCycleQueue_dyn
-            : public ci::VyukovMPMCCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            >
+        struct traits_VyukovMPMCCycleQueue_static : public ci::vyukov_queue::traits
         {
-            typedef ci::VyukovMPMCCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-            > base_class;
+            typedef co::v::static_buffer< int, 1024 > buffer;
+            typedef IntrusiveQueueHeaderTest::faked_disposer disposer;
+            typedef co::v::sequential_consistent memory_model;
+        };
+        typedef ci::VyukovMPMCCycleQueue< item, traits_VyukovMPMCCycleQueue_static > VyukovMPMCCycleQueue_static;
+
+        struct traits_VyukovMPMCCycleQueue_static_ic : public traits_VyukovMPMCCycleQueue_static
+        {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef ci::VyukovMPMCCycleQueue< item, traits_VyukovMPMCCycleQueue_static_ic > VyukovMPMCCycleQueue_static_ic;
+
+        struct traits_VyukovMPMCCycleQueue_dyn :
+            public ci::vyukov_queue::make_traits <
+                co::buffer< co::v::dynamic_buffer< int > >,
+                ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+            >::type
+        {};
+        class VyukovMPMCCycleQueue_dyn
+            : public ci::VyukovMPMCCycleQueue< item, traits_VyukovMPMCCycleQueue_dyn >
+        {
+            typedef ci::VyukovMPMCCycleQueue< item, traits_VyukovMPMCCycleQueue_dyn > base_class;
+
         public:
             VyukovMPMCCycleQueue_dyn()
                 : base_class( 1024 )
             {}
         };
 
+        struct traits_VyukovMPMCCycleQueue_dyn_ic :
+            public ci::vyukov_queue::make_traits <
+                ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
+                , co::item_counter< cds::atomicity::item_counter >
+            >::type
+        {};
         class VyukovMPMCCycleQueue_dyn_ic
-            : public ci::VyukovMPMCCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >
+            : public ci::VyukovMPMCCycleQueue< item, traits_VyukovMPMCCycleQueue_dyn_ic >
         {
-            typedef ci::VyukovMPMCCycleQueue<
-                item
-                ,co::buffer< co::v::dynamic_buffer< int > >
-                ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-                ,co::item_counter< cds::atomicity::item_counter >
-            > base_class;
+            typedef ci::VyukovMPMCCycleQueue< item, traits_VyukovMPMCCycleQueue_dyn_ic > base_class;
         public:
             VyukovMPMCCycleQueue_dyn_ic()
                 : base_class( 1024 )
@@ -71,8 +65,8 @@ namespace queue {
         };
     }
 
-    TEST(VyukovMPMCCycleQueue_stat)
-    TEST(VyukovMPMCCycleQueue_stat_ic)
+    TEST(VyukovMPMCCycleQueue_static)
+    TEST(VyukovMPMCCycleQueue_static_ic)
     TEST(VyukovMPMCCycleQueue_dyn)
     TEST(VyukovMPMCCycleQueue_dyn_ic)
 

@@ -145,14 +145,14 @@ namespace michael {
             }
         };
 #endif
-
-        typedef container::VyukovMPMCCycleQueue<
-            void *,
-            opt::buffer< opt::v::static_buffer<void *, FreeListCapacity> >
+        struct free_list_traits : public cds::container::vyukov_queue::traits
+        {
+            typedef opt::v::static_buffer<void *, FreeListCapacity> buffer;
 #ifdef _DEBUG
-            , opt::value_cleaner< make_null_ptr >
+            typedef make_null_ptr value_cleaner;
 #endif
-        >   free_list;
+        };
+        typedef container::VyukovMPMCCycleQueue< void *, free_list_traits > free_list;
 
         free_list   m_FreeList;
         //@endcond
