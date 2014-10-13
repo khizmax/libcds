@@ -179,12 +179,12 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        static CDS_CONSTEXPR value_type * const free0 = nullptr;
-        static CDS_CONSTEXPR value_type * const free1 = free0 + 1;
+        static CDS_CONSTEXPR intptr_t const free0 = 0;
+        static CDS_CONSTEXPR intptr_t const free1 = 1;
 
         static bool is_free( const value_type * p ) CDS_NOEXCEPT
         {
-            return p == free0 || p == free1;
+            return p == reinterpret_cast<value_type *>(free0) || p == reinterpret_cast<value_type *>(free1);
         }
 
         size_t CDS_CONSTEXPR buffer_capacity() const CDS_NOEXCEPT
@@ -264,7 +264,7 @@ namespace cds { namespace intrusive {
                     continue;
                 }
 
-                if ( tt == free1 )
+                if ( tt == reinterpret_cast<value_type *>(free1) )
                     pNewNode = reinterpret_cast<value_type *>(reinterpret_cast<intptr_t>( pNewNode ) | 1);
                 if ( te != m_nTail.load(memory_model::memory_order_relaxed) )
                     continue;
@@ -323,7 +323,7 @@ namespace cds { namespace intrusive {
                     continue;
                 }
 
-                pNull = (reinterpret_cast<ptr_atomic_t>( tt ) & 1) ? free0 : free1;
+                pNull = reinterpret_cast<value_type *>((reinterpret_cast<ptr_atomic_t>(tt)& 1) ? free0 : free1);
 
                 if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
                     continue;
