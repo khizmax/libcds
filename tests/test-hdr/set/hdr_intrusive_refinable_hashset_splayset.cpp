@@ -3,6 +3,7 @@
 #include "set/hdr_intrusive_striped_set.h"
 #include <cds/intrusive/striped_set/boost_splay_set.h>
 #include <cds/intrusive/striped_set.h>
+#include <boost/version.hpp>
 
 namespace set {
     namespace bi = boost::intrusive;
