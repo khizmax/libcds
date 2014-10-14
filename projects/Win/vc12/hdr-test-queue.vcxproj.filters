@@ -94,10 +94,10 @@
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue.h">
       <Filter>container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue.h">
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue_new.h">
       <Filter>container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue_new.h">
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_fcqueue.h">
       <Filter>container</Filter>
     </ClInclude>
   </ItemGroup>

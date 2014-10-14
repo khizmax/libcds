@@ -11,7 +11,7 @@ namespace queue {
     //
     // Test queue operation in single thread mode
     //
-    class Queue_TestHeader: public CppUnitMini::TestCase
+    class HdrFCQueue: public CppUnitMini::TestCase
     {
     protected:
         template <class Queue>
@@ -148,7 +148,7 @@ namespace queue {
         void FCQueue_list_mutex();
         void FCQueue_list_stat();
 
-        CPPUNIT_TEST_SUITE(Queue_TestHeader)
+        CPPUNIT_TEST_SUITE(HdrFCQueue)
             CPPUNIT_TEST(FCQueue_deque)
             CPPUNIT_TEST(FCQueue_deque_elimination)
             CPPUNIT_TEST(FCQueue_deque_mutex)

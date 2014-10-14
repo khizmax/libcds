@@ -1,19 +1,19 @@
 //$$CDS-header$$
 
 #include <cds/container/fcqueue.h>
-#include "queue/hdr_queue.h"
+#include "queue/hdr_fcqueue.h"
 
 #include <list>
 
 namespace queue {
 
-    void Queue_TestHeader::FCQueue_deque()
+    void HdrFCQueue::FCQueue_deque()
     {
         typedef cds::container::FCQueue<int> queue_type;
         testFCQueue<queue_type>();
     }
 
-    void Queue_TestHeader::FCQueue_deque_elimination()
+    void HdrFCQueue::FCQueue_deque_elimination()
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::deque<int> >,
             cds::container::fcqueue::make_traits<
@@ -23,7 +23,7 @@ namespace queue {
         testFCQueue<queue_type>();
     }
 
-    void Queue_TestHeader::FCQueue_deque_mutex()
+    void HdrFCQueue::FCQueue_deque_mutex()
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::deque<int> >,
             cds::container::fcqueue::make_traits<
@@ -33,7 +33,7 @@ namespace queue {
         testFCQueue<queue_type>();
     }
 
-    void Queue_TestHeader::FCQueue_deque_stat()
+    void HdrFCQueue::FCQueue_deque_stat()
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::deque<int> >,
             cds::container::fcqueue::make_traits<
@@ -44,13 +44,13 @@ namespace queue {
     }
 
     //
-    void Queue_TestHeader::FCQueue_list()
+    void HdrFCQueue::FCQueue_list()
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::list<int> > > queue_type;
         testFCQueue<queue_type>();
     }
 
-    void Queue_TestHeader::FCQueue_list_elimination()
+    void HdrFCQueue::FCQueue_list_elimination()
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::list<int> >,
             cds::container::fcqueue::make_traits<
@@ -60,7 +60,7 @@ namespace queue {
         testFCQueue<queue_type>();
     }
 
-    void Queue_TestHeader::FCQueue_list_mutex()
+    void HdrFCQueue::FCQueue_list_mutex()
     {
         typedef cds::container::FCQueue<int, std::queue<int, std::list<int> >,
             cds::container::fcqueue::make_traits<
@@ -70,7 +70,7 @@ namespace queue {
         testFCQueue<queue_type>();
     }
 
-    void Queue_TestHeader::FCQueue_list_stat()
+    void HdrFCQueue::FCQueue_list_stat()
     {
         struct queue_traits : public cds::container::fcqueue::traits 
         {
