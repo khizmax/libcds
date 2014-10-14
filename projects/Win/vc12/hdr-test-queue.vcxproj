@@ -568,6 +568,7 @@
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_fcqueue.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

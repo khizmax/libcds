@@ -97,6 +97,9 @@
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_fcqueue.h">
       <Filter>container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue.h">
+      <Filter>container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="intrusive">
