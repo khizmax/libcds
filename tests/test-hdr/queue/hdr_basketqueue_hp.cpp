@@ -3,7 +3,7 @@
 #include <cds/gc/hp.h>
 #include <cds/container/basket_queue.h>
 
-#include "queue/hdr_queue_new.h"
+#include "queue/hdr_queue.h"
 
 namespace queue {
 

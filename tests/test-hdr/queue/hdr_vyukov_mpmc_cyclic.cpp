@@ -2,7 +2,7 @@
 
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
 
-#include "queue/hdr_queue_new.h"
+#include "queue/hdr_queue.h"
 
 namespace queue {
     namespace{

@@ -3,7 +3,7 @@
 #include <cds/container/rwqueue.h>
 #include <mutex>
 
-#include "queue/hdr_queue_new.h"
+#include "queue/hdr_queue.h"
 
 namespace queue {
     void HdrTestQueue::RWQueue_default()

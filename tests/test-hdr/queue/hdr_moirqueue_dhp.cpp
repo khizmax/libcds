@@ -2,7 +2,7 @@
 
 #include <cds/gc/dhp.h>
 #include <cds/container/moir_queue.h>
-#include "queue/hdr_queue_new.h"
+#include "queue/hdr_queue.h"
 
 namespace queue {
 

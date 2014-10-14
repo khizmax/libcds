@@ -3,7 +3,7 @@
 #include <cds/gc/dhp.h>
 #include <cds/container/msqueue.h>
 
-#include "queue/hdr_queue_new.h"
+#include "queue/hdr_queue.h"
 
 namespace queue {
 

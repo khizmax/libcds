@@ -1,6 +1,6 @@
 //$$CDS-header$$
 
-#include "hdr_queue_new.h"
+#include "hdr_queue.h"
 #include <cds/container/tsigas_cycle_queue.h>
 
 namespace queue {
