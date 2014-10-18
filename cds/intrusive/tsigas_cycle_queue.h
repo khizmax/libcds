@@ -256,7 +256,7 @@ namespace cds { namespace intrusive {
                     ate = ( temp + 1 ) & nModulo;
                     tt = m_buffer[ ate ].load(memory_model::memory_order_relaxed);
                     if ( !is_free( tt ) ) {
-                        return false    ;    // Queue is full
+                        return false;   // Queue is full
                     }
 
                     // help the dequeue to update head
@@ -329,7 +329,7 @@ namespace cds { namespace intrusive {
                     continue;
 
                 // Get the actual head, null means empty
-                if ( m_buffer[temp].compare_exchange_strong( tt, pNull, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+                if ( m_buffer[temp].compare_exchange_strong( tt, pNull, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                     if ( temp % 2 == 0 )
                         m_nHead.compare_exchange_strong( th, temp, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     --m_ItemCounter;
