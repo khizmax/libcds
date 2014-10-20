@@ -21,6 +21,7 @@ namespace queue {
     {
         struct queue_traits : public cds::container::tsigas_queue::traits
         {
+            typedef cds::opt::v::static_buffer< int, 1024 > buffer;
             typedef cds::atomicity::item_counter item_counter;
         };
         typedef cds::container::TsigasCycleQueue< int, queue_traits > queue_type;
