@@ -305,7 +305,7 @@ namespace cds { namespace intrusive {
                     if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
                         goto TryAgain;
 
-                    // two consecutive nullptr means queue empty
+                    // two consecutive nullptr means the queue is empty
                     if ( temp == m_nTail.load(memory_model::memory_order_acquire) )
                         return nullptr;
 
@@ -319,19 +319,19 @@ namespace cds { namespace intrusive {
                 // check whether the queue is empty
                 if ( temp == m_nTail.load(memory_model::memory_order_acquire) ) {
                     // help the enqueue to update end
-                    m_nTail.compare_exchange_strong( temp, (temp + 1) & nModulo, memory_model::memory_order_release, atomics::memory_order_relaxed );
+                    m_nTail.compare_exchange_weak( temp, (temp + 1) & nModulo, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     continue;
                 }
 
-                pNull = reinterpret_cast<value_type *>((reinterpret_cast<ptr_atomic_t>(tt)& 1) ? free0 : free1);
+                pNull = reinterpret_cast<value_type *>((reinterpret_cast<ptr_atomic_t>(tt) & 1) ? free0 : free1 );
 
                 if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
                     continue;
 
                 // Get the actual head, null means empty
-                if ( m_buffer[temp].compare_exchange_strong( tt, pNull, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
+                if ( m_buffer[temp].compare_exchange_weak( tt, pNull, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                     if ( temp % 2 == 0 )
-                        m_nHead.compare_exchange_strong( th, temp, memory_model::memory_order_release, atomics::memory_order_relaxed );
+                        m_nHead.compare_exchange_weak( th, temp, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     --m_ItemCounter;
                     return reinterpret_cast<value_type *>(reinterpret_cast<intptr_t>( tt ) & ~intptr_t(1));
                 }
