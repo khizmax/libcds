@@ -217,8 +217,8 @@ namespace queue {
             int n = -1;
             CPPUNIT_CHECK( q.pop(n) );
             CPPUNIT_CHECK( n == 0 );
-            CPPUNIT_ASSERT( q.push( static_cast<it>(nCapacity) ) );
-            CPPUNIT_ASSERT( !q.push( static_cast<it>(nCapacity) ) );
+            CPPUNIT_ASSERT( q.push( static_cast<int>(nCapacity) ) );
+            CPPUNIT_ASSERT( !q.push( static_cast<int>(nCapacity) ) );
         }
 
         template <class Queue>
@@ -236,13 +236,13 @@ namespace queue {
             // The queue is full
             CPPUNIT_CHECK( !q.empty() );
             CPPUNIT_CHECK( q.size() == nCapacity );
-            CPPUNIT_ASSERT( !q.push_with( [nCapacity]( int& itm ) { itm = static_cast<it>(nCapacity); } ) );
+            CPPUNIT_ASSERT( !q.push_with( [nCapacity]( int& itm ) { itm = static_cast<int>(nCapacity); } ));
             int n = -1;
             CPPUNIT_CHECK( q.pop( n ) );
             CPPUNIT_CHECK( n == 0 );
-            CPPUNIT_ASSERT( q.push( static_cast<it>(nCapacity) ) );
+            CPPUNIT_ASSERT( q.push( static_cast<int>(nCapacity) ) );
             CPPUNIT_CHECK( q.size() == nCapacity );
-            CPPUNIT_ASSERT( !q.push( static_cast<it>(nCapacity) ) );
+            CPPUNIT_ASSERT( !q.push( static_cast<int>(nCapacity) ) );
             CPPUNIT_CHECK( q.size() == nCapacity );
         }
 
