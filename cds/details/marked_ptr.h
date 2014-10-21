@@ -338,13 +338,16 @@ CDS_CXX11_ATOMIC_BEGIN_NAMESPACE
 
         atomic(const atomic&) = delete;
         atomic& operator=(const atomic&) = delete;
-        atomic& operator=(const atomic&) volatile = delete;
 
+#if !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION <= CDS_COMPILER_MSVC12)
+        // MSVC12: warning C4522: multiple assignment operators specified
+        atomic& operator=(const atomic&) volatile = delete;
         marked_ptr operator=(marked_ptr val) volatile CDS_NOEXCEPT
         {
             store( val );
             return val;
         }
+#endif
         marked_ptr operator=(marked_ptr val) CDS_NOEXCEPT
         {
             store( val );

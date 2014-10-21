@@ -6,7 +6,6 @@
 #include <cds/intrusive/details/base.h>
 #include <cds/gc/default_gc.h>
 #include <cds/cxx11_atomic.h>
-#include <cds/gc/hrc.h>
 
 namespace cds { namespace intrusive {
 
@@ -22,7 +21,7 @@ namespace cds { namespace intrusive {
             - Tag - a tag used to distinguish between different implementation
         */
         template <class GC, typename Tag = opt::none>
-        struct node: public GC::container_node
+        struct node
         {
             typedef GC              gc  ;   ///< Garbage collector
             typedef Tag             tag ;   ///< tag
@@ -43,53 +42,6 @@ namespace cds { namespace intrusive {
         };
 
         //@cond
-        // Specialization for HRC GC
-        template <typename Tag>
-        struct node< gc::HRC, Tag>: public gc::HRC::container_node
-        {
-            typedef gc::HRC     gc  ;   ///< Garbage collector
-            typedef Tag         tag ;   ///< tag
-
-            typedef gc::atomic_ref<node>    atomic_node_ptr    ;    ///< atomic pointer
-            atomic_node_ptr m_pNext ; ///< pointer to the next node in the container
-
-            node()
-                : m_pNext( nullptr )
-            {}
-
-        protected:
-            virtual void cleanUp( cds::gc::hrc::ThreadGC * pGC )
-            {
-                assert( pGC != nullptr );
-                typename gc::GuardArray<2> aGuards( *pGC );
-
-                while ( true ) {
-                    node * pNext = aGuards.protect( 0, m_pNext );
-                    if ( pNext && pNext->m_bDeleted.load(atomics::memory_order_acquire) ) {
-                        node * p = aGuards.protect( 1, pNext->m_pNext );
-                        m_pNext.compare_exchange_strong( pNext, p, atomics::memory_order_acquire, atomics::memory_order_relaxed );
-                        continue;
-                    }
-                    else {
-                        break;
-                    }
-                }
-            }
-
-            virtual void terminate( cds::gc::hrc::ThreadGC * pGC, bool bConcurrent )
-            {
-                if ( bConcurrent ) {
-                    node * pNext = m_pNext.load(atomics::memory_order_relaxed);
-                    do {} while ( !m_pNext.compare_exchange_weak( pNext, nullptr, atomics::memory_order_release, atomics::memory_order_relaxed ) );
-                }
-                else {
-                    m_pNext.store( nullptr, atomics::memory_order_relaxed );
-                }
-            }
-        };
-        //@endcond
-
-        //@cond
         struct default_hook {
             typedef cds::gc::default_gc gc;
             typedef opt::none           tag;
@@ -107,7 +59,6 @@ namespace cds { namespace intrusive {
             typedef HookType      hook_type;
         };
         //@endcond
-
 
         /// Base hook
         /**
@@ -173,18 +124,6 @@ namespace cds { namespace intrusive {
         //@cond
         template <class GC, typename Node, opt::link_check_type LinkType >
         struct link_checker_selector;
-
-        template <typename Node>
-        struct link_checker_selector< gc::HRC, Node, opt::never_check_link >
-        {
-            typedef link_checker<Node>  type;
-        };
-
-        template <typename Node>
-        struct link_checker_selector< gc::HRC, Node, opt::debug_check_link >
-        {
-            typedef link_checker<Node>  type;
-        };
 
         template <typename GC, typename Node>
         struct link_checker_selector< GC, Node, opt::never_check_link >
