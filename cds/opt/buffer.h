@@ -149,7 +149,7 @@ namespace cds { namespace opt {
         {
         public:
             typedef T   value_type  ;   ///< Value type
-            static CDS_CONSTEXPR_CONST bool c_bExp2 = Exp2; ///< \p Exp2 flag
+            static CDS_CONSTEXPR const bool c_bExp2 = Exp2; ///< \p Exp2 flag
 
             /// Rebind buffer for other template parameters
             template <typename Q, typename Alloc2=Alloc, bool Exp22 = c_bExp2>

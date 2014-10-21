@@ -79,7 +79,6 @@
 
 // constexpr is not yet supported
 #define CDS_CONSTEXPR
-#define CDS_CONSTEXPR_CONST const
 
 // noexcept is not yet supported
 //#define CDS_NOEXCEPT_SUPPORT        noexcept

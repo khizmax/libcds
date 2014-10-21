@@ -1394,17 +1394,11 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = CDS_BUILD_BITS=64 \
                          CDS_DOXYGEN_INVOKED \
-                         cds_std=std \
                          CDS_URCU_SIGNAL_HANDLING_ENABLED \
                          CDS_CXX11_INLINE_NAMESPACE_SUPPORT \
                          CDS_CXX11_INLINE_NAMESPACE=inline \
-                         CDS_CXX11_DECLTYPE_SUPPORT \
                          CDS_NOEXCEPT=noexcept() \
-                         CDS_CONSTEXPR=constexpr \
-                         CDS_CONSTEXPR_CONST="constexpr const" \
-                         CDS_ATOMIC=std \
-                         CDS_DELETE_SPECIFIER="=delete"\
-                         CDS_DEFAULT_SPECIFIER="=default"
+                         CDS_CONSTEXPR=constexpr
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded.

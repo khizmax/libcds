@@ -27,8 +27,8 @@ namespace cds {
         public:
             typedef T       value_type      ;       ///< type of value the class points to
             typedef T *     pointer_type    ;       ///< type of pointer
-            static CDS_CONSTEXPR_CONST uintptr_t bitmask = Bitmask  ;   ///< bitfield bitmask
-            static CDS_CONSTEXPR_CONST uintptr_t pointer_bitmask = ~bitmask ; ///< pointer bitmask
+            static CDS_CONSTEXPR const uintptr_t bitmask = Bitmask;   ///< bitfield bitmask
+            static CDS_CONSTEXPR const uintptr_t pointer_bitmask = ~bitmask; ///< pointer bitmask
 
         public:
             /// Constructs null marked pointer. The flag is cleared.

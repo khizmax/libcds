@@ -174,7 +174,7 @@ namespace cds { namespace intrusive {
             typedef treiber_stack::empty_stat       stat;
 
             /// Link checking, see \p cds::opt::link_checker
-            static CDS_CONSTEXPR_CONST opt::link_check_type link_checker = opt::debug_check_link;
+            static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
 
             /** @name Elimination back-off traits
                 The following traits is used only if elimination enabled
@@ -182,7 +182,7 @@ namespace cds { namespace intrusive {
             ///@{
 
             /// Enable elimination back-off; by default, it is disabled
-            static CDS_CONSTEXPR_CONST bool enable_elimination = false;
+            static CDS_CONSTEXPR const bool enable_elimination = false;
 
             /// Back-off strategy to wait for elimination, default is cds::backoff::delay<>
             typedef cds::backoff::delay<>          elimination_backoff;
@@ -605,7 +605,7 @@ namespace cds { namespace intrusive {
     public: // related to elimination back-off
 
         /// Elimination back-off is enabled or not
-        static CDS_CONSTEXPR_CONST bool enable_elimination = traits::enable_elimination;
+        static CDS_CONSTEXPR const bool enable_elimination = traits::enable_elimination;
         /// back-off strategy used to wait for elimination
         typedef typename traits::elimination_backoff elimination_backoff_type;
         /// Lock type used in elimination back-off

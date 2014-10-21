@@ -80,7 +80,7 @@ namespace cds { namespace container {
         typedef typename bucket_type::rcu_lock      rcu_lock   ; ///< RCU scoped lock
         typedef typename bucket_type::exempt_ptr    exempt_ptr ; ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
-        static CDS_CONSTEXPR_CONST bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
     protected:
         item_counter    m_ItemCounter   ;   ///< Item counter

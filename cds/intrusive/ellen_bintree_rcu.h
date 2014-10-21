@@ -512,7 +512,7 @@ namespace cds { namespace intrusive {
 
         typedef typename gc::scoped_lock    rcu_lock;   ///< RCU scoped lock
 
-        static CDS_CONSTEXPR_CONST bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions do not require external locking
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions do not require external locking
 
     protected:
         //@cond

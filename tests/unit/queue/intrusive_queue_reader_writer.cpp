@@ -207,7 +207,7 @@ namespace queue {
     protected:
         size_t                  m_nThreadPushCount;
         atomics::atomic<size_t>     m_nProducerCount;
-        static CDS_CONSTEXPR_CONST size_t c_nBadConsumer = 0xbadc0ffe;
+        static CDS_CONSTEXPR const size_t c_nBadConsumer = 0xbadc0ffe;
 
     protected:
         template <class Queue>

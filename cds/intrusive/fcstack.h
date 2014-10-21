@@ -109,7 +109,7 @@ namespace cds { namespace intrusive {
 
         typedef typename traits::disposer  disposer;   ///< The disposer functor. The disposer is used only in \ref clear() function
         typedef typename traits::stat  stat;   ///< Internal statistics type
-        static CDS_CONSTEXPR_CONST bool c_bEliminationEnabled = traits::enable_elimination; ///< \p true if elimination is enabled
+        static CDS_CONSTEXPR const bool c_bEliminationEnabled = traits::enable_elimination; ///< \p true if elimination is enabled
 
     protected:
         //@cond

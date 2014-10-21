@@ -79,7 +79,6 @@
 #endif
 
 #define CDS_CONSTEXPR    constexpr
-#define CDS_CONSTEXPR_CONST constexpr const
 
 #define CDS_NOEXCEPT_SUPPORT        noexcept
 #define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)

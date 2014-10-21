@@ -40,8 +40,8 @@ namespace istack {
     class IntrusiveStack_PushPop: public CppUnitMini::TestCase
     {
         atomics::atomic<size_t>  m_nWorkingProducers;
-        static CDS_CONSTEXPR_CONST size_t c_nValArraySize = 1024;
-        static CDS_CONSTEXPR_CONST size_t c_nBadConsumer = 0xbadc0ffe;
+        static CDS_CONSTEXPR const size_t c_nValArraySize = 1024;
+        static CDS_CONSTEXPR const size_t c_nBadConsumer = 0xbadc0ffe;
 
         template <class Stack>
         class Producer: public CppUnitMini::TestThread

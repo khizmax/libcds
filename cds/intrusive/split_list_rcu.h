@@ -85,7 +85,7 @@ namespace cds { namespace intrusive {
         typedef typename ordered_list::rcu_lock         rcu_lock        ;   ///< RCU scoped lock
         typedef typename ordered_list::exempt_ptr       exempt_ptr      ;   ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
-        static CDS_CONSTEXPR_CONST bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
 
         typedef typename options::item_counter          item_counter    ;   ///< Item counter type
         typedef typename options::back_off              back_off        ;   ///< back-off strategy for spinning

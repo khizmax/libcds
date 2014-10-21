@@ -35,7 +35,6 @@
 // noexcept
 #define CDS_NOEXCEPT_SUPPORT        noexcept
 #define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-#define CDS_CONSTEXPR_CONST constexpr const
 
 // C++11 thread_local keyword
 #define CDS_CXX11_THREAD_LOCAL_SUPPORT

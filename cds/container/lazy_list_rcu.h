@@ -130,7 +130,7 @@ namespace cds { namespace container {
         typedef typename base_class::rcu_check_deadlock rcu_check_deadlock ; ///< Deadlock checking policy
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
-        static CDS_CONSTEXPR_CONST bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions require external locking
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions require external locking
 
     protected:
         //@cond
