@@ -30,16 +30,32 @@ namespace queue {
 
     void HdrTestQueue::VyukovMPMCCycleQueue_dyn()
     {
-        test_bounded_no_ic< cds::container::VyukovMPMCCycleQueue< int > >();
+        class queue_type : public cds::container::VyukovMPMCCycleQueue < int >
+        {
+            typedef cds::container::VyukovMPMCCycleQueue < int > base_class;
+        public:
+            queue_type() : base_class( 1024 ) {}
+        };
+        test_bounded_no_ic< queue_type >();
     }
 
     void HdrTestQueue::VyukovMPMCCycleQueue_dyn_ic()
     {
-        typedef cds::container::VyukovMPMCCycleQueue < int,
+        class queue_type :
+            public cds::container::VyukovMPMCCycleQueue < int,
             typename cds::container::vyukov_queue::make_traits <
-                cds::opt::item_counter < cds::atomicity::item_counter >
+            cds::opt::item_counter < cds::atomicity::item_counter >
             > ::type
-        > queue_type;
+            >
+        {
+            typedef cds::container::VyukovMPMCCycleQueue < int,
+                typename cds::container::vyukov_queue::make_traits <
+                    cds::opt::item_counter < cds::atomicity::item_counter >
+                > ::type
+            > base_class;
+        public:
+            queue_type() : base_class( 1024 ) {}
+        };
         test_bounded_ic< queue_type >();
     }
 
