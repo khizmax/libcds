@@ -829,10 +829,6 @@ namespace set {
         void Michael_PTB_less();
         void Michael_PTB_cmpmix();
 
-        void Michael_HRC_cmp();
-        void Michael_HRC_less();
-        void Michael_HRC_cmpmix();
-
         void Michael_RCU_GPI_cmp();
         void Michael_RCU_GPI_less();
         void Michael_RCU_GPI_cmpmix();
@@ -900,10 +896,6 @@ namespace set {
         void Split_PTB_cmp();
         void Split_PTB_less();
         void Split_PTB_cmpmix();
-
-        void Split_HRC_cmp();
-        void Split_HRC_less();
-        void Split_HRC_cmpmix();
 
         void Split_RCU_GPI_cmp();
         void Split_RCU_GPI_less();
@@ -975,10 +967,6 @@ namespace set {
             CPPUNIT_TEST(Michael_PTB_less)
             CPPUNIT_TEST(Michael_PTB_cmpmix)
 
-            CPPUNIT_TEST(Michael_HRC_cmp)
-            CPPUNIT_TEST(Michael_HRC_less)
-            CPPUNIT_TEST(Michael_HRC_cmpmix)
-
             CPPUNIT_TEST(Michael_RCU_GPI_cmp)
             CPPUNIT_TEST(Michael_RCU_GPI_less)
             CPPUNIT_TEST(Michael_RCU_GPI_cmpmix)
@@ -1046,10 +1034,6 @@ namespace set {
             CPPUNIT_TEST(Split_PTB_cmp)
             CPPUNIT_TEST(Split_PTB_less)
             CPPUNIT_TEST(Split_PTB_cmpmix)
-
-            CPPUNIT_TEST(Split_HRC_cmp)
-            CPPUNIT_TEST(Split_HRC_less)
-            CPPUNIT_TEST(Split_HRC_cmpmix)
 
             CPPUNIT_TEST(Split_RCU_GPI_cmp)
             CPPUNIT_TEST(Split_RCU_GPI_less)

@@ -1,6 +1,5 @@
 CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_michael_map_hp.cpp \
-    tests/test-hdr/map/hdr_michael_map_hrc.cpp \
     tests/test-hdr/map/hdr_michael_map_ptb.cpp \
     tests/test-hdr/map/hdr_michael_map_rcu_gpi.cpp \
     tests/test-hdr/map/hdr_michael_map_rcu_gpb.cpp \
@@ -35,7 +34,6 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_skiplist_map_rcu_sht.cpp \
     tests/test-hdr/map/hdr_skiplist_map_nogc.cpp \
     tests/test-hdr/map/hdr_splitlist_map_hp.cpp \
-    tests/test-hdr/map/hdr_splitlist_map_hrc.cpp \
     tests/test-hdr/map/hdr_splitlist_map_ptb.cpp \
     tests/test-hdr/map/hdr_splitlist_map_nogc.cpp \
     tests/test-hdr/map/hdr_splitlist_map_rcu_gpi.cpp \
@@ -85,9 +83,7 @@ CDS_TESTHDR_ORDLIST := \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpt.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_shb.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_sht.cpp \
-    tests/test-hdr/ordered_list/hdr_intrusive_michael_hrc.cpp \
     tests/test-hdr/ordered_list/hdr_michael_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_hrc.cpp \
     tests/test-hdr/ordered_list/hdr_michael_nogc.cpp \
     tests/test-hdr/ordered_list/hdr_michael_ptb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_rcu_gpi.cpp \
@@ -96,7 +92,6 @@ CDS_TESTHDR_ORDLIST := \
     tests/test-hdr/ordered_list/hdr_michael_rcu_shb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_rcu_sht.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_hrc.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_nogc.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_ptb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_rcu_gpi.cpp \
@@ -138,7 +133,6 @@ CDS_TESTHDR_QUEUE := \
     tests/test-hdr/queue/hdr_vyukov_mpmc_cyclic.cpp
 
 CDS_TESTHDR_SET := \
-    tests/test-hdr/set/hdr_intrusive_michael_set_hrc.cpp \
     tests/test-hdr/set/hdr_intrusive_michael_set_hrc_lazy.cpp \
     tests/test-hdr/set/hdr_intrusive_refinable_hashset_avlset.cpp \
     tests/test-hdr/set/hdr_intrusive_refinable_hashset_list.cpp \
@@ -157,7 +151,6 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_shb.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_sht.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_nogc.cpp \
-    tests/test-hdr/set/hdr_intrusive_splitlist_set_hrc.cpp \
     tests/test-hdr/set/hdr_intrusive_splitlist_set_hrc_lazy.cpp \
     tests/test-hdr/set/hdr_intrusive_striped_hashset_avlset.cpp \
     tests/test-hdr/set/hdr_intrusive_striped_hashset_list.cpp \
@@ -169,7 +162,6 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_intrusive_striped_hashset_uset.cpp \
     tests/test-hdr/set/hdr_intrusive_striped_set.cpp \
     tests/test-hdr/set/hdr_michael_set_hp.cpp \
-    tests/test-hdr/set/hdr_michael_set_hrc.cpp \
     tests/test-hdr/set/hdr_michael_set_ptb.cpp \
     tests/test-hdr/set/hdr_michael_set_rcu_gpi.cpp \
     tests/test-hdr/set/hdr_michael_set_rcu_gpb.cpp \
@@ -207,7 +199,6 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_skiplist_set_rcu_sht.cpp \
     tests/test-hdr/set/hdr_skiplist_set_nogc.cpp \
     tests/test-hdr/set/hdr_splitlist_set_hp.cpp \
-    tests/test-hdr/set/hdr_splitlist_set_hrc.cpp \
     tests/test-hdr/set/hdr_splitlist_set_nogc.cpp \
     tests/test-hdr/set/hdr_splitlist_set_ptb.cpp \
     tests/test-hdr/set/hdr_splitlist_set_rcu_gpi.cpp \

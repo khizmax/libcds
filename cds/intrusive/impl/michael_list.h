@@ -90,7 +90,6 @@ namespace cds { namespace intrusive {
         You should select GC needed and include appropriate .h-file:
         - for gc::HP: \code #include <cds/intrusive/michael_list_hp.h> \endcode
         - for gc::DHP: \code #include <cds/intrusive/michael_list_dhp.h> \endcode
-        - for gc::HRC: \code #include <cds/intrusive/michael_list_hrc.h> \endcode
         - for \ref cds_urcu_gc "RCU type" - see \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
         - for gc::nogc: \code #include <cds/intrusive/michael_list_nogc.h> \endcode
             See \ref cds_intrusive_MichaelList_nogc "non-GC MichaelList"

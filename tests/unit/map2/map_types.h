@@ -10,13 +10,11 @@
 #include <cds/urcu/signal_threaded.h>
 
 #include <cds/container/michael_kvlist_hp.h>
-#include <cds/container/michael_kvlist_hrc.h>
 #include <cds/container/michael_kvlist_dhp.h>
 #include <cds/container/michael_kvlist_rcu.h>
 #include <cds/container/michael_kvlist_nogc.h>
 
 #include <cds/container/lazy_kvlist_hp.h>
-#include <cds/container/lazy_kvlist_hrc.h>
 #include <cds/container/lazy_kvlist_ptb.h>
 #include <cds/container/lazy_kvlist_rcu.h>
 #include <cds/container/lazy_kvlist_nogc.h>
@@ -35,7 +33,6 @@
 #include <cds/container/cuckoo_map.h>
 
 #include <cds/container/skip_list_map_hp.h>
-#include <cds/container/skip_list_map_hrc.h>
 #include <cds/container/skip_list_map_ptb.h>
 #include <cds/container/skip_list_map_rcu.h>
 #include <cds/container/skip_list_map_nogc.h>
@@ -259,46 +256,6 @@ namespace map2 {
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
         >   MichaelList_HP_less_michaelAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::HRC, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_HRC_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::HRC, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_HRC_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< cds::gc::HRC, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_HRC_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::HRC, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_HRC_less_stdAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::HRC, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_HRC_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< cds::gc::HRC, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_HRC_less_michaelAlloc;
 
         typedef cc::MichaelKVList< cds::gc::PTB, Key, Value,
             typename cc::michael_list::make_traits<
@@ -739,44 +696,6 @@ namespace map2 {
             >::type
         >   MichaelMap_HP_less_michaelAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::HRC, MichaelList_HRC_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_HRC_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, MichaelList_HRC_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_HRC_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, MichaelList_HRC_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_HRC_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, MichaelList_HRC_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_HRC_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, MichaelList_HRC_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_HRC_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, MichaelList_HRC_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_HRC_less_michaelAlloc;
-
         typedef cc::MichaelHashMap< cds::gc::PTB, MichaelList_PTB_cmp_stdAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
@@ -1093,46 +1012,6 @@ namespace map2 {
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
         >   LazyList_HP_less_michaelAlloc;
-
-        typedef cc::LazyKVList< cds::gc::HRC, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_HRC_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< cds::gc::HRC, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_HRC_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< cds::gc::HRC, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_HRC_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< cds::gc::HRC, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_HRC_less_stdAlloc;
-
-        typedef cc::LazyKVList< cds::gc::HRC, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_HRC_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< cds::gc::HRC, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_HRC_less_michaelAlloc;
 
         typedef cc::LazyKVList< cds::gc::PTB, Key, Value,
             typename cc::lazy_list::make_traits<
@@ -1462,44 +1341,6 @@ namespace map2 {
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
         >   MichaelMap_Lazy_HP_less_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, LazyList_HRC_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HRC_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, LazyList_HRC_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HRC_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, LazyList_HRC_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_HRC_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, LazyList_HRC_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HRC_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, LazyList_HRC_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HRC_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HRC, LazyList_HRC_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_HRC_less_michaelAlloc;
 
         typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_PTB_cmp_stdAlloc,
             typename cc::michael_map::make_traits<
@@ -1888,116 +1729,6 @@ namespace map2 {
             >::type
         {};
         typedef cc::SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Michael_HP_st_less_seqcst > SplitList_Michael_HP_st_less_seqcst;
-
-        // HRC
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_dyn_cmp;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_dyn_cmp_seqcst;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_st_cmp;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_st_cmp_seqcst;
-
-        // HRC + less
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_dyn_less;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_dyn_less_seqcst;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_st_less;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HRC_st_less_seqcst;
 
         // PTB
         typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
@@ -2884,117 +2615,6 @@ namespace map2 {
                 >
             >::type
         > SplitList_Lazy_HP_st_less_seqcst;
-
-        // HRC
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_dyn_cmp;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_dyn_cmp_seqcst;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_st_cmp;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_st_cmp_seqcst;
-
-        // HRC + less
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_dyn_less;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_dyn_less_seqcst;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_st_less;
-
-        typedef cc::SplitListMap< cds::gc::HRC, Key, Value,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HRC_st_less_seqcst;
-
 
         // PTB
         typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
@@ -4221,86 +3841,6 @@ namespace map2 {
             >::type
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_cmp_xorshift_stat > SkipListMap_hp_cmp_xorshift_stat;
-
-        // ***************************************************************************
-        // SkipListMap - HRC
-
-        class traits_SkipListMap_hrc_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_less_pascal > SkipListMap_hrc_less_pascal;
-
-        class traits_SkipListMap_hrc_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_less_pascal_seqcst > SkipListMap_hrc_less_pascal_seqcst;
-
-        class traits_SkipListMap_hrc_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_less_pascal_stat > SkipListMap_hrc_less_pascal_stat;
-
-        class traits_SkipListMap_hrc_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_cmp_pascal > SkipListMap_hrc_cmp_pascal;
-
-        class traits_SkipListMap_hrc_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_cmp_pascal_stat > SkipListMap_hrc_cmp_pascal_stat;
-
-        class traits_SkipListMap_hrc_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_less_xorshift > SkipListMap_hrc_less_xorshift;
-
-        class traits_SkipListMap_hrc_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_less_xorshift_stat > SkipListMap_hrc_less_xorshift_stat;
-
-        class traits_SkipListMap_hrc_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_cmp_xorshift > SkipListMap_hrc_cmp_xorshift;
-
-        class traits_SkipListMap_hrc_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HRC, Key, Value, traits_SkipListMap_hrc_cmp_xorshift_stat > SkipListMap_hrc_cmp_xorshift_stat;
 
         // ***************************************************************************
         // SkipListMap - PTB

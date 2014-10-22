@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31010.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds.vcxproj", "{408FE9BC-44F0-4E6A-89FA-D6F952584239}"
 EndProject
@@ -67,6 +67,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hdr-test-ordered-list", "hd
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "map", "map", "{6BB7A27F-FC59-4267-B6FA-D034176D1459}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\tests\unit\map2\map_defs.h = ..\..\..\tests\unit\map2\map_defs.h
 		..\..\..\tests\unit\map2\map_types.h = ..\..\..\tests\unit\map2\map_types.h
 		..\..\..\tests\unit\map2\std_hash_map.h = ..\..\..\tests\unit\map2\std_hash_map.h
 		..\..\..\tests\unit\map2\std_hash_map_gcc.h = ..\..\..\tests\unit\map2\std_hash_map_gcc.h

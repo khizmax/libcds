@@ -39,8 +39,6 @@
 #define CDSUNIT_DECLARE_MichaelSet  \
     TEST_SET_EXTRACT(MichaelSet_HP_cmp_stdAlloc) \
     TEST_SET_EXTRACT(MichaelSet_HP_less_michaelAlloc) \
-    /*TEST_SET_EXTRACT(MichaelSet_HRC_cmp_stdAlloc)*/ \
-    /*TEST_SET_EXTRACT(MichaelSet_HRC_less_michaelAlloc)*/ \
     TEST_SET_EXTRACT(MichaelSet_PTB_cmp_stdAlloc) \
     TEST_SET_EXTRACT(MichaelSet_PTB_less_michaelAlloc) \
     TEST_SET_EXTRACT(MichaelSet_RCU_GPI_cmp_stdAlloc) \
@@ -51,8 +49,6 @@
     TEST_SET_EXTRACT(MichaelSet_RCU_GPT_less_michaelAlloc) \
     TEST_SET_EXTRACT(MichaelSet_Lazy_HP_cmp_stdAlloc) \
     TEST_SET_EXTRACT(MichaelSet_Lazy_HP_less_michaelAlloc) \
-    /*TEST_SET_EXTRACT(MichaelSet_Lazy_HRC_cmp_stdAlloc)*/ \
-    /*TEST_SET_EXTRACT(MichaelSet_Lazy_HRC_less_michaelAlloc)*/ \
     TEST_SET_EXTRACT(MichaelSet_Lazy_PTB_cmp_stdAlloc) \
     TEST_SET_EXTRACT(MichaelSet_Lazy_PTB_less_michaelAlloc) \
     TEST_SET_EXTRACT(MichaelSet_Lazy_RCU_GPI_cmp_stdAlloc) \
@@ -66,8 +62,6 @@
 #define CDSUNIT_TEST_MichaelSet  \
     CPPUNIT_TEST(MichaelSet_HP_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelSet_HP_less_michaelAlloc) \
-    /*CPPUNIT_TEST(MichaelSet_HRC_cmp_stdAlloc)*/ \
-    /*CPPUNIT_TEST(MichaelSet_HRC_less_michaelAlloc)*/ \
     CPPUNIT_TEST(MichaelSet_PTB_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelSet_PTB_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelSet_RCU_GPI_cmp_stdAlloc) \
@@ -78,8 +72,6 @@
     CPPUNIT_TEST(MichaelSet_RCU_GPT_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelSet_Lazy_HP_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelSet_Lazy_HP_less_michaelAlloc) \
-    /*CPPUNIT_TEST(MichaelSet_Lazy_HRC_cmp_stdAlloc)*/ \
-    /*CPPUNIT_TEST(MichaelSet_Lazy_HRC_less_michaelAlloc)*/ \
     CPPUNIT_TEST(MichaelSet_Lazy_PTB_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelSet_Lazy_PTB_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelSet_Lazy_RCU_GPI_cmp_stdAlloc) \
@@ -138,10 +130,6 @@
     TEST_SET_EXTRACT(SplitList_Michael_HP_st_cmp)\
     TEST_SET_EXTRACT(SplitList_Michael_HP_dyn_less)\
     TEST_SET_EXTRACT(SplitList_Michael_HP_st_less)\
-    TEST_SET_EXTRACT(SplitList_Michael_HRC_dyn_cmp)\
-    TEST_SET_EXTRACT(SplitList_Michael_HRC_st_cmp)\
-    TEST_SET_EXTRACT(SplitList_Michael_HRC_dyn_less)\
-    TEST_SET_EXTRACT(SplitList_Michael_HRC_st_less)\
     TEST_SET_EXTRACT(SplitList_Michael_PTB_dyn_cmp)\
     TEST_SET_EXTRACT(SplitList_Michael_PTB_st_cmp)\
     TEST_SET_EXTRACT(SplitList_Michael_PTB_dyn_less)\
@@ -162,10 +150,6 @@
     TEST_SET_EXTRACT(SplitList_Lazy_HP_st_cmp)\
     TEST_SET_EXTRACT(SplitList_Lazy_HP_dyn_less)\
     TEST_SET_EXTRACT(SplitList_Lazy_HP_st_less)\
-    TEST_SET_EXTRACT(SplitList_Lazy_HRC_dyn_cmp)\
-    TEST_SET_EXTRACT(SplitList_Lazy_HRC_st_cmp)\
-    TEST_SET_EXTRACT(SplitList_Lazy_HRC_dyn_less)\
-    TEST_SET_EXTRACT(SplitList_Lazy_HRC_st_less)\
     TEST_SET_EXTRACT(SplitList_Lazy_PTB_dyn_cmp)\
     TEST_SET_EXTRACT(SplitList_Lazy_PTB_st_cmp)\
     TEST_SET_EXTRACT(SplitList_Lazy_PTB_dyn_less)\
@@ -189,10 +173,6 @@
     CPPUNIT_TEST(SplitList_Michael_HP_st_cmp)\
     CPPUNIT_TEST(SplitList_Michael_HP_dyn_less)\
     CPPUNIT_TEST(SplitList_Michael_HP_st_less)\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_dyn_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_st_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_dyn_less)*/\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_st_less)*/\
     CPPUNIT_TEST(SplitList_Michael_PTB_dyn_cmp)\
     CPPUNIT_TEST(SplitList_Michael_PTB_st_cmp)\
     CPPUNIT_TEST(SplitList_Michael_PTB_dyn_less)\
@@ -213,10 +193,6 @@
     CPPUNIT_TEST(SplitList_Lazy_HP_st_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_HP_dyn_less)\
     CPPUNIT_TEST(SplitList_Lazy_HP_st_less)\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_dyn_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_st_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_dyn_less)*/\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_st_less)*/\
     CPPUNIT_TEST(SplitList_Lazy_PTB_dyn_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_PTB_st_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_PTB_dyn_less)\
@@ -322,10 +298,6 @@
     TEST_SET_NOLF_EXTRACT(SkipListSet_hp_cmp_pascal_stat)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_hp_less_xorshift)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_hp_cmp_xorshift_stat)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_hrc_less_pascal)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_hrc_cmp_pascal_stat)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_hrc_less_xorshift)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_hrc_cmp_xorshift_stat)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_ptb_less_pascal)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_ptb_cmp_pascal_stat)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_ptb_less_xorshift)\
@@ -349,10 +321,6 @@
     CPPUNIT_TEST(SkipListSet_hp_cmp_pascal_stat)\
     CPPUNIT_TEST(SkipListSet_hp_less_xorshift)\
     CPPUNIT_TEST(SkipListSet_hp_cmp_xorshift_stat)\
-    /*CPPUNIT_TEST(SkipListSet_hrc_less_pascal)*/\
-    /*CPPUNIT_TEST(SkipListSet_hrc_cmp_pascal_stat)*/\
-    /*CPPUNIT_TEST(SkipListSet_hrc_less_xorshift)*/\
-    /*CPPUNIT_TEST(SkipListSet_hrc_cmp_xorshift_stat)*/\
     CPPUNIT_TEST(SkipListSet_ptb_less_pascal)\
     CPPUNIT_TEST(SkipListSet_ptb_cmp_pascal_stat)\
     CPPUNIT_TEST(SkipListSet_ptb_less_xorshift)\

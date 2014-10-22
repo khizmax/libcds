@@ -25,9 +25,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_hp.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_hrc.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_gpb.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
@@ -79,13 +76,7 @@
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_hp.cpp">
       <Filter>container</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_hrc.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_hp.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_hrc.cpp">
       <Filter>container</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_nogc.cpp">

@@ -7,9 +7,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_hp.cpp">
       <Filter>michael</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_hrc.cpp">
-      <Filter>michael</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_hp.cpp">
       <Filter>michael</Filter>
     </ClCompile>
@@ -65,9 +62,6 @@
       <Filter>skip_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_hp.cpp">
-      <Filter>split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_hrc.cpp">
       <Filter>split_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_hp.cpp">

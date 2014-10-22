@@ -53,9 +53,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_hp_lazy.cpp">
       <Filter>intrusive\michael_set</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_hrc.cpp">
-      <Filter>intrusive\michael_set</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_hrc_lazy.cpp">
       <Filter>intrusive\michael_set</Filter>
     </ClCompile>
@@ -110,9 +107,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hp_lazy.cpp">
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hrc.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hrc_lazy.cpp">
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
@@ -147,9 +141,6 @@
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_hp.cpp">
-      <Filter>container\michael_set</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_hrc.cpp">
       <Filter>container\michael_set</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_lazy_hp.cpp">
@@ -198,9 +189,6 @@
       <Filter>container\skip_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_hp.cpp">
-      <Filter>container\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_hrc.cpp">
       <Filter>container\split_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_hp.cpp">

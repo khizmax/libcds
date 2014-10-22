@@ -553,7 +553,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_gpt.cpp" />
@@ -580,9 +579,7 @@
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_rcu_gpb.cpp" />

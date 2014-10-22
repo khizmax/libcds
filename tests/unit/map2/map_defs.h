@@ -40,8 +40,6 @@
 #define CDSUNIT_DECLARE_MichaelMap  \
     TEST_MAP_EXTRACT(MichaelMap_HP_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_HP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_HRC_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_HRC_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_PTB_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_PTB_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_RCU_GPI_cmp_stdAlloc) \
@@ -52,8 +50,6 @@
     TEST_MAP_EXTRACT(MichaelMap_RCU_GPT_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_HP_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_HP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_Lazy_HRC_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_Lazy_HRC_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_PTB_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_PTB_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc) \
@@ -67,8 +63,6 @@
 #define CDSUNIT_TEST_MichaelMap  \
     CPPUNIT_TEST(MichaelMap_HP_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_HP_less_michaelAlloc) \
-    /*CPPUNIT_TEST(MichaelMap_HRC_cmp_stdAlloc)*/ \
-    /*CPPUNIT_TEST(MichaelMap_HRC_less_michaelAlloc)*/ \
     CPPUNIT_TEST(MichaelMap_PTB_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_PTB_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_RCU_GPI_cmp_stdAlloc) \
@@ -79,8 +73,6 @@
     CPPUNIT_TEST(MichaelMap_RCU_GPT_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_HP_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_HP_less_michaelAlloc) \
-    /*CPPUNIT_TEST(MichaelMap_Lazy_HRC_cmp_stdAlloc)*/ \
-    /*CPPUNIT_TEST(MichaelMap_Lazy_HRC_less_michaelAlloc)*/ \
     CPPUNIT_TEST(MichaelMap_Lazy_PTB_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_PTB_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc) \
@@ -150,10 +142,6 @@
     TEST_MAP_EXTRACT(SplitList_Michael_HP_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Michael_HP_dyn_less)\
     TEST_MAP_EXTRACT(SplitList_Michael_HP_st_less)\
-    TEST_MAP_EXTRACT(SplitList_Michael_HRC_dyn_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Michael_HRC_st_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Michael_HRC_dyn_less)\
-    TEST_MAP_EXTRACT(SplitList_Michael_HRC_st_less)\
     TEST_MAP_EXTRACT(SplitList_Michael_PTB_dyn_cmp)\
     TEST_MAP_EXTRACT(SplitList_Michael_PTB_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Michael_PTB_dyn_less)\
@@ -174,10 +162,6 @@
     TEST_MAP_EXTRACT(SplitList_Lazy_HP_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Lazy_HP_dyn_less)\
     TEST_MAP_EXTRACT(SplitList_Lazy_HP_st_less)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_HRC_dyn_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_HRC_st_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_HRC_dyn_less)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_HRC_st_less)\
     TEST_MAP_EXTRACT(SplitList_Lazy_PTB_dyn_cmp)\
     TEST_MAP_EXTRACT(SplitList_Lazy_PTB_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Lazy_PTB_dyn_less)\
@@ -201,10 +185,6 @@
     CPPUNIT_TEST(SplitList_Michael_HP_st_cmp)\
     CPPUNIT_TEST(SplitList_Michael_HP_dyn_less)\
     CPPUNIT_TEST(SplitList_Michael_HP_st_less)\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_dyn_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_st_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_dyn_less)*/\
-    /*CPPUNIT_TEST(SplitList_Michael_HRC_st_less)*/\
     CPPUNIT_TEST(SplitList_Michael_PTB_dyn_cmp)\
     CPPUNIT_TEST(SplitList_Michael_PTB_st_cmp)\
     CPPUNIT_TEST(SplitList_Michael_PTB_dyn_less)\
@@ -225,10 +205,6 @@
     CPPUNIT_TEST(SplitList_Lazy_HP_st_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_HP_dyn_less)\
     CPPUNIT_TEST(SplitList_Lazy_HP_st_less)\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_dyn_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_st_cmp)*/\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_dyn_less)*/\
-    /*CPPUNIT_TEST(SplitList_Lazy_HRC_st_less)*/\
     CPPUNIT_TEST(SplitList_Lazy_PTB_dyn_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_PTB_st_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_PTB_dyn_less)\

@@ -1065,10 +1065,6 @@ namespace set {
         void PTB_member_less();
         void PTB_member_cmpmix();
 
-        void HRC_base_cmp();
-        void HRC_base_less();
-        void HRC_base_cmpmix();
-
         void RCU_GPI_base_cmp();
         void RCU_GPI_base_less();
         void RCU_GPI_base_cmpmix();
@@ -1198,13 +1194,6 @@ namespace set {
         void split_st_PTB_member_cmp();
         void split_st_PTB_member_less();
         void split_st_PTB_member_cmpmix();
-
-        void split_dyn_HRC_base_cmp();
-        void split_dyn_HRC_base_less();
-        void split_dyn_HRC_base_cmpmix();
-        void split_st_HRC_base_cmp();
-        void split_st_HRC_base_less();
-        void split_st_HRC_base_cmpmix();
 
         void split_dyn_RCU_GPI_base_cmp();
         void split_dyn_RCU_GPI_base_less();
@@ -1412,10 +1401,6 @@ namespace set {
             CPPUNIT_TEST(PTB_member_less)
             CPPUNIT_TEST(PTB_member_cmpmix)
 
-            CPPUNIT_TEST(HRC_base_cmp)
-            CPPUNIT_TEST(HRC_base_less)
-            CPPUNIT_TEST(HRC_base_cmpmix)
-
             CPPUNIT_TEST(RCU_GPI_base_cmp)
             CPPUNIT_TEST(RCU_GPI_base_less)
             CPPUNIT_TEST(RCU_GPI_base_cmpmix)
@@ -1543,13 +1528,6 @@ namespace set {
             CPPUNIT_TEST(split_st_PTB_member_cmp)
             CPPUNIT_TEST(split_st_PTB_member_less)
             CPPUNIT_TEST(split_st_PTB_member_cmpmix)
-
-            CPPUNIT_TEST(split_dyn_HRC_base_cmp)
-            CPPUNIT_TEST(split_dyn_HRC_base_less)
-            CPPUNIT_TEST(split_dyn_HRC_base_cmpmix)
-            CPPUNIT_TEST(split_st_HRC_base_cmp)
-            CPPUNIT_TEST(split_st_HRC_base_less)
-            CPPUNIT_TEST(split_st_HRC_base_cmpmix)
 
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_cmp)
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_less)
