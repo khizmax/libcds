@@ -127,7 +127,7 @@ namespace cds { namespace container {
         MichaelList as a bucket type. Also, for ordered list we should develop a comparator for our \p Foo
         struct.
         \code
-        #include <cds/container/michael_list_ptb.h>
+        #include <cds/container/michael_list_dhp.h>
         #include <cds/container/michael_set.h>
 
         namespace cc = cds::container;

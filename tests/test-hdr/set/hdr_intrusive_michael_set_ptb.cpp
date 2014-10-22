@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "set/hdr_intrusive_set.h"
-#include <cds/intrusive/michael_list_ptb.h>
+#include <cds/intrusive/michael_list_dhp.h>
 #include <cds/intrusive/michael_set.h>
 
 namespace set {

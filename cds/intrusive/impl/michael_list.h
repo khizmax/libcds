@@ -89,7 +89,7 @@ namespace cds { namespace intrusive {
         There are different specializations of this template for each garbage collecting schema used.
         You should select GC needed and include appropriate .h-file:
         - for gc::HP: \code #include <cds/intrusive/michael_list_hp.h> \endcode
-        - for gc::PTB: \code #include <cds/intrusive/michael_list_ptb.h> \endcode
+        - for gc::DHP: \code #include <cds/intrusive/michael_list_dhp.h> \endcode
         - for gc::HRC: \code #include <cds/intrusive/michael_list_hrc.h> \endcode
         - for \ref cds_urcu_gc "RCU type" - see \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
         - for gc::nogc: \code #include <cds/intrusive/michael_list_nogc.h> \endcode
@@ -102,7 +102,7 @@ namespace cds { namespace intrusive {
         Example for gc::PTB and base hook:
         \code
         // Include GC-related Michael's list specialization
-        #include <cds/intrusive/michael_list_ptb.h>
+        #include <cds/intrusive/michael_list_dhp.h>
 
         // Data stored in Michael's list
         struct my_data: public cds::intrusive::michael_list::node< cds::gc::PTB >
@@ -147,7 +147,7 @@ namespace cds { namespace intrusive {
         Equivalent option-based code:
         \code
         // GC-related specialization
-        #include <cds/intrusive/michael_list_ptb.h>
+        #include <cds/intrusive/michael_list_dhp.h>
 
         struct my_data {
             // see above

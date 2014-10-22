@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "ordered_list/hdr_intrusive_michael.h"
-#include <cds/intrusive/michael_list_ptb.h>
+#include <cds/intrusive/michael_list_dhp.h>
 
 namespace ordlist {
     void IntrusiveMichaelListHeaderTest::PTB_base_cmp()

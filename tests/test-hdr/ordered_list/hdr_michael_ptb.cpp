@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "ordered_list/hdr_michael.h"
-#include <cds/container/michael_list_ptb.h>
+#include <cds/container/michael_list_dhp.h>
 
 namespace ordlist {
     namespace {

@@ -132,7 +132,7 @@ namespace cds { namespace intrusive {
         Like other intrusive containers, you may build several containers on single item structure:
         \code
         #include <cds/intrusive/michael_list_hp.h>
-        #include <cds/intrusive/michael_list_ptb.h>
+        #include <cds/intrusive/michael_list_dhp.h>
         #include <cds/intrusive/michael_set.h>
 
         struct tag_key1_idx;

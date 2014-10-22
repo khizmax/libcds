@@ -560,9 +560,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_nogc.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\michael_list_ptb.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\michael_set.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -651,9 +648,6 @@
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\michael_list_nogc.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\michael_list_ptb.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\michael_map.h">
@@ -1258,6 +1252,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\dhp.h">
       <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\michael_list_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\michael_list_dhp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@
 
 #include <cds/container/michael_list_hp.h>
 #include <cds/container/michael_list_hrc.h>
-#include <cds/container/michael_list_ptb.h>
+#include <cds/container/michael_list_dhp.h>
 #include <cds/container/michael_list_rcu.h>
 #include <cds/container/lazy_list_hp.h>
 #include <cds/container/lazy_list_hrc.h>
