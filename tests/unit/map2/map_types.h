@@ -11,7 +11,7 @@
 
 #include <cds/container/michael_kvlist_hp.h>
 #include <cds/container/michael_kvlist_hrc.h>
-#include <cds/container/michael_kvlist_ptb.h>
+#include <cds/container/michael_kvlist_dhp.h>
 #include <cds/container/michael_kvlist_rcu.h>
 #include <cds/container/michael_kvlist_nogc.h>
 
