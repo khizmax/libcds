@@ -83,17 +83,17 @@ CDS_TESTHDR_ORDLIST := \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpt.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_shb.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_sht.cpp \
+    tests/test-hdr/ordered_list/hdr_michael_dhp.cpp \
     tests/test-hdr/ordered_list/hdr_michael_hp.cpp \
     tests/test-hdr/ordered_list/hdr_michael_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_ptb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_rcu_gpi.cpp \
     tests/test-hdr/ordered_list/hdr_michael_rcu_gpb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_rcu_gpt.cpp \
     tests/test-hdr/ordered_list/hdr_michael_rcu_shb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_rcu_sht.cpp \
+    tests/test-hdr/ordered_list/hdr_michael_kv_dhp.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_hp.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_ptb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_rcu_gpi.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_rcu_gpb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_rcu_gpt.cpp \

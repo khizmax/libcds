@@ -13,7 +13,8 @@ namespace cds { namespace container {
         \anchor cds_nonintrusive_MichaelList_gc
 
         Usually, ordered single-linked list is used as a building block for the hash table implementation.
-        The complexity of searching is <tt>O(N)</tt>.
+        The complexity of searching is <tt>O(N)</tt>, where \p N is the item count in the list, not in the 
+        hash table.
 
         Source:
         - [2002] Maged Michael "High performance dynamic lock-free hash tables and list-based sets"
@@ -23,7 +24,7 @@ namespace cds { namespace container {
         Template arguments:
         - \p GC - garbage collector used
         - \p T - type stored in the list. The type must be default- and copy-constructible.
-        - \p Traits - type traits, default is michael_list::type_traits
+        - \p Traits - type traits, default is \p michael_list::traits
 
         Unlike standard container, this implementation does not divide type \p T into key and value part and
         may be used as a main building block for hash set algorithms.
@@ -44,8 +45,8 @@ namespace cds { namespace container {
             }
         };
 
-        // Declare type_traits
-        struct my_traits: public cds::container::michael_list::type_traits
+        // Declare traits
+        struct my_traits: public cds::container::michael_list::traits
         {
             typedef my_compare compare;
         };
@@ -68,16 +69,6 @@ namespace cds { namespace container {
         >     option_based_list;
         \endcode
 
-        Template argument list \p Options of cds::container::michael_list::make_traits metafunction are:
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-
         \par Usage
         There are different specializations of this template for each garbage collecting schema used.
         You should include appropriate .h-file depending on GC you are using:
@@ -90,7 +81,7 @@ namespace cds { namespace container {
         typename GC,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = michael_list::type_traits
+        typename Traits = michael_list::traits
 #else
         typename Traits
 #endif
@@ -103,25 +94,27 @@ namespace cds { namespace container {
 #endif
     {
         //@cond
-        typedef details::make_michael_list< GC, T, Traits > options;
-        typedef typename options::type  base_class;
+        typedef details::make_michael_list< GC, T, Traits > maker;
+        typedef typename maker::type base_class;
         //@endcond
 
     public:
-        typedef T                                   value_type      ;   ///< Type of value stored in the list
-        typedef typename base_class::gc             gc              ;   ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator_type    allocator_type  ;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename options::key_comparator    key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef T value_type;   ///< Type of value stored in the list
+        typedef Traits traits;  ///< List traits
+
+        typedef typename base_class::gc             gc;             ///< Garbage collector used
+        typedef typename base_class::back_off       back_off;       ///< Back-off strategy used
+        typedef typename maker::allocator_type      allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter   item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator      key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
 
     protected:
         //@cond
-        typedef typename base_class::value_type     node_type;
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;
-        typedef typename options::type_traits::compare  intrusive_key_comparator;
+        typedef typename base_class::value_type      node_type;
+        typedef typename maker::cxx_allocator        cxx_allocator;
+        typedef typename maker::node_deallocator     node_deallocator;
+        typedef typename maker::intrusive_traits::compare intrusive_key_comparator;
 
         typedef typename base_class::atomic_node_ptr head_type;
         //@endcond
@@ -167,7 +160,7 @@ namespace cds { namespace container {
                 free_node( pNode );
             }
         };
-        typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
+        typedef std::unique_ptr< node_type, node_disposer > scoped_node_ptr;
 
         head_type& head()
         {
@@ -181,7 +174,7 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
-                //@cond
+        //@cond
         template <bool IsConst>
         class iterator_type: protected base_class::template iterator_type<IsConst>
         {
@@ -326,7 +319,7 @@ namespace cds { namespace container {
             The function creates a node with copy of \p val value
             and then inserts the node created into the list.
 
-            The type \p Q should contain as minimum the complete key of the node.
+            The type \p Q should contain least the complete key of the node.
             The object of \ref value_type should be constructible from \p val of type \p Q.
             In trivial case, \p Q is equal to \ref value_type.
 
@@ -347,18 +340,17 @@ namespace cds { namespace container {
             The argument \p itemValue of user-defined functor \p func is the reference
             to the list's item inserted. User-defined functor \p func should guarantee that during changing
             item's value no any other changes could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if the inserting is success.
+            The user-defined functor is called only if inserting is success.
 
             The type \p Q should contain the complete key of the node.
-            The object of \ref value_type should be constructible from \p key of type \p Q.
+            The object of \p value_type should be constructible from \p key of type \p Q.
 
             The function allows to split creating of new item into two part:
             - create item from \p key with initializing key-fields only;
             - insert new item into the list;
-            - if inserting is successful, initialize non-key fields of item by calling \p f functor
+            - if inserting is successful, initialize non-key fields of item by calling \p func functor
 
-            This can be useful if complete initialization of object of \p value_type is heavyweight and
+            The method can be useful if complete initialization of object of \p value_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename Q, typename Func>
@@ -392,19 +384,17 @@ namespace cds { namespace container {
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference by \p std::ref
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
         */
         template <typename Q, typename Func>
-        std::pair<bool, bool> ensure( Q const& key, Func f )
+        std::pair<bool, bool> ensure( Q const& key, Func func )
         {
-            return ensure_at( head(), key, f );
+            return ensure_at( head(), key, func );
         }
 
-        /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -416,9 +406,9 @@ namespace cds { namespace container {
 
         /// Delete \p key from the list
         /** \anchor cds_nonintrusive_MichealList_hp_erase_val
-            Since the key of MichaelList's item type \p T is not explicitly specified,
-            template parameter \p Q defines the key type searching in the list.
-            The list item comparator should be able to compare the type \p T of list item
+            Since the key of MichaelList's item type \p value_type is not explicitly specified,
+            template parameter \p Q sould contain the complete key to search in the list.
+            The list item comparator should be able to compare the type \p value_type
             and the type \p Q.
 
             Return \p true if key is found and deleted, \p false otherwise
@@ -439,7 +429,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
-            return erase_at( head(), key, typename options::template less_wrapper<Less>::type(), [](value_type const&){} );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), [](value_type const&){} );
         }
 
         /// Deletes \p key from the list
@@ -455,14 +445,12 @@ namespace cds { namespace container {
             \endcode
             The functor may be passed by reference with <tt>boost:ref</tt>
 
-            Since the key of MichaelList's item type \p T is not explicitly specified,
-            template parameter \p Q defines the key type searching in the list.
-            The list item comparator should be able to compare the type \p T of list item
+            Since the key of MichaelList's item type \p value_type is not explicitly specified,
+            template parameter \p Q should contain the complete key to search in the list.
+            The list item comparator should be able to compare the type \p value_type of list item
             and the type \p Q.
 
             Return \p true if key is found and deleted, \p false otherwise
-
-            See also: \ref erase
         */
         template <typename Q, typename Func>
         bool erase( Q const& key, Func f )
@@ -480,7 +468,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
-            return erase_at( head(), key, typename options::template less_wrapper<Less>::type(), f );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
         /// Extracts the item from the list with specified \p key
@@ -519,17 +507,17 @@ namespace cds { namespace container {
             The function is an analog of \ref cds_nonintrusive_MichaelList_hp_extract "extract(guarded_ptr&, Q const&)"
             but \p pred predicate is used for key comparing.
 
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
+            \p Less functor has the semantics like \p std::less but it should accept arguments of type \p value_type and \p Q
             in any order.
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
         bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
         {
-            return extract_at( head(), dest.guard(), key, typename options::template less_wrapper<Less>::type() );
+            return extract_at( head(), dest.guard(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
-        /// Find the key \p key
+        /// Finds \p key
         /** \anchor cds_nonintrusive_MichaelList_hp_find_val
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise
@@ -540,7 +528,7 @@ namespace cds { namespace container {
             return find_at( head(), key, intrusive_key_comparator() );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelList_hp_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -550,39 +538,34 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred )
         {
-            return find_at( head(), key, typename options::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
-        /// Find the key \p val and perform an action with it
+        /// Finds \p key and perform an action with it
         /** \anchor cds_nonintrusive_MichaelList_hp_find_func
-            The function searches an item with key equal to \p val and calls the functor \p f for the item found.
+            The function searches an item with key equal to \p key and calls the functor \p f for the item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor may change non-key fields of \p item. Note that the function is only guarantee
             that \p item cannot be deleted during functor is executing.
             The function does not serialize simultaneous access to the list \p item. If such access is
             possible you must provide your own synchronization schema to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
-            may modify both arguments.
-
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return find_at( head(), val, intrusive_key_comparator(), f );
+            return find_at( head(), key, intrusive_key_comparator(), f );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelList_hp_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -590,56 +573,17 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return find_at( head(), val, typename options::template less_wrapper<Less>::type(), f );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
-        /// Find the key \p val and perform an action with it
-        /** \anchor cds_nonintrusive_MichaelList_hp_find_cfunc
-            The function searches an item with key equal to \p val and calls the functor \p f for the item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref
-
-            The functor may change non-key fields of \p item. Note that the function is only guarantee
-            that \p item cannot be deleted during functor is executing.
-            The function does not serialize simultaneous access to the list \p item. If such access is
-            possible you must provide your own synchronization schema to exclude unsafe item modifications.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_at( head(), val, intrusive_key_comparator(), f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_nonintrusive_MichaelList_hp_find_cfunc "find(Q&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return find_at( head(), val, typename options::template less_wrapper<Less>::type(), f );
-        }
-
-        /// Finds the key \p val and return the item found
+        /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelList_hp_get
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p val is found, and \p false otherwise.
-            If \p val is not found the \p ptr parameter is not changed.
+            The function returns \p true if \p key is found, and \p false otherwise.
+            If \p key is not found the \p ptr parameter is not changed.
 
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -662,24 +606,24 @@ namespace cds { namespace container {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& val )
+        bool get( guarded_ptr& ptr, Q const& key )
         {
-            return get_at( head(), ptr.guard(), val, intrusive_key_comparator() );
+            return get_at( head(), ptr.guard(), key, intrusive_key_comparator() );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds \p key and return the item found
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelList_hp_get "get( guarded_ptr& ptr, Q const&)"
             but \p pred is used for comparing the keys.
 
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
+            \p Less functor has the semantics like \p std::less but should accept arguments of type \p value_type and \p Q
             in any order.
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& val, Less pred )
+        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
         {
-            return get_at( head(), ptr.guard(), val, typename options::template less_wrapper<Less>::type() );
+            return get_at( head(), ptr.guard(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Check if the list is empty
@@ -690,11 +634,11 @@ namespace cds { namespace container {
 
         /// Returns list's item count
         /**
-            The value returned depends on opt::item_counter option. For atomics::empty_item_counter,
+            The value returned depends on item counter provided by \p Traits. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
-            is empty. To check list emptyness use \ref empty() method.
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the list
+            is empty. To check list emptyness use \p empty() method.
         */
         size_t size() const
         {
@@ -702,9 +646,6 @@ namespace cds { namespace container {
         }
 
         /// Clears the list
-        /**
-            Post-condition: the list is empty
-        */
         void clear()
         {
             base_class::clear();

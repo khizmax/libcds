@@ -5,20 +5,20 @@
 
 namespace ordlist {
     namespace {
-        struct PTB_cmp_traits: public cc::michael_list::type_traits
+        struct DHP_cmp_traits: public cc::michael_list::traits
         {
             typedef MichaelListTestHeader::cmp<MichaelListTestHeader::item>   compare;
         };
     }
-    void MichaelListTestHeader::PTB_cmp()
+    void MichaelListTestHeader::DHP_cmp()
     {
         // traits-based version
-        typedef cc::MichaelList< cds::gc::PTB, item, PTB_cmp_traits > list;
+        typedef cc::MichaelList< cds::gc::DHP, item, DHP_cmp_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::MichaelList< cds::gc::PTB, item,
+        typedef cc::MichaelList< cds::gc::DHP, item,
             cc::michael_list::make_traits<
                 cc::opt::compare< cmp<item> >
             >::type
@@ -27,20 +27,20 @@ namespace ordlist {
     }
 
     namespace {
-        struct PTB_less_traits: public cc::michael_list::type_traits
+        struct DHP_less_traits: public cc::michael_list::traits
         {
             typedef MichaelListTestHeader::lt<MichaelListTestHeader::item>   less;
         };
     }
-    void MichaelListTestHeader::PTB_less()
+    void MichaelListTestHeader::DHP_less()
     {
         // traits-based version
-        typedef cc::MichaelList< cds::gc::PTB, item, PTB_less_traits > list;
+        typedef cc::MichaelList< cds::gc::DHP, item, DHP_less_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::MichaelList< cds::gc::PTB, item,
+        typedef cc::MichaelList< cds::gc::DHP, item,
             cc::michael_list::make_traits<
                 cc::opt::less< lt<item> >
             >::type
@@ -49,21 +49,21 @@ namespace ordlist {
     }
 
     namespace {
-        struct PTB_cmpmix_traits: public cc::michael_list::type_traits
+        struct DHP_cmpmix_traits: public cc::michael_list::traits
         {
             typedef MichaelListTestHeader::cmp<MichaelListTestHeader::item>   compare;
             typedef MichaelListTestHeader::lt<MichaelListTestHeader::item>  less;
         };
     }
-    void MichaelListTestHeader::PTB_cmpmix()
+    void MichaelListTestHeader::DHP_cmpmix()
     {
         // traits-based version
-        typedef cc::MichaelList< cds::gc::PTB, item, PTB_cmpmix_traits > list;
+        typedef cc::MichaelList< cds::gc::DHP, item, DHP_cmpmix_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::MichaelList< cds::gc::PTB, item,
+        typedef cc::MichaelList< cds::gc::DHP, item,
             cc::michael_list::make_traits<
                 cc::opt::compare< cmp<item> >
                 ,cc::opt::less< lt<item> >
@@ -73,21 +73,21 @@ namespace ordlist {
     }
 
     namespace {
-        struct PTB_ic_traits: public cc::michael_list::type_traits
+        struct DHP_ic_traits: public cc::michael_list::traits
         {
             typedef MichaelListTestHeader::lt<MichaelListTestHeader::item>   less;
             typedef cds::atomicity::item_counter item_counter;
         };
     }
-    void MichaelListTestHeader::PTB_ic()
+    void MichaelListTestHeader::DHP_ic()
     {
         // traits-based version
-        typedef cc::MichaelList< cds::gc::PTB, item, PTB_ic_traits > list;
+        typedef cc::MichaelList< cds::gc::DHP, item, DHP_ic_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::MichaelList< cds::gc::PTB, item,
+        typedef cc::MichaelList< cds::gc::DHP, item,
             cc::michael_list::make_traits<
                 cc::opt::less< lt<item> >
                 ,cc::opt::item_counter< cds::atomicity::item_counter >

@@ -30,20 +30,24 @@ namespace cds { namespace container {
     }   // namespace details
     //@endcond
 
-    /// Michael's lock-free ordered single-linked list (template specialization for gc::nogc)
+    /// Michael's lock-free ordered single-linked list (template specialization for \pgc::nogc)
     /** @ingroup cds_nonintrusive_list
         \anchor cds_nonintrusive_MichaelList_nogc
 
-        This specialization is intended for so-called persistent usage when no item
+        This specialization is intended for so-called append-only usage when no item
         reclamation may be performed. The class does not support deleting of list item.
         Usually, ordered single-linked list is used as a building block for the hash table implementation.
         The complexity of searching is <tt>O(N)</tt>.
 
         See \ref cds_nonintrusive_MichaelList_gc "MichaelList" for description of template parameters.
-
-        The interface of the specialization is a little different.
     */
-    template <typename T, typename Traits>
+    template <typename T, 
+#ifdef CDS_DOXYGEN_INVOKED
+        class Traits = michael_list::traits
+#else
+        class Traits
+#endif
+    >
     class MichaelList<gc::nogc, T, Traits>:
 #ifdef CDS_DOXYGEN_INVOKED
         protected intrusive::MichaelList< gc::nogc, T, Traits >

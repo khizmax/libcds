@@ -306,7 +306,7 @@ namespace cds { namespace intrusive {
         > barQueue;
         \endcode
     */
-    template <typename GC, typename T, typename Traits>
+    template <typename GC, typename T, typename Traits = msqueue::traits>
     class MSQueue
     {
     public:

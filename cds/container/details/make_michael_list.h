@@ -34,10 +34,10 @@ namespace cds { namespace container {
                 {}
             };
 
-            typedef Traits original_type_traits;
+            typedef Traits original_traits;
 
-            typedef typename original_type_traits::allocator::template rebind<node_type>::other  allocator_type;
-            typedef cds::details::Allocator< node_type, allocator_type >                cxx_allocator;
+            typedef typename original_traits::allocator::template rebind<node_type>::other allocator_type;
+            typedef cds::details::Allocator< node_type, allocator_type > cxx_allocator;
 
             struct node_deallocator
             {
@@ -47,7 +47,7 @@ namespace cds { namespace container {
                 }
             };
 
-            typedef typename opt::details::make_comparator< value_type, original_type_traits >::type key_comparator;
+            typedef typename opt::details::make_comparator< value_type, original_traits >::type key_comparator;
 
             struct value_accessor
             {
@@ -59,18 +59,18 @@ namespace cds { namespace container {
 
             template <typename Less>
             struct less_wrapper {
-                typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor >    type;
+                typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor > type;
             };
 
-            struct type_traits: public original_type_traits
+            struct intrusive_traits: public original_traits
             {
-                typedef intrusive::michael_list::base_hook< opt::gc<gc> >  hook;
-                typedef node_deallocator               disposer;
-
+                typedef intrusive::michael_list::base_hook< opt::gc<gc> > hook;
+                typedef node_deallocator disposer;
                 typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
+                static const opt::link_check_type link_checker = intrusive::michael_list::traits::link_checker;
             };
 
-            typedef intrusive::MichaelList<gc, node_type, type_traits>  type;
+            typedef intrusive::MichaelList<gc, node_type, intrusive_traits>  type;
         };
     }   // namespace details
     //@endcond

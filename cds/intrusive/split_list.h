@@ -17,7 +17,7 @@ namespace cds { namespace intrusive {
 
         The split-ordered list is a lock-free implementation of an extensible unbounded hash table. It uses original
         recursive split-ordering algorithm discovered by Ori Shalev and Nir Shavit that allows to split buckets
-        without moving an item on resizing.
+        without items moving on resizing.
 
         \anchor cds_SplitList_algo_desc
         <b>Short description</b>

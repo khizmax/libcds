@@ -7,14 +7,12 @@ namespace ordlist {
     void IntrusiveMichaelListHeaderTest::HP_base_cmp()
     {
         typedef base_int_item< cds::gc::HP > item;
-        typedef ci::MichaelList< cds::gc::HP
-            ,item
-            ,ci::michael_list::make_traits<
-                ci::opt::hook< ci::michael_list::base_hook< co::gc<cds::gc::HP> > >
-                ,co::compare< cmp<item> >
-                ,ci::opt::disposer< faked_disposer >
-            >::type
-        >    list;
+        struct traits : public ci::michael_list::traits {
+            typedef ci::michael_list::base_hook< co::gc<cds::gc::HP> > hook;
+            typedef cmp<item> compare;
+            typedef faked_disposer disposer;
+        };
+        typedef ci::MichaelList< cds::gc::HP, item, traits > list;
         test_int<list>();
     }
     void IntrusiveMichaelListHeaderTest::HP_base_less()

@@ -753,14 +753,14 @@ namespace ordlist {
         void HP_member_cmpmix();
         void HP_member_ic();
 
-        void PTB_base_cmp();
-        void PTB_base_less();
-        void PTB_base_cmpmix();
-        void PTB_base_ic();
-        void PTB_member_cmp();
-        void PTB_member_less();
-        void PTB_member_cmpmix();
-        void PTB_member_ic();
+        void DHP_base_cmp();
+        void DHP_base_less();
+        void DHP_base_cmpmix();
+        void DHP_base_ic();
+        void DHP_member_cmp();
+        void DHP_member_less();
+        void DHP_member_cmpmix();
+        void DHP_member_ic();
 
         void RCU_GPI_base_cmp();
         void RCU_GPI_base_less();
@@ -827,14 +827,14 @@ namespace ordlist {
             CPPUNIT_TEST(HP_member_cmpmix)
             CPPUNIT_TEST(HP_member_ic)
 
-            CPPUNIT_TEST(PTB_base_cmp)
-            CPPUNIT_TEST(PTB_base_less)
-            CPPUNIT_TEST(PTB_base_cmpmix)
-            CPPUNIT_TEST(PTB_base_ic)
-            CPPUNIT_TEST(PTB_member_cmp)
-            CPPUNIT_TEST(PTB_member_less)
-            CPPUNIT_TEST(PTB_member_cmpmix)
-            CPPUNIT_TEST(PTB_member_ic)
+            CPPUNIT_TEST(DHP_base_cmp)
+            CPPUNIT_TEST(DHP_base_less)
+            CPPUNIT_TEST(DHP_base_cmpmix)
+            CPPUNIT_TEST(DHP_base_ic)
+            CPPUNIT_TEST(DHP_member_cmp)
+            CPPUNIT_TEST(DHP_member_less)
+            CPPUNIT_TEST(DHP_member_cmpmix)
+            CPPUNIT_TEST(DHP_member_ic)
 
             CPPUNIT_TEST(RCU_GPI_base_cmp)
             CPPUNIT_TEST(RCU_GPI_base_less)
