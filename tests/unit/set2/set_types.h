@@ -25,7 +25,7 @@
 #include <cds/container/cuckoo_set.h>
 
 #include <cds/container/skip_list_set_hp.h>
-#include <cds/container/skip_list_set_ptb.h>
+#include <cds/container/skip_list_set_dhp.h>
 #include <cds/container/skip_list_set_rcu.h>
 
 #include <cds/container/ellen_bintree_set_rcu.h>

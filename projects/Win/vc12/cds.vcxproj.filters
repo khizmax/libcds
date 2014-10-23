@@ -872,13 +872,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\skip_list_ptb.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_set_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\skip_list_set_ptb.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h">
@@ -1230,6 +1224,12 @@
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_dhp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_dhp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "map/hdr_skiplist_map.h"
-#include <cds/container/skip_list_map_ptb.h>
+#include <cds/container/skip_list_map_dhp.h>
 #include "unit/michael_alloc.h"
 #include "map/print_skiplist_stat.h"
 

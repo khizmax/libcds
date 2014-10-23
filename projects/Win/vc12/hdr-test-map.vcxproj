@@ -570,7 +570,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_slist.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu_gpb.cpp" />
@@ -580,7 +579,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_rcu_gpb.cpp" />

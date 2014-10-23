@@ -2,7 +2,7 @@
 
 #include "set/hdr_intrusive_skiplist_set.h"
 
-#include <cds/intrusive/skip_list_ptb.h>
+#include <cds/intrusive/skip_list_dhp.h>
 #include "map/print_skiplist_stat.h"
 
 namespace set {

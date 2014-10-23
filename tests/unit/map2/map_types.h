@@ -33,7 +33,7 @@
 #include <cds/container/cuckoo_map.h>
 
 #include <cds/container/skip_list_map_hp.h>
-#include <cds/container/skip_list_map_ptb.h>
+#include <cds/container/skip_list_map_dhp.h>
 #include <cds/container/skip_list_map_rcu.h>
 #include <cds/container/skip_list_map_nogc.h>
 

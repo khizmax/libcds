@@ -697,9 +697,9 @@
     <ClInclude Include="..\..\..\cds\container\skip_list_map_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_rcu.h" />
+    <ClInclude Include="..\..\..\cds\container\skip_list_set_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_set_hp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_set_nogc.h" />
-    <ClInclude Include="..\..\..\cds\container\skip_list_set_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\split_list_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\split_list_set_rcu.h" />
@@ -771,9 +771,9 @@
     <ClInclude Include="..\..\..\cds\intrusive\michael_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\mspriority_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\options.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\skip_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_nogc.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\skip_list_ptb.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\split_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set.h" />

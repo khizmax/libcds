@@ -62,8 +62,8 @@ namespace cds { namespace container {
             when you try to create skip-list object.
 
         \note There are several specializations of \p %SkipListMap for each \p GC. You should include:
-        - <tt><cds/container/skip_list_map_hp.h></tt> for gc::HP garbage collector
-        - <tt><cds/container/skip_list_map_ptb.h></tt> for gc::PTB garbage collector
+        - <tt><cds/container/skip_list_map_hp.h></tt> for \p gc::HP garbage collector
+        - <tt><cds/container/skip_list_map_dhp.h></tt> for \p gc::DHP garbage collector
         - <tt><cds/container/skip_list_map_rcu.h></tt> for \ref cds_nonintrusive_SkipListMap_rcu "RCU type"
         - <tt><cds/container/skip_list_map_nogc.h></tt> for \ref cds_nonintrusive_SkipListMap_nogc "non-deletable SkipListMap"
 

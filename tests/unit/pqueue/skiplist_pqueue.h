@@ -4,8 +4,7 @@
 #define __CDSUNIT_SKIPLIST_PQUEUE_H
 
 #include <cds/container/skip_list_set_hp.h>
-#include <cds/container/skip_list_set_hrc.h>
-#include <cds/container/skip_list_set_ptb.h>
+#include <cds/container/skip_list_set_dhp.h>
 #include <cds/urcu/general_instant.h>
 #include <cds/urcu/general_buffered.h>
 #include <cds/urcu/general_threaded.h>

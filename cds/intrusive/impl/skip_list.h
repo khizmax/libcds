@@ -215,8 +215,8 @@ namespace cds { namespace intrusive {
             when you try to create skip-list object.
 
         \note There are several specializations of \p %SkipListSet for each \p GC. You should include:
-        - <tt><cds/intrusive/skip_list_hp.h></tt> for gc::HP garbage collector
-        - <tt><cds/intrusive/skip_list_ptb.h></tt> for gc::PTB garbage collector
+        - <tt><cds/intrusive/skip_list_hp.h></tt> for \p gc::HP garbage collector
+        - <tt><cds/intrusive/skip_list_dhp.h></tt> for \p gc::DHP garbage collector
         - <tt><cds/intrusive/skip_list_nogc.h></tt> for \ref cds_intrusive_SkipListSet_nogc for persistent set
         - <tt><cds/intrusive/skip_list_rcu.h></tt> for \ref cds_intrusive_SkipListSet_rcu "RCU type"
 
