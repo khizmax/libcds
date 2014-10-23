@@ -104,9 +104,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hp_lazy.cpp">
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hrc_lazy.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_nogc.cpp">
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
@@ -186,9 +183,6 @@
       <Filter>container\split_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_hp.cpp">
-      <Filter>container\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_hrc.cpp">
       <Filter>container\split_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_nogc.cpp">

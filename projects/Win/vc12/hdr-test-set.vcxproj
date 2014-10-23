@@ -578,7 +578,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_rcu_sht_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hp_lazy.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hrc_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_nogc_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_ptb.cpp" />
@@ -620,7 +619,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_rcu_gpb.cpp" />

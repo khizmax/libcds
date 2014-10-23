@@ -861,10 +861,6 @@ namespace set {
         void Lazy_PTB_less();
         void Lazy_PTB_cmpmix();
 
-        void Lazy_HRC_cmp();
-        void Lazy_HRC_less();
-        void Lazy_HRC_cmpmix();
-
         void Lazy_RCU_GPI_cmp();
         void Lazy_RCU_GPI_less();
         void Lazy_RCU_GPI_cmpmix();
@@ -929,10 +925,6 @@ namespace set {
         void Split_Lazy_PTB_cmp();
         void Split_Lazy_PTB_less();
         void Split_Lazy_PTB_cmpmix();
-
-        void Split_Lazy_HRC_cmp();
-        void Split_Lazy_HRC_less();
-        void Split_Lazy_HRC_cmpmix();
 
         void Split_Lazy_RCU_GPI_cmp();
         void Split_Lazy_RCU_GPI_less();
@@ -999,10 +991,6 @@ namespace set {
             CPPUNIT_TEST(Lazy_PTB_less)
             CPPUNIT_TEST(Lazy_PTB_cmpmix)
 
-            CPPUNIT_TEST(Lazy_HRC_cmp)
-            CPPUNIT_TEST(Lazy_HRC_less)
-            CPPUNIT_TEST(Lazy_HRC_cmpmix)
-
             CPPUNIT_TEST(Lazy_RCU_GPI_cmp)
             CPPUNIT_TEST(Lazy_RCU_GPI_less)
             CPPUNIT_TEST(Lazy_RCU_GPI_cmpmix)
@@ -1066,10 +1054,6 @@ namespace set {
             CPPUNIT_TEST(Split_Lazy_PTB_cmp)
             CPPUNIT_TEST(Split_Lazy_PTB_less)
             CPPUNIT_TEST(Split_Lazy_PTB_cmpmix)
-
-            CPPUNIT_TEST(Split_Lazy_HRC_cmp)
-            CPPUNIT_TEST(Split_Lazy_HRC_less)
-            CPPUNIT_TEST(Split_Lazy_HRC_cmpmix)
 
             CPPUNIT_TEST(Split_Lazy_RCU_GPI_cmp)
             CPPUNIT_TEST(Split_Lazy_RCU_GPI_less)

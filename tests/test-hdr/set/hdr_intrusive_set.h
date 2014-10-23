@@ -1122,10 +1122,6 @@ namespace set {
         void PTB_member_less_lazy();
         void PTB_member_cmpmix_lazy();
 
-        void HRC_base_cmp_lazy();
-        void HRC_base_less_lazy();
-        void HRC_base_cmpmix_lazy();
-
         void RCU_GPI_base_cmp_lazy();
         void RCU_GPI_base_less_lazy();
         void RCU_GPI_base_cmpmix_lazy();
@@ -1301,13 +1297,6 @@ namespace set {
         void split_st_PTB_member_less_lazy();
         void split_st_PTB_member_cmpmix_lazy();
 
-        void split_dyn_HRC_base_cmp_lazy();
-        void split_dyn_HRC_base_less_lazy();
-        void split_dyn_HRC_base_cmpmix_lazy();
-        void split_st_HRC_base_cmp_lazy();
-        void split_st_HRC_base_less_lazy();
-        void split_st_HRC_base_cmpmix_lazy();
-
         void split_dyn_RCU_GPI_base_cmp_lazy();
         void split_dyn_RCU_GPI_base_less_lazy();
         void split_dyn_RCU_GPI_base_cmpmix_lazy();
@@ -1456,10 +1445,6 @@ namespace set {
             CPPUNIT_TEST(PTB_member_cmp_lazy)
             CPPUNIT_TEST(PTB_member_less_lazy)
             CPPUNIT_TEST(PTB_member_cmpmix_lazy)
-
-            CPPUNIT_TEST(HRC_base_cmp_lazy)
-            CPPUNIT_TEST(HRC_base_less_lazy)
-            CPPUNIT_TEST(HRC_base_cmpmix_lazy)
 
             CPPUNIT_TEST(RCU_GPI_base_cmp_lazy)
             CPPUNIT_TEST(RCU_GPI_base_less_lazy)
@@ -1633,13 +1618,6 @@ namespace set {
             CPPUNIT_TEST(split_st_PTB_member_cmp_lazy)
             CPPUNIT_TEST(split_st_PTB_member_less_lazy)
             CPPUNIT_TEST(split_st_PTB_member_cmpmix_lazy)
-
-            CPPUNIT_TEST(split_dyn_HRC_base_cmp_lazy)
-            CPPUNIT_TEST(split_dyn_HRC_base_less_lazy)
-            CPPUNIT_TEST(split_dyn_HRC_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_HRC_base_cmp_lazy)
-            CPPUNIT_TEST(split_st_HRC_base_less_lazy)
-            CPPUNIT_TEST(split_st_HRC_base_cmpmix_lazy)
 
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_cmp_lazy)
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_less_lazy)
