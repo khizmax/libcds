@@ -59,7 +59,7 @@ CDS_TESTHDR_OFFSETOF_ORDLIST := \
     tests/test-hdr/ordered_list/hdr_intrusive_lazy_rcu_sht.cpp \
     tests/test-hdr/ordered_list/hdr_intrusive_michael_hp.cpp \
     tests/test-hdr/ordered_list/hdr_intrusive_michael_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_intrusive_michael_ptb.cpp \
+    tests/test-hdr/ordered_list/hdr_intrusive_michael_dhp.cpp \
     tests/test-hdr/ordered_list/hdr_intrusive_michael_list_rcu_gpb.cpp \
     tests/test-hdr/ordered_list/hdr_intrusive_michael_list_rcu_gpi.cpp \
     tests/test-hdr/ordered_list/hdr_intrusive_michael_list_rcu_gpt.cpp \

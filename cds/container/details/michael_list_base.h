@@ -13,8 +13,8 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace michael_list {
-        /// Michael list default type traits
-        struct type_traits
+        /// MichaelList traits
+        struct traits
         {
             typedef CDS_DEFAULT_ALLOCATOR   allocator       ;   ///< allocator used to allocate new node
 
@@ -24,34 +24,22 @@ namespace cds { namespace container {
             */
             typedef opt::none                       compare;
 
-            /// specifies binary predicate used for key comparison.
+            /// Specifies binary predicate used for key comparison.
             /**
                 Default is \p std::less<T>.
             */
             typedef opt::none                       less;
 
-            /// back-off strategy used
-            /**
-                If the option is not specified, the cds::backoff::empty is used.
-            */
+            /// Back-off strategy
             typedef cds::backoff::empty             back_off;
 
-            /// Item counter
-            /**
-                The type for item counting feature.
-                Default is no item counter (\ref atomicity::empty_item_counter)
-            */
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
 
-            /// Link fields checking feature
-            /**
-                Default is \ref intrusive::opt::debug_check_link
-            */
-            static const opt::link_check_type link_checker = opt::debug_check_link;
-
             /// C++ memory ordering model
-            /**
-                List of available memory ordering see opt::memory_model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
@@ -68,11 +56,8 @@ namespace cds { namespace container {
             //@endcond
         };
 
-        /// Metafunction converting option list to MichaelList traits
+        /// Metafunction converting option list to \p michael_list::traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-
-            See \ref MichaelList, \ref type_traits, \ref cds::opt::make_options.
         */
         template <typename... Options>
         struct make_traits {
@@ -80,7 +65,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #endif
@@ -90,10 +75,10 @@ namespace cds { namespace container {
     } // namespace michael_list
 
     // Forward declarations
-    template <typename GC, typename T, typename Traits=michael_list::type_traits>
+    template <typename GC, typename T, typename Traits=michael_list::traits>
     class MichaelList;
 
-    template <typename GC, typename Key, typename Value, typename Traits=michael_list::type_traits>
+    template <typename GC, typename Key, typename Value, typename Traits=michael_list::traits>
     class MichaelKVList;
 
     // Tag for selecting Michael's list implementation

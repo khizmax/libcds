@@ -15,14 +15,13 @@ namespace ordlist {
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef base_int_item< RCU > item;
-        typedef ci::MichaelList< RCU
-            ,item
-            ,ci::michael_list::make_traits<
-                ci::opt::hook< ci::michael_list::base_hook< co::gc<RCU> > >
-                ,co::compare< cmp<item> >
-                ,ci::opt::disposer< faked_disposer >
-            >::type
-        >    list;
+        struct traits : public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< co::gc<RCU> > hook;
+            typedef cmp<item> compare;
+            typedef faked_disposer disposer;
+        };
+        typedef ci::MichaelList< RCU, item, traits > list;
         test_rcu_int<list>();
 #endif
     }
@@ -30,14 +29,13 @@ namespace ordlist {
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef base_int_item< RCU > item;
-        typedef ci::MichaelList< RCU
-            ,item
-            ,ci::michael_list::make_traits<
-                ci::opt::hook< ci::michael_list::base_hook< co::gc<RCU> > >
-                ,co::less< less<item> >
-                ,ci::opt::disposer< faked_disposer >
-            >::type
-        >    list;
+        struct traits : public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< co::gc<RCU> > hook;
+            typedef IntrusiveMichaelListHeaderTest::less<item> less;
+            typedef faked_disposer disposer;
+        };
+        typedef ci::MichaelList< RCU, item, traits > list;
         test_rcu_int<list>();
 #endif
     }

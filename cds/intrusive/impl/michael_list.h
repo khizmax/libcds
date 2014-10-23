@@ -5,6 +5,7 @@
 
 #include <cds/intrusive/details/michael_list_base.h>
 #include <cds/gc/guarded_ptr.h>
+#include <cds/details/make_const_type.h>
 
 namespace cds { namespace intrusive {
 
@@ -19,71 +20,53 @@ namespace cds { namespace intrusive {
             - [2002] Maged Michael "High performance dynamic lock-free hash tables and list-based sets"
 
         Template arguments:
-        - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T (see michael_list::node).
+        - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T (see \p michael_list::node).
         - \p T - type to be stored in the list. The type must be based on michael_list::node (for michael_list::base_hook)
             or it must have a member of type michael_list::node (for michael_list::member_hook).
-        - \p Traits - type traits. See michael_list::type_traits for explanation.
-
-        It is possible to declare option-based list with cds::intrusive::michael_list::make_traits metafunction istead of \p Traits template
-        argument.
-
-        Template argument list \p Options of cds::intrusive::michael_list::make_traits metafunction are:
-        - opt::hook - hook used. Possible values are: michael_list::base_hook, michael_list::member_hook, michael_list::traits_hook.
-            If the option is not specified, <tt>michael_list::base_hook<></tt> and gc::HP is used.
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
-        - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. Due the nature
-            of GC schema the disposer may be called asynchronously.
-        - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-
-        For example, the following traits-based declaration of gc::HP Michael's list
-        \code
-        #include <cds/intrusive/michael_list_hp.h>
-        // Declare item stored in your list
-        struct item: public cds::intrusive::michael_list::node< cds::gc::HP >
-        {
-            int nKey;
-            // .... other data
-        };
-
-        // Declare comparator for the item
-        struct my_compare {
-            int operator()( item const& i1, item const& i2 ) const
+        - \p Traits - type traits, default is \p michael_list::traits. It is possible to declare option-based 
+             list with \p cds::intrusive::michael_list::make_traits metafunction:
+            For example, the following traits-based declaration of \p gc::HP Michael's list
+            \code
+            #include <cds/intrusive/michael_list_hp.h>
+            // Declare item stored in your list
+            struct item: public cds::intrusive::michael_list::node< cds::gc::HP >
             {
-                return i1.nKey - i2.nKey;
-            }
-        };
+                int nKey;
+                // .... other data
+            };
 
-        // Declare type_traits
-        struct my_traits: public cds::intrusive::michael_list::type_traits
-        {
-            typedef cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::HP > >   hook;
-            typedef my_compare compare;
-        };
+            // Declare comparator for the item
+            struct my_compare {
+                int operator()( item const& i1, item const& i2 ) const
+                {
+                    return i1.nKey - i2.nKey;
+                }
+            };
 
-        // Declare traits-based list
-        typedef cds::intrusive::MichaelList< cds::gc::HP, item, my_traits >     traits_based_list;
-        \endcode
+            // Declare traits
+            struct my_traits: public cds::intrusive::michael_list::traits
+            {
+                typedef cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::HP > >   hook;
+                typedef my_compare compare;
+            };
 
-        is equivalent for the following option-based list
-        \code
-        #include <cds/intrusive/michael_list_hp.h>
+            // Declare traits-based list
+            typedef cds::intrusive::MichaelList< cds::gc::HP, item, my_traits >     traits_based_list;
+            \endcode
+            is equivalent for the following option-based list
+            \code
+            #include <cds/intrusive/michael_list_hp.h>
 
-        // item struct and my_compare are the same
+            // item struct and my_compare are the same
 
-        // Declare option-based list
-        typedef cds::intrusive::MichaelList< cds::gc::HP, item,
-            typename cds::intrusive::michael_list::make_traits<
-                cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::HP > > >    // hook option
-                ,cds::intrusive::opt::compare< my_compare >     // item comparator option
-            >::type
-        >     option_based_list;
-        \endcode
+            // Declare option-based list
+            typedef cds::intrusive::MichaelList< cds::gc::HP, item,
+                typename cds::intrusive::michael_list::make_traits<
+                    cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::HP > > >    // hook option
+                    ,cds::intrusive::opt::compare< my_compare >     // item comparator option
+                >::type
+            >     option_based_list;
+            \endcode
 
         \par Usage
         There are different specializations of this template for each garbage collecting schema used.
@@ -95,10 +78,10 @@ namespace cds { namespace intrusive {
             See \ref cds_intrusive_MichaelList_nogc "non-GC MichaelList"
 
         Then, you should incorporate michael_list::node into your struct \p T and provide
-        appropriate michael_list::type_traits::hook in your \p Traits template parameters. Usually, for \p Traits you
-        define a struct based on michael_list::type_traits.
+        appropriate \p michael_list::traits::hook in your \p Traits template parameters. Usually, for \p Traits you
+        define a struct based on \p michael_list::traits.
 
-        Example for gc::PTB and base hook:
+        Example for \p gc::PTB and base hook:
         \code
         // Include GC-related Michael's list specialization
         #include <cds/intrusive/michael_list_dhp.h>
@@ -132,8 +115,8 @@ namespace cds { namespace intrusive {
         };
 
 
-        // Declare type_traits
-        struct my_traits: public cds::intrusive::michael_list::type_traits
+        // Declare traits
+        struct my_traits: public cds::intrusive::michael_list::traits
         {
             typedef cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::PTB > >   hook;
             typedef my_data_cmp compare;
@@ -170,7 +153,7 @@ namespace cds { namespace intrusive {
         class GC
         ,typename T
 #ifdef CDS_DOXYGEN_INVOKED
-        ,class Traits = michael_list::type_traits
+        ,class Traits = michael_list::traits
 #else
         ,class Traits
 #endif
@@ -178,49 +161,49 @@ namespace cds { namespace intrusive {
     class MichaelList
     {
     public:
-        typedef T       value_type      ;   ///< type of value stored in the list
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef T       value_type; ///< type of value stored in the list
+        typedef Traits  traits;     ///< Traits template parameter
 
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
+        typedef typename traits::hook    hook;      ///< hook type
+        typedef typename hook::node_type node_type; ///< node type
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
 #   else
-        typedef typename opt::details::make_comparator< value_type, options >::type key_comparator;
+        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
 
-        typedef typename options::disposer  disposer    ;   ///< disposer used
+        typedef typename traits::disposer  disposer; ///< disposer used
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
-        typedef typename michael_list::get_link_checker< node_type, options::link_checker >::type link_checker   ;   ///< link checker
+        typedef typename michael_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
         typedef GC  gc          ;   ///< Garbage collector
-        typedef typename options::back_off  back_off    ;   ///< back-off strategy
-        typedef typename options::item_counter item_counter ;   ///< Item counting policy used
-        typedef typename options::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::back_off  back_off;   ///< back-off strategy
+        typedef typename traits::item_counter item_counter;   ///< Item counting policy used
+        typedef typename traits::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
         typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
 
         //@cond
-        // Rebind options (split-list support)
+        // Rebind traits (split-list support)
         template <typename... Options>
-        struct rebind_options {
+        struct rebind_traits {
             typedef MichaelList<
                 gc
                 , value_type
-                , typename cds::opt::make_options< options, Options...>::type
+                , typename cds::opt::make_options< traits, Options...>::type
             >   type;
         };
         //@endcond
 
     protected:
-        typedef typename node_type::atomic_marked_ptr   atomic_node_ptr ;   ///< Atomic node pointer
-        typedef typename node_type::marked_ptr          marked_node_ptr ;   ///< Node marked pointer
+        typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic node pointer
+        typedef typename node_type::marked_ptr          marked_node_ptr;   ///< Node marked pointer
 
-        typedef atomic_node_ptr     auxiliary_head      ;   ///< Auxiliary head type (for split-list support)
+        typedef atomic_node_ptr     auxiliary_head;   ///< Auxiliary head type (for split-list support)
 
-        atomic_node_ptr     m_pHead         ;   ///< Head pointer
-        item_counter        m_ItemCounter   ;   ///< Item counter
+        atomic_node_ptr     m_pHead;        ///< Head pointer
+        item_counter        m_ItemCounter;  ///< Item counter
 
         //@cond
         /// Position pointer for item search
@@ -245,18 +228,17 @@ namespace cds { namespace intrusive {
                 disposer()( p );
             }
         };
-
         //@endcond
 
     protected:
         //@cond
-        void retire_node( node_type * pNode )
+        static void retire_node( node_type * pNode )
         {
             assert( pNode != nullptr );
             gc::template retire<clean_disposer>( node_traits::to_value_ptr( *pNode ) );
         }
 
-        bool link_node( node_type * pNode, position& pos )
+        static bool link_node( node_type * pNode, position& pos )
         {
             assert( pNode != nullptr );
             link_checker::is_empty( pNode );
@@ -266,7 +248,7 @@ namespace cds { namespace intrusive {
             return pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
 
-        bool unlink_node( position& pos )
+        static bool unlink_node( position& pos )
         {
             assert( pos.pPrev != nullptr );
             assert( pos.pCur != nullptr );
@@ -403,11 +385,11 @@ namespace cds { namespace intrusive {
             The forward iterator for Michael's list has some features:
             - it has no post-increment operator
             - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
-              For some GC (gc::HP, gc::HRC), a guard is limited resource per thread, so an exception (or assertion) "no free guard"
-              may be thrown if a limit of guard count per thread is exceeded.
-            - The iterator cannot be moved across thread boundary since it contains GC's guard that is thread-private GC data.
-            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the list.
+              For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
+              may be thrown if the limit of guard count per thread is exceeded.
+            - The iterator cannot be moved across thread boundary since it contains thread-private GC's guard.
+            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
+              deleting operations there is no guarantee that you iterate all item in the list.
 
             Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator on the concurrent container
             for debug purpose only.
@@ -509,10 +491,10 @@ namespace cds { namespace intrusive {
 
         /// Inserts new node
         /**
-            The function inserts \p val in the list if the list does not contain
+            The function inserts \p val into the list if the list does not contain
             an item with key equal to \p val.
 
-            Returns \p true if \p val is linked into the list, \p false otherwise.
+            Returns \p true if \p val has been linked to the list, \p false otherwise.
         */
         bool insert( value_type& val )
         {
@@ -534,8 +516,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this list's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success and may be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success.
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -543,11 +524,11 @@ namespace cds { namespace intrusive {
             return insert_at( m_pHead, val, f );
         }
 
-        /// Ensures that the \p item exists in the list
+        /// Ensures that the \p val exists in the list
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val not found in the list, then \p val is inserted into the list.
+            If the item \p val is not found in the list, then \p val is inserted.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -563,8 +544,6 @@ namespace cds { namespace intrusive {
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using \p std::ref.
-
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the list.
@@ -577,12 +556,12 @@ namespace cds { namespace intrusive {
 
         /// Unlinks the item \p val from the list
         /**
-            The function searches the item \p val in the list and unlink it from the list
+            The function searches the item \p val in the list and unlinks it from the list
             if it is found and it is equal to \p val.
 
-            Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
-            and deletes the item found. \p unlink finds an item by key and deletes it
-            only if \p val is an item of that list, i.e. the pointer to item found
+            Difference between \p erase() and \p %unlink(): \p %erase() finds <i>a key</i>
+            and deletes the item found. \p %unlink() finds an item by key and deletes it
+            only if \p val is an item of the list, i.e. the pointer to item found
             is equal to <tt> &val </tt>.
 
             The function returns \p true if success and \p false otherwise.
@@ -594,14 +573,14 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the list
         /** \anchor cds_intrusive_MichaelList_hp_erase_val
-            The function searches an item with key equal to \p val in the list,
+            The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \p true.
-            If the item with the key equal to \p val is not found the function return \p false.
+            If \p key is not found the function return \p false.
         */
         template <typename Q>
-        bool erase( Q const& val )
+        bool erase( Q const& key )
         {
-            return erase_at( m_pHead, val, key_comparator() );
+            return erase_at( m_pHead, key, key_comparator() );
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -612,14 +591,14 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool erase_with( Q const& val, Less pred )
+        bool erase_with( Q const& key, Less pred )
         {
-            return erase_at( m_pHead, val, cds::opt::details::make_comparator_from_less<Less>());
+            return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Deletes the item from the list
         /** \anchor cds_intrusive_MichaelList_hp_erase_func
-            The function searches an item with key equal to \p val in the list,
+            The function searches an item with key equal to \p key in the list,
             call \p func functor with item found, unlinks it from the list, and returns \p true.
             The \p Func interface is
             \code
@@ -627,14 +606,12 @@ namespace cds { namespace intrusive {
                 void operator()( value_type const& item );
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
-
-            If the item with the key equal to \p val is not found the function return \p false.
+            If \p key is not found the function return \p false, \p func is not called.
         */
         template <typename Q, typename Func>
-        bool erase( Q const& val, Func func )
+        bool erase( Q const& key, Func func )
         {
-            return erase_at( m_pHead, val, key_comparator(), func );
+            return erase_at( m_pHead, key, key_comparator(), func );
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -645,9 +622,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func>
-        bool erase_with( Q const& val, Less pred, Func f )
+        bool erase_with( Q const& key, Less pred, Func f )
         {
-            return erase_at( m_pHead, val, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
         /// Extracts the item from the list with specified \p key
@@ -698,36 +675,34 @@ namespace cds { namespace intrusive {
             return extract_at( m_pHead, dest.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
-        /// Finds the key \p val
+        /// Finds \p key in the list
         /** \anchor cds_intrusive_MichaelList_hp_find_func
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor may change non-key fields of \p item. Note that the function is only guarantee
             that \p item cannot be disposed during functor is executing.
-            The function does not serialize simultaneous access to the list \p item. If such access is
-            possible you must provide your own synchronization schema to exclude unsafe item modifications.
+            The function does not serialize simultaneous access to the \p item. If such access is
+            possible you must provide your own synchronization schema to keep out unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
+            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
             may modify both arguments.
 
             The function returns \p true if \p val is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return find_at( m_pHead, val, key_comparator(), f );
+            return find_at( m_pHead, key, key_comparator(), f );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_intrusive_MichaelList_hp_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -735,59 +710,20 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return find_at( m_pHead, val, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
-        /// Finds the key \p val
-        /** \anchor cds_intrusive_MichaelList_hp_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
-
-            The functor may change non-key fields of \p item. Note that the function is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The function does not serialize simultaneous access to the list \p item. If such access is
-            possible you must provide your own synchronization schema to exclude unsafe item modifications.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_at( m_pHead, val, key_comparator(), f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return find_at( m_pHead, val, cds::opt::details::make_comparator_from_less<Less>(), f );
-        }
-
-        /// Finds the key \p val
+        /// Finds the \p key
         /** \anchor cds_intrusive_MichaelList_hp_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise
         */
         template <typename Q>
-        bool find( Q const & val )
+        bool find( Q const& key )
         {
-            return find_at( m_pHead, val, key_comparator() );
+            return find_at( m_pHead, key, key_comparator() );
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -798,17 +734,17 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return find_at( m_pHead, val, cds::opt::details::make_comparator_from_less<Less>() );
+            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the \p key and return the item found
         /** \anchor cds_intrusive_MichaelList_hp_get
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p val is found, and \p false otherwise.
-            If \p val is not found the \p ptr parameter is not changed.
+            The function returns \p true if \p key is found, and \p false otherwise.
+            If \p key is not found the \p ptr parameter is not changed.
 
             The \ref disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC automatically when returned \ref guarded_ptr object
@@ -834,12 +770,12 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& val )
+        bool get( guarded_ptr& ptr, Q const& key )
         {
-            return get_at( m_pHead, ptr.guard(), val, key_comparator() );
+            return get_at( m_pHead, ptr.guard(), key, key_comparator() );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the \p key and return the item found
         /**
             The function is an analog of \ref cds_intrusive_MichaelList_hp_get "get( guarded_ptr& ptr, Q const&)"
             but \p pred is used for comparing the keys.
@@ -849,9 +785,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& val, Less pred )
+        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
         {
-            return get_at( m_pHead, ptr.guard(), val, cds::opt::details::make_comparator_from_less<Less>() );
+            return get_at( m_pHead, ptr.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
         /// Clears the list
@@ -875,7 +811,7 @@ namespace cds { namespace intrusive {
             }
         }
 
-        /// Checks if the list is empty
+        /// Checks whether the list is empty
         bool empty() const
         {
             return m_pHead.load( memory_model::memory_order_relaxed ).all() == nullptr;
@@ -883,11 +819,11 @@ namespace cds { namespace intrusive {
 
         /// Returns list's item count
         /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
+            The value returned depends on item counter provided by \p Traits. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
-            is empty. To check list emptyness use \ref empty() method.
+            @note Even if you use real item counter and it returns 0, this fact does not mean that the list
+            is empty. To check list emptyness use \p empty() method.
         */
         size_t size() const
         {

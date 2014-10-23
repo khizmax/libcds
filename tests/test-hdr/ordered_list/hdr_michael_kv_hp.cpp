@@ -5,7 +5,7 @@
 
 namespace ordlist {
     namespace {
-        struct HP_cmp_traits: public cc::michael_list::type_traits
+        struct HP_cmp_traits: public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::cmp<MichaelKVListTestHeader::key_type>   compare;
         };
@@ -30,7 +30,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct HP_less_traits: public cc::michael_list::type_traits
+        struct HP_less_traits : public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>   less;
         };
@@ -52,7 +52,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct HP_cmpmix_traits: public cc::michael_list::type_traits
+        struct HP_cmpmix_traits : public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::cmp<MichaelKVListTestHeader::key_type>   compare;
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>  less;
@@ -76,7 +76,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct HP_ic_traits: public cc::michael_list::type_traits
+        struct HP_ic_traits : public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>   less;
             typedef cds::atomicity::item_counter item_counter;
