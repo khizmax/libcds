@@ -136,6 +136,15 @@
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_dhp.cpp">
       <Filter>container</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy.h">

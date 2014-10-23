@@ -64,20 +64,17 @@ CDS_TESTHDR_DEQUE := \
     tests/test-hdr/deque/hdr_fcdeque.cpp
 
 CDS_TESTHDR_ORDLIST := \
-    tests/test-hdr/ordered_list/hdr_intrusive_lazy_hrc.cpp \
+    tests/test-hdr/ordered_list/hdr_lazy_dhp.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_hrc.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_ptb.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_rcu_gpi.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_rcu_gpb.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_rcu_gpt.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_rcu_shb.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_rcu_sht.cpp \
+    tests/test-hdr/ordered_list/hdr_lazy_kv_dhp.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_hrc.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_ptb.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpb.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpi.cpp \
     tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpt.cpp \
