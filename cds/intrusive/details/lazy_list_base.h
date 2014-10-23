@@ -3,12 +3,10 @@
 #ifndef __CDS_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
 #define __CDS_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
 
-#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/details/make_const_type.h>
-#include <boost/type_traits/is_same.hpp>
 #include <cds/lock/spinlock.h>
 #include <cds/urcu/options.h>
 
@@ -22,8 +20,8 @@ namespace cds { namespace intrusive {
         /**
             Template parameters:
             - GC - garbage collector
-            - Lock - lock type. Default is cds::lock::Spin
-            - Tag - a tag used to distinguish between different implementation. An incomplete type can be used as a tag.
+            - Lock - lock type. Default is \p cds::lock::Spin
+            - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <
             class GC
@@ -39,8 +37,8 @@ namespace cds { namespace intrusive {
             typedef cds::details::marked_ptr<node, 1>   marked_ptr         ;   ///< marked pointer
             typedef typename gc::template atomic_marked_ptr< marked_ptr>     atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
 
-            atomic_marked_ptr   m_pNext ; ///< pointer to the next node in the list + logical deletion mark
-            mutable lock_type   m_Lock  ; ///< Node lock
+            atomic_marked_ptr   m_pNext; ///< pointer to the next node in the list + logical deletion mark
+            mutable lock_type   m_Lock;  ///< Node lock
 
             /// Checks if node is marked
             bool is_marked() const
@@ -53,35 +51,6 @@ namespace cds { namespace intrusive {
                 : m_pNext( nullptr )
             {}
         };
-
-        //@cond
-        template <typename GC, typename NodeType, typename Alloc >
-        class boundary_nodes
-        {
-            typedef NodeType node_type;
-
-            node_type   m_Head;
-            node_type   m_Tail;
-
-        public:
-            node_type * head()
-            {
-                return &m_Head;
-            }
-            node_type const * head() const
-            {
-                return &m_Head;
-            }
-            node_type * tail()
-            {
-                return &m_Tail;
-            }
-            node_type const * tail() const
-            {
-                return &m_Tail;
-            }
-        };
-        //@endcond
 
         //@cond
         template <typename GC, typename Node, typename MemoryModel>
@@ -119,9 +88,9 @@ namespace cds { namespace intrusive {
         /// Base hook
         /**
             \p Options are:
-            - opt::gc - garbage collector used.
+            - opt::gc - garbage collector
             - opt::lock_type - lock type used for node locking. Default is lock::Spin
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         struct base_hook: public hook< opt::base_hook_tag, Options... >
@@ -133,9 +102,9 @@ namespace cds { namespace intrusive {
             Use \p offsetof macro to define \p MemberOffset
 
             \p Options are:
-            - opt::gc - garbage collector used.
+            - opt::gc - garbage collector
             - opt::lock_type - lock type used for node locking. Default is lock::Spin
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         struct member_hook: public hook< opt::member_hook_tag, Options... >
@@ -153,7 +122,7 @@ namespace cds { namespace intrusive {
             \p Options are:
             - opt::gc - garbage collector used.
             - opt::lock_type - lock type used for node locking. Default is lock::Spin
-            - opt::tag - tag
+            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         struct traits_hook: public hook< opt::traits_hook_tag, Options... >
@@ -217,82 +186,74 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Type traits for LazyList class
-        struct type_traits
+        /// LazyList traits
+        struct traits
         {
             /// Hook used
             /**
-                Possible values are: lazy_list::base_hook, lazy_list::member_hook, lazy_list::traits_hook.
+                Possible values are: \p lazy_list::base_hook, \p lazy_list::member_hook, \p lazy_list::traits_hook.
             */
             typedef base_hook<>       hook;
 
-            /// Key comparison functor
+            /// Key comparing functor
             /**
-                No default functor is provided. If the option is not specified, the \p less is used.
+                No default functor is provided. If the functor is not specified, the \p less is used.
             */
             typedef opt::none                       compare;
 
-            /// specifies binary predicate used for key comparison.
+            /// Specifies binary predicate used for comparing keys
             /**
                 Default is \p std::less<T>.
             */
             typedef opt::none                       less;
 
-            /// back-off strategy used
-            /**
-                If the option is not specified, the cds::backoff::Default is used.
-            */
+            /// Back-off strategy
             typedef cds::backoff::Default           back_off;
 
-            /// Disposer
-            /**
-                the functor used for dispose removed items. Default is opt::v::empty_disposer.
-            */
+            /// Disposer for removing items
             typedef opt::v::empty_disposer          disposer;
 
-            /// Item counter
-            /**
-                The type for item counting feature.
-                Default is no item counter (\ref atomicity::empty_item_counter)
-            */
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
 
             /// Link fields checking feature
             /**
-                Default is \ref opt::debug_check_link
+                Default is \p opt::debug_check_link
             */
             static const opt::link_check_type link_checker = opt::debug_check_link;
 
-            /// Allocator
-            /**
-                For intrusive lazy list an allocator is needed for dummy tail node allocation.
-            */
-            typedef CDS_DEFAULT_ALLOCATOR           allocator;
-
             /// C++ memory ordering model
-            /**
-                List of available memory ordering see opt::memory_model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
             /// RCU deadlock checking policy (only for \ref cds_intrusive_LazyList_rcu "RCU-based LazyList")
             /**
-                List of available options see opt::rcu_check_deadlock
+                List of available options see \p opt::rcu_check_deadlock
             */
             typedef opt::v::rcu_throw_deadlock      rcu_check_deadlock;
-
-            //@cond
-            // for internal use only!!!
-            typedef opt::none                       boundary_node_type;
-            //@endcond
         };
 
-        /// Metafunction converting option list to traits
+        /// Metafunction converting option list to \p lazy_list::traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-
-            See \ref LazyList, \ref type_traits, \ref cds::opt::make_options.
-
+            Supported \p Options are:
+            - \p opt::hook - hook used. Possible values are: \p lazy_list::base_hook, \p lazy_list::member_hook, \p lazy_list::traits_hook.
+                If the option is not specified, \p %lazy_list::base_hook and \p gc::HP is used.
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p opt::less is used.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. Due the nature
+                of GC schema the disposer may be called asynchronously.
+            - \p opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
+            - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
+                 To enable item counting use \p atomicity::item_counter.
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
+                Default is \p opt::v::rcu_throw_deadlock
         */
         template <typename... Options>
         struct make_traits {
@@ -300,7 +261,7 @@ namespace cds { namespace intrusive {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -310,10 +271,9 @@ namespace cds { namespace intrusive {
 
     //@cond
     // Forward declaration
-    template < class GC, typename T, class Traits = lazy_list::type_traits >
+    template < class GC, typename T, class Traits = lazy_list::traits >
     class LazyList;
     //@endcond
-
 
 }}   // namespace cds::intrusive
 
