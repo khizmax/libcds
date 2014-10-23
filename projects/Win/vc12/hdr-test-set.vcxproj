@@ -545,7 +545,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_hp_lazy.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_hrc_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_nogc_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_ptb.cpp" />
@@ -594,7 +593,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_rcu_sht_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_lazy_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_lazy_hrc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_lazy_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_lazy_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_lazy_rcu_gpb.cpp" />

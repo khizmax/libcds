@@ -32,7 +32,7 @@ namespace cds { namespace intrusive {
         There are several specializations of \p %MichaelHashSet for each GC. You should include:
         - <tt><cds/intrusive/michael_set_rcu.h></tt> for \ref cds_intrusive_MichaelHashSet_rcu "RCU type"
         - <tt><cds/intrusive/michael_set_nogc.h></tt> for \ref cds_intrusive_MichaelHashSet_nogc for persistent set
-        - <tt><cds/intrusive/michael_set.h></tt> for other GC (gc::HP, gc::HRC, gc::PTB)
+        - <tt><cds/intrusive/michael_set.h></tt> for other GC (gc::HP, gc::PTB)
 
         <b>Hash functor</b>
 

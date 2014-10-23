@@ -10,9 +10,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_hp.cpp">
       <Filter>michael</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_hrc.cpp">
-      <Filter>michael</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_nogc.cpp">
       <Filter>michael</Filter>
     </ClCompile>
