@@ -19,12 +19,12 @@ namespace cds { namespace container {
             typedef make_michael_list<cds::gc::nogc, T, Traits>  base_maker;
             typedef typename base_maker::node_type node_type;
 
-            struct type_traits: public base_maker::type_traits
+            struct intrusive_traits: public base_maker::intrusive_traits
             {
                 typedef typename base_maker::node_deallocator    disposer;
             };
 
-            typedef intrusive::MichaelList<cds::gc::nogc, node_type, type_traits>  type;
+            typedef intrusive::MichaelList<cds::gc::nogc, node_type, intrusive_traits>  type;
         };
 
     }   // namespace details
@@ -56,25 +56,27 @@ namespace cds { namespace container {
 #endif
     {
         //@cond
-        typedef details::make_michael_list_nogc< T, Traits > options;
-        typedef typename options::type  base_class;
+        typedef details::make_michael_list_nogc< T, Traits > maker;
+        typedef typename maker::type  base_class;
         //@endcond
 
     public:
-        typedef T                                   value_type      ;   ///< Type of value stored in the list
-        typedef typename base_class::gc             gc              ;   ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator_type    allocator_type  ;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename options::key_comparator    key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef cds::gc::nogc gc;         ///< Garbage collector used
+        typedef T             value_type; ///< Type of value stored in the list
+        typedef Traits        traits;     ///< List traits
+
+        typedef typename base_class::back_off     back_off;       ///< Back-off strategy used
+        typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator    key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
     protected:
         //@cond
-        typedef typename base_class::value_type     node_type;
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;
-        typedef typename options::type_traits::compare  intrusive_key_comparator;
+        typedef typename base_class::value_type   node_type;
+        typedef typename maker::cxx_allocator     cxx_allocator;
+        typedef typename maker::node_deallocator  node_deallocator;
+        typedef typename maker::intrusive_traits::compare  intrusive_key_comparator;
 
         typedef typename base_class::atomic_node_ptr head_type;
         //@endcond
@@ -295,7 +297,7 @@ namespace cds { namespace container {
             The operation inserts new item if the key \p val is not found in the list.
             Otherwise, the function returns an iterator that points to item found.
 
-            Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
+            Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
             item found or inserted, \p second is true if new item has been added or \p false if the item
             already is in the list.
         */
@@ -316,11 +318,11 @@ namespace cds { namespace container {
             return node_to_iterator( emplace_at( head(), std::forward<Args>(args)... ));
         }
 
-        /// Find the key \p val
+        /// Find the key \p key
         /** \anchor cds_nonintrusive_MichaelList_nogc_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise
+            and \p end() otherwise
         */
         template <typename Q>
         iterator find( Q const& key )
@@ -328,7 +330,7 @@ namespace cds { namespace container {
             return node_to_iterator( find_at( head(), key, intrusive_key_comparator() ));
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelList_nogc_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -338,7 +340,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         iterator find_with( Q const& key, Less pred )
         {
-            return node_to_iterator( find_at( head(), key, typename options::template less_wrapper<Less>::type() ));
+            return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ) );
         }
 
         /// Check if the list is empty
@@ -349,11 +351,11 @@ namespace cds { namespace container {
 
         /// Returns list's item count
         /**
-            The value returned depends on opt::item_counter option. For atomics::empty_item_counter,
+            The value returned depends on item counter provided by \p Traits. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
-            is empty. To check list emptyness use \ref empty() method.
+            @note Even if you use real item counter and it returns 0, this fact does not mean that the list
+            is empty. To check list emptyness use \p empty() method.
         */
         size_t size() const
         {
@@ -361,9 +363,6 @@ namespace cds { namespace container {
         }
 
         /// Clears the list
-        /**
-            Post-condition: the list is empty
-        */
         void clear()
         {
             base_class::clear();

@@ -7,7 +7,7 @@
 namespace ordlist {
     namespace {
         typedef cds::urcu::gc< cds::urcu::general_instant<> > rcu_type;
-        struct RCU_GPI_cmp_traits: public cc::michael_list::type_traits
+        struct RCU_GPI_cmp_traits : public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::cmp<MichaelKVListTestHeader::key_type>   compare;
         };
@@ -29,7 +29,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct RCU_GPI_less_traits: public cc::michael_list::type_traits
+        struct RCU_GPI_less_traits : public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>   less;
         };
@@ -51,7 +51,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct RCU_GPI_cmpmix_traits: public cc::michael_list::type_traits
+        struct RCU_GPI_cmpmix_traits : public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::cmp<MichaelKVListTestHeader::key_type>   compare;
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>  less;
@@ -75,7 +75,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct RCU_GPI_ic_traits: public cc::michael_list::type_traits
+        struct RCU_GPI_ic_traits : public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>   less;
             typedef cds::atomicity::item_counter item_counter;

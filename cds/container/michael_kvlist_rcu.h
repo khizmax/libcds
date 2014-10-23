@@ -26,12 +26,12 @@ namespace cds { namespace container {
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p Key - key type of an item stored in the list. It should be copy-constructible
         - \p Value - value type stored in a list
-        - \p Traits - type traits, default is michael_list::type_traits
+        - \p Traits - type traits, default is \p michael_list::traits
 
         @note Before including <tt><cds/container/michael_kvlist_rcu.h></tt> you should include appropriate RCU header file,
         see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
 
-        It is possible to declare option-based list with cds::container::michael_list::make_traits metafunction istead of \p Traits template
+        It is possible to declare option-based list using \p cds::container::michael_list::make_traits metafunction istead of \p Traits template
         argument. For example, the following traits-based declaration of Michael's list
         \code
         #include <cds/urcu/general_buffered.h>
@@ -44,8 +44,8 @@ namespace cds { namespace container {
             }
         };
 
-        // Declare type_traits
-        struct my_traits: public cds::container::michael_list::type_traits
+        // Declare traits
+        struct my_traits: public cds::container::michael_list::traits
         {
             typedef my_compare compare;
         };
@@ -68,24 +68,13 @@ namespace cds { namespace container {
             >::type
         >     option_based_list;
         \endcode
-
-        Template argument list \p Options of cds::container::michael_list::make_traits metafunction are:
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - opt::rcu_check_deadlock - a deadlock checking policy. Default is opt::v::rcu_throw_deadlock
     */
     template <
         typename RCU,
         typename Key,
         typename Value,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = michael_list::type_traits
+        typename Traits = michael_list::traits
 #else
         typename Traits
 #endif
@@ -98,8 +87,8 @@ namespace cds { namespace container {
 #endif
     {
         //@cond
-        typedef details::make_michael_kvlist< cds::urcu::gc<RCU>, Key, Value, Traits > options;
-        typedef typename options::type  base_class;
+        typedef details::make_michael_kvlist< cds::urcu::gc<RCU>, Key, Value, Traits > maker;
+        typedef typename maker::type  base_class;
         //@endcond
 
     public:
@@ -108,16 +97,17 @@ namespace cds { namespace container {
         typedef Value                               mapped_type     ;   ///< Type of value stored in the list
         typedef std::pair<key_type const, mapped_type> value_type   ;   ///< key/value pair stored in the list
 #else
-        typedef typename options::key_type          key_type;
-        typedef typename options::value_type        mapped_type;
-        typedef typename options::pair_type         value_type;
+        typedef typename maker::key_type          key_type;
+        typedef typename maker::value_type        mapped_type;
+        typedef typename maker::pair_type         value_type;
 #endif
+        typename Traits traits; ///< List traits
 
         typedef typename base_class::gc             gc              ;   ///< Garbage collector used
         typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator_type    allocator_type  ;   ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename maker::allocator_type    allocator_type;   ///< Allocator type used for allocate/deallocate the nodes
         typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename options::key_comparator    key_comparator  ;   ///< key comparison functor
+        typedef typename maker::key_comparator    key_comparator;   ///< key comparison functor
         typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
         typedef typename base_class::rcu_check_deadlock rcu_check_deadlock ; ///< RCU deadlock checking policy
 
@@ -127,16 +117,16 @@ namespace cds { namespace container {
     protected:
         //@cond
         typedef typename base_class::value_type     node_type;
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;
-        typedef typename options::type_traits::compare  intrusive_key_comparator;
+        typedef typename maker::cxx_allocator     cxx_allocator;
+        typedef typename maker::node_deallocator  node_deallocator;
+        typedef typename maker::intrusive_traits::compare  intrusive_key_comparator;
 
         typedef typename base_class::atomic_node_ptr head_type;
         //@endcond
 
     public:
         /// pointer to extracted node
-        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename options::type_traits::disposer,
+        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer,
             cds::urcu::details::conventional_exempt_pair_cast<node_type, value_type>
         > exempt_ptr;
 
@@ -475,7 +465,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool erase_with( K const& key, Less pred )
         {
-            return erase_at( head(), key, typename options::template less_wrapper<Less>::type() );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Deletes \p key from the list
@@ -513,7 +503,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
-            return erase_at( head(), key, typename options::template less_wrapper<Less>::type(), f );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
         /// Extracts an item from the list
@@ -572,7 +562,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool extract_with( exempt_ptr& dest, K const& key, Less pred )
         {
-            dest = extract_at( head(), key, typename options::template less_wrapper<Less>::type() );
+            dest = extract_at( head(), key, typename maker::template less_wrapper<Less>::type() );
             return !dest.empty();
         }
 
@@ -590,7 +580,7 @@ namespace cds { namespace container {
             return find_at( head(), key, intrusive_key_comparator() );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelKVList_rcu_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -600,10 +590,10 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred ) const
         {
-            return find_at( head(), key, typename options::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
-        /// Finds the key \p key and performs an action with it
+        /// Finds \p key and performs an action with it
         /** \anchor cds_nonintrusive_MichaelKVList_rcu_find_func
             The function searches an item with key equal to \p key and calls the functor \p f for the item found.
             The interface of \p Func functor is:
@@ -613,8 +603,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found.
-
-            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change <tt>item.second</tt> that is reference to value of node.
             Note that the function is only guarantee that \p item cannot be deleted during functor is executing.
@@ -641,7 +629,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f ) const
         {
-            return find_at( head(), key, typename options::template less_wrapper<Less>::type(), f );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
         /// Finds \p key and return the item found
@@ -689,7 +677,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         value_type * get_with( K const& key, Less pred ) const
         {
-            return get_at( head(), key, typename options::template less_wrapper<Less>::type());
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Checks if the list is empty
@@ -700,11 +688,11 @@ namespace cds { namespace container {
 
         /// Returns list's item count
         /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
+            The value returned depends on item counter provided by \p Traits. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
-            is empty. To check list emptyness use \ref empty() method.
+            @note Even if you use real item counter and it returns 0, this fact does not mean that the list
+            is empty. To check list emptyness use \p empty() method.
         */
         size_t size() const
         {
