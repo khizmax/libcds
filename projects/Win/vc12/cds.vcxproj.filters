@@ -881,16 +881,10 @@
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\skip_list_hrc.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_ptb.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_set_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\skip_list_set_hrc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_set_ptb.h">
@@ -900,9 +894,6 @@
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_map_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\skip_list_map_hrc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_map_ptb.h">

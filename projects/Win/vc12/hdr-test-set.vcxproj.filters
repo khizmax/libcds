@@ -92,9 +92,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_hp_member.cpp">
       <Filter>intrusive\skip_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_hrc.cpp">
-      <Filter>intrusive\skip_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_ptb.cpp">
       <Filter>intrusive\skip_list</Filter>
     </ClCompile>
@@ -180,9 +177,6 @@
       <Filter>container\michael_set</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_hp.cpp">
-      <Filter>container\skip_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_hrc.cpp">
       <Filter>container\skip_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_ptb.cpp">

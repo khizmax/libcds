@@ -550,26 +550,6 @@ namespace set {
         void skiplist_hp_member_less_pascal_stat();
         void skiplist_hp_member_cmpmix_pascal_stat();
 
-        // Skip-list - gc::HRC
-        void skiplist_hrc_base_cmp();
-        void skiplist_hrc_base_less();
-        void skiplist_hrc_base_cmpmix();
-        void skiplist_hrc_base_cmp_stat();
-        void skiplist_hrc_base_less_stat();
-        void skiplist_hrc_base_cmpmix_stat();
-        void skiplist_hrc_base_cmp_xorshift();
-        void skiplist_hrc_base_less_xorshift();
-        void skiplist_hrc_base_cmpmix_xorshift();
-        void skiplist_hrc_base_cmp_xorshift_stat();
-        void skiplist_hrc_base_less_xorshift_stat();
-        void skiplist_hrc_base_cmpmix_xorshift_stat();
-        void skiplist_hrc_base_cmp_pascal();
-        void skiplist_hrc_base_less_pascal();
-        void skiplist_hrc_base_cmpmix_pascal();
-        void skiplist_hrc_base_cmp_pascal_stat();
-        void skiplist_hrc_base_less_pascal_stat();
-        void skiplist_hrc_base_cmpmix_pascal_stat();
-
         // Skip-list - gc::PTB
         void skiplist_ptb_base_cmp();
         void skiplist_ptb_base_less();
@@ -686,25 +666,6 @@ namespace set {
             CPPUNIT_TEST(skiplist_hp_member_cmp_pascal_stat)
             CPPUNIT_TEST(skiplist_hp_member_less_pascal_stat)
             CPPUNIT_TEST(skiplist_hp_member_cmpmix_pascal_stat)
-
-            CPPUNIT_TEST(skiplist_hrc_base_cmp)
-            CPPUNIT_TEST(skiplist_hrc_base_less)
-            CPPUNIT_TEST(skiplist_hrc_base_cmpmix)
-            CPPUNIT_TEST(skiplist_hrc_base_cmp_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_less_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_cmpmix_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_cmp_xorshift)
-            CPPUNIT_TEST(skiplist_hrc_base_less_xorshift)
-            CPPUNIT_TEST(skiplist_hrc_base_cmpmix_xorshift)
-            CPPUNIT_TEST(skiplist_hrc_base_cmp_xorshift_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_less_xorshift_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_cmpmix_xorshift_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_cmp_pascal)
-            CPPUNIT_TEST(skiplist_hrc_base_less_pascal)
-            CPPUNIT_TEST(skiplist_hrc_base_cmpmix_pascal)
-            CPPUNIT_TEST(skiplist_hrc_base_cmp_pascal_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_less_pascal_stat)
-            CPPUNIT_TEST(skiplist_hrc_base_cmpmix_pascal_stat)
 
             CPPUNIT_TEST(skiplist_ptb_base_cmp)
             CPPUNIT_TEST(skiplist_ptb_base_less)

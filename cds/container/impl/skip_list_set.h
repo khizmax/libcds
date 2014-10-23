@@ -55,7 +55,7 @@ namespace cds { namespace container {
         - opt::stat - internal statistics. Available types: skip_list::stat, skip_list::empty_stat (the default)
 
         \warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
-            the guard count is limited (like as gc::HP, gc::HRC). Those GCs should be explicitly initialized with
+            the guard count is limited (like as \p gc::HP). Those GCs should be explicitly initialized with
             hazard pointer enough: \code cds::gc::HP myhp( 67 ) \endcode. Otherwise an run-time exception may be raised
             when you try to create skip-list object.
 
@@ -79,7 +79,7 @@ namespace cds { namespace container {
         before end of the set. Therefore, such iteration is more suitable for debugging purpose only
 
         Remember, each iterator object requires 2 additional hazard pointers, that may be
-        a limited resource for \p GC like as gc::HP and gc::HRC (for gc::PTB the count of
+        a limited resource for \p GC like \p gc::HP (for \p gc::PTB the count of
         guards is unlimited).
 
         The iterator class supports the following minimalistic interface:
