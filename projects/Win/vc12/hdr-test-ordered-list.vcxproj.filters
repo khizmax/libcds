@@ -4,9 +4,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_hp.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_hrc.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_nogc.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
@@ -43,13 +40,7 @@
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_hp.cpp">
       <Filter>container</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_hrc.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_hp.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_hrc.cpp">
       <Filter>container</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_nogc.cpp">

@@ -77,7 +77,6 @@ namespace cds { namespace container {
         You should include appropriate .h-file depending on GC you are using:
         - for gc::HP: \code #include <cds/container/lazy_kvlist_hp.h> \endcode
         - for gc::PTB: \code #include <cds/container/lazy_kvlist_ptb.h> \endcode
-        - for gc::HRC: \code #include <cds/container/lazy_kvlist_hrc.h> \endcode
         - for \ref cds_urcu_desc "RCU": \code #include <cds/container/lazy_kvlist_rcu.h> \endcode
         - for gc::nogc: \code #include <cds/container/lazy_kvlist_nogc.h> \endcode
     */
@@ -272,7 +271,7 @@ namespace cds { namespace container {
             The forward iterator for lazy list has some features:
             - it has no post-increment operator
             - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
-              For some GC (gc::HP, gc::HRC), a guard is limited resource per thread, so an exception (or assertion) "no free guard"
+              For some GC (\p gc::HP), a guard is limited resource per thread, so an exception (or assertion) "no free guard"
               may be thrown if a limit of guard count per thread is exceeded.
             - The iterator cannot be moved across thread boundary since it contains GC's guard that is thread-private GC data.
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent

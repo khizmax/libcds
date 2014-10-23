@@ -683,11 +683,6 @@ namespace ordlist {
         void PTB_cmpmix();
         void PTB_ic();
 
-        void HRC_cmp();
-        void HRC_less();
-        void HRC_cmpmix();
-        void HRC_ic();
-
         void RCU_GPI_cmp();
         void RCU_GPI_less();
         void RCU_GPI_cmpmix();
@@ -728,11 +723,6 @@ namespace ordlist {
             CPPUNIT_TEST(PTB_less)
             CPPUNIT_TEST(PTB_cmpmix)
             CPPUNIT_TEST(PTB_ic)
-
-            CPPUNIT_TEST(HRC_cmp)
-            CPPUNIT_TEST(HRC_less)
-            CPPUNIT_TEST(HRC_cmpmix)
-            CPPUNIT_TEST(HRC_ic)
 
             CPPUNIT_TEST(RCU_GPI_cmp)
             CPPUNIT_TEST(RCU_GPI_less)

@@ -932,7 +932,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\fcqueue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\fcstack.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_hp.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_hrc.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_nogc.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_ptb.h" />
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_hp.h" />
@@ -953,11 +952,9 @@
     <ClInclude Include="..\..\..\cds\container\fcqueue.h" />
     <ClInclude Include="..\..\..\cds\container\fcstack.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hp.h" />
-    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_hrc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_hp.h" />
-    <ClInclude Include="..\..\..\cds\container\lazy_list_hrc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_hp.h" />
