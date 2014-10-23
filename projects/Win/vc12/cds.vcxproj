@@ -695,7 +695,6 @@
     <ClInclude Include="..\..\..\cds\container\mspriority_queue.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_hp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_nogc.h" />
-    <ClInclude Include="..\..\..\cds\container\skip_list_map_ptb.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_set_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_set_hp.h" />

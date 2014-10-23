@@ -40,8 +40,8 @@
 #define CDSUNIT_DECLARE_MichaelMap  \
     TEST_MAP_EXTRACT(MichaelMap_HP_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_HP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_PTB_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_PTB_less_michaelAlloc) \
+    TEST_MAP_EXTRACT(MichaelMap_DHP_cmp_stdAlloc) \
+    TEST_MAP_EXTRACT(MichaelMap_DHP_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_RCU_GPI_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_RCU_GPI_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_RCU_GPB_cmp_stdAlloc) \
@@ -50,8 +50,8 @@
     TEST_MAP_EXTRACT(MichaelMap_RCU_GPT_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_HP_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_HP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_Lazy_PTB_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(MichaelMap_Lazy_PTB_less_michaelAlloc) \
+    TEST_MAP_EXTRACT(MichaelMap_Lazy_DHP_cmp_stdAlloc) \
+    TEST_MAP_EXTRACT(MichaelMap_Lazy_DHP_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_RCU_GPI_less_michaelAlloc) \
     TEST_MAP_EXTRACT(MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc) \
@@ -63,8 +63,8 @@
 #define CDSUNIT_TEST_MichaelMap  \
     CPPUNIT_TEST(MichaelMap_HP_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_HP_less_michaelAlloc) \
-    CPPUNIT_TEST(MichaelMap_PTB_cmp_stdAlloc) \
-    CPPUNIT_TEST(MichaelMap_PTB_less_michaelAlloc) \
+    CPPUNIT_TEST(MichaelMap_DHP_cmp_stdAlloc) \
+    CPPUNIT_TEST(MichaelMap_DHP_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_RCU_GPI_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_RCU_GPI_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_RCU_GPB_cmp_stdAlloc) \
@@ -73,8 +73,8 @@
     CPPUNIT_TEST(MichaelMap_RCU_GPT_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_HP_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_HP_less_michaelAlloc) \
-    CPPUNIT_TEST(MichaelMap_Lazy_PTB_cmp_stdAlloc) \
-    CPPUNIT_TEST(MichaelMap_Lazy_PTB_less_michaelAlloc) \
+    CPPUNIT_TEST(MichaelMap_Lazy_DHP_cmp_stdAlloc) \
+    CPPUNIT_TEST(MichaelMap_Lazy_DHP_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_RCU_GPI_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc) \
@@ -142,10 +142,10 @@
     TEST_MAP_EXTRACT(SplitList_Michael_HP_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Michael_HP_dyn_less)\
     TEST_MAP_EXTRACT(SplitList_Michael_HP_st_less)\
-    TEST_MAP_EXTRACT(SplitList_Michael_PTB_dyn_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Michael_PTB_st_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Michael_PTB_dyn_less)\
-    TEST_MAP_EXTRACT(SplitList_Michael_PTB_st_less)\
+    TEST_MAP_EXTRACT(SplitList_Michael_DHP_dyn_cmp)\
+    TEST_MAP_EXTRACT(SplitList_Michael_DHP_st_cmp)\
+    TEST_MAP_EXTRACT(SplitList_Michael_DHP_dyn_less)\
+    TEST_MAP_EXTRACT(SplitList_Michael_DHP_st_less)\
     TEST_MAP_EXTRACT(SplitList_Michael_RCU_GPI_dyn_cmp)\
     TEST_MAP_EXTRACT(SplitList_Michael_RCU_GPI_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Michael_RCU_GPI_dyn_less)\
@@ -162,10 +162,10 @@
     TEST_MAP_EXTRACT(SplitList_Lazy_HP_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Lazy_HP_dyn_less)\
     TEST_MAP_EXTRACT(SplitList_Lazy_HP_st_less)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_PTB_dyn_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_PTB_st_cmp)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_PTB_dyn_less)\
-    TEST_MAP_EXTRACT(SplitList_Lazy_PTB_st_less)\
+    TEST_MAP_EXTRACT(SplitList_Lazy_DHP_dyn_cmp)\
+    TEST_MAP_EXTRACT(SplitList_Lazy_DHP_st_cmp)\
+    TEST_MAP_EXTRACT(SplitList_Lazy_DHP_dyn_less)\
+    TEST_MAP_EXTRACT(SplitList_Lazy_DHP_st_less)\
     TEST_MAP_EXTRACT(SplitList_Lazy_RCU_GPI_dyn_cmp)\
     TEST_MAP_EXTRACT(SplitList_Lazy_RCU_GPI_st_cmp)\
     TEST_MAP_EXTRACT(SplitList_Lazy_RCU_GPI_dyn_less)\
@@ -185,10 +185,10 @@
     CPPUNIT_TEST(SplitList_Michael_HP_st_cmp)\
     CPPUNIT_TEST(SplitList_Michael_HP_dyn_less)\
     CPPUNIT_TEST(SplitList_Michael_HP_st_less)\
-    CPPUNIT_TEST(SplitList_Michael_PTB_dyn_cmp)\
-    CPPUNIT_TEST(SplitList_Michael_PTB_st_cmp)\
-    CPPUNIT_TEST(SplitList_Michael_PTB_dyn_less)\
-    CPPUNIT_TEST(SplitList_Michael_PTB_st_less)\
+    CPPUNIT_TEST(SplitList_Michael_DHP_dyn_cmp)\
+    CPPUNIT_TEST(SplitList_Michael_DHP_st_cmp)\
+    CPPUNIT_TEST(SplitList_Michael_DHP_dyn_less)\
+    CPPUNIT_TEST(SplitList_Michael_DHP_st_less)\
     CPPUNIT_TEST(SplitList_Michael_RCU_GPI_dyn_cmp)\
     CPPUNIT_TEST(SplitList_Michael_RCU_GPI_st_cmp)\
     CPPUNIT_TEST(SplitList_Michael_RCU_GPI_dyn_less)\
@@ -205,10 +205,10 @@
     CPPUNIT_TEST(SplitList_Lazy_HP_st_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_HP_dyn_less)\
     CPPUNIT_TEST(SplitList_Lazy_HP_st_less)\
-    CPPUNIT_TEST(SplitList_Lazy_PTB_dyn_cmp)\
-    CPPUNIT_TEST(SplitList_Lazy_PTB_st_cmp)\
-    CPPUNIT_TEST(SplitList_Lazy_PTB_dyn_less)\
-    CPPUNIT_TEST(SplitList_Lazy_PTB_st_less)\
+    CPPUNIT_TEST(SplitList_Lazy_DHP_dyn_cmp)\
+    CPPUNIT_TEST(SplitList_Lazy_DHP_st_cmp)\
+    CPPUNIT_TEST(SplitList_Lazy_DHP_dyn_less)\
+    CPPUNIT_TEST(SplitList_Lazy_DHP_st_less)\
     CPPUNIT_TEST(SplitList_Lazy_RCU_GPI_dyn_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_RCU_GPI_st_cmp)\
     CPPUNIT_TEST(SplitList_Lazy_RCU_GPI_dyn_less)\

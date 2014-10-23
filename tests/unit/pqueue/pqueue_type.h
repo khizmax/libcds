@@ -133,19 +133,19 @@ namespace pqueue {
             >::type, false
         > EllenBinTree_HP_min_stat;
 
-        typedef EllenBinTreePQueue< cds::gc::PTB, typename Value::key_type, Value,
+        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value,
             typename cc::ellen_bintree::make_set_traits<
                 cc::ellen_bintree::key_extractor< typename Value::key_extractor >
                 ,cc::opt::less< std::less<Value> >
             >::type
-        > EllenBinTree_PTB_max;
+        > EllenBinTree_DHP_max;
 
-        typedef EllenBinTreePQueue< cds::gc::PTB, typename Value::key_type, Value,
+        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value,
             typename cc::ellen_bintree::make_set_traits<
                 cc::ellen_bintree::key_extractor< typename Value::key_extractor >
                 ,cc::opt::less< std::greater<Value> >
             >::type, false
-        > EllenBinTree_PTB_min;
+        > EllenBinTree_DHP_min;
 
         typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_instant<> >, typename Value::key_type, Value,
             typename cc::ellen_bintree::make_set_traits<
@@ -338,17 +338,17 @@ namespace pqueue {
             >::type, false
         > SkipList_HRC_min;
 
-        typedef SkipListPQueue< cds::gc::PTB, Value,
+        typedef SkipListPQueue< cds::gc::DHP, Value,
             typename cc::skip_list::make_traits<
                 cc::opt::less< std::less<Value> >
             >::type
-        > SkipList_PTB_max;
+        > SkipList_DHP_max;
 
-        typedef SkipListPQueue< cds::gc::PTB, Value,
+        typedef SkipListPQueue< cds::gc::DHP, Value,
             typename cc::skip_list::make_traits<
                 cc::opt::less< std::greater<Value> >
             >::type, false
-        > SkipList_PTB_min;
+        > SkipList_DHP_min;
 
         typedef SkipListPQueue< cds::urcu::gc< cds::urcu::general_instant<> >, Value,
             typename cc::skip_list::make_traits<

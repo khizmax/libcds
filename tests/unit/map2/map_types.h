@@ -257,45 +257,45 @@ namespace map2 {
             >::type
         >   MichaelList_HP_less_michaelAlloc;
 
-        typedef cc::MichaelKVList< cds::gc::PTB, Key, Value,
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
             typename cc::michael_list::make_traits<
                 co::compare< compare >
             >::type
-        >   MichaelList_PTB_cmp_stdAlloc;
+        >   MichaelList_DHP_cmp_stdAlloc;
 
-        typedef cc::MichaelKVList< cds::gc::PTB, Key, Value,
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
             typename cc::michael_list::make_traits<
                 co::compare< compare >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   MichaelList_PTB_cmp_stdAlloc_seqcst;
+        >   MichaelList_DHP_cmp_stdAlloc_seqcst;
 
-        typedef cc::MichaelKVList< cds::gc::PTB, Key, Value,
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
             typename cc::michael_list::make_traits<
                 co::compare< compare >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelList_PTB_cmp_michaelAlloc;
+        >   MichaelList_DHP_cmp_michaelAlloc;
 
-        typedef cc::MichaelKVList< cds::gc::PTB, Key, Value,
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
             typename cc::michael_list::make_traits<
                 co::less< less >
             >::type
-        >   MichaelList_PTB_less_stdAlloc;
+        >   MichaelList_DHP_less_stdAlloc;
 
-        typedef cc::MichaelKVList< cds::gc::PTB, Key, Value,
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
             typename cc::michael_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   MichaelList_PTB_less_stdAlloc_seqcst;
+        >   MichaelList_DHP_less_stdAlloc_seqcst;
 
-        typedef cc::MichaelKVList< cds::gc::PTB, Key, Value,
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
             typename cc::michael_list::make_traits<
                 co::less< less >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelList_PTB_less_michaelAlloc;
+        >   MichaelList_DHP_less_michaelAlloc;
 
         // RCU
         typedef cc::MichaelKVList< rcu_gpi, Key, Value,
@@ -696,43 +696,43 @@ namespace map2 {
             >::type
         >   MichaelMap_HP_less_michaelAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, MichaelList_PTB_cmp_stdAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_PTB_cmp_stdAlloc;
+        >   MichaelMap_DHP_cmp_stdAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, MichaelList_PTB_cmp_stdAlloc_seqcst,
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc_seqcst,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_PTB_cmp_stdAlloc_seqcst;
+        >   MichaelMap_DHP_cmp_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, MichaelList_PTB_cmp_michaelAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_michaelAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelMap_PTB_cmp_michaelAlloc;
+        >   MichaelMap_DHP_cmp_michaelAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, MichaelList_PTB_less_stdAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_stdAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_PTB_less_stdAlloc;
+        >   MichaelMap_DHP_less_stdAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, MichaelList_PTB_less_stdAlloc_seqcst,
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_stdAlloc_seqcst,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_PTB_less_stdAlloc_seqcst;
+        >   MichaelMap_DHP_less_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, MichaelList_PTB_less_michaelAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_michaelAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelMap_PTB_less_michaelAlloc;
+        >   MichaelMap_DHP_less_michaelAlloc;
 
         //RCU
         typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_cmp_stdAlloc,
@@ -1342,43 +1342,43 @@ namespace map2 {
             >::type
         >   MichaelMap_Lazy_HP_less_michaelAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_cmp_stdAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_Lazy_PTB_cmp_stdAlloc;
+        >   MichaelMap_Lazy_DHP_cmp_stdAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_cmp_stdAlloc_seqcst,
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc_seqcst,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_Lazy_PTB_cmp_stdAlloc_seqcst;
+        >   MichaelMap_Lazy_DHP_cmp_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_cmp_michaelAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_michaelAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelMap_Lazy_PTB_cmp_michaelAlloc;
+        >   MichaelMap_Lazy_DHP_cmp_michaelAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_less_stdAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_stdAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_Lazy_PTB_less_stdAlloc;
+        >   MichaelMap_Lazy_DHP_less_stdAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_less_stdAlloc_seqcst,
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_stdAlloc_seqcst,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_Lazy_PTB_less_stdAlloc_seqcst;
+        >   MichaelMap_Lazy_DHP_less_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_less_michaelAlloc,
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_michaelAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelMap_Lazy_PTB_less_michaelAlloc;
+        >   MichaelMap_Lazy_DHP_less_michaelAlloc;
 
         // RCU
         typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_cmp_stdAlloc,
@@ -1730,8 +1730,8 @@ namespace map2 {
         {};
         typedef cc::SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Michael_HP_st_less_seqcst > SplitList_Michael_HP_st_less_seqcst;
 
-        // PTB
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        // DHP
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1741,9 +1741,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_cmp;
+        > SplitList_Michael_DHP_dyn_cmp;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1755,9 +1755,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_cmp_seqcst;
+        > SplitList_Michael_DHP_dyn_cmp_seqcst;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -1768,9 +1768,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_cmp;
+        > SplitList_Michael_DHP_st_cmp;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1783,10 +1783,10 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_cmp_seqcst;
+        > SplitList_Michael_DHP_st_cmp_seqcst;
 
-        // PTB + less
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        // DHP + less
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1796,9 +1796,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_less;
+        > SplitList_Michael_DHP_dyn_less;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1810,9 +1810,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_less_seqcst;
+        > SplitList_Michael_DHP_dyn_less_seqcst;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -1823,9 +1823,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_less;
+        > SplitList_Michael_DHP_st_less;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1838,7 +1838,7 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_less_seqcst;
+        > SplitList_Michael_DHP_st_less_seqcst;
 
         // RCU
         typedef cc::SplitListMap< rcu_gpi, Key, Value,
@@ -2616,8 +2616,8 @@ namespace map2 {
             >::type
         > SplitList_Lazy_HP_st_less_seqcst;
 
-        // PTB
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        // DHP
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2627,9 +2627,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_cmp;
+        > SplitList_Lazy_DHP_dyn_cmp;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2641,9 +2641,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_cmp_seqcst;
+        > SplitList_Lazy_DHP_dyn_cmp_seqcst;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -2654,9 +2654,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_cmp;
+        > SplitList_Lazy_DHP_st_cmp;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2669,10 +2669,10 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_cmp_seqcst;
+        > SplitList_Lazy_DHP_st_cmp_seqcst;
 
-        // PTB + less
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        // DHP + less
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2682,9 +2682,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_less;
+        > SplitList_Lazy_DHP_dyn_less;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2696,9 +2696,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_less_seqcst;
+        > SplitList_Lazy_DHP_dyn_less_seqcst;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -2709,9 +2709,9 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_less;
+        > SplitList_Lazy_DHP_st_less;
 
-        typedef cc::SplitListMap< cds::gc::PTB, Key, Value,
+        typedef cc::SplitListMap< cds::gc::DHP, Key, Value,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2724,7 +2724,7 @@ namespace map2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_less_seqcst;
+        > SplitList_Lazy_DHP_st_less_seqcst;
 
         // RCU
         typedef cc::SplitListMap< rcu_gpi, Key, Value,
@@ -3843,7 +3843,7 @@ namespace map2 {
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_cmp_xorshift_stat > SkipListMap_hp_cmp_xorshift_stat;
 
         // ***************************************************************************
-        // SkipListMap - PTB
+        // SkipListMap - DHP
 
         class traits_SkipListMap_ptb_less_pascal: public cc::skip_list::make_traits <
                 co::less< less >
@@ -3851,7 +3851,7 @@ namespace map2 {
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_less_pascal > SkipListMap_ptb_less_pascal;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_pascal > SkipListMap_ptb_less_pascal;
 
         class traits_SkipListMap_ptb_less_pascal_seqcst: public cc::skip_list::make_traits <
                 co::less< less >
@@ -3860,7 +3860,7 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_less_pascal_seqcst > SkipListMap_ptb_less_pascal_seqcst;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_pascal_seqcst > SkipListMap_ptb_less_pascal_seqcst;
 
         class traits_SkipListMap_ptb_less_pascal_stat: public cc::skip_list::make_traits <
                 co::less< less >
@@ -3869,7 +3869,7 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_less_pascal_stat > SkipListMap_ptb_less_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_pascal_stat > SkipListMap_ptb_less_pascal_stat;
 
         class traits_SkipListMap_ptb_cmp_pascal: public cc::skip_list::make_traits <
                 co::compare< compare >
@@ -3877,7 +3877,7 @@ namespace map2 {
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_cmp_pascal > SkipListMap_ptb_cmp_pascal;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_pascal > SkipListMap_ptb_cmp_pascal;
 
         class traits_SkipListMap_ptb_cmp_pascal_stat: public cc::skip_list::make_traits <
                 co::compare< compare >
@@ -3886,7 +3886,7 @@ namespace map2 {
                 ,co::stat< cc::skip_list::stat<> >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_cmp_pascal_stat > SkipListMap_ptb_cmp_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_pascal_stat > SkipListMap_ptb_cmp_pascal_stat;
 
         class traits_SkipListMap_ptb_less_xorshift: public cc::skip_list::make_traits <
                 co::less< less >
@@ -3894,7 +3894,7 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_less_xorshift > SkipListMap_ptb_less_xorshift;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_xorshift > SkipListMap_ptb_less_xorshift;
 
         class traits_SkipListMap_ptb_less_xorshift_stat: public cc::skip_list::make_traits <
                 co::less< less >
@@ -3903,7 +3903,7 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_less_xorshift_stat > SkipListMap_ptb_less_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_xorshift_stat > SkipListMap_ptb_less_xorshift_stat;
 
         class traits_SkipListMap_ptb_cmp_xorshift: public cc::skip_list::make_traits <
                 co::compare< compare >
@@ -3911,7 +3911,7 @@ namespace map2 {
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_cmp_xorshift > SkipListMap_ptb_cmp_xorshift;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_xorshift > SkipListMap_ptb_cmp_xorshift;
 
         class traits_SkipListMap_ptb_cmp_xorshift_stat: public cc::skip_list::make_traits <
                 co::compare< compare >
@@ -3920,7 +3920,7 @@ namespace map2 {
                 ,co::stat< cc::skip_list::stat<> >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::PTB, Key, Value, traits_SkipListMap_ptb_cmp_xorshift_stat > SkipListMap_ptb_cmp_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_xorshift_stat > SkipListMap_ptb_cmp_xorshift_stat;
 
         // ***************************************************************************
         // SkipListMap< gc::nogc >
@@ -4432,7 +4432,7 @@ namespace map2 {
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
             };
             struct ptb_gc {
-                typedef cc::ellen_bintree::map_node<cds::gc::PTB, Key, Value>       leaf_node;
+                typedef cc::ellen_bintree::map_node<cds::gc::DHP, Key, Value>       leaf_node;
                 typedef cc::ellen_bintree::internal_node< Key, leaf_node >          internal_node;
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
             };
@@ -4493,7 +4493,7 @@ namespace map2 {
         typedef cc::EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_hp_stat > EllenBinTreeMap_hp_stat;
 
         // ***************************************************************************
-        // EllenBinTreeMap - PTB
+        // EllenBinTreeMap - DHP
 
         struct traits_EllenBinTreeMap_ptb: public cc::ellen_bintree::make_set_traits<
                 co::less< less >
@@ -4504,7 +4504,7 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::EllenBinTreeMap< cds::gc::PTB, Key, Value, traits_EllenBinTreeMap_ptb> EllenBinTreeMap_ptb;
+        typedef cc::EllenBinTreeMap< cds::gc::DHP, Key, Value, traits_EllenBinTreeMap_ptb> EllenBinTreeMap_ptb;
 
         struct traits_EllenBinTreeMap_ptb_stat: public cc::ellen_bintree::make_set_traits<
                 co::less< less >
@@ -4516,7 +4516,7 @@ namespace map2 {
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::EllenBinTreeMap< cds::gc::PTB, Key, Value, traits_EllenBinTreeMap_ptb_stat > EllenBinTreeMap_ptb_stat;
+        typedef cc::EllenBinTreeMap< cds::gc::DHP, Key, Value, traits_EllenBinTreeMap_ptb_stat > EllenBinTreeMap_ptb_stat;
 
         // ***************************************************************************
         // EllenBinTreeMap - RCU

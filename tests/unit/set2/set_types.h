@@ -349,45 +349,45 @@ namespace set2 {
             >::type
         >   MichaelList_HP_less_michaelAlloc;
 
-        typedef cc::MichaelList< cds::gc::PTB, key_val,
+        typedef cc::MichaelList< cds::gc::DHP, key_val,
             typename cc::michael_list::make_traits<
                 co::compare< compare >
             >::type
-        >   MichaelList_PTB_cmp_stdAlloc;
+        >   MichaelList_DHP_cmp_stdAlloc;
 
-        typedef cc::MichaelList< cds::gc::PTB, key_val,
+        typedef cc::MichaelList< cds::gc::DHP, key_val,
             typename cc::michael_list::make_traits<
                 co::compare< compare >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   MichaelList_PTB_cmp_stdAlloc_seqcst;
+        >   MichaelList_DHP_cmp_stdAlloc_seqcst;
 
-        typedef cc::MichaelList< cds::gc::PTB, key_val,
+        typedef cc::MichaelList< cds::gc::DHP, key_val,
             typename cc::michael_list::make_traits<
                 co::compare< compare >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelList_PTB_cmp_michaelAlloc;
+        >   MichaelList_DHP_cmp_michaelAlloc;
 
-        typedef cc::MichaelList< cds::gc::PTB, key_val,
+        typedef cc::MichaelList< cds::gc::DHP, key_val,
             typename cc::michael_list::make_traits<
                 co::less< less >
             >::type
-        >   MichaelList_PTB_less_stdAlloc;
+        >   MichaelList_DHP_less_stdAlloc;
 
-        typedef cc::MichaelList< cds::gc::PTB, key_val,
+        typedef cc::MichaelList< cds::gc::DHP, key_val,
             typename cc::michael_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   MichaelList_PTB_less_stdAlloc_seqcst;
+        >   MichaelList_DHP_less_stdAlloc_seqcst;
 
-        typedef cc::MichaelList< cds::gc::PTB, key_val,
+        typedef cc::MichaelList< cds::gc::DHP, key_val,
             typename cc::michael_list::make_traits<
                 co::less< less >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelList_PTB_less_michaelAlloc;
+        >   MichaelList_DHP_less_michaelAlloc;
 
 
         typedef cc::MichaelList< rcu_gpi, key_val,
@@ -636,43 +636,43 @@ namespace set2 {
             >::type
         >   MichaelSet_HP_less_michaelAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, MichaelList_PTB_cmp_stdAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_PTB_cmp_stdAlloc;
+        >   MichaelSet_DHP_cmp_stdAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, MichaelList_PTB_cmp_stdAlloc_seqcst,
+        typedef cc::MichaelHashSet< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc_seqcst,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_PTB_cmp_stdAlloc_seqcst;
+        >   MichaelSet_DHP_cmp_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, MichaelList_PTB_cmp_michaelAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, MichaelList_DHP_cmp_michaelAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelSet_PTB_cmp_michaelAlloc;
+        >   MichaelSet_DHP_cmp_michaelAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, MichaelList_PTB_less_stdAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, MichaelList_DHP_less_stdAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_PTB_less_stdAlloc;
+        >   MichaelSet_DHP_less_stdAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, MichaelList_PTB_less_stdAlloc_seqcst,
+        typedef cc::MichaelHashSet< cds::gc::DHP, MichaelList_DHP_less_stdAlloc_seqcst,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_PTB_less_stdAlloc_seqcst;
+        >   MichaelSet_DHP_less_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, MichaelList_PTB_less_michaelAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, MichaelList_DHP_less_michaelAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelSet_PTB_less_michaelAlloc;
+        >   MichaelSet_DHP_less_michaelAlloc;
 
         // general_instant RCU
         typedef cc::MichaelHashSet< rcu_gpi, MichaelList_RCU_GPI_cmp_stdAlloc,
@@ -1202,43 +1202,43 @@ namespace set2 {
             >::type
         >   MichaelSet_Lazy_HP_less_michaelAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, LazyList_DHP_cmp_stdAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_Lazy_PTB_cmp_stdAlloc;
+        >   MichaelSet_Lazy_DHP_cmp_stdAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, LazyList_DHP_cmp_stdAlloc_seqcst,
+        typedef cc::MichaelHashSet< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc_seqcst,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_Lazy_PTB_cmp_stdAlloc_seqcst;
+        >   MichaelSet_Lazy_DHP_cmp_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, LazyList_DHP_cmp_michaelAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, LazyList_DHP_cmp_michaelAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelSet_Lazy_PTB_cmp_michaelAlloc;
+        >   MichaelSet_Lazy_DHP_cmp_michaelAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, LazyList_DHP_less_stdAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, LazyList_DHP_less_stdAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_Lazy_PTB_less_stdAlloc;
+        >   MichaelSet_Lazy_DHP_less_stdAlloc;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, LazyList_DHP_less_stdAlloc_seqcst,
+        typedef cc::MichaelHashSet< cds::gc::DHP, LazyList_DHP_less_stdAlloc_seqcst,
             typename cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelSet_Lazy_PTB_less_stdAlloc_seqcst;
+        >   MichaelSet_Lazy_DHP_less_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashSet< cds::gc::PTB, LazyList_DHP_less_michaelAlloc,
+        typedef cc::MichaelHashSet< cds::gc::DHP, LazyList_DHP_less_michaelAlloc,
             typename cc::michael_set::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelSet_Lazy_PTB_less_michaelAlloc;
+        >   MichaelSet_Lazy_DHP_less_michaelAlloc;
 
         // RCU
         typedef cc::MichaelHashSet< rcu_gpi, LazyList_RCU_GPI_cmp_stdAlloc,
@@ -1549,8 +1549,8 @@ namespace set2 {
             >::type
         > SplitList_Michael_HP_st_less_seqcst;
 
-        // PTB
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        // DHP
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1560,9 +1560,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_cmp;
+        > SplitList_Michael_DHP_dyn_cmp;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1574,9 +1574,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_cmp_seqcst;
+        > SplitList_Michael_DHP_dyn_cmp_seqcst;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -1587,9 +1587,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_cmp;
+        > SplitList_Michael_DHP_st_cmp;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1602,10 +1602,10 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_cmp_seqcst;
+        > SplitList_Michael_DHP_st_cmp_seqcst;
 
-        // PTB + less
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        // DHP + less
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1615,9 +1615,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_less;
+        > SplitList_Michael_DHP_dyn_less;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1629,9 +1629,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_dyn_less_seqcst;
+        > SplitList_Michael_DHP_dyn_less_seqcst;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -1642,9 +1642,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_less;
+        > SplitList_Michael_DHP_st_less;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
@@ -1657,7 +1657,7 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_PTB_st_less_seqcst;
+        > SplitList_Michael_DHP_st_less_seqcst;
 
         // RCU
         typedef cc::SplitListSet< rcu_gpi, key_val,
@@ -2325,8 +2325,8 @@ namespace set2 {
             >::type
         > SplitList_Lazy_HP_st_less_seqcst;
 
-        // PTB
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        // DHP
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2336,9 +2336,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_cmp;
+        > SplitList_Lazy_DHP_dyn_cmp;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2350,9 +2350,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_cmp_seqcst;
+        > SplitList_Lazy_DHP_dyn_cmp_seqcst;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -2363,9 +2363,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_cmp;
+        > SplitList_Lazy_DHP_st_cmp;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2378,10 +2378,10 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_cmp_seqcst;
+        > SplitList_Lazy_DHP_st_cmp_seqcst;
 
-        // PTB + less
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        // DHP + less
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2391,9 +2391,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_less;
+        > SplitList_Lazy_DHP_dyn_less;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2405,9 +2405,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_dyn_less_seqcst;
+        > SplitList_Lazy_DHP_dyn_less_seqcst;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -2418,9 +2418,9 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_less;
+        > SplitList_Lazy_DHP_st_less;
 
-        typedef cc::SplitListSet< cds::gc::PTB, key_val,
+        typedef cc::SplitListSet< cds::gc::DHP, key_val,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
@@ -2433,7 +2433,7 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_PTB_st_less_seqcst;
+        > SplitList_Lazy_DHP_st_less_seqcst;
 
 
         // RCU
@@ -3502,7 +3502,7 @@ namespace set2 {
         typedef cc::SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_hp_cmp_xorshift_stat > SkipListSet_hp_cmp_xorshift_stat;
 
         // ***************************************************************************
-        // SkipListSet - PTB
+        // SkipListSet - DHP
 
         class traits_SkipListSet_ptb_less_pascal: public cc::skip_list::make_traits <
             co::less< less >
@@ -3510,7 +3510,7 @@ namespace set2 {
             ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_less_pascal > SkipListSet_ptb_less_pascal;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_less_pascal > SkipListSet_ptb_less_pascal;
 
         class traits_SkipListSet_ptb_less_pascal_seqcst: public cc::skip_list::make_traits <
             co::less< less >
@@ -3519,7 +3519,7 @@ namespace set2 {
             ,co::item_counter< cds::atomicity::item_counter >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_less_pascal_seqcst > SkipListSet_ptb_less_pascal_seqcst;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_less_pascal_seqcst > SkipListSet_ptb_less_pascal_seqcst;
 
         class traits_SkipListSet_ptb_less_pascal_stat: public cc::skip_list::make_traits <
             co::less< less >
@@ -3528,7 +3528,7 @@ namespace set2 {
             ,co::item_counter< cds::atomicity::item_counter >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_less_pascal_stat > SkipListSet_ptb_less_pascal_stat;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_less_pascal_stat > SkipListSet_ptb_less_pascal_stat;
 
         class traits_SkipListSet_ptb_cmp_pascal: public cc::skip_list::make_traits <
             co::compare< compare >
@@ -3536,7 +3536,7 @@ namespace set2 {
             ,co::item_counter< cds::atomicity::item_counter >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_cmp_pascal > SkipListSet_ptb_cmp_pascal;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_cmp_pascal > SkipListSet_ptb_cmp_pascal;
 
         class traits_SkipListSet_ptb_cmp_pascal_stat: public cc::skip_list::make_traits <
             co::compare< compare >
@@ -3545,7 +3545,7 @@ namespace set2 {
             ,co::item_counter< cds::atomicity::item_counter >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_cmp_pascal_stat > SkipListSet_ptb_cmp_pascal_stat;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_cmp_pascal_stat > SkipListSet_ptb_cmp_pascal_stat;
 
         class traits_SkipListSet_ptb_less_xorshift: public cc::skip_list::make_traits <
             co::less< less >
@@ -3553,7 +3553,7 @@ namespace set2 {
             ,co::item_counter< cds::atomicity::item_counter >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_less_xorshift > SkipListSet_ptb_less_xorshift;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_less_xorshift > SkipListSet_ptb_less_xorshift;
 
         class traits_SkipListSet_ptb_less_xorshift_stat: public cc::skip_list::make_traits <
             co::less< less >
@@ -3562,7 +3562,7 @@ namespace set2 {
             ,co::stat< cc::skip_list::stat<> >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_less_xorshift_stat > SkipListSet_ptb_less_xorshift_stat;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_less_xorshift_stat > SkipListSet_ptb_less_xorshift_stat;
 
         class traits_SkipListSet_ptb_cmp_xorshift: public cc::skip_list::make_traits <
             co::compare< compare >
@@ -3570,7 +3570,7 @@ namespace set2 {
             ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_cmp_xorshift> SkipListSet_ptb_cmp_xorshift;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_cmp_xorshift> SkipListSet_ptb_cmp_xorshift;
 
         class traits_SkipListSet_ptb_cmp_xorshift_stat: public cc::skip_list::make_traits <
             co::compare< compare >
@@ -3579,7 +3579,7 @@ namespace set2 {
             ,co::item_counter< cds::atomicity::item_counter >
         >::type
         {};
-        typedef cc::SkipListSet< cds::gc::PTB, key_val, traits_SkipListSet_ptb_cmp_xorshift_stat > SkipListSet_ptb_cmp_xorshift_stat;
+        typedef cc::SkipListSet< cds::gc::DHP, key_val, traits_SkipListSet_ptb_cmp_xorshift_stat > SkipListSet_ptb_cmp_xorshift_stat;
 
 
         // ***************************************************************************
@@ -4021,7 +4021,7 @@ namespace set2 {
             };
 
             struct ptb_gc {
-                typedef cc::ellen_bintree::node<cds::gc::PTB, key_val>              leaf_node;
+                typedef cc::ellen_bintree::node<cds::gc::DHP, key_val>              leaf_node;
                 typedef cc::ellen_bintree::internal_node< key_type, leaf_node >     internal_node;
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
             };
@@ -4083,7 +4083,7 @@ namespace set2 {
         typedef cc::EllenBinTreeSet< cds::gc::HP, key_type, key_val, traits_EllenBinTreeSet_hp_stat > EllenBinTreeSet_hp_stat;
 
         // ***************************************************************************
-        // EllenBinTreeSet - PTB
+        // EllenBinTreeSet - DHP
 
         class traits_EllenBinTreeSet_ptb: public cc::ellen_bintree::make_set_traits<
             cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
@@ -4094,7 +4094,7 @@ namespace set2 {
             ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
         >::type
         {};
-        typedef cc::EllenBinTreeSet< cds::gc::PTB, key_type, key_val, traits_EllenBinTreeSet_ptb > EllenBinTreeSet_ptb;
+        typedef cc::EllenBinTreeSet< cds::gc::DHP, key_type, key_val, traits_EllenBinTreeSet_ptb > EllenBinTreeSet_ptb;
 
         class traits_EllenBinTreeSet_ptb_stat: public cc::ellen_bintree::make_set_traits<
             cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
@@ -4106,7 +4106,7 @@ namespace set2 {
             ,co::stat< cc::ellen_bintree::stat<> >
         >::type
         {};
-        typedef cc::EllenBinTreeSet< cds::gc::PTB, key_type, key_val, traits_EllenBinTreeSet_ptb_stat > EllenBinTreeSet_ptb_stat;
+        typedef cc::EllenBinTreeSet< cds::gc::DHP, key_type, key_val, traits_EllenBinTreeSet_ptb_stat > EllenBinTreeSet_ptb_stat;
 
 
         // ***************************************************************************

@@ -206,20 +206,20 @@
     TEST_SEGMENTED( SegmentedQueue_HP_spin_stat, ITEM_TYPE ) \
     TEST_SEGMENTED( SegmentedQueue_HP_mutex, ITEM_TYPE ) \
     TEST_SEGMENTED( SegmentedQueue_HP_mutex_stat, ITEM_TYPE ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_spin, ITEM_TYPE ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_spin_stat, ITEM_TYPE ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_mutex, ITEM_TYPE ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_mutex_stat, ITEM_TYPE )
+    TEST_SEGMENTED( SegmentedQueue_DHP_spin, ITEM_TYPE ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_spin_stat, ITEM_TYPE ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_mutex, ITEM_TYPE ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_mutex_stat, ITEM_TYPE )
 
 #define CDSUNIT_TEST_SegmentedQueue \
     CPPUNIT_TEST( SegmentedQueue_HP_spin ) \
     CPPUNIT_TEST( SegmentedQueue_HP_spin_stat ) \
     CPPUNIT_TEST( SegmentedQueue_HP_mutex ) \
     CPPUNIT_TEST( SegmentedQueue_HP_mutex_stat ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_spin ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_spin_stat ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_mutex ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_mutex_stat )
+    CPPUNIT_TEST( SegmentedQueue_DHP_spin ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_spin_stat ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_mutex ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_mutex_stat )
 
 
 // std::queue

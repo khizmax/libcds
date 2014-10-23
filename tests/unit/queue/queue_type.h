@@ -485,10 +485,10 @@ namespace queue {
         typedef cds::container::SegmentedQueue< cds::gc::HP, Value, traits_SegmentedQueue_mutex >  SegmentedQueue_HP_mutex;
         typedef cds::container::SegmentedQueue< cds::gc::HP, Value, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_HP_mutex_stat;
 
-        typedef cds::container::SegmentedQueue< cds::gc::PTB, Value >  SegmentedQueue_PTB_spin;
-        typedef cds::container::SegmentedQueue< cds::gc::PTB, Value, traits_SegmentedQueue_spin_stat >  SegmentedQueue_PTB_spin_stat;
-        typedef cds::container::SegmentedQueue< cds::gc::PTB, Value, traits_SegmentedQueue_mutex >  SegmentedQueue_PTB_mutex;
-        typedef cds::container::SegmentedQueue< cds::gc::PTB, Value, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_PTB_mutex_stat;
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, Value >  SegmentedQueue_DHP_spin;
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_spin_stat >  SegmentedQueue_DHP_spin_stat;
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex >  SegmentedQueue_DHP_mutex;
+        typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_DHP_mutex_stat;
 
 
     };
