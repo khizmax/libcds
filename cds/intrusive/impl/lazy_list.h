@@ -89,7 +89,7 @@ namespace cds { namespace intrusive {
         There are different specializations of this template for each garbage collecting schema used.
         You should select GC needed and include appropriate .h-file:
         - for gc::HP: \code #include <cds/intrusive/lazy_list_hp.h> \endcode
-        - for gc::PTB: \code #include <cds/intrusive/lazy_list_ptb.h> \endcode
+        - for gc::DHP: \code #include <cds/intrusive/lazy_list_dhp.h> \endcode
         - for gc::nogc: \code #include <cds/intrusive/lazy_list_nogc.h> \endcode
         - for \ref cds_urcu_type "RCU" - see \ref cds_intrusive_LazyList_rcu "LazyList RCU specialization"
 
@@ -100,7 +100,7 @@ namespace cds { namespace intrusive {
         Example for gc::PTB and base hook:
         \code
         // Include GC-related lazy list specialization
-        #include <cds/intrusive/lazy_list_ptb.h>
+        #include <cds/intrusive/lazy_list_dhp.h>
 
         // Data stored in lazy list
         struct my_data: public cds::intrusive::lazy_list::node< cds::gc::PTB >
@@ -145,7 +145,7 @@ namespace cds { namespace intrusive {
         Equivalent option-based code:
         \code
         // GC-related specialization
-        #include <cds/intrusive/lazy_list_ptb.h>
+        #include <cds/intrusive/lazy_list_dhp.h>
 
         struct my_data {
             // see above

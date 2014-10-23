@@ -1,42 +1,42 @@
 //$$CDS-header$$
 
 #include "ordered_list/hdr_intrusive_lazy.h"
-#include <cds/intrusive/lazy_list_ptb.h>
+#include <cds/intrusive/lazy_list_dhp.h>
 
 namespace ordlist {
-    void IntrusiveLazyListHeaderTest::PTB_base_cmp()
+    void IntrusiveLazyListHeaderTest::DHP_base_cmp()
     {
-        typedef base_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef base_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
-                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::DHP> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
             >::type
         >    list;
         test_int<list>();
     }
-    void IntrusiveLazyListHeaderTest::PTB_base_less()
+    void IntrusiveLazyListHeaderTest::DHP_base_less()
     {
-        typedef base_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef base_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
-                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
             >::type
         >    list;
         test_int<list>();
     }
-    void IntrusiveLazyListHeaderTest::PTB_base_cmpmix()
+    void IntrusiveLazyListHeaderTest::DHP_base_cmpmix()
     {
-        typedef base_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef base_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
-                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
@@ -44,13 +44,13 @@ namespace ordlist {
         >    list;
         test_int<list>();
     }
-    void IntrusiveLazyListHeaderTest::PTB_base_ic()
+    void IntrusiveLazyListHeaderTest::DHP_base_ic()
     {
-        typedef base_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef base_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
-                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
@@ -59,15 +59,15 @@ namespace ordlist {
         >    list;
         test_int<list>();
     }
-    void IntrusiveLazyListHeaderTest::PTB_member_cmp()
+    void IntrusiveLazyListHeaderTest::DHP_member_cmp()
     {
-        typedef member_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef member_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
                 ci::opt::hook< ci::lazy_list::member_hook<
                     offsetof( item, hMember ),
-                    co::gc<cds::gc::PTB>
+                    co::gc<cds::gc::DHP>
                 > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
@@ -75,15 +75,15 @@ namespace ordlist {
         >    list;
         test_int<list>();
     }
-    void IntrusiveLazyListHeaderTest::PTB_member_less()
+    void IntrusiveLazyListHeaderTest::DHP_member_less()
     {
-        typedef member_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef member_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
                 ci::opt::hook< ci::lazy_list::member_hook<
                     offsetof( item, hMember ),
-                    co::gc<cds::gc::PTB>
+                    co::gc<cds::gc::DHP>
                 > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
@@ -91,15 +91,15 @@ namespace ordlist {
         >    list;
         test_int<list>();
     }
-    void IntrusiveLazyListHeaderTest::PTB_member_cmpmix()
+    void IntrusiveLazyListHeaderTest::DHP_member_cmpmix()
     {
-        typedef member_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef member_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
                 ci::opt::hook< ci::lazy_list::member_hook<
                     offsetof( item, hMember ),
-                    co::gc<cds::gc::PTB>
+                    co::gc<cds::gc::DHP>
                 > >
                 ,co::less< less<item> >
                 ,co::compare< cmp<item> >
@@ -108,15 +108,15 @@ namespace ordlist {
         >    list;
         test_int<list>();
     }
-    void IntrusiveLazyListHeaderTest::PTB_member_ic()
+    void IntrusiveLazyListHeaderTest::DHP_member_ic()
     {
-        typedef member_int_item< cds::gc::PTB > item;
-        typedef ci::LazyList< cds::gc::PTB
+        typedef member_int_item< cds::gc::DHP > item;
+        typedef ci::LazyList< cds::gc::DHP
             ,item
             ,ci::lazy_list::make_traits<
                 ci::opt::hook< ci::lazy_list::member_hook<
                     offsetof( item, hMember ),
-                    co::gc<cds::gc::PTB>
+                    co::gc<cds::gc::DHP>
                 > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >

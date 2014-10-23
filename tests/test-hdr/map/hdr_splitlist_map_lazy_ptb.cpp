@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "map/hdr_map.h"
-#include <cds/container/lazy_list_ptb.h>
+#include <cds/container/lazy_list_dhp.h>
 #include <cds/container/split_list_map.h>
 
 namespace map {

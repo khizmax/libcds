@@ -92,7 +92,7 @@ namespace cds { namespace container {
         There are different specializations of this template for each garbage collecting schema used.
         You should include appropriate .h-file depending on GC you are using:
         - for gc::HP: \code #include <cds/container/lazy_list_hp.h> \endcode
-        - for gc::PTB: \code #include <cds/container/lazy_list_ptb.h> \endcode
+        - for gc::DHP: \code #include <cds/container/lazy_list_dhp.h> \endcode
         - for \ref cds_urcu_desc "RCU": \code #include <cds/container/lazy_list_rcu.h> \endcode
         - for gc::nogc: \code #include <cds/container/lazy_list_nogc.h> \endcode
     */

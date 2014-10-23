@@ -1,24 +1,24 @@
 //$$CDS-header$$
 
 #include "ordered_list/hdr_lazy.h"
-#include <cds/container/lazy_list_ptb.h>
+#include <cds/container/lazy_list_dhp.h>
 
 namespace ordlist {
     namespace {
-        struct PTB_cmp_traits: public cc::lazy_list::type_traits
+        struct DHP_cmp_traits: public cc::lazy_list::type_traits
         {
             typedef LazyListTestHeader::cmp<LazyListTestHeader::item>   compare;
         };
     }
-    void LazyListTestHeader::PTB_cmp()
+    void LazyListTestHeader::DHP_cmp()
     {
         // traits-based version
-        typedef cc::LazyList< cds::gc::PTB, item, PTB_cmp_traits > list;
+        typedef cc::LazyList< cds::gc::DHP, item, DHP_cmp_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::LazyList< cds::gc::PTB, item,
+        typedef cc::LazyList< cds::gc::DHP, item,
             cc::lazy_list::make_traits<
                 cc::opt::compare< cmp<item> >
             >::type
@@ -27,20 +27,20 @@ namespace ordlist {
     }
 
     namespace {
-        struct PTB_less_traits: public cc::lazy_list::type_traits
+        struct DHP_less_traits: public cc::lazy_list::type_traits
         {
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>   less;
         };
     }
-    void LazyListTestHeader::PTB_less()
+    void LazyListTestHeader::DHP_less()
     {
         // traits-based version
-        typedef cc::LazyList< cds::gc::PTB, item, PTB_less_traits > list;
+        typedef cc::LazyList< cds::gc::DHP, item, DHP_less_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::LazyList< cds::gc::PTB, item,
+        typedef cc::LazyList< cds::gc::DHP, item,
             cc::lazy_list::make_traits<
                 cc::opt::less< lt<item> >
             >::type
@@ -49,21 +49,21 @@ namespace ordlist {
     }
 
     namespace {
-        struct PTB_cmpmix_traits: public cc::lazy_list::type_traits
+        struct DHP_cmpmix_traits: public cc::lazy_list::type_traits
         {
             typedef LazyListTestHeader::cmp<LazyListTestHeader::item>   compare;
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>  less;
         };
     }
-    void LazyListTestHeader::PTB_cmpmix()
+    void LazyListTestHeader::DHP_cmpmix()
     {
         // traits-based version
-        typedef cc::LazyList< cds::gc::PTB, item, PTB_cmpmix_traits > list;
+        typedef cc::LazyList< cds::gc::DHP, item, DHP_cmpmix_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::LazyList< cds::gc::PTB, item,
+        typedef cc::LazyList< cds::gc::DHP, item,
             cc::lazy_list::make_traits<
                 cc::opt::compare< cmp<item> >
                 ,cc::opt::less< lt<item> >
@@ -73,21 +73,21 @@ namespace ordlist {
     }
 
     namespace {
-        struct PTB_ic_traits: public cc::lazy_list::type_traits
+        struct DHP_ic_traits: public cc::lazy_list::type_traits
         {
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>   less;
             typedef cds::atomicity::item_counter item_counter;
         };
     }
-    void LazyListTestHeader::PTB_ic()
+    void LazyListTestHeader::DHP_ic()
     {
         // traits-based version
-        typedef cc::LazyList< cds::gc::PTB, item, PTB_ic_traits > list;
+        typedef cc::LazyList< cds::gc::DHP, item, DHP_ic_traits > list;
         test< list >();
 
         // option-based version
 
-        typedef cc::LazyList< cds::gc::PTB, item,
+        typedef cc::LazyList< cds::gc::DHP, item,
             cc::lazy_list::make_traits<
                 cc::opt::less< lt<item> >
                 ,cc::opt::item_counter< cds::atomicity::item_counter >

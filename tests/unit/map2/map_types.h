@@ -15,7 +15,7 @@
 #include <cds/container/michael_kvlist_nogc.h>
 
 #include <cds/container/lazy_kvlist_hp.h>
-#include <cds/container/lazy_kvlist_ptb.h>
+#include <cds/container/lazy_kvlist_dhp.h>
 #include <cds/container/lazy_kvlist_rcu.h>
 #include <cds/container/lazy_kvlist_nogc.h>
 
@@ -1013,45 +1013,45 @@ namespace map2 {
             >::type
         >   LazyList_HP_less_michaelAlloc;
 
-        typedef cc::LazyKVList< cds::gc::PTB, Key, Value,
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
             typename cc::lazy_list::make_traits<
                 co::compare< compare >
             >::type
-        >   LazyList_PTB_cmp_stdAlloc;
+        >   LazyList_DHP_cmp_stdAlloc;
 
-        typedef cc::LazyKVList< cds::gc::PTB, Key, Value,
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
             typename cc::lazy_list::make_traits<
                 co::compare< compare >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   LazyList_PTB_cmp_stdAlloc_seqcst;
+        >   LazyList_DHP_cmp_stdAlloc_seqcst;
 
-        typedef cc::LazyKVList< cds::gc::PTB, Key, Value,
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
             typename cc::lazy_list::make_traits<
                 co::compare< compare >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   LazyList_PTB_cmp_michaelAlloc;
+        >   LazyList_DHP_cmp_michaelAlloc;
 
-        typedef cc::LazyKVList< cds::gc::PTB, Key, Value,
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
             typename cc::lazy_list::make_traits<
                 co::less< less >
             >::type
-        >   LazyList_PTB_less_stdAlloc;
+        >   LazyList_DHP_less_stdAlloc;
 
-        typedef cc::LazyKVList< cds::gc::PTB, Key, Value,
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
             typename cc::lazy_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   LazyList_PTB_less_stdAlloc_seqcst;
+        >   LazyList_DHP_less_stdAlloc_seqcst;
 
-        typedef cc::LazyKVList< cds::gc::PTB, Key, Value,
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
             typename cc::lazy_list::make_traits<
                 co::less< less >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   LazyList_PTB_less_michaelAlloc;
+        >   LazyList_DHP_less_michaelAlloc;
 
         // RCU
         typedef cc::LazyKVList< rcu_gpi, Key, Value,
@@ -1342,38 +1342,38 @@ namespace map2 {
             >::type
         >   MichaelMap_Lazy_HP_less_michaelAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_PTB_cmp_stdAlloc,
+        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_cmp_stdAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
         >   MichaelMap_Lazy_PTB_cmp_stdAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_PTB_cmp_stdAlloc_seqcst,
+        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_cmp_stdAlloc_seqcst,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
         >   MichaelMap_Lazy_PTB_cmp_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_PTB_cmp_michaelAlloc,
+        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_cmp_michaelAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
         >   MichaelMap_Lazy_PTB_cmp_michaelAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_PTB_less_stdAlloc,
+        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_less_stdAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
         >   MichaelMap_Lazy_PTB_less_stdAlloc;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_PTB_less_stdAlloc_seqcst,
+        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_less_stdAlloc_seqcst,
             typename cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
         >   MichaelMap_Lazy_PTB_less_stdAlloc_seqcst;
 
-        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_PTB_less_michaelAlloc,
+        typedef cc::MichaelHashMap< cds::gc::PTB, LazyList_DHP_less_michaelAlloc,
             typename cc::michael_map::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >

@@ -590,10 +590,10 @@ namespace ordlist {
         void HP_cmpmix();
         void HP_ic();
 
-        void PTB_cmp();
-        void PTB_less();
-        void PTB_cmpmix();
-        void PTB_ic();
+        void DHP_cmp();
+        void DHP_less();
+        void DHP_cmpmix();
+        void DHP_ic();
 
         void RCU_GPI_cmp();
         void RCU_GPI_less();
@@ -631,10 +631,10 @@ namespace ordlist {
             CPPUNIT_TEST(HP_cmpmix)
             CPPUNIT_TEST(HP_ic)
 
-            CPPUNIT_TEST(PTB_cmp)
-            CPPUNIT_TEST(PTB_less)
-            CPPUNIT_TEST(PTB_cmpmix)
-            CPPUNIT_TEST(PTB_ic)
+            CPPUNIT_TEST(DHP_cmp)
+            CPPUNIT_TEST(DHP_less)
+            CPPUNIT_TEST(DHP_cmpmix)
+            CPPUNIT_TEST(DHP_ic)
 
             CPPUNIT_TEST(RCU_GPI_cmp)
             CPPUNIT_TEST(RCU_GPI_less)

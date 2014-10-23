@@ -33,10 +33,10 @@ namespace cds { namespace container {
         \par Usage
 
         You should decide what garbage collector you want, and what ordered list you want to use. Split-ordered list
-        is original data structure based on an ordered list. Suppose, you want construct split-list set based on gc::PTB GC
+        is original data structure based on an ordered list. Suppose, you want construct split-list set based on gc::DHP GC
         and LazyList as ordered list implementation. So, you beginning your program with following include:
         \code
-        #include <cds/container/lazy_list_ptb.h>
+        #include <cds/container/lazy_list_dhp.h>
         #include <cds/container/split_list_set.h>
 
         namespace cc = cds::container;
@@ -47,7 +47,7 @@ namespace cds { namespace container {
             std::string strValue    ;   // value field
         };
         \endcode
-        The inclusion order is important: first, include header for ordered-list implementation (for this example, <tt>cds/container/lazy_list_ptb.h</tt>),
+        The inclusion order is important: first, include header for ordered-list implementation (for this example, <tt>cds/container/lazy_list_dhp.h</tt>),
         then the header for split-list set <tt>cds/container/split_list_set.h</tt>.
 
         Now, you should declare traits for split-list set. The main parts of traits are a hash functor for the set and a comparing functor for ordered list.

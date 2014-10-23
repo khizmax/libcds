@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "set/hdr_set.h"
-#include <cds/container/lazy_list_ptb.h>
+#include <cds/container/lazy_list_dhp.h>
 #include <cds/container/michael_set.h>
 
 namespace set {

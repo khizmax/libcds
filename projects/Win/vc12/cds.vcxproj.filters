@@ -545,9 +545,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_nogc.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_ptb.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_hp.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -605,16 +602,10 @@
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_nogc.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_ptb.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\lazy_list_hp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\lazy_list_nogc.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\lazy_list_ptb.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_hp.h">
@@ -1230,6 +1221,15 @@
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\michael_kvlist_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\lazy_list_dhp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_list_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\lazy_kvlist_dhp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
   </ItemGroup>
