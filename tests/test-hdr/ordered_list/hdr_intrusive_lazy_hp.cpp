@@ -7,14 +7,13 @@ namespace ordlist {
     void IntrusiveLazyListHeaderTest::HP_base_cmp()
     {
         typedef base_int_item< cds::gc::HP > item;
-        typedef ci::LazyList< cds::gc::HP
-            ,item
-            ,ci::lazy_list::make_traits<
-                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::HP> > >
-                ,co::compare< cmp<item> >
-                ,ci::opt::disposer< faked_disposer >
-            >::type
-        >    list;
+        struct traits : public ci::lazy_list::traits
+        {
+            typedef ci::lazy_list::base_hook< co::gc<cds::gc::HP> > hook;
+            typedef cmp<item> compare;
+            typedef faked_disposer disposer;
+        };
+        typedef ci::LazyList< cds::gc::HP, item, traits > list;
         test_int<list>();
     }
     void IntrusiveLazyListHeaderTest::HP_base_less()
@@ -78,17 +77,13 @@ namespace ordlist {
     void IntrusiveLazyListHeaderTest::HP_member_less()
     {
         typedef member_int_item< cds::gc::HP > item;
-        typedef ci::LazyList< cds::gc::HP
-            ,item
-            ,ci::lazy_list::make_traits<
-                ci::opt::hook< ci::lazy_list::member_hook<
-                    offsetof( item, hMember ),
-                    co::gc<cds::gc::HP>
-                > >
-                ,co::less< less<item> >
-                ,ci::opt::disposer< faked_disposer >
-            >::type
-        >    list;
+        struct traits : public ci::lazy_list::traits
+        {
+            typedef ci::lazy_list::member_hook< offsetof( item, hMember ), co::gc<cds::gc::HP>> hook;
+            typedef IntrusiveLazyListHeaderTest::less<item> less;
+            typedef faked_disposer disposer;
+        };
+        typedef ci::LazyList< cds::gc::HP, item, traits > list;
         test_int<list>();
     }
     void IntrusiveLazyListHeaderTest::HP_member_cmpmix()

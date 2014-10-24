@@ -9,20 +9,29 @@
 
 namespace cds { namespace intrusive {
     namespace lazy_list {
-        /// Lazy list node for gc::nogc
+        /// Lazy list node for \p gc::nogc
         /**
             Template parameters:
-            - Tag - a tag used to distinguish between different implementation
+             - Lock - lock type. Default is \p cds::lock::Spin
+             - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
-        template <typename Lock, typename Tag>
+        template <
+#ifdef CDS_DOXYGEN_INVOKED
+            typename Lock = cds::lock::Spin,
+            typename Tag = opt::none
+#else
+            typename Lock, 
+            typename Tag
+#endif
+        >
         struct node<gc::nogc, Lock, Tag>
         {
-            typedef gc::nogc    gc          ;   ///< Garbage collector
-            typedef Lock        lock_type   ;   ///< Lock type
-            typedef Tag         tag         ;   ///< tag
+            typedef gc::nogc    gc;   ///< Garbage collector
+            typedef Lock        lock_type;  ///< Lock type
+            typedef Tag         tag;  ///< tag
 
-            atomics::atomic<node *> m_pNext ; ///< pointer to the next node in the list
-            mutable lock_type   m_Lock  ; ///< Node lock
+            atomics::atomic<node *> m_pNext; ///< pointer to the next node in the list
+            mutable lock_type   m_Lock;      ///< Node lock
 
             node()
                 : m_pNext( nullptr )
@@ -31,39 +40,19 @@ namespace cds { namespace intrusive {
     }   // namespace lazy_list
 
 
-    /// Lazy ordered single-linked list (template specialization for gc::nogc)
+    /// Lazy ordered single-linked list (template specialization for \p gc::nogc)
     /** @ingroup cds_intrusive_list
         \anchor cds_intrusive_LazyList_nogc
 
-        This specialization is intended for so-called persistent usage when no item
+        This specialization is append-only list when no item
         reclamation may be performed. The class does not support deleting of list item.
 
         See \ref cds_intrusive_LazyList_hp "LazyList" for description of template parameters.
-
-        The interface of the specialization is a slightly different.
-
-        The gc::nogc specialization of LazyList accepts following template argument list
-        \p Options of cds::intrusive::lazy_list::make_traits metafunction:
-        - opt::hook - hook used. Possible values are: lazy_list::base_hook, lazy_list::member_hook, lazy_list::traits_hook.
-            If the option is not specified, <tt>lazy_list::base_hook<></tt> and gc::HP is used.
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. The disposer
-            provided is used only in \ref clear() function.
-        - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-
-        The opt::allocator and opt::back_off is not used for this specialization.
-
     */
     template <
         typename T
 #ifdef CDS_DOXYGEN_INVOKED
-        ,class Traits = lazy_list::type_traits
+        ,class Traits = lazy_list::traits
 #else
         ,class Traits
 #endif
@@ -71,35 +60,34 @@ namespace cds { namespace intrusive {
     class LazyList<gc::nogc, T, Traits>
     {
     public:
-        typedef T       value_type      ;   ///< type of value stored in the list
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef gc::nogc gc;         ///< Garbage collector
+        typedef T        value_type; ///< type of value stored in the list
+        typedef Traits   traits;    ///< Traits template parameter
 
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
+        typedef typename traits::hook    hook;      ///< hook type
+        typedef typename hook::node_type node_type; ///< node type
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
 #   else
-        typedef typename opt::details::make_comparator< value_type, options >::type key_comparator;
+        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
 
-        typedef typename options::disposer  disposer    ;   ///< disposer used
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
-        typedef typename lazy_list::get_link_checker< node_type, options::link_checker >::type link_checker   ;   ///< link checker
+        typedef typename traits::disposer  disposer;   ///< disposer
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;    ///< node traits
+        typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
-        typedef gc::nogc  gc    ;   ///< Garbage collector
-        typedef typename options::back_off  back_off        ;   ///< back-off strategy (not used)
-        typedef typename options::item_counter item_counter ;   ///< Item counting policy used
-        typedef typename options::memory_model  memory_model;   ///< C++ memory ordering (see lazy_list::type_traits::memory_model)
+        typedef typename traits::item_counter item_counter;  ///< Item counting policy used
+        typedef typename traits::memory_model  memory_model; ///< C++ memory ordering (see lazy_list::traits::memory_model)
 
         //@cond
-        // Rebind options (split-list support)
+        // Rebind traits (split-list support)
         template <typename... Options>
         struct rebind_options {
             typedef LazyList<
                 gc
                 , value_type
-                , typename cds::opt::make_options< options, Options...>::type
+                , typename cds::opt::make_options< traits, Options...>::type
             >   type;
         };
         //@endcond
@@ -108,9 +96,9 @@ namespace cds { namespace intrusive {
         typedef node_type *     auxiliary_head   ;   ///< Auxiliary head type (for split-list support)
 
     protected:
-        node_type       m_Head ;            ///< List head (dummy node)
-        node_type       m_Tail;             ///< List tail (dummy node)
-        item_counter    m_ItemCounter   ;   ///< Item counter
+        node_type       m_Head;        ///< List head (dummy node)
+        node_type       m_Tail;        ///< List tail (dummy node)
+        item_counter    m_ItemCounter; ///< Item counter
 
         //@cond
 
@@ -308,7 +296,6 @@ namespace cds { namespace intrusive {
         LazyList()
         {
             static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
-
             m_Head.m_pNext.store( &m_Tail, memory_model::memory_order_relaxed );
         }
 
@@ -316,7 +303,6 @@ namespace cds { namespace intrusive {
         ~LazyList()
         {
             clear();
-
             assert( m_Head.m_pNext.load(memory_model::memory_order_relaxed) == &m_Tail );
             m_Head.m_pNext.store( nullptr, memory_model::memory_order_relaxed );
         }
@@ -355,8 +341,6 @@ namespace cds { namespace intrusive {
             The functor may change non-key fields of the \p item.
             While the functor \p f is calling the item \p item is locked.
 
-            You may pass \p func argument by reference using \p std::ref.
-
             Returns <tt> std::pair<bool, bool>  </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
@@ -368,70 +352,30 @@ namespace cds { namespace intrusive {
             return ensure_at( &m_Head, val, func );
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_LazyList_nogc_find_func
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor may change non-key fields of \p item.
             While the functor \p f is calling the item found \p item is locked.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return find_at( &m_Head, val, key_comparator(), f );
+            return find_at( &m_Head, key, key_comparator(), f );
         }
 
-        /// Finds the key \p val
-        /** \anchor cds_intrusive_LazyList_nogc_find_cfunc
-            The function searches the item with key equal to \p val
-            and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
-
-            The functor may change non-key fields of \p item.
-            While the functor \p f is calling the item found \p item is locked.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_at( &m_Head, val, key_comparator(), f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_intrusive_LazyList_nogc_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return find_at( &m_Head, val, cds::opt::details::make_comparator_from_less<Less>(), f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_intrusive_LazyList_nogc_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -439,23 +383,23 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return find_at( &m_Head, val, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_LazyList_nogc_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns pointer to value found or \p nullptr.
         */
         template <typename Q>
-        value_type * find( Q const& val )
+        value_type * find( Q const& key )
         {
-            return find_at( &m_Head, val, key_comparator() );
+            return find_at( &m_Head, key, key_comparator() );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_intrusive_LazyList_nogc_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -463,9 +407,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        value_type * find_with( Q const & val, Less pred )
+        value_type * find_with( Q const & key, Less pred )
         {
-            return find_at( &m_Head, val, cds::opt::details::make_comparator_from_less<Less>() );
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
         /// Clears the list

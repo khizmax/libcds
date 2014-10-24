@@ -25,7 +25,7 @@ namespace cds { namespace intrusive {
         */
         template <
             class GC
-            ,typename Lock = lock::Spin
+            ,typename Lock =  cds::lock::Spin
             ,typename Tag = opt::none
         >
         struct node
