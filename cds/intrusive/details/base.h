@@ -31,7 +31,138 @@ namespace cds {
     struct tag1;
     cds::intrusive::treiber_stack::node< cds::gc::HP, tag<tag1> > 
     \endcode
-    If no tag is specified еру default \p cds::opt::none will be used.
+    If no tag is specified the default \p cds::opt::none will be used.
+
+    \anchor cds_intrusive_item_creating
+    \par Inserting items
+    Many intrusive and non-intrusive (standard-like) containers in the library have the member functions 
+    that take an functor argument to initialize the inserted item after it has been successfully inserted, 
+    for example:
+    \code
+    template <typename Q, typename Func>
+    bool insert( Q& key, Func f );
+
+    template <typename Q, typename Func>
+    std::pair<bool, bool> ensure( Q& key, Func f );
+    \endcode
+    The first member function calls \p f functor iif an new item has been inserted. The functor takes two parameter: a reference to inserted item and
+    \p key.
+
+    The second member function, \p ensure, allows to insert a new item to the container if \p key is not found, or to find the item with \p key and
+    to perform some action with it. The \p f signature is:
+    \code
+    void f( bool bNew, item_type& item, Q& key );
+    \endcode
+    where \p bNew is a flag to indicate whether \p item is a new created node or not.
+
+    Such functions should be used with caution in multi-threaded environment
+    since they can cause races. The library does not synchronize access
+    to container's items, so many threads can access to one item simultaneously.
+    For example, for \p insert member function the following race is possible:
+    \code
+        // Suppose, Foo is a complex structure with int key field
+        SomeContainer<Foo> q;
+
+        Thread 1                                  Thread 2
+
+        q.insert( Foo(5),                         q.find( 5, []( Foo& item ) {
+            []( Foo& item ){                         // access to item fields
+               // complex initialization             ...
+               item.f1 = ...;                     });
+               ...
+            });
+    \endcode
+    Execute sequence:
+    \code
+        Find 5 in the container.
+        Key 5 is not found
+        Create a new item                         Find key 5
+            with calling Foo(5) ctor
+        Insert the new item
+                                                  The key 5 is found - 
+                                                     call the functor     (!)
+        Perform complex
+           initialization - 
+           call the functor
+    \endcode
+    (!): Thread 2 found the key and call its functor on incomplete initialized item.
+    Simultaneous access to the item also is possible. In this case Thread 1 is
+    initializing the item, thread 2 is reading (or writing) the item's fields. 
+    In any case, Thread 2 can read uninitialized or incomplete initialized fields.
+
+    \p ensure member function race. Suppose, thread 1 and thread 2 perform 
+    the 
+    following code:
+    \code
+        q.ensure( 5, []( bool bNew, Foo& item, int  arg )
+           {
+              // bNew: true if the new element has been created
+              //       false otherwise
+              if ( bNew ) {
+                 // initialize item
+                 item.f1=...;
+                 //...
+              }
+              else {
+                 // do some work
+                 if ( !item.f1 ) 
+                    item.f1 = ...;
+                 else {
+                   //...
+                 }
+                 //...
+              }
+           }
+        );
+    \endcode
+    Execute sequence:
+    \code
+        Thread 1                                  Thread 2
+        key 5 not found
+        insert new item Foo(5)                    Find 5
+                                                  Key 5 found
+                                                  call the functor with 
+                                                     bNew = false        (!)
+        call the functor with
+           bNew = true
+    \endcode
+    (!): Thread 2 executes its functor on incomplete initialized item. 
+
+    To protect your code from such races you can use some item-level synchronization,
+    for example:
+    \code
+    struct Foo {
+       spinlock lock;       // item-level lock
+       bool initialized = false;    // initialization flag
+       // other fields
+       // ....
+    };
+
+    q.ensure( 5, []( bool bNew, Foo& item, int  arg )
+        {
+            // Lock access to the item
+            std::unique_lock( item.lock );
+
+            if ( !item.initialized ) {
+                // initialize item
+                item.f1=...;
+                //...
+                item.initialized = true; // mark the item as initialized
+            }
+            else {
+                // do some work
+                if ( !item.f1 ) 
+                    item.f1 = ...;
+                else {
+                    //...
+                }
+                //...
+            }
+        }
+    );
+    \endcode
+    If the item-level synchronization is not suitable, you should not use any inserting member function
+    with post-insert functor argument.
 
     \anchor cds_intrusive_item_destroying
     \par Destroying items

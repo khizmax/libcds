@@ -517,6 +517,8 @@ namespace cds { namespace intrusive {
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this list's item by concurrent threads.
             The user-defined functor is called only if the inserting is success.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -547,6 +549,8 @@ namespace cds { namespace intrusive {
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )

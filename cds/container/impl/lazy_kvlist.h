@@ -427,6 +427,8 @@ namespace cds { namespace container {
 
             This can be useful if complete initialization of object of \p mapped_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         bool insert_key( const K& key, Func func )
@@ -471,11 +473,11 @@ namespace cds { namespace container {
             however, \p func must guarantee that during changing no any other modifications
             could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using \p std::ref.
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( const K& key, Func f )

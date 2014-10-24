@@ -444,8 +444,9 @@ namespace cds { namespace intrusive {
             \endcode
             where \p val is the item inserted.
             While the functor \p f is working the item \p val is locked.
-            The user-defined functor is called only if the inserting is success and may be passed by reference
-            using \p std::ref.
+            The user-defined functor is called only if the inserting is success.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -475,11 +476,11 @@ namespace cds { namespace intrusive {
             The functor may change non-key fields of the \p item.
             While the functor \p f is calling the item \p item is locked.
 
-            You may pass \p func argument by reference using \p std::ref.
-
             Returns <tt> std::pair<bool, bool>  </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
 
         template <typename Func>

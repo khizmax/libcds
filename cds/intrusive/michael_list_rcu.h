@@ -340,6 +340,8 @@ namespace cds { namespace intrusive {
             The user-defined functor is called only if the inserting is success.
 
             The function makes RCU lock internally.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -374,6 +376,8 @@ namespace cds { namespace intrusive {
             already is in the list.
 
             The function makes RCU lock internally.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )

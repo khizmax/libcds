@@ -385,6 +385,8 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
 
             The function makes RCU lock internally.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
         bool insert( Q const& key, Func func )
@@ -436,6 +438,8 @@ namespace cds { namespace container {
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
         std::pair<bool, bool> ensure( Q const& key, Func f )
