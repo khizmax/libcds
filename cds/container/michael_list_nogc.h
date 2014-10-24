@@ -30,7 +30,7 @@ namespace cds { namespace container {
     }   // namespace details
     //@endcond
 
-    /// Michael's lock-free ordered single-linked list (template specialization for \pgc::nogc)
+    /// Michael's lock-free ordered single-linked list (template specialization for \p gc::nogc)
     /** @ingroup cds_nonintrusive_list
         \anchor cds_nonintrusive_MichaelList_nogc
 

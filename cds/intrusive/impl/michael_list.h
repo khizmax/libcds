@@ -21,8 +21,8 @@ namespace cds { namespace intrusive {
 
         Template arguments:
         - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T (see \p michael_list::node).
-        - \p T - type to be stored in the list. The type must be based on michael_list::node (for michael_list::base_hook)
-            or it must have a member of type michael_list::node (for michael_list::member_hook).
+        - \p T - type to be stored in the list. The type must be based on \p michael_list::node (for \p michael_list::base_hook)
+            or it must have a member of type \p michael_list::node (for \p michael_list::member_hook).
         - \p Traits - type traits, default is \p michael_list::traits. It is possible to declare option-based 
              list with \p cds::intrusive::michael_list::make_traits metafunction:
             For example, the following traits-based declaration of \p gc::HP Michael's list
@@ -69,25 +69,25 @@ namespace cds { namespace intrusive {
             \endcode
 
         \par Usage
-        There are different specializations of this template for each garbage collecting schema used.
+        There are different specializations of this template for each garbage collecting schema.
         You should select GC needed and include appropriate .h-file:
-        - for gc::HP: \code #include <cds/intrusive/michael_list_hp.h> \endcode
-        - for gc::DHP: \code #include <cds/intrusive/michael_list_dhp.h> \endcode
+        - for \p gc::HP: <tt> <cds/intrusive/michael_list_hp.h> </tt>
+        - for \p gc::DHP: <tt> <cds/intrusive/michael_list_dhp.h> </tt>
         - for \ref cds_urcu_gc "RCU type" - see \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
-        - for gc::nogc: \code #include <cds/intrusive/michael_list_nogc.h> \endcode
+        - for \p gc::nogc: <tt> <cds/intrusive/michael_list_nogc.h> </tt>
             See \ref cds_intrusive_MichaelList_nogc "non-GC MichaelList"
 
-        Then, you should incorporate michael_list::node into your struct \p T and provide
+        Then, you should incorporate \p michael_list::node into your struct \p T and provide
         appropriate \p michael_list::traits::hook in your \p Traits template parameters. Usually, for \p Traits you
         define a struct based on \p michael_list::traits.
 
-        Example for \p gc::PTB and base hook:
+        Example for \p gc::DHP and base hook:
         \code
         // Include GC-related Michael's list specialization
         #include <cds/intrusive/michael_list_dhp.h>
 
         // Data stored in Michael's list
-        struct my_data: public cds::intrusive::michael_list::node< cds::gc::PTB >
+        struct my_data: public cds::intrusive::michael_list::node< cds::gc::DHP >
         {
             // key field
             std::string     strKey;
@@ -118,12 +118,12 @@ namespace cds { namespace intrusive {
         // Declare traits
         struct my_traits: public cds::intrusive::michael_list::traits
         {
-            typedef cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::PTB > >   hook;
+            typedef cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::DHP > >   hook;
             typedef my_data_cmp compare;
         };
 
         // Declare list type
-        typedef cds::intrusive::MichaelList< cds::gc::PTB, my_data, my_traits >     traits_based_list;
+        typedef cds::intrusive::MichaelList< cds::gc::DHP, my_data, my_traits >     traits_based_list;
         \endcode
 
         Equivalent option-based code:
@@ -139,10 +139,10 @@ namespace cds { namespace intrusive {
         };
 
         // Declare option-based list
-        typedef cds::intrusive::MichaelList< cds::gc::PTB
+        typedef cds::intrusive::MichaelList< cds::gc::DHP
             ,my_data
             , typename cds::intrusive::michael_list::make_traits<
-                cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::PTB > > >
+                cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::DHP > > >
                 ,cds::intrusive::opt::compare< my_data_cmp >
             >::type
         > option_based_list;

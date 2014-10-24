@@ -12,6 +12,8 @@ namespace cds { namespace intrusive {
     /** @ingroup cds_intrusive_helper
     */
     namespace vyukov_queue {
+
+        /// VyukovMPMCCycleQueue traits
         struct traits : public cds::container::vyukov_queue::traits
         {
             /// The functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used only in \p clear()

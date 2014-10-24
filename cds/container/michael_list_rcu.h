@@ -113,7 +113,7 @@ namespace cds { namespace container {
     public:
         typedef cds::urcu::gc<RCU> gc;          ///< RCU 
         typedef T                  value_type;  ///< Type of value stored in the list
-        typedef Traits             traits;      /// List traits
+        typedef Traits             traits;      ///< List traits
 
         typedef typename base_class::back_off     back_off;       ///< Back-off strategy used
         typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes

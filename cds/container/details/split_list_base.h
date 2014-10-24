@@ -72,9 +72,9 @@ namespace cds { namespace container {
 
         /// Type traits for SplitListSet class
         /**
-            Note, the SplitListSet type traits is based on intrusive::split_list::type_traits.
-            Any member declared in intrusive::split_list::type_traits is also applied to
-            container::split_list::type_traits.
+            Note, the SplitListSet type traits is based on intrusive::split_list::traits.
+            Any member declared in intrusive::split_list::traits is also applied to
+            container::split_list::traits.
         */
         struct type_traits: public intrusive::split_list::type_traits
         {
@@ -91,9 +91,9 @@ namespace cds { namespace container {
                 If this option is opt::none, the ordered list traits is combined with default
                 ordered list traits and split-list traits.
 
-                For \p michael_list_tag, the default traits is \ref container::michael_list::type_traits.
+                For \p michael_list_tag, the default traits is \p container::michael_list::traits.
 
-                For \p lazy_list_tag, the default traits is \ref container::lazy_list::type_traits.
+                For \p lazy_list_tag, the default traits is \p container::lazy_list::traits.
             */
             typedef opt::none           ordered_list_traits;
 
@@ -140,8 +140,8 @@ namespace cds { namespace container {
             - split_list::ordered_list - a tag for ordered list implementation.
                 See split_list::ordered_list for possible values.
             - split_list::ordered_list_traits - type traits for ordered list implementation.
-                For MichaelList use container::michael_list::type_traits,
-                for LazyList use container::lazy_list::type_traits.
+                For MichaelList use \p container::michael_list::traits,
+                for LazyList use \p container::lazy_list::traits.
             - plus any option from intrusive::split_list::make_traits
         */
         template <typename... Options>
