@@ -17,16 +17,16 @@ namespace cds { namespace container {
 
             typedef GC      gc;
             typedef K       key_type;
-            typedef T       value_type;
-            typedef std::pair<key_type const, value_type>       pair_type;
+            typedef T       mapped_type;
+            typedef std::pair<key_type const, mapped_type> value_type;
 
             struct node_type: public intrusive::lazy_list::node<gc, typename original_type_traits::lock_type>
             {
-                pair_type   m_Data;
+                value_type   m_Data;
 
                 template <typename Q>
                 node_type( Q const& key )
-                    : m_Data( key, value_type() )
+                    : m_Data( key, mapped_type() )
                 {}
 
                 template <typename Q, typename R>
@@ -41,12 +41,12 @@ namespace cds { namespace container {
 
                 template <typename Ky, typename... Args>
                 node_type( Ky&& key, Args&&... args )
-                    : m_Data( std::forward<Ky>(key), std::move( value_type( std::forward<Args>(args)...)))
+                    : m_Data( std::forward<Ky>( key ), std::move( mapped_type( std::forward<Args>( args )... ) ) )
                 {}
             };
 
-            typedef typename original_type_traits::allocator::template rebind<node_type>::other  allocator_type;
-            typedef cds::details::Allocator< node_type, allocator_type >                cxx_allocator;
+            typedef typename original_type_traits::allocator::template rebind<node_type>::other allocator_type;
+            typedef cds::details::Allocator< node_type, allocator_type > cxx_allocator;
 
             struct node_deallocator
             {
@@ -70,14 +70,15 @@ namespace cds { namespace container {
                 typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, key_field_accessor >    type;
             };
 
-            struct type_traits: public original_type_traits
+            struct intrusive_traits: public original_type_traits
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
-                typedef node_deallocator                    disposer;
+                typedef node_deallocator disposer;
                 typedef cds::details::compare_wrapper< node_type, key_comparator, key_field_accessor > compare;
+                static const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
             };
 
-            typedef intrusive::LazyList<gc, node_type, type_traits>  type;
+            typedef intrusive::LazyList<gc, node_type, intrusive_traits>  type;
         };
     }   // namespace details
     //@endcond

@@ -27,17 +27,53 @@ namespace cds { namespace container {
         reference. It also has a novel wait-free membership \p find operation
         that does not need to perform cleanup operations and is more efficient.
 
-        It is non-intrusive version of cds::intrusive::LazyList class
+        It is non-intrusive version of \p cds::intrusive::LazyList class
 
         Template arguments:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
-        - \p T - type stored in the list. The type must be default- and copy-constructible.
-        - \p Traits - type traits, default is lazy_list::type_traits
+        - \p T - type to be stored in the list.
+        - \p Traits - type traits, default is lazy_list::traits
+            It is possible to declare option-based list with cds::container::lazy_list::make_traits metafunction istead of \p Traits template
+            argument. For example, the following traits-based declaration of \p gc::HP lazy list
+            \code
+            #include <cds/urcu/general_instant.h>
+            #include <cds/container/lazy_list_rcu.h>
+            // Declare comparator for the item
+            struct my_compare {
+                int operator ()( int i1, int i2 )
+                {
+                    return i1 - i2;
+                }
+            };
+
+            // Declare traits
+            struct my_traits: public cds::container::lazy_list::traits
+            {
+                typedef my_compare compare;
+            };
+
+            // Declare traits-based list
+            typedef cds::container::LazyList< cds::urcu::gc< cds::urcu::general_instant<> >, int, my_traits > traits_based_list;
+            \endcode
+            is equal to the following option-based list
+            \code
+            #include <cds/urcu/general_instant.h>
+            #include <cds/container/lazy_list_rcu.h>
+
+            // my_compare is the same
+
+            // Declare option-based list
+            typedef cds::container::LazyList< cds::urcu::gc< cds::urcu::general_instant<> >, int,
+                typename cds::container::lazy_list::make_traits<
+                    cds::container::opt::compare< my_compare >     // item comparator option
+                >::type
+            >     option_based_list;
+            \endcode
 
         The implementation does not divide type \p T into key and value part and
-        may be used as main building block for hash set containers.
-        The key is a function (or a part) of type \p T, and this function is specified by <tt> Traits::compare </tt> functor
-        or <tt> Traits::less </tt> predicate
+        may be used as main building block for some hash set containers.
+        The key is a function (or a part) of type \p T, and this function is specified by \p Traits::compare functor
+        or \p Traits::less predicate
 
         \ref cds_nonintrusive_LazyKVList_rcu "LazyKVList" is a key-value version
         of lazy non-intrusive list that is closer to the C++ std library approach.
@@ -45,64 +81,12 @@ namespace cds { namespace container {
         @note Before including <tt><cds/container/lazy_list_rcu.h></tt> you should include
         appropriate RCU header file, see \ref cds_urcu_gc "RCU type" for list
         of existing RCU class and corresponding header files.
-
-        It is possible to declare option-based list with cds::container::lazy_list::make_traits metafunction istead of \p Traits template
-        argument. For example, the following traits-based declaration of gc::HP lazy list
-        \code
-        #include <cds/urcu/general_instant.h>
-        #include <cds/container/lazy_list_rcu.h>
-        // Declare comparator for the item
-        struct my_compare {
-            int operator ()( int i1, int i2 )
-            {
-                return i1 - i2;
-            }
-        };
-
-        // Declare type_traits
-        struct my_traits: public cds::container::lazy_list::type_traits
-        {
-            typedef my_compare compare;
-        };
-
-        // Declare traits-based list
-        typedef cds::container::LazyList< cds::urcu::gc< cds::urcu::general_instant<> >, int, my_traits >     traits_based_list;
-        \endcode
-
-        is equivalent for the following option-based list
-        \code
-        #include <cds/urcu/general_instant.h>
-        #include <cds/container/lazy_list_rcu.h>
-
-        // my_compare is the same
-
-        // Declare option-based list
-        typedef cds::container::LazyList< cds::urcu::gc< cds::urcu::general_instant<> >, int,
-            typename cds::container::lazy_list::make_traits<
-                cds::container::opt::compare< my_compare >     // item comparator option
-            >::type
-        >     option_based_list;
-        \endcode
-
-        Template argument list \p Options of cds::container::lazy_list::make_traits metafunction are:
-        - opt::lock_type - lock type for per-node locking. Default is cds::lock::Spin. Note that <b>each</b> node
-            of the list has member of type \p lock_type, therefore, heavy-weighted locking primitive is not
-            acceptable as candidate for \p lock_type.
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - opt::rcu_check_deadlock - a deadlock checking policy. Default is opt::v::rcu_throw_deadlock
     */
     template <
         typename RCU,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = lazy_list::type_traits
+        typename Traits = lazy_list::traits
 #else
         typename Traits
 #endif
@@ -120,16 +104,18 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef T                                   value_type      ;   ///< Type of value stored in the list
-        typedef typename base_class::gc             gc              ;   ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename maker::allocator_type      allocator_type  ;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename maker::key_comparator      key_comparator  ;   ///< key compare functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename base_class::rcu_check_deadlock rcu_check_deadlock ; ///< Deadlock checking policy
+        typedef cds::urcu::gc<RCU> gc; ///< Garbage collector
+        typedef T value_type;          ///< Type of value stored in the list
+        typedef Traits traits;         ///< List traits
 
-        typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
+        typedef typename base_class::back_off       back_off;       ///< Back-off strategy
+        typedef typename maker::allocator_type      allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter   item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator      key_comparator; ///< key compare functor
+        typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
+
+        typedef typename gc::scoped_lock  rcu_lock ;  ///< RCU scoped lock
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions require external locking
 
     protected:
@@ -137,13 +123,13 @@ namespace cds { namespace container {
         typedef typename base_class::value_type     node_type;
         typedef typename maker::cxx_allocator       cxx_allocator;
         typedef typename maker::node_deallocator    node_deallocator;
-        typedef typename maker::type_traits::compare  intrusive_key_comparator;
+        typedef typename maker::intrusive_traits::compare intrusive_key_comparator;
 
-        typedef typename base_class::node_type      head_type;
+        typedef typename base_class::node_type head_type;
         //@endcond
 
     public:
-        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::type_traits::disposer > exempt_ptr; ///< pointer to extracted node
+        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer > exempt_ptr; ///< pointer to extracted node
 
     private:
         //@cond
@@ -327,16 +313,10 @@ namespace cds { namespace container {
 
     public:
         /// Default constructor
-        /**
-            Initializes empty list
-        */
         LazyList()
         {}
 
-        /// List desctructor
-        /**
-            Clears the list
-        */
+        /// Desctructor clears the list
         ~LazyList()
         {
             clear();
@@ -348,8 +328,8 @@ namespace cds { namespace container {
             and then inserts the node created into the list.
 
             The type \p Q should contain as minimum the complete key of the node.
-            The object of \ref value_type should be constructible from \p val of type \p Q.
-            In trivial case, \p Q is equal to \ref value_type.
+            The object of \p value_type should be constructible from \p val of type \p Q.
+            In trivial case, \p Q is equal to \p value_type.
 
             The function makes RCU lock internally.
 
@@ -368,10 +348,8 @@ namespace cds { namespace container {
             \code void func( value_type& itemValue ) ;\endcode
 
             The argument \p itemValue of user-defined functor \p func is the reference
-            to the list's item inserted. User-defined functor \p func should guarantee that during changing
-            item's value no any other changes could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if the inserting is success.
+            to the list's item inserted. 
+            The user-defined functor is called only if the inserting is success.
 
             The type \p Q should contain the complete key of the node.
             The object of \ref value_type should be constructible from \p key of type \p Q.
@@ -385,8 +363,6 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
 
             The function makes RCU lock internally.
-
-            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
         bool insert( Q const& key, Func func )
@@ -394,7 +370,7 @@ namespace cds { namespace container {
             return insert_at( head(), key, func );
         }
 
-        /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type constructed from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
@@ -412,11 +388,7 @@ namespace cds { namespace container {
 
             If the \p key not found in the list, then the new item created from \p key
             is inserted into the list. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func should be a function with signature:
-            \code
-                void func( bool bNew, value_type& item, Q const& val );
-            \endcode
-            or a functor:
+            The functor \p Func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item, Q const& val );
@@ -428,10 +400,7 @@ namespace cds { namespace container {
             - \p item - item of the list
             - \p val - argument \p key passed into the \p ensure function
 
-            The functor may change non-key fields of the \p item; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
+            The functor may change non-key fields of the \p item.
 
             The function applies RCU lock internally.
 
@@ -592,7 +561,7 @@ namespace cds { namespace container {
             return find_at( head(), key, intrusive_key_comparator() );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_LazyList_rcu_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -605,16 +574,16 @@ namespace cds { namespace container {
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
-        /// Finds the key \p val and performs an action with it
+        /// Finds the key \p key and performs an action with it
         /** \anchor cds_nonintrusive_LazyList_rcu_find_func
-            The function searches an item with key equal to \p val and calls the functor \p f for the item found.
+            The function searches an item with key equal to \p key and calls the functor \p f for the item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the \p find() function argument.
+            where \p item is the item found, \p key is the \p find() function argument.
 
             You may pass \p f argument by reference using \p std::ref.
 
@@ -623,20 +592,20 @@ namespace cds { namespace container {
             The function does not serialize simultaneous access to the list \p item. If such access is
             possible you must provide your own synchronization schema to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
+            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
             may modify both arguments.
 
             The function makes RCU lock internally.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f ) const
+        bool find( Q& key, Func f ) const
         {
-            return find_at( head(), val, intrusive_key_comparator(), f );
+            return find_at( head(), key, intrusive_key_comparator(), f );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_LazyList_rcu_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -644,54 +613,15 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f ) const
+        bool find_with( Q& key, Less pred, Func f ) const
         {
-            return find_at( head(), val, typename maker::template less_wrapper<Less>::type(), f );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
-        /// Finds the key \p val and performs an action with it
-        /** \anchor cds_nonintrusive_LazyList_rcu_find_cfunc
-            The function searches an item with key equal to \p val and calls the functor \p f for the item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
-
-            The function does not serialize simultaneous access to the list \p item. If such access is
-            possible you must provide your own synchronization schema to exclude unsafe item modifications.
-
-            The function makes RCU lock internally.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f ) const
-        {
-            return find_at( head(), val, intrusive_key_comparator(), f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_nonintrusive_LazyList_rcu_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f ) const
-        {
-            return find_at( head(), val, typename maker::template less_wrapper<Less>::type(), f );
-        }
-
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_LazyList_rcu_get
-            The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p nullptr.
+            The function searches the item with key equal to \p key and returns the pointer to item found.
+            If \p key is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -716,12 +646,12 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& val ) const
+        value_type * get( Q const& key ) const
         {
-            return get_at( head(), val, intrusive_key_comparator());
+            return get_at( head(), key, intrusive_key_comparator());
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /**
             The function is an analog of \ref cds_nonintrusive_LazyList_rcu_get "get(Q const&)"
             but \p pred is used for comparing the keys.
@@ -731,9 +661,9 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& val, Less pred ) const
+        value_type * get_with( Q const& key, Less pred ) const
         {
-            return get_at( head(), val, typename maker::template less_wrapper<Less>::type());
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks if the list is empty
@@ -744,10 +674,10 @@ namespace cds { namespace container {
 
         /// Returns list's item count
         /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
+            The value returned depends on \p Traits::item_counter type. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the list
             is empty. To check list emptyness use \ref empty() method.
         */
         size_t size() const
@@ -756,9 +686,6 @@ namespace cds { namespace container {
         }
 
         /// Clears the list
-        /**
-            Post-condition: the list is empty
-        */
         void clear()
         {
             base_class::clear();

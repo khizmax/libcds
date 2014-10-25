@@ -9,7 +9,7 @@ namespace ordlist {
     namespace {
         typedef cds::urcu::gc< cds::urcu::signal_buffered<> >    rcu_type;
 
-        struct RCU_SHB_cmp_traits: public cc::lazy_list::type_traits
+        struct RCU_SHB_cmp_traits : public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::cmp<LazyListTestHeader::item>   compare;
         };
@@ -35,7 +35,7 @@ namespace ordlist {
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
-        struct RCU_SHB_less_traits: public cc::lazy_list::type_traits
+        struct RCU_SHB_less_traits : public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>   less;
         };
@@ -61,7 +61,7 @@ namespace ordlist {
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
-        struct RCU_SHB_cmpmix_traits: public cc::lazy_list::type_traits
+        struct RCU_SHB_cmpmix_traits: public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::cmp<LazyListTestHeader::item>   compare;
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>  less;
@@ -89,7 +89,7 @@ namespace ordlist {
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
-        struct RCU_SHB_ic_traits: public cc::lazy_list::type_traits
+        struct RCU_SHB_ic_traits: public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>   less;
             typedef cds::atomicity::item_counter item_counter;

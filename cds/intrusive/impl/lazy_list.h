@@ -517,7 +517,8 @@ namespace cds { namespace intrusive {
                 void func( value_type& val );
             \endcode
             where \p val is the item inserted.
-            While the functor \p f is working the item \p val is locked.
+            While the functor \p f is called the item \p val is locked so
+            the functor has an exclusive access to the item.
             The user-defined functor is called only if the inserting is success.
         */
         template <typename Func>
@@ -544,7 +545,8 @@ namespace cds { namespace intrusive {
             refer to the same thing.
 
             The functor may change non-key fields of the \p item.
-            While the functor \p f is working the item \p item is locked.
+            While the functor \p f is working the item \p item is locked,
+            so \p f has exclusive access to the item.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key

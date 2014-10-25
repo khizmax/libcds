@@ -10,68 +10,52 @@
 
 namespace cds { namespace container {
 
-    //@cond
-    namespace details {
-
-        template <typename T, class Traits>
-        struct make_lazy_list_nogc: public make_lazy_list<gc::nogc, T, Traits>
-        {
-            typedef make_lazy_list<cds::gc::nogc, T, Traits>  base_maker;
-            typedef typename base_maker::node_type node_type;
-
-            struct type_traits: public base_maker::type_traits
-            {
-                typedef typename base_maker::node_deallocator    disposer;
-            };
-
-            typedef intrusive::LazyList<cds::gc::nogc, node_type, type_traits>  type;
-        };
-
-    }   // namespace details
-    //@endcond
-
     /// Lazy ordered single-linked list (template specialization for gc::nogc)
     /** @ingroup cds_nonintrusive_list
         \anchor cds_nonintrusive_LazyList_nogc
 
-        This specialization is intended for so-called persistent usage when no item
+        This specialization is so-called append-only when no item
         reclamation may be performed. The class does not support deleting of list item.
 
-        Usually, ordered single-linked list is used as a building block for the hash table implementation.
-        The complexity of searching is <tt>O(N)</tt>.
-
-        See \ref cds_nonintrusive_LazyList_gc "LazyList" for description of template parameters.
-
-        The interface of the specialization is a little different.
+        @copydetails cds_nonintrusive_LazyList_gc
     */
-    template <typename T, typename Traits>
-    class LazyList<gc::nogc, T, Traits>:
+    template <
+        typename T, 
+#ifdef CDS_DOXYGEN_INVOKED
+        typename Traits = lazy_list::traits
+#else
+        typename Traits
+#endif
+    >
+    class LazyList<cds::gc::nogc, T, Traits>:
 #ifdef CDS_DOXYGEN_INVOKED
         protected intrusive::LazyList< gc::nogc, T, Traits >
 #else
-        protected details::make_lazy_list_nogc< T, Traits >::type
+        protected details::make_lazy_list< cds::gc::nogc, T, Traits >::type
 #endif
     {
         //@cond
-        typedef details::make_lazy_list_nogc< T, Traits > options;
-        typedef typename options::type  base_class;
+        typedef details::make_lazy_list< cds::gc::nogc, T, Traits > maker;
+        typedef typename maker::type  base_class;
         //@endcond
 
     public:
-        typedef T                                   value_type      ;   ///< Type of value stored in the list
-        typedef typename base_class::gc             gc              ;   ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator_type    allocator_type  ;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename options::key_comparator    key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef cds::gc::nogc gc;  ///< Garbage collector
+        typedef T      value_type; ///< Type of value stored in the list
+        typedef Traits traits;     ///< List traits
+
+        typedef typename base_class::back_off     back_off;       ///< Back-off strategy used
+        typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator    key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
     protected:
         //@cond
-        typedef typename base_class::value_type     node_type;
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;
-        typedef typename options::type_traits::compare  intrusive_key_comparator;
+        typedef typename base_class::value_type   node_type;
+        typedef typename maker::cxx_allocator     cxx_allocator;
+        typedef typename maker::node_deallocator  node_deallocator;
+        typedef typename maker::intrusive_traits::compare intrusive_key_comparator;
 
         typedef typename base_class::node_type      head_type;
         //@endcond
@@ -274,16 +258,10 @@ namespace cds { namespace container {
 
     public:
         /// Default constructor
-        /**
-            Initialize empty list
-        */
         LazyList()
         {}
 
-        /// List desctructor
-        /**
-            Clears the list
-        */
+        /// Desctructor clears the list
         ~LazyList()
         {
             clear();
@@ -302,7 +280,7 @@ namespace cds { namespace container {
             return node_to_iterator( insert_at( head(), val ) );
         }
 
-        /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type created from \p args
         /**
             Return an iterator pointing to inserted item if success \ref end() otherwise
         */
@@ -318,7 +296,7 @@ namespace cds { namespace container {
             Otherwise, the function returns an iterator that points to item found.
 
             Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
+            item found or inserted, \p second is \p true if new item has been added or \p false if the item
             already is in the list.
         */
         template <typename Q>
@@ -350,7 +328,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         iterator find_with( Q const& key, Less pred )
         {
-            return node_to_iterator( find_at( head(), key, typename options::template less_wrapper<Less>::type() ));
+            return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ));
         }
 
         /// Check if the list is empty
@@ -361,10 +339,10 @@ namespace cds { namespace container {
 
         /// Returns list's item count
         /**
-            The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
+            The value returned depends on \p Traits::item_counter type. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the list
             is empty. To check list emptyness use \ref empty() method.
         */
         size_t size() const
@@ -373,9 +351,6 @@ namespace cds { namespace container {
         }
 
         /// Clears the list
-        /**
-            Post-condition: the list is empty
-        */
         void clear()
         {
             base_class::clear();

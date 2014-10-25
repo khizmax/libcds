@@ -217,332 +217,105 @@ namespace map2 {
         // ***************************************************************************
         // MichaelKVList
 
-        typedef cc::MichaelKVList< cds::gc::HP, Key, Value,
-            typename cc::michael_list::make_traits<
+        struct traits_MichaelList_cmp_stdAlloc :
+            public cc::michael_list::make_traits<
                 co::compare< compare >
             >::type
-        >   MichaelList_HP_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::HP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_HP_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< cds::gc::HP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_HP_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::HP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_HP_less_stdAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::HP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_HP_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< cds::gc::HP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_HP_less_michaelAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_DHP_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_DHP_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_DHP_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_DHP_less_stdAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_DHP_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_DHP_less_michaelAlloc;
-
-        // RCU
-        typedef cc::MichaelKVList< rcu_gpi, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_RCU_GPI_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpi, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_GPI_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_gpi, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_GPI_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpi, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_RCU_GPI_less_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpi, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_GPI_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_gpi, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_GPI_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelKVList< rcu_gpb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_RCU_GPB_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_GPB_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_gpb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_GPB_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_RCU_GPB_less_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_GPB_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_gpb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_GPB_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelKVList< rcu_gpt, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_RCU_GPT_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpt, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_GPT_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_gpt, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_GPT_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpt, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_RCU_GPT_less_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_gpt, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_GPT_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_gpt, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_GPT_less_michaelAlloc;
-
+        {};
+        typedef cc::MichaelKVList< cds::gc::HP,  Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_HP_cmp_stdAlloc;
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_DHP_cmp_stdAlloc;
+        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_NOGC_cmp_stdAlloc;
+        typedef cc::MichaelKVList< rcu_gpi, Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_RCU_GPI_cmp_stdAlloc;
+        typedef cc::MichaelKVList< rcu_gpb, Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_RCU_GPB_cmp_stdAlloc;
+        typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_RCU_GPT_cmp_stdAlloc;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::MichaelKVList< rcu_shb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_RCU_SHB_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_shb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_SHB_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_shb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_SHB_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< rcu_shb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_RCU_SHB_less_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_shb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_SHB_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_shb, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_SHB_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelKVList< rcu_sht, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_RCU_SHT_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_sht, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_SHT_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_sht, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_SHT_cmp_michaelAlloc;
-
-        typedef cc::MichaelKVList< rcu_sht, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-            >::type
-        >   MichaelList_RCU_SHT_less_stdAlloc;
-
-        typedef cc::MichaelKVList< rcu_sht, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   MichaelList_RCU_SHT_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelKVList< rcu_sht, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelList_RCU_SHT_less_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_RCU_SHB_cmp_stdAlloc;
+        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_cmp_stdAlloc > MichaelList_RCU_SHT_cmp_stdAlloc;
 #endif
 
-        // gc::nogc
-        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value,
-            typename cc::michael_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   MichaelList_NOGC_cmp_stdAlloc;
-
-        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value,
-            typename cc::michael_list::make_traits<
+        struct traits_MichaelList_cmp_stdAlloc_seqcst :
+            public cc::michael_list::make_traits<
                 co::compare< compare >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   MichaelList_NOGC_cmp_stdAlloc_seqcst;
+        {};
+        typedef cc::MichaelKVList< cds::gc::HP,  Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_HP_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_DHP_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_NOGC_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_gpi, Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_RCU_GPI_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_gpb, Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_RCU_GPB_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_RCU_GPT_cmp_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_RCU_SHB_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_cmp_stdAlloc_seqcst > MichaelList_RCU_SHT_cmp_stdAlloc_seqcst;
+#endif
 
-        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value,
-            typename cc::michael_list::make_traits<
+        struct traits_MichaelList_cmp_michaelAlloc :
+            public cc::michael_list::make_traits<
                 co::compare< compare >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelList_NOGC_cmp_michaelAlloc;
+        {};
+        typedef cc::MichaelKVList< cds::gc::HP,  Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_HP_cmp_michaelAlloc;
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_DHP_cmp_michaelAlloc;
+        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_NOGC_cmp_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_gpi, Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_RCU_GPI_cmp_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_gpb, Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_RCU_GPB_cmp_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_RCU_GPT_cmp_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_RCU_SHB_cmp_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_cmp_michaelAlloc > MichaelList_RCU_SHT_cmp_michaelAlloc;
+#endif
 
-        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value,
-            typename cc::michael_list::make_traits<
+        struct traits_MichaelList_less_stdAlloc :
+            public cc::michael_list::make_traits<
                 co::less< less >
             >::type
-        >   MichaelList_NOGC_less_stdAlloc;
+        {};
+        typedef cc::MichaelKVList< cds::gc::HP,  Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_HP_less_stdAlloc;
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_DHP_less_stdAlloc;
+        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_NOGC_less_stdAlloc;
+        typedef cc::MichaelKVList< rcu_gpi, Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_RCU_GPI_less_stdAlloc;
+        typedef cc::MichaelKVList< rcu_gpb, Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_RCU_GPB_less_stdAlloc;
+        typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_RCU_GPT_less_stdAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_RCU_SHB_less_stdAlloc;
+        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_less_stdAlloc > MichaelList_RCU_SHT_less_stdAlloc;
+#endif
 
-        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value,
-            typename cc::michael_list::make_traits<
+        struct traits_MichaelList_less_stdAlloc_seqcst :
+            public cc::michael_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   MichaelList_NOGC_less_stdAlloc_seqcst;
+        {};
+        typedef cc::MichaelKVList< cds::gc::HP,  Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_HP_less_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_DHP_less_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_NOGC_less_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_gpi, Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_RCU_GPI_less_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_gpb, Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_RCU_GPB_less_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_RCU_GPT_less_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_RCU_SHB_less_stdAlloc_seqcst;
+        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_less_stdAlloc_seqcst > MichaelList_RCU_SHT_less_stdAlloc_seqcst;
+#endif
 
-        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value,
-            typename cc::michael_list::make_traits<
+        struct traits_MichaelList_less_michaelAlloc :
+            public cc::michael_list::make_traits<
                 co::less< less >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   MichaelList_NOGC_less_michaelAlloc;
+        {};
+        typedef cc::MichaelKVList< cds::gc::HP,  Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_HP_less_michaelAlloc;
+        typedef cc::MichaelKVList< cds::gc::DHP, Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_DHP_less_michaelAlloc;
+        typedef cc::MichaelKVList< cds::gc::nogc, Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_NOGC_less_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_gpi, Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_RCU_GPI_less_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_gpb, Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_RCU_GPB_less_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_RCU_GPT_less_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_RCU_SHB_less_michaelAlloc;
+        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_less_michaelAlloc > MichaelList_RCU_SHT_less_michaelAlloc;
+#endif
 
         template <typename Base>
         class NogcMapWrapper: public Base
@@ -658,964 +431,249 @@ namespace map2 {
         // ***************************************************************************
         // MichaelHashMap based on MichaelKVList
 
-        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
+        struct traits_MichaelMap_hash :
+            public cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
-        >   MichaelMap_HP_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_HP_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_HP_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_HP_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_HP_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_HP_less_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_DHP_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_DHP_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_DHP_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_DHP_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_DHP_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_DHP_less_michaelAlloc;
-
-        //RCU
-        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPI_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPI_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_GPI_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPI_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPI_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_GPI_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPB_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPB_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_GPB_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPB_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPB_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_GPB_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPT_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPT_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_GPT_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPT_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_GPT_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_GPT_less_michaelAlloc;
-
+        {};
+        typedef cc::MichaelHashMap< cds::gc::HP,  MichaelList_HP_cmp_stdAlloc,  traits_MichaelMap_hash > MichaelMap_HP_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_DHP_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_NOGC_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_GPI_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_GPB_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_GPT_cmp_stdAlloc;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHB_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHB_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_SHB_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHB_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHB_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_SHB_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHT_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHT_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_SHT_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHT_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_RCU_SHT_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_RCU_SHT_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_SHB_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_SHT_cmp_stdAlloc;
 #endif
 
-        // gc::nogc
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >  MichaelMap_NOGC_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_HP_less_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_DHP_less_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_NOGC_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_GPI_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_GPB_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_GPT_less_stdAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_SHB_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_SHT_less_stdAlloc;
+#endif
 
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >   MichaelMap_NOGC_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_HP_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_DHP_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_NOGC_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPI_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPB_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPT_cmp_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHB_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHT_cmp_stdAlloc_seqcst;
+#endif
 
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        > >  MichaelMap_NOGC_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_HP_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_DHP_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_NOGC_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPI_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPB_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPT_less_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHB_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHT_less_stdAlloc_seqcst;
+#endif
 
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >   MichaelMap_NOGC_less_stdAlloc;
-
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >   MichaelMap_NOGC_less_stdAlloc_seqcst;
-
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        > >  MichaelMap_NOGC_less_michaelAlloc;
-
+        struct traits_MichaelSet_michaelAlloc :
+            public traits_MichaelMap_hash
+        {
+            typedef cds::memory::MichaelAllocator<int> allocator;
+        };
+        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_HP_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_DHP_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_NOGC_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_GPI_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_GPB_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_GPT_cmp_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_SHB_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_SHT_cmp_michaelAlloc;
+#endif
+        typedef cc::MichaelHashMap< cds::gc::HP, MichaelList_HP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_HP_less_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, MichaelList_DHP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_DHP_less_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, MichaelList_NOGC_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_NOGC_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, MichaelList_RCU_GPI_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_GPI_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, MichaelList_RCU_GPB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_GPB_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, MichaelList_RCU_GPT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_GPT_less_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, MichaelList_RCU_SHB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_SHB_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, MichaelList_RCU_SHT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_RCU_SHT_less_michaelAlloc;
+#endif
 
         // ***************************************************************************
         // LazyKVList
 
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value,
-            typename cc::lazy_list::make_traits<
+        struct traits_LazyList_cmp_stdAlloc :
+            public cc::lazy_list::make_traits<
                 co::compare< compare >
             >::type
-        >   LazyList_HP_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_HP_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_HP_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_HP_less_stdAlloc;
-
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_HP_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_HP_less_michaelAlloc;
-
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_DHP_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_DHP_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_DHP_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_DHP_less_stdAlloc;
-
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_DHP_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_DHP_less_michaelAlloc;
-
-        // RCU
-        typedef cc::LazyKVList< rcu_gpi, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_RCU_GPI_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_gpi, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_GPI_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_gpi, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_GPI_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< rcu_gpi, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_RCU_GPI_less_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_gpi, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_GPI_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_gpi, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_GPI_less_michaelAlloc;
-
-        //
-        typedef cc::LazyKVList< rcu_gpb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_RCU_GPB_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_gpb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_GPB_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_gpb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_GPB_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< rcu_gpb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_RCU_GPB_less_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_gpb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_GPB_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_gpb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_GPB_less_michaelAlloc;
-
-        //
-        typedef cc::LazyKVList< rcu_gpt, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_RCU_GPT_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_gpt, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_GPT_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_gpt, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_GPT_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< rcu_gpt, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_RCU_GPT_less_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_gpt, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_GPT_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_gpt, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_GPT_less_michaelAlloc;
-
+        {};
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_HP_cmp_stdAlloc;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_DHP_cmp_stdAlloc;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_NOGC_cmp_stdAlloc;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_GPI_cmp_stdAlloc;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_GPB_cmp_stdAlloc;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_GPT_cmp_stdAlloc;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_RCU_SHB_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_shb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_SHB_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_shb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_SHB_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< rcu_shb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_RCU_SHB_less_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_shb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_SHB_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_shb, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_SHB_less_michaelAlloc;
-
-        //
-        typedef cc::LazyKVList< rcu_sht, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_RCU_SHT_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_sht, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_SHT_cmp_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_sht, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_SHT_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< rcu_sht, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-            >::type
-        >   LazyList_RCU_SHT_less_stdAlloc;
-
-        typedef cc::LazyKVList< rcu_sht, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >
-                ,co::memory_model< co::v::sequential_consistent >
-            >::type
-        >   LazyList_RCU_SHT_less_stdAlloc_seqcst;
-
-        typedef cc::LazyKVList< rcu_sht, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   LazyList_RCU_SHT_less_michaelAlloc;
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHB_cmp_stdAlloc;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHT_cmp_stdAlloc;
 #endif
 
-        // gc::nogc
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value,
-            typename cc::lazy_list::make_traits<
-                co::compare< compare >
-            >::type
-        >   LazyList_NOGC_cmp_stdAlloc;
-
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value,
-            typename cc::lazy_list::make_traits<
+        struct traits_LazyList_cmp_stdAlloc_seqcst :
+            public cc::lazy_list::make_traits<
                 co::compare< compare >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   LazyList_NOGC_cmp_stdAlloc_seqcst;
+        {};
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_HP_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_DHP_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_NOGC_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_GPI_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_GPB_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_GPT_cmp_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_SHB_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_SHT_cmp_stdAlloc_seqcst;
+#endif
 
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value,
-            typename cc::lazy_list::make_traits<
+        struct traits_LazyList_cmp_michaelAlloc :
+            public cc::lazy_list::make_traits<
                 co::compare< compare >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   LazyList_NOGC_cmp_michaelAlloc;
-
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value,
-            typename cc::lazy_list::make_traits<
+        {};
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_HP_cmp_michaelAlloc;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_DHP_cmp_michaelAlloc;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_NOGC _cmp_michaelAlloc;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_GPI_cmp_michaelAlloc;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_GPB_cmp_michaelAlloc;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_GPT_cmp_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_SHB_cmp_michaelAlloc;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_SHT_cmp_michaelAlloc;
+#endif
+        struct traits_LazyList_less_stdAlloc :
+            public cc::lazy_list::make_traits<
                 co::less< less >
             >::type
-        >   LazyList_NOGC_less_stdAlloc;
+        {};
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_stdAlloc > LazyList_HP_less_stdAlloc;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_stdAlloc > LazyList_DHP_less_stdAlloc;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_stdAlloc > LazyList_NOGC_less_stdAlloc;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_GPI_less_stdAlloc;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_GPB_less_stdAlloc;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_GPT_less_stdAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_SHB_less_stdAlloc;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_SHT_less_stdAlloc;
+#endif
 
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value,
-            typename cc::lazy_list::make_traits<
+        struct traits_LazyList_less_stdAlloc_seqcst :
+            public cc::lazy_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
-        >   LazyList_NOGC_less_stdAlloc_seqcst;
+        {};
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_HP_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_DHP_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_NOGC_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_GPI_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_GPB_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_GPT_less_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_SHB_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_SHT_less_stdAlloc_seqcst;
+#endif
 
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value,
-            typename cc::lazy_list::make_traits<
+        struct traits_LazyList_less_michaelAlloc :
+            public cc::lazy_list::make_traits<
                 co::less< less >,
                 co::allocator< memory::MichaelAllocator<int> >
             >::type
-        >   LazyList_NOGC_less_michaelAlloc;
-
+        {};
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_HP_less_michaelAlloc;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_DHP_less_michaelAlloc;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_NOGC_less_michaelAlloc;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_GPI_less_michaelAlloc;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_GPB_less_michaelAlloc;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_GPT_less_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_SHB_less_michaelAlloc;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_SHT_less_michaelAlloc;
+#endif
 
         // ***************************************************************************
         // MichaelHashMap based on LazyKVList
-
-        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HP_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HP_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_HP_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HP_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_HP_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_HP_less_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_DHP_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_DHP_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_DHP_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_DHP_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_DHP_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_DHP_less_michaelAlloc;
-
-        // RCU
-        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPI_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPI_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPI_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPI_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPB_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPB_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPB_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPB_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPT_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPT_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPT_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_GPT_less_michaelAlloc;
-
-
+        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_HP_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_DHP_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHB_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHB_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHB_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHB_less_michaelAlloc;
-
-        //
-        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHT_cmp_michaelAlloc;
-
-        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHT_less_stdAlloc;
-
-        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHT_less_stdAlloc_seqcst;
-
-        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        >   MichaelMap_Lazy_RCU_SHT_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc;
 #endif
 
-        // gc::nogc
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_cmp_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >   MichaelMap_Lazy_NOGC_cmp_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_HP_less_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_DHP_less_stdAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPI_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPB_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_less_stdAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less_stdAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_less_stdAlloc;
+#endif
 
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_cmp_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >   MichaelMap_Lazy_NOGC_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_HP_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_DHP_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc_seqcst;
+#endif
 
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_cmp_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        > >  MichaelMap_Lazy_NOGC_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_HP_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_DHP_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPI_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPB_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_less_stdAlloc_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less_stdAlloc_seqcst;
+        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_less_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_less_stdAlloc_seqcst;
+#endif
 
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_less_stdAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >  MichaelMap_Lazy_NOGC_less_stdAlloc;
-
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_less_stdAlloc_seqcst,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >
-            >::type
-        > >  MichaelMap_Lazy_NOGC_less_stdAlloc_seqcst;
-
-        typedef NogcMapWrapper< cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_less_michaelAlloc,
-            typename cc::michael_map::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        > >  MichaelMap_Lazy_NOGC_less_michaelAlloc;
-
+        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_HP_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_DHP_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_NOGC_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_GPI_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_GPB_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_GPT_cmp_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_SHB_cmp_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_SHT_cmp_michaelAlloc;
+#endif
+        typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_HP_less_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_DHP_less_michaelAlloc;
+        typedef cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_NOGC_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpi, LazyList_RCU_GPI_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_GPI_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpb, LazyList_RCU_GPB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_GPB_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_gpt, LazyList_RCU_GPT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_GPT_less_michaelAlloc;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_SHB_less_michaelAlloc;
+        typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_SHT_less_michaelAlloc;
+#endif
 
         // ***************************************************************************
         // SplitListMap based on MichaelList

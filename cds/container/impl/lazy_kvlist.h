@@ -4,7 +4,6 @@
 #define __CDS_CONTAINER_IMPL_LAZY_KVLIST_H
 
 #include <memory>
-#include <functional>   // ref
 #include <cds/container/details/guarded_ptr_cast.h>
 
 namespace cds { namespace container {
@@ -21,71 +20,59 @@ namespace cds { namespace container {
         The complexity of searching is <tt>O(N)</tt>.
 
         Template arguments:
-        - \p GC - garbage collector used
-        - \p Key - key type of an item stored in the list. It should be copy-constructible
-        - \p Value - value type stored in the list
-        - \p Traits - type traits, default is lazy_list::type_traits
+        - \p GC - garbage collector
+        - \p Key - key type of an item to be stored in the list. It should be copy-constructible
+        - \p Value - value type to be stored in the list
+        - \p Traits - type traits, default is \p lazy_list::traits
+            It is possible to declare option-based list with cds::container::lazy_list::make_traits metafunction istead of \p Traits template
+            argument. For example, the following traits-based declaration of \p gc::HP lazy list
+            \code
+            #include <cds/container/lazy_kvlist_hp.h>
+            // Declare comparator for the item
+            struct my_compare {
+                int operator ()( int i1, int i2 )
+                {
+                    return i1 - i2;
+                }
+            };
 
-        It is possible to declare option-based list with cds::container::lazy_list::make_traits metafunction istead of \p Traits template
-        argument. For example, the following traits-based declaration of gc::HP lazy list
-        \code
-        #include <cds/container/lazy_kvlist_hp.h>
-        // Declare comparator for the item
-        struct my_compare {
-            int operator ()( int i1, int i2 )
+            // Declare traits
+            struct my_traits: public cds::container::lazy_list::traits
             {
-                return i1 - i2;
-            }
-        };
+                typedef my_compare compare;
+            };
 
-        // Declare type_traits
-        struct my_traits: public cds::container::lazy_list::type_traits
-        {
-            typedef my_compare compare;
-        };
+            // Declare traits-based list
+            typedef cds::container::LazyKVList< cds::gc::HP, int, int, my_traits >     traits_based_list;
+            \endcode
+            is equal to the following option-based list
+            \code
+            #include <cds/container/lazy_kvlist_hp.h>
 
-        // Declare traits-based list
-        typedef cds::container::LazyKVList< cds::gc::HP, int, int, my_traits >     traits_based_list;
-        \endcode
+            // my_compare is the same
 
-        is equivalent for the following option-based list
-        \code
-        #include <cds/container/lazy_kvlist_hp.h>
-
-        // my_compare is the same
-
-        // Declare option-based list
-        typedef cds::container::LazyKVList< cds::gc::HP, int, int,
-            typename cds::container::lazy_list::make_traits<
-                cds::container::opt::compare< my_compare >     // item comparator option
-            >::type
-        >     option_based_list;
-        \endcode
-
-        Template argument list \p Options of cds::container::lazy_list::make_traits metafunction are:
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::empty is used.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
+            // Declare option-based list
+            typedef cds::container::LazyKVList< cds::gc::HP, int, int,
+                typename cds::container::lazy_list::make_traits<
+                    cds::container::opt::compare< my_compare >     // item comparator option
+                >::type
+            >     option_based_list;
+            \endcode
 
         \par Usage
         There are different specializations of this template for each garbage collecting schema used.
         You should include appropriate .h-file depending on GC you are using:
-        - for gc::HP: \code #include <cds/container/lazy_kvlist_hp.h> \endcode
-        - for gc::DHP: \code #include <cds/container/lazy_kvlist_dhp.h> \endcode
-        - for \ref cds_urcu_desc "RCU": \code #include <cds/container/lazy_kvlist_rcu.h> \endcode
-        - for gc::nogc: \code #include <cds/container/lazy_kvlist_nogc.h> \endcode
+        - for \p gc::HP: <tt> <cds/container/lazy_kvlist_hp.h> </tt>
+        - for \p gc::DHP: <tt> <cds/container/lazy_kvlist_dhp.h> </tt>
+        - for \ref cds_urcu_desc "RCU": <tt> <cds/container/lazy_kvlist_rcu.h> </tt>
+        - for \p gc::nogc: <tt> <cds/container/lazy_kvlist_nogc.h> </tt>
     */
     template <
         typename GC,
         typename Key,
         typename Value,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = lazy_list::type_traits
+        typename Traits = lazy_list::traits
 #else
         typename Traits
 #endif
@@ -98,36 +85,35 @@ namespace cds { namespace container {
 #endif
     {
         //@cond
-        typedef details::make_lazy_kvlist< GC, Key, Value, Traits > options;
-        typedef typename options::type  base_class;
+        typedef details::make_lazy_kvlist< GC, Key, Value, Traits > maker;
+        typedef typename maker::type base_class;
         //@endcond
 
     public:
+        typedef GC gc; ///< Garbage collector
 #ifdef CDS_DOXYGEN_INVOKED
         typedef Key                                 key_type        ;   ///< Key type
         typedef Value                               mapped_type     ;   ///< Type of value stored in the list
         typedef std::pair<key_type const, mapped_type> value_type   ;   ///< key/value pair stored in the list
 #else
-        typedef typename options::key_type          key_type;
-        typedef typename options::value_type        mapped_type;
-        typedef typename options::pair_type         value_type;
+        typedef typename maker::key_type    key_type;
+        typedef typename maker::mapped_type mapped_type;
+        typedef typename maker::value_type  value_type;
 #endif
-
-        typedef typename base_class::gc             gc              ;   ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator_type    allocator_type  ;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename options::key_comparator    key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::back_off     back_off;       ///< Back-off strategy
+        typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter item_counter;   ///< Item counter type
+        typedef typename maker::key_comparator    key_comparator; ///< key comparing functor
+        typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See \p cds::opt::memory_model
 
     protected:
         //@cond
-        typedef typename base_class::value_type     node_type;
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;
-        typedef typename options::type_traits::compare  intrusive_key_comparator;
+        typedef typename base_class::value_type   node_type;
+        typedef typename maker::cxx_allocator     cxx_allocator;
+        typedef typename maker::node_deallocator  node_deallocator;
+        typedef typename maker::intrusive_traits::compare intrusive_key_comparator;
 
-        typedef typename base_class::node_type      head_type;
+        typedef typename base_class::node_type head_type;
         //@endcond
 
     public:
@@ -169,22 +155,22 @@ namespace cds { namespace container {
 
         head_type& head()
         {
-            return *base_class::head();
+            return base_class::m_Head;
         }
 
         head_type const& head() const
         {
-            return *base_class::head();
+            return base_class::m_Head;
         }
 
         head_type& tail()
         {
-            return *base_class::tail();
+            return base_class::m_Tail;
         }
 
         head_type const& tail() const
         {
-            return *base_class::tail();
+            return base_class::m_Tail;
         }
 
         //@endcond
@@ -350,16 +336,10 @@ namespace cds { namespace container {
 
     public:
         /// Default constructor
-        /**
-            Initializes empty list
-        */
         LazyKVList()
         {}
 
-        /// List destructor
-        /**
-            Clears the list
-        */
+        /// Destructor clears the list
         ~LazyKVList()
         {
             clear();
@@ -413,12 +393,9 @@ namespace cds { namespace container {
 
             The argument \p item of user-defined functor \p func is the reference
             to the list's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
-            User-defined functor \p func should guarantee that during changing item's value no any other changes
-            could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
+            The user-defined functor is called only if inserting is successful.
 
-            The key_type should be constructible from value of type \p K.
+            The \p key_type should be constructible from value of type \p K.
 
             The function allows to split creating of new item into two part:
             - create item from \p key;
@@ -427,8 +404,6 @@ namespace cds { namespace container {
 
             This can be useful if complete initialization of object of \p mapped_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
-
-            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         bool insert_key( const K& key, Func func )
@@ -451,14 +426,10 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the list, then the new item created from \p key
-            is inserted into the list (note that in this case the \ref key_type should be
-            copy-constructible from type \p K).
+            is inserted into the list (note that in this case the \p key_type should be
+            constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            The functor signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
@@ -469,15 +440,11 @@ namespace cds { namespace container {
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
 
-            The functor may change any fields of the \p item.second that is \ref mapped_type;
-            however, \p func must guarantee that during changing no any other modifications
-            could be made on this item by concurrent threads.
+            The functor may change any fields of the \p item.second that is \p mapped_type.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
-
-            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( const K& key, Func f )
@@ -506,7 +473,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool erase_with( K const& key, Less pred )
         {
-            return erase_at( head(), key, typename options::template less_wrapper<Less>::type() );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Deletes \p key from the list
@@ -540,7 +507,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
-            return erase_at( head(), key, typename options::template less_wrapper<Less>::type(), f );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
         /// Extracts the item from the list with specified \p key
@@ -586,7 +553,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool extract_with( guarded_ptr& dest, K const& key, Less pred )
         {
-            return extract_at( head(), dest.guard(), key, typename options::template less_wrapper<Less>::type() );
+            return extract_at( head(), dest.guard(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Finds the key \p key
@@ -610,7 +577,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred )
         {
-            return find_at( head(), key, typename options::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Finds the key \p key and performs an action with it
@@ -649,7 +616,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
-            return find_at( head(), key, typename options::template less_wrapper<Less>::type(), f );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
         /// Finds \p key and return the item found
@@ -697,7 +664,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool get_with( guarded_ptr& ptr, K const& key, Less pred )
         {
-            return get_at( head(), ptr.guard(), key, typename options::template less_wrapper<Less>::type() );
+            return get_at( head(), ptr.guard(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Checks if the list is empty
@@ -711,7 +678,7 @@ namespace cds { namespace container {
             The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the list
             is empty. To check list emptyness use \ref empty() method.
         */
         size_t size() const
@@ -720,9 +687,6 @@ namespace cds { namespace container {
         }
 
         /// Clears the list
-        /**
-            Post-condition: the list is empty
-        */
         void clear()
         {
             base_class::clear();

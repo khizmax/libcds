@@ -5,7 +5,7 @@
 
 namespace ordlist {
     namespace {
-        struct DHP_cmp_traits: public cc::lazy_list::type_traits
+        struct DHP_cmp_traits: public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::cmp<LazyListTestHeader::item>   compare;
         };
@@ -27,7 +27,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct DHP_less_traits: public cc::lazy_list::type_traits
+        struct DHP_less_traits: public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>   less;
         };
@@ -49,7 +49,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct DHP_cmpmix_traits: public cc::lazy_list::type_traits
+        struct DHP_cmpmix_traits: public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::cmp<LazyListTestHeader::item>   compare;
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>  less;
@@ -73,7 +73,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct DHP_ic_traits: public cc::lazy_list::type_traits
+        struct DHP_ic_traits: public cc::lazy_list::traits
         {
             typedef LazyListTestHeader::lt<LazyListTestHeader::item>   less;
             typedef cds::atomicity::item_counter item_counter;

@@ -13,22 +13,22 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace lazy_list {
-        /// Lazy list default type traits
+        /// LazyList traits
         /**
             Either \p compare or \p less or both must be specified.
         */
-        struct type_traits
+        struct traits
         {
             /// allocator used to allocate new node
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
 
-            /// Key comparison functor
+            /// Key comparing functor
             /**
                 No default functor is provided. If the option is not specified, the \p less is used.
             */
             typedef opt::none                       compare;
 
-            /// specifies binary predicate used for key comparison.
+            /// Specifies binary predicate used for key comparing
             /**
                 Default is \p std::less<T>.
             */
@@ -41,33 +41,21 @@ namespace cds { namespace container {
             typedef cds::lock::Spin                 lock_type;
 
             /// back-off strategy used
-            /**
-                If the option is not specified, the cds::backoff::Default is used.
-            */
             typedef cds::backoff::Default           back_off;
 
-            /// Item counter
-            /**
-                The type for item counting feature.
-                Default is no item counter (\ref atomicity::empty_item_counter)
-            */
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
-
-            /// Link fields checking feature
-            /**
-                Default is \ref intrusive::opt::debug_check_link
-            */
-            static const opt::link_check_type link_checker = opt::debug_check_link;
 
             /// C++ memory ordering model
             /**
-                List of available memory ordering see opt::memory_model
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
             /// RCU deadlock checking policy (only for \ref cds_intrusive_LazyList_rcu "RCU-based LazyList")
             /**
-                List of available options see opt::rcu_check_deadlock
+                List of available options see \p opt::rcu_check_deadlock
             */
             typedef opt::v::rcu_throw_deadlock      rcu_check_deadlock;
 
@@ -76,17 +64,24 @@ namespace cds { namespace container {
             // key accessor (opt::none = internal key type is equal to user key type)
             typedef opt::none                       key_accessor;
 
-            // for internal use only!!!
-            typedef opt::none                       boundary_node_type;
-
             //@endcond
         };
 
-        /// Metafunction converting option list to traits for LazyList
+        /// Metafunction converting option list to \p lazy_list::traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-
-            See \ref LazyList, \ref type_traits, \ref cds::opt::make_options.
+            \p Options are:
+            - \p opt::lock_type - lock type for node-level locking. Default \p is cds::lock::Spin. Note that <b>each</b> node
+                of the list has member of type \p lock_type, therefore, heavy-weighted locking primitive is not
+                acceptable as candidate for \p lock_type.
+            - \p opt::compare - key compare functor. No default functor is provided.
+                If the option is not specified, the \p opt::less is used.
+            - \p opt::less - specifies binary predicate used for key compare. Default is \p std::less<T>.
+            - \p opt::back_off - back-off strategy used. If the option is not specified, \p cds::backoff::Default is used.
+            - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
+                To enable item counting use \p atomicity::item_counter.
+            - \p opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
         */
         template <typename... Options>
         struct make_traits {
@@ -94,7 +89,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #endif
@@ -104,10 +99,10 @@ namespace cds { namespace container {
     } // namespace lazy_list
 
     // Forward declarations
-    template <typename GC, typename T, typename Traits=lazy_list::type_traits>
+    template <typename GC, typename T, typename Traits=lazy_list::traits>
     class LazyList;
 
-    template <typename GC, typename Key, typename Value, typename Traits=lazy_list::type_traits>
+    template <typename GC, typename Key, typename Value, typename Traits=lazy_list::traits>
     class LazyKVList;
 
     // Tag for selecting lazy list implementation
@@ -115,11 +110,10 @@ namespace cds { namespace container {
         This struct is empty and it is used only as a tag for selecting LazyList
         as ordered list implementation in declaration of some classes.
 
-        See split_list::type_traits::ordered_list as an example.
+        See \p split_list::traits::ordered_list as an example.
     */
     struct lazy_list_tag
     {};
-
 
 }}  // namespace cds::container
 

@@ -59,15 +59,16 @@ namespace cds { namespace container {
                 typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor > type;
             };
 
-            struct type_traits: public original_type_traits
+            struct intrusive_traits: public original_type_traits
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
                 typedef node_deallocator               disposer;
+                static const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
 
                 typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
             };
 
-            typedef intrusive::LazyList<gc, node_type, type_traits>  type;
+            typedef intrusive::LazyList<gc, node_type, intrusive_traits>  type;
         };
     }   // namespace details
     //@endcond

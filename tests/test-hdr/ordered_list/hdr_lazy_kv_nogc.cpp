@@ -5,7 +5,7 @@
 
 namespace ordlist {
     namespace {
-        struct NOGC_cmp_traits: public cc::lazy_list::type_traits
+        struct NOGC_cmp_traits: public cc::lazy_list::traits
         {
             typedef LazyKVListTestHeader::cmp<LazyKVListTestHeader::key_type>   compare;
         };
@@ -30,7 +30,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct NOGC_less_traits: public cc::lazy_list::type_traits
+        struct NOGC_less_traits : public cc::lazy_list::traits
         {
             typedef LazyKVListTestHeader::lt<LazyKVListTestHeader::key_type>   less;
         };
@@ -52,7 +52,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct NOGC_cmpmix_traits: public cc::lazy_list::type_traits
+        struct NOGC_cmpmix_traits : public cc::lazy_list::traits
         {
             typedef LazyKVListTestHeader::cmp<LazyKVListTestHeader::key_type>   compare;
             typedef LazyKVListTestHeader::lt<LazyKVListTestHeader::key_type>  less;
@@ -76,7 +76,7 @@ namespace ordlist {
     }
 
     namespace {
-        struct NOGC_ic_traits: public cc::lazy_list::type_traits
+        struct NOGC_ic_traits : public cc::lazy_list::traits
         {
             typedef LazyKVListTestHeader::lt<LazyKVListTestHeader::key_type>   less;
             typedef cds::atomicity::item_counter item_counter;

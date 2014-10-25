@@ -72,7 +72,7 @@ namespace cds { namespace intrusive {
 #   else
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
-
+        typedef typename traits::back_off  back_off;   ///< Back-off strategy
         typedef typename traits::disposer  disposer;   ///< disposer
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;    ///< node traits
         typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker

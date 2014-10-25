@@ -10,44 +10,19 @@
 
 namespace cds { namespace container {
 
-    //@cond
-    namespace details {
-
-        template <typename K, typename T, class Traits>
-        struct make_lazy_kvlist_nogc: public make_lazy_kvlist<gc::nogc, K, T, Traits>
-        {
-            typedef make_lazy_kvlist<cds::gc::nogc, K, T, Traits>  base_maker;
-            typedef typename base_maker::node_type node_type;
-
-            struct type_traits: public base_maker::type_traits
-            {
-                typedef typename base_maker::node_deallocator    disposer;
-            };
-
-            typedef intrusive::LazyList<cds::gc::nogc, node_type, type_traits>  type;
-        };
-
-    }   // namespace details
-    //@endcond
-
     /// Lazy ordered list (key-value pair, template specialization for gc::nogc)
     /** @ingroup cds_nonintrusive_list
 
-        This specialization is intended for so-called persistent usage when no item
+        This specialization is append-only list when no item
         reclamation may be performed. The class does not support deleting of list item.
 
-        Usually, ordered single-linked list is used as a building block for the hash table implementation.
-        The complexity of searching is <tt>O(N)</tt>.
-
-        See \ref cds_nonintrusive_LazyList_gc "LazyList" for description of template parameters.
-
-        The interface of the specialization is a little different.
+        @copydetails cds_nonintrusive_LazyList_gc
     */
     template <
         typename Key,
         typename Value,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = lazy_list::type_traits
+        typename Traits = lazy_list::traits
 #else
         typename Traits
 #endif
@@ -56,39 +31,38 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGEN_INVOKED
         protected intrusive::LazyList< gc::nogc, implementation_defined, Traits >
 #else
-        protected details::make_lazy_kvlist_nogc< Key, Value, Traits >::type
+        protected details::make_lazy_kvlist< cds::gc::nogc, Key, Value, Traits >::type
 #endif
     {
         //@cond
-        typedef details::make_lazy_kvlist_nogc< Key, Value, Traits > options;
-        typedef typename options::type  base_class;
+        typedef details::make_lazy_kvlist< cds::gc::nogc, Key, Value, Traits > maker;
+        typedef typename maker::type  base_class;
         //@endcond
 
     public:
+        typedef cds::gc::nogc gc; ///< Garbage collector
 #ifdef CDS_DOXYGEN_INVOKED
         typedef Key                                 key_type        ;   ///< Key type
         typedef Value                               mapped_type     ;   ///< Type of value stored in the list
         typedef std::pair<key_type const, mapped_type> value_type   ;   ///< key/value pair stored in the list
 #else
-        typedef typename options::key_type          key_type;
-        typedef typename options::value_type        mapped_type;
-        typedef typename options::pair_type         value_type;
+        typedef typename maker::key_type    key_type;
+        typedef typename maker::mapped_type mapped_type;
+        typedef typename maker::value_type  value_type;
 #endif
-        typedef typename base_class::gc             gc              ;   ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator_type    allocator_type  ;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename options::key_comparator    key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::back_off     back_off;       ///< Back-off strategy used
+        typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator    key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
     protected:
         //@cond
-        typedef typename base_class::value_type     node_type;
-        typedef typename options::cxx_allocator     cxx_allocator;
-        typedef typename options::node_deallocator  node_deallocator;
-        typedef typename options::type_traits::compare  intrusive_key_comparator;
-
-        typedef typename base_class::node_type      head_type;
+        typedef typename base_class::value_type   node_type;
+        typedef typename maker::cxx_allocator     cxx_allocator;
+        typedef typename maker::node_deallocator  node_deallocator;
+        typedef typename maker::intrusive_traits::compare  intrusive_key_comparator;
+        typedef typename base_class::node_type    head_type;
         //@endcond
 
     protected:
@@ -319,16 +293,10 @@ namespace cds { namespace container {
 
     public:
         /// Default constructor
-        /**
-            Initialize empty list
-        */
         LazyKVList()
         {}
 
-        /// List desctructor
-        /**
-            Clears the list
-        */
+        /// Desctructor clears the list
         ~LazyKVList()
         {
             clear();
@@ -384,10 +352,7 @@ namespace cds { namespace container {
 
             The argument \p item of user-defined functor \p func is the reference
             to the list's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
-            User-defined functor \p func should guarantee that during changing item's value no any other changes
-            could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if the inserting is successful.
+            The user-defined functor is called only if the inserting is successful.
 
             The key_type should be constructible from value of type \p K.
 
@@ -455,7 +420,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         iterator find_with( Q const& key, Less pred )
         {
-            return node_to_iterator( find_at( head(), key, typename options::template less_wrapper<Less>::type() ) );
+            return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ) );
         }
 
         /// Check if the list is empty
@@ -469,7 +434,7 @@ namespace cds { namespace container {
             The value returned depends on opt::item_counter option. For atomicity::empty_item_counter,
             this function always returns 0.
 
-            <b>Warning</b>: even if you use real item counter and it returns 0, this fact is not mean that the list
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the list
             is empty. To check list emptyness use \ref empty() method.
         */
         size_t size() const
