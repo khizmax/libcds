@@ -6,23 +6,23 @@
 
 namespace map {
     namespace {
-        struct map_traits: public cc::michael_map::type_traits
+        struct map_traits: public cc::michael_map::traits
         {
             typedef HashMapHdrTest::hash_int            hash;
             typedef HashMapHdrTest::simple_item_counter item_counter;
         };
 
-        struct HP_cmp_traits: public cc::michael_list::type_traits
+        struct HP_cmp_traits: public cc::michael_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
         };
 
-        struct HP_less_traits: public cc::michael_list::type_traits
+        struct HP_less_traits: public cc::michael_list::traits
         {
             typedef HashMapHdrTest::less  less;
         };
 
-        struct HP_cmpmix_traits: public cc::michael_list::type_traits
+        struct HP_cmpmix_traits: public cc::michael_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
             typedef HashMapHdrTest::less  less;

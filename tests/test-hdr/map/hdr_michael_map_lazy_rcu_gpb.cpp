@@ -7,24 +7,24 @@
 
 namespace map {
     namespace {
-        struct map_traits: public cc::michael_map::type_traits
+        struct map_traits: public cc::michael_map::traits
         {
             typedef HashMapHdrTest::hash_int            hash;
             typedef HashMapHdrTest::simple_item_counter item_counter;
         };
         typedef cds::urcu::gc< cds::urcu::general_buffered<> > rcu_type;
 
-        struct RCU_GPB_cmp_traits: public cc::lazy_list::type_traits
+        struct RCU_GPB_cmp_traits: public cc::lazy_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
         };
 
-        struct RCU_GPB_less_traits: public cc::lazy_list::type_traits
+        struct RCU_GPB_less_traits: public cc::lazy_list::traits
         {
             typedef HashMapHdrTest::less  less;
         };
 
-        struct RCU_GPB_cmpmix_traits: public cc::lazy_list::type_traits
+        struct RCU_GPB_cmpmix_traits: public cc::lazy_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
             typedef HashMapHdrTest::less  less;

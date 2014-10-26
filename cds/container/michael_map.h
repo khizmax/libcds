@@ -24,20 +24,14 @@ namespace cds { namespace container {
         - \p GC - Garbage collector used. You may use any \ref cds_garbage_collector "Garbage collector"
             from the \p libcds library.
             Note the \p GC must be the same as the GC used for \p OrderedList
-        - \p OrderedList - ordered key-value list implementation used as bucket for hash map, for example, MichaelKVList
-            or LazyKVList. The ordered list implementation specifies the \p Key and \p Value types stored in the hash-map,
+        - \p OrderedList - ordered key-value list implementation used as bucket for hash map, for example, \p MichaelKVList
+            or \p LazyKVList. The ordered list implementation specifies the \p Key and \p Value types stored in the hash-map,
             the reclamation schema \p GC used by hash-map, the comparison functor for the type \p Key and other features
             specific for the ordered list.
-        - \p Traits - type traits. See michael_map::type_traits for explanation.
+        - \p Traits - map traits, default is \p michael_map::traits.
+            Instead of defining \p Traits struct you may use option-based syntax with \p michael_map::make_traits metafunction.
 
-        Instead of defining \p Traits struct you may use option-based syntax with \p michael_map::make_traits metafunction
-        (this metafunction is a synonym for michael_set::make_traits).
-        For \p michael_map::make_traits the following option may be used:
-        - opt::hash - mandatory option, specifies hash functor.
-        - opt::item_counter - optional, specifies item counting policy. See michael_map::type_traits for explanation.
-        - opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
-
-        Many of the class function take a key argument of type \p K that in general is not \ref key_type.
+        Many of the class function take a key argument of type \p K that in general is not \p key_type.
         \p key_type and an argument of template type \p K must meet the following requirements:
         - \p key_type should be constructible from value of type \p K;
         - the hash functor should be able to calculate correct hash value from argument \p key of type \p K:
@@ -45,9 +39,9 @@ namespace cds { namespace container {
         - values of type \p key_type and \p K should be comparable
 
         There are the specializations:
-        - for \ref cds_urcu_desc "RCU" - declared in <tt>cd/container/michael_map_rcu.h</tt>,
+        - for \ref cds_urcu_desc "RCU" - declared in <tt>cds/container/michael_map_rcu.h</tt>,
             see \ref cds_nonintrusive_MichaelHashMap_rcu "MichaelHashMap<RCU>".
-        - for \ref cds::gc::nogc declared in <tt>cds/container/michael_map_nogc.h</tt>,
+        - for \p cds::gc::nogc declared in <tt>cds/container/michael_map_nogc.h</tt>,
             see \ref cds_nonintrusive_MichaelHashMap_nogc "MichaelHashMap<gc::nogc>".
 
         <b>Iterators</b>
@@ -58,13 +52,13 @@ namespace cds { namespace container {
         so, the element cannot be reclaimed while the iterator object is alive.
         However, passing an iterator object between threads is dangerous.
 
-        \warning Due to concurrent nature of Michael's set it is not guarantee that you can iterate
+        @warning Due to concurrent nature of Michael's set it is not guarantee that you can iterate
         all elements in the set: any concurrent deletion can exclude the element
         pointed by the iterator from the set, and your iteration can be terminated
         before end of the set. Therefore, such iteration is more suitable for debugging purpose only
 
         Remember, each iterator object requires an additional hazard pointer, that may be
-        a limited resource for \p GC like \p gc::HP (for gc::PTB the count of
+        a limited resource for \p GC like \p gc::HP (for \p gc::DHP the count of
         guards is unlimited).
 
         The iterator class supports the following minimalistic interface:
@@ -95,13 +89,13 @@ namespace cds { namespace container {
         <b>How to use</b>
 
         Suppose, you want to make \p int to \p int map for Hazard Pointer garbage collector. You should
-        choose suitable ordered list class that will be used as a bucket for the map; it may be MichaelKVList.
+        choose suitable ordered list class that will be used as a bucket for the map; it may be \p MichaelKVList.
         \code
         #include <cds/container/michael_kvlist_hp.h>    // MichaelKVList for gc::HP
-        #include <cds/container/michael_map.h>          // MIchaelHashMap
+        #include <cds/container/michael_map.h>          // MichaelHashMap
 
         // List traits based on std::less predicate
-        struct list_traits: public cds::container::michael_list::type_traits
+        struct list_traits: public cds::container::michael_list::traits
         {
             typedef std::less<int>      less;
         };
@@ -110,7 +104,7 @@ namespace cds { namespace container {
         typedef cds::container::MichaelKVList< cds::gc::HP, int, int, list_traits> int2int_list;
 
         // Map traits
-        struct map_traits: public cds::container::michael_map::type_traits
+        struct map_traits: public cds::container::michael_map::traits
         {
             struct hash {
                 size_t operator()( int i ) const
@@ -137,7 +131,7 @@ namespace cds { namespace container {
         You may use option-based declaration:
         \code
         #include <cds/container/michael_kvlist_hp.h>    // MichaelKVList for gc::HP
-        #include <cds/container/michael_map.h>          // MIchaelHashMap
+        #include <cds/container/michael_map.h>          // MichaelHashMap
 
         // Ordered list
         typedef cds::container::MichaelKVList< cds::gc::HP, int, int,
@@ -158,7 +152,7 @@ namespace cds { namespace container {
         class GC,
         class OrderedList,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = michael_map::type_traits
+        class Traits = michael_map::traits
 #else
         class Traits
 #endif
@@ -166,29 +160,28 @@ namespace cds { namespace container {
     class MichaelHashMap
     {
     public:
-        typedef OrderedList bucket_type     ;   ///< type of ordered list used as a bucket implementation
-        typedef Traits      options         ;   ///< Traits template parameters
+        typedef GC          gc;          ///< Garbage collector
+        typedef OrderedList bucket_type; ///< type of ordered list to be used as a bucket
+        typedef Traits      traits;      ///< Map traits
 
-        typedef typename bucket_type::key_type          key_type        ;   ///< key type
-        typedef typename bucket_type::mapped_type       mapped_type     ;   ///< value type
-        typedef typename bucket_type::value_type        value_type      ;   ///< key/value pair stored in the map
+        typedef typename bucket_type::key_type    key_type;    ///< key type
+        typedef typename bucket_type::mapped_type mapped_type; ///< value type
+        typedef typename bucket_type::value_type  value_type;  ///< key/value pair stored in the map
 
-        typedef GC                                      gc              ;   ///< Garbage collector
-        typedef typename bucket_type::key_comparator    key_comparator  ;   ///< key compare functor
+        typedef typename bucket_type::key_comparator key_comparator;  ///< key compare functor
 
         /// Hash functor for \ref key_type and all its derivatives that you use
-        typedef typename cds::opt::v::hash_selector< typename options::hash >::type   hash;
-        typedef typename options::item_counter          item_counter    ;   ///< Item counter type
+        typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
+        typedef typename traits::item_counter  item_counter;   ///< Item counter type
 
         /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename options::allocator >  bucket_table_allocator;
-        typedef typename bucket_type::guarded_ptr      guarded_ptr; ///< Guarded pointer
+        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
+        typedef typename bucket_type::guarded_ptr  guarded_ptr; ///< Guarded pointer
 
     protected:
-        item_counter    m_ItemCounter   ;   ///< Item counter
-        hash            m_HashFunctor   ;   ///< Hash functor
-
-        bucket_type *   m_Buckets       ;   ///< bucket table
+        item_counter    m_ItemCounter; ///< Item counter
+        hash            m_HashFunctor; ///< Hash functor
+        bucket_type *   m_Buckets;     ///< bucket table
 
     private:
         //@cond
@@ -196,6 +189,7 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
+        //@cond
         /// Calculates hash value of \p key
         template <typename Q>
         size_t hash_value( Q const& key ) const
@@ -209,6 +203,7 @@ namespace cds { namespace container {
         {
             return m_Buckets[ hash_value( key ) ];
         }
+        //@endcond
 
     protected:
         //@cond
@@ -364,7 +359,7 @@ namespace cds { namespace container {
 
     public:
         /// Initializes the map
-        /**
+        /** @anchor cds_nonintrusive_MichaelHashMap_hp_ctor
             The Michael's hash map is non-expandable container. You should point the average count of items \p nMaxItemCount
             when you create an object.
             \p nLoadFactor parameter defines average count of items per bucket and it should be small number between 1 and 10.
@@ -379,10 +374,11 @@ namespace cds { namespace container {
         ) : m_nHashBitmask( michael_map::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename bucket_type::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ), "atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value, 
+                           "atomicity::empty_item_counter is not allowed as a item counter");
 
             m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
         }
@@ -449,12 +445,9 @@ namespace cds { namespace container {
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            User-defined functor \p func should guarantee that during changing item's value no any other changes
-            could be made on this map's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
+            The user-defined functor is called only if inserting is successful.
 
-            The key_type should be constructible from value of type \p K.
+            The \p key_type should be constructible from value of type \p K.
 
             The function allows to split creating of new item into two part:
             - create item from \p key;
@@ -463,6 +456,10 @@ namespace cds { namespace container {
 
             This can be useful if complete initialization of object of \p mapped_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
+
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename K, typename Func>
         bool insert_key( const K& key, Func func )
@@ -482,11 +479,7 @@ namespace cds { namespace container {
             is inserted into the map (note that in this case the \p key_type should be
             constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            The functor \p Func may signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
@@ -497,15 +490,15 @@ namespace cds { namespace container {
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
 
-            The functor may change any fields of the \p item.second that is \p mapped_type;
-            however, \p func must guarantee that during changing no any other modifications
-            could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
+            The functor may change any fields of the \p item.second that is \p mapped_type.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
@@ -516,7 +509,7 @@ namespace cds { namespace container {
             return bRet;
         }
 
-        /// For key \p key inserts data of type \p mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p mapped_type created from \p args
         /**
             \p key_type should be constructible from type \p K
 
@@ -573,7 +566,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Return \p true if key is found and deleted, \p false otherwise
         */
@@ -666,8 +658,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found.
-
-            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change \p item.second. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
@@ -767,15 +757,7 @@ namespace cds { namespace container {
             return bucket( key ).get_with( ptr, key, pred );
         }
 
-        /// Clears the map (non-atomic)
-        /**
-            The function erases all items from the map.
-
-            The function is not atomic. It cleans up each bucket and then resets the item counter to zero.
-            If there are a thread that performs insertion while \p clear is working the result is undefined in general case:
-            <tt> empty() </tt> may return \p true but the map may contain item(s).
-            Therefore, \p clear may be used only for debugging purposes.
-        */
+        /// Clears the map (not atomic)
         void clear()
         {
             for ( size_t i = 0; i < bucket_count(); ++i )
@@ -801,9 +783,9 @@ namespace cds { namespace container {
 
         /// Returns the size of hash table
         /**
-            Since MichaelHashMap cannot dynamically extend the hash table size,
+            Since \p %MichaelHashMap cannot dynamically extend the hash table size,
             the value returned is an constant depending on object initialization parameters;
-            see MichaelHashMap::MichaelHashMap for explanation.
+            see \p MichaelHashMap::MichaelHashMap for explanation.
         */
         size_t bucket_count() const
         {

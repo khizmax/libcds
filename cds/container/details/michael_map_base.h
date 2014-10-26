@@ -11,10 +11,12 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace michael_map {
-        /// Type traits for MichaelHashMap class
-        typedef container::michael_set::type_traits  type_traits;
+        /// \p MichaelHashMap traits
+        typedef container::michael_set::traits  traits;
 
-        using container::michael_set::make_traits;
+        /// Metafunction converting option list to \p michael_map::traits
+        template <typename... Options>
+        using make_traits = cds::intrusive::michael_set::make_traits< Options... >;
 
         //@cond
         namespace details {
@@ -26,7 +28,7 @@ namespace cds { namespace container {
 
     //@cond
     // Forward declarations
-    template <class GC, class OrderedList, class Traits = michael_map::type_traits>
+    template <class GC, class OrderedList, class Traits = michael_map::traits>
     class MichaelHashMap;
     //@endcond
 

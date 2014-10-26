@@ -15,7 +15,7 @@ namespace cds { namespace container {
         /// MichaelHashSet traits
         typedef cds::intrusive::michael_set::traits  traits;
 
-        /// Metafunction converting option list to \p MichaelHashSet traits
+        /// Metafunction converting option list to \p michael_set::traits
         template <typename... Options>
         using make_traits = cds::intrusive::michael_set::make_traits< Options... >;
 

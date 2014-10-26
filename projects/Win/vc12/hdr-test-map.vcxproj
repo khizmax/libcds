@@ -544,17 +544,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_cuckoo_map.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_gpt.cpp" />

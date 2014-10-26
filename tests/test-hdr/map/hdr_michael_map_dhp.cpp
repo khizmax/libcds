@@ -6,38 +6,38 @@
 
 namespace map {
     namespace {
-        struct map_traits: public cc::michael_map::type_traits
+        struct map_traits: public cc::michael_map::traits
         {
             typedef HashMapHdrTest::hash_int            hash;
             typedef HashMapHdrTest::simple_item_counter item_counter;
         };
-        struct PTB_cmp_traits: public cc::michael_list::type_traits
+        struct DHP_cmp_traits: public cc::michael_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
         };
 
-        struct PTB_less_traits: public cc::michael_list::type_traits
+        struct DHP_less_traits: public cc::michael_list::traits
         {
             typedef HashMapHdrTest::less  less;
         };
 
-        struct PTB_cmpmix_traits: public cc::michael_list::type_traits
+        struct DHP_cmpmix_traits: public cc::michael_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
             typedef HashMapHdrTest::less  less;
         };
     }
 
-    void HashMapHdrTest::Michael_PTB_cmp()
+    void HashMapHdrTest::Michael_DHP_cmp()
     {
-        typedef cc::MichaelKVList< cds::gc::PTB, int, HashMapHdrTest::value_type, PTB_cmp_traits > list;
+        typedef cc::MichaelKVList< cds::gc::DHP, int, HashMapHdrTest::value_type, DHP_cmp_traits > list;
 
         // traits-based version
-        typedef cc::MichaelHashMap< cds::gc::PTB, list, map_traits > map;
+        typedef cc::MichaelHashMap< cds::gc::DHP, list, map_traits > map;
         test_int< map >();
 
         // option-based version
-        typedef cc::MichaelHashMap< cds::gc::PTB, list,
+        typedef cc::MichaelHashMap< cds::gc::DHP, list,
             cc::michael_map::make_traits<
                 cc::opt::hash< hash_int >
                 ,cc::opt::item_counter< simple_item_counter >
@@ -46,16 +46,16 @@ namespace map {
         test_int< opt_map >();
     }
 
-    void HashMapHdrTest::Michael_PTB_less()
+    void HashMapHdrTest::Michael_DHP_less()
     {
-        typedef cc::MichaelKVList< cds::gc::PTB, int, HashMapHdrTest::value_type, PTB_less_traits > list;
+        typedef cc::MichaelKVList< cds::gc::DHP, int, HashMapHdrTest::value_type, DHP_less_traits > list;
 
         // traits-based version
-        typedef cc::MichaelHashMap< cds::gc::PTB, list, map_traits > map;
+        typedef cc::MichaelHashMap< cds::gc::DHP, list, map_traits > map;
         test_int< map >();
 
         // option-based version
-        typedef cc::MichaelHashMap< cds::gc::PTB, list,
+        typedef cc::MichaelHashMap< cds::gc::DHP, list,
             cc::michael_map::make_traits<
                 cc::opt::hash< hash_int >
                 ,cc::opt::item_counter< simple_item_counter >
@@ -64,16 +64,16 @@ namespace map {
         test_int< opt_map >();
     }
 
-    void HashMapHdrTest::Michael_PTB_cmpmix()
+    void HashMapHdrTest::Michael_DHP_cmpmix()
     {
-        typedef cc::MichaelKVList< cds::gc::PTB, int, HashMapHdrTest::value_type, PTB_cmpmix_traits > list;
+        typedef cc::MichaelKVList< cds::gc::DHP, int, HashMapHdrTest::value_type, DHP_cmpmix_traits > list;
 
         // traits-based version
-        typedef cc::MichaelHashMap< cds::gc::PTB, list, map_traits > map;
+        typedef cc::MichaelHashMap< cds::gc::DHP, list, map_traits > map;
         test_int< map >();
 
         // option-based version
-        typedef cc::MichaelHashMap< cds::gc::PTB, list,
+        typedef cc::MichaelHashMap< cds::gc::DHP, list,
             cc::michael_map::make_traits<
                 cc::opt::hash< hash_int >
                 ,cc::opt::item_counter< simple_item_counter >

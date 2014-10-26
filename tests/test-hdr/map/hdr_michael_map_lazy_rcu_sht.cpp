@@ -8,24 +8,24 @@
 namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
-        struct map_traits: public cc::michael_map::type_traits
+        struct map_traits: public cc::michael_map::traits
         {
             typedef HashMapHdrTest::hash_int            hash;
             typedef HashMapHdrTest::simple_item_counter item_counter;
         };
         typedef cds::urcu::gc< cds::urcu::signal_threaded<> > rcu_type;
 
-        struct RCU_SHT_cmp_traits: public cc::lazy_list::type_traits
+        struct RCU_SHT_cmp_traits: public cc::lazy_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
         };
 
-        struct RCU_SHT_less_traits: public cc::lazy_list::type_traits
+        struct RCU_SHT_less_traits: public cc::lazy_list::traits
         {
             typedef HashMapHdrTest::less  less;
         };
 
-        struct RCU_SHT_cmpmix_traits: public cc::lazy_list::type_traits
+        struct RCU_SHT_cmpmix_traits: public cc::lazy_list::traits
         {
             typedef HashMapHdrTest::cmp   compare;
             typedef HashMapHdrTest::less  less;

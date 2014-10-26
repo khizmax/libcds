@@ -9,56 +9,53 @@
 
 namespace cds { namespace container {
 
-    /// Michael's hash map (template specialization for gc::nogc)
+    /// Michael's hash map (template specialization for \p cds::gc::nogc)
     /** @ingroup cds_nonintrusive_map
         \anchor cds_nonintrusive_MichaelHashMap_nogc
 
-        This specialization is intended for so-called persistent usage when no item
+        This specialization is so-called append-only when no item
         reclamation may be performed. The class does not support deleting of map item.
 
         See \ref cds_nonintrusive_MichaelHashMap_hp "MichaelHashMap" for description of template parameters.
-
-        The interface of the specialization is a little different.
     */
     template <
         class OrderedList,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = michael_map::type_traits
+        class Traits = michael_map::traits
 #else
         class Traits
 #endif
     >
-    class MichaelHashMap<gc::nogc, OrderedList, Traits>
+    class MichaelHashMap<cds::gc::nogc, OrderedList, Traits>
     {
     public:
-        typedef OrderedList bucket_type     ;   ///< type of ordered list used as a bucket implementation
-        typedef Traits      options         ;   ///< Traits template parameters
+        typedef cds::gc::nogc gc;        ///< No garbage collector
+        typedef OrderedList bucket_type; ///< type of ordered list used as a bucket implementation
+        typedef Traits      traits;      ///< Map traits
 
-        typedef typename bucket_type::key_type          key_type        ;   ///< key type
-        typedef typename bucket_type::mapped_type       mapped_type     ;   ///< type of value stored in the list
-        typedef typename bucket_type::value_type        value_type      ;   ///< Pair used as the some functor's argument
+        typedef typename bucket_type::key_type    key_type;    ///< key type
+        typedef typename bucket_type::mapped_type mapped_type; ///< type of value to be stored in the map
+        typedef typename bucket_type::value_type  value_type;  ///< Pair used as the some functor's argument
 
-        typedef gc::nogc                                gc              ;   ///< No garbage collector
-        typedef typename bucket_type::key_comparator    key_comparator  ;   ///< key comparison functor
+        typedef typename bucket_type::key_comparator key_comparator;   ///< key comparing functor
 
         /// Hash functor for \ref key_type and all its derivatives that you use
-        typedef typename cds::opt::v::hash_selector< typename options::hash >::type   hash;
-        typedef typename options::item_counter          item_counter    ;   ///< Item counter type
+        typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
+        typedef typename traits::item_counter item_counter;   ///< Item counter type
 
         /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename options::allocator >  bucket_table_allocator;
+        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
 
     protected:
         //@cond
-        typedef typename bucket_type::iterator          bucket_iterator;
-        typedef typename bucket_type::const_iterator    bucket_const_iterator;
+        typedef typename bucket_type::iterator       bucket_iterator;
+        typedef typename bucket_type::const_iterator bucket_const_iterator;
         //@endcond
 
     protected:
-        item_counter    m_ItemCounter   ;   ///< Item counter
-        hash            m_HashFunctor   ;   ///< Hash functor
-
-        bucket_type *   m_Buckets       ;   ///< bucket table
+        item_counter    m_ItemCounter; ///< Item counter
+        hash            m_HashFunctor; ///< Hash functor
+        bucket_type *   m_Buckets;     ///< bucket table
 
     private:
         //@cond
@@ -66,6 +63,7 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
+        //@cond
         /// Calculates hash value of \p key
         size_t hash_value( key_type const & key ) const
         {
@@ -77,6 +75,7 @@ namespace cds { namespace container {
         {
             return m_Buckets[ hash_value( key ) ];
         }
+        //@endcond
 
     protected:
             protected:
@@ -235,7 +234,7 @@ namespace cds { namespace container {
         //@}
 
     private:
-        //@{
+        //@cond
         const_iterator get_const_begin() const
         {
             return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
@@ -244,18 +243,11 @@ namespace cds { namespace container {
         {
             return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
-        //@}
+        //@endcond
 
     public:
         /// Initialize the map
-        /**
-            The Michael's hash map is non-expandable container. You should point the average count of items \p nMaxItemCount
-            when you create an object.
-            \p nLoadFactor parameter defines average count of items per bucket and it should be small number between 1 and 10.
-            Remember, since the bucket implementation is an ordered list, searching in the bucket is linear [<tt>O(nLoadFactor)</tt>].
-            Note, that many popular STL hash map implementation uses load factor 1.
-
-            The ctor defines hash table size as rounding <tt>nMacItemCount / nLoadFactor</tt> up to nearest power of two.
+        /** @copydetails cds_nonintrusive_MichaelHashMap_hp_ctor
         */
         MichaelHashMap(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
@@ -263,15 +255,16 @@ namespace cds { namespace container {
         ) : m_nHashBitmask( michael_map::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename bucket_type::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ),"atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
+                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
         }
 
-        /// Clear hash set and destroy it
+        /// Clears hash set and destroys it
         ~MichaelHashMap()
         {
             clear();
@@ -340,12 +333,9 @@ namespace cds { namespace container {
 
             The argument \p item of user-defined functor \p func is the reference
             to the map's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
-            User-defined functor \p func should guarantee that during changing item's value no any other changes
-            could be made on this map's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if the inserting is successful.
 
-            The key_type should be constructible from value of type \p K.
+            The user-defined functor it is called only if the inserting is successful.
+            The \p key_type should be constructible from value of type \p K.
 
             The function allows to split creating of new item into two part:
             - create item from \p key;
@@ -356,6 +346,10 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
 
             Returns an iterator pointed to inserted value, or \p end() if inserting is failed
+
+            @warning For \ref cds_nonintrusive_MichaelKVList_nogc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyKVList_nogc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename K, typename Func>
         iterator insert_key( const K& key, Func func )
@@ -371,7 +365,7 @@ namespace cds { namespace container {
             return end();
         }
 
-        /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p mapped_type created from \p args
         /**
             \p key_type should be constructible from type \p K
 
@@ -399,6 +393,10 @@ namespace cds { namespace container {
             Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
             item found or inserted, \p second is true if new item has been added or \p false if the item
             already is in the list.
+
+            @warning For \ref cds_nonintrusive_MichaelKVList_nogc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyKVList_nogc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename K>
         std::pair<iterator, bool> ensure( const K& key )
@@ -450,13 +448,7 @@ namespace cds { namespace container {
             return end();
         }
 
-        /// Clears the map (non-atomic)
-        /**
-            The function deletes all items from the map.
-            The function is not atomic. It cleans up each bucket and then resets the item counter to zero.
-            If there are a thread that performs insertion while \p clear is working the result is undefined in general case:
-            <tt> empty() </tt> may return \p true but the map may contain item(s).
-        */
+        /// Clears the map (not atomic)
         void clear()
         {
             for ( size_t i = 0; i < bucket_count(); ++i )
@@ -464,8 +456,7 @@ namespace cds { namespace container {
             m_ItemCounter.reset();
         }
 
-
-        /// Checks if the map is empty
+        /// Checks whether the map is empty
         /**
             Emptiness is checked by item counting: if item count is zero then the map is empty.
             Thus, the correct item counting feature is an important part of Michael's map implementation.
@@ -483,15 +474,14 @@ namespace cds { namespace container {
 
         /// Returns the size of hash table
         /**
-            Since MichaelHashMap cannot dynamically extend the hash table size,
+            Since \p %MichaelHashMap cannot dynamically extend the hash table size,
             the value returned is an constant depending on object initialization parameters;
-            see MichaelHashMap::MichaelHashMap for explanation.
+            see \p MichaelHashMap::MichaelHashMap for explanation.
         */
         size_t bucket_count() const
         {
             return m_nHashBitmask + 1;
         }
-
     };
 }} // namespace cds::container
 

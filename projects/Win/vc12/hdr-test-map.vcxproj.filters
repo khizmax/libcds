@@ -13,13 +13,7 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_nogc.cpp">
       <Filter>michael</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_ptb.cpp">
-      <Filter>michael</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_nogc.cpp">
-      <Filter>michael</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_ptb.cpp">
       <Filter>michael</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_flat_map.cpp">
@@ -180,6 +174,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_rcu_sht.cpp">
       <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_dhp.cpp">
+      <Filter>michael</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_lazy_dhp.cpp">
+      <Filter>michael</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
