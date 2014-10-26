@@ -22,23 +22,19 @@ namespace cds { namespace container {
 
         Template parameters are:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
-        - \p OrderedList - ordered list implementation used as bucket for hash set, for example, MichaelList.
+        - \p OrderedList - ordered list implementation used as the bucket for hash set, for example, 
+            \ref cds_nonintrusive_MichaelList_rcu "MichaelList".
             The ordered list implementation specifies the type \p T stored in the hash-set,
             the comparison functor for the type \p T and other features specific for
             the ordered list.
-        - \p Traits - type traits. See michael_set::type_traits for explanation.
+        - \p Traits - set traits, default is michael_set::traits.
+            Instead of defining \p Traits struct you may use option-based syntax with michael_set::make_traits metafunction.
 
-        Instead of defining \p Traits struct you may use option-based syntax with michael_set::make_traits metafunction.
-        For michael_set::make_traits the following option may be used:
-        - opt::hash - mandatory option, specifies hash functor.
-        - opt::item_counter - optional, specifies item counting policy. See michael_set::type_traits for explanation.
-        - opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
-
-        \note About hash functor see \ref cds_nonintrusive_MichaelHashSet_hash_functor "MichaelSet".
+        About hash functor see \ref cds_nonintrusive_MichaelHashSet_hash_functor "MichaelSet hash functor".
 
         <b>How to use</b>
 
-        Suppose, we have the following type \p Foo that we want to store in our MichaelHashSet:
+        Suppose, we have the following type \p Foo that we want to store in your \p %MichaelHashSet:
         \code
         struct Foo {
             int     nKey    ;   // key field
@@ -69,7 +65,7 @@ namespace cds { namespace container {
             }
         };
 
-        // Our ordered list
+        // Ordered list
         typedef cc::MichaelList< cds::urcu::gc< cds::urcu::general_buffered<> >, Foo,
             typename cc::michael_list::make_traits<
                 cc::opt::compare< Foo_cmp >     // item comparator option
@@ -88,7 +84,7 @@ namespace cds { namespace container {
             }
         };
 
-        // Declare set type.
+        // Declare the set
         // Note that \p RCU template parameter of ordered list must be equal \p RCU for the set.
         typedef cc::MichaelHashSet< cds::urcu::gc< cds::urcu::general_buffered<> >, bucket_list,
             cc::michael_set::make_traits<
@@ -96,7 +92,6 @@ namespace cds { namespace container {
             >::type
         > foo_set;
 
-        // Set variable
         foo_set fooSet;
         \endcode
     */
@@ -104,7 +99,7 @@ namespace cds { namespace container {
         class RCU,
         class OrderedList,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = michael_set::type_traits
+        class Traits = michael_set::traits
 #else
         class Traits
 #endif
@@ -112,30 +107,29 @@ namespace cds { namespace container {
     class MichaelHashSet< cds::urcu::gc< RCU >, OrderedList, Traits >
     {
     public:
-        typedef OrderedList bucket_type     ;   ///< type of ordered list used as a bucket implementation
-        typedef Traits      options         ;   ///< Traits template parameters
+        typedef cds::urcu::gc< RCU > gc; ///< RCU used as garbage collector
+        typedef OrderedList bucket_type; ///< type of ordered list to be used as a bucket implementation
+        typedef Traits      traits;      ///< Set traits
 
-        typedef typename bucket_type::value_type        value_type      ;   ///< type of value stored in the list
-        typedef cds::urcu::gc< RCU >                    gc              ;   ///< RCU used as garbage collector
-        typedef typename bucket_type::key_comparator    key_comparator  ;   ///< key comparing functor
+        typedef typename bucket_type::value_type        value_type;     ///< type of value to be stored in the list
+        typedef typename bucket_type::key_comparator    key_comparator; ///< key comparing functor
 
         /// Hash functor for \ref value_type and all its derivatives that you use
-        typedef typename cds::opt::v::hash_selector< typename options::hash >::type   hash;
-        typedef typename options::item_counter          item_counter    ;   ///< Item counter type
+        typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
+        typedef typename traits::item_counter item_counter;   ///< Item counter type
 
         /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename options::allocator >  bucket_table_allocator;
+        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
 
-        typedef typename bucket_type::rcu_lock      rcu_lock   ; ///< RCU scoped lock
-        typedef typename bucket_type::exempt_ptr    exempt_ptr ; ///< pointer to extracted node
+        typedef typename bucket_type::rcu_lock   rcu_lock;   ///< RCU scoped lock
+        typedef typename bucket_type::exempt_ptr exempt_ptr; ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
     protected:
-        item_counter    m_ItemCounter   ;   ///< Item counter
-        hash            m_HashFunctor   ;   ///< Hash functor
-
-        bucket_type *   m_Buckets       ;   ///< bucket table
+        item_counter    m_ItemCounter; ///< Item counter
+        hash            m_HashFunctor; ///< Hash functor
+        bucket_type *   m_Buckets;     ///< bucket table
 
     private:
         //@cond
@@ -143,6 +137,7 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
+        //@cond
         /// Calculates hash value of \p key
         template <typename Q>
         size_t hash_value( Q const& key ) const
@@ -151,7 +146,6 @@ namespace cds { namespace container {
         }
 
         /// Returns the bucket (ordered list) for \p key
-        //@{
         template <typename Q>
         bucket_type&    bucket( Q const& key )
         {
@@ -162,7 +156,7 @@ namespace cds { namespace container {
         {
             return m_Buckets[ hash_value( key ) ];
         }
-        //@}
+        //@endcond
     public:
         /// Forward iterator
         /**
@@ -239,14 +233,7 @@ namespace cds { namespace container {
 
     public:
         /// Initialize hash set
-        /**
-            The Michael's hash set is non-expandable container. You should point the average count of items \p nMaxItemCount
-            when you create an object.
-            \p nLoadFactor parameter defines average count of items per bucket and it should be small number between 1 and 10.
-            Remember, since the bucket implementation is an ordered list, searching in the bucket is linear [<tt>O(nLoadFactor)</tt>].
-            Note, that many popular STL hash map implementation uses load factor 1.
-
-            The ctor defines hash table size as rounding <tt>nMacItemCount / nLoadFactor</tt> up to nearest power of two.
+        /** @copydetails cds_nonintrusive_MichaelHashSet_hp_ctor
         */
         MichaelHashSet(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
@@ -254,15 +241,16 @@ namespace cds { namespace container {
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename bucket_type::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ), "atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
+                           "atomicity::empty_item_counter is not allowed as a item counter");
 
             m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
         }
 
-        /// Clear hash set and destroy it
+        /// Clears hash set and destroys it
         ~MichaelHashSet()
         {
             clear();
@@ -302,13 +290,15 @@ namespace cds { namespace container {
             \code
                 void func( value_type& val );
             \endcode
-            where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
-            \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success. It may be passed by reference
-            using \p std::ref
+            where \p val is the item inserted.
+            The user-defined functor is called only if the inserting is success.
 
             The function applies RCU lock internally.
-        */
+
+            @warning For \ref cds_nonintrusive_MichaelList_rcu "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyList_rcu "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
+            */
         template <typename Q, typename Func>
         bool insert( Q const& val, Func f )
         {
@@ -324,11 +314,7 @@ namespace cds { namespace container {
 
             If the \p val key not found in the set, then the new item created from \p val
             is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func should be a function with signature:
-            \code
-                void func( bool bNew, value_type& item, const Q& val );
-            \endcode
-            or a functor:
+            The functor \p Func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item, const Q& val );
@@ -340,16 +326,17 @@ namespace cds { namespace container {
             - \p item - item of the set
             - \p val - argument \p key passed into the \p ensure function
 
-            The functor may change non-key fields of the \p item; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
+            The functor may change non-key fields of the \p item.
 
             The function applies RCU lock internally.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the set.
+
+            @warning For \ref cds_nonintrusive_MichaelList_rcu "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyList_rcu "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename Q, typename Func>
         std::pair<bool, bool> ensure( const Q& val, Func func )
@@ -360,7 +347,7 @@ namespace cds { namespace container {
             return bRet;
         }
 
-        /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type created from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
@@ -378,7 +365,7 @@ namespace cds { namespace container {
         /// Deletes \p key from the set
         /** \anchor cds_nonintrusive_MichealSet_rcu_erase_val
 
-            Since the key of MichaelHashSet's item type \ref value_type is not explicitly specified,
+            Since the key of MichaelHashSet's item type \p value_type is not explicitly specified,
             template parameter \p Q defines the key type searching in the list.
             The set item comparator should be able to compare the type \p value_type
             and the type \p Q.
@@ -424,7 +411,6 @@ namespace cds { namespace container {
                 void operator()(value_type const& val);
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Since the key of %MichaelHashSet's \p value_type is not explicitly specified,
             template parameter \p Q defines the key type searching in the list.
@@ -462,9 +448,9 @@ namespace cds { namespace container {
 
         /// Extracts an item from the set
         /** \anchor cds_nonintrusive_MichaelHashSet_rcu_extract
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             unlinks it from the set, places item pointer into \p dest argument, and returns \p true.
-            If the item with the key equal to \p val is not found the function return \p false.
+            If the item with the key equal to \p key is not found the function return \p false.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the set
@@ -503,9 +489,9 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& dest, Q const& val )
+        bool extract( exempt_ptr& dest, Q const& key )
         {
-            if ( bucket( val ).extract( dest, val )) {
+            if ( bucket( key ).extract( dest, key )) {
                 --m_ItemCounter;
                 return true;
             }
@@ -520,35 +506,33 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest, Q const& val, Less pred )
+        bool extract_with( exempt_ptr& dest, Q const& key, Less pred )
         {
-            if ( bucket( val ).extract_with( dest, val, pred )) {
+            if ( bucket( key ).extract_with( dest, key, pred )) {
                 --m_ItemCounter;
                 return true;
             }
             return false;
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_nonintrusive_MichealSet_rcu_find_func
 
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
             The functor does not serialize simultaneous access to the set's \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
+            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
             can modify both arguments.
 
             Note the hash functor specified for class \p Traits template parameter
@@ -556,15 +540,15 @@ namespace cds { namespace container {
 
             The function applies RCU lock internally.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f ) const
+        bool find( Q& key, Func f ) const
         {
-            return bucket( val ).find( val, f );
+            return bucket( key ).find( key, f );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichealSet_rcu_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -572,72 +556,27 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f ) const
+        bool find_with( Q& key, Less pred, Func f ) const
         {
-            return bucket( val ).find_with( val, pred, f );
+            return bucket( key ).find_with( key, pred, f );
         }
 
-        /// Finds the key \p val
-        /** \anchor cds_nonintrusive_MichealSet_rcu_find_cfunc
-
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
-
-            The functor may change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set's \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \p value_type.
-
-            The function applies RCU lock internally.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f ) const
-        {
-            return bucket( val ).find( val, f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_nonintrusive_MichealSet_rcu_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f ) const
-        {
-            return bucket( val ).find_with( val, pred, f );
-        }
-
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_nonintrusive_MichealSet_rcu_find_val
 
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \ref value_type.
+            should accept a parameter of type \p Q that may be not the same as \p value_type.
         */
         template <typename Q>
-        bool find( Q const & val ) const
+        bool find( Q const & key ) const
         {
-            return bucket( val ).find( val );
+            return bucket( key ).find( key );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichealSet_rcu_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -645,15 +584,15 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const & val, Less pred ) const
+        bool find_with( Q const & key, Less pred ) const
         {
-            return bucket( val ).find_with( val, pred );
+            return bucket( key ).find_with( key, pred );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelHashSet_rcu_get
-            The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p nullptr.
+            The function searches the item with key equal to \p key and returns the pointer to item found.
+            If \p key is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -678,12 +617,12 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& val ) const
+        value_type * get( Q const& key ) const
         {
-            return bucket( val ).get( val );
+            return bucket( key ).get( key );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelHashSet_rcu_get "get(Q const&)"
             but \p pred is used for comparing the keys.
@@ -693,22 +632,12 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& val, Less pred ) const
+        value_type * get_with( Q const& key, Less pred ) const
         {
-            return bucket( val ).get_with( val, pred );
+            return bucket( key ).get_with( key, pred );
         }
 
-        /// Clears the set (non-atomic)
-        /**
-            The function erases all items from the set.
-
-            The function is not atomic. It cleans up each bucket and then resets the item counter to zero.
-            If there are a thread that performs insertion while \p clear is working the result is undefined in general case:
-            <tt> empty() </tt> may return \p true but the set may contain item(s).
-            Therefore, \p clear may be used only for debugging purposes.
-
-            RCU \p synchronize method can be called. RCU should not be locked.
-        */
+        /// Clears the set (not atomic)
         void clear()
         {
             for ( size_t i = 0; i < bucket_count(); ++i )
@@ -734,7 +663,7 @@ namespace cds { namespace container {
 
         /// Returns the size of hash table
         /**
-            Since MichaelHashSet cannot dynamically extend the hash table size,
+            Since \p %MichaelHashSet cannot dynamically extend the hash table size,
             the value returned is an constant depending on object initialization parameters;
             see MichaelHashSet::MichaelHashSet for explanation.
         */
@@ -746,4 +675,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // ifndef __CDS_CONTAINER_MICHAEL_SET_H
+#endif // ifndef __CDS_CONTAINER_MICHAEL_SET_RCU_H

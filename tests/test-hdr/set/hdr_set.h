@@ -825,9 +825,9 @@ namespace set {
         void Michael_HP_less();
         void Michael_HP_cmpmix();
 
-        void Michael_PTB_cmp();
-        void Michael_PTB_less();
-        void Michael_PTB_cmpmix();
+        void Michael_DHP_cmp();
+        void Michael_DHP_less();
+        void Michael_DHP_cmpmix();
 
         void Michael_RCU_GPI_cmp();
         void Michael_RCU_GPI_less();
@@ -857,9 +857,9 @@ namespace set {
         void Lazy_HP_less();
         void Lazy_HP_cmpmix();
 
-        void Lazy_PTB_cmp();
-        void Lazy_PTB_less();
-        void Lazy_PTB_cmpmix();
+        void Lazy_DHP_cmp();
+        void Lazy_DHP_less();
+        void Lazy_DHP_cmpmix();
 
         void Lazy_RCU_GPI_cmp();
         void Lazy_RCU_GPI_less();
@@ -955,9 +955,9 @@ namespace set {
             CPPUNIT_TEST(Michael_HP_less)
             CPPUNIT_TEST(Michael_HP_cmpmix)
 
-            CPPUNIT_TEST(Michael_PTB_cmp)
-            CPPUNIT_TEST(Michael_PTB_less)
-            CPPUNIT_TEST(Michael_PTB_cmpmix)
+            CPPUNIT_TEST(Michael_DHP_cmp)
+            CPPUNIT_TEST(Michael_DHP_less)
+            CPPUNIT_TEST(Michael_DHP_cmpmix)
 
             CPPUNIT_TEST(Michael_RCU_GPI_cmp)
             CPPUNIT_TEST(Michael_RCU_GPI_less)
@@ -987,9 +987,9 @@ namespace set {
             CPPUNIT_TEST(Lazy_HP_less)
             CPPUNIT_TEST(Lazy_HP_cmpmix)
 
-            CPPUNIT_TEST(Lazy_PTB_cmp)
-            CPPUNIT_TEST(Lazy_PTB_less)
-            CPPUNIT_TEST(Lazy_PTB_cmpmix)
+            CPPUNIT_TEST(Lazy_DHP_cmp)
+            CPPUNIT_TEST(Lazy_DHP_less)
+            CPPUNIT_TEST(Lazy_DHP_cmpmix)
 
             CPPUNIT_TEST(Lazy_RCU_GPI_cmp)
             CPPUNIT_TEST(Lazy_RCU_GPI_less)

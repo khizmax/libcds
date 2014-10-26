@@ -11,23 +11,23 @@ namespace set {
     namespace {
         typedef cds::urcu::gc< cds::urcu::signal_threaded<> > rcu_type;
 
-        struct set_traits: public cc::michael_set::type_traits
+        struct set_traits: public cc::michael_set::traits
         {
             typedef HashSetHdrTest::hash_int            hash;
             typedef HashSetHdrTest::simple_item_counter item_counter;
         };
 
-        struct RCU_SHT_cmp_traits: public cc::michael_list::type_traits
+        struct RCU_SHT_cmp_traits: public cc::michael_list::traits
         {
             typedef HashSetHdrTest::cmp<HashSetHdrTest::item>   compare;
         };
 
-        struct RCU_SHT_less_traits: public cc::michael_list::type_traits
+        struct RCU_SHT_less_traits: public cc::michael_list::traits
         {
             typedef HashSetHdrTest::less<HashSetHdrTest::item>   less;
         };
 
-        struct RCU_SHT_cmpmix_traits: public cc::michael_list::type_traits
+        struct RCU_SHT_cmpmix_traits: public cc::michael_list::traits
         {
             typedef HashSetHdrTest::cmp<HashSetHdrTest::item>   compare;
             typedef HashSetHdrTest::less<HashSetHdrTest::item>   less;

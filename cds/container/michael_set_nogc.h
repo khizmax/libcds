@@ -13,51 +13,48 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_set
         \anchor cds_nonintrusive_MichaelHashSet_nogc
 
-        This specialization is intended for so-called persistent usage when no item
+        This specialization is so-called append-only when no item
         reclamation may be performed. The class does not support deleting of list item.
 
         See \ref cds_nonintrusive_MichaelHashSet_hp "MichaelHashSet" for description of template parameters.
-        The template parameter \p OrderedList should be any gc::nogc-derived ordered list, for example,
-        \ref cds_nonintrusive_MichaelList_nogc "persistent MichaelList".
-
-        The interface of the specialization is a slightly different.
+        The template parameter \p OrderedList should be any \p gc::nogc -derived ordered list, for example,
+        \ref cds_nonintrusive_MichaelList_nogc "append-only MichaelList".
     */
     template <
         class OrderedList,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = michael_set::type_traits
+        class Traits = michael_set::traits
 #else
         class Traits
 #endif
     >
-    class MichaelHashSet< gc::nogc, OrderedList, Traits >
+    class MichaelHashSet< cds::gc::nogc, OrderedList, Traits >
     {
     public:
-        typedef OrderedList bucket_type     ;   ///< type of ordered list used as a bucket implementation
-        typedef Traits      options         ;   ///< Traits template parameters
+        typedef cds::gc::nogc gc;        ///< Garbage collector
+        typedef OrderedList bucket_type; ///< type of ordered list to be used as a bucket implementation
+        typedef Traits      traits;      ///< Set traits
 
-        typedef typename bucket_type::value_type        value_type      ;   ///< type of value stored in the list
-        typedef gc::nogc                                gc              ;   ///< Garbage collector
-        typedef typename bucket_type::key_comparator    key_comparator  ;   ///< key comparison functor
+        typedef typename bucket_type::value_type        value_type;     ///< type of value stored in the list
+        typedef typename bucket_type::key_comparator    key_comparator; ///< key comparison functor
 
         /// Hash functor for \ref value_type and all its derivatives that you use
-        typedef typename cds::opt::v::hash_selector< typename options::hash >::type   hash;
-        typedef typename options::item_counter          item_counter    ;   ///< Item counter type
+        typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
+        typedef typename traits::item_counter  item_counter; ///< Item counter type
 
         /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename options::allocator >  bucket_table_allocator;
+        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
 
     protected:
         //@cond
-        typedef typename bucket_type::iterator          bucket_iterator;
-        typedef typename bucket_type::const_iterator    bucket_const_iterator;
+        typedef typename bucket_type::iterator        bucket_iterator;
+        typedef typename bucket_type::const_iterator  bucket_const_iterator;
         //@endcond
 
     protected:
-        item_counter    m_ItemCounter   ;   ///< Item counter
-        hash            m_HashFunctor   ;   ///< Hash functor
-
-        bucket_type *   m_Buckets       ;   ///< bucket table
+        item_counter    m_ItemCounter;   ///< Item counter
+        hash            m_HashFunctor;   ///< Hash functor
+        bucket_type *   m_Buckets;       ///< bucket table
 
     private:
         //@cond
@@ -65,6 +62,7 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
+        //@cond
         /// Calculates hash value of \p key
         template <typename Q>
         size_t hash_value( const Q& key ) const
@@ -78,6 +76,7 @@ namespace cds { namespace container {
         {
             return m_Buckets[ hash_value( key ) ];
         }
+        //@endcond
 
     public:
         /// Forward iterator
@@ -139,7 +138,7 @@ namespace cds { namespace container {
         //@}
 
     private:
-        //@{
+        //@cond
         const_iterator get_const_begin() const
         {
             return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
@@ -148,12 +147,11 @@ namespace cds { namespace container {
         {
             return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
-        //@}
+        //@endcond
 
     public:
         /// Initialize hash set
-        /**
-            See \ref cds_nonintrusive_MichaelHashSet_hp "MichaelHashSet" ctor for explanation
+        /** @copydetails cds_nonintrusive_MichaelHashSet_hp_ctor
         */
         MichaelHashSet(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
@@ -161,15 +159,16 @@ namespace cds { namespace container {
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename bucket_type::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ), "atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value, 
+                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
         }
 
-        /// Clear hash set and destroy it
+        /// Clears hash set and destroys it
         ~MichaelHashSet()
         {
             clear();
@@ -220,9 +219,13 @@ namespace cds { namespace container {
             The operation inserts new item if the key \p val is not found in the set.
             Otherwise, the function returns an iterator that points to item found.
 
-            Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
+            Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
             item found or inserted, \p second is true if new item has been added or \p false if the item
             already is in the set.
+
+            @warning For \ref cds_nonintrusive_MichaelList_nogc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyList_nogc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename Q>
         std::pair<iterator, bool> ensure( const Q& val )
@@ -274,15 +277,7 @@ namespace cds { namespace container {
             return end();
         }
 
-
-        /// Clears the set (non-atomic, not thread-safe)
-        /**
-            The function deletes all items from the set.
-            The function is not atomic and even not thread-safe.
-            It cleans up each bucket and then resets the item counter to zero.
-            If there are a thread that performs insertion while \p clear is working the result is undefined in general case:
-            <tt> empty() </tt> may return \p true but the set may contain item(s).
-        */
+        /// Clears the set (not atomic)
         void clear()
         {
             for ( size_t i = 0; i < bucket_count(); ++i )
@@ -290,10 +285,9 @@ namespace cds { namespace container {
             m_ItemCounter.reset();
         }
 
-
         /// Checks if the set is empty
         /**
-            Emptiness is checked by item counting: if item count is zero then the set is empty.
+            The emptiness is checked by the item counting: if item count is zero then the set is empty.
             Thus, the correct item counting feature is an important part of Michael's set implementation.
         */
         bool empty() const
@@ -309,7 +303,7 @@ namespace cds { namespace container {
 
         /// Returns the size of hash table
         /**
-            Since MichaelHashSet cannot dynamically extend the hash table size,
+            Since \p %MichaelHashSet cannot dynamically extend the hash table size,
             the value returned is an constant depending on object initialization parameters;
             see MichaelHashSet::MichaelHashSet for explanation.
         */

@@ -7,23 +7,23 @@
 namespace set {
 
     namespace {
-        struct set_traits: public cc::michael_set::type_traits
+        struct set_traits: public cc::michael_set::traits
         {
             typedef HashSetHdrTest::hash_int            hash;
             typedef HashSetHdrTest::simple_item_counter item_counter;
         };
 
-        struct nogc_cmp_traits: public cc::lazy_list::type_traits
+        struct nogc_cmp_traits: public cc::lazy_list::traits
         {
             typedef HashSetHdrTest::cmp<HashSetHdrTest::item>   compare;
         };
 
-        struct nogc_less_traits: public cc::lazy_list::type_traits
+        struct nogc_less_traits: public cc::lazy_list::traits
         {
             typedef HashSetHdrTest::less<HashSetHdrTest::item>   less;
         };
 
-        struct nogc_cmpmix_traits: public cc::lazy_list::type_traits
+        struct nogc_cmpmix_traits: public cc::lazy_list::traits
         {
             typedef HashSetHdrTest::cmp<HashSetHdrTest::item>   compare;
             typedef HashSetHdrTest::less<HashSetHdrTest::item>   less;
