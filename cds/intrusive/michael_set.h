@@ -22,28 +22,28 @@ namespace cds { namespace intrusive {
 
         Template parameters are:
         - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for \p OrderedList
-        - \p OrderedList - ordered list implementation used as bucket for hash set, for example, MichaelList, LazyList.
+        - \p OrderedList - ordered list implementation used as bucket for hash set, for example, \p MichaelList, \p LazyList.
             The intrusive ordered list implementation specifies the type \p T stored in the hash-set, the reclamation
             schema \p GC used by hash-set, the comparison functor for the type \p T and other features specific for
             the ordered list.
-        - \p Traits - type traits. See michael_set::type_traits for explanation.
-            Instead of defining \p Traits struct you can use option-based syntax with michael_set::make_traits metafunction.
+        - \p Traits - type traits. See \p michael_set::traits for explanation.
+            Instead of defining \p Traits struct you can use option-based syntax with \p michael_set::make_traits metafunction.
 
         There are several specializations of \p %MichaelHashSet for each GC. You should include:
         - <tt><cds/intrusive/michael_set_rcu.h></tt> for \ref cds_intrusive_MichaelHashSet_rcu "RCU type"
-        - <tt><cds/intrusive/michael_set_nogc.h></tt> for \ref cds_intrusive_MichaelHashSet_nogc for persistent set
-        - <tt><cds/intrusive/michael_set.h></tt> for other GC (gc::HP, gc::PTB)
+        - <tt><cds/intrusive/michael_set_nogc.h></tt> for \ref cds_intrusive_MichaelHashSet_nogc for append-only set
+        - <tt><cds/intrusive/michael_set.h></tt> for \p gc::HP, \p gc::DHP
 
         <b>Hash functor</b>
 
         Some member functions of Michael's hash set accept the key parameter of type \p Q which differs from \p value_type.
         It is expected that type \p Q contains full key of \p value_type, and for equal keys of type \p Q and \p value_type
-        the hash values of these keys must be equal too.
-        The hash functor <tt>Traits::hash</tt> should accept parameters of both type:
+        the hash values of these keys must be equal.
+        The hash functor \p Traits::hash should accept parameters of both type:
         \code
         // Our node type
         struct Foo {
-            std::string     key_    ;   // key field
+            std::string     key_; // key field
             // ... other fields
         };
 
@@ -60,7 +60,6 @@ namespace cds { namespace intrusive {
             }
         };
         \endcode
-
 
         <b>How to use</b>
 
@@ -139,10 +138,11 @@ namespace cds { namespace intrusive {
         struct tag_key2_idx;
 
         // Your two-key data
-        // The first key is maintained by gc::HP, second key is maintained by gc::PTB garbage collectors
+        // The first key is maintained by gc::HP, second key is maintained by gc::DHP garbage collectors
+        // (I don't know what is needed for, but it is correct)
         struct Foo
             : public cds::intrusive::michael_list::node< cds::gc::HP, tag_key1_idx >
-            , public cds::intrusive::michael_list::node< cds::gc::PTB, tag_key2_idx >
+            , public cds::intrusive::michael_list::node< cds::gc::DHP, tag_key2_idx >
         {
             std::string     key1_   ;   // first key field
             unsigned int    key2_   ;   // second key field
@@ -170,11 +170,11 @@ namespace cds { namespace intrusive {
             >::type
         >  Key1_bucket;
 
-        // Declare bucket type for Michael's hash set indexed by key2_ field and maintained by gc::PTB
-        typedef cds::intrusive::MichaelList< cds::gc::PTB, Foo,
+        // Declare bucket type for Michael's hash set indexed by key2_ field and maintained by gc::DHP
+        typedef cds::intrusive::MichaelList< cds::gc::DHP, Foo,
             typename cds::intrusive::michael_list::make_traits<
                 // hook option
-                cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::PTB >, tag_key2_idx > >
+                cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::DHP >, tag_key2_idx > >
                 // item comparator option
                 ,cds::opt::less< Key2Less >
             >::type
@@ -198,7 +198,7 @@ namespace cds { namespace intrusive {
 
         // Michael's set indexed by key2_ field
         typedef cds::intrusive::MichaelHashSet<
-            cds::gc::PTB
+            cds::gc::DHP
             ,Key2_bucket
             ,typename cds::intrusive::michael_set::make_traits<
                 cds::opt::hash< Key2Hash >
@@ -210,7 +210,7 @@ namespace cds { namespace intrusive {
         class GC,
         class OrderedList,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = michael_set::type_traits
+        class Traits = michael_set::traits
 #else
         class Traits
 #endif
@@ -218,29 +218,28 @@ namespace cds { namespace intrusive {
     class MichaelHashSet
     {
     public:
-        typedef OrderedList     ordered_list    ;   ///< type of ordered list used as a bucket implementation
-        typedef ordered_list    bucket_type     ;   ///< bucket type
-        typedef Traits          options         ;   ///< Traits template parameters
+        typedef GC           gc;            ///< Garbage collector
+        typedef OrderedList  ordered_list;  ///< type of ordered list used as a bucket implementation
+        typedef ordered_list bucket_type;   ///< bucket type
+        typedef Traits       traits;       ///< Set traits
 
-        typedef typename ordered_list::value_type       value_type      ;   ///< type of value stored in the list
-        typedef GC                                      gc              ;   ///< Garbage collector
-        typedef typename ordered_list::key_comparator   key_comparator  ;   ///< key comparison functor
+        typedef typename ordered_list::value_type       value_type      ;   ///< type of value to be stored in the set
+        typedef typename ordered_list::key_comparator   key_comparator  ;   ///< key comparing functor
         typedef typename ordered_list::disposer         disposer        ;   ///< Node disposer functor
 
-        /// Hash functor for \ref value_type and all its derivatives that you use
-        typedef typename cds::opt::v::hash_selector< typename options::hash >::type   hash;
-        typedef typename options::item_counter          item_counter    ;   ///< Item counter type
+        /// Hash functor for \p value_type and all its derivatives that you use
+        typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
+        typedef typename traits::item_counter item_counter;   ///< Item counter type
 
-        typedef typename ordered_list::guarded_ptr      guarded_ptr; ///< Guarded pointer
+        typedef typename ordered_list::guarded_ptr guarded_ptr; ///< Guarded pointer
 
         /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename options::allocator >  bucket_table_allocator;
+        typedef cds::details::Allocator< bucket_type, typename traits::allocator > bucket_table_allocator;
 
     protected:
-        item_counter    m_ItemCounter   ;   ///< Item counter
-        hash            m_HashFunctor   ;   ///< Hash functor
-
-        bucket_type *   m_Buckets       ;   ///< bucket table
+        item_counter    m_ItemCounter;   ///< Item counter
+        hash            m_HashFunctor;   ///< Hash functor
+        bucket_type *   m_Buckets;      ///< bucket table
 
     private:
         //@cond
@@ -248,6 +247,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
+        //@cond
         /// Calculates hash value of \p key
         template <typename Q>
         size_t hash_value( const Q& key ) const
@@ -261,6 +261,7 @@ namespace cds { namespace intrusive {
         {
             return m_Buckets[ hash_value( key ) ];
         }
+        //@endcond
 
     public:
         /// Forward iterator
@@ -328,7 +329,7 @@ namespace cds { namespace intrusive {
         //@}
 
     private:
-        //@{
+        //@cond
         const_iterator get_const_begin() const
         {
             return const_iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
@@ -337,11 +338,11 @@ namespace cds { namespace intrusive {
         {
             return const_iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
-        //@}
+        //@endcond
 
     public:
         /// Initializes hash set
-        /**
+        /** @anchor cds_intrusive_MichaelHashSet_hp_ctor
             The Michael's hash set is an unbounded container, but its hash table is non-expandable.
             At construction time you should pass estimated maximum item count and a load factor.
             The load factor is average size of one bucket - a small number between 1 and 10.
@@ -350,14 +351,15 @@ namespace cds { namespace intrusive {
         */
         MichaelHashSet(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
-            size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket. Small integer up to 10, default is 1.
+            size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket. Small integer up to 10.
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename bucket_type::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ), "atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value, 
+                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
         }
@@ -397,10 +399,13 @@ namespace cds { namespace intrusive {
             \code
                 void func( value_type& val );
             \endcode
-            where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
-            \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success and can be passed by reference
-            using \p std::ref.
+            where \p val is the item inserted.
+
+            The user-defined functor is called only if the inserting is success.
+
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList": as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -428,14 +433,15 @@ namespace cds { namespace intrusive {
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
-            The functor may change non-key fields of the \p item; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref.
+            The functor may change non-key fields of the \p item.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
+
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
@@ -448,7 +454,7 @@ namespace cds { namespace intrusive {
 
         /// Unlinks the item \p val from the set
         /**
-            The function searches the item \p val in the set and unlink it from the set
+            The function searches the item \p val in the set and unlink it
             if it is found and is equal to \p val.
 
             The function returns \p true if success and \p false otherwise.
@@ -463,16 +469,16 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_MichaelHashSet_hp_erase
-            The function searches an item with key equal to \p val in the set,
-            unlinks it from the set, and returns \p true.
-            If the item with key equal to \p val is not found the function return \p false.
+            The function searches an item with key equal to \p key in the set,
+            unlinks it, and returns \p true.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool erase( Q const& val )
+        bool erase( Q const& key )
         {
-            if ( bucket( val ).erase( val )) {
+            if ( bucket( key ).erase( key )) {
                 --m_ItemCounter;
                 return true;
             }
@@ -487,9 +493,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool erase_with( Q const& val, Less pred )
+        bool erase_with( Q const& key, Less pred )
         {
-            if ( bucket( val ).erase_with( val, pred )) {
+            if ( bucket( key ).erase_with( key, pred )) {
                 --m_ItemCounter;
                 return true;
             }
@@ -498,7 +504,7 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_MichaelHashSet_hp_erase_func
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             call \p f functor with item found, and unlinks it from the set.
             The \ref disposer specified in \p OrderedList class template parameter is called
             by garbage collector \p GC asynchronously.
@@ -511,14 +517,14 @@ namespace cds { namespace intrusive {
             \endcode
             The functor may be passed by reference with <tt>boost:ref</tt>
 
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q, typename Func>
-        bool erase( const Q& val, Func f )
+        bool erase( const Q& key, Func f )
         {
-            if ( bucket( val ).erase( val, f )) {
+            if ( bucket( key ).erase( key, f )) {
                 --m_ItemCounter;
                 return true;
             }
@@ -533,9 +539,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool erase_with( const Q& val, Less pred, Func f )
+        bool erase_with( const Q& key, Less pred, Func f )
         {
-            if ( bucket( val ).erase_with( val, pred, f )) {
+            if ( bucket( key ).erase_with( key, pred, f )) {
                 --m_ItemCounter;
                 return true;
             }
@@ -598,16 +604,16 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_MichaelHashSet_hp_find_func
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             You can pass \p f argument by reference using \p std::ref.
 
@@ -616,21 +622,21 @@ namespace cds { namespace intrusive {
             The functor does not serialize simultaneous access to the set \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
+            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
             may modify both arguments.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return bucket( val ).find( val, f );
+            return bucket( key ).find( key, f );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -638,68 +644,26 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return bucket( val ).find_with( val, pred, f );
+            return bucket( key ).find_with( key, pred, f );
         }
 
-        /// Finds the key \p val
-        /** \anchor cds_intrusive_MichaelHashSet_hp_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by reference using \p std::ref.
-
-            The functor may change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return bucket( val ).find( val, f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return bucket( val ).find_with( val, pred, f );
-        }
-
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_MichaelHashSet_hp_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool find( Q const & val )
+        bool find( Q const& key )
         {
-            return bucket( val ).find( val );
+            return bucket( key ).find( key );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -707,17 +671,17 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const & val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return bucket( val ).find_with( val, pred );
+            return bucket( key ).find_with( key, pred );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_MichaelHashSet_hp_get
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p val is found, and \p false otherwise.
-            If \p val is not found the \p ptr parameter is not changed.
+            The function returns \p true if \p key is found, and \p false otherwise.
+            If \p key is not found the \p ptr parameter is not changed.
 
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -740,12 +704,12 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& val )
+        bool get( guarded_ptr& ptr, Q const& key )
         {
-            return bucket( val ).get( ptr, val );
+            return bucket( key ).get( ptr, key );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /**
             The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_get "get( guarded_ptr& ptr, Q const&)"
             but \p pred is used for comparing the keys.
@@ -755,9 +719,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& val, Less pred )
+        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
         {
-            return bucket( val ).get_with( ptr, val, pred );
+            return bucket( key ).get_with( ptr, key, pred );
         }
 
         /// Clears the set (non-atomic)
@@ -796,9 +760,9 @@ namespace cds { namespace intrusive {
 
         /// Returns the size of hash table
         /**
-            Since MichaelHashSet cannot dynamically extend the hash table size,
-            the value returned is an constant depending on object initialization parameters;
-            see MichaelHashSet::MichaelHashSet for explanation.
+            Since \p %MichaelHashSet cannot dynamically extend the hash table size,
+            the value returned is an constant depending on object initialization parameters,
+            see \p MichaelHashSet::MichaelHashSet.
         */
         size_t bucket_count() const
         {

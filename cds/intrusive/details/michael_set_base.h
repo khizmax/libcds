@@ -3,7 +3,6 @@
 #ifndef __CDS_INTRUSIVE_DETAILS_MICHAEL_SET_BASE_H
 #define __CDS_INTRUSIVE_DETAILS_MICHAEL_SET_BASE_H
 
-#include <functional>   // ref
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
@@ -17,8 +16,8 @@ namespace cds { namespace intrusive {
     */
     namespace michael_set {
 
-        /// Type traits for MichaelHashSet class
-        struct type_traits {
+        /// MichaelHashSet traits
+        struct traits {
             /// Hash function
             /**
                 Hash function converts the key fields of struct \p T stored in the hash-set
@@ -26,42 +25,38 @@ namespace cds { namespace intrusive {
 
                 This is mandatory type and has no predefined one.
             */
-            typedef opt::none       hash;
+            typedef opt::none hash;
 
             /// Item counter
             /**
-                The item counting is an important part of MichaelHashSet algorithm:
-                the <tt>empty()</tt> member function depends on correct item counting.
-                Therefore, atomicity::empty_item_counter is not allowed as a type of the option.
+                The item counting is an important part of \p MichaelHashSet algorithm:
+                the \p empty() member function depends on correct item counting.
+                Therefore, \p atomicity::empty_item_counter is not allowed as a type of the option.
 
-                Default is atomicity::item_counter.
+                Default is \p atomicity::item_counter.
             */
-            typedef atomicity::item_counter     item_counter;
+            typedef cds::atomicity::item_counter item_counter;
 
             /// Bucket table allocator
             /**
                 Allocator for bucket table. Default is \ref CDS_DEFAULT_ALLOCATOR
-                The allocator uses only in ctor (for allocating bucket table)
-                and in dtor (for destroying bucket table)
+                The allocator uses only in constructor for allocating bucket table
+                and in destructor for destroying bucket table
             */
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
         };
 
         /// Metafunction converting option list to traits struct
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-
             Available \p Options:
-            - opt::hash - mandatory option, specifies hash functor.
-            - opt::item_counter - optional, specifies item counting policy. See type_traits::item_counter
+            - \p opt::hash - mandatory option, specifies hash functor.
+            - \p opt::item_counter - optional, specifies item counting policy. See \p traits::item_counter
                 for default type.
-            - opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
-
-            See \ref MichaelHashSet, \ref type_traits.
+            - \p opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
         */
         template <typename... Options>
         struct make_traits {
-            typedef typename cds::opt::make_options< type_traits, Options...>::type type  ;   ///< Result of metafunction
+            typedef typename cds::opt::make_options< traits, Options...>::type type;   ///< Metafunction result
         };
 
         //@cond
@@ -198,7 +193,7 @@ namespace cds { namespace intrusive {
 
     //@cond
     // Forward declarations
-    template <class GC, class OrderedList, class Traits = michael_set::type_traits>
+    template <class GC, class OrderedList, class Traits = michael_set::traits>
     class MichaelHashSet;
     //@endcond
 

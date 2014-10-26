@@ -1058,12 +1058,12 @@ namespace set {
         void HP_member_less();
         void HP_member_cmpmix();
 
-        void PTB_base_cmp();
-        void PTB_base_less();
-        void PTB_base_cmpmix();
-        void PTB_member_cmp();
-        void PTB_member_less();
-        void PTB_member_cmpmix();
+        void DHP_base_cmp();
+        void DHP_base_less();
+        void DHP_base_cmpmix();
+        void DHP_member_cmp();
+        void DHP_member_less();
+        void DHP_member_cmpmix();
 
         void RCU_GPI_base_cmp();
         void RCU_GPI_base_less();
@@ -1115,12 +1115,12 @@ namespace set {
         void HP_member_less_lazy();
         void HP_member_cmpmix_lazy();
 
-        void PTB_base_cmp_lazy();
-        void PTB_base_less_lazy();
-        void PTB_base_cmpmix_lazy();
-        void PTB_member_cmp_lazy();
-        void PTB_member_less_lazy();
-        void PTB_member_cmpmix_lazy();
+        void DHP_base_cmp_lazy();
+        void DHP_base_less_lazy();
+        void DHP_base_cmpmix_lazy();
+        void DHP_member_cmp_lazy();
+        void DHP_member_less_lazy();
+        void DHP_member_cmpmix_lazy();
 
         void RCU_GPI_base_cmp_lazy();
         void RCU_GPI_base_less_lazy();
@@ -1383,12 +1383,12 @@ namespace set {
             CPPUNIT_TEST(HP_member_less)
             CPPUNIT_TEST(HP_member_cmpmix)
 
-            CPPUNIT_TEST(PTB_base_cmp)
-            CPPUNIT_TEST(PTB_base_less)
-            CPPUNIT_TEST(PTB_base_cmpmix)
-            CPPUNIT_TEST(PTB_member_cmp)
-            CPPUNIT_TEST(PTB_member_less)
-            CPPUNIT_TEST(PTB_member_cmpmix)
+            CPPUNIT_TEST(DHP_base_cmp)
+            CPPUNIT_TEST(DHP_base_less)
+            CPPUNIT_TEST(DHP_base_cmpmix)
+            CPPUNIT_TEST(DHP_member_cmp)
+            CPPUNIT_TEST(DHP_member_less)
+            CPPUNIT_TEST(DHP_member_cmpmix)
 
             CPPUNIT_TEST(RCU_GPI_base_cmp)
             CPPUNIT_TEST(RCU_GPI_base_less)
@@ -1439,12 +1439,12 @@ namespace set {
             CPPUNIT_TEST(HP_member_less_lazy)
             CPPUNIT_TEST(HP_member_cmpmix_lazy)
 
-            CPPUNIT_TEST(PTB_base_cmp_lazy)
-            CPPUNIT_TEST(PTB_base_less_lazy)
-            CPPUNIT_TEST(PTB_base_cmpmix_lazy)
-            CPPUNIT_TEST(PTB_member_cmp_lazy)
-            CPPUNIT_TEST(PTB_member_less_lazy)
-            CPPUNIT_TEST(PTB_member_cmpmix_lazy)
+            CPPUNIT_TEST(DHP_base_cmp_lazy)
+            CPPUNIT_TEST(DHP_base_less_lazy)
+            CPPUNIT_TEST(DHP_base_cmpmix_lazy)
+            CPPUNIT_TEST(DHP_member_cmp_lazy)
+            CPPUNIT_TEST(DHP_member_less_lazy)
+            CPPUNIT_TEST(DHP_member_cmpmix_lazy)
 
             CPPUNIT_TEST(RCU_GPI_base_cmp_lazy)
             CPPUNIT_TEST(RCU_GPI_base_less_lazy)

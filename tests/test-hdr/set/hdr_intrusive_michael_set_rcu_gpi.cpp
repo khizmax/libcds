@@ -14,20 +14,20 @@ namespace set {
     void IntrusiveHashSetHdrTest::RCU_GPI_base_cmp()
     {
         typedef base_int_item< ci::michael_list::node<RCU> > item;
-        typedef ci::MichaelList< RCU
-            ,item
-            ,ci::michael_list::make_traits<
+        struct list_traits :
+            public ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::base_hook< co::gc<RCU> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
             >::type
-        >    bucket_type;
+        {};
+        typedef ci::MichaelList< RCU, item, list_traits > bucket_type;
 
-        typedef ci::MichaelHashSet< RCU, bucket_type,
-            ci::michael_set::make_traits<
-                co::hash< hash_int >
-            >::type
-        > set;
+        struct set_traits : public ci::michael_set::traits
+        {
+            typedef hash_int hash;
+        };
+        typedef ci::MichaelHashSet< RCU, bucket_type, set_traits > set;
 
         test_rcu_int<set>();
     }

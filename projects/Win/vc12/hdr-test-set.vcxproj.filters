@@ -59,12 +59,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_nogc_lazy.cpp">
       <Filter>intrusive\michael_set</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_ptb.cpp">
-      <Filter>intrusive\michael_set</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_ptb_lazy.cpp">
-      <Filter>intrusive\michael_set</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_gpb.cpp">
       <Filter>intrusive\michael_set</Filter>
     </ClCompile>
@@ -310,6 +304,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_sht.cpp">
       <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_dhp.cpp">
+      <Filter>intrusive\michael_set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_dhp_lazy.cpp">
+      <Filter>intrusive\michael_set</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
