@@ -403,7 +403,7 @@ namespace cds { namespace intrusive {
 
             The user-defined functor is called only if the inserting is success.
 
-            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList": as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */

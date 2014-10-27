@@ -50,27 +50,108 @@ namespace cds { namespace intrusive {
             }
         };
 
+        /// SplitListSet internal statistics. May be used for debugging or profiling
+        /**
+            Template argument \p Counter defines type of counter.
+            Default is \p cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
+            strict event counting.
+            You may use stronger type of counter like as \p cds::atomicity::item_counter,
+            or even integral type, for example, \p int.
+        */
+        template <typename Counter = cds::atomicity::event_counter >
+        struct stat
+        {
+            typedef Counter     counter_type;   ///< Counter type
 
-        /// Type traits for SplitListSet class
-        struct type_traits {
+            counter_type    m_nInsertSuccess;        ///< Count of success inserting
+            counter_type    m_nInsertFailed;         ///< Count of failed inserting
+            counter_type    m_nEnsureNew;            ///< Count of new item created by \p ensure() member function
+            counter_type    m_nEnsureExist;          ///< Count of \p ensure() call for existing item
+            counter_type    m_nEraseSuccess;         ///< Count of success erasing of items
+            counter_type    m_nEraseFailed;          ///< Count of attempts to erase unknown item
+            counter_type    m_nExtractSuccess;       ///< Count of success extracting of items
+            counter_type    m_nExtractFailed;        ///< Count of attempts to extract unknown item
+            counter_type    m_nFindSuccess;          ///< Count of success finding
+            counter_type    m_nFindFailed;           ///< Count of failed finding
+            counter_type    m_nHeadNodeAllocated;    ///< Count of allocated head node
+            counter_type    m_nHeadNodeFreed;        ///< Count of freed head node
+            counter_type    m_nBucketCount;          ///< Current bucket count
+            counter_type    m_nInitBucketRecursive;  ///< Count of recursive bucket initialization
+            counter_type    m_nInitBucketContention; ///< Count of bucket init contention encountered
+            counter_type    m_nBusyWaitBucketInit;   ///< Count of busy wait cycle while a bucket is initialized
+
+            //@cond
+            void onInsertSuccess()       { ++m_nInsertSuccess; }
+            void onInsertFailed()        { ++m_nInsertFailed; }
+            void onEnsureNew()           { ++m_nEnsureNew; }
+            void onEnsureExist()         { ++m_nEnsureExist; }
+            void onEraseSuccess()        { ++m_nEraseSuccess; }
+            void onEraseFailed()         { ++m_nEraseFailed; }
+            void onExtractSuccess()      { ++m_nExtractSuccess; }
+            void onExtractFailed()       { ++m_nExtractFailed; }
+            void onFindSuccess()         { ++m_nFindSuccess; }
+            void onFindFailed()          { ++m_nFindFailed; }
+            bool onFind(bool bSuccess) 
+            { 
+                if ( bSuccess )
+                    onFindSuccess();
+                else
+                    onFindFailed();
+                return bSuccess;
+            }
+            void onHeadNodeAllocated()   { ++m_nHeadNodeAllocated; }
+            void onHeadNodeFreed()       { ++m_nHeadNodeFreed; }
+            void onNewBucket()           { ++m_nBucketCount; }
+            void onRecursiveInitBucket() { ++m_nInitBucketRecursive; }
+            void onBucketInitContenton() { ++m_nInitBucketContention; }
+            void onBusyWaitBucketInit()  { ++m_nBusyWaitBucketInit; }
+            //@endcond
+        };
+
+        /// Dummy queue statistics - no counting is performed, no overhead. Support interface like \p split_list::stat
+        struct empty_stat {
+            //@cond
+            void onInsertSuccess()       const {}
+            void onInsertFailed()        const {}
+            void onEnsureNew()           const {}
+            void onEnsureExist()         const {}
+            void onEraseSuccess()        const {}
+            void onEraseFailed()         const {}
+            void onExtractSuccess()      const {}
+            void onExtractFailed()       const {}
+            void onFindSuccess()         const {}
+            void onFindFailed()          const {}
+            bool onFind( bool bSuccess ) const { return bSuccess; }
+            void onHeadNodeAllocated()   const {}
+            void onHeadNodeFreed()       const {}
+            void onNewBucket()           const {}
+            void onRecursiveInitBucket() const {}
+            void onBucketInitContenton() const {}
+            void onBusyWaitBucketInit()  const {}
+            //@endcond
+        };
+
+        /// SplitListSet traits
+        struct traits
+        {
             /// Hash function
             /**
                 Hash function converts the key fields of struct \p T stored in the split list
-                into value of type \p size_t called hash value that is an index of hash table.
+                into hash value of type \p size_t that is an index in hash table.
 
-                This is mandatory type and has no predefined one.
+                Hash typedef is mandatory and has no predefined one.
             */
             typedef opt::none       hash;
 
             /// Item counter
             /**
-                The item counting is an important part of SplitListSet algorithm:
+                The item counting is an important part of \p SplitListSet algorithm:
                 the <tt>empty()</tt> member function depends on correct item counting.
-                Therefore, atomicity::empty_item_counter is not allowed as a type of the option.
+                Therefore, \p cds::atomicity::empty_item_counter is not allowed as a type of the option.
 
-                Default is atomicity::item_counter.
+                Default is \p cds::atomicity::item_counter.
             */
-            typedef atomicity::item_counter item_counter;
+            typedef cds::atomicity::item_counter item_counter;
 
             /// Bucket table allocator
             /**
@@ -78,35 +159,43 @@ namespace cds { namespace intrusive {
             */
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
 
-            /// C++ memory model for atomic operations
+            /// Internal statistics (by default, disabled)
             /**
-                Can be opt::v::relaxed_ordering (relaxed memory model, the default) or opt::v::sequential_consistent (sequentially consisnent memory model).
+                Possible statistics types are: \p split_list::stat (enable internal statistics), 
+                \p split_list::empty_stat (the default, internal statistics disabled),
+                user-provided class that supports \p %split_list::stat interface.
             */
-            typedef opt::v::relaxed_ordering    memory_model;
+            typedef split_list::empty_stat  stat;
+
+
+            /// C++ memory ordering model
+            /** 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            */
+            typedef opt::v::relaxed_ordering memory_model;
 
             /// What type of bucket table is used
             /**
-                \p true - use split_list::expandable_bucket_table that can be expanded
-                    if the load factor of the set is exhausted
-                \p false - use split_list::static_bucket_table that cannot be expanded
+                \p true - use \p split_list::expandable_bucket_table that can be expanded
+                    if the load factor of the set is exhausted.
+                \p false - use \p split_list::static_bucket_table that cannot be expanded
+                    and is allocated in \p SplitListSet constructor.
 
                 Default is \p true.
             */
             static const bool dynamic_bucket_table = true;
 
-            /// back-off strategy used
-            /**
-                If the option is not specified, the cds::backoff::Default is used.
-            */
-            typedef cds::backoff::Default             back_off;
+            /// Back-off strategy
+            typedef cds::backoff::Default back_off;
         };
 
         /// [value-option] Split-list dynamic bucket table option
         /**
             The option is used to select bucket table implementation.
             Possible values of \p Value are:
-            - \p true - select \ref expandable_bucket_table implementation
-            - \p false - select \ref static_bucket_table implementation
+            - \p true - select \p expandable_bucket_table
+            - \p false - select \p static_bucket_table
         */
         template <bool Value>
         struct dynamic_bucket_table
@@ -119,42 +208,38 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Metafunction converting option list to traits struct
+        /// Metafunction converting option list to \p split_list::traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-
             Available \p Options:
-            - opt::hash - mandatory option, specifies hash functor.
-            - opt::item_counter - optional, specifies item counting policy. See type_traits::item_counter
+            - \p opt::hash - mandatory option, specifies hash functor.
+            - \p opt::item_counter - optional, specifies item counting policy. See \p traits::item_counter
                 for default type.
-            - opt::memory_model - C++ memory model for atomic operations.
-                Can be opt::v::relaxed_ordering (relaxed memory model, the default) or opt::v::sequential_consistent (sequentially consisnent memory model).
-            - opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
-            - split_list::dynamic_bucket_table - use dynamic or static bucket table implementation.
+            - \p opt::memory_model - C++ memory model for atomic operations.
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default) 
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            - \p opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p split_list::dynamic_bucket_table - use dynamic or static bucket table implementation.
                 Dynamic bucket table expands its size up to maximum bucket count when necessary
-            - opt::back_off - back-off strategy used for spinning. If the option is not specified, the cds::backoff::Default is used.
-
-            See \ref MichaelHashSet, \ref type_traits.
+            - \p opt::back_off - back-off strategy used for spinning, defult is \p cds::backoff::Default.
         */
         template <typename... Options>
         struct make_traits {
-            typedef typename cds::opt::make_options< type_traits, Options...>::type type  ;   ///< Result of metafunction
+            typedef typename cds::opt::make_options< traits, Options...>::type type  ;   ///< Result of metafunction
         };
-
 
         /// Static bucket table
         /**
-            Non-resizeable bucket table for SplitListSet class.
+            Non-resizeable bucket table for \p SplitListSet class.
             The capacity of table (max bucket count) is defined in the constructor call.
 
             Template parameter:
-            - \p GC - garbage collector used
-            - \p Node - node type, must be a type based on\ref node template
+            - \p GC - garbage collector
+            - \p Node - node type, must be a type based on \p split_list::node
             - \p Options... - options
 
             \p Options are:
             - \p opt::allocator - allocator used to allocate bucket table. Default is \ref CDS_DEFAULT_ALLOCATOR
-            - \p opt::memory_model - memory model used. Possible types are opt::v::sequential_consistent, opt::v::relaxed_ordering
+            - \p opt::memory_model - memory model used. Possible types are \p opt::v::sequential_consistent, \p opt::v::relaxed_ordering
         */
         template <typename GC, typename Node, typename... Options>
         class static_bucket_table
@@ -165,24 +250,24 @@ namespace cds { namespace intrusive {
                 typedef CDS_DEFAULT_ALLOCATOR       allocator;
                 typedef opt::v::relaxed_ordering    memory_model;
             };
-            typedef typename opt::make_options< default_options, Options... >::type   options;
+            typedef typename opt::make_options< default_options, Options... >::type options;
             //@endcond
 
         public:
-            typedef GC      gc          ;   ///< Garbage collector
-            typedef Node    node_type   ;   ///< Bucket node type
-            typedef atomics::atomic<node_type *> table_entry ;   ///< Table entry type
+            typedef GC      gc;         ///< Garbage collector
+            typedef Node    node_type;  ///< Bucket node type
+            typedef atomics::atomic<node_type *> table_entry;  ///< Table entry type
 
             /// Bucket table allocator
             typedef cds::details::Allocator< table_entry, typename options::allocator >  bucket_table_allocator;
 
             /// Memory model for atomic operations
-            typedef typename options::memory_model     memory_model;
+            typedef typename options::memory_model  memory_model;
 
         protected:
-            const size_t   m_nLoadFactor    ;    ///< load factor (average count of items per bucket)
-            const size_t   m_nCapacity      ;    ///< Bucket table capacity
-            table_entry *  m_Table          ;    ///< Bucket table
+            const size_t   m_nLoadFactor; ///< load factor (average count of items per bucket)
+            const size_t   m_nCapacity;   ///< Bucket table capacity
+            table_entry *  m_Table;       ///< Bucket table
 
         protected:
             //@cond
@@ -206,7 +291,7 @@ namespace cds { namespace intrusive {
                 allocate_table();
             }
 
-            /// Constructs
+            /// Creates the table with specified size rounded up to nearest power-of-two
             static_bucket_table(
                 size_t nItemCount,        ///< Max expected item count in split-ordered list
                 size_t nLoadFactor        ///< Load factor
@@ -219,7 +304,7 @@ namespace cds { namespace intrusive {
                 allocate_table();
             }
 
-            /// Destroy bucket table
+            /// Destroys bucket table
             ~static_bucket_table()
             {
                 destroy_table();
@@ -232,7 +317,7 @@ namespace cds { namespace intrusive {
                 return m_Table[ nBucket ].load(memory_model::memory_order_acquire);
             }
 
-            /// Set head node \p pNode of bucket \p nBucket
+            /// Set \p pNode as a head of bucket \p nBucket
             void bucket( size_t nBucket, node_type * pNode )
             {
                 assert( nBucket < capacity() );
@@ -260,13 +345,13 @@ namespace cds { namespace intrusive {
             up to maximum bucket count.
 
             Template parameter:
-            - \p GC - garbage collector used
-            - \p Node - node type, must be an instantiation of \ref node template
+            - \p GC - garbage collector
+            - \p Node - node type, must be derived from \p split_list::node
             - \p Options... - options
 
             \p Options are:
             - \p opt::allocator - allocator used to allocate bucket table. Default is \ref CDS_DEFAULT_ALLOCATOR
-            - \p opt::memory_model - memory model used. Possible types are opt::v::sequential_consistent, opt::v::relaxed_ordering
+            - \p opt::memory_model - memory model used. Possible types are \p opt::v::sequential_consistent, \p opt::v::relaxed_ordering
         */
         template <typename GC, typename Node, typename... Options>
         class expandable_bucket_table
@@ -277,18 +362,18 @@ namespace cds { namespace intrusive {
                 typedef CDS_DEFAULT_ALLOCATOR       allocator;
                 typedef opt::v::relaxed_ordering    memory_model;
             };
-            typedef typename opt::make_options< default_options, Options... >::type   options;
+            typedef typename opt::make_options< default_options, Options... >::type options;
             //@endcond
         public:
-            typedef GC      gc          ;   ///< Garbage collector
-            typedef Node    node_type   ;   ///< Bucket node type
-            typedef atomics::atomic<node_type *> table_entry ;   ///< Table entry type
+            typedef GC      gc;        ///< Garbage collector
+            typedef Node    node_type; ///< Bucket node type
+            typedef atomics::atomic<node_type *> table_entry; ///< Table entry type
 
             /// Memory model for atomic operations
-            typedef typename options::memory_model     memory_model;
+            typedef typename options::memory_model memory_model;
 
         protected:
-            typedef atomics::atomic<table_entry *>   segment_type    ;   ///< Bucket table segment type
+            typedef atomics::atomic<table_entry *>   segment_type; ///< Bucket table segment type
 
         public:
             /// Bucket table allocator
@@ -300,12 +385,13 @@ namespace cds { namespace intrusive {
         protected:
             /// Bucket table metrics
             struct metrics {
-                size_t    nSegmentCount     ;    ///< max count of segments in bucket table
-                size_t    nSegmentSize      ;    ///< the segment's capacity. The capacity must be power of two.
-                size_t    nSegmentSizeLog2  ;    ///< log2( m_nSegmentSize )
-                size_t    nLoadFactor       ;    ///< load factor
-                size_t    nCapacity         ;    ///< max capacity of bucket table
+                size_t    nSegmentCount;    ///< max count of segments in bucket table
+                size_t    nSegmentSize;     ///< the segment's capacity. The capacity must be power of two.
+                size_t    nSegmentSizeLog2; ///< <tt> log2( m_nSegmentSize )</tt>
+                size_t    nLoadFactor;      ///< load factor
+                size_t    nCapacity;        ///< max capacity of bucket table
 
+                //@cond
                 metrics()
                     : nSegmentCount(1024)
                     , nSegmentSize(512)
@@ -313,14 +399,12 @@ namespace cds { namespace intrusive {
                     , nLoadFactor(1)
                     , nCapacity( nSegmentCount * nSegmentSize )
                 {}
+                //@endcond
             };
-
-            const metrics   m_metrics   ;    ///< Dynamic bucket table metrics
+            const metrics   m_metrics; ///< Dynamic bucket table metrics
 
         protected:
-            //const size_t   m_nLoadFactor;    ///< load factor (average count of items per bucket)
-            //const size_t   m_nCapacity  ;    ///< Bucket table capacity
-            segment_type * m_Segments   ;    ///< bucket table - array of segments
+            segment_type * m_Segments; ///< bucket table - array of segments
 
         protected:
             //@cond
@@ -397,7 +481,7 @@ namespace cds { namespace intrusive {
                 init_segments();
             }
 
-            /// Constructs
+            /// Creates the table with specified capacity rounded up to nearest power-of-two
             expandable_bucket_table(
                 size_t nItemCount,        ///< Max expected item count in split-ordered list
                 size_t nLoadFactor        ///< Load factor
@@ -407,7 +491,7 @@ namespace cds { namespace intrusive {
                 init_segments();
             }
 
-            /// Destroy bucket table
+            /// Destroys bucket table
             ~expandable_bucket_table()
             {
                 segment_type * pSegments = m_Segments;
@@ -431,7 +515,7 @@ namespace cds { namespace intrusive {
                 return pSegment[ nBucket & (m_metrics.nSegmentSize - 1) ].load(memory_model::memory_order_acquire);
             }
 
-            /// Set head node \p pNode of bucket \p nBucket
+            /// Set \p pNode as a head of bucket \p nBucket
             void bucket( size_t nBucket, node_type * pNode )
             {
                 size_t nSegment = nBucket >> m_metrics.nSegmentSizeLog2;
@@ -472,10 +556,10 @@ namespace cds { namespace intrusive {
         template <class BaseNodeTraits>
         struct node_traits: private BaseNodeTraits
         {
-            typedef BaseNodeTraits base_class ;     ///< Base ordered list type
-            typedef typename base_class::value_type value_type      ;   ///< Value type
-            typedef typename base_class::node_type  base_node_type  ;   ///< Ordered list node type
-            typedef node<base_node_type>            node_type       ;   ///< Spit-list node type
+            typedef BaseNodeTraits base_class;     ///< Base ordered list node type
+            typedef typename base_class::value_type value_type;     ///< Value type
+            typedef typename base_class::node_type  base_node_type; ///< Ordered list node type
+            typedef node<base_node_type>            node_type;      ///< Spit-list node type
 
             /// Convert value reference to node pointer
             static node_type * to_node_ptr( value_type& v )
@@ -526,7 +610,6 @@ namespace cds { namespace intrusive {
             }
         };
 
-
         //@cond
         namespace details {
             template <bool Value, typename GC, typename Node, typename... Options>
@@ -564,12 +647,6 @@ namespace cds { namespace intrusive {
                     : val( v )
                     , nHash( h )
                 {}
-                /*
-                operator Q&() const
-                {
-                    return val;
-                }
-                */
             };
 
             template <class OrderedList, class Options>
@@ -670,7 +747,7 @@ namespace cds { namespace intrusive {
                     }
                 };
 
-                typedef typename native_ordered_list::template rebind_options<
+                typedef typename native_ordered_list::template rebind_traits<
                     opt::compare< key_compare >
                     ,opt::disposer< wrapped_disposer >
                     ,opt::boundary_node_type< splitlist_node_type >
@@ -767,8 +844,6 @@ namespace cds { namespace intrusive {
                     return m_itCur != i.m_itCur;
                 }
             };
-
-
         }   // namespace details
         //@endcond
 
@@ -796,7 +871,7 @@ namespace cds { namespace intrusive {
 
     //@cond
     // Forward declaration
-    template <class GC, class OrderedList, class Traits = split_list::type_traits>
+    template <class GC, class OrderedList, class Traits = split_list::traits>
     class SplitListSet;
     //@endcond
 

@@ -101,12 +101,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_nogc_lazy.cpp">
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_ptb.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_ptb_lazy.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_rcu_gpb.cpp">
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
@@ -167,32 +161,8 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_nogc.cpp">
       <Filter>container\split_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_ptb.cpp">
-      <Filter>container\split_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_nogc.cpp">
       <Filter>container\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_ptb.cpp">
-      <Filter>container\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_rcu_gpb.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_rcu_gpi.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_rcu_gpt.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_gpb.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_gpi.cpp">
-      <Filter>intrusive\split_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_gpt.cpp">
-      <Filter>intrusive\split_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_rcu_gpb.cpp">
       <Filter>intrusive\skip_list</Filter>
@@ -310,6 +280,36 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_lazy_rcu_gpb.cpp">
       <Filter>container\michael_set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_dhp.cpp">
+      <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_dhp.cpp">
+      <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_dhp.cpp">
+      <Filter>intrusive\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_dhp_lazy.cpp">
+      <Filter>intrusive\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_rcu_gpb.cpp">
+      <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_rcu_gpi.cpp">
+      <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_lazy_rcu_gpt.cpp">
+      <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_gpb.cpp">
+      <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_gpi.cpp">
+      <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_gpt.cpp">
+      <Filter>container\split_list</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
