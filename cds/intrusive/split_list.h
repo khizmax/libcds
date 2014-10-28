@@ -197,7 +197,7 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef split_list::details::rebind_list_options<OrderedList, traits> wrapped_ordered_list;
+        typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;
         //@endcond
 
     public:
@@ -439,10 +439,11 @@ namespace cds { namespace intrusive {
         void init()
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename ordered_list::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ), "atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value, 
+                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             // Initialize bucket 0
             dummy_node_type * pNode = alloc_dummy_node( 0 /*split_list::dummy_hash(0)*/ );

@@ -221,6 +221,8 @@ namespace cds { namespace intrusive {
             - \p split_list::dynamic_bucket_table - use dynamic or static bucket table implementation.
                 Dynamic bucket table expands its size up to maximum bucket count when necessary
             - \p opt::back_off - back-off strategy used for spinning, defult is \p cds::backoff::Default.
+            - \p opt::stat - internal statistics, default is \p split_list::empty_stat (disabled).
+                To enable internal statistics use \p split_list::stat.
         */
         template <typename... Options>
         struct make_traits {
@@ -649,11 +651,11 @@ namespace cds { namespace intrusive {
                 {}
             };
 
-            template <class OrderedList, class Options>
-            class rebind_list_options
+            template <class OrderedList, class Traits>
+            class rebind_list_traits
             {
                 typedef OrderedList native_ordered_list;
-                typedef Options     options;
+                typedef Traits      traits;
 
                 typedef typename native_ordered_list::gc                gc;
                 typedef typename native_ordered_list::key_comparator    native_key_comparator;
@@ -706,7 +708,7 @@ namespace cds { namespace intrusive {
                     {
                         splitlist_node_type * p = static_cast<splitlist_node_type *>( node_traits::to_node_ptr( v ));
                         if ( p->is_dummy() )
-                            dummy_node_disposer<gc, typename options::allocator>()( p );
+                            dummy_node_disposer<gc, typename traits::allocator>()( p );
                         else
                             native_disposer()( v );
                     }

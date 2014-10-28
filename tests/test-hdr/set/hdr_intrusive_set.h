@@ -1168,28 +1168,36 @@ namespace set {
         void split_dyn_HP_base_cmp();
         void split_dyn_HP_base_less();
         void split_dyn_HP_base_cmpmix();
+        void split_dyn_HP_base_cmpmix_stat();
         void split_dyn_HP_member_cmp();
         void split_dyn_HP_member_less();
         void split_dyn_HP_member_cmpmix();
+        void split_dyn_HP_member_cmpmix_stat();
         void split_st_HP_base_cmp();
         void split_st_HP_base_less();
         void split_st_HP_base_cmpmix();
+        void split_st_HP_base_cmpmix_stat();
         void split_st_HP_member_cmp();
         void split_st_HP_member_less();
         void split_st_HP_member_cmpmix();
+        void split_st_HP_member_cmpmix_stat();
 
         void split_dyn_DHP_base_cmp();
         void split_dyn_DHP_base_less();
         void split_dyn_DHP_base_cmpmix();
+        void split_dyn_DHP_base_cmpmix_stat();
         void split_dyn_DHP_member_cmp();
         void split_dyn_DHP_member_less();
         void split_dyn_DHP_member_cmpmix();
+        void split_dyn_DHP_member_cmpmix_stat();
         void split_st_DHP_base_cmp();
         void split_st_DHP_base_less();
         void split_st_DHP_base_cmpmix();
+        void split_st_DHP_base_cmpmix_stat();
         void split_st_DHP_member_cmp();
         void split_st_DHP_member_less();
         void split_st_DHP_member_cmpmix();
+        void split_st_DHP_member_cmpmix_stat();
 
         void split_dyn_RCU_GPI_base_cmp();
         void split_dyn_RCU_GPI_base_less();
@@ -1207,15 +1215,19 @@ namespace set {
         void split_dyn_RCU_GPB_base_cmp();
         void split_dyn_RCU_GPB_base_less();
         void split_dyn_RCU_GPB_base_cmpmix();
+        void split_dyn_RCU_GPB_base_cmpmix_stat();
         void split_dyn_RCU_GPB_member_cmp();
         void split_dyn_RCU_GPB_member_less();
         void split_dyn_RCU_GPB_member_cmpmix();
+        void split_dyn_RCU_GPB_member_cmpmix_stat();
         void split_st_RCU_GPB_base_cmp();
         void split_st_RCU_GPB_base_less();
         void split_st_RCU_GPB_base_cmpmix();
+        void split_st_RCU_GPB_base_cmpmix_stat();
         void split_st_RCU_GPB_member_cmp();
         void split_st_RCU_GPB_member_less();
         void split_st_RCU_GPB_member_cmpmix();
+        void split_st_RCU_GPB_member_cmpmix_stat();
 
         void split_dyn_RCU_GPT_base_cmp();
         void split_dyn_RCU_GPT_base_less();
@@ -1259,43 +1271,55 @@ namespace set {
         void split_dyn_nogc_base_cmp();
         void split_dyn_nogc_base_less();
         void split_dyn_nogc_base_cmpmix();
+        void split_dyn_nogc_base_cmpmix_stat();
         void split_dyn_nogc_member_cmp();
         void split_dyn_nogc_member_less();
         void split_dyn_nogc_member_cmpmix();
+        void split_dyn_nogc_member_cmpmix_stat();
         void split_st_nogc_base_cmp();
         void split_st_nogc_base_less();
         void split_st_nogc_base_cmpmix();
+        void split_st_nogc_base_cmpmix_stat();
         void split_st_nogc_member_cmp();
         void split_st_nogc_member_less();
         void split_st_nogc_member_cmpmix();
+        void split_st_nogc_member_cmpmix_stat();
 
 
         // SplitListSet + LazyList [dyn - dynamic bucket table, st - static bucket table]
         void split_dyn_HP_base_cmp_lazy();
         void split_dyn_HP_base_less_lazy();
         void split_dyn_HP_base_cmpmix_lazy();
+        void split_dyn_HP_base_cmpmix_stat_lazy();
         void split_dyn_HP_member_cmp_lazy();
         void split_dyn_HP_member_less_lazy();
         void split_dyn_HP_member_cmpmix_lazy();
+        void split_dyn_HP_member_cmpmix_stat_lazy();
         void split_st_HP_base_cmp_lazy();
         void split_st_HP_base_less_lazy();
         void split_st_HP_base_cmpmix_lazy();
+        void split_st_HP_base_cmpmix_stat_lazy();
         void split_st_HP_member_cmp_lazy();
         void split_st_HP_member_less_lazy();
         void split_st_HP_member_cmpmix_lazy();
+        void split_st_HP_member_cmpmix_stat_lazy();
 
         void split_dyn_DHP_base_cmp_lazy();
         void split_dyn_DHP_base_less_lazy();
         void split_dyn_DHP_base_cmpmix_lazy();
+        void split_dyn_DHP_base_cmpmix_stat_lazy();
         void split_dyn_DHP_member_cmp_lazy();
         void split_dyn_DHP_member_less_lazy();
         void split_dyn_DHP_member_cmpmix_lazy();
+        void split_dyn_DHP_member_cmpmix_stat_lazy();
         void split_st_DHP_base_cmp_lazy();
         void split_st_DHP_base_less_lazy();
         void split_st_DHP_base_cmpmix_lazy();
+        void split_st_DHP_base_cmpmix_stat_lazy();
         void split_st_DHP_member_cmp_lazy();
         void split_st_DHP_member_less_lazy();
         void split_st_DHP_member_cmpmix_lazy();
+        void split_st_DHP_member_cmpmix_stat_lazy();
 
         void split_dyn_RCU_GPI_base_cmp_lazy();
         void split_dyn_RCU_GPI_base_less_lazy();
@@ -1313,15 +1337,19 @@ namespace set {
         void split_dyn_RCU_GPB_base_cmp_lazy();
         void split_dyn_RCU_GPB_base_less_lazy();
         void split_dyn_RCU_GPB_base_cmpmix_lazy();
+        void split_dyn_RCU_GPB_base_cmpmix_stat_lazy();
         void split_dyn_RCU_GPB_member_cmp_lazy();
         void split_dyn_RCU_GPB_member_less_lazy();
         void split_dyn_RCU_GPB_member_cmpmix_lazy();
+        void split_dyn_RCU_GPB_member_cmpmix_stat_lazy();
         void split_st_RCU_GPB_base_cmp_lazy();
         void split_st_RCU_GPB_base_less_lazy();
         void split_st_RCU_GPB_base_cmpmix_lazy();
+        void split_st_RCU_GPB_base_cmpmix_stat_lazy();
         void split_st_RCU_GPB_member_cmp_lazy();
         void split_st_RCU_GPB_member_less_lazy();
         void split_st_RCU_GPB_member_cmpmix_lazy();
+        void split_st_RCU_GPB_member_cmpmix_stat_lazy();
 
         void split_dyn_RCU_GPT_base_cmp_lazy();
         void split_dyn_RCU_GPT_base_less_lazy();
@@ -1365,15 +1393,19 @@ namespace set {
         void split_dyn_nogc_base_cmp_lazy();
         void split_dyn_nogc_base_less_lazy();
         void split_dyn_nogc_base_cmpmix_lazy();
+        void split_dyn_nogc_base_cmpmix_stat_lazy();
         void split_dyn_nogc_member_cmp_lazy();
         void split_dyn_nogc_member_less_lazy();
         void split_dyn_nogc_member_cmpmix_lazy();
+        void split_dyn_nogc_member_cmpmix_stat_lazy();
         void split_st_nogc_base_cmp_lazy();
         void split_st_nogc_base_less_lazy();
         void split_st_nogc_base_cmpmix_lazy();
+        void split_st_nogc_base_cmpmix_stat_lazy();
         void split_st_nogc_member_cmp_lazy();
         void split_st_nogc_member_less_lazy();
         void split_st_nogc_member_cmpmix_lazy();
+        void split_st_nogc_member_cmpmix_stat_lazy();
 
         CPPUNIT_TEST_SUITE(IntrusiveHashSetHdrTest)
             CPPUNIT_TEST(HP_base_cmp)
@@ -1491,28 +1523,36 @@ namespace set {
             CPPUNIT_TEST(split_dyn_HP_base_cmp)
             CPPUNIT_TEST(split_dyn_HP_base_less)
             CPPUNIT_TEST(split_dyn_HP_base_cmpmix)
-            CPPUNIT_TEST(split_dyn_HP_member_cmp)
+            CPPUNIT_TEST( split_dyn_HP_base_cmpmix_stat )
+            CPPUNIT_TEST( split_dyn_HP_member_cmp )
             CPPUNIT_TEST(split_dyn_HP_member_less)
             CPPUNIT_TEST(split_dyn_HP_member_cmpmix)
-            CPPUNIT_TEST(split_st_HP_base_cmp)
+            CPPUNIT_TEST( split_dyn_HP_member_cmpmix_stat )
+            CPPUNIT_TEST( split_st_HP_base_cmp )
             CPPUNIT_TEST(split_st_HP_base_less)
             CPPUNIT_TEST(split_st_HP_base_cmpmix)
-            CPPUNIT_TEST(split_st_HP_member_cmp)
+            CPPUNIT_TEST( split_st_HP_base_cmpmix_stat )
+            CPPUNIT_TEST( split_st_HP_member_cmp )
             CPPUNIT_TEST(split_st_HP_member_less)
             CPPUNIT_TEST(split_st_HP_member_cmpmix)
+            CPPUNIT_TEST( split_st_HP_member_cmpmix_stat )
 
             CPPUNIT_TEST(split_dyn_DHP_base_cmp)
             CPPUNIT_TEST(split_dyn_DHP_base_less)
             CPPUNIT_TEST(split_dyn_DHP_base_cmpmix)
-            CPPUNIT_TEST(split_dyn_DHP_member_cmp)
+            CPPUNIT_TEST( split_dyn_DHP_base_cmpmix_stat )
+            CPPUNIT_TEST( split_dyn_DHP_member_cmp )
             CPPUNIT_TEST(split_dyn_DHP_member_less)
             CPPUNIT_TEST(split_dyn_DHP_member_cmpmix)
-            CPPUNIT_TEST(split_st_DHP_base_cmp)
+            CPPUNIT_TEST( split_dyn_DHP_member_cmpmix_stat )
+            CPPUNIT_TEST( split_st_DHP_base_cmp )
             CPPUNIT_TEST(split_st_DHP_base_less)
             CPPUNIT_TEST(split_st_DHP_base_cmpmix)
-            CPPUNIT_TEST(split_st_DHP_member_cmp)
+            CPPUNIT_TEST( split_st_DHP_base_cmpmix_stat )
+            CPPUNIT_TEST( split_st_DHP_member_cmp )
             CPPUNIT_TEST(split_st_DHP_member_less)
             CPPUNIT_TEST(split_st_DHP_member_cmpmix)
+            CPPUNIT_TEST( split_st_DHP_member_cmpmix_stat )
 
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_cmp)
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_less)
@@ -1530,15 +1570,19 @@ namespace set {
             CPPUNIT_TEST(split_dyn_RCU_GPB_base_cmp)
             CPPUNIT_TEST(split_dyn_RCU_GPB_base_less)
             CPPUNIT_TEST(split_dyn_RCU_GPB_base_cmpmix)
-            CPPUNIT_TEST(split_dyn_RCU_GPB_member_cmp)
+            CPPUNIT_TEST( split_dyn_RCU_GPB_base_cmpmix_stat )
+            CPPUNIT_TEST( split_dyn_RCU_GPB_member_cmp )
             CPPUNIT_TEST(split_dyn_RCU_GPB_member_less)
             CPPUNIT_TEST(split_dyn_RCU_GPB_member_cmpmix)
-            CPPUNIT_TEST(split_st_RCU_GPB_base_cmp)
+            CPPUNIT_TEST( split_dyn_RCU_GPB_member_cmpmix_stat )
+            CPPUNIT_TEST( split_st_RCU_GPB_base_cmp )
             CPPUNIT_TEST(split_st_RCU_GPB_base_less)
             CPPUNIT_TEST(split_st_RCU_GPB_base_cmpmix)
-            CPPUNIT_TEST(split_st_RCU_GPB_member_cmp)
+            CPPUNIT_TEST( split_st_RCU_GPB_base_cmpmix_stat )
+            CPPUNIT_TEST( split_st_RCU_GPB_member_cmp )
             CPPUNIT_TEST(split_st_RCU_GPB_member_less)
             CPPUNIT_TEST(split_st_RCU_GPB_member_cmpmix)
+            CPPUNIT_TEST( split_st_RCU_GPB_member_cmpmix_stat )
 
             CPPUNIT_TEST(split_dyn_RCU_GPT_base_cmp)
             CPPUNIT_TEST(split_dyn_RCU_GPT_base_less)
@@ -1582,42 +1626,53 @@ namespace set {
             CPPUNIT_TEST(split_dyn_nogc_base_cmp)
             CPPUNIT_TEST(split_dyn_nogc_base_less)
             CPPUNIT_TEST(split_dyn_nogc_base_cmpmix)
-            CPPUNIT_TEST(split_dyn_nogc_member_cmp)
+            CPPUNIT_TEST( split_dyn_nogc_base_cmpmix_stat )
+            CPPUNIT_TEST( split_dyn_nogc_member_cmp )
             CPPUNIT_TEST(split_dyn_nogc_member_less)
             CPPUNIT_TEST(split_dyn_nogc_member_cmpmix)
-            CPPUNIT_TEST(split_st_nogc_base_cmp)
+            CPPUNIT_TEST( split_dyn_nogc_member_cmpmix_stat )
+            CPPUNIT_TEST( split_st_nogc_base_cmp )
             CPPUNIT_TEST(split_st_nogc_base_less)
             CPPUNIT_TEST(split_st_nogc_base_cmpmix)
-            CPPUNIT_TEST(split_st_nogc_member_cmp)
+            CPPUNIT_TEST( split_st_nogc_base_cmpmix_stat )
+            CPPUNIT_TEST( split_st_nogc_member_cmp )
             CPPUNIT_TEST(split_st_nogc_member_less)
             CPPUNIT_TEST(split_st_nogc_member_cmpmix)
-
+            CPPUNIT_TEST( split_st_nogc_member_cmpmix_stat )
 
             CPPUNIT_TEST(split_dyn_HP_base_cmp_lazy)
             CPPUNIT_TEST(split_dyn_HP_base_less_lazy)
             CPPUNIT_TEST(split_dyn_HP_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_dyn_HP_member_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_HP_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_dyn_HP_member_cmp_lazy )
             CPPUNIT_TEST(split_dyn_HP_member_less_lazy)
             CPPUNIT_TEST(split_dyn_HP_member_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_HP_base_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_HP_member_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_HP_base_cmp_lazy )
             CPPUNIT_TEST(split_st_HP_base_less_lazy)
             CPPUNIT_TEST(split_st_HP_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_HP_member_cmp_lazy)
+            CPPUNIT_TEST( split_st_HP_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_HP_member_cmp_lazy )
             CPPUNIT_TEST(split_st_HP_member_less_lazy)
             CPPUNIT_TEST(split_st_HP_member_cmpmix_lazy)
+            CPPUNIT_TEST( split_st_HP_member_cmpmix_stat_lazy )
 
             CPPUNIT_TEST(split_dyn_DHP_base_cmp_lazy)
             CPPUNIT_TEST(split_dyn_DHP_base_less_lazy)
             CPPUNIT_TEST(split_dyn_DHP_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_dyn_DHP_member_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_DHP_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_dyn_DHP_member_cmp_lazy )
             CPPUNIT_TEST(split_dyn_DHP_member_less_lazy)
             CPPUNIT_TEST(split_dyn_DHP_member_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_DHP_base_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_DHP_member_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_DHP_base_cmp_lazy )
             CPPUNIT_TEST(split_st_DHP_base_less_lazy)
             CPPUNIT_TEST(split_st_DHP_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_DHP_member_cmp_lazy)
+            CPPUNIT_TEST( split_st_DHP_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_DHP_member_cmp_lazy )
             CPPUNIT_TEST(split_st_DHP_member_less_lazy)
             CPPUNIT_TEST(split_st_DHP_member_cmpmix_lazy)
+            CPPUNIT_TEST( split_st_DHP_member_cmpmix_stat_lazy )
 
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_cmp_lazy)
             CPPUNIT_TEST(split_dyn_RCU_GPI_base_less_lazy)
@@ -1635,15 +1690,19 @@ namespace set {
             CPPUNIT_TEST(split_dyn_RCU_GPB_base_cmp_lazy)
             CPPUNIT_TEST(split_dyn_RCU_GPB_base_less_lazy)
             CPPUNIT_TEST(split_dyn_RCU_GPB_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_dyn_RCU_GPB_member_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_RCU_GPB_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_dyn_RCU_GPB_member_cmp_lazy )
             CPPUNIT_TEST(split_dyn_RCU_GPB_member_less_lazy)
             CPPUNIT_TEST(split_dyn_RCU_GPB_member_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_RCU_GPB_base_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_RCU_GPB_member_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_RCU_GPB_base_cmp_lazy )
             CPPUNIT_TEST(split_st_RCU_GPB_base_less_lazy)
             CPPUNIT_TEST(split_st_RCU_GPB_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_RCU_GPB_member_cmp_lazy)
+            CPPUNIT_TEST( split_st_RCU_GPB_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_RCU_GPB_member_cmp_lazy )
             CPPUNIT_TEST(split_st_RCU_GPB_member_less_lazy)
             CPPUNIT_TEST(split_st_RCU_GPB_member_cmpmix_lazy)
+            CPPUNIT_TEST( split_st_RCU_GPB_member_cmpmix_stat_lazy )
 
             CPPUNIT_TEST(split_dyn_RCU_GPT_base_cmp_lazy)
             CPPUNIT_TEST(split_dyn_RCU_GPT_base_less_lazy)
@@ -1687,15 +1746,19 @@ namespace set {
             CPPUNIT_TEST(split_dyn_nogc_base_cmp_lazy)
             CPPUNIT_TEST(split_dyn_nogc_base_less_lazy)
             CPPUNIT_TEST(split_dyn_nogc_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_dyn_nogc_member_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_nogc_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_dyn_nogc_member_cmp_lazy )
             CPPUNIT_TEST(split_dyn_nogc_member_less_lazy)
             CPPUNIT_TEST(split_dyn_nogc_member_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_nogc_base_cmp_lazy)
+            CPPUNIT_TEST( split_dyn_nogc_member_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_nogc_base_cmp_lazy )
             CPPUNIT_TEST(split_st_nogc_base_less_lazy)
             CPPUNIT_TEST(split_st_nogc_base_cmpmix_lazy)
-            CPPUNIT_TEST(split_st_nogc_member_cmp_lazy)
+            CPPUNIT_TEST( split_st_nogc_base_cmpmix_stat_lazy )
+            CPPUNIT_TEST( split_st_nogc_member_cmp_lazy )
             CPPUNIT_TEST(split_st_nogc_member_less_lazy)
             CPPUNIT_TEST(split_st_nogc_member_cmpmix_lazy)
+            CPPUNIT_TEST( split_st_nogc_member_cmpmix_stat_lazy )
 
         CPPUNIT_TEST_SUITE_END()
 

@@ -83,7 +83,7 @@ namespace cds { namespace intrusive {
         //@cond
         // Rebind traits (split-list support)
         template <typename... Options>
-        struct rebind_options {
+        struct rebind_traits {
             typedef LazyList<
                 gc
                 , value_type

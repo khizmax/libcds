@@ -19,49 +19,48 @@ namespace cds { namespace intrusive {
         The template parameter \p OrderedList should be any gc::nogc-derived ordered list, for example,
         \ref cds_intrusive_MichaelList_nogc "persistent MichaelList",
         \ref cds_intrusive_LazyList_nogc "persistent LazyList"
-
-        The interface of the specialization is a slightly different.
     */
     template <
         class OrderedList,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = split_list::type_traits
+        class Traits = split_list::traits
 #else
         class Traits
 #endif
     >
-    class SplitListSet< gc::nogc, OrderedList, Traits >
+    class SplitListSet< cds::gc::nogc, OrderedList, Traits >
     {
     public:
-        typedef Traits          options ;   ///< Traits template parameters
-        typedef gc::nogc        gc      ;   ///< Garbage collector
+        typedef cds::gc::nogc gc;     ///< Garbage collector
+        typedef Traits        traits; ///< Traits template parameters
 
-        /// Hash functor for \ref value_type and all its derivatives that you use
-        typedef typename cds::opt::v::hash_selector< typename options::hash >::type   hash;
+        /// Hash functor for \p value_type and all its derivatives that you use
+        typedef typename cds::opt::v::hash_selector< typename traits::hash >::type   hash;
 
     protected:
         //@cond
-        typedef split_list::details::rebind_list_options<OrderedList, options> wrapped_ordered_list;
+        typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;
         //@endcond
 
     public:
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef OrderedList         ordered_list    ;   ///< type of ordered list used as base for split-list
+        typedef OrderedList ordered_list;   ///< type of ordered list used as base for split-list
 #   else
-        typedef typename wrapped_ordered_list::result    ordered_list;
+        typedef typename wrapped_ordered_list::result ordered_list;
 #   endif
-        typedef typename ordered_list::value_type   value_type  ;   ///< type of value stored in the split-list
-        typedef typename ordered_list::key_comparator    key_comparator  ;   ///< key comparison functor
-        typedef typename ordered_list::disposer disposer        ;   ///< Node disposer functor
+        typedef typename ordered_list::value_type     value_type;     ///< type of value stored in the split-list
+        typedef typename ordered_list::key_comparator key_comparator; ///< key comparison functor
+        typedef typename ordered_list::disposer       disposer;       ///< Node disposer functor
 
-        typedef typename options::item_counter          item_counter    ;   ///< Item counter type
-        typedef typename options::back_off              back_off        ;   ///< back-off strategy for spinning
-        typedef typename options::memory_model          memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::item_counter item_counter; ///< Item counter type
+        typedef typename traits::back_off     back_off;     ///< back-off strategy
+        typedef typename traits::memory_model memory_model; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::stat         stat;         ///< Internal statistics, see \p spit_list::stat
 
     protected:
-        typedef typename ordered_list::node_type    list_node_type      ;   ///< Node type as declared in ordered list
-        typedef split_list::node<list_node_type>    node_type           ;   ///< split-list node type
-        typedef node_type                           dummy_node_type     ;   ///< dummy node type
+        typedef typename ordered_list::node_type  list_node_type;  ///< Node type as declared in ordered list
+        typedef split_list::node<list_node_type>  node_type;       ///< split-list node type
+        typedef node_type                         dummy_node_type; ///< dummy node type
 
         /// Split-list node traits
         /**
@@ -73,10 +72,10 @@ namespace cds { namespace intrusive {
         //@cond
         /// Bucket table implementation
         typedef typename split_list::details::bucket_table_selector<
-            options::dynamic_bucket_table
+            traits::dynamic_bucket_table
             , gc
             , dummy_node_type
-            , opt::allocator< typename options::allocator >
+            , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
         >::type bucket_table;
 
@@ -138,22 +137,26 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
-        ordered_list_wrapper    m_List              ;   ///< Ordered list containing split-list items
-        bucket_table            m_Buckets           ;   ///< bucket table
-        atomics::atomic<size_t>  m_nBucketCountLog2  ;   ///< log2( current bucket count )
-        item_counter            m_ItemCounter       ;   ///< Item counter
-        hash                    m_HashFunctor       ;   ///< Hash functor
+        ordered_list_wrapper    m_List;             ///< Ordered list containing split-list items
+        bucket_table            m_Buckets;          ///< bucket table
+        atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
+        item_counter            m_ItemCounter;      ///< Item counter
+        hash                    m_HashFunctor;      ///< Hash functor
+        stat                    m_Stat;             ///< Internal statistics
 
     protected:
         //@cond
-        typedef cds::details::Allocator< dummy_node_type, typename options::allocator >   dummy_node_allocator;
-        static dummy_node_type * alloc_dummy_node( size_t nHash )
+        typedef cds::details::Allocator< dummy_node_type, typename traits::allocator >   dummy_node_allocator;
+
+        dummy_node_type * alloc_dummy_node( size_t nHash )
         {
+            m_Stat.onHeadNodeAllocated();
             return dummy_node_allocator().New( nHash );
         }
-        static void free_dummy_node( dummy_node_type * p )
+        void free_dummy_node( dummy_node_type * p )
         {
             dummy_node_allocator().Delete( p );
+            m_Stat.onHeadNodeFreed();
         }
 
         /// Calculates hash value of \p key
@@ -182,6 +185,7 @@ namespace cds { namespace intrusive {
             dummy_node_type * pParentBucket = m_Buckets.bucket( nParent );
             if ( pParentBucket == nullptr ) {
                 pParentBucket = init_bucket( nParent );
+                m_Stat.onRecursiveInitBucket();
             }
 
             assert( pParentBucket != nullptr );
@@ -191,6 +195,7 @@ namespace cds { namespace intrusive {
                 dummy_node_type * pBucket = alloc_dummy_node( split_list::dummy_hash( nBucket ) );
                 if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
                     m_Buckets.bucket( nBucket, pBucket );
+                    m_Stat.onNewBucket();
                     return pBucket;
                 }
                 free_dummy_node( pBucket );
@@ -202,12 +207,14 @@ namespace cds { namespace intrusive {
             // The compiler can decide that waiting loop can be "optimized" (stripped)
             // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
             //
+            m_Stat.onBucketInitContenton();
             back_off bkoff;
             while ( true ) {
                 dummy_node_type volatile * p = m_Buckets.bucket( nBucket );
                 if ( p && p != nullptr )
                     return const_cast<dummy_node_type *>( p );
                 bkoff();
+                m_Stat.onBusyWaitBucketInit();
             }
         }
 
@@ -227,10 +234,11 @@ namespace cds { namespace intrusive {
         void init()
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename ordered_list::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ), "atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value, 
+                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             // Initialize bucket 0
             dummy_node_type * pNode = alloc_dummy_node( 0 /*split_list::dummy_hash(0)*/ );
@@ -308,14 +316,15 @@ namespace cds { namespace intrusive {
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
-            The functor can change non-key fields of the \p item; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You can pass \p func argument by value by reference using \p std::ref.
+            The functor can change non-key fields of the \p item.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with given key
             already is in the set.
+
+            @warning For \ref cds_intrusive_MichaelList_nogc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_nogc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
@@ -324,24 +333,24 @@ namespace cds { namespace intrusive {
             return std::make_pair( ret.first != end(), ret.second );
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_SplitListSet_nogc_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns pointer to item found or , and \p nullptr otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        value_type * find( Q const & val )
+        value_type * find( Q const& key )
         {
-            iterator it = find_( val );
+            iterator it = find_( key );
             if ( it == end() )
                 return nullptr;
             return &*it;
         }
 
-        /// Finds the key \p val with \p pred predicate for comparing
+        /// Finds the key \p key with \p pred predicate for comparing
         /**
             The function is an analog of \ref cds_intrusive_SplitListSet_nogc_find_val "find(Q const&)"
             but \p cmp is used for key compare.
@@ -349,46 +358,41 @@ namespace cds { namespace intrusive {
             \p cmp must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * find_with( Q const& val, Less pred )
+        value_type * find_with( Q const& key, Less pred )
         {
-            iterator it = find_with_( val, pred );
+            iterator it = find_with_( key, pred );
             if ( it == end() )
                 return nullptr;
             return &*it;
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_SplitListSet_nogc_find_func
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor can change non-key fields of \p item.
             The functor does not serialize simultaneous access to the set \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
-            may modify both arguments.
-
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return find_( val, key_comparator(), f );
+            return find_( key, key_comparator(), f );
         }
 
-        /// Finds the key \p val with \p pred predicate for comparing
+        /// Finds the key \p key with \p pred predicate for comparing
         /**
             The function is an analog of \ref cds_intrusive_SplitListSet_nogc_find_func "find(Q&, Func)"
             but \p cmp is used for key compare.
@@ -396,50 +400,9 @@ namespace cds { namespace intrusive {
             \p cmp must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return find_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
-        }
-
-        /// Find the key \p val
-        /** \anchor cds_intrusive_SplitListSet_nogc_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
-
-            The functor can change non-key fields of \p item.
-            The functor does not serialize simultaneous access to the set \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_( val, key_comparator(), f );
-        }
-
-        /// Finds the key \p val with \p pred predicate for comparing
-        /**
-            The function is an analog of \ref cds_intrusive_SplitListSet_nogc_find_cfunc "find(Q const&, Func)"
-            but \p cmp is used for key compare.
-            \p Less has the interface like \p std::less.
-            \p cmp must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return find_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
         }
 
         /// Checks if the set is empty
@@ -462,7 +425,7 @@ namespace cds { namespace intrusive {
         //@cond
         template <bool IsConst>
         class iterator_type
-            :public split_list::details::iterator_type<node_traits, ordered_list, IsConst>
+            : public split_list::details::iterator_type<node_traits, ordered_list, IsConst>
         {
             typedef split_list::details::iterator_type<node_traits, ordered_list, IsConst> iterator_base_class;
             typedef typename iterator_base_class::list_iterator list_iterator;
@@ -554,8 +517,10 @@ namespace cds { namespace intrusive {
             list_iterator it = m_List.insert_at_( pHead, val );
             if ( it != m_List.end() ) {
                 inc_item_count();
+                m_Stat.onInsertSuccess();
                 return iterator( it, m_List.end() );
             }
+            m_Stat.onInsertFailed();
             return end();
         }
 
@@ -570,22 +535,28 @@ namespace cds { namespace intrusive {
 
             std::pair<list_iterator, bool> ret = m_List.ensure_at_( pHead, val, func );
             if ( ret.first != m_List.end() ) {
-                if ( ret.second )
+                if ( ret.second ) {
                     inc_item_count();
+                    m_Stat.onEnsureNew();
+                }
+                else
+                    m_Stat.onEnsureExist();
                 return std::make_pair( iterator(ret.first, m_List.end()), ret.second );
             }
             return std::make_pair( end(), ret.second );
         }
 
         template <typename Q, typename Less >
-        iterator find_with_( Q const& val, Less pred )
+        iterator find_with_( Q& val, Less pred )
         {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return iterator( m_List.find_at_( pHead, sv, typename wrapped_ordered_list::template make_compare_from_less<Less>() ), m_List.end() );
+            auto it = m_List.find_at_( pHead, sv, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+            m_Stat.onFind( it != m_List.end() );
+            return iterator( it, m_List.end() );
         }
 
         template <typename Q>
@@ -596,8 +567,9 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return iterator( m_List.find_at_( pHead, sv, key_comparator() ), m_List.end() );
-
+            auto it = m_List.find_at_( pHead, sv, key_comparator() );
+            m_Stat.onFind( it != m_List.end() );
+            return iterator( it, m_List.end() );
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -607,8 +579,8 @@ namespace cds { namespace intrusive {
             split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
-            return m_List.find_at( pHead, sv, cmp,
-                [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); });
+            return m_Stat.onFind( m_List.find_at( pHead, sv, cmp,
+                [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); }));
         }
 
         //@endcond

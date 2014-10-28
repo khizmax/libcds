@@ -27,10 +27,10 @@ namespace cds { namespace intrusive {
         - \p OrderedList - ordered list implementation used as bucket for hash set, for example, MichaelList, LazyList.
             The intrusive ordered list implementation specifies the type \p T stored in the hash-set,
             the comparing functor for the type \p T and other features specific for the ordered list.
-        - \p Traits - type traits. See split_list::type_traits for explanation.
-            Instead of defining \p Traits struct you may use option-based syntax with split_list::make_traits metafunction.
+        - \p Traits - set traits, default isd \p split_list::traits.
+            Instead of defining \p Traits struct you may use option-based syntax with \p split_list::make_traits metafunction.
 
-        @note About features of hash functor needed for \p %SplitList see \ref cds_SplitList_hash_functor "SplitList general description".
+        @note About reqired features of hash functor see \ref cds_SplitList_hash_functor "SplitList general description".
 
         \par How to use
         Before including <tt><cds/intrusive/split_list_rcu.h></tt> you should include appropriate RCU header file,
@@ -54,7 +54,7 @@ namespace cds { namespace intrusive {
         class RCU,
         class OrderedList,
 #   ifdef CDS_DOXYGEN_INVOKED
-        class Traits = split_list::type_traits
+        class Traits = split_list::traits
 #   else
         class Traits
 #   endif
@@ -62,39 +62,40 @@ namespace cds { namespace intrusive {
     class SplitListSet< cds::urcu::gc< RCU >, OrderedList, Traits >
     {
     public:
-        typedef Traits               options ;   ///< Traits template parameters
-        typedef cds::urcu::gc< RCU > gc      ;   ///< RCU garbage collector
+        typedef cds::urcu::gc< RCU > gc;   ///< RCU garbage collector
+        typedef Traits           traits;   ///< Traits template parameters
 
         /// Hash functor for \ref value_type and all its derivatives that you use
-        typedef typename cds::opt::v::hash_selector< typename options::hash >::type   hash;
+        typedef typename cds::opt::v::hash_selector< typename traits::hash >::type   hash;
 
     protected:
         //@cond
-        typedef split_list::details::rebind_list_options<OrderedList, options> wrapped_ordered_list;
+        typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;
         //@endcond
 
     public:
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef OrderedList         ordered_list    ;   ///< type of ordered list used as base for split-list
+        typedef OrderedList         ordered_list;   ///< type of ordered list used as base for split-list
 #   else
         typedef typename wrapped_ordered_list::result    ordered_list;
 #   endif
-        typedef typename ordered_list::value_type       value_type      ;   ///< type of value stored in the split-list
-        typedef typename ordered_list::key_comparator   key_comparator  ;   ///< key compare functor
-        typedef typename ordered_list::disposer         disposer        ;   ///< Node disposer functor
-        typedef typename ordered_list::rcu_lock         rcu_lock        ;   ///< RCU scoped lock
-        typedef typename ordered_list::exempt_ptr       exempt_ptr      ;   ///< pointer to extracted node
+        typedef typename ordered_list::value_type     value_type;     ///< type of value stored in the split-list
+        typedef typename ordered_list::key_comparator key_comparator; ///< key compare functor
+        typedef typename ordered_list::disposer       disposer;       ///< Node disposer functor
+        typedef typename ordered_list::rcu_lock       rcu_lock;       ///< RCU scoped lock
+        typedef typename ordered_list::exempt_ptr     exempt_ptr;     ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
 
-        typedef typename options::item_counter          item_counter    ;   ///< Item counter type
-        typedef typename options::back_off              back_off        ;   ///< back-off strategy for spinning
-        typedef typename options::memory_model          memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::item_counter item_counter; ///< Item counter type
+        typedef typename traits::back_off     back_off;     ///< back-off strategy for spinning
+        typedef typename traits::memory_model memory_model; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::stat         stat;         ///< Internal statistics
 
     protected:
-        typedef typename ordered_list::node_type    list_node_type      ;   ///< Node type as declared in ordered list
-        typedef split_list::node<list_node_type>    node_type           ;   ///< split-list node type
-        typedef node_type                           dummy_node_type     ;   ///< dummy node type
+        typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
+        typedef split_list::node<list_node_type>    node_type;       ///< split-list node type
+        typedef node_type                           dummy_node_type; ///< dummy node type
 
         /// Split-list node traits
         /**
@@ -106,10 +107,10 @@ namespace cds { namespace intrusive {
         //@cond
         /// Bucket table implementation
         typedef typename split_list::details::bucket_table_selector<
-            options::dynamic_bucket_table
+            traits::dynamic_bucket_table
             , gc
             , dummy_node_type
-            , opt::allocator< typename options::allocator >
+            , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
         >::type bucket_table;
 
@@ -233,22 +234,26 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
-        ordered_list_wrapper    m_List              ;   ///< Ordered list containing split-list items
-        bucket_table            m_Buckets           ;   ///< bucket table
-        atomics::atomic<size_t> m_nBucketCountLog2  ;   ///< log2( current bucket count )
-        item_counter            m_ItemCounter       ;   ///< Item counter
-        hash                    m_HashFunctor       ;   ///< Hash functor
+        ordered_list_wrapper    m_List;             ///< Ordered list containing split-list items
+        bucket_table            m_Buckets;          ///< bucket table
+        atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
+        item_counter            m_ItemCounter;      ///< Item counter
+        hash                    m_HashFunctor;      ///< Hash functor
+        stat                    m_Stat;             ///< Internal stattistics accumulator
 
     protected:
         //@cond
-        typedef cds::details::Allocator< dummy_node_type, typename options::allocator >   dummy_node_allocator;
-        static dummy_node_type * alloc_dummy_node( size_t nHash )
+        typedef cds::details::Allocator< dummy_node_type, typename traits::allocator >   dummy_node_allocator;
+
+        dummy_node_type * alloc_dummy_node( size_t nHash )
         {
+            m_Stat.onHeadNodeAllocated();
             return dummy_node_allocator().New( nHash );
         }
-        static void free_dummy_node( dummy_node_type * p )
+        void free_dummy_node( dummy_node_type * p )
         {
             dummy_node_allocator().Delete( p );
+            m_Stat.onHeadNodeFreed();
         }
 
         /// Calculates hash value of \p key
@@ -277,6 +282,7 @@ namespace cds { namespace intrusive {
             dummy_node_type * pParentBucket = m_Buckets.bucket( nParent );
             if ( pParentBucket == nullptr ) {
                 pParentBucket = init_bucket( nParent );
+                m_Stat.onRecursiveInitBucket();
             }
 
             assert( pParentBucket != nullptr );
@@ -286,6 +292,7 @@ namespace cds { namespace intrusive {
                 dummy_node_type * pBucket = alloc_dummy_node( split_list::dummy_hash( nBucket ) );
                 if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
                     m_Buckets.bucket( nBucket, pBucket );
+                    m_Stat.onNewBucket();
                     return pBucket;
                 }
                 free_dummy_node( pBucket );
@@ -297,12 +304,14 @@ namespace cds { namespace intrusive {
             // The compiler can decide that waiting loop can be "optimized" (stripped)
             // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
             //
+            m_Stat.onBucketInitContenton();
             back_off bkoff;
             while ( true ) {
                 dummy_node_type volatile * p = m_Buckets.bucket( nBucket );
                 if ( p != nullptr )
                     return const_cast<dummy_node_type *>( p );
                 bkoff();
+                m_Stat.onBusyWaitBucketInit();
             }
         }
 
@@ -322,10 +331,11 @@ namespace cds { namespace intrusive {
         void init()
         {
             // GC and OrderedList::gc must be the same
-            static_assert(( std::is_same<gc, typename ordered_list::gc>::value ), "GC and OrderedList::gc must be the same");
+            static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert(( !std::is_same<item_counter, atomicity::empty_item_counter>::value ), "atomicity::empty_item_counter is not allowed as a item counter");
+            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value, 
+                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             // Initialize bucket 0
             dummy_node_type * pNode = alloc_dummy_node( 0 /*split_list::dummy_hash(0)*/ );
@@ -353,8 +363,8 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return m_List.find_at( pHead, sv, cmp,
-                [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); });
+            return m_Stat.onFind( m_List.find_at( pHead, sv, cmp,
+                [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); }));
         }
 
         template <typename Q, typename Compare>
@@ -365,7 +375,7 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return m_List.find_at( pHead, sv, cmp );
+            return m_Stat.onFind( m_List.find_at( pHead, sv, cmp ));
         }
 
         template <typename Q, typename Compare>
@@ -376,7 +386,9 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return m_List.get_at( pHead, sv, cmp );
+            value_type * p = m_List.get_at( pHead, sv, cmp );
+            m_Stat.onFind( p != nullptr );
+            return p;
         }
 
         template <typename Q, typename Compare>
@@ -388,8 +400,12 @@ namespace cds { namespace intrusive {
             assert( pHead != nullptr );
 
             value_type * pNode = m_List.extract_at( pHead, sv, cmp );
-            if ( pNode )
+            if ( pNode ) {
                 --m_ItemCounter;
+                m_Stat.onExtractSuccess();
+            }
+            else
+                m_Stat.onExtractFailed();
             return pNode;
         }
 
@@ -409,8 +425,10 @@ namespace cds { namespace intrusive {
 
             if ( m_List.erase_at( pHead, sv, cmp ) ) {
                 --m_ItemCounter;
+                m_Stat.onEraseSuccess();
                 return true;
             }
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -424,8 +442,10 @@ namespace cds { namespace intrusive {
 
             if ( m_List.erase_at( pHead, sv, cmp, f )) {
                 --m_ItemCounter;
+                m_Stat.onEraseSuccess();
                 return true;
             }
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -475,8 +495,10 @@ namespace cds { namespace intrusive {
 
             if ( m_List.insert_at( pHead, val )) {
                 inc_item_count();
+                m_Stat.onInsertSuccess();
                 return true;
             }
+            m_Stat.onInsertFailed();
             return false;
         }
 
@@ -493,13 +515,14 @@ namespace cds { namespace intrusive {
             \code
                 void func( value_type& val );
             \endcode
-            where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
-            \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success and may be passed by reference
-            using \p std::ref.
+            where \p val is the item inserted.
 
             The function makes RCU lock internally.
-        */
+
+            @warning For \ref cds_intrusive_MichaelList_rcu "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_rcu "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
+            */
         template <typename Func>
         bool insert( value_type& val, Func f )
         {
@@ -511,8 +534,10 @@ namespace cds { namespace intrusive {
 
             if ( m_List.insert_at( pHead, val, f )) {
                 inc_item_count();
+                m_Stat.onInsertSuccess();
                 return true;
             }
+            m_Stat.onInsertFailed();
             return false;
         }
 
@@ -533,17 +558,16 @@ namespace cds { namespace intrusive {
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
-            The functor can change non-key fields of the \p item; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You can pass \p func argument by value or by reference using \p std::ref.
-
             The function makes RCU lock internally.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
-        */
+
+            @warning For \ref cds_intrusive_MichaelList_rcu "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_rcu "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
+            */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
@@ -554,8 +578,12 @@ namespace cds { namespace intrusive {
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
 
             std::pair<bool, bool> bRet = m_List.ensure_at( pHead, val, func );
-            if ( bRet.first && bRet.second )
+            if ( bRet.first && bRet.second ) {
                 inc_item_count();
+                m_Stat.onEnsureNew();
+            }
+            else
+                m_Stat.onEnsureExist();
             return bRet;
         }
 
@@ -581,30 +609,32 @@ namespace cds { namespace intrusive {
 
             if ( m_List.unlink_at( pHead, val ) ) {
                 --m_ItemCounter;
+                m_Stat.onEraseSuccess();
                 return true;
             }
+            m_Stat.onEraseFailed();
             return false;
         }
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_SplitListSet_rcu_erase
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             unlinks it from the set, and returns \p true.
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
             and deletes the item found. \p unlink finds an item by key and deletes it
-            only if \p val is an item of that set, i.e. the pointer to item found
-            is equal to <tt> &val </tt>.
+            only if \p key is an item of that set, i.e. the pointer to item found
+            is equal to <tt> &key </tt>.
 
             RCU \p synchronize method can be called, therefore, RCU should not be locked.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool erase( Q const& val )
+        bool erase( Q const& key )
         {
-            return erase_( val, key_comparator() );
+            return erase_( key, key_comparator() );
         }
 
         /// Deletes the item from the set using \p pred for searching
@@ -615,14 +645,14 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool erase_with( Q const& val, Less pred )
+        bool erase_with( Q const& key, Less pred )
         {
-            return erase_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+            return erase_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
         }
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_SplitListSet_rcu_erase_func
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             call \p f functor with item found, unlinks it from the set, and returns \p true.
             The \ref disposer specified by \p OrderedList class template parameter is called
             by garbage collector \p GC asynchronously.
@@ -635,16 +665,16 @@ namespace cds { namespace intrusive {
             \endcode
             The functor can be passed by reference with <tt>boost:ref</tt>
 
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             RCU \p synchronize method can be called, therefore, RCU should not be locked.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q, typename Func>
-        bool erase( Q const& val, Func f )
+        bool erase( Q const& key, Func f )
         {
-            return erase_( val, key_comparator(), f );
+            return erase_( key, key_comparator(), f );
         }
 
         /// Deletes the item from the set using \p pred for searching
@@ -655,16 +685,16 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool erase_with( Q const& val, Less pred, Func f )
+        bool erase_with( Q const& key, Less pred, Func f )
         {
-            return erase_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return erase_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
         }
 
         /// Extracts an item from the set
         /** \anchor cds_intrusive_SplitListSet_rcu_extract
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             unlinks it, and returns pointer to an item found in \p dest argument.
-            If the item with the key equal to \p val is not found the function returns \p false.
+            If the item with the key equal to \p key is not found the function returns \p false.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the set
@@ -700,9 +730,9 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& dest, Q const& val )
+        bool extract( exempt_ptr& dest, Q const& key )
         {
-            value_type * pNode = extract_( val, key_comparator() );
+            value_type * pNode = extract_( key, key_comparator() );
             if ( pNode ) {
                 dest = pNode;
                 return true;
@@ -718,9 +748,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest, Q const& val, Less pred )
+        bool extract_with( exempt_ptr& dest, Q const& key, Less pred )
         {
-            value_type * pNode = extract_with_( val, pred );
+            value_type * pNode = extract_with_( key, pred );
             if ( pNode ) {
                 dest = pNode;
                 return true;
@@ -728,16 +758,16 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_SplitListSet_rcu_find_func
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             You can pass \p f argument by value or by reference using \p std::ref.
 
@@ -746,7 +776,7 @@ namespace cds { namespace intrusive {
             The functor does not serialize simultaneous access to the set \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
+            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
             can modify both arguments.
 
             Note the hash functor specified for class \p Traits template parameter
@@ -754,15 +784,15 @@ namespace cds { namespace intrusive {
 
             The function applies RCU lock internally.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return find_( val, key_comparator(), f );
+            return find_( key, key_comparator(), f );
         }
 
-        /// Finds the key \p val with \p pred predicate for comparing
+        /// Finds the key \p key with \p pred predicate for comparing
         /**
             The function is an analog of \ref cds_intrusive_SplitListSet_rcu_find_func "find(Q&, Func)"
             but \p cmp is used for key compare.
@@ -770,67 +800,24 @@ namespace cds { namespace intrusive {
             \p cmp must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return find_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
         }
 
-        /// Finds the key \p val
-        /** \anchor cds_intrusive_SplitListSet_rcu_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using \p std::ref.
-
-            The functor can change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
-
-            The function applies RCU lock internally.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_( val, key_comparator(), f );
-        }
-
-        /// Finds the key \p val with \p pred predicate for comparing
-        /**
-            The function is an analog of \ref cds_intrusive_SplitListSet_rcu_find_cfunc "find(Q const&, Func)"
-            but \p cmp is used for key compare.
-            \p Less has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return find_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
-        }
-
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_intrusive_SplitListSet_rcu_find_val
-            The function searches the item with key equal to \p val
-            and returns \p true if \p val found or \p false otherwise.
+            The function searches the item with key equal to \p key
+            and returns \p true if \p key found or \p false otherwise.
         */
         template <typename Q>
-        bool find( Q const& val )
+        bool find( Q const& key )
         {
-            return find_value( val, key_comparator() );
+            return find_value( key, key_comparator() );
         }
 
-        /// Finds the key \p val with \p pred predicate for comparing
+        /// Finds the key \p key with \p pred predicate for comparing
         /**
             The function is an analog of \ref cds_intrusive_SplitListSet_rcu_find_val "find(Q const&)"
             but \p cmp is used for key compare.
@@ -838,15 +825,15 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return find_value( val, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+            return find_value( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_SplitListSet_rcu_get
-            The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p nullptr.
+            The function searches the item with key equal to \p key and returns the pointer to item found.
+            If \p key is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -870,12 +857,12 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& val )
+        value_type * get( Q const& key )
         {
-            return get_( val, key_comparator() );
+            return get_( key, key_comparator() );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /**
             The function is an analog of \ref cds_intrusive_SplitListSet_rcu_get "get(Q const&)"
             but \p pred is used for comparing the keys.
@@ -885,9 +872,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& val, Less pred )
+        value_type * get_with( Q const& key, Less pred )
         {
-            return get_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>());
+            return get_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
         }
 
 
@@ -907,11 +894,7 @@ namespace cds { namespace intrusive {
             return size() == 0;
         }
 
-        /// Clears the set (non-atomic)
-        /**
-            The function unlink all items from the set.
-            The function is not atomic. Therefore, \p clear may be used only for debugging purposes.
-        */
+        /// Clears the set (not atomic)
         void clear()
         {
             iterator it = begin();
