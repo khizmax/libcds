@@ -24,11 +24,11 @@ namespace cds { namespace container {
         {
             typedef GC      gc;
             typedef T       value_type;
-            typedef Traits  original_type_traits;
+            typedef Traits  original_traits;
 
             typedef typename cds::opt::select_default<
-                typename original_type_traits::ordered_list_traits,
-                cds::container::michael_list::type_traits
+                typename original_traits::ordered_list_traits,
+                cds::container::michael_list::traits
             >::type         original_ordered_list_traits;
 
             typedef cds::intrusive::split_list::node< cds::intrusive::michael_list::node<gc> > primary_node_type;
@@ -49,11 +49,11 @@ namespace cds { namespace container {
             };
 
             typedef typename cds::opt::select_default<
-                typename original_type_traits::ordered_list_traits,
-                typename original_type_traits::allocator,
+                typename original_traits::ordered_list_traits,
+                typename original_traits::allocator,
                 typename cds::opt::select_default<
-                    typename original_type_traits::ordered_list_traits::allocator,
-                    typename original_type_traits::allocator
+                    typename original_traits::ordered_list_traits::allocator,
+                    typename original_traits::allocator
                 >::type
             >::type node_allocator_;
 
@@ -70,7 +70,7 @@ namespace cds { namespace container {
 
             typedef typename opt::details::make_comparator< value_type, original_ordered_list_traits >::type key_comparator;
 
-            typedef typename original_type_traits::key_accessor key_accessor;
+            typedef typename original_traits::key_accessor key_accessor;
 
             struct value_accessor
             {
@@ -90,16 +90,17 @@ namespace cds { namespace container {
                 typedef cds::intrusive::michael_list::base_hook<
                     opt::gc<gc>
                 >   hook;
-                typedef atomicity::empty_item_counter   item_counter;
-                typedef node_deallocator                disposer;
+                typedef cds::atomicity::empty_item_counter item_counter;
+                typedef node_deallocator  disposer;
                 typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
+                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::michael_list::traits::link_checker;
             };
 
-            struct type_traits: public original_type_traits
+            struct traits: public original_traits
             {
-                struct hash: public original_type_traits::hash
+                struct hash: public original_traits::hash
                 {
-                    typedef typename original_type_traits::hash  base_class;
+                    typedef typename original_traits::hash  base_class;
 
                     size_t operator()(node_type const& v ) const
                     {
@@ -110,12 +111,11 @@ namespace cds { namespace container {
                     {
                         return base_class::operator()( k );
                     }
-                    //using base_class::operator();
                 };
             };
 
-            typedef cds::intrusive::MichaelList< gc, node_type, ordered_list_traits >   ordered_list;
-            typedef cds::intrusive::SplitListSet< gc, ordered_list, type_traits >       type;
+            typedef cds::intrusive::MichaelList< gc, node_type, ordered_list_traits > ordered_list;
+            typedef cds::intrusive::SplitListSet< gc, ordered_list, traits > type;
         };
 #endif  // ifdef __CDS_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
 
@@ -126,16 +126,16 @@ namespace cds { namespace container {
         {
             typedef GC      gc;
             typedef T       value_type;
-            typedef Traits  original_type_traits;
+            typedef Traits  original_traits;
 
             typedef typename cds::opt::select_default<
-                typename original_type_traits::ordered_list_traits,
-                cds::container::lazy_list::type_traits
+                typename original_traits::ordered_list_traits,
+                cds::container::lazy_list::traits
             >::type         original_ordered_list_traits;
 
             typedef typename cds::opt::select_default<
                 typename original_ordered_list_traits::lock_type,
-                typename cds::container::lazy_list::type_traits::lock_type
+                typename cds::container::lazy_list::traits::lock_type
             >::type   lock_type;
 
             typedef cds::intrusive::split_list::node< cds::intrusive::lazy_list::node<gc, lock_type > > primary_node_type;
@@ -157,11 +157,11 @@ namespace cds { namespace container {
             };
 
             typedef typename cds::opt::select_default<
-                typename original_type_traits::ordered_list_traits,
-                typename original_type_traits::allocator,
+                typename original_traits::ordered_list_traits,
+                typename original_traits::allocator,
                 typename cds::opt::select_default<
-                    typename original_type_traits::ordered_list_traits::allocator,
-                    typename original_type_traits::allocator
+                    typename original_traits::ordered_list_traits::allocator,
+                    typename original_traits::allocator
                 >::type
             >::type node_allocator_;
 
@@ -178,7 +178,7 @@ namespace cds { namespace container {
 
             typedef typename opt::details::make_comparator< value_type, original_ordered_list_traits >::type key_comparator;
 
-            typedef typename original_type_traits::key_accessor key_accessor;
+            typedef typename original_traits::key_accessor key_accessor;
 
             struct value_accessor
             {
@@ -199,16 +199,17 @@ namespace cds { namespace container {
                     opt::gc<gc>
                     ,opt::lock_type< lock_type >
                 >  hook;
-                typedef atomicity::empty_item_counter   item_counter;
+                typedef cds::atomicity::empty_item_counter item_counter;
                 typedef node_deallocator                disposer;
                 typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
+                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
             };
 
-            struct type_traits: public original_type_traits
+            struct traits: public original_traits
             {
-                struct hash: public original_type_traits::hash
+                struct hash: public original_traits::hash
                 {
-                    typedef typename original_type_traits::hash  base_class;
+                    typedef typename original_traits::hash  base_class;
 
                     size_t operator()(node_type const& v ) const
                     {
@@ -219,12 +220,11 @@ namespace cds { namespace container {
                     {
                         return base_class::operator()( k );
                     }
-                    //using base_class::operator();
                 };
             };
 
             typedef cds::intrusive::LazyList< gc, node_type, ordered_list_traits >  ordered_list;
-            typedef cds::intrusive::SplitListSet< gc, ordered_list, type_traits >   type;
+            typedef cds::intrusive::SplitListSet< gc, ordered_list, traits >   type;
         };
 #endif  // ifdef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
 

@@ -16,25 +16,22 @@ namespace cds { namespace container {
         - [2003] Ori Shalev, Nir Shavit "Split-Ordered Lists - Lock-free Resizable Hash Tables"
         - [2008] Nir Shavit "The Art of Multiprocessor Programming"
 
-        See intrusive::SplitListSet for a brief description of the split-list algorithm.
+        See \p intrusive::SplitListSet for a brief description of the split-list algorithm.
 
         Template parameters:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
-        - \p T - type stored in the split-list. The type must be default- and copy-constructible.
-        - \p Traits - type traits, default is split_list::type_traits. Instead of declaring split_list::type_traits -based
-            struct you may apply option-based notation with split_list::make_traits metafunction.
+        - \p T - type of the value to be stored in the split-list.
+        - \p Traits - type traits, default is \p split_list::traits. Instead of declaring \p split_list::traits -based
+            struct you can apply option-based notation with \p split_list::make_traits metafunction.
 
         <b>Iterators</b>
 
         The class supports a forward iterator (\ref iterator and \ref const_iterator).
-        The iteration is ordered.
+        The iteration is unordered.
 
         You may iterate over split-list set items only under RCU lock.
         Only in this case the iterator is thread-safe since
         while RCU is locked any set's item cannot be reclaimed.
-
-        The requirement of RCU lock during iterating means that deletion of the elements (i.e. \ref erase)
-        is not possible.
 
         @warning The iterator object cannot be passed between threads
 
@@ -65,13 +62,13 @@ namespace cds { namespace container {
             bool operator !=(iterator const& i ) const;
         };
         \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
+        Note, the iterator object returned by \p end(), \p cend() member functions points to \p nullptr and should not be dereferenced.
 
         \par Usage
 
         You should decide what garbage collector you want, and what ordered list you want to use. Split-ordered list
-        is an original data structure based on an ordered list. Suppose, you want construct split-list set based on cds::urcu::general_buffered<> GC
-        and LazyList as ordered list implementation. So, you beginning your program with following include:
+        is an original data structure based on an ordered list. Suppose, you want construct split-list set based on \p cds::urcu::general_buffered<> GC
+        and \p LazyList as ordered list implementation. So, you beginning your program with following include:
         \code
         #include <cds/urcu/general_buffered.h>
         #include <cds/container/lazy_list_rcu.h>
@@ -91,10 +88,10 @@ namespace cds { namespace container {
         - then, the header for RCU-based split-list set <tt>cds/container/split_list_set_rcu.h</tt>.
 
         Now, you should declare traits for split-list set. The main parts of traits are a hash functor for the set and a comparing functor for ordered list.
-        Note that we define several function in <tt>foo_hash</tt> and <tt>foo_less</tt> functors for different argument types since we want call our \p %SplitListSet
-        object by the key of type <tt>int</tt> and by the value of type <tt>foo</tt>.
+        Note that we define several function in \p foo_hash and \p foo_less functors for different argument types since we want call our \p %SplitListSet
+        object by the key of type \p int and by the value of type \p foo.
 
-        The second attention: instead of using LazyList in SplitListSet traits we use a tag <tt>cds::contaner::lazy_list_tag</tt> for the lazy list.
+        The second attention: instead of using \p %LazyList in \p %SplitListSet traits we use \p cds::contaner::lazy_list_tag tag for the lazy list.
         The split-list requires significant support from underlying ordered list class and it is not good idea to dive you
         into deep implementation details of split-list and ordered list interrelations. The tag paradigm simplifies split-list interface.
 
@@ -113,13 +110,13 @@ namespace cds { namespace container {
         };
 
         // SplitListSet traits
-        struct foo_set_traits: public cc::split_list::type_traits
+        struct foo_set_traits: public cc::split_list::traits
         {
             typedef cc::lazy_list_tag   ordered_list    ;   // what type of ordered list we want to use
             typedef foo_hash            hash            ;   // hash functor for our data stored in split-list set
 
             // Type traits for our LazyList class
-            struct ordered_list_traits: public cc::lazy_list::type_traits
+            struct ordered_list_traits: public cc::lazy_list::traits
             {
                 typedef foo_less less   ;   // use our foo_less as comparator to order list nodes
             };
@@ -139,29 +136,28 @@ namespace cds { namespace container {
             ,cc::split_list::make_traits<      // metafunction to build split-list traits
                 cc::split_list::ordered_list<cc::lazy_list_tag>     // tag for underlying ordered list implementation
                 ,cc::opt::hash< foo_hash >              // hash functor
-                ,cc::split_list::ordered_list_traits<   // ordered list traits desired
+                ,cc::split_list::ordered_list_traits<   // ordered list traits 
                     cc::lazy_list::make_traits<         // metafunction to build lazy list traits
-                        cc::opt::less< foo_less >           // less-based compare functor
+                        cc::opt::less< foo_less >       // less-based compare functor
                     >::type
                 >
             >::type
         >  foo_set;
         \endcode
-        In case of option-based declaration using split_list::make_traits metafunction
+        In case of option-based declaration using \p split_list::make_traits metafunction
         the struct \p foo_set_traits is not required.
 
         Now, the set of type \p foo_set is ready to use in your program.
 
-        Note that in this example we show only mandatory type_traits parts, optional ones is the default and they are inherited
-        from cds::container::split_list::type_traits.
-        The <b>cds</b> library contains many other options for deep tuning of behavior of the split-list and
-        ordered-list containers.
+        Note that in this example we show only mandatory \p traits parts, optional ones is the default and they are inherited
+        from \p container::split_list::traits.
+        There are many other options for deep tuning of the split-list and ordered-list containers.
     */
     template <
         class RCU,
         class T,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = split_list::type_traits
+        class Traits = split_list::traits
 #else
         class Traits
 #endif
@@ -180,15 +176,16 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef Traits                            options         ; ///< \p Traits template argument
-        typedef typename maker::gc                gc              ; ///< Garbage collector
-        typedef typename maker::value_type        value_type      ; ///< type of value stored in the list
-        typedef typename maker::ordered_list      ordered_list    ; ///< Underlying ordered list class
+        typedef cds::urcu::gc< RCU >  gc; ///< RCU-based garbage collector
+        typedef T       value_type; ///< Type of value to be storedin the set
+        typedef Traits  traits;    ///< \p Traits template argument
+
+        typedef typename maker::ordered_list        ordered_list;   ///< Underlying ordered list class
         typedef typename base_class::key_comparator key_comparator; ///< key compare functor
 
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename base_class::hash           hash;
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counter type
+        typedef typename base_class::item_counter   item_counter; ///< Item counter type
 
         typedef typename base_class::rcu_lock      rcu_lock   ; ///< RCU scoped lock
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
@@ -206,13 +203,6 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-
-        template <typename Q>
-        static node_type * alloc_node(Q const& v )
-        {
-            return cxx_node_allocator().New( v );
-        }
-
         template <typename Q, typename Func>
         bool find_( Q& val, Func f )
         {
@@ -226,6 +216,11 @@ namespace cds { namespace container {
                 [&f]( node_type& item, Q& val ) { f(item.m_Value, val) ; } );
         }
 
+        template <typename Q>
+        static node_type * alloc_node( Q const& v )
+        {
+            return cxx_node_allocator().New( v );
+        }
 
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
@@ -350,8 +345,8 @@ namespace cds { namespace container {
         /// Initializes split-ordered list of default capacity
         /**
             The default capacity is defined in bucket table constructor.
-            See intrusive::split_list::expandable_bucket_table, intrusive::split_list::static_bucket_table
-            which selects by intrusive::split_list::dynamic_bucket_table option.
+            See \p intrusive::split_list::expandable_bucket_table, \p intrusive::split_list::static_bucket_table
+            which selects by \p container::split_list::dynamic_bucket_table option.
         */
         SplitListSet()
             : base_class()
@@ -359,7 +354,7 @@ namespace cds { namespace container {
 
         /// Initializes split-ordered list
         SplitListSet(
-            size_t nItemCount           ///< estimate average of item count
+            size_t nItemCount           ///< estimated average of item count
             , size_t nLoadFactor = 1    ///< load factor - average item count per bucket. Small integer up to 8, default is 1.
             )
             : base_class( nItemCount, nLoadFactor )
@@ -434,15 +429,14 @@ namespace cds { namespace container {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success. It may be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success.
 
             The function applies RCU lock internally.
         */
         template <typename Q, typename Func>
-        bool insert( Q const& val, Func f )
+        bool insert( Q const& key, Func f )
         {
-            scoped_node_ptr pNode( alloc_node( val ));
+            scoped_node_ptr pNode( alloc_node( key ));
 
             if ( base_class::insert( *pNode, [&f](node_type& node) { f( node.m_Value ) ; } )) {
                 pNode.release();
@@ -451,7 +445,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Inserts data of type \p value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type created from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
@@ -463,17 +457,13 @@ namespace cds { namespace container {
             return insert_node( alloc_node( std::forward<Args>(args)...));
         }
 
-        /// Ensures that the \p item exists in the set
+        /// Ensures that the \p val exists in the set
         /**
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p val key not found in the set, then the new item created from \p val
             is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func should be a function with signature:
-            \code
-                void func( bool bNew, value_type& item, const Q& val );
-            \endcode
-            or a functor:
+            The functor \p Func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item, const Q& val );
@@ -483,12 +473,10 @@ namespace cds { namespace container {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %ensure() function
 
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
 
             The function applies RCU lock internally.
 
@@ -513,8 +501,7 @@ namespace cds { namespace container {
         /// Deletes \p key from the set
         /** \anchor cds_nonintrusive_SplitListSet_rcu_erase_val
 
-            Since the key of SplitListSet's item type \p value_type is not explicitly specified,
-            template parameter \p Q defines the key type searching in the list.
+            Template parameter of type \p Q defines the key type searching in the list.
             The set item comparator should be able to compare the values of type \p value_type
             and the type \p Q.
 
@@ -553,10 +540,8 @@ namespace cds { namespace container {
                 void operator()(value_type const& val);
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
-            Since the key of SplitListSet's \p value_type is not explicitly specified,
-            template parameter \p Q defines the key type searching in the list.
+            Template parameter of type \p Q defines the key type searching in the list.
             The list item comparator should be able to compare the values of the type \p value_type
             and the type \p Q.
 
@@ -586,9 +571,9 @@ namespace cds { namespace container {
 
         /// Extracts an item from the set
         /** \anchor cds_nonintrusive_SplitListSet_rcu_extract
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             unlinks it from the set, places item pointer into \p dest argument, and returns \p true.
-            If the item with the key equal to \p val is not found the function return \p false.
+            If the item with the key equal to \p key is not found the function return \p false.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the set
@@ -622,9 +607,9 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& dest, Q const& val )
+        bool extract( exempt_ptr& dest, Q const& key )
         {
-            node_type * pNode = base_class::extract_( val, key_comparator() );
+            node_type * pNode = base_class::extract_( key, key_comparator() );
             if ( pNode ) {
                 dest = pNode;
                 return true;
@@ -640,9 +625,9 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest, Q const& val, Less pred )
+        bool extract_with( exempt_ptr& dest, Q const& key, Less pred )
         {
-            node_type * pNode = base_class::extract_with_( val, typename maker::template predicate_wrapper<Less>::type());
+            node_type * pNode = base_class::extract_with_( key, typename maker::template predicate_wrapper<Less>::type());
             if ( pNode ) {
                 dest = pNode;
                 return true;
@@ -650,42 +635,37 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_nonintrusive_SplitListSet_rcu_find_func
 
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
             The functor does not serialize simultaneous access to the set's \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
-            may modify both arguments.
-
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             The function makes RCU lock internally.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return find_( val, f );
+            return find_( key, f );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SplitListSet_rcu_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -693,60 +673,15 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return find_with_( val, pred, f );
+            return find_with_( key, pred, f );
         }
 
-        /// Find the key \p val
-        /** \anchor cds_nonintrusive_SplitListSet_rcu_find_cfunc
-
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
-
-            The functor may change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set's \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
-
-            The function makes RCU lock internally.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_( val, f );
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_nonintrusive_SplitListSet_rcu_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return find_with_( val, pred, f );
-        }
-
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** \anchor cds_nonintrusive_SplitListSet_rcu_find_val
 
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
@@ -755,12 +690,12 @@ namespace cds { namespace container {
             The function makes RCU lock internally.
         */
         template <typename Q>
-        bool find( Q const& val )
+        bool find( Q const& key )
         {
-            return base_class::find( val );
+            return base_class::find( key );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SplitListSet_rcu_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -768,15 +703,15 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return base_class::find_with( val, typename maker::template predicate_wrapper<Less>::type() );
+            return base_class::find_with( key, typename maker::template predicate_wrapper<Less>::type() );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SplitListSet_rcu_get
-            The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p nullptr.
+            The function searches the item with key equal to \p key and returns the pointer to item found.
+            If \p key is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -802,13 +737,13 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& val )
+        value_type * get( Q const& key )
         {
-            node_type * pNode = base_class::get( val );
+            node_type * pNode = base_class::get( key );
             return pNode ? &pNode->m_Value : nullptr;
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds the key \p key and return the item found
         /**
             The function is an analog of \ref cds_nonintrusive_SplitListSet_rcu_get "get(Q const&)"
             but \p pred is used for comparing the keys.
@@ -818,19 +753,13 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& val, Less pred )
+        value_type * get_with( Q const& key, Less pred )
         {
-            node_type * pNode = base_class::get_with( val, typename maker::template predicate_wrapper<Less>::type());
+            node_type * pNode = base_class::get_with( key, typename maker::template predicate_wrapper<Less>::type());
             return pNode ? &pNode->m_Value : nullptr;
         }
 
-        /// Clears the set (non-atomic)
-        /**
-            The function unlink all items from the set.
-            The function is not atomic and not lock-free and should be used for debugging only.
-
-            RCU \p synchronize method can be called. RCU should not be locked.
-        */
+        /// Clears the set (not atomic)
         void clear()
         {
             base_class::clear();
@@ -852,8 +781,6 @@ namespace cds { namespace container {
             return base_class::size();
         }
     };
-
-
 }}  // namespace cds::container
 
 #endif // #ifndef __CDS_CONTAINER_SPLIT_LIST_SET_RCU_H

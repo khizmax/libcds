@@ -14,7 +14,19 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace split_list {
-        using intrusive::split_list::dynamic_bucket_table;
+        /// Internal statistics, see \p cds::intrusive::split_list::stat
+        template <typename Counter = cds::intrusive::split_list::stat<>::counter_type >
+        using stat = cds::intrusive::split_list::stat<Counter>;
+
+        /// Disabled internal statistics, see \p cds::intrusive::split_list::empty_stat
+        typedef cds::intrusive::split_list::empty_stat empty_stat;
+
+        /// Selector of bucket table implementation =- typedef for \p intrusive::split_list::dynamic_bucket_table
+        template <bool Value>
+        using dynamic_bucket_table = cds::intrusive::split_list::dynamic_bucket_table<Value>;
+
+        using cds::intrusive::split_list::static_bucket_table;
+        using cds::intrusive::split_list::expandable_bucket_table;
 
         //@cond
         namespace details {
@@ -70,30 +82,26 @@ namespace cds { namespace container {
         //@endcond
 
 
-        /// Type traits for SplitListSet class
-        /**
-            Note, the SplitListSet type traits is based on intrusive::split_list::traits.
-            Any member declared in intrusive::split_list::traits is also applied to
-            container::split_list::traits.
-        */
-        struct type_traits: public intrusive::split_list::type_traits
+        /// SplitListSet traits
+        struct traits: public intrusive::split_list::traits
         {
             // Ordered list implementation
             /**
-                This option selects appropriate ordered-list implementation for split-list.
-                It may be \ref michael_list_tag or \ref lazy_list_tag.
+                Selects appropriate ordered-list implementation for split-list.
+                Supported types are:
+                - \p michael_list_tag - for MichaelList
+                - \p lazy_list_tag - for LazyList
             */
             typedef michael_list_tag    ordered_list;
 
             // Ordered list traits
             /**
-                With this option you can specify type traits for selected ordered list class.
-                If this option is opt::none, the ordered list traits is combined with default
-                ordered list traits and split-list traits.
+                Specifyes traits for selected ordered list type, default type:
+                - for \p michael_list_tag: \p container::michael_list::traits.
+                - for \p lazy_list_tag: \p container::lazy_list::traits.
 
-                For \p michael_list_tag, the default traits is \p container::michael_list::traits.
-
-                For \p lazy_list_tag, the default traits is \p container::lazy_list::traits.
+                If this type is \p opt::none, the ordered list traits is combined with default
+                ordered list traits above and split-list traits.
             */
             typedef opt::none           ordered_list_traits;
 
@@ -105,7 +113,7 @@ namespace cds { namespace container {
         /// Option to select ordered list class for split-list
         /**
             This option selects appropriate ordered list class for containers based on split-list.
-            Template parameter \p Type may be \ref michael_list_tag or \ref lazy_list_tag.
+            Template parameter \p Type may be \p michael_list_tag or \p lazy_list_tag.
         */
         template <class Type>
         struct ordered_list
@@ -137,25 +145,24 @@ namespace cds { namespace container {
         /// Metafunction converting option list to traits struct
         /**
             Available \p Options:
-            - split_list::ordered_list - a tag for ordered list implementation.
-                See split_list::ordered_list for possible values.
-            - split_list::ordered_list_traits - type traits for ordered list implementation.
-                For MichaelList use \p container::michael_list::traits,
-                for LazyList use \p container::lazy_list::traits.
-            - plus any option from intrusive::split_list::make_traits
+            - \p split_list::ordered_list - a tag for ordered list implementation.
+            - \p split_list::ordered_list_traits - type traits for ordered list implementation.
+                For \p MichaelList use \p container::michael_list::traits or derivatives,
+                for \p LazyList use \p container::lazy_list::traits or derivatives.
+            - plus any option from \p intrusive::split_list::make_traits
         */
         template <typename... Options>
         struct make_traits {
-            typedef typename cds::opt::make_options< type_traits, Options...>::type type  ;   ///< Result of metafunction
+            typedef typename cds::opt::make_options< traits, Options...>::type type  ;   ///< Result of metafunction
         };
     }   // namespace split_list
 
     //@cond
     // Forward declarations
-    template <class GC, class T, class Traits = split_list::type_traits>
+    template <class GC, class T, class Traits = split_list::traits>
     class SplitListSet;
 
-    template <class GC, typename Key, typename Value, class Traits = split_list::type_traits>
+    template <class GC, typename Key, typename Value, class Traits = split_list::traits>
     class SplitListMap;
     //@endcond
 

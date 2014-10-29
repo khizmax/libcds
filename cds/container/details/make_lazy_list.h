@@ -63,7 +63,7 @@ namespace cds { namespace container {
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
                 typedef node_deallocator               disposer;
-                static const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
+                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
 
                 typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
             };

@@ -888,10 +888,12 @@ namespace set {
         void Split_HP_cmp();
         void Split_HP_less();
         void Split_HP_cmpmix();
+        void Split_HP_cmpmix_stat();
 
         void Split_DHP_cmp();
         void Split_DHP_less();
         void Split_DHP_cmpmix();
+        void Split_DHP_cmpmix_stat();
 
         void Split_RCU_GPI_cmp();
         void Split_RCU_GPI_less();
@@ -916,15 +918,18 @@ namespace set {
         void Split_nogc_cmp();
         void Split_nogc_less();
         void Split_nogc_cmpmix();
+        void Split_nogc_cmpmix_stat();
 
 
         void Split_Lazy_HP_cmp();
         void Split_Lazy_HP_less();
         void Split_Lazy_HP_cmpmix();
+        void Split_Lazy_HP_cmpmix_stat();
 
         void Split_Lazy_DHP_cmp();
         void Split_Lazy_DHP_less();
         void Split_Lazy_DHP_cmpmix();
+        void Split_Lazy_DHP_cmpmix_stat();
 
         void Split_Lazy_RCU_GPI_cmp();
         void Split_Lazy_RCU_GPI_less();
@@ -949,6 +954,7 @@ namespace set {
         void Split_Lazy_nogc_cmp();
         void Split_Lazy_nogc_less();
         void Split_Lazy_nogc_cmpmix();
+        void Split_Lazy_nogc_cmpmix_stat();
 
         CPPUNIT_TEST_SUITE(HashSetHdrTest)
             CPPUNIT_TEST(Michael_HP_cmp)
@@ -1018,10 +1024,12 @@ namespace set {
             CPPUNIT_TEST(Split_HP_cmp)
             CPPUNIT_TEST(Split_HP_less)
             CPPUNIT_TEST(Split_HP_cmpmix)
+            CPPUNIT_TEST( Split_HP_cmpmix_stat )
 
             CPPUNIT_TEST(Split_DHP_cmp)
             CPPUNIT_TEST(Split_DHP_less)
             CPPUNIT_TEST(Split_DHP_cmpmix)
+            CPPUNIT_TEST( Split_DHP_cmpmix_stat )
 
             CPPUNIT_TEST(Split_RCU_GPI_cmp)
             CPPUNIT_TEST(Split_RCU_GPI_less)
@@ -1046,14 +1054,17 @@ namespace set {
             CPPUNIT_TEST(Split_nogc_cmp)
             CPPUNIT_TEST(Split_nogc_less)
             CPPUNIT_TEST(Split_nogc_cmpmix)
+            CPPUNIT_TEST( Split_nogc_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_HP_cmp)
             CPPUNIT_TEST(Split_Lazy_HP_less)
             CPPUNIT_TEST(Split_Lazy_HP_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_HP_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_DHP_cmp)
             CPPUNIT_TEST(Split_Lazy_DHP_less)
             CPPUNIT_TEST(Split_Lazy_DHP_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_DHP_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_RCU_GPI_cmp)
             CPPUNIT_TEST(Split_Lazy_RCU_GPI_less)
@@ -1078,6 +1089,7 @@ namespace set {
             CPPUNIT_TEST(Split_Lazy_nogc_cmp)
             CPPUNIT_TEST(Split_Lazy_nogc_less)
             CPPUNIT_TEST(Split_Lazy_nogc_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_nogc_cmpmix_stat )
 
         CPPUNIT_TEST_SUITE_END()
 

@@ -10,21 +10,24 @@
 
 namespace cds { namespace container {
 
-    /// Split-ordered list set (template specialization for gc::nogc)
+    /// Split-ordered list set (template specialization for \p gc::nogc)
     /** @ingroup cds_nonintrusive_set
         \anchor cds_nonintrusive_SplitListSet_nogc
 
-        This specialization is intended for so-called persistent usage when no item
+        This specialization is so-called append-only container when no item
         reclamation may be performed. The class does not support deleting of list item.
 
         See \ref cds_nonintrusive_SplitListSet_hp "SplitListSet" for description of template parameters.
 
-        The interface of the specialization is a slightly different.
+        @warning Many member functions return an iterator pointing to an item.
+        The iterator can be used to set up field of the item,
+        but you should provide an exclusive access to it, 
+        see \ref cds_intrusive_item_creating "insert item troubleshooting".
     */
     template <
         class T,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = split_list::type_traits
+        class Traits = split_list::traits
 #else
         class Traits
 #endif
@@ -38,24 +41,26 @@ namespace cds { namespace container {
     {
     protected:
         //@cond
-        typedef details::make_split_list_set< cds::gc::nogc, T, typename Traits::ordered_list, split_list::details::wrap_set_traits<T, Traits> > options;
-        typedef typename options::type  base_class;
+        typedef details::make_split_list_set< cds::gc::nogc, T, typename Traits::ordered_list, split_list::details::wrap_set_traits<T, Traits> > maker;
+        typedef typename maker::type  base_class;
         //@endcond
 
     public:
-        typedef typename options::gc                gc              ;   ///< Garbage collector
-        typedef typename options::value_type        value_type      ;   ///< type of value stored in the list
-        typedef typename options::ordered_list      ordered_list    ;   ///< Underlying ordered list class
-        typedef typename base_class::key_comparator key_comparator  ;   ///< key comparison functor
+        typedef cds::gc::nogc  gc;         ///< Garbage collector
+        typedef T              value_type; ///< type of value to be stored in the list
+        typedef Traits         traits;     ///< List traits
+
+        typedef typename maker::ordered_list      ordered_list;     ///< Underlying ordered list class
+        typedef typename base_class::key_comparator key_comparator; ///< key comparison functor
 
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename base_class::hash           hash;
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counter type
+        typedef typename base_class::item_counter   item_counter; ///< Item counter type
 
     protected:
         //@cond
-        typedef typename options::cxx_node_allocator    cxx_node_allocator;
-        typedef typename options::node_type             node_type;
+        typedef typename maker::cxx_node_allocator    cxx_node_allocator;
+        typedef typename maker::node_type             node_type;
 
         template <typename Q>
         static node_type * alloc_node(Q const& v )
@@ -87,8 +92,8 @@ namespace cds { namespace container {
         /// Initialize split-ordered list of default capacity
         /**
             The default capacity is defined in bucket table constructor.
-            See intrusive::split_list::expandable_bucket_table, intrusive::split_list::static_ducket_table
-            which selects by intrusive::split_list::dynamic_bucket_table option.
+            See \p intrusive::split_list::expandable_bucket_table, \p intrusive::split_list::static_bucket_table
+            which selects by \p split_list::dynamic_bucket_table option.
         */
         SplitListSet()
             : base_class()
@@ -96,7 +101,7 @@ namespace cds { namespace container {
 
         /// Initialize split-ordered list
         SplitListSet(
-            size_t nItemCount           ///< estimate average of item count
+            size_t nItemCount           ///< estimated average of item count
             , size_t nLoadFactor = 1    ///< load factor - average item count per bucket. Small integer up to 10, default is 1.
             )
             : base_class( nItemCount, nLoadFactor )
@@ -244,9 +249,9 @@ namespace cds { namespace container {
         /**
             The function inserts \p val in the set if it does not contain
             an item with key equal to \p val.
-            The \ref value_type should be constructible from a value of type \p Q.
+            The \p value_type should be constructible from a value of type \p Q.
 
-            Return an iterator pointing to inserted item if success \ref end() otherwise
+            Return an iterator pointing to inserted item if success \p end() otherwise
         */
         template <typename Q>
         iterator insert( const Q& val )
@@ -254,9 +259,9 @@ namespace cds { namespace container {
             return insert_node( alloc_node( val ) );
         }
 
-        /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type created from \p args
         /**
-            Return an iterator pointing to inserted item if success \ref end() otherwise
+            Return an iterator pointing to inserted item if success \p end() otherwise
         */
         template <typename... Args>
         iterator emplace( Args&&... args )
@@ -270,7 +275,7 @@ namespace cds { namespace container {
             Otherwise, the function returns an iterator that points to item found.
             The \p value_type should be constructible from a value of type \p Q.
 
-            Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
+            Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
             item found or inserted, \p second is true if new item has been added or \p false if the item
             already is in the set.
         */
@@ -288,12 +293,12 @@ namespace cds { namespace container {
             return std::make_pair( iterator(ret.first), ret.second );
         }
 
-        /// Find the key \p val
+        /// Find the key \p key
         /** \anchor cds_nonintrusive_SplitListSet_nogc_find
 
             The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise
+            and \ref end() otherwise.
         */
         template <typename Q>
         iterator find( Q const& key )
@@ -301,7 +306,7 @@ namespace cds { namespace container {
             return iterator( base_class::find_( key ));
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SplitListSet_nogc_find "find(Q const&)"
             but \p pred is used for key comparing.
@@ -311,7 +316,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         iterator find_with( Q const& key, Less pred )
         {
-            return iterator( base_class::find_with_( key, typename options::template predicate_wrapper<Less>::type() ));
+            return iterator( base_class::find_with_( key, typename maker::template predicate_wrapper<Less>::type() ));
         }
 
         /// Checks if the set is empty
