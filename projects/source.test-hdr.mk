@@ -32,7 +32,7 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_skiplist_map_rcu_sht.cpp \
     tests/test-hdr/map/hdr_skiplist_map_nogc.cpp \
     tests/test-hdr/map/hdr_splitlist_map_hp.cpp \
-    tests/test-hdr/map/hdr_splitlist_map_ptb.cpp \
+    tests/test-hdr/map/hdr_splitlist_map_dhp.cpp \
     tests/test-hdr/map/hdr_splitlist_map_nogc.cpp \
     tests/test-hdr/map/hdr_splitlist_map_rcu_gpi.cpp \
     tests/test-hdr/map/hdr_splitlist_map_rcu_gpb.cpp \
@@ -40,7 +40,7 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_splitlist_map_rcu_shb.cpp \
     tests/test-hdr/map/hdr_splitlist_map_rcu_sht.cpp \
     tests/test-hdr/map/hdr_splitlist_map_lazy_hp.cpp \
-    tests/test-hdr/map/hdr_splitlist_map_lazy_ptb.cpp \
+    tests/test-hdr/map/hdr_splitlist_map_lazy_dhp.cpp \
     tests/test-hdr/map/hdr_splitlist_map_lazy_nogc.cpp \
     tests/test-hdr/map/hdr_splitlist_map_lazy_rcu_gpi.cpp \
     tests/test-hdr/map/hdr_splitlist_map_lazy_rcu_gpb.cpp \

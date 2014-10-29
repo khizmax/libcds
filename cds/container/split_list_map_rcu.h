@@ -20,26 +20,22 @@ namespace cds { namespace container {
 
         Template parameters:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
-        - \p Key - key type of an item stored in the map. It should be copy-constructible
-        - \p Value - value type stored in the map
-        - \p Traits - type traits, default is split_list::type_traits. Instead of declaring split_list::type_traits -based
-            struct you may apply option-based notation with split_list::make_traits metafunction.
+        - \p Key - key type to be stored in the map
+        - \p Value - value type to be stored in the map
+        - \p Traits - type traits, default is \p split_list::traits. Instead of declaring \p %split_list::traits -based
+            struct you may apply option-based notation with \p split_list::make_traits metafunction.
 
         <b>Iterators</b>
 
-        The class supports a forward iterator (\ref iterator and \ref const_iterator).
-        The iteration is unordered.
-
+        The class supports a forward unordered iterator (\ref iterator and \ref const_iterator).
         You may iterate over split-list map items only under RCU lock.
         Only in this case the iterator is thread-safe since
         while RCU is locked any map's item cannot be reclaimed.
-
-        The requirement of RCU lock during iterating means that deletion of the elements (i.e. \ref erase)
+        The requirement of RCU lock during iterating means that deletion of the elements
         is not possible.
 
-        @warning The iterator object cannot be passed between threads
-
-        \warning Due to concurrent nature of split-list map it is not guarantee that you can iterate
+        @warning The iterator object cannot be passed between threads.
+        Due to concurrent nature of split-list map it is not guarantee that you can iterate
         all elements in the map: any concurrent deletion can exclude the element
         pointed by the iterator from the map, and your iteration can be terminated
         before end of the map. Therefore, such iteration is more suitable for debugging purposes
@@ -71,8 +67,8 @@ namespace cds { namespace container {
         \par Usage
 
         You should decide what garbage collector you want, and what ordered list you want to use. Split-ordered list
-        is original data structure based on an ordered list. Suppose, you want construct split-list map based on cds::urcu::general_buffered<> GC
-        and MichaelList as ordered list implementation. Your map should map \p int key to <tt>std::string</tt> value.
+        is original data structure based on an ordered list. Suppose, you want construct split-list map based on \p cds::urcu::general_buffered<> GC
+        and \p MichaelList as ordered list implementation. Your map should map \p int key to \p std::string value.
         So, you beginning your program with following include:
         \code
         #include <cds/urcu/general_buffered.h>
@@ -83,26 +79,26 @@ namespace cds { namespace container {
         \endcode
         The inclusion order is important:
         - first, include one of \ref cds_urcu_gc "RCU implementation" (<tt>cds/urcu/general_buffered.h</tt> in our case)
-        - second, include file for ordered-list implementation (for this example, <tt>cds/container/michael_list_rcu.h</tt>),
+        - second, include the header of ordered-list implementation (for this example, <tt>cds/container/michael_list_rcu.h</tt>),
         - then, the header for RCU-based split-list map <tt>cds/container/split_list_map_rcu.h</tt>.
 
         Now, you should declare traits for split-list map. The main parts of traits are a hash functor for the map key and a comparing functor for ordered list.
-        We use <tt>std::hash<int></tt> as hash functor and <tt>std::less<int></tt> predicate as comparing functor.
+        We use \p std::hash<int> and \p std::less<int>.
 
-        The second attention: instead of using %MichaelList in %SplitListMap traits we use a tag <tt>cds::contaner::michael_list_tag</tt>
+        The second attention: instead of using \p %MichaelList in \p %SplitListMap traits we use a tag \p ds::contaner::michael_list_tag
         for the Michael's list.
         The split-list requires significant support from underlying ordered list class and it is not good idea to dive you
         into deep implementation details of split-list and ordered list interrelations. The tag paradigm simplifies split-list interface.
 
         \code
         // SplitListMap traits
-        struct foo_set_traits: public cc::split_list::type_traits
+        struct foo_set_traits: public cc::split_list::traits
         {
             typedef cc::michael_list_tag   ordered_list    ;   // what type of ordered list we want to use
             typedef std::hash<int>         hash            ;   // hash functor for the key stored in split-list map
 
             // Type traits for our MichaelList class
-            struct ordered_list_traits: public cc::michael_list::type_traits
+            struct ordered_list_traits: public cc::michael_list::traits
             {
                 typedef std::less<int> less   ;   // use our std::less predicate as comparator to order list nodes
             };
@@ -114,7 +110,7 @@ namespace cds { namespace container {
         typedef cc::SplitListMap< cds::urcu::gc<cds::urcu::general_buffered<> >, int, std::string, foo_set_traits > int_string_map;
         \endcode
 
-        You may use the modern option-based declaration instead of classic type-traits-based one:
+        You may use the modern option-based declaration instead of classic traits-based one:
         \code
         typedef cc:SplitListMap<
             cds::urcu::gc<cds::urcu::general_buffered<> >  // RCU type
@@ -131,21 +127,20 @@ namespace cds { namespace container {
             >::type
         >  int_string_map;
         \endcode
-        In case of option-based declaration using split_list::make_traits metafunction the struct \p foo_set_traits is not required.
+        In case of option-based declaration using \p split_list::make_traits metafunction the struct \p foo_set_traits is not required.
 
         Now, the map of type \p int_string_map is ready to use in your program.
 
-        Note that in this example we show only mandatory type_traits parts, optional ones is the default and they are inherited
-        from cds::container::split_list::type_traits.
-        The <b>cds</b> library contains many other options for deep tuning of behavior of the split-list and
-        ordered-list containers.
+        Note that in this example we show only mandatory \p traits parts, optional ones is the default and they are inherited
+        from cds::container::split_list::traits.
+        There are many other useful options for deep tuning the split-list and ordered-list containers.
     */
     template <
         class RCU,
         typename Key,
         typename Value,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = split_list::type_traits
+        class Traits = split_list::traits
 #else
         class Traits
 #endif
@@ -166,26 +161,26 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef typename base_class::gc gc              ;   ///< Garbage collector
-        typedef Traits                  options         ;   ///< ]p Traits template argument
-        typedef Key                     key_type        ;   ///< key type
-        typedef Value                   mapped_type     ;   ///< type of value stored in the map
+        typedef cds::urcu::gc< RCU > gc; ///< Garbage collector
+        typedef Key     key_type;    ///< key type
+        typedef Value   mapped_type; ///< type of value to be stored in the map
+        typedef Traits  traits;     ///< Map traits
 
-        typedef std::pair<key_type const, mapped_type>  value_type  ;   ///< key-value pair type
-        typedef typename base_class::ordered_list       ordered_list;   ///< Underlying ordered list class
-        typedef typename base_class::key_comparator     key_comparator  ;   ///< key comparison functor
+        typedef std::pair<key_type const, mapped_type> value_type;     ///< key-value pair type
+        typedef typename base_class::ordered_list      ordered_list;   ///< Underlying ordered list class
+        typedef typename base_class::key_comparator    key_comparator; ///< key comparison functor
 
-        typedef typename base_class::hash           hash            ;   ///< Hash functor for \ref key_type
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counter type
+        typedef typename base_class::hash           hash;         ///< Hash functor for \ref key_type
+        typedef typename base_class::item_counter   item_counter; ///< Item counter type
 
-        typedef typename base_class::rcu_lock       rcu_lock    ; ///< RCU scoped lock
-        typedef typename base_class::exempt_ptr     exempt_ptr  ; ///< pointer to extracted node
+        typedef typename base_class::rcu_lock       rcu_lock;   ///< RCU scoped lock
+        typedef typename base_class::exempt_ptr     exempt_ptr; ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
 
     protected:
         //@cond
-        typedef typename base_class::maker::type_traits::key_accessor key_accessor;
+        typedef typename base_class::maker::traits::key_accessor key_accessor;
         //@endcond
 
     public:
@@ -243,8 +238,8 @@ namespace cds { namespace container {
         /// Initializes split-ordered map of default capacity
         /**
             The default capacity is defined in bucket table constructor.
-            See intrusive::split_list::expandable_bucket_table, intrusive::split_list::static_bucket_table
-            which selects by intrusive::split_list::dynamic_bucket_table option.
+            See \p intrusive::split_list::expandable_bucket_table, \p intrusive::split_list::static_bucket_table
+            which selects by \p split_list::dynamic_bucket_table option.
         */
         SplitListMap()
             : base_class()
@@ -252,7 +247,7 @@ namespace cds { namespace container {
 
         /// Initializes split-ordered map
         SplitListMap(
-            size_t nItemCount           ///< estimate average item count
+            size_t nItemCount           ///< estimated average item count
             , size_t nLoadFactor = 1    ///< load factor - average item count per bucket. Small integer up to 10, default is 1.
             )
             : base_class( nItemCount, nLoadFactor )
@@ -261,12 +256,11 @@ namespace cds { namespace container {
     public:
         /// Inserts new node with key and default value
         /**
-            The function creates a node with \p key and default value, and then inserts the node created into the map.
+            The function creates a node with \p key and the default value, and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from value of type \p K.
-                In trivial case, \p K is equal to \ref key_type.
-            - The \ref mapped_type should be default-constructible.
+            - The \p key_type should be constructible from value of type \p K.
+            - The \p mapped_type should be default-constructible.
 
             The function applies RCU lock internally.
 
@@ -282,11 +276,11 @@ namespace cds { namespace container {
         /// Inserts new node
         /**
             The function creates a node with copy of \p val value
-            and then inserts the node created into the map.
+            and then inserts the node into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from \p key of type \p K.
-            - The \ref mapped_type should be constructible from \p val of type \p V.
+            - The \p key_type should be constructible from \p key of type \p K.
+            - The \p mapped_type should be constructible from \p val of type \p V.
 
             The function applies RCU lock internally.
 
@@ -314,14 +308,11 @@ namespace cds { namespace container {
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            It should be keep in mind that concurrent modifications of \p <tt>item.second</tt> may be possible.
-            User-defined functor \p func should guarantee that during changing item's value no any other changes
+            It should be keep in mind that concurrent modifications of \p <tt>item.second</tt> in \p func body
+            should be careful. You shouldf guarantee that during changing item's value in \p func no any other changes
             could be made on this \p item by concurrent threads.
 
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
-
-            The key_type should be constructible from value of type \p K.
+            \p func is called only if inserting is successful.
 
             The function allows to split creating of new item into two part:
             - create item from \p key;
@@ -340,7 +331,7 @@ namespace cds { namespace container {
             return base_class::insert( std::make_pair( key, mapped_type() ), func );
         }
 
-        /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p mapped_type created in-place from \p args
         /**
             \p key_type should be constructible from type \p K
 
@@ -359,35 +350,32 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
-            constructible from type \p K).
+            is inserted into the map; in this case the \p key_type should be
+            constructible from type \p K.
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            The functor \p Func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
 
-            The functor may change any fields of the \p item.second that is \ref mapped_type;
+            The functor may change any fields of the \p item.second that is \p mapped_type;
             however, \p func must guarantee that during changing no any other modifications
             could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
 
             The function applies RCU lock internally.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning For \ref cds_intrusive_MichaelKVList_hp "MichaelKVList" as the ordered list see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyKVList_hp "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
@@ -638,13 +626,7 @@ namespace cds { namespace container {
             return base_class::get_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 
-        /// Clears the map (non-atomic)
-        /**
-            The function unlink all items from the map.
-            The function is not atomic and not lock-free and should be used for debugging only.
-
-            RCU \p synchronize method can be called. RCU should not be locked.
-        */
+        /// Clears the map (not atomic)
         void clear()
         {
             base_class::clear();
@@ -666,7 +648,6 @@ namespace cds { namespace container {
             return base_class::size();
         }
     };
-
 
 }} // namespace cds::container
 

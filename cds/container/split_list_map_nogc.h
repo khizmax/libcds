@@ -59,7 +59,7 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        typedef typename base_class::options::traits::key_accessor key_accessor;
+        typedef typename base_class::traits::key_accessor key_accessor;
         //@endcond
 
     public:

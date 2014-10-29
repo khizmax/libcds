@@ -67,7 +67,7 @@ namespace cds { namespace container {
                 typedef intrusive::michael_list::base_hook< opt::gc<gc> > hook;
                 typedef node_deallocator disposer;
                 typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
-                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
+                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::michael_list::traits::link_checker;
             };
 
             typedef intrusive::MichaelList<gc, node_type, intrusive_traits>  type;

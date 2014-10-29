@@ -334,7 +334,7 @@ namespace cds { namespace container {
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
 
-            @warning For \ref cds_intrusive_MichaelKVList_hp "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            @warning For \ref cds_intrusive_MichaelKVList_hp "MichaelKVList" as the ordered list see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_intrusive_LazyKVList_hp "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
