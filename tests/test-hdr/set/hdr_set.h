@@ -898,22 +898,27 @@ namespace set {
         void Split_RCU_GPI_cmp();
         void Split_RCU_GPI_less();
         void Split_RCU_GPI_cmpmix();
+        void Split_RCU_GPI_cmpmix_stat();
 
         void Split_RCU_GPB_cmp();
         void Split_RCU_GPB_less();
         void Split_RCU_GPB_cmpmix();
+        void Split_RCU_GPB_cmpmix_stat();
 
         void Split_RCU_GPT_cmp();
         void Split_RCU_GPT_less();
         void Split_RCU_GPT_cmpmix();
+        void Split_RCU_GPT_cmpmix_stat();
 
         void Split_RCU_SHB_cmp();
         void Split_RCU_SHB_less();
         void Split_RCU_SHB_cmpmix();
+        void Split_RCU_SHB_cmpmix_stat();
 
         void Split_RCU_SHT_cmp();
         void Split_RCU_SHT_less();
         void Split_RCU_SHT_cmpmix();
+        void Split_RCU_SHT_cmpmix_stat();
 
         void Split_nogc_cmp();
         void Split_nogc_less();
@@ -934,22 +939,27 @@ namespace set {
         void Split_Lazy_RCU_GPI_cmp();
         void Split_Lazy_RCU_GPI_less();
         void Split_Lazy_RCU_GPI_cmpmix();
+        void Split_Lazy_RCU_GPI_cmpmix_stat();
 
         void Split_Lazy_RCU_GPB_cmp();
         void Split_Lazy_RCU_GPB_less();
         void Split_Lazy_RCU_GPB_cmpmix();
+        void Split_Lazy_RCU_GPB_cmpmix_stat();
 
         void Split_Lazy_RCU_GPT_cmp();
         void Split_Lazy_RCU_GPT_less();
         void Split_Lazy_RCU_GPT_cmpmix();
+        void Split_Lazy_RCU_GPT_cmpmix_stat();
 
         void Split_Lazy_RCU_SHB_cmp();
         void Split_Lazy_RCU_SHB_less();
         void Split_Lazy_RCU_SHB_cmpmix();
+        void Split_Lazy_RCU_SHB_cmpmix_stat();
 
         void Split_Lazy_RCU_SHT_cmp();
         void Split_Lazy_RCU_SHT_less();
         void Split_Lazy_RCU_SHT_cmpmix();
+        void Split_Lazy_RCU_SHT_cmpmix_stat();
 
         void Split_Lazy_nogc_cmp();
         void Split_Lazy_nogc_less();
@@ -1034,22 +1044,27 @@ namespace set {
             CPPUNIT_TEST(Split_RCU_GPI_cmp)
             CPPUNIT_TEST(Split_RCU_GPI_less)
             CPPUNIT_TEST(Split_RCU_GPI_cmpmix)
+            CPPUNIT_TEST( Split_RCU_GPI_cmpmix_stat )
 
             CPPUNIT_TEST(Split_RCU_GPB_cmp)
             CPPUNIT_TEST(Split_RCU_GPB_less)
             CPPUNIT_TEST(Split_RCU_GPB_cmpmix)
+            CPPUNIT_TEST( Split_RCU_GPB_cmpmix_stat )
 
             CPPUNIT_TEST(Split_RCU_GPT_cmp)
             CPPUNIT_TEST(Split_RCU_GPT_less)
             CPPUNIT_TEST(Split_RCU_GPT_cmpmix)
+            CPPUNIT_TEST( Split_RCU_GPT_cmpmix_stat )
 
             CPPUNIT_TEST(Split_RCU_SHB_cmp)
             CPPUNIT_TEST(Split_RCU_SHB_less)
             CPPUNIT_TEST(Split_RCU_SHB_cmpmix)
+            CPPUNIT_TEST( Split_RCU_SHB_cmpmix_stat )
 
             CPPUNIT_TEST(Split_RCU_SHT_cmp)
             CPPUNIT_TEST(Split_RCU_SHT_less)
             CPPUNIT_TEST(Split_RCU_SHT_cmpmix)
+            CPPUNIT_TEST( Split_RCU_SHT_cmpmix_stat )
 
             CPPUNIT_TEST(Split_nogc_cmp)
             CPPUNIT_TEST(Split_nogc_less)
@@ -1069,22 +1084,27 @@ namespace set {
             CPPUNIT_TEST(Split_Lazy_RCU_GPI_cmp)
             CPPUNIT_TEST(Split_Lazy_RCU_GPI_less)
             CPPUNIT_TEST(Split_Lazy_RCU_GPI_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_RCU_GPI_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_RCU_GPB_cmp)
             CPPUNIT_TEST(Split_Lazy_RCU_GPB_less)
             CPPUNIT_TEST(Split_Lazy_RCU_GPB_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_RCU_GPB_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_RCU_GPT_cmp)
             CPPUNIT_TEST(Split_Lazy_RCU_GPT_less)
             CPPUNIT_TEST(Split_Lazy_RCU_GPT_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_RCU_GPT_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_RCU_SHB_cmp)
             CPPUNIT_TEST(Split_Lazy_RCU_SHB_less)
             CPPUNIT_TEST(Split_Lazy_RCU_SHB_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_RCU_SHB_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_RCU_SHT_cmp)
             CPPUNIT_TEST(Split_Lazy_RCU_SHT_less)
             CPPUNIT_TEST(Split_Lazy_RCU_SHT_cmpmix)
+            CPPUNIT_TEST( Split_Lazy_RCU_SHT_cmpmix_stat )
 
             CPPUNIT_TEST(Split_Lazy_nogc_cmp)
             CPPUNIT_TEST(Split_Lazy_nogc_less)
