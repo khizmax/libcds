@@ -8,7 +8,7 @@ namespace ordlist {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
         typedef cds::urcu::gc< cds::urcu::signal_buffered<> > rcu_type;
-        struct RCU_SHB_cmp_traits: public cc::michael_list::type_traits
+        struct RCU_SHB_cmp_traits: public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::cmp<MichaelKVListTestHeader::key_type>   compare;
         };
@@ -34,7 +34,7 @@ namespace ordlist {
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
-        struct RCU_SHB_less_traits: public cc::michael_list::type_traits
+        struct RCU_SHB_less_traits: public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>   less;
         };
@@ -60,7 +60,7 @@ namespace ordlist {
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
-        struct RCU_SHB_cmpmix_traits: public cc::michael_list::type_traits
+        struct RCU_SHB_cmpmix_traits: public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::cmp<MichaelKVListTestHeader::key_type>   compare;
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>  less;
@@ -88,7 +88,7 @@ namespace ordlist {
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
-        struct RCU_SHB_ic_traits: public cc::michael_list::type_traits
+        struct RCU_SHB_ic_traits: public cc::michael_list::traits
         {
             typedef MichaelKVListTestHeader::lt<MichaelKVListTestHeader::key_type>   less;
             typedef cds::atomicity::item_counter item_counter;

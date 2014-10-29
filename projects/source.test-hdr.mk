@@ -180,7 +180,7 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_refinable_hashset_slist.cpp \
     tests/test-hdr/set/hdr_refinable_hashset_vector.cpp \
     tests/test-hdr/set/hdr_skiplist_set_hp.cpp \
-    tests/test-hdr/set/hdr_skiplist_set_dhp.cpp \
+    tests/test-hdr/set/hdr_skiplist_set_ptb.cpp \
     tests/test-hdr/set/hdr_skiplist_set_rcu_gpi.cpp \
     tests/test-hdr/set/hdr_skiplist_set_rcu_gpb.cpp \
     tests/test-hdr/set/hdr_skiplist_set_rcu_gpt.cpp \

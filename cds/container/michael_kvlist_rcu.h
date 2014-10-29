@@ -92,23 +92,24 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-#ifdef CDS_DOXYGEN_INVOKED
-        typedef Key                                 key_type        ;   ///< Key type
-        typedef Value                               mapped_type     ;   ///< Type of value stored in the list
-        typedef std::pair<key_type const, mapped_type> value_type   ;   ///< key/value pair stored in the list
-#else
-        typedef typename maker::key_type          key_type;
-        typedef typename maker::value_type        mapped_type;
-        typedef typename maker::pair_type         value_type;
-#endif
-        typename Traits traits; ///< List traits
+        typedef cds::urcu::gc<RCU>  gc;   ///< Garbage collector
 
-        typedef typename base_class::gc             gc              ;   ///< Garbage collector used
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
+#ifdef CDS_DOXYGEN_INVOKED
+        typedef Key                                 key_type;      ///< Key type
+        typedef Value                               mapped_type;   ///< Type of value stored in the list
+        typedef std::pair<key_type const, mapped_type> value_type; ///< key/value pair stored in the list
+#else
+        typedef typename maker::key_type   key_type;
+        typedef typename maker::value_type mapped_type;
+        typedef typename maker::pair_type  value_type;
+#endif
+        typedef Traits traits; ///< List traits
+
+        typedef typename base_class::back_off       back_off;       ///< Back-off strategy
         typedef typename maker::allocator_type    allocator_type;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
+        typedef typename base_class::item_counter   item_counter;   ///< Item counting policy
         typedef typename maker::key_comparator    key_comparator;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See \p michael_list::traits::memory_model
         typedef typename base_class::rcu_check_deadlock rcu_check_deadlock ; ///< RCU deadlock checking policy
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
