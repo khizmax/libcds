@@ -22,8 +22,8 @@ namespace cds { namespace container {
         - \p GC - Garbage collector used
         - \p Key - key type of an item stored in the map. It should be copy-constructible
         - \p Value - value type stored in the map
-        - \p Traits - type traits, default is split_list::type_traits. Instead of declaring split_list::type_traits -based
-            struct you may apply option-based notation with split_list::make_traits metafunction.
+        - \p Traits - map traits, default is \p split_list::traits. Instead of declaring \p %split_list::traits -based
+            struct you may apply option-based notation with \p split_list::make_traits metafunction.
 
         There are the specializations:
         - for \ref cds_urcu_desc "RCU" - declared in <tt>cd/container/split_list_map_rcu.h</tt>,
@@ -34,8 +34,8 @@ namespace cds { namespace container {
         \par Usage
 
         You should decide what garbage collector you want, and what ordered list you want to use. Split-ordered list
-        is original data structure based on an ordered list. Suppose, you want construct split-list map based on gc::HP GC
-        and MichaelList as ordered list implementation. Your map should map \p int key to <tt>std::string</tt> value.
+        is original data structure based on an ordered list. Suppose, you want construct split-list map based on \p gc::HP GC
+        and \p MichaelList as ordered list implementation. Your map should map \p int key to \p std::string value.
         So, you beginning your program with following include:
         \code
         #include <cds/container/michael_list_hp.h>
@@ -46,29 +46,29 @@ namespace cds { namespace container {
         The inclusion order is important: first, include file for ordered-list implementation (for this example, <tt>cds/container/michael_list_hp.h</tt>),
         then the header for split-list map <tt>cds/container/split_list_map.h</tt>.
 
-        Now, you should declare traits for split-list map. The main parts of traits are a hash functor for the map key and a comparing functor for ordered list.
+        Now, you should declare traits for split-list map. The main parts of traits are a hash functor and a comparing functor for the ordered list.
         We use <tt>std::hash<int></tt> as hash functor and <tt>std::less<int></tt> predicate as comparing functor.
 
-        The second attention: instead of using \p %MichaelList in \p %SplitListMap traits we use a tag <tt>cds::contaner::michael_list_tag</tt> for the Michael's list.
+        The second attention: instead of using \p %MichaelList in \p %SplitListMap traits we use a tag \p cds::contaner::michael_list_tag for the Michael's list.
         The split-list requires significant support from underlying ordered list class and it is not good idea to dive you
         into deep implementation details of split-list and ordered list interrelations. The tag paradigm simplifies split-list interface.
 
         \code
         // SplitListMap traits
-        struct foo_set_traits: public cc::split_list::type_traits
+        struct foo_set_traits: public cc::split_list::traits
         {
             typedef cc::michael_list_tag   ordered_list    ;   // what type of ordered list we want to use
             typedef std::hash<int>         hash            ;   // hash functor for the key stored in split-list map
 
             // Type traits for our MichaelList class
-            struct ordered_list_traits: public cc::michael_list::type_traits
+            struct ordered_list_traits: public cc::michael_list::traits
             {
             typedef std::less<int> less   ;   // use our std::less predicate as comparator to order list nodes
             };
         };
         \endcode
 
-        Now you are ready to declare our map class based on SplitListMap:
+        Now you are ready to declare our map class based on \p %SplitListMap:
         \code
         typedef cc::SplitListMap< cds::gc::PTB, int, std::string, foo_set_traits > int_string_map;
         \endcode
@@ -90,13 +90,12 @@ namespace cds { namespace container {
             >::type
         >  int_string_map;
         \endcode
-        In case of option-based declaration using split_list::make_traits metafunction the struct \p foo_set_traits is not required.
+        In case of option-based declaration with \p split_list::make_traits metafunction the struct \p foo_set_traits is not required.
 
         Now, the map of type \p int_string_map is ready to use in your program.
 
-        Note that in this example we show only mandatory type_traits parts, optional ones is the default and they are inherited
-        from cds::container::split_list::type_traits.
-        The <b>cds</b> library contains many other options for deep tuning of behavior of the split-list and
+        Note that in this example we show only mandatory \p traits parts, optional ones is the default and they are inherited
+        from \p container::split_list::traits. There are many other options for deep tuning of the split-list and
         ordered-list containers.
     */
     template <
@@ -104,7 +103,7 @@ namespace cds { namespace container {
         typename Key,
         typename Value,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = split_list::type_traits
+        class Traits = split_list::traits
 #else
         class Traits
 #endif
@@ -125,21 +124,21 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef typename base_class::gc gc              ;   ///< Garbage collector
-        typedef Key                     key_type        ;   ///< key type
-        typedef Value                   mapped_type     ;   ///< type of value stored in the map
-        typedef Traits                  options         ;   ///< \p Traits template argument
+        typedef GC     gc;          ///< Garbage collector
+        typedef Key    key_type;    ///< key type
+        typedef Value  mapped_type; ///< type of value to be stored in the map
+        typedef Traits options;     ///< Map traits
 
         typedef std::pair<key_type const, mapped_type>  value_type  ;   ///< key-value pair type
         typedef typename base_class::ordered_list       ordered_list;   ///< Underlying ordered list class
-        typedef typename base_class::key_comparator     key_comparator  ;   ///< key compare functor
+        typedef typename base_class::key_comparator     key_comparator; ///< key compare functor
 
-        typedef typename base_class::hash           hash            ;   ///< Hash functor for \ref key_type
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counter type
+        typedef typename base_class::hash           hash;         ///< Hash functor for \ref key_type
+        typedef typename base_class::item_counter   item_counter; ///< Item counter type
 
     protected:
         //@cond
-        typedef typename base_class::maker::type_traits::key_accessor key_accessor;
+        typedef typename base_class::maker::traits::key_accessor key_accessor;
         typedef typename base_class::node_type node_type;
         //@endcond
 
@@ -148,7 +147,7 @@ namespace cds { namespace container {
         typedef cds::gc::guarded_ptr< gc, node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
 
     public:
-        /// Forward iterator (see SplitListSet::iterator)
+        /// Forward iterator (see \p SplitListSet::iterator)
         /**
             Remember, the iterator <tt>operator -> </tt> and <tt>operator *</tt> returns \ref value_type pointer and reference.
             To access item key and value use <tt>it->first</tt> and <tt>it->second</tt> respectively.
@@ -206,8 +205,8 @@ namespace cds { namespace container {
         /// Initializes split-ordered map of default capacity
         /**
             The default capacity is defined in bucket table constructor.
-            See intrusive::split_list::expandable_bucket_table, intrusive::split_list::static_bucket_table
-            which selects by intrusive::split_list::dynamic_bucket_table option.
+            See \p intrusive::split_list::expandable_bucket_table, \p intrusive::split_list::static_bucket_table
+            which selects by \p intrusive::split_list::traits::dynamic_bucket_table.
         */
         SplitListMap()
             : base_class()
@@ -215,7 +214,7 @@ namespace cds { namespace container {
 
         /// Initializes split-ordered map
         SplitListMap(
-            size_t nItemCount           ///< estimate average item count
+            size_t nItemCount           ///< estimated average item count
             , size_t nLoadFactor = 1    ///< load factor - average item count per bucket. Small integer up to 10, default is 1.
             )
             : base_class( nItemCount, nLoadFactor )
@@ -274,11 +273,6 @@ namespace cds { namespace container {
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
             It should be keep in mind that concurrent modifications of \p <tt>item.second</tt> may be possible.
-            User-defined functor \p func should guarantee that during changing item's value no any other changes
-            could be made on this \p item by concurrent threads.
-
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
 
             The key_type should be constructible from value of type \p K.
 
@@ -289,6 +283,10 @@ namespace cds { namespace container {
 
             This can be useful if complete initialization of object of \p mapped_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
+
+            @warning For \ref cds_intrusive_MichaelKVList_hp "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyKVList_hp "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename K, typename Func>
         bool insert_key( K const& key, Func func )
@@ -297,7 +295,7 @@ namespace cds { namespace container {
             return base_class::insert( std::make_pair( key, mapped_type() ), func );
         }
 
-        /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p mapped_type created from \p args
         /**
             \p key_type should be constructible from type \p K
 
@@ -332,15 +330,13 @@ namespace cds { namespace container {
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
 
-            The functor may change any fields of the \p item.second that is \ref mapped_type;
-            however, \p func must guarantee that during changing no any other modifications
-            could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning For \ref cds_intrusive_MichaelKVList_hp "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyKVList_hp "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
@@ -470,8 +466,6 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found.
 
-            You may pass \p f argument by reference using \p std::ref.
-
             The functor may change \p item.second. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
             The functor does not serialize simultaneous access to the map's \p item. If such access is
@@ -573,11 +567,7 @@ namespace cds { namespace container {
             return base_class::get_with_( ptr.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
         }
 
-        /// Clears the map (non-atomic)
-        /**
-            The function unlink all items from the map.
-            The function is not atomic and not lock-free and should be used for debugging only.
-        */
+        /// Clears the map (not atomic)
         void clear()
         {
             base_class::clear();

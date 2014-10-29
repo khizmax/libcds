@@ -12,18 +12,21 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_map
         \anchor cds_nonintrusive_SplitListMap_nogc
 
-        This specialization is intended for so-called persistent usage when no item
-        reclamation may be performed. The class does not support deleting of list item.
+        This specialization is so-called append-only. 
+        The map does not support the removal of list item.
 
         See \ref cds_nonintrusive_SplitListMap_hp "SplitListMap" for description of template parameters.
 
-        The interface of the specialization is a slightly different.
+        @warning Many member functions return an iterator pointing to an item.
+        The iterator can be used to set up field of the item,
+        but you should provide an exclusive access to it,
+        see \ref cds_intrusive_item_creating "insert item troubleshooting".
     */
     template <
         typename Key,
         typename Value,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = split_list::type_traits
+        class Traits = split_list::traits
 #else
         class Traits
 #endif
@@ -43,24 +46,24 @@ namespace cds { namespace container {
         > base_class;
         //@endcond
     public:
-        typedef typename base_class::gc gc              ;   ///< Garbage collector
-        typedef Key                     key_type        ;   ///< key type
-        typedef Value                   mapped_type     ;   ///< type of value stored in the map
+        typedef cds::gc::nogc gc;          ///< Garbage collector
+        typedef Key           key_type;    ///< key type
+        typedef Value         mapped_type; ///< type of value stored in the map
 
         typedef std::pair<key_type const, mapped_type>  value_type  ;   ///< Pair type
         typedef typename base_class::ordered_list       ordered_list;   ///< Underlying ordered list class
-        typedef typename base_class::key_comparator     key_comparator  ;   ///< key comparison functor
+        typedef typename base_class::key_comparator     key_comparator; ///< key comparison functor
 
-        typedef typename base_class::hash           hash            ;   ///< Hash functor for \ref key_type
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counter type
+        typedef typename base_class::hash           hash;         ///< Hash functor for \ref key_type
+        typedef typename base_class::item_counter   item_counter; ///< Item counter type
 
     protected:
         //@cond
-        typedef typename base_class::options::type_traits::key_accessor key_accessor;
+        typedef typename base_class::options::traits::key_accessor key_accessor;
         //@endcond
 
     public:
-        /// Forward iterator (see SplitListSet::iterator)
+        /// Forward iterator (see \p SplitListSet::iterator)
         /**
             Remember, the iterator <tt>operator -> </tt> and <tt>operator *</tt> returns \ref value_type pointer and reference.
             To access item key and value use <tt>it->first</tt> and <tt>it->second</tt> respectively.
@@ -118,8 +121,8 @@ namespace cds { namespace container {
         /// Initialize split-ordered map of default capacity
         /**
             The default capacity is defined in bucket table constructor.
-            See intrusive::split_list::expandable_bucket_table, intrusive::split_list::static_ducket_table
-            which selects by intrusive::split_list::dynamic_bucket_table option.
+            See \p intrusive::split_list::expandable_bucket_table, \p intrusive::split_list::static_ducket_table
+            which selects by \p intrusive::split_list::traits::dynamic_bucket_table.
         */
         SplitListMap()
             : base_class()
@@ -127,7 +130,7 @@ namespace cds { namespace container {
 
         /// Initialize split-ordered map
         SplitListMap(
-            size_t nItemCount           ///< estimate average item count
+            size_t nItemCount           ///< estimated average item count
             , size_t nLoadFactor = 1    ///< load factor - average item count per bucket. Small integer up to 10, default is 1.
             )
             : base_class( nItemCount, nLoadFactor )
@@ -139,9 +142,9 @@ namespace cds { namespace container {
             The function creates a node with \p key and default value, and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from value of type \p K.
+            - The \p key_type should be constructible from value of type \p K.
                 In trivial case, \p K is equal to \ref key_type.
-            - The \ref mapped_type should be default-constructible.
+            - The \p mapped_type should be default-constructible.
 
             Returns an iterator pointed to inserted value, or \p end() if inserting is failed
         */
@@ -158,8 +161,8 @@ namespace cds { namespace container {
             and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from \p key of type \p K.
-            - The \ref mapped_type should be constructible from \p val of type \p V.
+            - The \p key_type should be constructible from \p key of type \p K.
+            - The \p mapped_type should be constructible from \p val of type \p V.
 
             Returns an iterator pointed to inserted value, or \p end() if inserting is failed
         */
@@ -181,13 +184,12 @@ namespace cds { namespace container {
             \endcode
 
             The argument \p item of user-defined functor \p func is the reference
-            to the map's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
+            to the map's item inserted. \p item.second is a reference to item's value that may be changed.
             User-defined functor \p func should guarantee that during changing item's value no any other changes
             could be made on this map's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if the inserting is successful.
+            The user-defined functor is called only if the inserting is successful.
 
-            The key_type should be constructible from value of type \p K.
+            The \p key_type should be constructible from value of type \p K.
 
             The function allows to split creating of new item into two part:
             - create item from \p key;
@@ -208,7 +210,7 @@ namespace cds { namespace container {
             return it;
         }
 
-        /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p mapped_type created in-place from \p args
         /**
             \p key_type should be constructible from type \p K
 
@@ -241,7 +243,7 @@ namespace cds { namespace container {
 
             The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise
+            and \p end() otherwise
         */
         template <typename K>
         iterator find( K const& key )
@@ -249,7 +251,7 @@ namespace cds { namespace container {
             return base_class::find( key );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SplitListMap_nogc_find "find(K const&)"
             but \p pred is used for key comparing.
