@@ -58,6 +58,7 @@
 #include "set2/std_hash_set.h"
 #include "michael_alloc.h"
 #include "print_cuckoo_stat.h"
+#include "print_split_list_stat.h"
 #include "print_skip_list_stat.h"
 #include "print_ellenbintree_stat.h"
 #include "ellen_bintree_update_desc_pool.h"
@@ -277,34 +278,6 @@ namespace set2 {
                 return key_hash::operator()( k );
             }
         };
-
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
-        struct hash_less: public stdext::hash_compare< key_type, std::less<key_type> >
-        {
-            typedef stdext::hash_compare< key_type, std::less<key_type> > base_class;
-            size_t operator()(const key_val& kv) const
-            {
-                return hash()(kv);
-            }
-            size_t operator()(const key_type& k ) const
-            {
-                return hash()(k);
-            }
-
-            bool operator()(const key_val& kv1, const key_val& kv2) const
-            {
-                return less()( kv1, kv2 );
-            }
-            bool operator()(const key_type& k1, const key_val& kv2) const
-            {
-                return less()( k1, kv2 );
-            }
-            bool operator()(const key_val& kv1, const key_type& k2) const
-            {
-                return less()( kv1, k2 );
-            }
-        };
-#endif
 
         // ***************************************************************************
         // MichaelList
@@ -617,9 +590,8 @@ namespace set2 {
         // ***************************************************************************
         // SplitListSet based on MichaelList
 
-        // HP
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_dyn_cmp :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
                 ,cc::split_list::ordered_list_traits<
@@ -628,10 +600,41 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_HP_dyn_cmp;
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_HP_dyn_cmp;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_DHP_dyn_cmp;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_GPI_dyn_cmp;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_GPB_dyn_cmp;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_GPT_dyn_cmp;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_SHB_dyn_cmp;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_SHT_dyn_cmp;
+#endif
 
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_dyn_cmp_stat :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::michael_list_tag>
+                ,co::hash< hash >
+                ,co::stat< cc::split_list::stat<> >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::michael_list::make_traits<
+                        co::compare< compare >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_HP_dyn_cmp_stat;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_DHP_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_GPI_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_GPB_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_GPT_dyn_cmp_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_SHB_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_SHT_dyn_cmp_stat;
+#endif
+
+        struct traits_SplitList_Michael_dyn_cmp_seqcst :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
                 ,co::memory_model< co::v::sequential_consistent >
@@ -642,10 +645,19 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_HP_dyn_cmp_seqcst;
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_HP_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_DHP_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_GPI_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_GPB_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_GPT_dyn_cmp_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_SHB_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_SHT_dyn_cmp_seqcst;
+#endif
 
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_st_cmp :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
@@ -655,10 +667,19 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_HP_st_cmp;
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_HP_st_cmp;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_DHP_st_cmp;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_GPI_st_cmp;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_GPB_st_cmp;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_GPT_st_cmp;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_SHB_st_cmp;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_SHT_st_cmp;
+#endif
 
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_st_cmp_seqcst :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -670,11 +691,20 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_HP_st_cmp_seqcst;
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_HP_st_cmp_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_DHP_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_RCU_GPI_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_RCU_GPB_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_RCU_GPT_st_cmp_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_RCU_SHB_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_RCU_SHT_st_cmp_seqcst;
+#endif
 
         //HP + less
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_dyn_less :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
                 ,cc::split_list::ordered_list_traits<
@@ -683,561 +713,19 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_HP_dyn_less;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HP_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HP_st_less;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_HP_st_less_seqcst;
-
-        // DHP
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_dyn_cmp;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_st_cmp;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_st_cmp_seqcst;
-
-        // DHP + less
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_dyn_less;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_st_less;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_DHP_st_less_seqcst;
-
-        // RCU
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_st_cmp;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_st_cmp_seqcst;
-
-        // RCU_GPI + less
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_dyn_less;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_st_less;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPI_st_less_seqcst;
-
-
-        //
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_st_cmp;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_st_cmp_seqcst;
-
-        // RCU_GPB + less
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_dyn_less;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_st_less;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPB_st_less_seqcst;
-
-        //
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_st_cmp;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_st_cmp_seqcst;
-
-        // RCU_GPT + less
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_dyn_less;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_st_less;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_GPT_st_less_seqcst;
-
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_HP_dyn_less;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_DHP_dyn_less;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_GPI_dyn_less;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_GPB_dyn_less;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_GPT_dyn_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHB_dyn_cmp;
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_SHB_dyn_less;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_SHT_dyn_less;
+#endif
 
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHB_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHB_st_cmp;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHB_st_cmp_seqcst;
-
-        // RCU_SHB + less
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHB_dyn_less;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_dyn_less_seqcst :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
                 ,co::memory_model< co::v::sequential_consistent >
@@ -1248,10 +736,19 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_RCU_SHB_dyn_less_seqcst;
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val,  traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_HP_dyn_less_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_DHP_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_GPI_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_GPB_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_GPT_dyn_less_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_SHB_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_SHT_dyn_less_seqcst;
+#endif
 
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_st_less :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
@@ -1261,10 +758,42 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_RCU_SHB_st_less;
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_st_less > SplitList_Michael_HP_st_less;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_DHP_st_less;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_GPI_st_less;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_GPB_st_less;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_GPT_st_less;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_SHB_st_less;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_SHT_st_less;
+#endif
 
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Michael_st_less_stat :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::michael_list_tag>
+                ,cc::split_list::dynamic_bucket_table< false >
+                ,co::hash< hash >
+                ,co::stat< cc::split_list::stat<>>
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::michael_list::make_traits<
+                        co::less< less >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_HP_st_less_stat;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_DHP_st_less_stat;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_GPI_st_less_stat;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_GPB_st_less_stat;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_GPT_st_less_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_SHB_st_less_stat;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_SHT_st_less_stat;
+#endif
+
+        struct traits_SplitList_Michael_st_less_seqcst :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
                 ,cc::split_list::dynamic_bucket_table< false >
@@ -1276,125 +805,22 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Michael_RCU_SHB_st_less_seqcst;
-
-        //
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_st_cmp;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_st_cmp_seqcst;
-
-        // RCU_SHT + less
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_dyn_less;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_st_less;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Michael_RCU_SHT_st_less_seqcst;
+        {};
+        typedef cc::SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_HP_st_less_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_DHP_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_GPI_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_GPB_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_GPT_st_less_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_SHB_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_SHT_st_less_seqcst;
 #endif
 
         // ***************************************************************************
         // SplitListSet based on LazyList
 
-        // HP
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
+        struct traits_SplitList_Lazy_dyn_cmp :
+            public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
                 ,cc::split_list::ordered_list_traits<
@@ -1403,768 +829,205 @@ namespace set2 {
                     >::type
                 >
             >::type
-        > SplitList_Lazy_HP_dyn_cmp;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HP_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HP_st_cmp;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HP_st_cmp_seqcst;
-
-
-        // HP + less
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HP_dyn_less;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HP_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HP_st_less;
-
-        typedef cc::SplitListSet< cds::gc::HP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_HP_st_less_seqcst;
-
-        // DHP
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_dyn_cmp;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_st_cmp;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_st_cmp_seqcst;
-
-        // DHP + less
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_dyn_less;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_st_less;
-
-        typedef cc::SplitListSet< cds::gc::DHP, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_DHP_st_less_seqcst;
-
-
-        // RCU
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_st_cmp;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_st_cmp_seqcst;
-
-        // RCU_GPI + less
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_dyn_less;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_st_less;
-
-        typedef cc::SplitListSet< rcu_gpi, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPI_st_less_seqcst;
-
-        //
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_st_cmp;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_st_cmp_seqcst;
-
-        // RCU_GPB + less
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_dyn_less;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_st_less;
-
-        typedef cc::SplitListSet< rcu_gpb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPB_st_less_seqcst;
-
-        //
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_st_cmp;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_st_cmp_seqcst;
-
-        // RCU_GPT + less
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_dyn_less;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_st_less;
-
-        typedef cc::SplitListSet< rcu_gpt, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_GPT_st_less_seqcst;
-
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_HP_dyn_cmp;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_DHP_dyn_cmp;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_GPI_dyn_cmp;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_GPB_dyn_cmp;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_GPT_dyn_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_st_cmp;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_st_cmp_seqcst;
-
-        // RCU_SHB + less
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_dyn_less;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_st_less;
-
-        typedef cc::SplitListSet< rcu_shb, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHB_st_less_seqcst;
-
-        //
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_dyn_cmp;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_dyn_cmp_seqcst;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_st_cmp;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_st_cmp_seqcst;
-
-        // RCU_SHT + less
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_dyn_less;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_dyn_less_seqcst;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_st_less;
-
-        typedef cc::SplitListSet< rcu_sht, key_val,
-            typename cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        > SplitList_Lazy_RCU_SHT_st_less_seqcst;
-
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHB_dyn_cmp;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHT_dyn_cmp;
 #endif
+
+        struct traits_SplitList_Lazy_dyn_cmp_stat : public traits_SplitList_Lazy_dyn_cmp
+        {
+            typedef cc::split_list::stat<> stat;
+        };
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_HP_dyn_cmp_stat;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_DHP_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_GPI_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_GPB_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_GPT_dyn_cmp_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHB_dyn_cmp_stat;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHT_dyn_cmp_stat;
+#endif
+
+        struct traits_SplitList_Lazy_dyn_cmp_seqcst :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::lazy_list_tag>
+                ,co::hash< hash >
+                ,co::memory_model< co::v::sequential_consistent >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::lazy_list::make_traits<
+                        co::compare< compare >
+                        ,co::memory_model< co::v::sequential_consistent >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_HP_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_DHP_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_GPI_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_GPB_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_GPT_dyn_cmp_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_SHB_dyn_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_SHT_dyn_cmp_seqcst;
+#endif
+
+        struct traits_SplitList_Lazy_st_cmp :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::lazy_list_tag>
+                ,cc::split_list::dynamic_bucket_table< false >
+                ,co::hash< hash >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::lazy_list::make_traits<
+                        co::compare< compare >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_HP_st_cmp;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_DHP_st_cmp;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_GPI_st_cmp;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_GPB_st_cmp;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_GPT_st_cmp;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_SHB_st_cmp;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_SHT_st_cmp;
+#endif
+
+        struct traits_SplitList_Lazy_st_cmp_seqcst :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::lazy_list_tag>
+                ,co::hash< hash >
+                ,cc::split_list::dynamic_bucket_table< false >
+                ,co::memory_model< co::v::sequential_consistent >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::lazy_list::make_traits<
+                        co::compare< compare >
+                        ,co::memory_model< co::v::sequential_consistent >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_st_cmp_seqcst > SplitList_Lazy_HP_st_cmp_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_st_cmp_seqcst > SplitList_Lazy_DHP_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_st_cmp_seqcst > SplitList_Lazy_RCU_GPI_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_st_cmp_seqcst > SplitList_Lazy_RCU_GPB_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_cmp_seqcst > SplitList_Lazy_RCU_GPT_st_cmp_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_cmp_seqcst > SplitList_Lazy_RCU_SHB_st_cmp_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_cmp_seqcst > SplitList_Lazy_RCU_SHT_st_cmp_seqcst;
+#endif
+
+        struct traits_SplitList_Lazy_dyn_less :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::lazy_list_tag>
+                ,co::hash< hash >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::lazy_list::make_traits<
+                        co::less< less >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_HP_dyn_less;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_DHP_dyn_less;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_GPI_dyn_less;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_GPB_dyn_less;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_GPT_dyn_less;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_SHB_dyn_less;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_SHT_dyn_less;
+#endif
+
+        struct traits_SplitList_Lazy_dyn_less_seqcst :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::lazy_list_tag>
+                ,co::hash< hash >
+                ,co::memory_model< co::v::sequential_consistent >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::lazy_list::make_traits<
+                        co::less< less >
+                        ,co::memory_model< co::v::sequential_consistent >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_HP_dyn_less_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_DHP_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_GPI_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_GPB_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_GPT_dyn_less_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_SHB_dyn_less_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_SHT_dyn_less_seqcst;
+#endif
+
+        struct traits_SplitList_Lazy_st_less :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::lazy_list_tag>
+                ,cc::split_list::dynamic_bucket_table< false >
+                ,co::hash< hash >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::lazy_list::make_traits<
+                        co::less< less >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_HP_st_less;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_DHP_st_less;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_GPI_st_less;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_GPB_st_less;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_GPT_st_less;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_SHB_st_less;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_SHT_st_less;
+#endif
+
+        struct traits_SplitList_Lazy_st_less_seqcst :
+            public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::lazy_list_tag>
+                ,co::hash< hash >
+                ,cc::split_list::dynamic_bucket_table< false >
+                ,co::memory_model< co::v::sequential_consistent >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::lazy_list::make_traits<
+                        co::less< less >
+                        ,co::memory_model< co::v::sequential_consistent >
+                    >::type
+                >
+            >::type
+        {};
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_st_less_seqcst > SplitList_Lazy_HP_st_less_seqcst;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_st_less_seqcst > SplitList_Lazy_DHP_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_GPI_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_GPB_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_GPT_st_less_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_SHB_st_less_seqcst;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_SHT_st_less_seqcst;
+#endif
+
+        struct traits_SplitList_Lazy_st_less_stat : public traits_SplitList_Lazy_st_less
+        {
+            typedef cc::split_list::stat<> stat;
+        };
+        typedef cc::SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_HP_st_less_stat;
+        typedef cc::SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_DHP_st_less_stat;
+        typedef cc::SplitListSet< rcu_gpi, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_GPI_st_less_stat;
+        typedef cc::SplitListSet< rcu_gpb, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_GPB_st_less_stat;
+        typedef cc::SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_GPT_st_less_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_SHB_st_less_stat;
+        typedef cc::SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_SHT_st_less_stat;
+#endif
+
+
         // ***************************************************************************
         // StripedSet
 
@@ -3427,6 +2290,12 @@ namespace set2 {
     template <typename Set>
     static inline void print_stat( Set const& s )
     {}
+
+    template <typename GC, typename T, typename Traits>
+    static inline void print_stat( cc::SplitListSet<GC, T, Traits> const& s )
+    {
+        CPPUNIT_MSG( s.statistics() );
+    }
 
     template <typename GC, typename T, typename Traits>
     static inline void print_stat( cc::SkipListSet<GC, T, Traits> const& s )
