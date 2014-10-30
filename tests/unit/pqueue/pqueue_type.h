@@ -326,17 +326,6 @@ namespace pqueue {
             >::type, false
         > SkipList_HP_min_stat;
 
-        typedef SkipListPQueue< cds::gc::HRC, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_HRC_max;
-
-        typedef SkipListPQueue< cds::gc::HRC, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_HRC_min;
 
         typedef SkipListPQueue< cds::gc::DHP, Value,
             typename cc::skip_list::make_traits<

@@ -113,8 +113,6 @@
     TEST_CASE(SkipList_HP_max_stat)     \
     TEST_CASE(SkipList_HP_min)          \
     TEST_CASE(SkipList_HP_min_stat)     \
-    TEST_CASE(SkipList_HRC_max)         \
-    TEST_CASE(SkipList_HRC_min)         \
     TEST_CASE(SkipList_DHP_max)         \
     TEST_CASE(SkipList_DHP_min)         \
     TEST_CASE(SkipList_RCU_gpi_max)     \
@@ -129,8 +127,6 @@
     CPPUNIT_TEST(SkipList_HP_max_stat)  \
     CPPUNIT_TEST(SkipList_HP_min)       \
     CPPUNIT_TEST(SkipList_HP_min_stat)  \
-    /*CPPUNIT_TEST(SkipList_HRC_max)*/      \
-    /*CPPUNIT_TEST(SkipList_HRC_min)*/      \
     CPPUNIT_TEST(SkipList_DHP_max)      \
     CPPUNIT_TEST(SkipList_DHP_min)      \
     CPPUNIT_TEST(SkipList_RCU_gpi_max)  \

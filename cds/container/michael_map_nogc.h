@@ -78,7 +78,6 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
-            protected:
         /// Forward iterator
         /**
             \p IsConst - constness boolean flag
@@ -169,15 +168,21 @@ namespace cds { namespace container {
 
             /// Equality operator
             template <bool C>
-            bool operator ==(iterator_type<C> const& i )
+            bool operator ==(iterator_type<C> const& i ) const
             {
                 return base_class::operator ==( i );
             }
             /// Equality operator
             template <bool C>
-            bool operator !=(iterator_type<C> const& i )
+            bool operator !=(iterator_type<C> const& i ) const
             {
                 return !( *this == i );
+            }
+
+            /// Checks if the iterator is not equal to \p end()
+            explicit operator bool() const
+            {
+                return *this != iterator_type();
             }
         };
 
