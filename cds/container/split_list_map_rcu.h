@@ -172,6 +172,7 @@ namespace cds { namespace container {
 
         typedef typename base_class::hash           hash;         ///< Hash functor for \ref key_type
         typedef typename base_class::item_counter   item_counter; ///< Item counter type
+        typedef typename base_class::stat           stat;         ///< Internal statistics
 
         typedef typename base_class::rcu_lock       rcu_lock;   ///< RCU scoped lock
         typedef typename base_class::exempt_ptr     exempt_ptr; ///< pointer to extracted node
@@ -646,6 +647,12 @@ namespace cds { namespace container {
         size_t size() const
         {
             return base_class::size();
+        }
+
+        /// Returns internal statistics
+        stat const& statistics() const
+        {
+            return base_class::statistics();
         }
     };
 

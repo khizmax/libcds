@@ -186,6 +186,7 @@ namespace cds { namespace container {
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename base_class::hash           hash;
         typedef typename base_class::item_counter   item_counter; ///< Item counter type
+        typedef typename base_class::stat           stat; ///< Internal statistics
 
         typedef typename base_class::rcu_lock      rcu_lock   ; ///< RCU scoped lock
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
@@ -779,6 +780,12 @@ namespace cds { namespace container {
         size_t size() const
         {
             return base_class::size();
+        }
+
+        /// Returns internal statistics
+        stat const& statistics() const
+        {
+            return base_class::statistics();
         }
     };
 }}  // namespace cds::container

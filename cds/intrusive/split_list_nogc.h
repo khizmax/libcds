@@ -421,6 +421,12 @@ namespace cds { namespace intrusive {
             return m_ItemCounter;
         }
 
+        /// Returns internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
     protected:
         //@cond
         template <bool IsConst>

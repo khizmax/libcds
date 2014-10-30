@@ -906,6 +906,12 @@ namespace cds { namespace intrusive {
             }
         }
 
+        /// Returns internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
     protected:
         //@cond
         template <bool IsConst>
