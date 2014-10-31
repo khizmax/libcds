@@ -59,6 +59,7 @@
 #include "map2/std_hash_map.h"
 #include "michael_alloc.h"
 #include "print_cuckoo_stat.h"
+#include "print_split_list_stat.h"
 #include "print_skip_list_stat.h"
 #include "print_ellenbintree_stat.h"
 #include "ellen_bintree_update_desc_pool.h"
@@ -2401,6 +2402,12 @@ namespace map2 {
 
     template <typename GC, typename K, typename T, typename Traits >
     static inline void print_stat( cc::SkipListMap< GC, K, T, Traits > const& m )
+    {
+        CPPUNIT_MSG( m.statistics() );
+    }
+
+    template <typename GC, typename K, typename T, typename Traits >
+    static inline void print_stat( cc::SplitListMap< GC, K, T, Traits > const& m )
     {
         CPPUNIT_MSG( m.statistics() );
     }
