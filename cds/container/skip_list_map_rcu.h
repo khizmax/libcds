@@ -197,7 +197,7 @@ namespace cds { namespace container {
         {
             return cbegin();
         }
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             return const_iterator( base_class::cbegin() );
         }
@@ -215,7 +215,7 @@ namespace cds { namespace container {
         {
             return cend();
         }
-        const_iterator cend()
+        const_iterator cend() const
         {
             return const_iterator( base_class::cend() );
         }

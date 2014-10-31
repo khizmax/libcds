@@ -248,7 +248,7 @@ namespace cds { namespace container {
         {
             return get_const_begin();
         }
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             return get_const_begin();
         }
@@ -260,7 +260,7 @@ namespace cds { namespace container {
         {
             return get_const_end();
         }
-        const_iterator cend()
+        const_iterator cend() const
         {
             return get_const_end();
         }

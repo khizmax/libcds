@@ -10,8 +10,8 @@
 // find int test in map<int> in mutithreaded mode
 namespace map2 {
 
-#    define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >()    ; }
-#    define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >()    ; }
+#   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >()    ; }
+#   define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >()    ; }
 #   define TEST_MAP_EXTRACT(X)  TEST_MAP(X)
 #   define TEST_MAP_NOLF_EXTRACT(X) TEST_MAP_NOLF(X)
 
@@ -36,6 +36,17 @@ namespace map2 {
         ValueVector             m_Arr;
         size_t                  m_nRealMapSize;
         bool                    m_bSeqInit;
+
+        template <typename Iterator, typename Map>
+        static bool check_result( Iterator const& it, Map const& map )
+        {
+            return it != map.end();
+        }
+        template <typename Map>
+        static bool check_result( bool b, Map const& )
+        {
+            return b;
+        }
 
         template <class MAP>
         class TestThread: public CppUnitMini::TestThread
@@ -88,15 +99,15 @@ namespace map2 {
                     if ( m_nThreadNo & 1 ) {
                         ValueVector::const_iterator itEnd = arr.end();
                         for ( ValueVector::const_iterator it = arr.begin(); it != itEnd; ++it ) {
-                            bool bFound = rMap.find( *(it->pKey) );
+                            auto bFound = rMap.find( *(it->pKey) );
                             if ( it->bExists ) {
-                                if ( bFound )
+                                if ( check_result(bFound, rMap))
                                     ++m_KeyExists.nSuccess;
                                 else
                                     ++m_KeyExists.nFailed;
                             }
                             else {
-                                if ( bFound )
+                                if ( check_result(bFound, rMap))
                                     ++m_KeyNotExists.nFailed;
                                 else
                                     ++m_KeyNotExists.nSuccess;
@@ -106,15 +117,15 @@ namespace map2 {
                     else {
                         ValueVector::const_reverse_iterator itEnd = arr.rend();
                         for ( ValueVector::const_reverse_iterator it = arr.rbegin(); it != itEnd; ++it ) {
-                            bool bFound = rMap.find( *(it->pKey) );
+                            auto bFound = rMap.find( *(it->pKey) );
                             if ( it->bExists ) {
-                                if ( bFound )
+                                if ( check_result(bFound, rMap))
                                     ++m_KeyExists.nSuccess;
                                 else
                                     ++m_KeyExists.nFailed;
                             }
                             else {
-                                if ( bFound )
+                                if ( check_result( bFound, rMap ))
                                     ++m_KeyNotExists.nFailed;
                                 else
                                     ++m_KeyNotExists.nSuccess;
@@ -169,7 +180,7 @@ namespace map2 {
             for ( size_t i = 0; i < m_Arr.size(); ++i ) {
                 // Все ключи в arrData - уникальные, поэтому ошибок при вставке быть не должно
                 if ( m_Arr[i].bExists )
-                    CPPUNIT_ASSERT( testMap.insert( *(m_Arr[i].pKey), m_Arr[i] ) );
+                    CPPUNIT_ASSERT( check_result( testMap.insert( *(m_Arr[i].pKey), m_Arr[i] ), testMap ));
             }
             CPPUNIT_MSG( "   Duration=" << timer.duration() );
 

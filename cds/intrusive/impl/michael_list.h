@@ -452,7 +452,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             return const_iterator( m_pHead );
         }
@@ -470,7 +470,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        const_iterator cend()
+        const_iterator cend() const
         {
             return const_iterator();
         }

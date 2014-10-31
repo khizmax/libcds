@@ -215,6 +215,28 @@ namespace ordlist {
                 for ( int i = 0; i < nCount; ++i )
                     CPPUNIT_ASSERT( l.insert(i, i * 2 ) );
 
+                {
+                    typename OrdList::iterator it( l.begin() );
+                    typename OrdList::const_iterator cit( l.cbegin() );
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != l.end() );
+                    CPPUNIT_CHECK( it != l.cend() );
+                    CPPUNIT_CHECK( cit != l.end() );
+                    CPPUNIT_CHECK( cit != l.cend() );
+                    ++it;
+                    CPPUNIT_CHECK( it != cit );
+                    CPPUNIT_CHECK( it != l.end() );
+                    CPPUNIT_CHECK( it != l.cend() );
+                    CPPUNIT_CHECK( cit != l.end() );
+                    CPPUNIT_CHECK( cit != l.cend() );
+                    ++cit;
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != l.end() );
+                    CPPUNIT_CHECK( it != l.cend() );
+                    CPPUNIT_CHECK( cit != l.end() );
+                    CPPUNIT_CHECK( cit != l.cend() );
+                }
+
                 int i = 0;
                 for ( typename OrdList::iterator it = l.begin(), itEnd = l.end(); it != itEnd; ++it, ++i ) {
                     CPPUNIT_ASSERT( it.key() == i );
@@ -547,6 +569,28 @@ namespace ordlist {
                     int nCount = 100;
                     for ( int i = 0; i < nCount; ++i )
                         CPPUNIT_ASSERT( l.insert(i, i * 2 ) != l.end() );
+
+                    {
+                        typename OrdList::iterator it( l.begin() );
+                        typename OrdList::const_iterator cit( l.cbegin() );
+                        CPPUNIT_CHECK( it == cit );
+                        CPPUNIT_CHECK( it != l.end() );
+                        CPPUNIT_CHECK( it != l.cend() );
+                        CPPUNIT_CHECK( cit != l.end() );
+                        CPPUNIT_CHECK( cit != l.cend() );
+                        ++it;
+                        CPPUNIT_CHECK( it != cit );
+                        CPPUNIT_CHECK( it != l.end() );
+                        CPPUNIT_CHECK( it != l.cend() );
+                        CPPUNIT_CHECK( cit != l.end() );
+                        CPPUNIT_CHECK( cit != l.cend() );
+                        ++cit;
+                        CPPUNIT_CHECK( it == cit );
+                        CPPUNIT_CHECK( it != l.end() );
+                        CPPUNIT_CHECK( it != l.cend() );
+                        CPPUNIT_CHECK( cit != l.end() );
+                        CPPUNIT_CHECK( cit != l.cend() );
+                    }
 
                     int i = 0;
                     for ( typename OrdList::iterator iter = l.begin(), itEnd = l.end(); iter != itEnd; ++iter, ++i ) {

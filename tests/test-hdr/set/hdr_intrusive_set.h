@@ -564,8 +564,33 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( v[i] ));
                 }
 
+                {
+                    typename Set::iterator it( s.begin() );
+                    typename Set::const_iterator cit( s.cbegin() );
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != s.end() );
+                    CPPUNIT_CHECK( it != s.cend() );
+                    CPPUNIT_CHECK( cit != s.end() );
+                    CPPUNIT_CHECK( cit != s.cend() );
+                    ++it;
+                    CPPUNIT_CHECK( it != cit );
+                    CPPUNIT_CHECK( it != s.end() );
+                    CPPUNIT_CHECK( it != s.cend() );
+                    CPPUNIT_CHECK( cit != s.end() );
+                    CPPUNIT_CHECK( cit != s.cend() );
+                    ++cit;
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != s.end() );
+                    CPPUNIT_CHECK( it != s.cend() );
+                    CPPUNIT_CHECK( cit != s.end() );
+                    CPPUNIT_CHECK( cit != s.cend() );
+                }
+
                 int nCount = 0;
                 for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
+                    set_iterator it2 = it;
+                    CPPUNIT_CHECK( it == it2 );
+                    CPPUNIT_CHECK( it2 != itEnd );
                     CPPUNIT_ASSERT( (*it).nKey * 2 == it->nVal );
                     it->nVal = (*it).nKey;
                     ++nCount;

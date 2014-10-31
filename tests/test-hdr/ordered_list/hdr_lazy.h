@@ -389,7 +389,29 @@ namespace ordlist {
             {
                 int nCount = 100;
                 for ( int i = 0; i < nCount; ++i )
-                    CPPUNIT_ASSERT( l.insert(i) );
+                    CPPUNIT_ASSERT( l.insert( i ) );
+
+                {
+                    typename OrdList::iterator it( l.begin() );
+                    typename OrdList::const_iterator cit( l.cbegin() );
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != l.end() );
+                    CPPUNIT_CHECK( it != l.cend() );
+                    CPPUNIT_CHECK( cit != l.end() );
+                    CPPUNIT_CHECK( cit != l.cend() );
+                    ++it;
+                    CPPUNIT_CHECK( it != cit );
+                    CPPUNIT_CHECK( it != l.end() );
+                    CPPUNIT_CHECK( it != l.cend() );
+                    CPPUNIT_CHECK( cit != l.end() );
+                    CPPUNIT_CHECK( cit != l.cend() );
+                    ++cit;
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != l.end() );
+                    CPPUNIT_CHECK( it != l.cend() );
+                    CPPUNIT_CHECK( cit != l.end() );
+                    CPPUNIT_CHECK( cit != l.cend() );
+                }
 
                 int i = 0;
                 for ( typename OrdList::iterator it = l.begin(), itEnd = l.end(); it != itEnd; ++it, ++i ) {
@@ -668,6 +690,29 @@ namespace ordlist {
             CPPUNIT_ASSERT( it != l.end() );
             CPPUNIT_ASSERT( it->nKey == 1001 );
             CPPUNIT_ASSERT( it->nVal == 1001 * 2 );
+
+            {
+                typename OrdList::iterator it( l.begin() );
+                typename OrdList::const_iterator cit( l.cbegin() );
+                CPPUNIT_CHECK( it == cit );
+                CPPUNIT_CHECK( it != l.end() );
+                CPPUNIT_CHECK( it != l.cend() );
+                CPPUNIT_CHECK( cit != l.end() );
+                CPPUNIT_CHECK( cit != l.cend() );
+                ++it;
+                CPPUNIT_CHECK( it != cit );
+                CPPUNIT_CHECK( it != l.end() );
+                CPPUNIT_CHECK( it != l.cend() );
+                CPPUNIT_CHECK( cit != l.end() );
+                CPPUNIT_CHECK( cit != l.cend() );
+                ++cit;
+                CPPUNIT_CHECK( it == cit );
+                CPPUNIT_CHECK( it != l.end() );
+                CPPUNIT_CHECK( it != l.cend() );
+                CPPUNIT_CHECK( cit != l.end() );
+                CPPUNIT_CHECK( cit != l.cend() );
+            }
+
 
             l.clear();
             CPPUNIT_ASSERT( l.empty() );

@@ -190,7 +190,7 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             return const_iterator( base_class::cbegin() );
         }
@@ -208,7 +208,7 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
-        const_iterator cend()
+        const_iterator cend() const
         {
             return const_iterator( base_class::cend() );
         }

@@ -388,7 +388,13 @@ namespace ordlist {
                 // begin/end
                 {
                     typename OrdList::iterator it = l.begin();
+                    typename OrdList::const_iterator cit = l.cbegin();
                     CPPUNIT_ASSERT( it != l.end() );
+                    CPPUNIT_ASSERT( it != l.cend() );
+                    CPPUNIT_ASSERT( cit != l.end() );
+                    CPPUNIT_ASSERT( cit != l.cend() );
+                    CPPUNIT_ASSERT( cit == it );
+
                     CPPUNIT_ASSERT( it->nKey == v2.nKey );
                     CPPUNIT_ASSERT( it->nVal == v2.nVal );
                     CPPUNIT_ASSERT( ++it != l.end() );
@@ -707,7 +713,13 @@ namespace ordlist {
 
                     {
                         typename OrdList::iterator it = l.begin();
+                        typename OrdList::const_iterator cit = l.cbegin();
                         CPPUNIT_ASSERT( it != l.end() );
+                        CPPUNIT_ASSERT( it != l.cend() );
+                        CPPUNIT_ASSERT( cit != l.end() );
+                        CPPUNIT_ASSERT( cit != l.cend() );
+                        CPPUNIT_ASSERT( cit == it );
+
                         CPPUNIT_ASSERT( it->nKey == v2.nKey );
                         CPPUNIT_ASSERT( it->nVal == v2.nVal );
                         CPPUNIT_ASSERT( ++it != l.end() );

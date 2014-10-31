@@ -280,15 +280,24 @@ namespace cds { namespace intrusive {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            const_iterator it( const_cast<node_type *>( &m_Head ));
-            ++it        ;   // skip dummy head
+            return cbegin();
+        }
+        /// Returns a forward const iterator addressing the first element in a list
+        const_iterator cbegin() const
+        {
+            const_iterator it( const_cast<node_type *>(&m_Head) );
+            ++it;   // skip dummy head
             return it;
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator end() const
         {
-            return const_iterator( const_cast<node_type *>( &m_Tail ));
+            return cend();
+        }
+        const_iterator cend() const
+        {
+            return const_iterator( const_cast<node_type *>(&m_Tail) );
         }
 
     public:

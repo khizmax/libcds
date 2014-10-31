@@ -257,7 +257,7 @@ namespace cds { namespace intrusive {
             return const_iterator(m_pHead.load(memory_model::memory_order_relaxed) );
         }
         /// Returns a forward const iterator addressing the first element in a list
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             return const_iterator(m_pHead.load(memory_model::memory_order_relaxed) );
         }

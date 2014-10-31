@@ -26,6 +26,17 @@ namespace map2 {
         typedef size_t  key_type;
         typedef size_t  value_type;
 
+        template <typename Iterator, typename Map>
+        static bool check_result( Iterator const& it, Map const& map )
+        {
+            return it != map.end();
+        }
+        template <typename Map>
+        static bool check_result( bool b, Map const& )
+        {
+            return b;
+        }
+
         template <class Map>
         class Inserter: public CppUnitMini::TestThread
         {
@@ -86,13 +97,13 @@ namespace map2 {
                 size_t const nArrSize = m_arrVal.size();
                 for ( size_t i = 0; i < nArrSize; ++i ) {
                     size_t const nItem = m_arrVal[i];
-                    if ( rMap.insert( nItem, nItem * 8 ) )
+                    if ( check_result( rMap.insert( nItem, nItem * 8 ), rMap ))
                         ++m_nInsertSuccess;
                     else
                         ++m_nInsertFailed;
 
                     for ( size_t k = 0; k <= i; ++k ) {
-                        if ( rMap.find( m_arrVal[k] ) )
+                        if ( check_result( rMap.find( m_arrVal[k] ), rMap ))
                             ++m_nFindSuccess;
                         else
                             ++m_nFindFail;

@@ -59,6 +59,17 @@ namespace map2 {
             std::random_shuffle( m_Arr.begin(), m_Arr.end() );
         }
 
+        template <typename Iterator, typename Map>
+        static bool check_result( Iterator const& it, Map const& map )
+        {
+            return it != map.end();
+        }
+        template <typename Map>
+        static bool check_result( bool b, Map const& )
+        {
+            return b;
+        }
+
         template <class Map>
         class TestThread: public CppUnitMini::TestThread
         {
@@ -110,9 +121,9 @@ namespace map2 {
                     if ( m_nThreadNo & 1 ) {
                         ValueVector::const_iterator itEnd = arr.end();
                         for ( ValueVector::const_iterator it = arr.begin(); it != itEnd; ++it ) {
-                            bool bFound = rMap.find( it->nKey );
+                            auto bFound = rMap.find( it->nKey );
                             if ( it->bExists ) {
-                                if ( bFound )
+                                if ( check_result( bFound, rMap ))
                                     ++m_KeyExists.nSuccess;
                                 else {
                                     //rMap.find( it->nKey );
@@ -120,7 +131,7 @@ namespace map2 {
                                 }
                             }
                             else {
-                                if ( bFound ) {
+                                if ( check_result( bFound, rMap )) {
                                     //rMap.find( it->nKey );
                                     ++m_KeyNotExists.nFailed;
                                 }
@@ -132,9 +143,9 @@ namespace map2 {
                     else {
                         ValueVector::const_reverse_iterator itEnd = arr.rend();
                         for ( ValueVector::const_reverse_iterator it = arr.rbegin(); it != itEnd; ++it ) {
-                            bool bFound = rMap.find( it->nKey );
+                            auto bFound = rMap.find( it->nKey );
                             if ( it->bExists ) {
-                                if ( bFound )
+                                if ( check_result( bFound, rMap ))
                                     ++m_KeyExists.nSuccess;
                                 else {
                                     //rMap.find( it->nKey );
@@ -142,7 +153,7 @@ namespace map2 {
                                 }
                             }
                             else {
-                                if ( bFound ) {
+                                if ( check_result( bFound, rMap )) {
                                     //rMap.find( it->nKey );
                                     ++m_KeyNotExists.nFailed;
                                 }
@@ -168,7 +179,7 @@ namespace map2 {
             timer.reset();
             for ( size_t i = 0; i < m_Arr.size(); ++i ) {
                 if ( m_Arr[i].bExists ) {
-                    CPPUNIT_ASSERT( testMap.insert( m_Arr[i].nKey, m_Arr[i] ) );
+                    CPPUNIT_ASSERT( check_result( testMap.insert( m_Arr[i].nKey, m_Arr[i] ), testMap ));
                 }
             }
             CPPUNIT_MSG( "   Duration=" << timer.duration() );

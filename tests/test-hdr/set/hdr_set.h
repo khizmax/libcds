@@ -776,6 +776,9 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( std::make_pair( i, i * 2) ) != s.end() );
                 }
                 for ( iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
+                    iterator it2 = it;
+                    CPPUNIT_CHECK( it2 == it );
+                    CPPUNIT_CHECK( it2 != itEnd );
                     CPPUNIT_ASSERT( (*it).nKey * 2 == it->nVal );
                     it->nVal = (*it).nKey;
                 }
@@ -800,6 +803,29 @@ namespace set {
             for ( int i = 0; size_t(i) < nMaxCount; ++i ) {
                 CPPUNIT_ASSERT( s.insert( std::make_pair( i, i * 2) ));
             }
+
+            {
+                typename Set::iterator it( s.begin() );
+                typename Set::const_iterator cit( s.cbegin() );
+                CPPUNIT_CHECK( it == cit );
+                CPPUNIT_CHECK( it != s.end() );
+                CPPUNIT_CHECK( it != s.cend() );
+                CPPUNIT_CHECK( cit != s.end() );
+                CPPUNIT_CHECK( cit != s.cend() );
+                ++it;
+                CPPUNIT_CHECK( it != cit );
+                CPPUNIT_CHECK( it != s.end() );
+                CPPUNIT_CHECK( it != s.cend() );
+                CPPUNIT_CHECK( cit != s.end() );
+                CPPUNIT_CHECK( cit != s.cend() );
+                ++cit;
+                CPPUNIT_CHECK( it == cit );
+                CPPUNIT_CHECK( it != s.end() );
+                CPPUNIT_CHECK( it != s.cend() );
+                CPPUNIT_CHECK( cit != s.end() );
+                CPPUNIT_CHECK( cit != s.cend() );
+            }
+
             size_t nCount = 0;
             for ( iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                 CPPUNIT_ASSERT_EX( (*it).nKey * 2 == it->nVal,

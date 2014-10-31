@@ -310,7 +310,7 @@ namespace cds { namespace intrusive {
         {
             return get_const_begin();
         }
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             return get_const_begin();
         }
@@ -322,7 +322,7 @@ namespace cds { namespace intrusive {
         {
             return get_const_end();
         }
-        const_iterator cend()
+        const_iterator cend() const
         {
             return get_const_end();
         }
@@ -332,11 +332,11 @@ namespace cds { namespace intrusive {
         //@cond
         const_iterator get_const_begin() const
         {
-            return const_iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( m_Buckets[0].cbegin(), m_Buckets, m_Buckets + bucket_count() );
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( m_Buckets[bucket_count() - 1].cend(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
         //@endcond
 

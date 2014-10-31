@@ -492,7 +492,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator( m_List.begin(), m_List.end() );
         }
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             return const_iterator( m_List.cbegin(), m_List.cend() );
         }
@@ -504,7 +504,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator( m_List.end(), m_List.end() );
         }
-        const_iterator cend()
+        const_iterator cend() const
         {
             return const_iterator( m_List.cend(), m_List.cend() );
         }

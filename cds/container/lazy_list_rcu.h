@@ -291,7 +291,7 @@ namespace cds { namespace container {
             ++it        ;   // skip dummy head node
             return it;
         }
-        const_iterator cbegin()
+        const_iterator cbegin() const
         {
             const_iterator it( head() );
             ++it        ;   // skip dummy head node
@@ -305,7 +305,7 @@ namespace cds { namespace container {
         {
             return const_iterator( tail() );
         }
-        const_iterator cend()
+        const_iterator cend() const
         {
             return const_iterator( tail() );
         }

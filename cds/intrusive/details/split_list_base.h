@@ -775,6 +775,8 @@ namespace cds { namespace intrusive {
             class iterator_type
             {
                 typedef OrderedList     ordered_list_type;
+                friend class iterator_type <NodeTraits, OrderedList, !IsConst >;
+
             protected:
                 typedef typename select_list_iterator<ordered_list_type, IsConst>::type    list_iterator;
                 typedef NodeTraits      node_traits;

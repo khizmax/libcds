@@ -582,7 +582,33 @@ namespace map {
                 }
                 CPPUNIT_ASSERT( check_size( m, 500 ));
 
+                {
+                    typename Map::iterator it( m.begin() );
+                    typename Map::const_iterator cit( m.cbegin() );
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != m.end() );
+                    CPPUNIT_CHECK( it != m.cend() );
+                    CPPUNIT_CHECK( cit != m.end() );
+                    CPPUNIT_CHECK( cit != m.cend() );
+                    ++it;
+                    CPPUNIT_CHECK( it != cit );
+                    CPPUNIT_CHECK( it != m.end() );
+                    CPPUNIT_CHECK( it != m.cend() );
+                    CPPUNIT_CHECK( cit != m.end() );
+                    CPPUNIT_CHECK( cit != m.cend() );
+                    ++cit;
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != m.end() );
+                    CPPUNIT_CHECK( it != m.cend() );
+                    CPPUNIT_CHECK( cit != m.end() );
+                    CPPUNIT_CHECK( cit != m.cend() );
+                }
+
+
                 for ( iterator it = m.begin(), itEnd = m.end(); it != itEnd; ++it ) {
+                    iterator it2 = it;
+                    CPPUNIT_CHECK( it2 == it );
+                    CPPUNIT_CHECK( it2 == itEnd );
                     CPPUNIT_ASSERT( it->first * 2 == (*it).second.m_val );
                     it->second = it->first;
                 }
@@ -606,6 +632,28 @@ namespace map {
             const int nMaxCount = 500;
             for ( int i = 0; i < nMaxCount; ++i ) {
                 CPPUNIT_ASSERT( s.insert( i, i * 2 ));
+            }
+
+            {
+                typename Map::iterator it( s.begin() );
+                typename Map::const_iterator cit( s.cbegin() );
+                CPPUNIT_CHECK( it == cit );
+                CPPUNIT_CHECK( it != s.end() );
+                CPPUNIT_CHECK( it != s.cend() );
+                CPPUNIT_CHECK( cit != s.end() );
+                CPPUNIT_CHECK( cit != s.cend() );
+                ++it;
+                CPPUNIT_CHECK( it != cit );
+                CPPUNIT_CHECK( it != s.end() );
+                CPPUNIT_CHECK( it != s.cend() );
+                CPPUNIT_CHECK( cit != s.end() );
+                CPPUNIT_CHECK( cit != s.cend() );
+                ++cit;
+                CPPUNIT_CHECK( it == cit );
+                CPPUNIT_CHECK( it != s.end() );
+                CPPUNIT_CHECK( it != s.cend() );
+                CPPUNIT_CHECK( cit != s.end() );
+                CPPUNIT_CHECK( cit != s.cend() );
             }
 
             int nCount = 0;
