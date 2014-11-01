@@ -11,7 +11,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
     namespace details {
         template <class List, typename... Options>
-        class adapt_boost_slist< List, Options... >
+        class adapt_boost_slist
         {
         public:
             typedef List  container_type;   ///< underlying intrusive container type
