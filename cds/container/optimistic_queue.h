@@ -58,7 +58,7 @@ namespace cds { namespace container {
             - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
             - opt::stat - the type to gather internal statistics.
-                Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat, 
+                Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat,
                 user-provided class that supports \p %optimistic_queue::stat interface.
                 Default is \p %optimistic_queue::empty_stat.
             - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
@@ -152,8 +152,8 @@ namespace cds { namespace container {
             typedef cds::container::OptimisticQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::container::OptimisticQueue< cds::gc::HP, Foo, 
-                typename cds::container::optimistic_queue::make_traits< 
+            typedef cds::container::OptimisticQueue< cds::gc::HP, Foo,
+                typename cds::container::optimistic_queue::make_traits<
                     cds::opt::stat< cds::container::optimistic_queue::stat<> >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type

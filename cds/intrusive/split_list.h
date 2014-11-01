@@ -442,7 +442,7 @@ namespace cds { namespace intrusive {
             static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value, 
+            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value,
                            "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             // Initialize bucket 0
@@ -471,7 +471,7 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return m_Stat.onFind( 
+            return m_Stat.onFind(
                 m_List.find_at( pHead, sv, cmp,
                     [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); })
             );

@@ -114,7 +114,7 @@ namespace cds { namespace container {
                 }
             };
 
-            struct intrusive_type_traits: public original_type_traits 
+            struct intrusive_type_traits: public original_type_traits
             {
                 typedef node_disposer   disposer;
             };

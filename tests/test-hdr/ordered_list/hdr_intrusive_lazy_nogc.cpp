@@ -18,7 +18,7 @@ namespace ordlist {
     void IntrusiveLazyListHeaderTest::nogc_base_less()
     {
         typedef base_int_item< cds::gc::nogc > item;
-        struct traits: public 
+        struct traits: public
             ci::lazy_list::make_traits<
                 ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::nogc> > >
                 ,co::less< less<item> >

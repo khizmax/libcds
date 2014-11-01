@@ -28,7 +28,7 @@ namespace queue {
         typedef ci::BasketQueue< cds::gc::DHP, member_hook_item, traits_BasketQueue_member >BasketQueue_DHP_member;
 
         /// DHP base hook + item counter
-        typedef ci::BasketQueue< cds::gc::DHP, base_hook_item, 
+        typedef ci::BasketQueue< cds::gc::DHP, base_hook_item,
             typename ci::basket_queue::make_traits<
                 ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
                 ,ci::opt::hook<

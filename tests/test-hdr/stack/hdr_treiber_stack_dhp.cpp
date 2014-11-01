@@ -13,13 +13,13 @@ namespace stack {
         typedef cs::TreiberStack< cds::gc::DHP, int > Treiber_DHP;
         typedef cs::TreiberStack< cds::gc::DHP, int
             , typename cs::treiber_stack::make_traits<
-                cds::opt::memory_model<cds::opt::v::relaxed_ordering> 
+                cds::opt::memory_model<cds::opt::v::relaxed_ordering>
             >::type
         > Treiber_DHP_relaxed;
 
         typedef cs::TreiberStack< cds::gc::DHP, int
             , typename cs::treiber_stack::make_traits<
-                cds::opt::back_off< cds::backoff::yield> 
+                cds::opt::back_off< cds::backoff::yield>
             >::type
         > Treiber_DHP_yield;
 

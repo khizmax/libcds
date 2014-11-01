@@ -204,7 +204,7 @@ namespace cds { namespace intrusive {
             static const opt::link_check_type link_checker = opt::debug_check_link;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */

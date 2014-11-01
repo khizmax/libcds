@@ -24,19 +24,19 @@ namespace cds {
     \anchor cds_intrusive_hook_tag
     \par Tags
     Many hooks and nodes for intrusive containers contain template argument \p Tag.
-    This argument serves as a tag, so you can derive from more than one container's node and hence put an object in multiple intrusive containers 
-    at the same time. An incomplete type can serve as a tag. If you specify two hooks, you must specify a different tag for each one. 
-    Example: 
+    This argument serves as a tag, so you can derive from more than one container's node and hence put an object in multiple intrusive containers
+    at the same time. An incomplete type can serve as a tag. If you specify two hooks, you must specify a different tag for each one.
+    Example:
     \code
     struct tag1;
-    cds::intrusive::treiber_stack::node< cds::gc::HP, tag<tag1> > 
+    cds::intrusive::treiber_stack::node< cds::gc::HP, tag<tag1> >
     \endcode
     If no tag is specified the default \p cds::opt::none will be used.
 
     \anchor cds_intrusive_item_creating
     \par Inserting items
-    Many intrusive and non-intrusive (standard-like) containers in the library have the member functions 
-    that take an functor argument to initialize the inserted item after it has been successfully inserted, 
+    Many intrusive and non-intrusive (standard-like) containers in the library have the member functions
+    that take an functor argument to initialize the inserted item after it has been successfully inserted,
     for example:
     \code
     template <typename Q, typename Func>
@@ -79,19 +79,19 @@ namespace cds {
         Create a new item                         Find key 5
             with calling Foo(5) ctor
         Insert the new item
-                                                  The key 5 is found - 
+                                                  The key 5 is found -
                                                      call the functor     (!)
         Perform complex
-           initialization - 
+           initialization -
            call the functor
     \endcode
     (!): Thread 2 found the key and call its functor on incomplete initialized item.
     Simultaneous access to the item also is possible. In this case Thread 1 is
-    initializing the item, thread 2 is reading (or writing) the item's fields. 
+    initializing the item, thread 2 is reading (or writing) the item's fields.
     In any case, Thread 2 can read uninitialized or incomplete initialized fields.
 
-    \p ensure member function race. Suppose, thread 1 and thread 2 perform 
-    the 
+    \p ensure member function race. Suppose, thread 1 and thread 2 perform
+    the
     following code:
     \code
         q.ensure( 5, []( bool bNew, Foo& item, int  arg )
@@ -105,7 +105,7 @@ namespace cds {
               }
               else {
                  // do some work
-                 if ( !item.f1 ) 
+                 if ( !item.f1 )
                     item.f1 = ...;
                  else {
                    //...
@@ -121,12 +121,12 @@ namespace cds {
         key 5 not found
         insert new item Foo(5)                    Find 5
                                                   Key 5 found
-                                                  call the functor with 
+                                                  call the functor with
                                                      bNew = false        (!)
         call the functor with
            bNew = true
     \endcode
-    (!): Thread 2 executes its functor on incomplete initialized item. 
+    (!): Thread 2 executes its functor on incomplete initialized item.
 
     To protect your code from such races you can use some item-level synchronization,
     for example:
@@ -151,7 +151,7 @@ namespace cds {
             }
             else {
                 // do some work
-                if ( !item.f1 ) 
+                if ( !item.f1 )
                     item.f1 = ...;
                 else {
                     //...

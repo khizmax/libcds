@@ -29,7 +29,7 @@ namespace cds { namespace intrusive {
         - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T (see lazy_list::node).
         - \p T - type to be stored in the list. The type must be based on lazy_list::node (for lazy_list::base_hook)
             or it must have a member of type lazy_list::node (for lazy_list::member_hook).
-        - \p Traits - type traits. See lazy_list::traits for explanation. 
+        - \p Traits - type traits. See lazy_list::traits for explanation.
             It is possible to declare option-based list with cds::intrusive::lazy_list::make_traits metafunction istead of \p Traits template
             argument. For example, the following traits-based declaration of \p gc::HP lazy list
             \code

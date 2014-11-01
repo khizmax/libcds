@@ -304,7 +304,7 @@ namespace cds { namespace container {
             static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value, 
+            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
                            "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
@@ -349,7 +349,7 @@ namespace cds { namespace container {
                 void func( value_type& val );
             \endcode
             where \p val is the item inserted.
-            The user-defined functor is called only if the inserting is success. 
+            The user-defined functor is called only if the inserting is success.
 
             @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level

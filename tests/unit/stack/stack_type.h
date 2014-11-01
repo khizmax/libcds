@@ -120,9 +120,9 @@ namespace stack {
         typedef cds::container::TreiberStack< cds::gc::HP,  T > Treiber_HP;
         typedef cds::container::TreiberStack< cds::gc::DHP, T > Treiber_DHP;
 
-        struct traits_Treiber_seqcst: public 
-            cds::container::treiber_stack::make_traits< 
-                cds::opt::memory_model<cds::opt::v::sequential_consistent> 
+        struct traits_Treiber_seqcst: public
+            cds::container::treiber_stack::make_traits<
+                cds::opt::memory_model<cds::opt::v::sequential_consistent>
             >::type
         {};
         typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Treiber_seqcst > Treiber_HP_seqcst;
@@ -270,7 +270,7 @@ namespace stack {
         typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn_stat > Elimination_HP_dyn_stat;
         typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_dyn_stat > Elimination_DHP_dyn_stat;
 
-        struct traits_Elimination_yield: public 
+        struct traits_Elimination_yield: public
             cds::container::treiber_stack::make_traits <
                 cds::opt::enable_elimination<true>
                 , cds::opt::back_off<cds::backoff::yield>
@@ -280,7 +280,7 @@ namespace stack {
         typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_yield > Elimination_HP_yield;
         typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_yield > Elimination_DHP_yield;
 
-        struct traits_Elimination_pause: public 
+        struct traits_Elimination_pause: public
             cds::container::treiber_stack::make_traits <
                 cds::opt::enable_elimination<true>
                 , cds::opt::back_off<cds::backoff::pause>
@@ -289,7 +289,7 @@ namespace stack {
         typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_pause > Elimination_HP_pause;
         typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_pause > Elimination_DHP_pause;
 
-        struct traits_Elimination_exp: public 
+        struct traits_Elimination_exp: public
             cds::container::treiber_stack::make_traits <
                 cds::opt::enable_elimination<true>
                 ,cds::opt::back_off<

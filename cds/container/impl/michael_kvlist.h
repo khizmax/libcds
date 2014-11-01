@@ -17,7 +17,7 @@ namespace cds { namespace container {
         constant key and alterable value.
 
         Usually, ordered single-linked list is used as a building block for the hash table implementation.
-        The complexity of searching is <tt>O(N)</tt> where \p N is the item count in the list, not in the 
+        The complexity of searching is <tt>O(N)</tt> where \p N is the item count in the list, not in the
         hash table.
 
         Template arguments:

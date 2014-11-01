@@ -27,7 +27,7 @@ namespace cds { namespace container {
             */
             typedef cds::opt::v::dynamic_buffer< void * > buffer;
 
-            /// A functor to clean item dequeued. 
+            /// A functor to clean item dequeued.
             /**
                 The functor  calls the destructor for queue item.
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
@@ -57,7 +57,7 @@ namespace cds { namespace container {
             - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
                 \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
                 element in the buffer is not important: it will be changed via \p rebind metafunction.
-            - \p opt::value_cleaner - a functor to clean item dequeued. 
+            - \p opt::value_cleaner - a functor to clean item dequeued.
                 The functor calls the destructor for queue item.
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
                 If \p T is a complex type, \p value_cleaner may be the useful feature.
@@ -70,7 +70,7 @@ namespace cds { namespace container {
 
             Example: declare \p %VyukovMPMCCycleQueue with item counting and static iternal buffer of size 1024:
             \code
-            typedef cds::container::VyukovMPMCCycleQueue< Foo, 
+            typedef cds::container::VyukovMPMCCycleQueue< Foo,
                 typename cds::container::vyukov_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
                     cds::opt::item_counte< cds::atomicity::item_counter >
@@ -117,8 +117,8 @@ namespace cds { namespace container {
             typedef cds::container::VyukovMPMCCycleQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::container::VyukovMPMCCycleQueue< cds::gc::HP, Foo, 
-                typename cds::container::vykov_queue::make_traits< 
+            typedef cds::container::VyukovMPMCCycleQueue< cds::gc::HP, Foo,
+                typename cds::container::vykov_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;

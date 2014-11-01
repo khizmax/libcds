@@ -25,7 +25,7 @@ namespace cds { namespace intrusive {
             - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none >
-        using node = cds::intrusive::single_link::node< GC, Tag > ;
+        using node = cds::intrusive::single_link::node< GC, Tag >;
 
         /// Base hook
         /**
@@ -123,7 +123,7 @@ namespace cds { namespace intrusive {
                 else
                     ++m_PassivePopCollision;
             }
-            void onEliminationFailed() 
+            void onEliminationFailed()
             {
                 ++m_EliminationFailed;
             }
@@ -160,7 +160,7 @@ namespace cds { namespace intrusive {
             typedef cds::atomicity::empty_item_counter   item_counter;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
@@ -237,7 +237,7 @@ namespace cds { namespace intrusive {
 
             Example: declare \p %TreiberStack with elimination enabled and internal statistics
             \code
-            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, 
+            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo,
                 typename cds::intrusive::treiber_stack::make_traits<
                     cds::opt::enable_elimination< true >,
                     cds::opt::stat< cds::intrusive::treiber_stack::stat<> >
@@ -438,7 +438,7 @@ namespace cds { namespace intrusive {
         Template arguments:
         - \p GC - garbage collector type: \p gc::HP, \p gc::DHP.
             Garbage collecting schema must be the same as \p treiber_stack::node GC.
-        - \p T - a type the stack contains. A value of type \p T must be derived 
+        - \p T - a type the stack contains. A value of type \p T must be derived
             from \p treiber_stack::node for \p treiber_stack::base_hook,
             or it should have a member of type \p %treiber_stack::node for \p treiber_stack::member_hook,
             or it should be convertible to \p %treiber_stack::node for \p treiber_stack::traits_hook.
@@ -451,9 +451,9 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, myTraits > myStack;
 
             // Equivalent make_traits example:
-            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, 
-                typename cds::intrusive::treiber_stack::make_traits< 
-                    cds::opt::stat< cds::intrusive::treiber_stack::stat<> > 
+            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo,
+                typename cds::intrusive::treiber_stack::make_traits<
+                    cds::opt::stat< cds::intrusive::treiber_stack::stat<> >
                 >::type
             > myStack;
             \endcode
@@ -488,7 +488,7 @@ namespace cds { namespace intrusive {
         // Stack with elimination back-off enabled
         typedef ci::TreiberStack< gc,
             myData,
-            typename ci::treiber_stack::make_traits< 
+            typename ci::treiber_stack::make_traits<
                 ci::opt::hook< ci::treiber_stack::base_hook< gc > >,
                 cds::opt::enable_elimination< true >
             >::type
@@ -514,15 +514,15 @@ namespace cds { namespace intrusive {
             // ...
         };
 
-        typedef ci::TreiberStack< gc, 
-            myData, 
-            typename ci::treiber_stack::make_traits< 
+        typedef ci::TreiberStack< gc,
+            myData,
+            typename ci::treiber_stack::make_traits<
                 ci::opt::hook< ci::treiber_stack::base_hook< gc, tag1 > >
-            >::type 
+            >::type
         > stack1_t;
 
-        typedef ci::TreiberStack< gc, 
-            myData, 
+        typedef ci::TreiberStack< gc,
+            myData,
             typename ci::treiber_stack::make_traits<
                 ci::opt::hook< ci::treiber_stack::base_hook< gc, tag2 > >
             >::type
@@ -565,7 +565,7 @@ namespace cds { namespace intrusive {
             // ...
         };
 
-        typedef ci::TreiberStack< gc, 
+        typedef ci::TreiberStack< gc,
             myData,
             typename ci::treiber_stack::make_traits<
                 ci::opt::hook< ci::treiber_stack::member_hook< offsetof(myData, member_hook_), gc >>
@@ -574,9 +574,9 @@ namespace cds { namespace intrusive {
         \endcode
     */
     template <
-        typename GC, 
-        typename T, 
-        typename Traits = treiber_stack::traits 
+        typename GC,
+        typename T,
+        typename Traits = treiber_stack::traits
     >
     class TreiberStack
     {

@@ -20,7 +20,7 @@ namespace cds { namespace intrusive {
             typename Lock = cds::lock::Spin,
             typename Tag = opt::none
 #else
-            typename Lock, 
+            typename Lock,
             typename Tag
 #endif
         >

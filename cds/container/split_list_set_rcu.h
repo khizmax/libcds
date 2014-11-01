@@ -136,7 +136,7 @@ namespace cds { namespace container {
             ,cc::split_list::make_traits<      // metafunction to build split-list traits
                 cc::split_list::ordered_list<cc::lazy_list_tag>     // tag for underlying ordered list implementation
                 ,cc::opt::hash< foo_hash >              // hash functor
-                ,cc::split_list::ordered_list_traits<   // ordered list traits 
+                ,cc::split_list::ordered_list_traits<   // ordered list traits
                     cc::lazy_list::make_traits<         // metafunction to build lazy list traits
                         cc::opt::less< foo_less >       // less-based compare functor
                     >::type

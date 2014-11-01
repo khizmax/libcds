@@ -21,7 +21,7 @@ namespace cds { namespace container {
 
         @warning Many member functions return an iterator pointing to an item.
         The iterator can be used to set up field of the item,
-        but you should provide an exclusive access to it, 
+        but you should provide an exclusive access to it,
         see \ref cds_intrusive_item_creating "insert item troubleshooting".
     */
     template <

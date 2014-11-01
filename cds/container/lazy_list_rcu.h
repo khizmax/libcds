@@ -348,7 +348,7 @@ namespace cds { namespace container {
             \code void func( value_type& itemValue ) ;\endcode
 
             The argument \p itemValue of user-defined functor \p func is the reference
-            to the list's item inserted. 
+            to the list's item inserted.
             The user-defined functor is called only if the inserting is success.
 
             The type \p Q should contain the complete key of the node.

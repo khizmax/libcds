@@ -23,7 +23,7 @@ namespace cds { namespace intrusive {
         - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T (see \p michael_list::node).
         - \p T - type to be stored in the list. The type must be based on \p michael_list::node (for \p michael_list::base_hook)
             or it must have a member of type \p michael_list::node (for \p michael_list::member_hook).
-        - \p Traits - type traits, default is \p michael_list::traits. It is possible to declare option-based 
+        - \p Traits - type traits, default is \p michael_list::traits. It is possible to declare option-based
              list with \p cds::intrusive::michael_list::make_traits metafunction:
             For example, the following traits-based declaration of \p gc::HP Michael's list
             \code

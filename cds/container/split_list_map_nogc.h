@@ -12,7 +12,7 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_map
         \anchor cds_nonintrusive_SplitListMap_nogc
 
-        This specialization is so-called append-only. 
+        This specialization is so-called append-only.
         The map does not support the removal of list item.
 
         See \ref cds_nonintrusive_SplitListMap_hp "SplitListMap" for description of template parameters.

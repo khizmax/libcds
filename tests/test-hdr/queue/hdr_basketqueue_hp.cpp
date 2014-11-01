@@ -36,7 +36,7 @@ namespace queue {
 
     void HdrTestQueue::BasketQueue_HP_Counted_relax()
     {
-        typedef cds::container::BasketQueue< cds::gc::HP, int, 
+        typedef cds::container::BasketQueue< cds::gc::HP, int,
             typename cds::container::basket_queue::make_traits <
                 cds::opt::item_counter< cds::atomicity::item_counter >
                 ,cds::opt::memory_model< cds::opt::v::relaxed_ordering>

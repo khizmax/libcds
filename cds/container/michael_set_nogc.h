@@ -162,7 +162,7 @@ namespace cds { namespace container {
             static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
             // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value, 
+            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
                            "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             m_Buckets = bucket_table_allocator().NewArray( bucket_count() );

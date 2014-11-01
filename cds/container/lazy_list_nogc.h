@@ -20,7 +20,7 @@ namespace cds { namespace container {
         @copydetails cds_nonintrusive_LazyList_gc
     */
     template <
-        typename T, 
+        typename T,
 #ifdef CDS_DOXYGEN_INVOKED
         typename Traits = lazy_list::traits
 #else

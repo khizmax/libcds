@@ -21,7 +21,7 @@ namespace cds { namespace intrusive {
             - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none >
-        using node = cds::intrusive::single_link::node< GC, Tag > ;
+        using node = cds::intrusive::single_link::node< GC, Tag >;
 
         /// Base hook
         /**
@@ -156,7 +156,7 @@ namespace cds { namespace intrusive {
             typedef msqueue::empty_stat         stat;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
@@ -190,7 +190,7 @@ namespace cds { namespace intrusive {
 
             Example: declare \p %MSQueue with item counting and internal statistics
             \code
-            typedef cds::intrusive::MSQueue< cds::gc::HP, Foo, 
+            typedef cds::intrusive::MSQueue< cds::gc::HP, Foo,
                 typename cds::intrusive::msqueue::make_traits<
                     cds::intrusive::opt:hook< cds::intrusive::msqueue::base_hook< cds::opt::gc<cds:gc::HP> >>,
                     cds::opt::item_counte< cds::atomicity::item_counter >,
@@ -232,8 +232,8 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::MSQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::intrusive::MSQueue< cds::gc::HP, Foo, 
-                typename cds::intrusive::msqueue::make_traits< 
+            typedef cds::intrusive::MSQueue< cds::gc::HP, Foo,
+                typename cds::intrusive::msqueue::make_traits<
                     cds::opt::stat< cds::intrusive::msqueue::stat<> >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type

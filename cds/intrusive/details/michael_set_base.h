@@ -93,7 +93,7 @@ namespace cds { namespace intrusive {
             template <typename OrderedList, bool IsConst>
             class iterator
             {
-                friend class iterator < OrderedList, !IsConst > ;
+                friend class iterator < OrderedList, !IsConst >;
             protected:
                 typedef OrderedList bucket_type;
                 typedef typename list_iterator_selector< bucket_type, IsConst>::bucket_ptr bucket_ptr;

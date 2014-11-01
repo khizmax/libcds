@@ -24,7 +24,7 @@ namespace cds { namespace intrusive {
 
         /// SegmentedQueue internal statistics. May be used for debugging or profiling
         template <typename Counter = cds::atomicity::event_counter >
-        struct stat 
+        struct stat
         {
             typedef Counter  counter_type;  ///< Counter type
 

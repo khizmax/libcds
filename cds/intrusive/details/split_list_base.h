@@ -91,8 +91,8 @@ namespace cds { namespace intrusive {
             void onExtractFailed()       { ++m_nExtractFailed; }
             void onFindSuccess()         { ++m_nFindSuccess; }
             void onFindFailed()          { ++m_nFindFailed; }
-            bool onFind(bool bSuccess) 
-            { 
+            bool onFind(bool bSuccess)
+            {
                 if ( bSuccess )
                     onFindSuccess();
                 else
@@ -161,7 +161,7 @@ namespace cds { namespace intrusive {
 
             /// Internal statistics (by default, disabled)
             /**
-                Possible statistics types are: \p split_list::stat (enable internal statistics), 
+                Possible statistics types are: \p split_list::stat (enable internal statistics),
                 \p split_list::empty_stat (the default, internal statistics disabled),
                 user-provided class that supports \p %split_list::stat interface.
             */
@@ -169,7 +169,7 @@ namespace cds { namespace intrusive {
 
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
@@ -215,7 +215,7 @@ namespace cds { namespace intrusive {
             - \p opt::item_counter - optional, specifies item counting policy. See \p traits::item_counter
                 for default type.
             - \p opt::memory_model - C++ memory model for atomic operations.
-                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default) 
+                Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \p split_list::dynamic_bucket_table - use dynamic or static bucket table implementation.

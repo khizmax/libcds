@@ -188,7 +188,7 @@ namespace cds { namespace container {
             typedef cds::container::TreiberStack< cds::gc::HP, Foo, myTraits > myStack;
 
             // Equivalent make_traits example:
-            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo, 
+            typedef cds::intrusive::TreiberStack< cds::gc::HP, Foo,
                 typename cds::intrusive::treiber_stack::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >,
                     cds::opt::stat< cds::intrusive::treiber_stack::stat<> >
@@ -196,10 +196,10 @@ namespace cds { namespace container {
             > myStack;
             \endcode
     */
-    template < 
-        typename GC, 
-        typename T, 
-        typename Traits = treiber_stack::traits 
+    template <
+        typename GC,
+        typename T,
+        typename Traits = treiber_stack::traits
     >
     class TreiberStack
         : public

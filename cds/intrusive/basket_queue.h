@@ -212,7 +212,7 @@ namespace cds { namespace intrusive {
             typedef basket_queue::empty_stat        stat;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
@@ -247,7 +247,7 @@ namespace cds { namespace intrusive {
 
             Example: declare \p %BasketQueue with item counting and internal statistics
             \code
-            typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo, 
+            typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo,
                 typename cds::intrusive::basket_queue::make_traits<
                     cds::intrusive::opt:hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc<cds:gc::HP> >>,
                     cds::opt::item_counte< cds::atomicity::item_counter >,
@@ -327,8 +327,8 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo, 
-                typename cds::intrusive::basket_queue::make_traits< 
+            typedef cds::intrusive::BasketQueue< cds::gc::HP, Foo,
+                typename cds::intrusive::basket_queue::make_traits<
                     cds::opt::stat< cds::intrusive::basket_queue::stat<> >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
@@ -380,7 +380,7 @@ namespace cds { namespace intrusive {
             ci::basket_queue::node< hp_gc > hMember;
         };
 
-        struct barTraits: public 
+        struct barTraits: public
             ci::basket_queue::make_traits<
                 ci::opt::hook<
                     ci::basket_queue::member_hook<

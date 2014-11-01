@@ -37,7 +37,7 @@ namespace cds { namespace intrusive {
             typedef atomicity::empty_item_counter item_counter;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
@@ -64,7 +64,7 @@ namespace cds { namespace intrusive {
 
             Example: declare \p %TsigasCycleQueue with item counting and static iternal buffer of size 1024:
             \code
-            typedef cds::intrusive::TsigasCycleQueue< Foo, 
+            typedef cds::intrusive::TsigasCycleQueue< Foo,
                 typename cds::intrusive::tsigas_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
                     cds::opt::item_counte< cds::atomicity::item_counter >
@@ -108,8 +108,8 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::TsigasCycleQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::intrusive::TsigasCycleQueue< Foo, 
-                typename cds::intrusive::tsigas_queue::make_traits< 
+            typedef cds::intrusive::TsigasCycleQueue< Foo,
+                typename cds::intrusive::tsigas_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;
@@ -406,7 +406,7 @@ namespace cds { namespace intrusive {
 
         /// Returns queue's item count
         /**
-            The value returned depends on \p tsigas_queue::traits::item_counter. 
+            The value returned depends on \p tsigas_queue::traits::item_counter.
             For \p atomicity::empty_item_counter, the function always returns 0.
         */
         size_t size() const CDS_NOEXCEPT

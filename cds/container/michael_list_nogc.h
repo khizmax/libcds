@@ -41,7 +41,7 @@ namespace cds { namespace container {
 
         See \ref cds_nonintrusive_MichaelList_gc "MichaelList" for description of template parameters.
     */
-    template <typename T, 
+    template <typename T,
 #ifdef CDS_DOXYGEN_INVOKED
         class Traits = michael_list::traits
 #else

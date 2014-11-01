@@ -12,8 +12,8 @@ namespace stack {
     namespace defs { namespace {
 
         typedef cs::TreiberStack< cds::gc::DHP, int
-            ,typename cs::treiber_stack::make_traits< 
-                cds::opt::enable_elimination<true> 
+            ,typename cs::treiber_stack::make_traits<
+                cds::opt::enable_elimination<true>
             >::type
         > Elimination_DHP;
 

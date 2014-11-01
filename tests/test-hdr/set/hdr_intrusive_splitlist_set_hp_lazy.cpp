@@ -303,7 +303,7 @@ namespace set {
                 ,co::item_counter< simple_item_counter >
                 ,ci::split_list::dynamic_bucket_table<false>
             >::type
-        { 
+        {
             typedef ci::split_list::stat<> stat;
         };
         typedef ci::SplitListSet< cds::gc::HP, ord_list, set_traits > set;

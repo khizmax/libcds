@@ -33,7 +33,7 @@ namespace cds { namespace container {
         \par Usage
 
         You should decide what garbage collector you want, and what ordered list you want to use as a base. Split-ordered list
-        is original data structure based on an ordered list. 
+        is original data structure based on an ordered list.
 
         Suppose, you want construct split-list set based on \p gc::DHP GC
         and \p LazyList as ordered list implementation. So, you beginning your program with following include:

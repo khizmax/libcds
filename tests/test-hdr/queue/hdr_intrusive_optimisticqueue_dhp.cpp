@@ -52,7 +52,7 @@ namespace queue {
         typedef ci::OptimisticQueue< cds::gc::DHP, member_hook_item, traits_OptimisticQueue_DHP_member > OptimisticQueue_DHP_member;
 
         /// DHP base hook + item counter
-        typedef ci::OptimisticQueue< cds::gc::DHP, base_hook_item, 
+        typedef ci::OptimisticQueue< cds::gc::DHP, base_hook_item,
             typename ci::optimistic_queue::make_traits<
                 ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
                 ,ci::opt::hook<
@@ -63,7 +63,7 @@ namespace queue {
         > OptimisticQueue_DHP_base_ic;
 
         // DHP member hook + item counter
-        typedef ci::OptimisticQueue< cds::gc::DHP, member_hook_item, 
+        typedef ci::OptimisticQueue< cds::gc::DHP, member_hook_item,
             typename ci::optimistic_queue::make_traits<
                 cds::opt::type_traits< traits_OptimisticQueue_DHP_member >
                 ,co::item_counter< cds::atomicity::item_counter >

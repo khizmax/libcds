@@ -41,7 +41,7 @@ namespace cds { namespace intrusive {
 
         See \ref cds_intrusive_MichaelList_hp "MichaelList" for description of template parameters.
     */
-    template < typename T, 
+    template < typename T,
 #ifdef CDS_DOXYGEN_INVOKED
         class Traits = michael_list::traits
 #else

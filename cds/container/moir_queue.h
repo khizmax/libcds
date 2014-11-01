@@ -37,8 +37,8 @@ namespace cds { namespace container {
             typedef cds::container::MoirQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::container::MoirQueue< cds::gc::HP, Foo, 
-                typename cds::container::msqueue::make_traits< 
+            typedef cds::container::MoirQueue< cds::gc::HP, Foo,
+                typename cds::container::msqueue::make_traits<
                     cds::opt::stat< cds::container::msqueue::stat<> >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type

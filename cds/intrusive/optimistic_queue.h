@@ -243,7 +243,7 @@ namespace cds { namespace intrusive {
             typedef cds::atomicity::empty_item_counter   item_counter;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
@@ -276,7 +276,7 @@ namespace cds { namespace intrusive {
             - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
             - opt::stat - the type to gather internal statistics.
-                Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat, 
+                Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat,
                 user-provided class that supports \p %optimistic_queue::stat interface.
                 Default is \p %optimistic_queue::empty_stat (internal statistics disabled).
             - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
@@ -285,7 +285,7 @@ namespace cds { namespace intrusive {
 
             Example: declare \p %OptimisticQueue with item counting and internal statistics
             \code
-            typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo, 
+            typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo,
                 typename cds::intrusive::optimistic_queue::make_traits<
                     cds::intrusive::opt:hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc<cds:gc::HP> >>,
                     cds::opt::item_counte< cds::atomicity::item_counter >,
@@ -327,8 +327,8 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo, 
-                typename cds::intrusive::optimistic_queue::make_traits< 
+            typedef cds::intrusive::OptimisticQueue< cds::gc::HP, Foo,
+                typename cds::intrusive::optimistic_queue::make_traits<
                     cds::opt::stat< cds::intrusive::optimistic_queue::stat<> >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
@@ -651,7 +651,7 @@ namespace cds { namespace intrusive {
 
         /// Returns queue's item count
         /**
-            The value returned depends on \p optimistic_queue::traits::item_counter. 
+            The value returned depends on \p optimistic_queue::traits::item_counter.
             For \p atomicity::empty_item_counter, this function always returns 0.
 
             @note Even if you use real item counter and it returns 0, this fact is not mean that the queue

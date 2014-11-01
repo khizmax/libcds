@@ -111,7 +111,7 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef cds::urcu::gc<RCU> gc;          ///< RCU 
+        typedef cds::urcu::gc<RCU> gc;          ///< RCU
         typedef T                  value_type;  ///< Type of value stored in the list
         typedef Traits             traits;      ///< List traits
 
@@ -420,7 +420,7 @@ namespace cds { namespace container {
         /** \anchor cds_nonintrusive_MichealList_rcu_erase_val
             Since the key of MichaelList's item type \p value_type is not explicitly specified,
             template parameter \p Q defines the key type searching in the list.
-            The list item comparator should be able to compare values of the type \p value_type 
+            The list item comparator should be able to compare values of the type \p value_type
             and \p Q in any order.
 
             RCU \p synchronize method can be called. RCU should not be locked.

@@ -22,8 +22,8 @@ namespace cds { namespace intrusive {
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p T - type to be stored in the list; the type \p T should be based on (or has a member of type)
             cds::intrusive::micheal_list::node
-        - \p Traits - type traits. See \p michael_list::traits for explanation. It is possible to declare option-based 
-             list with \p cds::intrusive::michael_list::make_traits metafunction, 
+        - \p Traits - type traits. See \p michael_list::traits for explanation. It is possible to declare option-based
+             list with \p cds::intrusive::michael_list::make_traits metafunction,
              see \ref cds_intrusive_MichaelList_hp "here" for explanations.
 
         \par Usage
@@ -38,7 +38,7 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::MichaelList<cds::urcu::gc< cds::urcu::general_buffered<> >, Foo > rcu_michael_list;
             \endcode
     */
-    template < typename RCU, typename T, 
+    template < typename RCU, typename T,
 #ifdef CDS_DOXYGEN_INVOKED
     class Traits = michael_list::traits
 #else

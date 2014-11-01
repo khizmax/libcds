@@ -62,7 +62,7 @@ namespace cds { namespace container {
 
             Example: declare \p %TsigasCycleQueue with item counting and static iternal buffer of size 1024:
             \code
-            typedef cds::container::TsigasCycleQueue< Foo, 
+            typedef cds::container::TsigasCycleQueue< Foo,
                 typename cds::container::tsigas_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
                     cds::opt::item_counte< cds::atomicity::item_counter >
@@ -133,8 +133,8 @@ namespace cds { namespace container {
             typedef cds::container::TsigasCycleQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::container::TsigasCycleQueue< cds::gc::HP, Foo, 
-                typename cds::container::tsigas_queue::make_traits< 
+            typedef cds::container::TsigasCycleQueue< cds::gc::HP, Foo,
+                typename cds::container::tsigas_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;
@@ -149,7 +149,7 @@ namespace cds { namespace container {
         };
 
         // Queue of Foo, capacity is 1024, statically allocated buffer:
-        typedef cds::container::TsigasCycleQueue< Foo, 
+        typedef cds::container::TsigasCycleQueue< Foo,
             typename cds::container::tsigas_queue::make_traits<
                 cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > >
             >::type

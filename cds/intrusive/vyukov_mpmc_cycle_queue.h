@@ -26,7 +26,7 @@ namespace cds { namespace intrusive {
             - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
                 \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
                 element in the buffer is not important: it will be changed via \p rebind metafunction.
-            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. 
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer.
                 This option is used only in \p clear() member function.
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
@@ -36,7 +36,7 @@ namespace cds { namespace intrusive {
 
             Example: declare \p %VyukovMPMCCycleQueue with item counting and static iternal buffer of size 1024:
             \code
-            typedef cds::intrusive::VyukovMPMCCycleQueue< Foo, 
+            typedef cds::intrusive::VyukovMPMCCycleQueue< Foo,
                 typename cds::intrusive::vyukov_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
                     cds::opt::item_counte< cds::atomicity::item_counter >
@@ -75,8 +75,8 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::VyukovMPMCCycleQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::intrusive::VyukovMPMCCycleQueue< cds::gc::HP, Foo, 
-                typename cds::intrusive::vykov_queue::make_traits< 
+            typedef cds::intrusive::VyukovMPMCCycleQueue< cds::gc::HP, Foo,
+                typename cds::intrusive::vykov_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;

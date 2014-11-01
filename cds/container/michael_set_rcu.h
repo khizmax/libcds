@@ -22,7 +22,7 @@ namespace cds { namespace container {
 
         Template parameters are:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
-        - \p OrderedList - ordered list implementation used as the bucket for hash set, for example, 
+        - \p OrderedList - ordered list implementation used as the bucket for hash set, for example,
             \ref cds_nonintrusive_MichaelList_rcu "MichaelList".
             The ordered list implementation specifies the type \p T stored in the hash-set,
             the comparison functor for the type \p T and other features specific for

@@ -39,7 +39,7 @@ namespace cds { namespace container {
 
             Example: declare mutex-based \p %RWQueue with item counting
             \code
-            typedef cds::container::RWQueue< Foo, 
+            typedef cds::container::RWQueue< Foo,
                 typename cds::container::rwqueue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >,
                     cds::opt::lock_type< std::mutex >
@@ -82,8 +82,8 @@ namespace cds { namespace container {
             typedef cds::container::RWQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::container::RWQueue< Foo, 
-                typename cds::container::rwqueue::make_traits< 
+            typedef cds::container::RWQueue< Foo,
+                typename cds::container::rwqueue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;

@@ -112,7 +112,7 @@ namespace deque {
 
         void fcDeque_mutex()
         {
-            struct deque_traits : public 
+            struct deque_traits : public
                 cds::container::fcdeque::make_traits<
                     cds::opt::enable_elimination< true >
                 >::type

@@ -37,7 +37,7 @@ namespace cds { namespace container {
             typedef atomicity::empty_item_counter     item_counter;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */

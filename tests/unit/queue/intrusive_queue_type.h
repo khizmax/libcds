@@ -181,7 +181,7 @@ namespace queue {
         typedef cds::intrusive::OptimisticQueue< cds::gc::DHP, T, traits_OptimisticQueue_DHP_seqcst > OptimisticQueue_DHP_seqcst;
 
         // OptimisticQueue + item counter
-        struct traits_OptimisticQueue_HP_ic: public 
+        struct traits_OptimisticQueue_HP_ic: public
             cds::intrusive::optimistic_queue::make_traits <
                 cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
                 , cds::opt::item_counter< cds::atomicity::item_counter >
@@ -198,7 +198,7 @@ namespace queue {
         typedef cds::intrusive::OptimisticQueue< cds::gc::DHP, T, traits_OptimisticQueue_DHP_ic > OptimisticQueue_DHP_ic;
 
         // OptimisticQueue + stat
-        struct traits_OptimisticQueue_HP_stat: public 
+        struct traits_OptimisticQueue_HP_stat: public
             cds::intrusive::optimistic_queue::make_traits <
                 cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
                 , cds::opt::stat< cds::intrusive::optimistic_queue::stat<> >
@@ -206,7 +206,7 @@ namespace queue {
         {};
         typedef cds::intrusive::OptimisticQueue< cds::gc::HP, T, traits_OptimisticQueue_HP_stat > OptimisticQueue_HP_stat;
 
-        struct traits_OptimisticQueue_DHP_stat: public 
+        struct traits_OptimisticQueue_DHP_stat: public
             cds::intrusive::optimistic_queue::make_traits <
                 cds::intrusive::opt::hook< cds::intrusive::optimistic_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
                 , cds::opt::stat< cds::intrusive::optimistic_queue::stat<> >
@@ -216,7 +216,7 @@ namespace queue {
 
         // TsigasCycleQueue
         class TsigasCycleQueue_dyn
-            : public cds::intrusive::TsigasCycleQueue< T, 
+            : public cds::intrusive::TsigasCycleQueue< T,
                 typename cds::intrusive::tsigas_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
                 >::type
@@ -323,7 +323,7 @@ namespace queue {
         {};
         typedef cds::intrusive::BasketQueue< cds::gc::HP, T, traits_BasketQueue_HP > BasketQueue_HP;
 
-        struct traits_BasketQueue_HP_seqcst: public 
+        struct traits_BasketQueue_HP_seqcst: public
             cds::intrusive::basket_queue::make_traits <
                 cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::HP > > >
                 , cds::opt::memory_model< cds::opt::v::sequential_consistent >
@@ -338,7 +338,7 @@ namespace queue {
         {};
         typedef cds::intrusive::BasketQueue< cds::gc::DHP, T, traits_BasketQueue_DHP > BasketQueue_DHP;
 
-        struct traits_BasketQueue_DHP_seqcst: public 
+        struct traits_BasketQueue_DHP_seqcst: public
             cds::intrusive::basket_queue::make_traits <
                 cds::intrusive::opt::hook< cds::intrusive::basket_queue::base_hook< cds::opt::gc< cds::gc::DHP > > >
                 , cds::opt::memory_model< cds::opt::v::sequential_consistent >

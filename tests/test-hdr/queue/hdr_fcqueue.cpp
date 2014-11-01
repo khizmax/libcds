@@ -72,7 +72,7 @@ namespace queue {
 
     void HdrFCQueue::FCQueue_list_stat()
     {
-        struct queue_traits : public cds::container::fcqueue::traits 
+        struct queue_traits : public cds::container::fcqueue::traits
         {
             typedef cds::container::fcqueue::stat<> stat;
         };

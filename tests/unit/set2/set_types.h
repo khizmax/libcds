@@ -412,7 +412,7 @@ namespace set2 {
         typedef cc::MichaelHashSet< rcu_sht, MichaelList_RCU_SHT_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHT_less_stdAlloc_seqcst;
 #endif
 
-        struct traits_MichaelSet_michaelAlloc : 
+        struct traits_MichaelSet_michaelAlloc :
             public cc::michael_set::make_traits<
                 co::hash< hash >,
                 co::allocator< memory::MichaelAllocator<int> >

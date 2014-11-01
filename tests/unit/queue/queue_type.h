@@ -136,7 +136,7 @@ namespace queue {
         typedef cds::container::MoirQueue< cds::gc::DHP, Value, traits_MSQueue_ic > MoirQueue_DHP_ic;
 
         // MSQueue + stat
-        struct traits_MSQueue_stat: public 
+        struct traits_MSQueue_stat: public
             cds::container::msqueue::make_traits <
                 cds::opt::stat< cds::container::msqueue::stat<> >
             >::type
@@ -377,7 +377,7 @@ namespace queue {
         };
         typedef cds::container::RWQueue< Value, traits_RWQueue_Spin_ic > RWQueue_Spin_ic;
 
-        struct traits_RWQueue_mutex : public 
+        struct traits_RWQueue_mutex : public
             cds::container::rwqueue::make_traits<
                 cds::opt::lock_type< std::mutex >
             >::type

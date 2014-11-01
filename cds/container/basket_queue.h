@@ -42,7 +42,7 @@ namespace cds { namespace container {
             typedef basket_queue::empty_stat         stat;
 
             /// C++ memory ordering model
-            /** 
+            /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
@@ -68,7 +68,7 @@ namespace cds { namespace container {
 
             Example: declare \p %BasketQueue with item counting and internal statistics
             \code
-            typedef cds::container::BasketQueue< cds::gc::HP, Foo, 
+            typedef cds::container::BasketQueue< cds::gc::HP, Foo,
                 typename cds::container::basket_queue::make_traits<
                     cds::opt::item_counte< cds::atomicity::item_counter >,
                     cds::opt::stat< cds::intrusive::basket_queue::stat<> >
@@ -193,8 +193,8 @@ namespace cds { namespace container {
             typedef cds::container::BasketQueue< cds::gc::HP, Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
-            typedef cds::container::BasketQueue< cds::gc::HP, Foo, 
-                typename cds::container::basket_queue::make_traits< 
+            typedef cds::container::BasketQueue< cds::gc::HP, Foo,
+                typename cds::container::basket_queue::make_traits<
                     cds::opt::stat< cds::container::basket_queue::stat<> >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
