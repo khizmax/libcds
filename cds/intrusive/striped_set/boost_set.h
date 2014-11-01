@@ -9,6 +9,17 @@
 //@cond
 namespace cds { namespace intrusive { namespace striped_set {
 
+#if CDS_COMPILER == CDS_COMPILER_INTEL && CDS_COMPILER_VERSION <= 1500
+    template <typename T, typename O1, typename O2, typename O3, typename O4, typename... Options>
+    class adapt< boost::intrusive::set< T, O1, O2, O3, O4 >, Options... >
+    {
+    public:
+        typedef boost::intrusive::set< T, O1, O2, O3, O4 >  container_type;   ///< underlying intrusive container type
+
+    public:
+        typedef details::boost_intrusive_set_adapter<container_type>   type;  ///< Result of the metafunction
+    };
+#else
     template <typename T, typename... BIOptons, typename... Options>
     class adapt< boost::intrusive::set< T, BIOptons... >, Options... >
     {
@@ -17,8 +28,9 @@ namespace cds { namespace intrusive { namespace striped_set {
 
     public:
         typedef details::boost_intrusive_set_adapter<container_type>   type ;  ///< Result of the metafunction
-
     };
+#endif
+
 }}} // namespace cds::intrusive::striped_set
 //@endcond
 
