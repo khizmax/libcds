@@ -103,8 +103,6 @@ namespace cds { namespace intrusive {
                 list_iterator   m_itList;
                 bucket_ptr      m_pEndBucket;
 
-                friend class iterator < bucket_type, !IsConst > ;
-
                 void next()
                 {
                     if ( m_pCurBucket < m_pEndBucket ) {

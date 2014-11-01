@@ -930,8 +930,8 @@ namespace map2 {
         typedef cc::SplitListMap< rcu_gpb, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_GPB_dyn_cmp_stat;
         typedef cc::SplitListMap< rcu_gpt, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_GPT_dyn_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::SplitListMap< rcu_shb, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_SHB_dyn_cmp;
-        typedef cc::SplitListMap< rcu_sht, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_SHT_dyn_cmp;
+        typedef cc::SplitListMap< rcu_shb, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_SHB_dyn_cmp_stat;
+        typedef cc::SplitListMap< rcu_sht, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_SHT_dyn_cmp_stat;
 #endif
 
         struct SplitList_Lazy_dyn_cmp_seqcst :
