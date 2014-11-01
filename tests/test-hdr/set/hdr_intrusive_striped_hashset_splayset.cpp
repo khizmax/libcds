@@ -13,8 +13,8 @@ namespace set {
         typedef bi::splay_set_member_hook<> splay_set_member_hook;
         typedef bi::splay_set_base_hook<> splay_set_base_hook;
 #else
-        typedef bi::bs_set_base_hook<> splay_set_member_hook;
-        typedef bi::bs_set_member_hook<> splay_set_base_hook;
+        typedef bi::bs_set_base_hook<> splay_set_base_hook;
+        typedef bi::bs_set_member_hook<> splay_set_member_hook;
 #endif
 
         typedef IntrusiveStripedSetHdrTest::base_item< splay_set_base_hook> base_item_type;
