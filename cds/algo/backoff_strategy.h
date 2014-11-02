@@ -18,7 +18,6 @@
 
 #include <thread>
 #include <chrono>
-#include <cds/details/defs.h>
 #include <cds/compiler/backoff.h>
 
 namespace cds {

@@ -3,6 +3,8 @@
 #ifndef __CDS_COMPILER_BACKOFF_IMPL_H
 #define __CDS_COMPILER_BACKOFF_IMPL_H
 
+#include <cds/details/defs.h>
+
 #if CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)
 #   if CDS_PROCESSOR_ARCH == CDS_PROCESSOR_X86
 #       include <cds/compiler/vc/x86/backoff.h>
