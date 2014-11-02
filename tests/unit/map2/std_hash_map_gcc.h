@@ -5,7 +5,7 @@
 
 #include <mutex>    //unique_lock
 #include <unordered_map>
-#include <functional>   // ref
+//#include <functional>   // ref
 
 namespace map2 {
 

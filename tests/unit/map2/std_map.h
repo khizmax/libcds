@@ -1,45 +1,46 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_STD_HASH_MAP_VC_H
-#define __CDSUNIT_STD_HASH_MAP_VC_H
+#ifndef __CDSUNIT_STD_MAP_GCC_H
+#define __CDSUNIT_STD_MAP_GCC_H
 
-#include <hash_map>
-#include <functional>   // ref
+#include <map>
 #include <mutex>    //unique_lock
 
 namespace map2 {
-    template <typename Key, typename Value, typename Lock, class Alloc = CDS_DEFAULT_ALLOCATOR>
-    class StdHashMap: public stdext::hash_map<Key, Value, stdext::hash_compare<Key, std::less<Key> >, Alloc>
+
+    template <typename Key, typename Value, typename Lock,
+        class Alloc = typename CDS_DEFAULT_ALLOCATOR::template rebind<std::pair<Key const, Value> >::other
+    >
+    class StdMap: public std::map<Key, Value, std::less<Key>, Alloc>
     {
-    public:
         Lock m_lock;
-        typedef std::unique_lock<Lock> AutoLock;
-        typedef stdext::hash_map<Key, Value, stdext::hash_compare<Key, std::less<Key> >, Alloc>   base_class;
+        typedef std::unique_lock<Lock> scoped_lock;
+        typedef std::map<Key, Value, std::less<Key>, Alloc> base_class;
     public:
         typedef typename base_class::mapped_type value_type;
         typedef typename base_class::value_type  pair_type;
         typedef size_t      item_counter;
 
-        StdHashMap( size_t nMapSize, size_t nLoadFactor )
+        StdMap( size_t nMapSize, size_t nLoadFactor )
         {}
 
         bool find( const Key& key )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             return base_class::find( key ) != base_class::end();
         }
 
         bool insert( const Key& key, const Value& val )
         {
-            AutoLock al( m_lock );
-            return base_class::insert( base_class::value_type(key, val)).second;
+            scoped_lock al( m_lock );
+            return base_class::insert( typename base_class::value_type(key, val)).second;
         }
 
         template <typename T, typename Func>
         bool insert( const Key& key, const T& val, Func func )
         {
-            AutoLock al( m_lock );
-            std::pair<base_class::iterator, bool> pRet = base_class::insert( base_class::value_type(key, Value() ));
+            scoped_lock al( m_lock );
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type(key, Value() ));
             if ( pRet.second ) {
                 func( pRet.first->second, val );
                 return true;
@@ -50,8 +51,8 @@ namespace map2 {
         template <typename T, typename Func>
         std::pair<bool, bool> ensure( const T& key, Func func )
         {
-            AutoLock al( m_lock );
-            std::pair<base_class::iterator, bool> pRet = base_class::insert( base_class::value_type(key, Value() ));
+            scoped_lock al( m_lock );
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type(key, Value() ));
             if ( pRet.second ) {
                 func( true, *pRet.first );
                 return std::make_pair( true, true );
@@ -64,25 +65,25 @@ namespace map2 {
 
         bool erase( const Key& key )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             return base_class::erase( key ) != 0;
         }
 
         template <typename T, typename Func>
         bool erase( const T& key, Func func )
         {
-            AutoLock al( m_lock );
-            base_class::iterator it = base_class::find( key );
+            scoped_lock al( m_lock );
+            typename base_class::iterator it = base_class::find( key );
             if ( it != base_class::end() ) {
-                func( *it );
-                return base_class::erase( key ) != 0;
+                func( (*it) );
+                base_class::erase( it );
+                return true;
             }
             return false;
         }
 
-
         std::ostream& dump( std::ostream& stm ) { return stm; }
     };
-}   // namespace map2
+}   // namespace map
 
-#endif  // #ifndef __CDSUNIT_STD_HASH_MAP_VC_H
+#endif  // #ifndef __CDSUNIT_STD_MAP_GCC_H
