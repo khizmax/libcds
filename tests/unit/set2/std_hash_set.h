@@ -4,7 +4,6 @@
 #define __CDSUNIT_STD_HASH_SET_STD_H
 
 #include <unordered_set>
-#include <functional>   // ref
 #include <mutex>    //unique_lock
 
 namespace set2 {

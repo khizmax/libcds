@@ -79,8 +79,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "set", "set", "{A64449B7-90F
 		..\..\..\tests\unit\set2\set_defs.h = ..\..\..\tests\unit\set2\set_defs.h
 		..\..\..\tests\unit\set2\set_types.h = ..\..\..\tests\unit\set2\set_types.h
 		..\..\..\tests\unit\set2\std_hash_set.h = ..\..\..\tests\unit\set2\std_hash_set.h
-		..\..\..\tests\unit\set2\std_hash_set_std.h = ..\..\..\tests\unit\set2\std_hash_set_std.h
-		..\..\..\tests\unit\set2\std_hash_set_vc9.h = ..\..\..\tests\unit\set2\std_hash_set_vc9.h
 		..\..\..\tests\unit\set2\std_set.h = ..\..\..\tests\unit\set2\std_set.h
 	EndProjectSection
 EndProject
