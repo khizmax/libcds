@@ -22,7 +22,7 @@ namespace set2 {
     {
     public:
         Lock m_lock;
-        typedef std::unique_lock<Lock> AutoLock;
+        typedef std::unique_lock<Lock> scoped_lock;
         typedef std::unordered_set<
             Value
             , Hash
@@ -38,14 +38,14 @@ namespace set2 {
         template <typename Key>
         bool find( const Key& key )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             return base_class::find( value_type(key) ) != base_class::end();
         }
 
         template <typename Key>
         bool insert( Key const& key )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( value_type( key ));
             return pRet.second;
         }
@@ -53,7 +53,7 @@ namespace set2 {
         template <typename Key, typename Func>
         bool insert( Key const& key, Func func )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( value_type( key ));
             if ( pRet.second ) {
                 func( *pRet.first );
@@ -65,7 +65,7 @@ namespace set2 {
         template <typename T, typename Func>
         std::pair<bool, bool> ensure( const T& key, Func func )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( value_type( key ));
             if ( pRet.second ) {
                 func( true, *pRet.first, key );
@@ -80,14 +80,14 @@ namespace set2 {
         template <typename Key>
         bool erase( const Key& key )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             return base_class::erase( value_type(key) ) != 0;
         }
 
         template <typename T, typename Func>
         bool erase( const T& key, Func func )
         {
-            AutoLock al( m_lock );
+            scoped_lock al( m_lock );
             typename base_class::iterator it = base_class::find( value_type(key) );
             if ( it != base_class::end() ) {
                 func( *it );
