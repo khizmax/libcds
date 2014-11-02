@@ -71,11 +71,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "map", "map", "{6BB7A27F-FC5
 		..\..\..\tests\unit\map2\map_defs.h = ..\..\..\tests\unit\map2\map_defs.h
 		..\..\..\tests\unit\map2\map_types.h = ..\..\..\tests\unit\map2\map_types.h
 		..\..\..\tests\unit\map2\std_hash_map.h = ..\..\..\tests\unit\map2\std_hash_map.h
-		..\..\..\tests\unit\map2\std_hash_map_gcc.h = ..\..\..\tests\unit\map2\std_hash_map_gcc.h
-		..\..\..\tests\unit\map2\std_hash_map_vc.h = ..\..\..\tests\unit\map2\std_hash_map_vc.h
 		..\..\..\tests\unit\map2\std_map.h = ..\..\..\tests\unit\map2\std_map.h
-		..\..\..\tests\unit\map2\std_map_gcc.h = ..\..\..\tests\unit\map2\std_map_gcc.h
-		..\..\..\tests\unit\map2\std_map_vc.h = ..\..\..\tests\unit\map2\std_map_vc.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "set", "set", "{A64449B7-90FB-4E2B-A686-9EFC0E298644}"
