@@ -333,15 +333,16 @@ namespace misc {
         {
             const atomics::memory_order oLoad = convert_to_load_order( order );
             const atomics::memory_order oStore = convert_to_store_order( order );
+            const atomics::memory_order oExchange = convert_to_exchange_order( order );
 
             CPPUNIT_ASSERT( atomics::atomic_is_lock_free( &a ) );
             atomics::atomic_store_explicit( &a, false, oStore );
             CPPUNIT_ASSERT( a == false );
             CPPUNIT_ASSERT( atomics::atomic_load_explicit( &a, oLoad ) == false );
 
-            CPPUNIT_ASSERT( atomics::atomic_exchange_explicit( &a, true, order ) == false );
+            CPPUNIT_ASSERT( atomics::atomic_exchange_explicit( &a, true, oExchange ) == false );
             CPPUNIT_ASSERT( atomics::atomic_load_explicit( &a, oLoad ) == true );
-            CPPUNIT_ASSERT( atomics::atomic_exchange_explicit( &a, false, order ) == true );
+            CPPUNIT_ASSERT( atomics::atomic_exchange_explicit( &a, false, oExchange ) == true );
             CPPUNIT_ASSERT( atomics::atomic_load_explicit( &a, oLoad ) == false );
 
             bool expected = false;
@@ -361,7 +362,7 @@ namespace misc {
 
             CPPUNIT_ASSERT( atomics::atomic_load_explicit( &a, oLoad ) == true );
 
-            CPPUNIT_ASSERT( atomics::atomic_exchange_explicit( &a, false, order ) == true );
+            CPPUNIT_ASSERT( atomics::atomic_exchange_explicit( &a, false, oExchange ) == true );
         }
 
         template <typename Atomic, typename Integral>
@@ -620,24 +621,6 @@ namespace misc {
         void test_atomic_long_long_volatile()   { test_atomic_integral_volatile<long long>(); }
         void test_atomic_unsigned_long_long()   { test_atomic_integral<unsigned long long>(); }
         void test_atomic_unsigned_long_long_volatile() { test_atomic_integral_volatile<unsigned long long>(); }
-//#if CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 40400
-//        void test_atomic_char16_t()             { test_atomic_integral<char16_t>(); }
-//        void test_atomic_char16_t_volatile()    { test_atomic_integral_volatile<char16_t>(); }
-//        void test_atomic_char32_t()             { test_atomic_integral<char32_t>(); }
-//        void test_atomic_char32_t_volatile()    { test_atomic_integral_volatile<char32_t>(); }
-//#endif
-//        void test_atomic_wchar_t()
-//        {
-//#if CDS_OS_TYPE != CDS_OS_HPUX
-//            test_atomic_integral<wchar_t>();
-//#endif
-//        }
-//        void test_atomic_wchar_t_volatile()
-//        {
-//#if CDS_OS_TYPE != CDS_OS_HPUX
-//            test_atomic_integral_volatile<wchar_t>();
-//#endif
-//        }
 
         void test_atomic_pointer_void()         { do_test_atomic_pointer_void<false>() ;}
         void test_atomic_pointer_void_volatile(){ do_test_atomic_pointer_void<true>() ;}
@@ -688,11 +671,6 @@ namespace misc {
             CPPUNIT_TEST( test_atomic_unsigned_long)
             CPPUNIT_TEST( test_atomic_long_long)
             CPPUNIT_TEST( test_atomic_unsigned_long_long)
-//#if CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 40400
-//            CPPUNIT_TEST( test_atomic_char16_t )
-//            CPPUNIT_TEST( test_atomic_char32_t )
-//#endif
-//            CPPUNIT_TEST( test_atomic_wchar_t)
 
             CPPUNIT_TEST( test_atomic_bool_volatile )
             CPPUNIT_TEST( test_atomic_char_volatile )
@@ -706,11 +684,6 @@ namespace misc {
             CPPUNIT_TEST( test_atomic_unsigned_long_volatile)
             CPPUNIT_TEST( test_atomic_long_long_volatile)
             CPPUNIT_TEST( test_atomic_unsigned_long_long_volatile)
-//#if CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 40400
-//            CPPUNIT_TEST( test_atomic_char16_t_volatile )
-//            CPPUNIT_TEST( test_atomic_char32_t_volatile )
-//#endif
-//            CPPUNIT_TEST( test_atomic_wchar_t_volatile)
 
             CPPUNIT_TEST( test_atomic_pointer_void)
             CPPUNIT_TEST( test_atomic_pointer_void_volatile)

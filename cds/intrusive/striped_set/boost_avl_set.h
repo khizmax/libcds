@@ -14,7 +14,7 @@ namespace cds { namespace intrusive { namespace striped_set {
     class adapt< boost::intrusive::avl_set< T, P1, P2, P3, P4, P5 >, Options... >
     {
     public:
-        typedef boost::intrusive::avl_set< T >  container_type;   ///< underlying intrusive container type
+        typedef boost::intrusive::avl_set< T, P1, P2, P3, P4, P5 >  container_type;   ///< underlying intrusive container type
 
     public:
         typedef details::boost_intrusive_set_adapter<container_type>   type;  ///< Result of the metafunction

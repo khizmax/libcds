@@ -29,6 +29,18 @@ namespace misc {
         }
     }
 
+#if CDS_COMPILER == CDS_COMPILER_INTEL
+    static inline atomics::memory_order convert_to_exchange_order( atomics::memory_order order )
+    {
+        return order == atomics::memory_order_consume ? atomics::memory_order_relaxed : order;
+    }
+#else
+    static inline atomics::memory_order convert_to_exchange_order( atomics::memory_order order )
+    {
+        return order;
+    }
+#endif
+
     template <typename T, bool Volatile>
     struct add_volatile;
 
