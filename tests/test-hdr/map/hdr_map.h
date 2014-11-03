@@ -608,7 +608,7 @@ namespace map {
                 for ( iterator it = m.begin(), itEnd = m.end(); it != itEnd; ++it ) {
                     iterator it2 = it;
                     CPPUNIT_CHECK( it2 == it );
-                    CPPUNIT_CHECK( it2 == itEnd );
+                    CPPUNIT_CHECK( it2 != itEnd );
                     CPPUNIT_ASSERT( it->first * 2 == (*it).second.m_val );
                     it->second = it->first;
                 }
