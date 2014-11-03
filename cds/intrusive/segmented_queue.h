@@ -223,6 +223,8 @@ namespace cds { namespace intrusive {
                 init( nCellCount );
             }
 
+            segment() = delete;
+
             void init( size_t nCellCount )
             {
                 atomics::atomic< cell > * pLastCell = cells + nCellCount;
@@ -230,9 +232,6 @@ namespace cds { namespace intrusive {
                     pCell->store( cell(), atomics::memory_order_relaxed );
                 atomics::atomic_thread_fence( memory_model::memory_order_release );
             }
-
-        private:
-            segment(); //=delete
         };
 
         typedef typename opt::details::alignment_setter< atomics::atomic<segment *>, traits::alignment >::type aligned_segment_ptr;
