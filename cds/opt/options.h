@@ -399,7 +399,7 @@ namespace opt {
     //@endcond
 
     /// Special padding constants for \p cds::opt::padding option
-    enum special_pading {
+    enum special_padding {
         no_special_padding = 0,   ///< no special padding
         cache_line_padding = 1,   ///< use cache line size defined in cds/user_setup/cache_line.h
 
@@ -498,8 +498,8 @@ namespace opt {
 
         public:
             static CDS_CONSTEXPR const size_t c_nPadding = 
-                padding == cache_line_padding ? cds::c_nCacheLineSize : 
-                padding == no_special_padding ? 0 : padding ;
+                static_cast<unsigned int>(padding) == static_cast<unsigned int>(cache_line_padding) ? cds::c_nCacheLineSize : 
+                static_cast<unsigned int>(padding) == static_cast<unsigned int>(no_special_padding) ? 0 : padding;
 
             static_assert( (c_nPadding & (c_nPadding - 1)) == 0, "Padding must be a power-of-two number" );
 
