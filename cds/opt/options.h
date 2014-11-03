@@ -398,6 +398,123 @@ namespace opt {
     } // namespace details
     //@endcond
 
+    /// Special padding constants for \p cds::opt::padding option
+    enum special_pading {
+        no_special_padding = 0,   ///< no special padding
+        cache_line_padding = 1,   ///< use cache line size defined in cds/user_setup/cache_line.h
+
+        /// Apply padding only for tiny data of size less than required padding
+        /**
+            The flag means that if your data size is less than the casheline size, the padding is applyed.
+            Otherwise no padding will be applyed.
+
+            This flag is applyed for padding value:
+            \code
+            cds::opt::padding< cds::opt::cache_line_padding | cds::opt::padding_tiny_data_only >;
+            cds::opt::padding< 256 | cds::opt::padding_tiny_data_only >;
+            \endcode
+        */
+        padding_tiny_data_only = 0x80000000,
+
+        //@cond
+        padding_flags = padding_tiny_data_only
+        //@endcond
+    };
+
+    /// [value-option] Padding option setter
+    /**
+        The padding for the internal data of some containers. May be useful to solve false sharing problem.
+        \p Value defines desired padding and it may be power of two integer or predefined values from
+        \p special_padding enum.
+    */
+    template <unsigned int Value>
+    struct padding {
+        //@cond
+        template <typename Base> struct pack: public Base
+        {
+            enum { padding = Value };
+        };
+        //@endcond
+    };
+
+    //@cond
+    namespace details {
+        enum padding_vs_datasize {
+            padding_datasize_less,
+            padding_datasize_equal,
+            padding_datasize_greater
+        };
+
+        template < typename T, unsigned int Padding, bool NoPadding, padding_vs_datasize Relation, bool TinyOnly >
+        struct apply_padding_helper;
+
+        template <typename T, padding_vs_datasize Relation, bool TinyOnly >
+        struct apply_padding_helper < T, 0, true, Relation, TinyOnly >
+        {
+            struct type {
+                T   data;
+            };
+        };
+
+        template <typename T, unsigned int Padding, bool TinyOnly >
+        struct apply_padding_helper < T, Padding, false, padding_datasize_equal, TinyOnly >
+        {
+            struct type {
+                T   data;
+            };
+        };
+
+        template <typename T, unsigned int Padding, bool TinyOnly >
+        struct apply_padding_helper < T, Padding, false, padding_datasize_less, TinyOnly >
+        {
+            struct type {
+                T data;
+                uint8_t pad_[Padding - sizeof( T )];
+            };
+        };
+
+        template <typename T, unsigned int Padding >
+        struct apply_padding_helper < T, Padding, false, padding_datasize_greater, false >
+        {
+            struct type {
+                T data;
+                uint8_t pad_[Padding - sizeof( T ) % Padding];
+            };
+        };
+
+        template <typename T, unsigned int Padding >
+        struct apply_padding_helper < T, Padding, false, padding_datasize_greater, true >
+        {
+            struct type {
+                T data;
+            };
+        };
+
+        template <typename T, unsigned int Padding >
+        struct apply_padding
+        {
+        private:
+            enum { padding = Padding & ~padding_flags };
+
+        public:
+            static CDS_CONSTEXPR const size_t c_nPadding = 
+                padding == cache_line_padding ? cds::c_nCacheLineSize : 
+                padding == no_special_padding ? 0 : padding ;
+
+            static_assert( (c_nPadding & (c_nPadding - 1)) == 0, "Padding must be a power-of-two number" );
+
+            typedef typename apply_padding_helper< T,
+                c_nPadding,
+                c_nPadding == 0,
+                sizeof( T ) < c_nPadding ? padding_datasize_less : sizeof( T ) == c_nPadding ? padding_datasize_equal : padding_datasize_greater,
+                (Padding & padding_tiny_data_only) != 0 
+            >::type type;
+        };
+
+    } // namespace details
+    //@endcond
+
+
     /// [type-option] Generic option setter for statisitcs
     /**
         This option sets a type to gather statistics.

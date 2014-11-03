@@ -46,6 +46,11 @@ namespace cds { namespace container {
             /// Alignment of critical data, default is cache line alignment. See cds::opt::alignment option specification
             enum { alignment = opt::cache_line_alignment };
 
+            /// Padding of segment data, default is no special padding
+            /** @copydetails cds::intrusive::segmented_queue::traits::padding
+            */
+            enum { padding = cds::intrusive::segmented_queue::traits::padding };
+
             /// Segment allocator. Default is \ref CDS_DEFAULT_ALLOCATOR
             typedef CDS_DEFAULT_ALLOCATOR allocator;
 
@@ -76,6 +81,8 @@ namespace cds { namespace container {
             - \p opt::memory_model - memory model, default is \p opt::v::relaxed_ordering.
                 See option description for the full list of possible models
             - \p opt::alignment - the alignment of critical data, see option description for explanation
+            - \p opt::padding - the padding of segment data, default no special padding.
+                See \p traits::padding for explanation.
             - \p opt::allocator - the allocator used to maintain segments.
             - \p opt::lock_type - a mutual exclusion lock type used to maintain internal list of allocated
                 segments. Default is \p cds::opt::Spin, \p std::mutex is also suitable.

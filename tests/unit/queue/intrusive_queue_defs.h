@@ -127,23 +127,31 @@
 // SegmentedQueue
 #define CDSUNIT_DECLARE_SegmentedQueue \
     TEST_SEGMENTED( SegmentedQueue_HP_spin ) \
+    TEST_SEGMENTED( SegmentedQueue_HP_spin_padding ) \
     TEST_SEGMENTED( SegmentedQueue_HP_spin_stat ) \
     TEST_SEGMENTED( SegmentedQueue_HP_mutex ) \
+    TEST_SEGMENTED( SegmentedQueue_HP_mutex_padding ) \
     TEST_SEGMENTED( SegmentedQueue_HP_mutex_stat ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_spin ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_spin_stat ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_mutex ) \
-    TEST_SEGMENTED( SegmentedQueue_PTB_mutex_stat )
+    TEST_SEGMENTED( SegmentedQueue_DHP_spin ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_spin_padding ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_spin_stat ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_mutex ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_mutex_padding ) \
+    TEST_SEGMENTED( SegmentedQueue_DHP_mutex_stat )
 
 #define CDSUNIT_TEST_SegmentedQueue \
     CPPUNIT_TEST( SegmentedQueue_HP_spin ) \
+    CPPUNIT_TEST( SegmentedQueue_HP_spin_padding ) \
     CPPUNIT_TEST( SegmentedQueue_HP_spin_stat ) \
     CPPUNIT_TEST( SegmentedQueue_HP_mutex ) \
+    CPPUNIT_TEST( SegmentedQueue_HP_mutex_padding ) \
     CPPUNIT_TEST( SegmentedQueue_HP_mutex_stat ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_spin ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_spin_stat ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_mutex ) \
-    CPPUNIT_TEST( SegmentedQueue_PTB_mutex_stat )
+    CPPUNIT_TEST( SegmentedQueue_DHP_spin ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_spin_padding ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_spin_stat ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_mutex ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_mutex_padding ) \
+    CPPUNIT_TEST( SegmentedQueue_DHP_mutex_stat )
 
 
 // BoostSList

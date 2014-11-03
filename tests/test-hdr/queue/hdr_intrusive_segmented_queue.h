@@ -9,7 +9,7 @@
 
 namespace queue {
 
-    class HdrIntrusiveSegmentedQueue: public CppUnitMini::TestCase
+    class HdrIntrusiveSegmentedQueue : public CppUnitMini::TestCase
     {
         struct item {
             int  nValue;
@@ -18,16 +18,28 @@ namespace queue {
             size_t  nDispose2Count;
 
             item()
-                : nValue(0)
-                , nDisposeCount(0)
-                , nDispose2Count(0)
+                : nValue( 0 )
+                , nDisposeCount( 0 )
+                , nDispose2Count( 0 )
             {}
 
             item( int nVal )
-                : nValue(nVal)
-                , nDisposeCount(0)
-                , nDispose2Count(0)
+                : nValue( nVal )
+                , nDisposeCount( 0 )
+                , nDispose2Count( 0 )
             {}
+        };
+
+        struct big_item : public item
+        {
+            big_item()
+            {}
+
+            big_item( int nVal )
+                : item( nVal )
+            {}
+
+            int arr[80];
         };
 
         struct Disposer
@@ -184,22 +196,70 @@ namespace queue {
         void SegmQueue_HP_mutex();
         void SegmQueue_HP_shuffle();
         void SegmQueue_HP_stat();
+        void SegmQueue_HP_cacheline_padding();
+        void SegmQueue_HP_mutex_cacheline_padding();
+        void SegmQueue_HP_shuffle_cacheline_padding();
+        void SegmQueue_HP_stat_cacheline_padding();
+        void SegmQueue_HP_256_padding();
+        void SegmQueue_HP_mutex_256_padding();
+        void SegmQueue_HP_shuffle_256_padding();
+        void SegmQueue_HP_stat_256_padding();
+        void SegmQueue_HP_cacheline_padding_bigdata();
+        void SegmQueue_HP_mutex_cacheline_padding_bigdata();
+        void SegmQueue_HP_shuffle_cacheline_padding_bigdata();
+        void SegmQueue_HP_stat_cacheline_padding_bigdata();
 
         void SegmQueue_DHP();
         void SegmQueue_DHP_mutex();
         void SegmQueue_DHP_shuffle();
         void SegmQueue_DHP_stat();
+        void SegmQueue_DHP_cacheline_padding();
+        void SegmQueue_DHP_mutex_cacheline_padding();
+        void SegmQueue_DHP_shuffle_cacheline_padding();
+        void SegmQueue_DHP_stat_cacheline_padding();
+        void SegmQueue_DHP_256_padding();
+        void SegmQueue_DHP_mutex_256_padding();
+        void SegmQueue_DHP_shuffle_256_padding();
+        void SegmQueue_DHP_stat_256_padding();
+        void SegmQueue_DHP_cacheline_padding_bigdata();
+        void SegmQueue_DHP_mutex_cacheline_padding_bigdata();
+        void SegmQueue_DHP_shuffle_cacheline_padding_bigdata();
+        void SegmQueue_DHP_stat_cacheline_padding_bigdata();
 
         CPPUNIT_TEST_SUITE(HdrIntrusiveSegmentedQueue)
             CPPUNIT_TEST( SegmQueue_HP )
             CPPUNIT_TEST( SegmQueue_HP_mutex )
             CPPUNIT_TEST( SegmQueue_HP_shuffle )
             CPPUNIT_TEST( SegmQueue_HP_stat )
+            CPPUNIT_TEST( SegmQueue_HP_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_HP_mutex_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_HP_shuffle_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_HP_stat_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_HP_256_padding )
+            CPPUNIT_TEST( SegmQueue_HP_mutex_256_padding )
+            CPPUNIT_TEST( SegmQueue_HP_shuffle_256_padding )
+            CPPUNIT_TEST( SegmQueue_HP_stat_256_padding )
+            CPPUNIT_TEST( SegmQueue_HP_cacheline_padding_bigdata )
+            CPPUNIT_TEST( SegmQueue_HP_mutex_cacheline_padding_bigdata )
+            CPPUNIT_TEST( SegmQueue_HP_shuffle_cacheline_padding_bigdata )
+            CPPUNIT_TEST( SegmQueue_HP_stat_cacheline_padding_bigdata )
 
             CPPUNIT_TEST( SegmQueue_DHP )
             CPPUNIT_TEST( SegmQueue_DHP_mutex )
             CPPUNIT_TEST( SegmQueue_DHP_shuffle )
             CPPUNIT_TEST( SegmQueue_DHP_stat )
+            CPPUNIT_TEST( SegmQueue_DHP_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_mutex_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_shuffle_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_stat_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_256_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_mutex_256_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_shuffle_256_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_stat_256_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_cacheline_padding_bigdata )
+            CPPUNIT_TEST( SegmQueue_DHP_mutex_cacheline_padding_bigdata )
+            CPPUNIT_TEST( SegmQueue_DHP_shuffle_cacheline_padding_bigdata )
+            CPPUNIT_TEST( SegmQueue_DHP_stat_cacheline_padding_bigdata )
         CPPUNIT_TEST_SUITE_END()
     };
 

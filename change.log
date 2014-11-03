@@ -14,6 +14,7 @@
              cds::container::TsigasCycleQueue
              cds::container::VyukovMPMCCycleQueue
     - Added: new member functions push_with(Func) and pop_with(Func) to cds::container::MSPriorityQueue
+    - SegmentedQueue: add padding into segmented_queue::traits to eliminate false sharing.
 
 1.6.0 23.09.2014
     General release

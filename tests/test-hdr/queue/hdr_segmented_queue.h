@@ -194,23 +194,39 @@ namespace queue {
         void SegmQueue_HP_mutex();
         void SegmQueue_HP_shuffle();
         void SegmQueue_HP_stat();
+        void SegmQueue_HP_cacheline_padding();
+        void SegmQueue_HP_mutex_cacheline_padding();
+        void SegmQueue_HP_shuffle_cacheline_padding();
+        void SegmQueue_HP_stat_cacheline_padding();
 
         void SegmQueue_DHP();
         void SegmQueue_DHP_mutex();
         void SegmQueue_DHP_shuffle();
         void SegmQueue_DHP_stat();
+        void SegmQueue_DHP_cacheline_padding();
+        void SegmQueue_DHP_mutex_cacheline_padding();
+        void SegmQueue_DHP_shuffle_cacheline_padding();
+        void SegmQueue_DHP_stat_cacheline_padding();
 
         CPPUNIT_TEST_SUITE(HdrSegmentedQueue)
             CPPUNIT_TEST( SegmQueue_HP )
             CPPUNIT_TEST( SegmQueue_HP_mutex )
             CPPUNIT_TEST( SegmQueue_HP_shuffle )
             CPPUNIT_TEST( SegmQueue_HP_stat )
+            CPPUNIT_TEST( SegmQueue_HP_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_HP_mutex_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_HP_shuffle_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_HP_stat_cacheline_padding )
 
             CPPUNIT_TEST( SegmQueue_DHP )
             CPPUNIT_TEST( SegmQueue_DHP_mutex )
             CPPUNIT_TEST( SegmQueue_DHP_shuffle )
             CPPUNIT_TEST( SegmQueue_DHP_stat )
-        CPPUNIT_TEST_SUITE_END()
+            CPPUNIT_TEST( SegmQueue_DHP_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_mutex_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_shuffle_cacheline_padding )
+            CPPUNIT_TEST( SegmQueue_DHP_stat_cacheline_padding )
+            CPPUNIT_TEST_SUITE_END()
 
     };
 } // namespace queue
