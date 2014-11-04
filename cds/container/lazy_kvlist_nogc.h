@@ -12,6 +12,7 @@ namespace cds { namespace container {
 
     /// Lazy ordered list (key-value pair, template specialization for gc::nogc)
     /** @ingroup cds_nonintrusive_list
+        @anchor cds_nonintrusive_LazyKVList_nogc
 
         This specialization is append-only list when no item
         reclamation may be performed. The class does not support deleting of list item.

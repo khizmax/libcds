@@ -285,8 +285,8 @@ namespace cds { namespace container {
             This can be useful if complete initialization of object of \p mapped_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
 
-            @warning For \ref cds_intrusive_MichaelKVList_hp "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_intrusive_LazyKVList_hp "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename K, typename Func>
@@ -335,8 +335,8 @@ namespace cds { namespace container {
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
 
-            @warning For \ref cds_intrusive_MichaelKVList_hp "MichaelKVList" as the ordered list see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_intrusive_LazyKVList_hp "LazyKVList" provides exclusive access to inserted item and does not require any node-level
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" as the ordered list see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename K, typename Func>

@@ -32,6 +32,7 @@ namespace cds { namespace container {
 
     /// Michael's ordered list (key-value pair, template specialization for gc::nogc)
     /** @ingroup cds_nonintrusive_list
+        @anchor cds_nonintrusive_MichaelKVList_nogc
 
         This specialization is intended for so-called persistent usage when no item
         reclamation may be performed. The class does not support deleting of list item.

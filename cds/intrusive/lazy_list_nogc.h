@@ -295,6 +295,7 @@ namespace cds { namespace intrusive {
         {
             return cend();
         }
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return const_iterator( const_cast<node_type *>(&m_Tail) );
