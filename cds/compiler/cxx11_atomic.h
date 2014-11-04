@@ -4,6 +4,7 @@
 #define __CDS_COMPILER_CXX11_ATOMIC_H
 //@cond
 
+#include <type_traits>  // make_unsigned
 #include <cds/details/defs.h>
 #include <cds/details/aligned_type.h>
 
@@ -47,9 +48,6 @@ namespace cds { namespace cxx11_atomic {
 #else
 #   error "Undefined compiler"
 #endif
-
-// In C++11, make_unsigned is declared in <type_traits>
-#include <boost/type_traits/make_unsigned.hpp>  // for make_unsigned
 
 namespace cds { namespace cxx11_atomic {
 
@@ -160,7 +158,7 @@ namespace cds { namespace cxx11_atomic {
         struct atomic_integral_bitwise_ops
         {
         public:
-            typedef typename boost::make_unsigned<T>::type unsigned_type;
+            typedef typename std::make_unsigned<T>::type unsigned_type;
             typedef atomic_generic_ops<unsigned_type, sizeof(unsigned_type)> atomic_ops;
 
             static T fetch_and(T volatile * pDest, T val, memory_order order) CDS_NOEXCEPT
