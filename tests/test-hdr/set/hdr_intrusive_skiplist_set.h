@@ -550,44 +550,44 @@ namespace set {
         void skiplist_hp_member_less_pascal_stat();
         void skiplist_hp_member_cmpmix_pascal_stat();
 
-        // Skip-list - gc::PTB
-        void skiplist_ptb_base_cmp();
-        void skiplist_ptb_base_less();
-        void skiplist_ptb_base_cmpmix();
-        void skiplist_ptb_base_cmp_stat();
-        void skiplist_ptb_base_less_stat();
-        void skiplist_ptb_base_cmpmix_stat();
-        void skiplist_ptb_base_cmp_xorshift();
-        void skiplist_ptb_base_less_xorshift();
-        void skiplist_ptb_base_cmpmix_xorshift();
-        void skiplist_ptb_base_cmp_xorshift_stat();
-        void skiplist_ptb_base_less_xorshift_stat();
-        void skiplist_ptb_base_cmpmix_xorshift_stat();
-        void skiplist_ptb_base_cmp_pascal();
-        void skiplist_ptb_base_less_pascal();
-        void skiplist_ptb_base_cmpmix_pascal();
-        void skiplist_ptb_base_cmp_pascal_stat();
-        void skiplist_ptb_base_less_pascal_stat();
-        void skiplist_ptb_base_cmpmix_pascal_stat();
+        // Skip-list - gc::DHP
+        void skiplist_dhp_base_cmp();
+        void skiplist_dhp_base_less();
+        void skiplist_dhp_base_cmpmix();
+        void skiplist_dhp_base_cmp_stat();
+        void skiplist_dhp_base_less_stat();
+        void skiplist_dhp_base_cmpmix_stat();
+        void skiplist_dhp_base_cmp_xorshift();
+        void skiplist_dhp_base_less_xorshift();
+        void skiplist_dhp_base_cmpmix_xorshift();
+        void skiplist_dhp_base_cmp_xorshift_stat();
+        void skiplist_dhp_base_less_xorshift_stat();
+        void skiplist_dhp_base_cmpmix_xorshift_stat();
+        void skiplist_dhp_base_cmp_pascal();
+        void skiplist_dhp_base_less_pascal();
+        void skiplist_dhp_base_cmpmix_pascal();
+        void skiplist_dhp_base_cmp_pascal_stat();
+        void skiplist_dhp_base_less_pascal_stat();
+        void skiplist_dhp_base_cmpmix_pascal_stat();
 
-        void skiplist_ptb_member_cmp();
-        void skiplist_ptb_member_less();
-        void skiplist_ptb_member_cmpmix();
-        void skiplist_ptb_member_cmp_stat();
-        void skiplist_ptb_member_less_stat();
-        void skiplist_ptb_member_cmpmix_stat();
-        void skiplist_ptb_member_cmp_xorshift();
-        void skiplist_ptb_member_less_xorshift();
-        void skiplist_ptb_member_cmpmix_xorshift();
-        void skiplist_ptb_member_cmp_xorshift_stat();
-        void skiplist_ptb_member_less_xorshift_stat();
-        void skiplist_ptb_member_cmpmix_xorshift_stat();
-        void skiplist_ptb_member_cmp_pascal();
-        void skiplist_ptb_member_less_pascal();
-        void skiplist_ptb_member_cmpmix_pascal();
-        void skiplist_ptb_member_cmp_pascal_stat();
-        void skiplist_ptb_member_less_pascal_stat();
-        void skiplist_ptb_member_cmpmix_pascal_stat();
+        void skiplist_dhp_member_cmp();
+        void skiplist_dhp_member_less();
+        void skiplist_dhp_member_cmpmix();
+        void skiplist_dhp_member_cmp_stat();
+        void skiplist_dhp_member_less_stat();
+        void skiplist_dhp_member_cmpmix_stat();
+        void skiplist_dhp_member_cmp_xorshift();
+        void skiplist_dhp_member_less_xorshift();
+        void skiplist_dhp_member_cmpmix_xorshift();
+        void skiplist_dhp_member_cmp_xorshift_stat();
+        void skiplist_dhp_member_less_xorshift_stat();
+        void skiplist_dhp_member_cmpmix_xorshift_stat();
+        void skiplist_dhp_member_cmp_pascal();
+        void skiplist_dhp_member_less_pascal();
+        void skiplist_dhp_member_cmpmix_pascal();
+        void skiplist_dhp_member_cmp_pascal_stat();
+        void skiplist_dhp_member_less_pascal_stat();
+        void skiplist_dhp_member_cmpmix_pascal_stat();
 
         // Skip-list - gc::nogc
         void skiplist_nogc_base_cmp();
@@ -667,43 +667,43 @@ namespace set {
             CPPUNIT_TEST(skiplist_hp_member_less_pascal_stat)
             CPPUNIT_TEST(skiplist_hp_member_cmpmix_pascal_stat)
 
-            CPPUNIT_TEST(skiplist_ptb_base_cmp)
-            CPPUNIT_TEST(skiplist_ptb_base_less)
-            CPPUNIT_TEST(skiplist_ptb_base_cmpmix)
-            CPPUNIT_TEST(skiplist_ptb_base_cmp_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_less_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_cmpmix_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_cmp_xorshift)
-            CPPUNIT_TEST(skiplist_ptb_base_less_xorshift)
-            CPPUNIT_TEST(skiplist_ptb_base_cmpmix_xorshift)
-            CPPUNIT_TEST(skiplist_ptb_base_cmp_xorshift_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_less_xorshift_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_cmpmix_xorshift_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_cmp_pascal)
-            CPPUNIT_TEST(skiplist_ptb_base_less_pascal)
-            CPPUNIT_TEST(skiplist_ptb_base_cmpmix_pascal)
-            CPPUNIT_TEST(skiplist_ptb_base_cmp_pascal_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_less_pascal_stat)
-            CPPUNIT_TEST(skiplist_ptb_base_cmpmix_pascal_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_cmp)
+            CPPUNIT_TEST(skiplist_dhp_base_less)
+            CPPUNIT_TEST(skiplist_dhp_base_cmpmix)
+            CPPUNIT_TEST(skiplist_dhp_base_cmp_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_less_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_cmpmix_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_cmp_xorshift)
+            CPPUNIT_TEST(skiplist_dhp_base_less_xorshift)
+            CPPUNIT_TEST(skiplist_dhp_base_cmpmix_xorshift)
+            CPPUNIT_TEST(skiplist_dhp_base_cmp_xorshift_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_less_xorshift_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_cmpmix_xorshift_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_cmp_pascal)
+            CPPUNIT_TEST(skiplist_dhp_base_less_pascal)
+            CPPUNIT_TEST(skiplist_dhp_base_cmpmix_pascal)
+            CPPUNIT_TEST(skiplist_dhp_base_cmp_pascal_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_less_pascal_stat)
+            CPPUNIT_TEST(skiplist_dhp_base_cmpmix_pascal_stat)
 
-            CPPUNIT_TEST(skiplist_ptb_member_cmp)
-            CPPUNIT_TEST(skiplist_ptb_member_less)
-            CPPUNIT_TEST(skiplist_ptb_member_cmpmix)
-            CPPUNIT_TEST(skiplist_ptb_member_cmp_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_less_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_cmpmix_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_cmp_xorshift)
-            CPPUNIT_TEST(skiplist_ptb_member_less_xorshift)
-            CPPUNIT_TEST(skiplist_ptb_member_cmpmix_xorshift)
-            CPPUNIT_TEST(skiplist_ptb_member_cmp_xorshift_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_less_xorshift_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_cmpmix_xorshift_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_cmp_pascal)
-            CPPUNIT_TEST(skiplist_ptb_member_less_pascal)
-            CPPUNIT_TEST(skiplist_ptb_member_cmpmix_pascal)
-            CPPUNIT_TEST(skiplist_ptb_member_cmp_pascal_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_less_pascal_stat)
-            CPPUNIT_TEST(skiplist_ptb_member_cmpmix_pascal_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_cmp)
+            CPPUNIT_TEST(skiplist_dhp_member_less)
+            CPPUNIT_TEST(skiplist_dhp_member_cmpmix)
+            CPPUNIT_TEST(skiplist_dhp_member_cmp_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_less_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_cmpmix_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_cmp_xorshift)
+            CPPUNIT_TEST(skiplist_dhp_member_less_xorshift)
+            CPPUNIT_TEST(skiplist_dhp_member_cmpmix_xorshift)
+            CPPUNIT_TEST(skiplist_dhp_member_cmp_xorshift_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_less_xorshift_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_cmpmix_xorshift_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_cmp_pascal)
+            CPPUNIT_TEST(skiplist_dhp_member_less_pascal)
+            CPPUNIT_TEST(skiplist_dhp_member_cmpmix_pascal)
+            CPPUNIT_TEST(skiplist_dhp_member_cmp_pascal_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_less_pascal_stat)
+            CPPUNIT_TEST(skiplist_dhp_member_cmpmix_pascal_stat)
 
             CPPUNIT_TEST(skiplist_nogc_base_cmp)
             CPPUNIT_TEST(skiplist_nogc_base_less)

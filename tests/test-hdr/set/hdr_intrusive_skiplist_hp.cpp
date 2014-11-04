@@ -10,15 +10,14 @@ namespace set {
     void IntrusiveSkipListSet::skiplist_hp_base_cmp()
     {
         typedef base_int_item< ci::skip_list::node< cds::gc::HP> > item;
-
-        typedef ci::SkipListSet< cds::gc::HP, item,
-            ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::base_hook< co::gc<cds::gc::HP> > >
-                ,co::compare< cmp<item> >
-                ,ci::opt::disposer< faked_disposer >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        >   set_type;
+        struct set_traits : public ci::skip_list::traits
+        {
+            typedef ci::skip_list::base_hook< co::gc<cds::gc::HP> > hook;
+            typedef cmp<item> compare;
+            typedef faked_disposer disposer;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef ci::SkipListSet< cds::gc::HP, item, set_traits > set_type;
 
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }

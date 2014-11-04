@@ -6,13 +6,13 @@
 #include "map/print_skiplist_stat.h"
 
 namespace set {
-        void IntrusiveSkipListSet::skiplist_ptb_member_cmp()
+        void IntrusiveSkipListSet::skiplist_dhp_member_cmp()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -22,13 +22,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_less()
+    void IntrusiveSkipListSet::skiplist_dhp_member_less()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -38,13 +38,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmpmix()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmpmix()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::compare< cmp<item> >
@@ -55,13 +55,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmp_stat()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmp_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::stat< ci::skip_list::stat<> >
@@ -72,13 +72,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_less_stat()
+    void IntrusiveSkipListSet::skiplist_dhp_member_less_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::stat< ci::skip_list::stat<> >
@@ -89,13 +89,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmpmix_stat()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmpmix_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::compare< cmp<item> >
@@ -107,13 +107,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmp_xorshift()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmp_xorshift()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -124,13 +124,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_less_xorshift()
+    void IntrusiveSkipListSet::skiplist_dhp_member_less_xorshift()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -141,13 +141,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmpmix_xorshift()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmpmix_xorshift()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::compare< cmp<item> >
@@ -159,13 +159,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-        void IntrusiveSkipListSet::skiplist_ptb_member_cmp_xorshift_stat()
+        void IntrusiveSkipListSet::skiplist_dhp_member_cmp_xorshift_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -177,13 +177,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_less_xorshift_stat()
+    void IntrusiveSkipListSet::skiplist_dhp_member_less_xorshift_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,ci::skip_list::random_level_generator< ci::skip_list::xorshift >
@@ -195,13 +195,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmpmix_xorshift_stat()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmpmix_xorshift_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::compare< cmp<item> >
@@ -215,13 +215,13 @@ namespace set {
     }
 
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmp_pascal()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmp_pascal()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,ci::skip_list::random_level_generator< ci::skip_list::turbo_pascal >
@@ -232,13 +232,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_less_pascal()
+    void IntrusiveSkipListSet::skiplist_dhp_member_less_pascal()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -249,13 +249,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmpmix_pascal()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmpmix_pascal()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::compare< cmp<item> >
@@ -267,13 +267,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-        void IntrusiveSkipListSet::skiplist_ptb_member_cmp_pascal_stat()
+        void IntrusiveSkipListSet::skiplist_dhp_member_cmp_pascal_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,ci::skip_list::random_level_generator< ci::skip_list::turbo_pascal >
@@ -285,13 +285,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_less_pascal_stat()
+    void IntrusiveSkipListSet::skiplist_dhp_member_less_pascal_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,ci::skip_list::random_level_generator< ci::skip_list::turbo_pascal >
@@ -303,13 +303,13 @@ namespace set {
         test_skiplist<set_type, misc::print_skiplist_stat<set_type::stat> >();
     }
 
-    void IntrusiveSkipListSet::skiplist_ptb_member_cmpmix_pascal_stat()
+    void IntrusiveSkipListSet::skiplist_dhp_member_cmpmix_pascal_stat()
     {
-        typedef member_int_item< ci::skip_list::node< cds::gc::PTB> > item;
+        typedef member_int_item< ci::skip_list::node< cds::gc::DHP> > item;
 
-        typedef ci::SkipListSet< cds::gc::PTB, item,
+        typedef ci::SkipListSet< cds::gc::DHP, item,
             ci::skip_list::make_traits<
-                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::PTB> > >
+                ci::opt::hook< ci::skip_list::member_hook< offsetof(item, hMember), co::gc<cds::gc::DHP> > >
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::compare< cmp<item> >

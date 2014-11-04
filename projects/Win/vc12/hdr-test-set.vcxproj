@@ -559,12 +559,12 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_shb_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_sht_lazy.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_hp_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_nogc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_nogc_member.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_ptb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_ptb_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_rcu_gpb_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_rcu_gpi.cpp" />

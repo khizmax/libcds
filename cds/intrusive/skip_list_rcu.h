@@ -5,7 +5,6 @@
 
 #include <type_traits>
 #include <memory>
-#include <functional>   // ref
 #include <cds/intrusive/details/skip_list_base.h>
 #include <cds/opt/compare.h>
 #include <cds/urcu/details/check_deadlock.h>
@@ -28,25 +27,25 @@ namespace cds { namespace intrusive {
             // Mark bits:
             //  bit 0 - the item is logically deleted
             //  bit 1 - the item is extracted (only for level 0)
-            typedef cds::details::marked_ptr<node, 3>   marked_ptr          ;   ///< marked pointer
-            typedef atomics::atomic< marked_ptr >    atomic_marked_ptr   ;   ///< atomic marked pointer
-            typedef atomic_marked_ptr                   tower_item_type;
+            typedef cds::details::marked_ptr<node, 3> marked_ptr;        ///< marked pointer
+            typedef atomics::atomic< marked_ptr >     atomic_marked_ptr; ///< atomic marked pointer
+            typedef atomic_marked_ptr                 tower_item_type;
 
         protected:
-            atomic_marked_ptr       m_pNext     ;   ///< Next item in bottom-list (list at level 0)
+            atomic_marked_ptr       m_pNext;     ///< Next item in bottom-list (list at level 0)
         public:
-            node *                  m_pDelChain ;   ///< Deleted node chain (local for a thread)
+            node *                  m_pDelChain; ///< Deleted node chain (local for a thread)
 #       ifdef _DEBUG
             bool volatile           m_bLinked;
             bool volatile           m_bUnlinked;
 #       endif
         protected:
-            unsigned int            m_nHeight   ;   ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
-            atomic_marked_ptr *     m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
+            unsigned int            m_nHeight;   ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
+            atomic_marked_ptr *     m_arrNext;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
 
         public:
             /// Constructs a node of height 1 (a bottom-list node)
-            node()
+            CDS_CONSTEXPR node()
                 : m_pNext( nullptr )
                 , m_pDelChain( nullptr )
 #       ifdef _DEBUG
@@ -101,7 +100,7 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height() );
                 assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
-                return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                return nLevel ? m_arrNext[nLevel - 1] : m_pNext;
             }
 
             /// Access to element of next pointer array (const version)
@@ -110,7 +109,7 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height() );
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
-                return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                return nLevel ? m_arrNext[nLevel - 1] : m_pNext;
             }
 
             /// Access to element of next pointer array (same as \ref next function)
@@ -313,39 +312,14 @@ namespace cds { namespace intrusive {
         The lock-free variant of skip-list is implemented according to book
             - [2008] M.Herlihy, N.Shavit "The Art of Multiprocessor Programming",
                 chapter 14.4 "A Lock-Free Concurrent Skiplist".
-        \note The algorithm described in this book cannot be directly adapted for C++ (roughly speaking,
-        the algo contains a lot of bugs). The \b libcds implementation applies the approach discovered
-        by M.Michael in his \ref cds_intrusive_MichaelList_hp "lock-free linked list".
 
         <b>Template arguments</b>:
             - \p RCU - one of \ref cds_urcu_gc "RCU type"
             - \p T - type to be stored in the list. The type must be based on \p skip_list::node (for \p skip_list::base_hook)
                 or it must have a member of type \p skip_list::node (for \p skip_list::member_hook).
-            - \p Traits - type traits. See \p skip_list::type_traits (the default) for explanation.
-
-        It is possible to declare option-based list with \p cds::intrusive::skip_list::make_traits metafunction instead of \p Traits template
-        argument.
-        Template argument list \p Options of \p %cds::intrusive::skip_list::make_traits metafunction is:
-        - \p opt::hook - hook used. Possible values are: \p skip_list::base_hook, \p skip_list::member_hook, \p skip_list::traits_hook.
-            If the option is not specified, <tt>skip_list::base_hook<></tt> is used.
-        - \p opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the \p opt::less is used.
-        - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. Due the nature
-            of GC schema the disposer may be called asynchronously.
-        - \p opt::item_counter - the type of item counting feature. Default is \p atomicity::empty_item_counter that is no item counting.
-        - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-            or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-        - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift, \p skip_list::turbo_pascal or
-            user-provided one. See \p skip_list::random_level_generator option description for explanation.
-            Default is \p %skip_list::turbo_pascal.
-        - \p opt::allocator - although the skip-list is an intrusive container,
-            an allocator should be provided to maintain variable randomly-calculated height of the node
-            since the node can contain up to 32 next pointers. The allocator option is used to allocate an array of next pointers
-            for nodes which height is more than 1. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
-        - \p opt::stat - internal statistics. Available types: \p skip_list::stat, \p skip_list::empty_stat (the default)
-        - \p opt::rcu_check_deadlock - a deadlock checking policy. Default is \p opt::v::rcu_throw_deadlock
+            - \p Traits - set traits, default is \p skip_list::type_traits
+                It is possible to declare option-based list with \p cds::intrusive::skip_list::make_traits metafunction 
+                instead of \p Traits template argument.
 
         @note Before including <tt><cds/intrusive/skip_list_rcu.h></tt> you should include appropriate RCU header file,
         see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
@@ -378,7 +352,7 @@ namespace cds { namespace intrusive {
 
         // Traits for your skip-list.
         // At least, you should define cds::opt::less or cds::opt::compare for Foo struct
-        struct my_traits: public cds::intrusive::skip_list::type_traits
+        struct my_traits: public cds::intrusive::skip_list::traits
         {
             // ...
         };
@@ -428,8 +402,8 @@ namespace cds { namespace intrusive {
         <b>How to use</b>
 
         You should incorporate skip_list::node into your struct \p T and provide
-        appropriate skip_list::type_traits::hook in your \p Traits template parameters. Usually, for \p Traits you
-        define a struct based on \p skip_list::type_traits.
+        appropriate skip_list::traits::hook in your \p Traits template parameters. Usually, for \p Traits you
+        define a struct based on \p skip_list::traits.
 
         Example for <tt>cds::urcu::general_buffered<></tt> RCU and base hook:
         \code
@@ -470,9 +444,8 @@ namespace cds { namespace intrusive {
             }
         };
 
-
-        // Declare type_traits
-        struct my_traits: public cds::intrusive::skip_list::type_traits
+        // Declare traits
+        struct my_traits: public cds::intrusive::skip_list::traits
         {
             typedef cds::intrusive::skip_list::base_hook< cds::opt::gc< rcu_type > >   hook;
             typedef my_data_cmp compare;
@@ -511,7 +484,7 @@ namespace cds { namespace intrusive {
         class RCU
        ,typename T
 #ifdef CDS_DOXYGEN_INVOKED
-       ,typename Traits = skip_list::type_traits
+       ,typename Traits = skip_list::traits
 #else
        ,typename Traits
 #endif
@@ -519,30 +492,30 @@ namespace cds { namespace intrusive {
     class SkipListSet< cds::urcu::gc< RCU >, T, Traits >
     {
     public:
-        typedef T       value_type      ;   ///< type of value stored in the skip-list
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef cds::urcu::gc< RCU > gc; ///< Garbage collector
+        typedef T       value_type;      ///< type of value stored in the skip-list
+        typedef Traits  traits;          ///< Traits template parameter
 
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
+        typedef typename traits::hook    hook;      ///< hook type
+        typedef typename hook::node_type node_type; ///< node type
 
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
+        typedef implementation_defined key_comparator  ;    ///< key comparison functor based on \p Traits::compare and \p Traits::less
 #   else
-        typedef typename opt::details::make_comparator< value_type, options >::type key_comparator;
+        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
 
-        typedef typename options::disposer  disposer    ;   ///< disposer used
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
+        typedef typename traits::disposer  disposer;   ///< disposer
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;    ///< node traits
 
-        typedef cds::urcu::gc< RCU >            gc          ;   ///< Garbage collector
-        typedef typename options::item_counter  item_counter;   ///< Item counting policy used
-        typedef typename options::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::random_level_generator    random_level_generator  ;   ///< random level generator
-        typedef typename options::allocator     allocator_type  ;   ///< allocator for maintaining array of next pointers of the node
-        typedef typename options::back_off      back_off    ;   ///< Back-off trategy
-        typedef typename options::stat          stat        ;   ///< internal statistics type
-        typedef typename options::rcu_check_deadlock    rcu_check_deadlock ; ///< Deadlock checking policy
-        typedef typename gc::scoped_lock        rcu_lock    ;   ///< RCU scoped lock
+        typedef typename traits::item_counter  item_counter;   ///< Item counting policy used
+        typedef typename traits::memory_model  memory_model;   ///< Memory ordering, see \p cds::opt::memory_model option
+        typedef typename traits::random_level_generator    random_level_generator;   ///< random level generator
+        typedef typename traits::allocator     allocator_type; ///< allocator for maintaining array of next pointers of the node
+        typedef typename traits::back_off      back_off;       ///< Back-off strategy
+        typedef typename traits::stat          stat;           ///< internal statistics type
+        typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
+        typedef typename gc::scoped_lock       rcu_lock;      ///< RCU scoped lock
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
 
 
@@ -570,9 +543,9 @@ namespace cds { namespace intrusive {
         typedef skip_list::details::intrusive_node_builder< node_type, atomic_node_ptr, allocator_type > intrusive_node_builder;
 
         typedef typename std::conditional<
-            std::is_same< typename options::internal_node_builder, cds::opt::none >::value
+            std::is_same< typename traits::internal_node_builder, cds::opt::none >::value
             ,intrusive_node_builder
-            ,typename options::internal_node_builder
+            ,typename traits::internal_node_builder
         >::type node_builder;
 
         typedef std::unique_ptr< node_type, typename node_builder::node_disposer >    scoped_node_ptr;
@@ -600,13 +573,13 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
-        skip_list::details::head_node< node_type >      m_Head  ;   ///< head tower (max height)
+        skip_list::details::head_node< node_type > m_Head;   ///< head tower (max height)
 
-        item_counter                m_ItemCounter       ;   ///< item counter
-        random_level_generator      m_RandomLevelGen    ;   ///< random level generator instance
-        atomics::atomic<unsigned int>    m_nHeight   ;   ///< estimated high level
+        item_counter                m_ItemCounter;      ///< item counter
+        random_level_generator      m_RandomLevelGen;   ///< random level generator instance
+        atomics::atomic<unsigned int>    m_nHeight;     ///< estimated high level
         atomics::atomic<node_type *>     m_pDeferredDelChain ;   ///< Deferred deleted node chain
-        mutable stat                m_Stat              ;   ///< internal statistics
+        mutable stat                m_Stat;             ///< internal statistics
 
     protected:
         //@cond
@@ -641,7 +614,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef cds::urcu::exempt_ptr< gc, value_type, value_type, node_disposer, void > exempt_ptr ; ///< pointer to extracted node
+        typedef cds::urcu::exempt_ptr< gc, value_type, value_type, node_disposer, void > exempt_ptr; ///< pointer to extracted node
 
     protected:
         //@cond
@@ -1551,13 +1524,13 @@ retry:
             The functor can change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You can pass \p func argument by value or by reference using \p std::ref.
-
             RCU \p synchronize method can be called. RCU should not be locked.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
@@ -1620,8 +1593,8 @@ retry:
             The function searches the item \p val in the set and unlink it from the set
             if it is found and is equal to \p val.
 
-            Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
-            and deletes the item found. \p unlink finds an item by key and deletes it
+            Difference between \p erase() and \p %unlink() functions: \p erase() finds <i>a key</i>
+            and deletes the item found. \p %unlink() searches an item by key and deletes it
             only if \p val is an item of that set, i.e. the pointer to item found
             is equal to <tt> &val </tt>.
 
@@ -1791,18 +1764,18 @@ retry:
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_SkipListSet_rcu_erase
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             unlinks it from the set, and returns \p true.
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
         template <typename Q>
-        bool erase( const Q& val )
+        bool erase( const Q& key )
         {
-            return do_erase( val, key_comparator(), [](value_type const&) {} );
+            return do_erase( key, key_comparator(), [](value_type const&) {} );
         }
 
         /// Delete the item from the set with comparing functor \p pred
@@ -1813,14 +1786,14 @@ retry:
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool erase_with( const Q& val, Less pred )
+        bool erase_with( const Q& key, Less pred )
         {
-            return do_erase( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
+            return do_erase( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
         }
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_SkipListSet_rcu_erase_func
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             call \p f functor with item found, unlinks it from the set, and returns \p true.
             The \ref disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously.
@@ -1831,18 +1804,16 @@ retry:
                 void operator()( value_type const& item );
             };
             \endcode
-            The functor can be passed by reference with <tt>boost:ref</tt>
-
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
         template <typename Q, typename Func>
-        bool erase( Q const& val, Func f )
+        bool erase( Q const& key, Func f )
         {
-            return do_erase( val, key_comparator(), f );
+            return do_erase( key, key_comparator(), f );
         }
 
         /// Delete the item from the set with comparing functor \p pred
@@ -1853,21 +1824,21 @@ retry:
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool erase_with( Q const& val, Less pred, Func f )
+        bool erase_with( Q const& key, Less pred, Func f )
         {
-            return do_erase( val, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return do_erase( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
-        /// Finds the key \p val
+        /// Finds \p key
         /** @anchor cds_intrusive_SkipListSet_rcu_find_func
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             You can pass \p f argument by value or by reference using \p std::ref.
 
@@ -1876,20 +1847,20 @@ retry:
             The functor does not serialize simultaneous access to the set \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
+            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
             can modify both arguments.
 
             The function applies RCU lock internally.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return do_find_with( val, key_comparator(), f );
+            return do_find_with( key, key_comparator(), f );
         }
 
-        /// Finds the key \p val with comparing functor \p pred
+        /// Finds the key \p key with comparing functor \p pred
         /**
             The function is an analog of \ref cds_intrusive_SkipListSet_rcu_find_func "find(Q&, Func)"
             but \p cmp is used for key comparison.
@@ -1897,66 +1868,25 @@ retry:
             \p cmp must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
-        /// Finds the key \p val
-        /** @anchor cds_intrusive_SkipListSet_rcu_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
-
-            The functor can change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            The function applies RCU lock internally.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return do_find_with( val, key_comparator(), f );
-        }
-
-        /// Finds the key \p val with comparing functor \p pred
-        /**
-            The function is an analog of \ref cds_intrusive_SkipListSet_rcu_find_cfunc "find(Q const&, Func)"
-            but \p cmp is used for key comparison.
-            \p Less functor has the interface like \p std::less.
-            \p cmp must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(), f );
-        }
-
-        /// Finds the key \p val
+        /// Finds \p key
         /** @anchor cds_intrusive_SkipListSet_rcu_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             The function applies RCU lock internally.
         */
         template <typename Q>
-        bool find( Q const& val )
+        bool find( Q const& key )
         {
-            return do_find_with( val, key_comparator(), [](value_type& , Q const& ) {} );
+            return do_find_with( key, key_comparator(), [](value_type& , Q const& ) {} );
         }
 
-        /// Finds the key \p val with comparing functor \p pred
+        /// Finds \p key with comparing functor \p pred
         /**
             The function is an analog of \ref cds_intrusive_SkipListSet_rcu_find_val "find(Q const&)"
             but \p pred is used for key compare.
@@ -1964,15 +1894,15 @@ retry:
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
+            return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds \p key and return the item found
         /** \anchor cds_intrusive_SkipListSet_rcu_get
-            The function searches the item with key equal to \p val and returns the pointer to item found.
-            If \p val is not found it returns \p nullptr.
+            The function searches the item with key equal to \p key and returns the pointer to item found.
+            If \p key is not found it returns \p nullptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -2000,16 +1930,16 @@ retry:
             see \ref force_dispose for explanation.
         */
         template <typename Q>
-        value_type * get( Q const& val )
+        value_type * get( Q const& key )
         {
             assert( gc::is_locked());
 
             value_type * pFound;
-            return do_find_with( val, key_comparator(), [&pFound](value_type& found, Q const& ) { pFound = &found; } )
+            return do_find_with( key, key_comparator(), [&pFound](value_type& found, Q const& ) { pFound = &found; } )
                 ? pFound : nullptr;
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds \p key and return the item found
         /**
             The function is an analog of \ref cds_intrusive_SkipListSet_rcu_get "get(Q const&)"
             but \p pred is used for comparing the keys.
@@ -2019,12 +1949,12 @@ retry:
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& val, Less pred )
+        value_type * get_with( Q const& key, Less pred )
         {
             assert( gc::is_locked());
 
             value_type * pFound;
-            return do_find_with( val, cds::opt::details::make_comparator_from_less<Less>(),
+            return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(),
                 [&pFound](value_type& found, Q const& ) { pFound = &found; } )
                 ? pFound : nullptr;
         }
@@ -2032,8 +1962,8 @@ retry:
         /// Returns item count in the set
         /**
             The value returned depends on item counter type provided by \p Traits template parameter.
-            If it is atomicity::empty_item_counter this function always returns 0.
-            Therefore, the function is not suitable for checking the set emptiness, use \ref empty
+            For \p atomicity::empty_item_counter the function always returns 0.
+            Therefore, the function is not suitable for checking the set emptiness, use \p empty()
             member function for this purpose.
         */
         size_t size() const
@@ -2047,7 +1977,7 @@ retry:
             return m_Head.head()->next( 0 ).load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
-        /// Clears the set (non-atomic)
+        /// Clears the set (not atomic)
         /**
             The function unlink all items from the set.
             The function is not atomic, thus, in multi-threaded environment with parallel insertions
@@ -2058,7 +1988,7 @@ retry:
             \endcode
             the assertion could be raised.
 
-            For each item the \ref disposer will be called automatically after unlinking.
+            For each item the \p disposer will be called automatically after unlinking.
         */
         void clear()
         {

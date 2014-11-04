@@ -83,12 +83,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_hp_member.cpp">
       <Filter>intrusive\skip_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_ptb.cpp">
-      <Filter>intrusive\skip_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_ptb_member.cpp">
-      <Filter>intrusive\skip_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_splitlist_set_hp.cpp">
       <Filter>intrusive\split_list</Filter>
     </ClCompile>
@@ -310,6 +304,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_rcu_gpt.cpp">
       <Filter>container\split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp.cpp">
+      <Filter>intrusive\skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp_member.cpp">
+      <Filter>intrusive\skip_list</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

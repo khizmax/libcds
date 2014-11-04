@@ -9,7 +9,6 @@
 #include <cds/os/timer.h>
 #include <cds/urcu/options.h>
 
-
 namespace cds { namespace intrusive {
     /// SkipListSet related definitions
     /** @ingroup cds_intrusive_helper
@@ -22,25 +21,26 @@ namespace cds { namespace intrusive {
         /// Skip list node
         /**
             Template parameters:
-            - GC - garbage collector
-            - Tag - a tag used to distinguish between different implementation. An incomplete type may be used as a tag.
+            - \p GC - garbage collector
+            - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none>
-        class node {
+        class node 
+        {
         public:
-            typedef GC      gc          ;   ///< Garbage collector
-            typedef Tag     tag         ;   ///< tag
+            typedef GC      gc;  ///< Garbage collector
+            typedef Tag     tag; ///< tag
 
-            typedef cds::details::marked_ptr<node, 1>                       marked_ptr          ;   ///< marked pointer
-            typedef typename gc::template atomic_marked_ptr< marked_ptr>    atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
+            typedef cds::details::marked_ptr<node, 1>                     marked_ptr;        ///< marked pointer
+            typedef typename gc::template atomic_marked_ptr< marked_ptr>  atomic_marked_ptr; ///< atomic marked pointer specific for GC
             //@cond
             typedef atomic_marked_ptr tower_item_type;
             //@endcond
 
         protected:
-            atomic_marked_ptr       m_pNext     ;   ///< Next item in bottom-list (list at level 0)
-            unsigned int            m_nHeight   ;   ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
-            atomic_marked_ptr *     m_arrNext   ;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
+            atomic_marked_ptr       m_pNext;   ///< Next item in bottom-list (list at level 0)
+            unsigned int            m_nHeight; ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
+            atomic_marked_ptr *     m_arrNext; ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
 
         public:
             /// Constructs a node of height 1 (a bottom-list node)
@@ -125,8 +125,7 @@ namespace cds { namespace intrusive {
             {
                 return m_pNext == atomic_marked_ptr()
                     && m_arrNext == nullptr
-                    && m_nHeight <= 1
-;
+                    && m_nHeight <= 1;
             }
             //@endcond
         };
@@ -154,8 +153,8 @@ namespace cds { namespace intrusive {
         /// Base hook
         /**
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a tag
+            - \p opt::gc - garbage collector
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         struct base_hook: public hook< opt::base_hook_tag, Options... >
@@ -167,8 +166,8 @@ namespace cds { namespace intrusive {
             Use \p offsetof macro to define \p MemberOffset
 
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a tag
+            - \p opt::gc - garbage collector
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         struct member_hook: public hook< opt::member_hook_tag, Options... >
@@ -184,8 +183,8 @@ namespace cds { namespace intrusive {
             See \ref node_traits for \p NodeTraits interface description
 
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a tag
+            - \p opt::gc - garbage collector
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         struct traits_hook: public hook< opt::traits_hook_tag, Options... >
@@ -222,8 +221,8 @@ namespace cds { namespace intrusive {
             Stateful generators are supported.
 
             Available \p Type implementations:
-            - \ref xorshift
-            - \ref turbo_pascal
+            - \p skip_list::xorshift
+            - \p skip_list::turbo_pascal
         */
         template <typename Type>
         struct random_level_generator {
@@ -338,7 +337,7 @@ namespace cds { namespace intrusive {
             }
         };
 
-        /// SkipListSet internal statistics
+        /// \p SkipListSet internal statistics
         template <typename EventCounter = cds::atomicity::event_counter>
         struct stat {
             typedef EventCounter event_counter ; ///< Event counter type
@@ -424,7 +423,7 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// SkipListSet empty internal statistics
+        /// \p SkipListSet empty internal statistics
         struct empty_stat {
             //@cond
             void onAddNode( unsigned int nHeight ) const {}
@@ -476,12 +475,12 @@ namespace cds { namespace intrusive {
         };
         //@endcond
 
-        /// Type traits for SkipListSet class
-        struct type_traits
+        /// \p SkipListSet traits
+        struct traits
         {
             /// Hook used
             /**
-                Possible values are: skip_list::base_hook, skip_list::member_hook, skip_list::traits_hook.
+                Possible values are: \p skip_list::base_hook, \p skip_list::member_hook, \p skip_list::traits_hook.
             */
             typedef base_hook<>       hook;
 
@@ -499,20 +498,21 @@ namespace cds { namespace intrusive {
 
             /// Disposer
             /**
-                The functor used for dispose removed items. Default is opt::v::empty_disposer.
+                The functor used for dispose removed items. Default is \p opt::v::empty_disposer.
             */
             typedef opt::v::empty_disposer          disposer;
 
             /// Item counter
             /**
                 The type for item counting feature.
-                Default is no item counter (\ref atomicity::empty_item_counter)
+                By default, item counting is disabled (\p atomicity::empty_item_counter)
+                \p atomicity::item_counter enables it.
             */
             typedef atomicity::empty_item_counter     item_counter;
 
             /// C++ memory ordering model
             /**
-                List of available memory ordering see opt::memory_model
+                List of available memory ordering see \p opt::memory_model
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
@@ -523,7 +523,7 @@ namespace cds { namespace intrusive {
                 where half of the nodes that have level \p i pointers also have level <tt>i+1</tt> pointers
                 (i = 0..30). So, the height of a node is in range [0..31].
 
-                See skip_list::random_level_generator option setter.
+                See \p skip_list::random_level_generator option setter.
             */
             typedef turbo_pascal                    random_level_generator;
 
@@ -537,18 +537,22 @@ namespace cds { namespace intrusive {
             */
             typedef CDS_DEFAULT_ALLOCATOR           allocator;
 
-            /// back-off strategy used
+            /// back-off strategy
             /**
-                If the option is not specified, the cds::backoff::Default is used.
+                If the option is not specified, the \p cds::backoff::Default is used.
             */
             typedef cds::backoff::Default           back_off;
 
             /// Internal statistics
+            /**
+                By default, internal statistics is disabled (\p skip_list::empty_stat).
+                Use \p skip_list::stat to enable it.
+            */
             typedef empty_stat                      stat;
 
             /// RCU deadlock checking policy (only for \ref cds_intrusive_SkipListSet_rcu "RCU-based SkipListSet")
             /**
-                List of available options see opt::rcu_check_deadlock
+                List of available options see \p opt::rcu_check_deadlock
             */
             typedef opt::v::rcu_throw_deadlock      rcu_check_deadlock;
 
@@ -558,10 +562,30 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Metafunction converting option list to SkipListSet traits
+        /// Metafunction converting option list to \p SkipListSet traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-            \p Options list see \ref SkipListSet.
+            \p Options are:
+            - \p opt::hook - hook used. Possible values are: \p skip_list::base_hook, \p skip_list::member_hook, \p skip_list::traits_hook.
+                If the option is not specified, <tt>skip_list::base_hook<></tt> and \p gc::HP is used.
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p opt::less is used.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. Due the nature
+                of GC schema the disposer may be called asynchronously.
+            - \p opt::item_counter - the type of item counting feature. Default is disabled, i.e. \p atomicity::empty_item_counter.
+                To enable it use \p atomicity::item_counter
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift, 
+                \p skip_list::turbo_pascal (the default) or
+                user-provided one. See \p skip_list::random_level_generator option description for explanation.
+            - \p opt::allocator - although the skip-list is an intrusive container,
+                an allocator should be provided to maintain variable randomly-calculated height of the node
+                since the node can contain up to 32 next pointers. The allocator option is used to allocate an array of next pointers
+                for nodes which height is more than 1. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::back_off - back-off strategy, default is \ç cds::backoff::Default.
+            - \p opt::stat - internal statistics. By default, it is disabled (\p skip_list::empty_stat).
+                To enable it use \p skip_list::stat
         */
         template <typename... Options>
         struct make_traits {
@@ -569,7 +593,7 @@ namespace cds { namespace intrusive {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -581,7 +605,6 @@ namespace cds { namespace intrusive {
             class head_node: public Node
             {
                 typedef Node node_type;
-
                 typename node_type::atomic_marked_ptr   m_Tower[skip_list::c_nHeightLimit];
 
             public:
@@ -646,7 +669,7 @@ namespace cds { namespace intrusive {
     }   // namespace skip_list
 
     // Forward declaration
-    template <class GC, typename T, typename Traits = skip_list::type_traits >
+    template <class GC, typename T, typename Traits = skip_list::traits >
     class SkipListSet;
 
 }}   // namespace cds::intrusive

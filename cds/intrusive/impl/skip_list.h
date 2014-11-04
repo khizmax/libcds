@@ -24,9 +24,9 @@ namespace cds { namespace intrusive {
             typedef BackOff                             back_off;
             typedef typename node_traits::node_type     node_type;
             typedef typename node_traits::value_type    value_type;
-            static bool const c_isConst = IsConst;
+            static CDS_CONSTEXPR bool const c_isConst = IsConst;
 
-            typedef typename std::conditional< c_isConst, value_type const &, value_type &>::type   value_ref;
+            typedef typename std::conditional< c_isConst, value_type const&, value_type&>::type   value_ref;
 
         protected:
             typedef typename node_type::marked_ptr          marked_ptr;
@@ -132,7 +132,7 @@ namespace cds { namespace intrusive {
                 return *this;
             }
 
-            iterator& operator = (const iterator& src)
+            iterator& operator =(const iterator& src)
             {
                 m_pNode = src.m_pNode;
                 m_guard.copy( src.m_guard );
@@ -176,48 +176,24 @@ namespace cds { namespace intrusive {
         The lock-free variant of skip-list is implemented according to book
             - [2008] M.Herlihy, N.Shavit "The Art of Multiprocessor Programming",
                 chapter 14.4 "A Lock-Free Concurrent Skiplist".
-        \note The algorithm described in this book cannot be directly adapted for C++ (roughly speaking,
-        the algo contains a lot of bugs). The \b libcds implementation applies the approach discovered
-        by M.Michael in his \ref cds_intrusive_MichaelList_hp "lock-free linked list".
 
         <b>Template arguments</b>:
-            - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T (see skip_list::node).
-            - \p T - type to be stored in the list. The type must be based on skip_list::node (for skip_list::base_hook)
-                or it must have a member of type skip_list::node (for skip_list::member_hook).
-            - \p Traits - type traits. See skip_list::type_traits for explanation.
+            - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T, see \p skip_list::node.
+            - \p T - type to be stored in the list. The type must be based on \p skip_list::node (for \p skip_list::base_hook)
+                or it must have a member of type \p skip_list::node (for \p skip_list::member_hook).
+            - \p Traits - skip-list traits, default is \p skip_list::traits.
+                It is possible to declare option-based list with \p cds::intrusive::skip_list::make_traits metafunction istead of \p Traits 
+                template argument.
 
-        It is possible to declare option-based list with cds::intrusive::skip_list::make_traits metafunction istead of \p Traits template
-        argument.
-        Template argument list \p Options of cds::intrusive::skip_list::make_traits metafunction are:
-        - opt::hook - hook used. Possible values are: skip_list::base_hook, skip_list::member_hook, skip_list::traits_hook.
-            If the option is not specified, <tt>skip_list::base_hook<></tt> and gc::HP is used.
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::disposer - the functor used for dispose removed items. Default is opt::v::empty_disposer. Due the nature
-            of GC schema the disposer may be called asynchronously.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - skip_list::random_level_generator - random level generator. Can be skip_list::xorshift, skip_list::turbo_pascal or
-            user-provided one. See skip_list::random_level_generator option description for explanation.
-            Default is \p %skip_list::turbo_pascal.
-        - opt::allocator - although the skip-list is an intrusive container,
-            an allocator should be provided to maintain variable randomly-calculated height of the node
-            since the node can contain up to 32 next pointers. The allocator option is used to allocate an array of next pointers
-            for nodes which height is more than 1. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
-        - opt::stat - internal statistics. Available types: skip_list::stat, skip_list::empty_stat (the default)
-
-        \warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
+        @warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
             the guard count is limited (like as \p gc::HP). Those GCs should be explicitly initialized with
             hazard pointer enough: \code cds::gc::HP myhp( 67 ) \endcode. Otherwise an run-time exception may be raised
             when you try to create skip-list object.
 
-        \note There are several specializations of \p %SkipListSet for each \p GC. You should include:
+        There are several specializations of \p %SkipListSet for each \p GC. You should include:
         - <tt><cds/intrusive/skip_list_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/intrusive/skip_list_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/intrusive/skip_list_nogc.h></tt> for \ref cds_intrusive_SkipListSet_nogc for persistent set
+        - <tt><cds/intrusive/skip_list_nogc.h></tt> for \ref cds_intrusive_SkipListSet_nogc for append-only set
         - <tt><cds/intrusive/skip_list_rcu.h></tt> for \ref cds_intrusive_SkipListSet_rcu "RCU type"
 
         <b>Iterators</b>
@@ -228,13 +204,13 @@ namespace cds { namespace intrusive {
         so, the element cannot be reclaimed while the iterator object is alive.
         However, passing an iterator object between threads is dangerous.
 
-        \warning Due to concurrent nature of skip-list set it is not guarantee that you can iterate
+        @warning Due to concurrent nature of skip-list set it is not guarantee that you can iterate
         all elements in the set: any concurrent deletion can exclude the element
         pointed by the iterator from the set, and your iteration can be terminated
         before end of the set. Therefore, such iteration is more suitable for debugging purpose only
 
         Remember, each iterator object requires 2 additional hazard pointers, that may be
-        a limited resource for \p GC like as \p gc::HP (for \p gc::PTB the count of
+        a limited resource for \p GC like as \p gc::HP (for \p gc::DHP the count of
         guards is unlimited).
 
         The iterator class supports the following minimalistic interface:
@@ -259,15 +235,15 @@ namespace cds { namespace intrusive {
             bool operator !=(iterator const& i ) const;
         };
         \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
+        Note, the iterator object returned by \p end(), \p cend() member functions points to \p nullptr and should not be dereferenced.
 
         <b>How to use</b>
 
-        You should incorporate skip_list::node into your struct \p T and provide
-        appropriate skip_list::type_traits::hook in your \p Traits template parameters. Usually, for \p Traits you
-        define a struct based on skip_list::type_traits.
+        You should incorporate \p skip_list::node into your struct \p T and provide
+        appropriate \p skip_list::traits::hook in your \p Traits template parameters. Usually, for \p Traits you
+        define a struct based on \p skip_list::traits.
 
-        Example for gc::HP and base hook:
+        Example for \p gc::HP and base hook:
         \code
         // Include GC-related skip-list specialization
         #include <cds/intrusive/skip_list_hp.h>
@@ -301,8 +277,8 @@ namespace cds { namespace intrusive {
         };
 
 
-        // Declare type_traits
-        struct my_traits: public cds::intrusive::skip_list::type_traits
+        // Declare your traits
+        struct my_traits: public cds::intrusive::skip_list::traits
         {
             typedef cds::intrusive::skip_list::base_hook< cds::opt::gc< cds::gc::HP > >   hook;
             typedef my_data_cmp compare;
@@ -339,7 +315,7 @@ namespace cds { namespace intrusive {
         class GC
        ,typename T
 #ifdef CDS_DOXYGEN_INVOKED
-       ,typename Traits = skip_list::type_traits
+       ,typename Traits = skip_list::traits
 #else
        ,typename Traits
 #endif
@@ -347,28 +323,28 @@ namespace cds { namespace intrusive {
     class SkipListSet
     {
     public:
-        typedef T       value_type      ;   ///< type of value stored in the skip-list
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef GC      gc;         ///< Garbage collector
+        typedef T       value_type; ///< type of value stored in the skip-list
+        typedef Traits  traits;     ///< Traits template parameter
 
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
+        typedef typename traits::hook    hook;      ///< hook type
+        typedef typename hook::node_type node_type; ///< node type
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
 #   else
-        typedef typename opt::details::make_comparator< value_type, options >::type key_comparator;
+        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
 
-        typedef typename options::disposer  disposer    ;   ///< disposer used
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
+        typedef typename traits::disposer  disposer;   ///< item disposer
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits; ///< node traits
 
-        typedef GC  gc          ;   ///< Garbage collector
-        typedef typename options::item_counter  item_counter ;   ///< Item counting policy used
-        typedef typename options::memory_model  memory_model ;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::random_level_generator    random_level_generator  ;   ///< random level generator
-        typedef typename options::allocator     allocator_type  ;   ///< allocator for maintaining array of next pointers of the node
-        typedef typename options::back_off      back_off    ;   ///< Back-off strategy
-        typedef typename options::stat          stat        ;   ///< internal statistics type
+        typedef typename traits::item_counter  item_counter;   ///< Item counting policy
+        typedef typename traits::memory_model  memory_model;   ///< Memory ordering, see \p cds::opt::memory_model option
+        typedef typename traits::random_level_generator random_level_generator; ///< random level generator
+        typedef typename traits::allocator     allocator_type;   ///< allocator for maintaining array of next pointers of the node
+        typedef typename traits::back_off      back_off;   ///< Back-off strategy
+        typedef typename traits::stat          stat;       ///< internal statistics type
 
     public:
         typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
@@ -376,7 +352,7 @@ namespace cds { namespace intrusive {
         /// Max node height. The actual node height should be in range <tt>[0 .. c_nMaxHeight)</tt>
         /**
             The max height is specified by \ref skip_list::random_level_generator "random level generator" constant \p m_nUpperBound
-            but it should be no more than 32 (\ref skip_list::c_nHeightLimit).
+            but it should be no more than 32 (\p skip_list::c_nHeightLimit).
         */
         static unsigned int const c_nMaxHeight = std::conditional<
             (random_level_generator::c_nUpperBound <= skip_list::c_nHeightLimit),
@@ -389,20 +365,20 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
-        typedef typename node_type::atomic_marked_ptr   atomic_node_ptr ;   ///< Atomic marked node pointer
-        typedef typename node_type::marked_ptr          marked_node_ptr ;   ///< Node marked pointer
+        typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic marked node pointer
+        typedef typename node_type::marked_ptr          marked_node_ptr;   ///< Node marked pointer
 
     protected:
         //@cond
         typedef skip_list::details::intrusive_node_builder< node_type, atomic_node_ptr, allocator_type > intrusive_node_builder;
 
         typedef typename std::conditional<
-            std::is_same< typename options::internal_node_builder, cds::opt::none >::value
+            std::is_same< typename traits::internal_node_builder, cds::opt::none >::value
             ,intrusive_node_builder
-            ,typename options::internal_node_builder
+            ,typename traits::internal_node_builder
         >::type node_builder;
 
-        typedef std::unique_ptr< node_type, typename node_builder::node_disposer >    scoped_node_ptr;
+        typedef std::unique_ptr< node_type, typename node_builder::node_disposer > scoped_node_ptr;
 
         // c_nMaxHeight * 2 - pPred/pSucc guards
         // + 1 - for erase, unlink
@@ -412,19 +388,18 @@ namespace cds { namespace intrusive {
             node_type *   pPrev[ c_nMaxHeight ];
             node_type *   pSucc[ c_nMaxHeight ];
 
-            typename gc::template GuardArray< c_nMaxHeight * 2 > guards  ;   ///< Guards array for pPrev/pSucc
-
-            node_type *   pCur  ;   // guarded by guards; needed only for *ensure* function
+            typename gc::template GuardArray< c_nMaxHeight * 2 > guards;   ///< Guards array for pPrev/pSucc
+            node_type *   pCur;   // guarded by guards; needed only for \p ensure()
         };
         //@endcond
 
     protected:
-        skip_list::details::head_node< node_type >      m_Head  ;   ///< head tower (max height)
+        skip_list::details::head_node< node_type > m_Head;   ///< head tower (max height)
 
-        item_counter                m_ItemCounter       ;   ///< item counter
-        random_level_generator      m_RandomLevelGen    ;   ///< random level generator instance
-        atomics::atomic<unsigned int>    m_nHeight   ;   ///< estimated high level
-        mutable stat                m_Stat              ;   ///< internal statistics
+        item_counter                m_ItemCounter;    ///< item counter
+        random_level_generator      m_RandomLevelGen; ///< random level generator instance
+        atomics::atomic<unsigned int> m_nHeight;      ///< estimated high level
+        mutable stat                m_Stat;           ///< internal statistics
 
     protected:
         //@cond
@@ -994,16 +969,15 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return const_iterator( *m_Head.head() );
         }
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return const_iterator( *m_Head.head() );
         }
-        //@}
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a set.
         iterator end()
@@ -1012,16 +986,15 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
-        //@{
         const_iterator end() const
         {
             return const_iterator();
         }
+        /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator cend() const
         {
             return const_iterator();
         }
-        //@}
 
     public:
         /// Inserts new node
@@ -1051,8 +1024,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success and may be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success.
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -1117,14 +1089,11 @@ namespace cds { namespace intrusive {
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 
-            The functor can change non-key fields of the \p item; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You can pass \p func argument by value or by reference using \p std::ref.
-
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
@@ -1178,12 +1147,12 @@ namespace cds { namespace intrusive {
             The function searches the item \p val in the set and unlink it from the set
             if it is found and is equal to \p val.
 
-            Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
-            and deletes the item found. \p unlink finds an item by key and deletes it
+            Difference between \p erase() and \p %unlink() functions: \p %erase() finds <i>a key</i>
+            and deletes the item found. \p %unlink() finds an item by key and deletes it
             only if \p val is an item of that set, i.e. the pointer to item found
             is equal to <tt> &val </tt>.
 
-            The \ref disposer specified in \p Traits class template parameter is called
+            The \p disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously.
 
             The function returns \p true if success and \p false otherwise.
@@ -1224,7 +1193,7 @@ namespace cds { namespace intrusive {
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             The \ref disposer specified in \p Traits class template parameter is called automatically
-            by garbage collector \p GC specified in class' template parameters when returned \ref guarded_ptr object
+            by garbage collector \p GC specified in class' template parameters when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
@@ -1274,8 +1243,8 @@ namespace cds { namespace intrusive {
             During unlinking, a concurrent thread may insert an item with key less than leftmost item's key.
             So, the function returns the item with minimum key at the moment of list traversing.
 
-            The \ref disposer specified in \p Traits class template parameter is called
-            by garbage collector \p GC automatically when returned \ref guarded_ptr object
+            The \p disposer specified in \p Traits class template parameter is called
+            by garbage collector \p GC automatically when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
@@ -1309,14 +1278,14 @@ namespace cds { namespace intrusive {
             During unlinking, a concurrent thread may insert an item with key greater than rightmost item's key.
             So, the function returns the item with maximum key at the moment of list traversing.
 
-            The \ref disposer specified in \p Traits class template parameter is called
+            The \p disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously when returned \ref guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
             Usage:
             \code
-            typedef cds::intrusive::SkipListSet< cds::gc::HP, foo, my_traits >  skip_list;
+            typedef cds::intrusive::SkipListSet< cds::gc::HP, foo, my_traits > skip_list;
             skip_list theList;
             // ...
             {
@@ -1336,16 +1305,16 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_SkipListSet_hp_erase
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             unlinks it from the set, and returns \p true.
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool erase( Q const& val )
+        bool erase( Q const& key )
         {
-            return erase_( val, key_comparator(), [](value_type const&) {} );
+            return erase_( key, key_comparator(), [](value_type const&) {} );
         }
 
         /// Deletes the item from the set with comparing functor \p pred
@@ -1358,14 +1327,14 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool erase_with( Q const& val, Less pred )
+        bool erase_with( Q const& key, Less pred )
         {
-            return erase_( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
+            return erase_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
         }
 
         /// Deletes the item from the set
         /** \anchor cds_intrusive_SkipListSet_hp_erase_func
-            The function searches an item with key equal to \p val in the set,
+            The function searches an item with key equal to \p key in the set,
             call \p f functor with item found, unlinks it from the set, and returns \p true.
             The \ref disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously.
@@ -1376,16 +1345,15 @@ namespace cds { namespace intrusive {
                 void operator()( value_type const& item );
             };
             \endcode
-            The functor can be passed by reference with <tt>boost:ref</tt>
 
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q, typename Func>
-        bool erase( Q const& val, Func f )
+        bool erase( Q const& key, Func f )
         {
-            return erase_( val, key_comparator(), f );
+            return erase_( key, key_comparator(), f );
         }
 
         /// Deletes the item from the set with comparing functor \p pred
@@ -1398,44 +1366,39 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool erase_with( Q const& val, Less pred, Func f )
+        bool erase_with( Q const& key, Less pred, Func f )
         {
-            return erase_( val, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return erase_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
-        /// Finds the key \p val
+        /// Finds \p key
         /** \anchor cds_intrusive_SkipListSet_hp_find_func
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
             The functor does not serialize simultaneous access to the set \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
-            can modify both arguments.
+            possible you must provide your own synchronization on item level to exclude unsafe item modifications.
 
             Note the compare functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return find_with_( val, key_comparator(), f );
+            return find_with_( key, key_comparator(), f );
         }
 
-        /// Finds the key \p val with \p pred predicate for comparing
+        /// Finds the key \p key with \p pred predicate for comparing
         /**
             The function is an analog of \ref cds_intrusive_SkipListSet_hp_find_func "find(Q&, Func)"
             but \p pred is used for key compare.
@@ -1445,69 +1408,26 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
-        /// Finds the key \p val
-        /** \anchor cds_intrusive_SkipListSet_hp_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
-
-            The functor can change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the compare functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_with_( val, key_comparator(), f );
-        }
-
-        /// Finds the key \p val with \p pred predicate for comparing
-        /**
-            The function is an analog of \ref cds_intrusive_SkipListSet_hp_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key compare.
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
-            in any order.
-            \p pred must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
-        {
-            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), f );
-        }
-
-        /// Finds the key \p val
+        /// Finds \p key
         /** \anchor cds_intrusive_SkipListSet_hp_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the compare functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool find( Q const & val )
+        bool find( Q const& key )
         {
-            return find_with_( val, key_comparator(), [](value_type& , Q const& ) {} );
+            return find_with_( key, key_comparator(), [](value_type& , Q const& ) {} );
         }
 
-        /// Finds the key \p val with comparing functor \p pred
+        /// Finds \p key with comparing functor \p pred
         /**
             The function is an analog of \ref cds_intrusive_SkipListSet_hp_find_val "find(Q const&)"
             but \p pred is used for comparing the keys.
@@ -1516,17 +1436,17 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return find_with_( val, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
+            return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds \p key and return the item found
         /** \anchor cds_intrusive_SkipListSet_hp_get
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p val is found, and \p false otherwise.
-            If \p val is not found the \p ptr parameter is not changed.
+            The function returns \p true if \p key is found, and \p false otherwise.
+            If \p key is not found the \p ptr parameter is not changed.
 
             The \ref disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously when returned \ref guarded_ptr object
@@ -1552,12 +1472,12 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& val )
+        bool get( guarded_ptr& ptr, Q const& key )
         {
-            return get_with_( ptr.guard(), val, key_comparator() );
+            return get_with_( ptr.guard(), key, key_comparator() );
         }
 
-        /// Finds the key \p val and return the item found
+        /// Finds \p key and return the item found
         /**
             The function is an analog of \ref cds_intrusive_SkipListSet_hp_get "get( guarded_ptr& ptr, Q const&)"
             but \p pred is used for comparing the keys.
@@ -1567,17 +1487,17 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& val, Less pred )
+        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
         {
-            return get_with_( ptr.guard(), val, cds::opt::details::make_comparator_from_less<Less>() );
+            return get_with_( ptr.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
         /// Returns item count in the set
         /**
             The value returned depends on item counter type provided by \p Traits template parameter.
-            If it is atomicity::empty_item_counter this function always returns 0.
-            Therefore, the function is not suitable for checking the set emptiness, use \ref empty
-            member function for this purpose.
+            If it is \p atomicity::empty_item_counter this function always returns 0.
+            Therefore, the function is not suitable for checking the set emptiness, use \p empty()
+            for this purpose.
         */
         size_t size() const
         {
@@ -1590,7 +1510,7 @@ namespace cds { namespace intrusive {
             return m_Head.head()->next( 0 ).load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
-        /// Clears the set (non-atomic)
+        /// Clears the set (not atomic)
         /**
             The function unlink all items from the set.
             The function is not atomic, i.e., in multi-threaded environment with parallel insertions
@@ -1620,7 +1540,6 @@ namespace cds { namespace intrusive {
         {
             return m_Stat;
         }
-
     };
 
 }} // namespace cds::intrusive
