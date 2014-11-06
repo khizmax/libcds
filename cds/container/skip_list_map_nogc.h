@@ -29,31 +29,17 @@ namespace cds { namespace container {
         See \ref cds_nonintrusive_SkipListMap_hp "SkipListMap" for detailed description.
 
         Template arguments:
-        - \p K - type of a key to be stored in the list.
-        - \p T - type of a value to be stored in the list.
-        - \p Traits - type traits. See skip_list::type_traits for explanation.
-
-        It is possible to declare option-based list with cds::container::skip_list::make_traits metafunction istead of \p Traits template
-        argument.
-        Template argument list \p Options of cds::container::skip_list::make_traits metafunction are:
-        - opt::compare - key compare functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<K>.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - skip_list::random_level_generator - random level generator. Can be skip_list::xorshift, skip_list::turbo_pascal or
-            user-provided one. See skip_list::random_level_generator option description for explanation.
-            Default is \p %skip_list::turbo_pascal.
-        - opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
-        - opt::stat - internal statistics. Available types: skip_list::stat, skip_list::empty_stat (the default)
+        - \p K - type of a key to be stored in the map.
+        - \p T - type of a value to be stored in the map.
+        - \p Traits - map traits, default is \p skip_list::traits
+            It is possible to declare option-based list with \p cds::container::skip_list::make_traits 
+            metafunction istead of \p Traits template argument.
     */
     template <
         typename Key,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = skip_list::type_traits
+        typename Traits = skip_list::traits
 #else
         typename Traits
 #endif
@@ -78,48 +64,24 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef typename base_class::gc gc  ; ///< Garbage collector used
-        typedef Key key_type      ;   ///< Key type
-        typedef T   mapped_type   ;   ///< Mapped type
-        typedef std::pair< key_type const, mapped_type> value_type  ;   ///< Key-value pair stored in the map
-        typedef Traits  options     ;   ///< Options specified
+        typedef cds::gc::nogc gc;   ///< Garbage collector
+        typedef Key key_type;       ///< Key type
+        typedef T   mapped_type;    ///< Mapped type
+        typedef std::pair< key_type const, mapped_type> value_type; ///< Key-value pair stored in the map
+        typedef Traits  traits;     ///< Options specified
 
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename base_class::allocator_type allocator_type  ;   ///< Allocator type used for allocate/deallocate the skip-list nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename base_class::key_comparator key_comparator  ;   ///< key compare functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename base_class::stat           stat            ;   ///< internal statistics type
-        typedef typename base_class::random_level_generator random_level_generator  ;   ///< random level generator
+        typedef typename base_class::back_off       back_off;       ///< Back-off strategy
+        typedef typename base_class::allocator_type allocator_type; ///< Allocator type used for allocate/deallocate the skip-list nodes
+        typedef typename base_class::item_counter   item_counter;   ///< Item counting policy
+        typedef typename base_class::key_comparator key_comparator; ///< key compare functor
+        typedef typename base_class::memory_model   memory_model;   ///< Memory ordering, see \p cds::opt::memory_model option
+        typedef typename base_class::stat           stat;           ///< internal statistics type
+        typedef typename base_class::random_level_generator random_level_generator; ///< random level generator
 
     protected:
         //@cond
         typedef typename base_class::node_type      node_type;
         typedef typename base_class::node_allocator node_allocator;
-
-        /*
-        template <class Less>
-        struct less_wrapper {
-            typedef Less    less_op;
-
-            bool operator()( value_type const& v1, value_type const& v2 ) const
-            {
-                return less_op()( v1.first, v2.first);
-            }
-
-            template <typename Q>
-            bool operator()( value_type const& v1, Q const& v2 ) const
-            {
-                return less_op()( v1.first, v2 );
-            }
-
-            template <typename Q>
-            bool operator()( Q const& v1, value_type const& v2 ) const
-            {
-                return less_op()( v1, v2.first );
-            }
-        };
-        */
         //@endcond
 
     public:
@@ -164,28 +126,26 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a map
-        //@{
         const_iterator begin() const
         {
             return base_class::begin();
         }
+        /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
             return base_class::cbegin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a map
-        //@{
         const_iterator end() const
         {
             return base_class::end();
         }
+        /// Returns an const iterator that addresses the location succeeding the last element in a map
         const_iterator cend() const
         {
             return base_class::cend();
         }
-        //@}
 
     public:
         /// Inserts new node with key and default value
@@ -238,12 +198,10 @@ namespace cds { namespace container {
             to the map's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
             User-defined functor \p func should guarantee that during changing item's value no any other changes
             could be made on this map's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if the inserting is successful.
 
             The key_type should be constructible from value of type \p K.
 
-            The function allows to split creating of new item into two part:
+            The function allows to split creating of new item into three part:
             - create item from \p key;
             - insert new item into the map;
             - if inserting is successful, initialize the value of item by calling \p f functor
@@ -262,7 +220,7 @@ namespace cds { namespace container {
             return it;
         }
 
-        /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p mapped_type created in-place from \p args
         /**
             \p key_type should be constructible from type \p K
 
@@ -334,9 +292,8 @@ namespace cds { namespace container {
             return base_class::get_max();
         }
 
-        /// Clears the map (non-atomic)
+        /// Clears the map (not atomic)
         /**
-            The function is not atomic.
             Finding and/or inserting is prohibited while clearing.
             Otherwise an unpredictable result may be encountered.
             Thus, \p clear() may be used only for debugging purposes.

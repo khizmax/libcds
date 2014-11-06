@@ -46,9 +46,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_hp.cpp">
       <Filter>skip_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_ptb.cpp">
-      <Filter>skip_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_hp.cpp">
       <Filter>split_list</Filter>
     </ClCompile>
@@ -180,6 +177,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_splitlist_map_lazy_dhp.cpp">
       <Filter>split_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_dhp.cpp">
+      <Filter>skip_list</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

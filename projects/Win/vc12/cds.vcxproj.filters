@@ -1229,5 +1229,8 @@
     <ClInclude Include="..\..\..\cds\container\skip_list_set_dhp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

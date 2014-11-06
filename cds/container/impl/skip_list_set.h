@@ -36,30 +36,16 @@ namespace cds { namespace container {
         Template arguments:
         - \p GC - Garbage collector used.
         - \p T - type to be stored in the list.
-        - \p Traits - type traits. See skip_list::type_traits for explanation.
+        - \p Traits - set traits, default is \p skip_list::traits.
+            It is possible to declare option-based list with \p cds::container::skip_list::make_traits metafunction 
+            istead of \p Traits template argument.
 
-        It is possible to declare option-based list with cds::container::skip_list::make_traits metafunction istead of \p Traits template
-        argument.
-        Template argument list \p Options of cds::container::skip_list::make_traits metafunction are:
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - skip_list::random_level_generator - random level generator. Can be skip_list::xorshift, skip_list::turbo_pascal or
-            user-provided one. See skip_list::random_level_generator option description for explanation.
-            Default is \p %skip_list::turbo_pascal.
-        - opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
-        - opt::stat - internal statistics. Available types: skip_list::stat, skip_list::empty_stat (the default)
-
-        \warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
+        @warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
             the guard count is limited (like as \p gc::HP). Those GCs should be explicitly initialized with
             hazard pointer enough: \code cds::gc::HP myhp( 67 ) \endcode. Otherwise an run-time exception may be raised
             when you try to create skip-list object.
 
-        \note There are several specializations of \p %SkipListSet for each \p GC. You should include:
+        @note There are several specializations of \p %SkipListSet for each \p GC. You should include:
         - <tt><cds/container/skip_list_set_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/container/skip_list_set_dhp.h></tt> for \p gc::DHP garbage collector
         - <tt><cds/container/skip_list_set_rcu.h></tt> for \ref cds_nonintrusive_SkipListSet_rcu "RCU type"
@@ -104,14 +90,13 @@ namespace cds { namespace container {
             bool operator !=(iterator const& i ) const;
         };
         \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
-
+        Note, the iterator object returned by \p end(), \p cend() member functions points to \p nullptr and should not be dereferenced.
     */
     template <
         typename GC,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = skip_list::type_traits
+        typename Traits = skip_list::traits
 #else
         typename Traits
 #endif
@@ -124,21 +109,21 @@ namespace cds { namespace container {
 #endif
     {
         //@cond
-        typedef details::make_skip_list_set< GC, T, Traits >    maker;
+        typedef details::make_skip_list_set< GC, T, Traits > maker;
         typedef typename maker::type base_class;
         //@endcond
     public:
-        typedef typename base_class::gc          gc  ; ///< Garbage collector used
-        typedef T       value_type  ;   ///< @anchor cds_containewr_SkipListSet_value_type Value type stored in the set
-        typedef Traits  options     ;   ///< Options specified
+        typedef GC     gc;          ///< Garbage collector used
+        typedef T      value_type;  ///< @anchor cds_containewr_SkipListSet_value_type Value type to be stored in the set
+        typedef Traits traits;      ///< Options specified
 
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator         allocator_type  ;   ///< Allocator type used for allocate/deallocate the skip-list nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename maker::key_comparator      key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::random_level_generator random_level_generator ; ///< random level generator
-        typedef typename options::stat              stat            ;   ///< internal statistics type
+        typedef typename base_class::back_off     back_off;       ///< Back-off strategy
+        typedef typename traits::allocator        allocator_type; ///< Allocator type used for allocate/deallocate the skip-list nodes
+        typedef typename base_class::item_counter item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator    key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::random_level_generator random_level_generator; ///< random level generator
+        typedef typename traits::stat             stat;           ///< internal statistics type
 
     protected:
         //@cond
@@ -249,8 +234,7 @@ namespace cds { namespace container {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success. It may be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success.
         */
         template <typename Q, typename Func>
         bool insert( Q const& val, Func f )
@@ -283,16 +267,16 @@ namespace cds { namespace container {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p key passed into the \p ensure function
+            - \p val - argument \p key passed into the \p %ensure() function
 
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using \p std::ref
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the set.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
         std::pair<bool, bool> ensure( const Q& val, Func func )
@@ -305,7 +289,7 @@ namespace cds { namespace container {
             return bRes;
         }
 
-        /// Inserts data of type \ref cds_containewr_SkipListSet_value_type "value_type" constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type created in-place from <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -359,7 +343,6 @@ namespace cds { namespace container {
                 void operator()(value_type const& val);
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Since the key of \p value_type is not explicitly specified,
             template parameter \p Q defines the key type to search in the list.
@@ -367,8 +350,6 @@ namespace cds { namespace container {
             and the type \p Q.
 
             Return \p true if key is found and deleted, \p false otherwise
-
-            See also: \ref erase
         */
         template <typename Q, typename Func>
         bool erase( Q const& key, Func f )
@@ -497,40 +478,35 @@ namespace cds { namespace container {
             return base_class::extract_max_( result.guard() );
         }
 
-        /// Find the key \p val
+        /// Find the \p key
         /** \anchor cds_nonintrusive_SkipListSet_find_func
 
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
             The functor does not serialize simultaneous access to the set's \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
-            can modify both arguments.
-
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that may be not the same as \p value_type.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return base_class::find( val, [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); });
+            return base_class::find( key, [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); });
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SkipListSet_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -538,72 +514,28 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
+            return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
                 [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
         }
 
-        /// Find the key \p val
-        /** \anchor cds_nonintrusive_SkipListSet_find_cfunc
-
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref
-
-            The functor may change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set's \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \p value_type.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return base_class::find( val, [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); });
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_nonintrusive_SkipListSet_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less cmp, Func f )
-        {
-            return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); } );
-        }
-
-        /// Find the key \p val
+        /// Find \p key
         /** \anchor cds_nonintrusive_SkipListSet_find_val
 
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that may be not the same as \ref value_type.
         */
         template <typename Q>
-        bool find( Q const& val )
+        bool find( Q const& key )
         {
-            return base_class::find( val );
+            return base_class::find( key );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SkipListSet_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -611,9 +543,9 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
+            return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
         }
 
         /// Finds \p key and return the item found
@@ -668,7 +600,7 @@ namespace cds { namespace container {
             return base_class::get_with_( result.guard(), key, cds::opt::details::make_comparator_from_less< wrapped_less >());
         }
 
-        /// Clears the set (non-atomic).
+        /// Clears the set (not atomic).
         /**
             The function deletes all items from the set.
             The function is not atomic, thus, in multi-threaded environment with parallel insertions
@@ -695,8 +627,8 @@ namespace cds { namespace container {
         /// Returns item count in the set
         /**
             The value returned depends on item counter type provided by \p Traits template parameter.
-            If it is atomicity::empty_item_counter this function always returns 0.
-            Therefore, the function is not suitable for checking the set emptiness, use \ref empty
+            If it is \p atomicity::empty_item_counter this function always returns 0.
+            Therefore, the function is not suitable for checking the set emptiness, use \p empty()
             member function for this purpose.
         */
         size_t size() const
@@ -709,7 +641,6 @@ namespace cds { namespace container {
         {
             return base_class::statistics();
         }
-
     };
 
 }} // namespace cds::container

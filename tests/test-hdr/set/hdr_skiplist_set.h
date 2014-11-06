@@ -431,30 +431,30 @@ namespace set {
         void SkipList_HP_michaelalloc_cmp_stat();
         void SkipList_HP_michaelalloc_cmpless_stat();
 
-        void SkipList_PTB_less();
-        void SkipList_PTB_cmp();
-        void SkipList_PTB_cmpless();
-        void SkipList_PTB_less_stat();
-        void SkipList_PTB_cmp_stat();
-        void SkipList_PTB_cmpless_stat();
-        void SkipList_PTB_xorshift_less();
-        void SkipList_PTB_xorshift_cmp();
-        void SkipList_PTB_xorshift_cmpless();
-        void SkipList_PTB_xorshift_less_stat();
-        void SkipList_PTB_xorshift_cmp_stat();
-        void SkipList_PTB_xorshift_cmpless_stat();
-        void SkipList_PTB_turbopas_less();
-        void SkipList_PTB_turbopas_cmp();
-        void SkipList_PTB_turbopas_cmpless();
-        void SkipList_PTB_turbopas_less_stat();
-        void SkipList_PTB_turbopas_cmp_stat();
-        void SkipList_PTB_turbopas_cmpless_stat();
-        void SkipList_PTB_michaelalloc_less();
-        void SkipList_PTB_michaelalloc_cmp();
-        void SkipList_PTB_michaelalloc_cmpless();
-        void SkipList_PTB_michaelalloc_less_stat();
-        void SkipList_PTB_michaelalloc_cmp_stat();
-        void SkipList_PTB_michaelalloc_cmpless_stat();
+        void SkipList_DHP_less();
+        void SkipList_DHP_cmp();
+        void SkipList_DHP_cmpless();
+        void SkipList_DHP_less_stat();
+        void SkipList_DHP_cmp_stat();
+        void SkipList_DHP_cmpless_stat();
+        void SkipList_DHP_xorshift_less();
+        void SkipList_DHP_xorshift_cmp();
+        void SkipList_DHP_xorshift_cmpless();
+        void SkipList_DHP_xorshift_less_stat();
+        void SkipList_DHP_xorshift_cmp_stat();
+        void SkipList_DHP_xorshift_cmpless_stat();
+        void SkipList_DHP_turbopas_less();
+        void SkipList_DHP_turbopas_cmp();
+        void SkipList_DHP_turbopas_cmpless();
+        void SkipList_DHP_turbopas_less_stat();
+        void SkipList_DHP_turbopas_cmp_stat();
+        void SkipList_DHP_turbopas_cmpless_stat();
+        void SkipList_DHP_michaelalloc_less();
+        void SkipList_DHP_michaelalloc_cmp();
+        void SkipList_DHP_michaelalloc_cmpless();
+        void SkipList_DHP_michaelalloc_less_stat();
+        void SkipList_DHP_michaelalloc_cmp_stat();
+        void SkipList_DHP_michaelalloc_cmpless_stat();
 
         void SkipList_NOGC_less();
         void SkipList_NOGC_cmp();
@@ -507,30 +507,30 @@ namespace set {
             CPPUNIT_TEST(SkipList_HP_michaelalloc_cmp_stat)
             CPPUNIT_TEST(SkipList_HP_michaelalloc_cmpless_stat)
 
-            CPPUNIT_TEST(SkipList_PTB_less)
-            CPPUNIT_TEST(SkipList_PTB_cmp)
-            CPPUNIT_TEST(SkipList_PTB_cmpless)
-            CPPUNIT_TEST(SkipList_PTB_less_stat)
-            CPPUNIT_TEST(SkipList_PTB_cmp_stat)
-            CPPUNIT_TEST(SkipList_PTB_cmpless_stat)
-            CPPUNIT_TEST(SkipList_PTB_xorshift_less)
-            CPPUNIT_TEST(SkipList_PTB_xorshift_cmp)
-            CPPUNIT_TEST(SkipList_PTB_xorshift_cmpless)
-            CPPUNIT_TEST(SkipList_PTB_xorshift_less_stat)
-            CPPUNIT_TEST(SkipList_PTB_xorshift_cmp_stat)
-            CPPUNIT_TEST(SkipList_PTB_xorshift_cmpless_stat)
-            CPPUNIT_TEST(SkipList_PTB_turbopas_less)
-            CPPUNIT_TEST(SkipList_PTB_turbopas_cmp)
-            CPPUNIT_TEST(SkipList_PTB_turbopas_cmpless)
-            CPPUNIT_TEST(SkipList_PTB_turbopas_less_stat)
-            CPPUNIT_TEST(SkipList_PTB_turbopas_cmp_stat)
-            CPPUNIT_TEST(SkipList_PTB_turbopas_cmpless_stat)
-            CPPUNIT_TEST(SkipList_PTB_michaelalloc_less)
-            CPPUNIT_TEST(SkipList_PTB_michaelalloc_cmp)
-            CPPUNIT_TEST(SkipList_PTB_michaelalloc_cmpless)
-            CPPUNIT_TEST(SkipList_PTB_michaelalloc_less_stat)
-            CPPUNIT_TEST(SkipList_PTB_michaelalloc_cmp_stat)
-            CPPUNIT_TEST(SkipList_PTB_michaelalloc_cmpless_stat)
+            CPPUNIT_TEST(SkipList_DHP_less)
+            CPPUNIT_TEST(SkipList_DHP_cmp)
+            CPPUNIT_TEST(SkipList_DHP_cmpless)
+            CPPUNIT_TEST(SkipList_DHP_less_stat)
+            CPPUNIT_TEST(SkipList_DHP_cmp_stat)
+            CPPUNIT_TEST(SkipList_DHP_cmpless_stat)
+            CPPUNIT_TEST(SkipList_DHP_xorshift_less)
+            CPPUNIT_TEST(SkipList_DHP_xorshift_cmp)
+            CPPUNIT_TEST(SkipList_DHP_xorshift_cmpless)
+            CPPUNIT_TEST(SkipList_DHP_xorshift_less_stat)
+            CPPUNIT_TEST(SkipList_DHP_xorshift_cmp_stat)
+            CPPUNIT_TEST(SkipList_DHP_xorshift_cmpless_stat)
+            CPPUNIT_TEST(SkipList_DHP_turbopas_less)
+            CPPUNIT_TEST(SkipList_DHP_turbopas_cmp)
+            CPPUNIT_TEST(SkipList_DHP_turbopas_cmpless)
+            CPPUNIT_TEST(SkipList_DHP_turbopas_less_stat)
+            CPPUNIT_TEST(SkipList_DHP_turbopas_cmp_stat)
+            CPPUNIT_TEST(SkipList_DHP_turbopas_cmpless_stat)
+            CPPUNIT_TEST(SkipList_DHP_michaelalloc_less)
+            CPPUNIT_TEST(SkipList_DHP_michaelalloc_cmp)
+            CPPUNIT_TEST(SkipList_DHP_michaelalloc_cmpless)
+            CPPUNIT_TEST(SkipList_DHP_michaelalloc_less_stat)
+            CPPUNIT_TEST(SkipList_DHP_michaelalloc_cmp_stat)
+            CPPUNIT_TEST(SkipList_DHP_michaelalloc_cmpless_stat)
 
             CPPUNIT_TEST(SkipList_NOGC_less)
             CPPUNIT_TEST(SkipList_NOGC_cmp)

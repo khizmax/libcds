@@ -693,6 +693,7 @@
     <ClInclude Include="..\..\..\cds\container\michael_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\michael_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\mspriority_queue.h" />
+    <ClInclude Include="..\..\..\cds\container\skip_list_map_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_hp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_rcu.h" />

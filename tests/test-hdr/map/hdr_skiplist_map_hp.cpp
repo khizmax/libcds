@@ -9,12 +9,12 @@ namespace map {
 
     void SkipListMapHdrTest::SkipList_HP_less()
     {
-        typedef cc::SkipListMap< cds::gc::HP, key_type, value_type,
-            cc::skip_list::make_traits<
-                co::less< less >
-                ,co::item_counter< simple_item_counter >
-            >::type
-        > set;
+        struct map_traits : public cc::skip_list::traits
+        {
+            typedef SkipListMapHdrTest::less less;
+            typedef simple_item_counter item_counter;
+        };
+        typedef cc::SkipListMap< cds::gc::HP, key_type, value_type, map_traits > set;
         test< set, misc::print_skiplist_stat<set::stat > >();
     }
 

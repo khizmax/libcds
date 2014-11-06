@@ -36,32 +36,18 @@ namespace cds { namespace container {
         - \p GC - Garbage collector used.
         - \p K - type of a key to be stored in the list.
         - \p T - type of a value to be stored in the list.
-        - \p Traits - type traits. See skip_list::type_traits for explanation.
+        - \p Traits - map traits, default is \p skip_list::traits
+            It is possible to declare option-based list with \p cds::container::skip_list::make_traits metafunction 
+            istead of \p Traits template argument.
 
-        It is possible to declare option-based list with cds::container::skip_list::make_traits metafunction istead of \p Traits template
-        argument.
-        Template argument list \p Options of cds::container::skip_list::make_traits metafunction are:
-        - opt::compare - key compare functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<K>.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - skip_list::random_level_generator - random level generator. Can be skip_list::xorshift, skip_list::turbo_pascal or
-            user-provided one. See skip_list::random_level_generator option description for explanation.
-            Default is \p %skip_list::turbo_pascal.
-        - opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
-        - opt::stat - internal statistics. Available types: skip_list::stat, skip_list::empty_stat (the default)
+        Like STL map class, \p %SkipListMap stores the key-value pair as <tt>std:pair< K const, T></tt>.
 
-        Like STL map class, %SkipListMap stores its key-value pair as <tt>std:pair< K const, T></tt>.
-
-        \warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
+        @warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
             the guard count is limited (like \p gc::HP). Those GCs should be explicitly initialized with
             hazard pointer enough: \code cds::gc::HP myhp( 67 ) \endcode. Otherwise an run-time exception may be raised
             when you try to create skip-list object.
 
-        \note There are several specializations of \p %SkipListMap for each \p GC. You should include:
+        @note There are several specializations of \p %SkipListMap for each \p GC. You should include:
         - <tt><cds/container/skip_list_map_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/container/skip_list_map_dhp.h></tt> for \p gc::DHP garbage collector
         - <tt><cds/container/skip_list_map_rcu.h></tt> for \ref cds_nonintrusive_SkipListMap_rcu "RCU type"
@@ -114,7 +100,7 @@ namespace cds { namespace container {
         typename Key,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = skip_list::type_traits
+        typename Traits = skip_list::traits
 #else
         typename Traits
 #endif
@@ -127,27 +113,27 @@ namespace cds { namespace container {
 #endif
     {
         //@cond
-        typedef details::make_skip_list_map< GC, Key, T, Traits >    maker;
+        typedef details::make_skip_list_map< GC, Key, T, Traits > maker;
         typedef typename maker::type base_class;
         //@endcond
     public:
-        typedef typename base_class::gc          gc  ; ///< Garbage collector used
-        typedef Key     key_type    ;   ///< Key type
-        typedef T       mapped_type ;   ///< Mapped type
+        typedef GC      gc;          ///< Garbage collector
+        typedef Key     key_type;    ///< Key type
+        typedef T       mapped_type; ///< Mapped type
+        typedef Traits  traits;      ///< Map traits
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef std::pair< K const, T> value_type   ;   ///< Value type stored in the map
+        typedef std::pair< K const, T> value_type;   ///< Key-value pair to be stored in the map
 #   else
         typedef typename maker::value_type  value_type;
 #   endif
-        typedef Traits  options     ;   ///< Options specified
 
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator         allocator_type  ;   ///< Allocator type used for allocate/deallocate the skip-list nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename maker::key_comparator      key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::random_level_generator random_level_generator ; ///< random level generator
-        typedef typename options::stat              stat            ;   ///< internal statistics type
+        typedef typename base_class::back_off      back_off;       ///< Back-off strategy
+        typedef typename traits::allocator         allocator_type; ///< Allocator type used for allocate/deallocate the skip-list nodes
+        typedef typename base_class::item_counter  item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator     key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model  memory_model;   ///< Memory ordering, see \p cds::opt::memory_model
+        typedef typename traits::random_level_generator random_level_generator ; ///< random level generator
+        typedef typename traits::stat              stat;           ///< internal statistics type
 
     protected:
         //@cond
@@ -155,7 +141,6 @@ namespace cds { namespace container {
         typedef typename maker::node_allocator      node_allocator;
 
         typedef std::unique_ptr< node_type, typename maker::node_deallocator >    scoped_node_ptr;
-
         //@endcond
 
     public:
@@ -194,16 +179,15 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a map
-        //@{
         const_iterator begin() const
         {
             return cbegin();
         }
+        /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
             return const_iterator( base_class::cbegin() );
         }
-        //@}
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a map.
         iterator end()
@@ -212,16 +196,15 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a map.
-        //@{
         const_iterator end() const
         {
             return cend();
         }
+        /// Returns a forward const iterator that addresses the location succeeding the last element in a map.
         const_iterator cend() const
         {
             return const_iterator( base_class::cend() );
         }
-        //@}
 
     public:
         /// Inserts new node with key and default value
@@ -229,9 +212,9 @@ namespace cds { namespace container {
             The function creates a node with \p key and default value, and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from a value of type \p K.
-                In trivial case, \p K is equal to \ref key_type.
-            - The \ref mapped_type should be default-constructible.
+            - The \p key_type should be constructible from a value of type \p K.
+                In trivial case, \p K is equal to \p key_type.
+            - The \p mapped_type should be default-constructible.
 
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -247,8 +230,8 @@ namespace cds { namespace container {
             and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from \p key of type \p K.
-            - The \ref value_type should be constructible from \p val of type \p V.
+            - The \p key_type should be constructible from \p key of type \p K.
+            - The \p value_type should be constructible from \p val of type \p V.
 
             Returns \p true if \p val is inserted into the set, \p false otherwise.
         */
@@ -273,10 +256,7 @@ namespace cds { namespace container {
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
-
-            The key_type should be constructible from value of type \p K.
+            \p key_type should be constructible from value of type \p K.
 
             The function allows to split creating of new item into two part:
             - create item from \p key;
@@ -297,7 +277,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p value_type created in-place from <tt>std::forward<Args>(args)...</tt>
         /**
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -337,11 +317,11 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \ref value_type.
 
-            You may pass \p func argument by reference using \p std::ref
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
@@ -391,7 +371,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Return \p true if key is found and deleted, \p false otherwise
         */
@@ -535,8 +514,6 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found.
 
-            You can pass \p f argument by reference using \p std::ref
-
             The functor may change \p item.second.
 
             The function returns \p true if \p key is found, \p false otherwise.
@@ -646,9 +623,6 @@ namespace cds { namespace container {
         }
 
         /// Checks if the map is empty
-        /**
-            Emptiness is checked by item counting: if item count is zero then the map is empty.
-        */
         bool empty() const
         {
             return base_class::empty();
@@ -665,7 +639,6 @@ namespace cds { namespace container {
         {
             return base_class::statistics();
         }
-
     };
 }} // namespace cds::container
 

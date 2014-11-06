@@ -15,12 +15,12 @@ namespace map {
 
     void SkipListMapRCUHdrTest::SkipList_RCU_GPB_less()
     {
-        typedef cc::SkipListMap< rcu_type, key_type, value_type,
-            cc::skip_list::make_traits<
-                co::less< less >
-                ,co::item_counter< simple_item_counter >
-            >::type
-        > set;
+        struct map_traits : public cc::skip_list::traits
+        {
+            typedef SkipListMapRCUHdrTest::less less;
+            typedef simple_item_counter item_counter;
+        };
+        typedef cc::SkipListMap< rcu_type, key_type, value_type, map_traits > set;
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 

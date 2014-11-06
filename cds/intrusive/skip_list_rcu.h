@@ -1517,7 +1517,7 @@ retry:
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %ensure() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 

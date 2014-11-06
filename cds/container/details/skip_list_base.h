@@ -13,43 +13,25 @@ namespace cds { namespace container {
     */
     namespace skip_list {
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Typedef for intrusive::skip_list::random_level_generator template
-        struct random_level_generator {};
-#else
-        using cds::intrusive::skip_list::random_level_generator;
-#endif
+        /// Option specifying random level generator
+        template <typename Type>
+        using random_level_generator = cds::intrusive::skip_list::random_level_generator<Type>;
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Typedef for intrusive::skip_list::xorshift class
-        class xorshift {};
-#else
-        using cds::intrusive::skip_list::xorshift;
-#endif
+        /// Xor-shift random level generator
+        typedef cds::intrusive::skip_list::xorshift xorshift;
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Typedef for intrusive::skip_list::turbo_pascal class
-        class turbo_pascal {};
-#else
-        using cds::intrusive::skip_list::turbo_pascal;
-#endif
+        /// Turbo-pascal random level generator
+        typedef cds::intrusive::skip_list::turbo_pascal turbo_pascal;
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Typedef for intrusive::skip_list::stat class
-        class stat {};
-#else
-        using cds::intrusive::skip_list::stat;
-#endif
+        /// Skip list internal statistics
+        template <typename EventCounter = cds::atomicity::event_counter>
+        using stat = cds::intrusive::skip_list::stat < EventCounter > ;
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Typedef for intrusive::skip_list::empty_stat class
-        class empty_stat {};
-#else
-        using cds::intrusive::skip_list::empty_stat;
-#endif
+        /// Skip list empty internal statistics
+        typedef cds::intrusive::skip_list::empty_stat empty_stat;
 
-        /// Type traits for SkipListSet class
-        struct type_traits
+        /// SkipListSet traits
+        struct traits
         {
             /// Key comparison functor
             /**
@@ -65,14 +47,14 @@ namespace cds { namespace container {
 
             /// Item counter
             /**
-                The type for item counting feature.
-                Default is no item counter (\ref atomicity::empty_item_counter)
+                The type for item counting feature,
+                 by defaulr disabled (\p atomicity::empty_item_counter)
             */
             typedef atomicity::empty_item_counter     item_counter;
 
             /// C++ memory ordering model
             /**
-                List of available memory ordering see opt::memory_model
+                List of available memory ordering see \p opt::memory_model
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
@@ -83,20 +65,17 @@ namespace cds { namespace container {
                 where half of the nodes that have level \p i also have level <tt>i+1</tt>
                 (i = 0..30). The height of a node is in range [0..31].
 
-                See skip_list::random_level_generator option setter.
+                See \p skip_list::random_level_generator option setter.
             */
             typedef turbo_pascal                    random_level_generator;
 
             /// Allocator for skip-list nodes, \p std::allocator interface
             typedef CDS_DEFAULT_ALLOCATOR           allocator;
 
-            /// back-off strategy used
-            /**
-                If the option is not specified, the cds::backoff::Default is used.
-            */
+            /// back-off strategy, default is \p cds::backoff::Default
             typedef cds::backoff::Default           back_off;
 
-            /// Internal statistics
+            /// Internal statistics, by default disabled. To enable, use \p split_list::stat
             typedef empty_stat                      stat;
 
             /// RCU deadlock checking policy (for \ref cds_nonintrusive_SkipListSet_rcu "RCU-based SkipListSet")
@@ -113,8 +92,22 @@ namespace cds { namespace container {
 
         /// Metafunction converting option list to SkipListSet traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-            \p Options list see \ref SkipListSet.
+            \p Options are:
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p opt::less is used.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::item_counter - the type of item counting feature. Default is \pf atomicity::empty_item_counter that is no item counting.
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift, \p skip_list::turbo_pascal or
+                user-provided one.
+                Default is \p %skip_list::turbo_pascal.
+            - \p opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
+            - \p opt::stat - internal statistics. Available types: \p skip_list::stat, \p skip_list::empty_stat (the default)
+            - \p opt::rcu_check_deadlock - a deadlock checking policy for RCU-based skip-list. 
+                Default is \p opt::v::rcu_throw_deadlock
+
         */
         template <typename... Options>
         struct make_traits {
@@ -122,7 +115,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -136,11 +129,11 @@ namespace cds { namespace container {
             {
             protected:
                 typedef Node node_type;
-                typedef Traits type_traits;
+                typedef Traits traits;
 
                 typedef typename node_type::tower_item_type node_tower_item;
-                typedef typename type_traits::allocator::template rebind<unsigned char>::other  tower_allocator_type;
-                typedef typename type_traits::allocator::template rebind<node_type>::other      node_allocator_type;
+                typedef typename traits::allocator::template rebind<unsigned char>::other  tower_allocator_type;
+                typedef typename traits::allocator::template rebind<node_type>::other      node_allocator_type;
 
                 static size_t const c_nTowerItemSize = sizeof(node_tower_item);
                 static size_t const c_nNodePadding = sizeof(node_type) % c_nTowerItemSize;
@@ -285,11 +278,11 @@ namespace cds { namespace container {
     } // namespace skip_list
 
     // Forward declaration
-    template <class GC, typename T, typename Traits = skip_list::type_traits >
+    template <class GC, typename T, typename Traits = skip_list::traits >
     class SkipListSet;
 
     // Forward declaration
-    template <class GC, typename K, typename T, typename Traits = skip_list::type_traits >
+    template <class GC, typename K, typename T, typename Traits = skip_list::traits >
     class SkipListMap;
 
 }} // namespace cds::container

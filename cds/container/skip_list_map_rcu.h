@@ -37,24 +37,9 @@ namespace cds { namespace container {
         - \p RCU - one of \ref cds_urcu_gc "RCU type".
         - \p K - type of a key to be stored in the list.
         - \p T - type of a value to be stored in the list.
-        - \p Traits - type traits. See skip_list::type_traits for explanation.
-
-        It is possible to declare option-based list with cds::container::skip_list::make_traits metafunction istead of \p Traits template
-        argument.
-        Template argument list \p Options of cds::container::skip_list::make_traits metafunction are:
-        - opt::compare - key compare functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<K>.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - skip_list::random_level_generator - random level generator. Can be skip_list::xorshift, skip_list::turbo_pascal or
-            user-provided one. See skip_list::random_level_generator option description for explanation.
-            Default is \p %skip_list::turbo_pascal.
-        - opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
-        - opt::stat - internal statistics. Available types: skip_list::stat, skip_list::empty_stat (the default)
-        - opt::rcu_check_deadlock - a deadlock checking policy. Default is opt::v::rcu_throw_deadlock
+        - \p Traits - map traits, default is \p skip_list::traits.
+            It is possible to declare option-based list with \p cds::container::skip_list::make_traits metafunction
+            instead of \p Traits template argument.
 
         Like STL map class, \p %SkipListMap stores its key-value pair as <tt>std:pair< K const, T></tt>.
 
@@ -104,7 +89,7 @@ namespace cds { namespace container {
         typename Key,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = skip_list::type_traits
+        typename Traits = skip_list::traits
 #else
         typename Traits
 #endif
@@ -121,23 +106,23 @@ namespace cds { namespace container {
         typedef typename maker::type base_class;
         //@endcond
     public:
-        typedef typename base_class::gc          gc  ; ///< Garbage collector used
-        typedef Key     key_type    ;   ///< Key type
-        typedef T       mapped_type ;   ///< Mapped type
+        typedef cds::urcu::gc< RCU > gc; ///< Garbage collector used
+        typedef Key     key_type;       ///< Key type
+        typedef T       mapped_type;    ///< Mapped type
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef std::pair< K const, T> value_type   ;   ///< Value type stored in the map
+        typedef std::pair< K const, T> value_type;   ///< Value type stored in the map
 #   else
         typedef typename maker::value_type  value_type;
 #   endif
-        typedef Traits  options     ;   ///< Options specified
+        typedef Traits  traits;   ///< Map traits
 
-        typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator         allocator_type  ;   ///< Allocator type used for allocate/deallocate the skip-list nodes
-        typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
-        typedef typename maker::key_comparator      key_comparator  ;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::random_level_generator random_level_generator ; ///< random level generator
-        typedef typename options::stat              stat            ;   ///< internal statistics type
+        typedef typename base_class::back_off       back_off;       ///< Back-off strategy used
+        typedef typename traits::allocator          allocator_type; ///< Allocator type used for allocate/deallocate the skip-list nodes
+        typedef typename base_class::item_counter   item_counter;   ///< Item counting policy used
+        typedef typename maker::key_comparator      key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::random_level_generator random_level_generator; ///< random level generator
+        typedef typename traits::stat               stat;   ///< internal statistics type
 
     protected:
         //@cond
@@ -192,16 +177,15 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a map
-        //@{
         const_iterator begin() const
         {
             return cbegin();
         }
+        /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
             return const_iterator( base_class::cbegin() );
         }
-        //@}
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a map.
         iterator end()
@@ -210,16 +194,15 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a map.
-        //@{
         const_iterator end() const
         {
             return cend();
         }
+        /// Returns a forward const iterator that addresses the location succeeding the last element in a map.
         const_iterator cend() const
         {
             return const_iterator( base_class::cend() );
         }
-        //@}
 
     public:
         /// Inserts new node with key and default value
@@ -227,9 +210,9 @@ namespace cds { namespace container {
             The function creates a node with \p key and default value, and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from a value of type \p K.
-                In trivial case, \p K is equal to \ref key_type.
-            - The \ref mapped_type should be default-constructible.
+            - The \p key_type should be constructible from a value of type \p K.
+                In trivial case, \p K is equal to \p key_type.
+            - The \p mapped_type should be default-constructible.
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -247,8 +230,8 @@ namespace cds { namespace container {
             and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from \p key of type \p K.
-            - The \ref value_type should be constructible from \p val of type \p V.
+            - The \p key_type should be constructible from \p key of type \p K.
+            - The \p value_type should be constructible from \p val of type \p V.
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -281,12 +264,7 @@ namespace cds { namespace container {
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
-
-            The key_type should be constructible from value of type \p K.
-
-            The function allows to split creating of new item into two part:
+            The function allows to split creating of new item into three part:
             - create item from \p key;
             - insert new item into the map;
             - if inserting is successful, initialize the value of item by calling \p func functor
@@ -307,11 +285,11 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p value_type created in-place from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() method can be called. RCU should not be locked.
         */
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
@@ -332,30 +310,25 @@ namespace cds { namespace container {
             is inserted into the map (note that in this case the \ref key_type should be
             constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            The functor \p Func interface is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
 
-            The functor may change any fields of the \p item.second that is \ref value_type.
+            The functor may change any fields of \p item.second.
 
-            You may pass \p func argument by reference using \p std::ref
-
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() method can be called. RCU should not be locked.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
@@ -407,7 +380,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -442,7 +414,8 @@ namespace cds { namespace container {
             Note the compare functor from \p Traits class' template argument
             should accept a parameter of type \p K that can be not the same as \p key_type.
 
-            RCU \p synchronize method can be called. RCU should NOT be locked.
+            RCU \p synchronize() method can be called. RCU should NOT be locked.
+
             The function does not free the item found.
             The item will be implicitly freed when \p result object is destroyed or when
             <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
@@ -473,6 +446,7 @@ namespace cds { namespace container {
             If the skip-list is empty the function returns \p false.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
+
             The function does not free the item found.
             The item will be implicitly freed when \p result object is destroyed or when
             <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
@@ -489,6 +463,7 @@ namespace cds { namespace container {
             in \p result parameter. If the skip-list is empty the function returns \p false.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
+
             The function does not free the item found.
             The item will be implicitly freed when \p result object is destroyed or when
             <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
@@ -510,8 +485,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found.
-
-            You can pass \p f argument by reference using \p std::ref.
 
             The functor may change \p item.second.
 
@@ -617,7 +590,7 @@ namespace cds { namespace container {
             return to_value_ptr( base_class::get_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >() ));
         }
 
-        /// Clears the map
+        /// Clears the map (not atomic)
         void clear()
         {
             base_class::clear();
@@ -645,8 +618,7 @@ namespace cds { namespace container {
         }
 
         /// Clears internal list of ready-to-delete items passing them to RCU reclamation cycle
-        /**
-            See \ref cds_intrusive_SkipListSet_rcu_force_dispose "intrusive SkipListSet" for explanation
+        /** @copydetails cds_intrusive_SkipListSet_rcu_force_dispose
         */
         void force_dispose()
         {

@@ -9,12 +9,12 @@ namespace set {
 
     void SkipListSetHdrTest::SkipList_HP_less()
     {
-        typedef cc::SkipListSet< cds::gc::HP, item,
-            cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::item_counter< simple_item_counter >
-            >::type
-        > set;
+        struct set_traits : public cc::skip_list::traits
+        {
+            typedef SkipListSetHdrTest::less<item > less;
+            typedef simple_item_counter item_counter;
+        };
+        typedef cc::SkipListSet< cds::gc::HP, item, set_traits > set;
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 

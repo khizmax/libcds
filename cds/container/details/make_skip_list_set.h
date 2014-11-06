@@ -14,7 +14,7 @@ namespace cds { namespace container { namespace details {
     {
         typedef GC      gc;
         typedef T       value_type;
-        typedef Traits  type_traits;
+        typedef Traits  traits;
 
         typedef cds::intrusive::skip_list::node< gc >   intrusive_node_type;
         struct node_type: public intrusive_node_type
@@ -50,7 +50,7 @@ namespace cds { namespace container { namespace details {
             node_type() ;   // no default ctor
         };
 
-        typedef skip_list::details::node_allocator< node_type, type_traits> node_allocator;
+        typedef skip_list::details::node_allocator< node_type, traits> node_allocator;
 
         struct node_deallocator {
             void operator ()( node_type * pNode )
@@ -68,15 +68,15 @@ namespace cds { namespace container { namespace details {
                 return node.m_Value;
             }
         };
-        typedef typename opt::details::make_comparator< value_type, type_traits >::type key_comparator;
+        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 
         template <typename Less>
         struct less_wrapper {
             typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor >    type;
         };
 
-        class intrusive_type_traits: public cds::intrusive::skip_list::make_traits<
-            cds::opt::type_traits< type_traits >
+        class intrusive_traits: public cds::intrusive::skip_list::make_traits<
+            cds::opt::type_traits< traits >
             ,cds::intrusive::opt::hook< intrusive::skip_list::base_hook< cds::opt::gc< gc > > >
             ,cds::intrusive::opt::disposer< node_deallocator >
             ,cds::intrusive::skip_list::internal_node_builder< dummy_node_builder >
@@ -84,7 +84,7 @@ namespace cds { namespace container { namespace details {
         >::type
         {};
 
-        typedef cds::intrusive::SkipListSet< gc, node_type, intrusive_type_traits>   type;
+        typedef cds::intrusive::SkipListSet< gc, node_type, intrusive_traits>   type;
     };
 }}} // namespace cds::container::details
 //@endcond

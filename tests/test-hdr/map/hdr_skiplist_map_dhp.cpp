@@ -1,63 +1,51 @@
 //$$CDS-header$$
 
-#include "set/hdr_skiplist_set.h"
-#include <cds/container/skip_list_set_dhp.h>
+#include "map/hdr_skiplist_map.h"
+#include <cds/container/skip_list_map_dhp.h>
 #include "unit/michael_alloc.h"
 #include "map/print_skiplist_stat.h"
 
-namespace set {
+namespace map {
 
-    void SkipListSetHdrTest::SkipList_PTB_less()
+    void SkipListMapHdrTest::SkipList_DHP_less()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
+                co::less< less >
                 ,co::item_counter< simple_item_counter >
             >::type
         > set;
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_cmp()
+    void SkipListMapHdrTest::SkipList_DHP_cmp()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-            co::compare< cmp<item > >
-            ,co::item_counter< simple_item_counter >
-            >::type
-        > set;
-        test< set, misc::print_skiplist_stat<set::stat> >();
-    }
-
-    void SkipListSetHdrTest::SkipList_PTB_cmpless()
-    {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
-            cc::skip_list::make_traits<
-            co::less< less<item > >
-            ,co::compare< cmp<item > >
-            ,co::item_counter< simple_item_counter >
-            >::type
-        > set;
-        test< set, misc::print_skiplist_stat<set::stat> >();
-    }
-
-    void SkipListSetHdrTest::SkipList_PTB_less_stat()
-    {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
-            cc::skip_list::make_traits<
-                co::less< less<item > >
+                co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
-                ,co::stat< cc::skip_list::stat<> >
             >::type
         > set;
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_cmp_stat()
+    void SkipListMapHdrTest::SkipList_DHP_cmpless()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::compare< cmp<item > >
+                co::less< less >
+                ,co::compare< cmp >
+                ,co::item_counter< simple_item_counter >
+            >::type
+        > set;
+        test< set, misc::print_skiplist_stat<set::stat> >();
+    }
+
+    void SkipListMapHdrTest::SkipList_DHP_less_stat()
+    {
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
+            cc::skip_list::make_traits<
+                co::less< less >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
             >::type
@@ -65,12 +53,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_cmpless_stat()
+    void SkipListMapHdrTest::SkipList_DHP_cmp_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::compare< cmp<item > >
+                co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
             >::type
@@ -78,61 +65,61 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_xorshift_less()
+    void SkipListMapHdrTest::SkipList_DHP_cmpless_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::item_counter< simple_item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        > set;
-        test< set, misc::print_skiplist_stat<set::stat> >();
-    }
-
-    void SkipListSetHdrTest::SkipList_PTB_xorshift_cmp()
-    {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
-            cc::skip_list::make_traits<
-                co::compare< cmp<item > >
-                ,co::item_counter< simple_item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        > set;
-        test< set, misc::print_skiplist_stat<set::stat> >();
-    }
-
-    void SkipListSetHdrTest::SkipList_PTB_xorshift_cmpless()
-    {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
-            cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::compare< cmp<item > >
-                ,co::item_counter< simple_item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        > set;
-        test< set, misc::print_skiplist_stat<set::stat> >();
-    }
-
-    void SkipListSetHdrTest::SkipList_PTB_xorshift_less_stat()
-    {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
-            cc::skip_list::make_traits<
-                co::less< less<item > >
+                co::less< less >
+                ,co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
+            >::type
+        > set;
+        test< set, misc::print_skiplist_stat<set::stat> >();
+    }
+
+    void SkipListMapHdrTest::SkipList_DHP_xorshift_less()
+    {
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
+            cc::skip_list::make_traits<
+                co::less< less >
+                ,co::item_counter< simple_item_counter >
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
             >::type
         > set;
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_xorshift_cmp_stat()
+    void SkipListMapHdrTest::SkipList_DHP_xorshift_cmp()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::compare< cmp<item > >
+                co::compare< cmp >
+                ,co::item_counter< simple_item_counter >
+                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+            >::type
+        > set;
+        test< set, misc::print_skiplist_stat<set::stat> >();
+    }
+
+    void SkipListMapHdrTest::SkipList_DHP_xorshift_cmpless()
+    {
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
+            cc::skip_list::make_traits<
+                co::less< less >
+                ,co::compare< cmp >
+                ,co::item_counter< simple_item_counter >
+                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+            >::type
+        > set;
+        test< set, misc::print_skiplist_stat<set::stat> >();
+    }
+
+    void SkipListMapHdrTest::SkipList_DHP_xorshift_less_stat()
+    {
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
+            cc::skip_list::make_traits<
+                co::less< less >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
@@ -141,12 +128,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_xorshift_cmpless_stat()
+    void SkipListMapHdrTest::SkipList_DHP_xorshift_cmp_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::compare< cmp<item > >
+                co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
@@ -155,11 +141,25 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_turbopas_less()
+    void SkipListMapHdrTest::SkipList_DHP_xorshift_cmpless_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
+                co::less< less >
+                ,co::compare< cmp >
+                ,co::item_counter< simple_item_counter >
+                ,co::stat< cc::skip_list::stat<> >
+                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+            >::type
+        > set;
+        test< set, misc::print_skiplist_stat<set::stat> >();
+    }
+
+    void SkipListMapHdrTest::SkipList_DHP_turbopas_less()
+    {
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
+            cc::skip_list::make_traits<
+                co::less< less >
                 ,co::item_counter< simple_item_counter >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
             >::type
@@ -167,11 +167,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_turbopas_cmp()
+    void SkipListMapHdrTest::SkipList_DHP_turbopas_cmp()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::compare< cmp<item > >
+                co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
             >::type
@@ -179,12 +179,12 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_turbopas_cmpless()
+    void SkipListMapHdrTest::SkipList_DHP_turbopas_cmpless()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::compare< cmp<item > >
+                co::less< less >
+                ,co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
             >::type
@@ -192,11 +192,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_turbopas_less_stat()
+    void SkipListMapHdrTest::SkipList_DHP_turbopas_less_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
+                co::less< less >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
@@ -205,11 +205,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_turbopas_cmp_stat()
+    void SkipListMapHdrTest::SkipList_DHP_turbopas_cmp_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::compare< cmp<item > >
+                co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
@@ -218,12 +218,12 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_turbopas_cmpless_stat()
+    void SkipListMapHdrTest::SkipList_DHP_turbopas_cmpless_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::compare< cmp<item > >
+                co::less< less >
+                ,co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
@@ -232,11 +232,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_michaelalloc_less()
+    void SkipListMapHdrTest::SkipList_DHP_michaelalloc_less()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
+                co::less< less >
                 ,co::item_counter< simple_item_counter >
                 ,co::allocator< memory::MichaelAllocator<int> >
             >::type
@@ -244,11 +244,24 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_michaelalloc_cmp()
+    void SkipListMapHdrTest::SkipList_DHP_michaelalloc_cmp()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+            typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
+                cc::skip_list::make_traits<
+                    co::compare< cmp >
+                    ,co::item_counter< simple_item_counter >
+                    ,co::allocator< memory::MichaelAllocator<int> >
+                >::type
+            > set;
+            test< set, misc::print_skiplist_stat<set::stat> >();
+    }
+
+    void SkipListMapHdrTest::SkipList_DHP_michaelalloc_cmpless()
+    {
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::compare< cmp<item > >
+                co::less< less >
+                ,co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::allocator< memory::MichaelAllocator<int> >
             >::type
@@ -256,24 +269,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_michaelalloc_cmpless()
+    void SkipListMapHdrTest::SkipList_DHP_michaelalloc_less_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::compare< cmp<item > >
-                ,co::item_counter< simple_item_counter >
-                ,co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        > set;
-        test< set, misc::print_skiplist_stat<set::stat> >();
-    }
-
-    void SkipListSetHdrTest::SkipList_PTB_michaelalloc_less_stat()
-    {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
-            cc::skip_list::make_traits<
-                co::less< less<item > >
+                co::less< less >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::allocator< memory::MichaelAllocator<int> >
@@ -282,11 +282,11 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_michaelalloc_cmp_stat()
+    void SkipListMapHdrTest::SkipList_DHP_michaelalloc_cmp_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::compare< cmp<item > >
+                co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::allocator< memory::MichaelAllocator<int> >
@@ -295,12 +295,12 @@ namespace set {
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
 
-    void SkipListSetHdrTest::SkipList_PTB_michaelalloc_cmpless_stat()
+    void SkipListMapHdrTest::SkipList_DHP_michaelalloc_cmpless_stat()
     {
-        typedef cc::SkipListSet< cds::gc::PTB, item,
+        typedef cc::SkipListMap< cds::gc::DHP, key_type, value_type,
             cc::skip_list::make_traits<
-                co::less< less<item > >
-                ,co::compare< cmp<item > >
+                co::less< less >
+                ,co::compare< cmp >
                 ,co::item_counter< simple_item_counter >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::allocator< memory::MichaelAllocator<int> >
@@ -308,4 +308,4 @@ namespace set {
         > set;
         test< set, misc::print_skiplist_stat<set::stat> >();
     }
-} // namespace set
+} // namespace map

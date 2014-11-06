@@ -185,7 +185,7 @@ namespace cds { namespace container {
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
 
         /// pointer to extracted node
-        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_type_traits::disposer > exempt_ptr;
+        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer > exempt_ptr;
 
     protected:
         //@cond

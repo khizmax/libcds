@@ -143,9 +143,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_hp.cpp">
       <Filter>container\skip_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_ptb.cpp">
-      <Filter>container\skip_list</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_splitlist_set_hp.cpp">
       <Filter>container\split_list</Filter>
     </ClCompile>
@@ -310,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp_member.cpp">
       <Filter>intrusive\skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_dhp.cpp">
+      <Filter>container\skip_list</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
