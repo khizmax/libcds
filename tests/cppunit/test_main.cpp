@@ -425,24 +425,12 @@ int main(int argc, char** argv)
         cds::gc::hzp::GarbageCollector::InternalState stat;
         cds::gc::hzp::GarbageCollector::instance().getInternalState( stat );
 
-        std::cout << "HZP GC constants:"
+        std::cout << "HP constants:"
             << "\n\tHP count per thread=" << stat.nHPCount
             << "\n\tMax thread count=" << stat.nMaxThreadCount
             << "\n\tMax retired pointer count per thread=" << stat.nMaxRetiredPtrCount
             << "\n\tHP record size in bytes=" << stat.nHPRecSize
             << "\n" << std::endl;
-      }
-
-      if ( CppUnitMini::TestCase::m_bPrintGCState ) {
-          cds::gc::hrc::GarbageCollector::internal_state stat;
-          cds::gc::hrc::GarbageCollector::instance().getInternalState( stat );
-
-          std::cout << "HRC GC constants:"
-              << "\n\tHRC count per thread=" << stat.nHPCount
-              << "\n\tMax thread count=" << stat.nMaxThreadCount
-              << "\n\tMax retired pointer count per thread=" << stat.nMaxRetiredPtrCount
-              << "\n\tHRC record size in bytes=" << stat.nHRCRecSize
-              << "\n" << std::endl;
       }
 
     // Attach main thread to CDS GC
