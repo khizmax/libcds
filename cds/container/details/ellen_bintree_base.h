@@ -16,32 +16,30 @@ namespace cds { namespace container {
     namespace ellen_bintree {
 
 #ifdef CDS_DOXYGEN_INVOKED
-        /// Typedef for cds::intrusive::ellen_bintree::update_desc
+        /// Typedef for \p cds::intrusive::ellen_bintree::update_desc
         typedef cds::intrusive::ellen_bintree::update_desc update_desc;
 
-        /// Typedef for cds::intrusive::ellen_bintree::internal_node
+        /// Typedef for \p cds::intrusive::ellen_bintree::internal_node
         typedef cds::intrusive::ellen_bintree::internal_node internal_node;
 
-        /// Typedef for cds::intrusive::ellen_bintree::key_extractor
+        /// Typedef for \p cds::intrusive::ellen_bintree::key_extractor
         typedef cds::intrusive::ellen_bintree::key_extractor key_extractor;
 
-        /// Typedef for cds::intrusive::ellen_bintree::update_desc_allocator
+        /// Typedef for \p cds::intrusive::ellen_bintree::update_desc_allocator
         typedef cds::intrusive::ellen_bintree::update_desc_allocator update_desc_allocator;
-
-        /// Typedef for cds::intrusive::ellen_bintree::stat
-        typedef cds::intrusive::ellen_bintree::stat stat;
-
-        /// Typedef for cds::intrusive::ellen_bintree::empty_stat
-        typedef cds::intrusive::ellen_bintree::empty_stat empty_stat;
 #else
         using cds::intrusive::ellen_bintree::update_desc;
         using cds::intrusive::ellen_bintree::internal_node;
         using cds::intrusive::ellen_bintree::key_extractor;
         using cds::intrusive::ellen_bintree::update_desc_allocator;
-        using cds::intrusive::ellen_bintree::stat;
-        using cds::intrusive::ellen_bintree::empty_stat;
         using cds::intrusive::ellen_bintree::node_types;
 #endif
+        /// EllenBinTree internal statistics
+        template <typename Counter = cds::intrusive::ellen_bintree::stat<>::event_counter >
+        using stat = cds::intrusive::ellen_bintree::stat< Counter >;
+
+        /// EllenBinTree empty internal statistics
+        typedef cds::intrusive::ellen_bintree::empty_stat empty_stat;
 
         /// EllenBinTree leaf node
         template <typename GC, typename T>
@@ -97,10 +95,10 @@ namespace cds { namespace container {
             {}
         };
 
-        /// Type traits for EllenBinTreeSet, EllenBinTreeMap and EllenBinTreePriorityQueue
-        struct type_traits
+        /// Type traits for EllenBinTreeSet and EllenBinTreeMap
+        struct traits
         {
-            /// Key extracting functor (only for EllenBinTreeSet)
+            /// Key extracting functor (only for \p EllenBinTreeSet)
             /**
                 You should explicit define a valid functor.
                 The functor has the following prototype:
@@ -110,7 +108,7 @@ namespace cds { namespace container {
                 };
                 \endcode
                 It should initialize \p dest key from \p src data.
-                The functor is used to initialize internal nodes.
+                The functor is used to initialize internal nodes of \p EllenBinTreeSet
             */
             typedef opt::none           key_extractor;
 
@@ -118,7 +116,7 @@ namespace cds { namespace container {
             /**
                 No default functor is provided. If the option is not specified, the \p less is used.
 
-                See cds::opt::compare option description for functor interface.
+                See \p cds::opt::compare option description for functor interface.
 
                 You should provide \p compare or \p less functor.
                 See \ref cds_container_EllenBinTreeSet_rcu_less "predicate requirements".
@@ -127,7 +125,7 @@ namespace cds { namespace container {
 
             /// Specifies binary predicate used for key compare.
             /**
-                See cds::opt::less option description for predicate interface.
+                See \p cds::opt::less option description.
 
                 You should provide \p compare or \p less functor.
                 See \ref cds_container_EllenBinTreeSet_rcu_less "predicate requirements".
@@ -136,27 +134,27 @@ namespace cds { namespace container {
 
             /// Item counter
             /**
-                The type for item counting feature (see cds::opt::item_counter).
-                Default is no item counter (\ref atomicity::empty_item_counter)
+                The type for item counter, by default it is disabled (\p atomicity::empty_item_counter).
+                To enable it use \p atomicity::item_counter
             */
             typedef atomicity::empty_item_counter     item_counter;
 
             /// C++ memory ordering model
             /**
-                List of available memory ordering see opt::memory_model
+                List of available memory ordering see \p opt::memory_model
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
             /// Allocator for update descriptors
             /**
-                The allocator type is used for \ref update_desc.
+                The allocator type is used for \p ellen_bintree::update_desc.
 
                 Update descriptor is helping data structure with short lifetime and it is good candidate
                 for pooling. The number of simultaneously existing descriptors is a small number
                 limited the number of threads working with the tree.
                 Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue
                 is good choice for the free-list of update descriptors,
-                see cds::memory::vyukov_queue_pool free-list implementation.
+                see \p cds::memory::vyukov_queue_pool free-list implementation.
 
                 Also notice that size of update descriptor is not dependent on the type of data
                 stored in the tree so single free-list object can be used for several \p EllenBinTree object.
@@ -165,7 +163,7 @@ namespace cds { namespace container {
 
             /// Allocator for internal nodes
             /**
-                The allocator type is used for \ref internal_node.
+                The allocator type is used for \p ellen_bintree::internal_node.
             */
             typedef CDS_DEFAULT_ALLOCATOR           node_allocator;
 
@@ -177,21 +175,22 @@ namespace cds { namespace container {
 
             /// Internal statistics
             /**
-                Possible types: ellen_bintree::empty_stat (the default), ellen_bintree::stat or any
-                other with interface like \p %stat.
+                By default, internal statistics is disabled (\p ellen_bintree::empty_stat).
+                To enable it use \p ellen_bintree::stat.
             */
             typedef empty_stat                      stat;
 
             /// RCU deadlock checking policy (only for RCU-based EllenBinTree<i>XXX</i> classes)
             /**
-                List of available options see opt::rcu_check_deadlock
+                List of available options see \p opt::rcu_check_deadlock
             */
             typedef cds::opt::v::rcu_throw_deadlock      rcu_check_deadlock;
 
-            /// Key copy policy (for EllenBinTreeMap)
+            /// Key copy policy (for \p EllenBinTreeMap)
             /**
                 The key copy policy defines a functor to copy leaf node's key to internal node.
-                This policy is used only in EllenBinTreeMap. By default, assignment operator is used.
+                This policy is used only in \p EllenBinTreeMap. 
+                By default, assignment operator is used.
 
                 The copy functor interface is:
                 \code
@@ -204,10 +203,39 @@ namespace cds { namespace container {
         };
 
 
-        /// Metafunction converting option list to EllenBinTreeSet traits
+        /// Metafunction converting option list to \p EllenBinTreeSet traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-            \p Options list see \ref cds_container_EllenBinTreeSet "EllenBinTreeSet".
+            \p Options are:
+            - \p ellen_bintree::key_extractor - key extracting functor, mandatory option. The functor has the following prototype:
+                \code
+                    struct key_extractor {
+                        void operator ()( Key& dest, T const& src );
+                    };
+                \endcode
+                It should initialize \p dest key from \p src data. The functor is used to initialize internal nodes.
+            - \p opt::compare - key compare functor. No default functor is provided.
+                If the option is not specified, \p %opt::less is used.
+            - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
+            - \p opt::item_counter - the type of item counter, default is disabled (\p atomicity::empty_item_counter).
+                To enable it use \p atomicity::item_counter
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            - \p opt::allocator - the allocator for \ref ellen_bintree::node "leaf nodes" which contains data.
+                Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::node_allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",
+                default is \ref CDS_DEFAULT_ALLOCATOR.
+                Note that update descriptor is helping data structure with short lifetime and it is good candidate for pooling.
+                The number of simultaneously existing descriptors is a relatively small number limited the number of threads
+                working with the tree and RCU buffer size.
+                Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue is good choice for the free-list
+                of update descriptors, see \p cds::memory::vyukov_queue_pool free-list implementation.
+                Also notice that size of update descriptor is not dependent on the type of data
+                stored in the tree so single free-list object can be used for several EllenBinTree-based object.
+            - \p opt::stat - internal statistics, by default disabled (\p ellen_bintree::empty_stat). To enable
+                it use \p ellen_bintree::stat.
+            - \p opt::rcu_check_deadlock - a deadlock checking policy, only for RCU-based tree. 
+                Default is \p opt::v::rcu_throw_deadlock.
         */
         template <typename... Options>
         struct make_set_traits {
@@ -215,16 +243,46 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
         };
 
-        /// Metafunction converting option list to EllenBinTreeMap traits
+        /// Metafunction converting option list to \p EllenBinTreeMap traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-            \p Options list see \ref cds_container_EllenBinTreeMap "EllenBinTreeMap".
+            \p Options are:
+            - \p opt::compare - key compare functor. No default functor is provided.
+                If the option is not specified, \p %opt::less is used.
+            - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
+            - \p opt::item_counter - the type of item counter, default is disabled (\p atomicity::empty_item_counter).
+                To enable it use \p atomicity::item_counter
+            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            - \p opt::allocator - the allocator used for \ref ellen_bintree::map_node "leaf nodes" which contains data.
+                Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::node_allocator - the allocator used for \ref ellen_bintree::internal_node "internal nodes".
+                Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",
+                default is \ref CDS_DEFAULT_ALLOCATOR.
+                Note that update descriptor is helping data structure with short lifetime and it is good candidate for pooling.
+                The number of simultaneously existing descriptors is a relatively small number limited the number of threads
+                working with the tree and RCU buffer size.
+                Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue is good choice for the free-list
+                of update descriptors, see \p cds::memory::vyukov_queue_pool free-list implementation.
+                Also notice that size of update descriptor is not dependent on the type of data
+                stored in the tree so single free-list object can be used for several EllenBinTree-based object.
+            - \p opt::stat - internal statistics, by default disabled (\p ellen_bintree::empty_stat). To enable
+                it use \p ellen_bintree::stat.
+            - \p opt::rcu_check_deadlock - a deadlock checking policy, only for RCU-based tree. Default is \p opt::v::rcu_throw_deadlock
+            - opt::copy_policy - key copying policy defines a functor to copy leaf node's key to internal node.
+                By default, assignment operator is used.
+                The copy functor interface is:
+                \code
+                struct copy_functor {
+                    void operator()( Key& dest, Key const& src );
+                };
+                \endcode
         */
         template <typename... Options>
         struct make_map_traits {
@@ -232,7 +290,7 @@ namespace cds { namespace container {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -247,7 +305,7 @@ namespace cds { namespace container {
                 typedef GC      gc;
                 typedef Key     key_type;
                 typedef T       value_type;
-                typedef Traits  original_type_traits;
+                typedef Traits  original_traits;
 
                 typedef node< gc, value_type >  leaf_node;
 
@@ -255,7 +313,7 @@ namespace cds { namespace container {
                 {
                     void operator()( key_type& dest, leaf_node const& src ) const
                     {
-                        typename original_type_traits::key_extractor()( dest, src.m_Value );
+                        typename original_traits::key_extractor()( dest, src.m_Value );
                     }
                 };
 
@@ -267,9 +325,9 @@ namespace cds { namespace container {
                     }
                 };
 
-                typedef typename cds::opt::details::make_comparator< value_type, original_type_traits, false >::type key_comparator;
+                typedef typename cds::opt::details::make_comparator< value_type, original_traits, false >::type key_comparator;
 
-                typedef cds::details::Allocator< leaf_node, typename original_type_traits::allocator>    cxx_leaf_node_allocator;
+                typedef cds::details::Allocator< leaf_node, typename original_traits::allocator>  cxx_leaf_node_allocator;
                 struct leaf_deallocator
                 {
                     void operator()( leaf_node * p ) const
@@ -278,7 +336,7 @@ namespace cds { namespace container {
                     }
                 };
 
-                struct intrusive_type_traits: public original_type_traits
+                struct intrusive_traits: public original_traits
                 {
                     typedef cds::intrusive::ellen_bintree::base_hook< cds::opt::gc< gc > >  hook;
                     typedef intrusive_key_extractor key_extractor;
@@ -287,7 +345,7 @@ namespace cds { namespace container {
                 };
 
                 // Metafunction result
-                typedef cds::intrusive::EllenBinTree< gc, key_type, leaf_node, intrusive_type_traits >    type;
+                typedef cds::intrusive::EllenBinTree< gc, key_type, leaf_node, intrusive_traits >    type;
             };
 
             template < class GC, typename Key, typename T, class Traits>
@@ -299,7 +357,7 @@ namespace cds { namespace container {
                 typedef map_node< gc, key_type, mapped_type >   leaf_node;
                 typedef typename leaf_node::value_type          value_type;
 
-                typedef Traits  original_type_traits;
+                typedef Traits  original_traits;
 
                 struct assignment_copy_policy {
                     void operator()( key_type& dest, key_type const& src )
@@ -308,9 +366,9 @@ namespace cds { namespace container {
                     }
                 };
                 typedef typename std::conditional<
-                    std::is_same< typename original_type_traits::copy_policy, opt::none >::value,
+                    std::is_same< typename original_traits::copy_policy, opt::none >::value,
                     assignment_copy_policy,
-                    typename original_type_traits::copy_policy
+                    typename original_traits::copy_policy
                 >::type copy_policy;
 
                 struct intrusive_key_extractor
@@ -329,9 +387,9 @@ namespace cds { namespace container {
                     }
                 };
 
-                typedef typename cds::opt::details::make_comparator< key_type, original_type_traits, false >::type key_comparator;
+                typedef typename cds::opt::details::make_comparator< key_type, original_traits, false >::type key_comparator;
 
-                typedef cds::details::Allocator< leaf_node, typename original_type_traits::allocator>    cxx_leaf_node_allocator;
+                typedef cds::details::Allocator< leaf_node, typename original_traits::allocator>    cxx_leaf_node_allocator;
                 struct leaf_deallocator
                 {
                     void operator()( leaf_node * p ) const
@@ -340,7 +398,7 @@ namespace cds { namespace container {
                     }
                 };
 
-                struct intrusive_type_traits: public original_type_traits
+                struct intrusive_traits: public original_traits
                 {
                     typedef cds::intrusive::ellen_bintree::base_hook< cds::opt::gc< gc > >  hook;
                     typedef intrusive_key_extractor key_extractor;
@@ -349,7 +407,7 @@ namespace cds { namespace container {
                 };
 
                 // Metafunction result
-                typedef cds::intrusive::EllenBinTree< gc, key_type, leaf_node, intrusive_type_traits >    type;
+                typedef cds::intrusive::EllenBinTree< gc, key_type, leaf_node, intrusive_traits >    type;
             };
 
         } // namespace details
@@ -358,10 +416,10 @@ namespace cds { namespace container {
 
     // Forward declarations
     //@cond
-    template < class GC, typename Key, typename T, class Traits = ellen_bintree::type_traits >
+    template < class GC, typename Key, typename T, class Traits = ellen_bintree::traits >
     class EllenBinTreeSet;
 
-    template < class GC, typename Key, typename T, class Traits = ellen_bintree::type_traits >
+    template < class GC, typename Key, typename T, class Traits = ellen_bintree::traits >
     class EllenBinTreeMap;
     //@endcond
 

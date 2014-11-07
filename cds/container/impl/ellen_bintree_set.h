@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_IMPL_ELLEN_BINTREE_SET_H
 #define __CDS_CONTAINER_IMPL_ELLEN_BINTREE_SET_H
 
-#include <type_traits>
+#include <traits>
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/impl/ellen_bintree.h>
 #include <cds/container/details/guarded_ptr_cast.h>
@@ -39,53 +39,24 @@ namespace cds { namespace container {
         Helping will be implemented in future release
 
         <b>Template arguments</b> :
-        - \p GC - safe memory reclamation (i.e. light-weight garbage collector) type, like cds::gc::HP, cds::gc::PTB
-            Note that cds::gc::HRC is not supported.
+        - \p GC - safe memory reclamation (i.e. light-weight garbage collector) type, like \p cds::gc::HP, cds::gc::DHP
         - \p Key - key type, a subset of \p T
         - \p T - type to be stored in tree's leaf nodes.
-        - \p Traits - type traits. See ellen_bintree::type_traits for explanation.
-
-        It is possible to declare option-based tree with ellen_bintree::make_set_traits metafunction
-        instead of \p Traits template argument.
-        Template argument list \p Options of ellen_bintree::make_set_traits metafunction are:
-        - ellen_bintree::key_extractor - key extracting functor, mandatory option. The functor has the following prototype:
-            \code
-                struct key_extractor {
-                    void operator ()( Key& dest, T const& src );
-                };
-            \endcode
-            It should initialize \p dest key from \p src data. The functor is used to initialize internal nodes.
-        - opt::compare - key compare functor. No default functor is provided.
-            If the option is not specified, \p %opt::less is used.
-        - opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - opt::allocator - the allocator used for \ref ellen_bintree::node "leaf nodes" which contains data.
-            Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::node_allocator - the allocator used for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",
-            default is \ref CDS_DEFAULT_ALLOCATOR.
-            Note that update descriptor is helping data structure with short lifetime and it is good candidate for pooling.
-            The number of simultaneously existing descriptors is a relatively small number limited the number of threads
-            working with the tree and GC buffer size.
-            Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue is good choice for the free-list
-            of update descriptors, see cds::memory::vyukov_queue_pool free-list implementation.
-            Also notice that size of update descriptor is not dependent on the type of data
-            stored in the tree so single free-list object can be used for several EllenBinTree-based object.
-        - opt::stat - internal statistics. Available types: ellen_bintree::stat, ellen_bintree::empty_stat (the default)
+        - \p Traits - set traits, default is \p ellen_bintree::traits
+            It is possible to declare option-based tree with \p ellen_bintree::make_set_traits metafunction
+            instead of \p Traits template argument.
 
         @note Do not include <tt><cds/container/impl/ellen_bintree_set.h></tt> header file directly.
         There are header file for each GC type:
-        - <tt><cds/container/ellen_bintree_set_hp.h></tt> - for Hazard Pointer GC cds::gc::HP
-        - <tt><cds/container/ellen_bintree_set_ptb.h></tt> - for Pass-the-Buck GC cds::gc::PTB
+        - <tt><cds/container/ellen_bintree_set_hp.h></tt> - for \p cds::gc::HP
+        - <tt><cds/container/ellen_bintree_set_ptb.h></tt> - for \p cds::gc::DHP
         - <tt><cds/container/ellen_bintree_set_rcu.h></tt> - for RCU GC
             (see \ref cds_container_EllenBinTreeSet_rcu "RCU-based EllenBinTreeSet")
 
         @anchor cds_container_EllenBinTreeSet_less
         <b>Predicate requirements</b>
 
-        opt::less, opt::compare and other predicates using with member fuctions should accept at least parameters
+        \p Traits::less, \p Traits::compare and other predicates using with member fuctions should accept at least parameters
         of type \p T and \p Key in any combination.
         For example, for \p Foo struct with \p std::string key field the appropiate \p less functor is:
         \code
@@ -125,7 +96,7 @@ namespace cds { namespace container {
         typename Key,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = ellen_bintree::type_traits
+        class Traits = ellen_bintree::traits
 #else
         class Traits
 #endif
@@ -143,24 +114,24 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef GC      gc              ;   ///< Garbage collector
-        typedef Key     key_type        ;   ///< type of a key stored in internal nodes; key is a part of \p value_type
-        typedef T       value_type      ;   ///< type of value stored in the binary tree
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef GC      gc;         ///< Garbage collector
+        typedef Key     key_type;   ///< type of a key to be stored in internal nodes; key is a part of \p value_type
+        typedef T       value_type; ///< type of value to be stored in the binary tree
+        typedef Traits  traits;    ///< Traits template parameter
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator  ;    ///< key compare functor based on opt::compare and opt::less option setter.
 #   else
         typedef typename maker::intrusive_type_traits::compare   key_comparator;
 #   endif
-        typedef typename base_class::item_counter           item_counter        ; ///< Item counting policy used
-        typedef typename base_class::memory_model           memory_model        ; ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename base_class::stat                   stat                ; ///< internal statistics type
-        typedef typename options::key_extractor             key_extractor       ; ///< key extracting functor
+        typedef typename base_class::item_counter           item_counter;  ///< Item counting policy used
+        typedef typename base_class::memory_model           memory_model;  ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::stat                   stat;          ///< internal statistics type
+        typedef typename traits::key_extractor              key_extractor; ///< key extracting functor
 
-        typedef typename options::allocator                 allocator_type      ;   ///< Allocator for leaf nodes
-        typedef typename base_class::node_allocator         node_allocator      ;   ///< Internal node allocator
-        typedef typename base_class::update_desc_allocator  update_desc_allocator ; ///< Update descriptor allocator
+        typedef typename traits::allocator                  allocator_type;   ///< Allocator for leaf nodes
+        typedef typename base_class::node_allocator         node_allocator;   ///< Internal node allocator
+        typedef typename base_class::update_desc_allocator  update_desc_allocator; ///< Update descriptor allocator
 
     protected:
         //@cond
@@ -179,9 +150,7 @@ namespace cds { namespace container {
         /// Default constructor
         EllenBinTreeSet()
             : base_class()
-        {
-            //static_assert( (std::is_same<gc, cds::gc::HP>::value || std::is_same<gc, cds::gc::PTB>::value), "GC must be cds::gc::HP or cds:gc::PTB" );
-        }
+        {}
 
         /// Clears the set
         ~EllenBinTreeSet()
@@ -222,8 +191,7 @@ namespace cds { namespace container {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success. It may be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success.
         */
         template <typename Q, typename Func>
         bool insert( Q const& val, Func f )
@@ -261,11 +229,11 @@ namespace cds { namespace container {
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You may pass \p func argument by reference using \p std::ref.
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the set.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
         std::pair<bool, bool> ensure( const Q& val, Func func )
@@ -278,7 +246,7 @@ namespace cds { namespace container {
             return bRes;
         }
 
-        /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// Inserts data of type \p value_type created in-place from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -332,7 +300,6 @@ namespace cds { namespace container {
                 void operator()(value_type const& val);
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Since the key of MichaelHashSet's \p value_type is not explicitly specified,
             template parameter \p Q defines the key type searching in the list.
@@ -429,18 +396,18 @@ namespace cds { namespace container {
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
         }
 
-        /// Find the key \p val
+        /// Find the key \p key
         /**
             @anchor cds_nonintrusive_EllenBinTreeSet_find_func
 
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             You may pass \p f argument by reference using \p std::ref.
 
@@ -449,21 +416,28 @@ namespace cds { namespace container {
             The functor does not serialize simultaneous access to the set's \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
+            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
             can modify both arguments.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that may be not the same as \p value_type.
 
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f )
+        bool find( Q& key, Func f )
         {
-            return base_class::find( val, [&f]( leaf_node& node, Q& v ) { f( node.m_Value, v ); });
+            return base_class::find( key, [&f]( leaf_node& node, Q& v ) { f( node.m_Value, v ); });
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f )
+        {
+            return base_class::find( key, [&f]( leaf_node& node, Q const& v ) { f( node.m_Value, v ); } );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_EllenBinTreeSet_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -471,72 +445,36 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f )
         {
-            return base_class::find_with( val, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >(),
+            return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >(),
                 [&f]( leaf_node& node, Q& v ) { f( node.m_Value, v ); } );
         }
-
-        /// Find the key \p val
-        /** @anchor cds_nonintrusive_EllenBinTreeSet_find_cfunc
-
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
-
-            The functor may change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set's \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \p value_type.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return base_class::find( val, [&f]( leaf_node& node, Q const& v ) { f( node.m_Value, v ); });
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeSet_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
-        */
+        //@cond
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f )
+        bool find_with( Q const& key, Less pred, Func f )
         {
-            return base_class::find_with( val, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >(),
-                [&f]( leaf_node& node, Q const& v ) { f( node.m_Value, v ); } );
+            return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >(),
+                                          [&f]( leaf_node& node, Q const& v ) { f( node.m_Value, v ); } );
         }
+        //@endcond
 
-        /// Find the key \p val
+        /// Find the key \p key
         /** @anchor cds_nonintrusive_EllenBinTreeSet_find_val
 
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that may be not the same as \ref value_type.
         */
         template <typename Q>
-        bool find( Q const & val )
+        bool find( Q const & key )
         {
-            return base_class::find( val );
+            return base_class::find( key );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_EllenBinTreeSet_find_val "find(Q const&)"
             but \p pred is used for key comparing.
@@ -544,9 +482,9 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred )
+        bool find_with( Q const& key, Less pred )
         {
-            return base_class::find_with( val, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
+            return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
         }
 
         /// Finds \p key and returns the item found
@@ -578,7 +516,7 @@ namespace cds { namespace container {
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >() );
         }
 
-        /// Clears the set (non-atomic)
+        /// Clears the set (not atomic)
         /**
             The function unlink all items from the tree.
             The function is not atomic, thus, in multi-threaded environment with parallel insertions
@@ -607,8 +545,9 @@ namespace cds { namespace container {
             Only leaf nodes containing user data are counted.
 
             The value returned depends on item counter type provided by \p Traits template parameter.
-            If it is atomicity::empty_item_counter this function always returns 0.
-            Therefore, the function is not suitable for checking the tree emptiness, use \ref empty
+            If it is \p atomicity::empty_item_counter this function always returns 0.
+
+            The function is not suitable for checking the tree emptiness, use \p empty()
             member function for this purpose.
         */
         size_t size() const
