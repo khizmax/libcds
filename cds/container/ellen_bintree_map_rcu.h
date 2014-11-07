@@ -212,9 +212,6 @@ namespace cds { namespace container {
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
-
             The key_type should be constructible from value of type \p K.
 
             The function allows to split creating of new item into two part:
@@ -280,8 +277,6 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \ref value_type.
 
-            You may pass \p func argument by reference using \p std::ref
-
             RCU \p synchronize method can be called. RCU should not be locked.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
@@ -338,7 +333,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -450,8 +444,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found.
-
-            You can pass \p f argument by reference using \p std::ref
 
             The functor may change \p item.second.
 

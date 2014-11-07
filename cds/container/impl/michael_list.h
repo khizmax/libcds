@@ -447,7 +447,6 @@ namespace cds { namespace container {
                 void operator()(const value_type& val) { ... }
             };
             \endcode
-            The functor may be passed by reference with <tt>boost:ref</tt>
 
             Since the key of MichaelList's item type \p value_type is not explicitly specified,
             template parameter \p Q should contain the complete key to search in the list.

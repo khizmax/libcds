@@ -369,8 +369,6 @@ namespace cds { namespace container {
             to the list's item inserted. <tt>item.second</tt> is a reference to item's value that may be changed.
             User-defined functor \p func should guarantee that during changing item's value no any other changes
             could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
 
             The key_type should be constructible from value of type \p K.
 
@@ -418,8 +416,6 @@ namespace cds { namespace container {
             The functor may change any fields of the \p item.second that is \ref mapped_type;
             however, \p func must guarantee that during changing no any other modifications
             could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
 
             The function makes RCU lock internally.
 
@@ -484,7 +480,6 @@ namespace cds { namespace container {
                 void operator()(value_type& val) { ... }
             };
             \endcode
-            The functor may be passed by reference with <tt>boost:ref</tt>
 
             RCU \p synchronize method can be called. RCU should not be locked.
 

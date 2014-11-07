@@ -47,8 +47,7 @@ namespace cds { namespace intrusive {
                 \endcode
                 where \p item is the item inserted.
 
-                The user-defined functor \p f is called only if the inserting is success. It can be passed by reference
-                using \p std::ref
+                The user-defined functor \p f is called only if the inserting is success.
                 <hr>
 
             <b>Ensures that the \p item exists in the container</b>
@@ -79,8 +78,6 @@ namespace cds { namespace intrusive {
 
                 The functor can change non-key fields of the \p item.
 
-                You can pass \p f argument by reference using \p std::ref
-
                 Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
                 \p second is true if new item has been added or \p false if the item with \p val key
                 already exists.
@@ -102,7 +99,6 @@ namespace cds { namespace intrusive {
                     void operator()(value_type& val);
                 };
                 \endcode
-                The functor can be passed by reference using <tt>boost:ref</tt>
 
                 The type \p Q can differ from \ref value_type of items storing in the container.
                 Therefore, the \p value_type should be comparable with type \p Q.
@@ -124,8 +120,6 @@ namespace cds { namespace intrusive {
                 };
                 \endcode
                 where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-                You can pass \p f argument by reference using \p std::ref.
 
                 The functor can change non-key fields of \p item.
                 The \p val argument may be non-const since it can be used as \p f functor destination i.e., the functor

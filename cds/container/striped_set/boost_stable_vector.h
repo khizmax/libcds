@@ -142,8 +142,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 The type \p Q may differ from \ref value_type of items storing in the container.
                 Therefore, the \p value_type should be comparable with type \p Q and constructible from type \p Q,
 
-                The user-defined functor is called only if the inserting is success. It may be passed by reference
-                using \p std::ref
+                The user-defined functor is called only if the inserting is success.
             */
             template <typename Q, typename Func>
             bool insert( const Q& val, Func f )
@@ -197,8 +196,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                 The type \p Q may differ from \ref value_type of items storing in the container.
                 Therefore, the \p value_type should be comparable with type \p Q and constructible from type \p Q,
 
-                You may pass \p func argument by reference using \p std::ref
-
                 Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
                 \p second is true if new item has been added or \p false if the item with \p val key
                 already exists.
@@ -232,7 +229,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                     void operator()(value_type const& val);
                 };
                 \endcode
-                The functor may be passed by reference using <tt>boost:ref</tt>
 
                 The type \p Q may differ from \ref value_type of items storing in the container.
                 Therefore, the \p value_type should be comparable with type \p Q.
@@ -275,8 +271,6 @@ namespace cds { namespace intrusive { namespace striped_set {
                 };
                 \endcode
                 where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-                You may pass \p f argument by reference using \p std::ref
 
                 The functor may change non-key fields of \p item.
                 The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor

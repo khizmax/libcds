@@ -223,8 +223,7 @@ namespace cds { namespace container {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success. It may be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success. 
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
@@ -263,8 +262,6 @@ namespace cds { namespace container {
 
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
-
-            You may pass \p func argument by reference using \p std::ref
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -341,7 +338,6 @@ namespace cds { namespace container {
                 void operator()(value_type const& val);
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Since the key of MichaelHashSet's \p value_type is not explicitly specified,
             template parameter \p Q defines the key type searching in the list.
@@ -462,8 +458,6 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using \p std::ref.
-
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.
             The functor does not serialize simultaneous access to the set's \p item. If such access is
@@ -510,8 +504,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.

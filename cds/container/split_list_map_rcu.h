@@ -426,7 +426,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
@@ -518,8 +517,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found.
-
-            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change \p item.second. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.

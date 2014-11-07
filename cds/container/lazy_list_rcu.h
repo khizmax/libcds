@@ -457,7 +457,6 @@ namespace cds { namespace container {
                 void operator()(value_type const& val) { ... }
             };
             \endcode
-            The functor may be passed by reference with <tt>boost:ref</tt>
 
             Since the key of LazyList's item type \p T is not explicitly specified,
             template parameter \p Q defines the key type searching in the list.
@@ -584,8 +583,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found, \p key is the \p find() function argument.
-
-            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item. Note that the function is only guarantee
             that \p item cannot be deleted during functor is executing.

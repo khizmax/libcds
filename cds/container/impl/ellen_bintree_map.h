@@ -395,8 +395,6 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found.
 
-            You can pass \p f argument by reference using std::ref.
-
             The functor may change \p item.second.
 
             The function returns \p true if \p key is found, \p false otherwise.

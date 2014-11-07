@@ -653,8 +653,6 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using \p std::ref.
-
             The functor may change non-key fields of \p item.
             While the functor \p f is calling the item found \p item is locked.
 

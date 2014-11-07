@@ -385,7 +385,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Return \p true if key is found and deleted, \p false otherwise
         */

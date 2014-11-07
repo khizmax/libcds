@@ -341,8 +341,6 @@ namespace cds { namespace container {
             The argument \p itemValue of user-defined functor \p func is the reference
             to the list's item inserted. User-defined functor \p func should guarantee that during changing
             item's value no any other changes could be made on this list's item by concurrent threads.
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if the inserting is success.
 
             The type \p Q should contain the complete key of the node.
             The object of \ref value_type should be constructible from \p key of type \p Q.

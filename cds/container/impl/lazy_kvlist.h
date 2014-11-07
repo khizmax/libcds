@@ -487,7 +487,6 @@ namespace cds { namespace container {
                 void operator()(value_type& val) { ... }
             };
             \endcode
-            The functor may be passed by reference with <tt>boost:ref</tt>
 
             Returns \p true if key is found and deleted, \p false otherwise
         */
@@ -590,8 +589,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found.
-
-            You may pass \p f argument by reference using \p std::ref.
 
             The functor may change <tt>item.second</tt> that is reference to value of node.
             Note that the function is only guarantee that \p item cannot be deleted during functor is executing.

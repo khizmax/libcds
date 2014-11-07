@@ -588,8 +588,7 @@ namespace cds { namespace container {
             The type \p Q can differ from \ref value_type of items storing in the set.
             Therefore, the \p value_type should be constructible from type \p Q.
 
-            The user-defined functor is called only if the inserting is success. It can be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success.
         */
         template <typename Q, typename Func>
         bool insert( Q const& val, Func f )
@@ -658,8 +657,6 @@ namespace cds { namespace container {
 
             The functor can change non-key fields of the \p item.
 
-            You can pass \p func argument by value or by reference using \p std::ref
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p val key
             already exists.
@@ -726,7 +723,6 @@ namespace cds { namespace container {
                 void operator()(value_type const& val);
             };
             \endcode
-            The functor can be passed by value or by reference using <tt>boost:ref</tt>
 
             Return \p true if key is found and deleted, \p false otherwise
         */
@@ -788,8 +784,6 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by value or by reference using \p std::ref.
-
             The functor can change non-key fields of \p item.
             The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
             can modify both arguments.
@@ -834,8 +828,6 @@ namespace cds { namespace container {
             };
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item.
 

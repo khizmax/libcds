@@ -566,8 +566,6 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
-            You may pass \p f argument by reference using \p std::ref.
-
             The functor may change non-key fields of \p item. Note that the function is only guarantee
             that \p item cannot be deleted during functor is executing.
             The function does not serialize simultaneous access to the list \p item. If such access is

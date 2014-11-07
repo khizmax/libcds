@@ -919,7 +919,6 @@ namespace cds { namespace intrusive {
                 void operator()( value_type const& item );
             };
             \endcode
-            The functor can be passed by reference with <tt>boost:ref</tt>
 
             If the item with key equal to \p key is not found the function return \p false.
 

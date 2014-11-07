@@ -515,7 +515,6 @@ namespace cds { namespace intrusive {
                 void operator()( value_type const& item );
             };
             \endcode
-            The functor may be passed by reference with <tt>boost:ref</tt>
 
             If the item with key equal to \p key is not found the function return \p false.
 
@@ -614,8 +613,6 @@ namespace cds { namespace intrusive {
             };
             \endcode
             where \p item is the item found, \p key is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.

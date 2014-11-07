@@ -1442,8 +1442,7 @@ retry:
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success and may be passed by reference
-            using \p std::ref.
+            The user-defined functor is called only if the inserting is success.
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
@@ -1839,8 +1838,6 @@ retry:
             };
             \endcode
             where \p item is the item found, \p key is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
 
             The functor can change non-key fields of \p item. Note that the functor is only guarantee
             that \p item cannot be disposed during functor is executing.

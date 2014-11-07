@@ -494,7 +494,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             RCU \p synchronize method can be called. RCU should not be locked.
 

@@ -486,9 +486,6 @@ namespace cds { namespace intrusive {
                 void func( value_type& val );
             \endcode
             where \p val is the item inserted.
-
-            The user-defined functor is called only if the inserting is success and can be passed by reference
-            using \p std::ref.
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -527,8 +524,6 @@ namespace cds { namespace intrusive {
             refers to the same thing.
 
             The functor may change non-key fields of the \p item.
-
-            You may pass \p func argument by reference using \p std::ref.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p key
@@ -617,7 +612,6 @@ namespace cds { namespace intrusive {
                 void operator()( value_type const& item );
             };
             \endcode
-            The functor may be passed by reference with <tt>boost:ref</tt>
 
             If the item with key equal to \p val is not found the function return \p false.
 
@@ -671,8 +665,6 @@ namespace cds { namespace intrusive {
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
 
-            You can pass \p f argument by reference using \p std::ref.
-
             The functor may change non-key fields of \p item.
 
             The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
@@ -712,8 +704,6 @@ namespace cds { namespace intrusive {
             };
             \endcode
             where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by reference using \p std::ref.
 
             The functor may change non-key fields of \p item.
 
