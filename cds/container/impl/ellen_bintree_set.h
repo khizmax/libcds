@@ -34,9 +34,10 @@ namespace cds { namespace container {
         @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
         for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
 
-        @note In the current implementation we do not use helping technique described in original paper.
-        So, the current implementation is near to fine-grained lock-based tree.
-        Helping will be implemented in future release
+        @note In the current implementation we do not use helping technique described in the original paper.
+        In Hazard Pointer schema helping is too complicated and does not give any observable benefits.
+        Instead of helping, when a thread encounters a concurrent operation it just spins waiting for
+        the operation done. Such solution allows greatly simplify the implementation of tree.
 
         <b>Template arguments</b> :
         - \p GC - safe memory reclamation (i.e. light-weight garbage collector) type, like \p cds::gc::HP, cds::gc::DHP
@@ -49,7 +50,7 @@ namespace cds { namespace container {
         @note Do not include <tt><cds/container/impl/ellen_bintree_set.h></tt> header file directly.
         There are header file for each GC type:
         - <tt><cds/container/ellen_bintree_set_hp.h></tt> - for \p cds::gc::HP
-        - <tt><cds/container/ellen_bintree_set_ptb.h></tt> - for \p cds::gc::DHP
+        - <tt><cds/container/ellen_bintree_set_dhp.h></tt> - for \p cds::gc::DHP
         - <tt><cds/container/ellen_bintree_set_rcu.h></tt> - for RCU GC
             (see \ref cds_container_EllenBinTreeSet_rcu "RCU-based EllenBinTreeSet")
 

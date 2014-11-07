@@ -57,9 +57,10 @@ namespace cds { namespace intrusive {
         @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
         for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
 
-        @note In the current implementation we do not use helping technique described in original paper.
-        So, the current implementation is near to fine-grained lock-based tree.
-        Helping will be implemented in future release
+        @note In the current implementation we do not use helping technique described in the original paper.
+        In Hazard Pointer schema helping is too complicated and does not give any observable benefits.
+        Instead of helping, when a thread encounters a concurrent operation it just spins waiting for
+        the operation done. Such solution allows greatly simplify the implementation of tree.
 
         <b>Template arguments</b> :
         - \p RCU - one of \ref cds_urcu_gc "RCU type"

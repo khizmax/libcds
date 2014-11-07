@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_IMPL_ELLEN_BINTREE_MAP_H
 #define __CDS_CONTAINER_IMPL_ELLEN_BINTREE_MAP_H
 
-#include <type_traits>
+#include <traits>
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/impl/ellen_bintree.h>
 #include <cds/container/details/guarded_ptr_cast.h>
@@ -34,53 +34,23 @@ namespace cds { namespace container {
         @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
         for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
 
-        @note In the current implementation we do not use helping technique described in original paper.
-        So, the current implementation is near to fine-grained lock-based tree.
-        Helping will be implemented in future release
+        @note In the current implementation we do not use helping technique described in the original paper.
+        In Hazard Pointer schema helping is too complicated and does not give any observable benefits.
+        Instead of helping, when a thread encounters a concurrent operation it just spins waiting for
+        the operation done. Such solution allows greatly simplify implementation of the tree.
 
         <b>Template arguments</b> :
-        - \p GC - safe memory reclamation (i.e. light-weight garbage collector) type, like cds::gc::HP, cds::gc::PTB
-            Note that cds::gc::HRC is not supported.
+        - \p GC - safe memory reclamation (i.e. light-weight garbage collector) type, like \p cds::gc::HP, \p cds::gc::DHP
         - \p Key - key type
         - \p T - value type to be stored in tree's leaf nodes.
-        - \p Traits - type traits. See ellen_bintree::type_traits for explanation.
-
-        It is possible to declare option-based tree with ellen_bintree::make_map_traits metafunction
-        instead of \p Traits template argument.
-        Template argument list \p Options of ellen_bintree::make_map_traits metafunction are:
-        - opt::compare - key compare functor. No default functor is provided.
-            If the option is not specified, \p %opt::less is used.
-        - opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - opt::allocator - the allocator used for \ref ellen_bintree::map_node "leaf nodes" which contains data.
-            Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::node_allocator - the allocator used for \ref ellen_bintree::internal_node "internal nodes".
-            Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",
-            default is \ref CDS_DEFAULT_ALLOCATOR.
-            Note that update descriptor is helping data structure with short lifetime and it is good candidate for pooling.
-            The number of simultaneously existing descriptors is a relatively small number limited the number of threads
-            working with the tree and GC buffer size.
-            Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue is good choice for the free-list
-            of update descriptors, see cds::memory::vyukov_queue_pool free-list implementation.
-            Also notice that size of update descriptor is not dependent on the type of data
-            stored in the tree so single free-list object can be used for several EllenBinTree-based object.
-        - opt::stat - internal statistics. Available types: ellen_bintree::stat, ellen_bintree::empty_stat (the default)
-        - opt::copy_policy - key copy policy defines a functor to copy leaf node's key to internal node.
-            By default, assignment operator is used.
-            The copy functor interface is:
-            \code
-            struct copy_functor {
-                void operator()( Key& dest, Key const& src );
-            };
-            \endcode
+        - \p Traits - map traits, default is \p ellen_bintree::traits
+            It is possible to declare option-based tree with \p ellen_bintree::make_map_traits metafunction
+            instead of \p Traits template argument.
 
         @note Do not include <tt><cds/container/impl/ellen_bintree_map.h></tt> header file directly.
         There are header file for each GC type:
         - <tt><cds/container/ellen_bintree_map_hp.h></tt> - for Hazard Pointer GC cds::gc::HP
-        - <tt><cds/container/ellen_bintree_map_ptb.h></tt> - for Pass-the-Buck GC cds::gc::PTB
+        - <tt><cds/container/ellen_bintree_map_dhp.h></tt> - for Pass-the-Buck GC cds::gc::DHP
         - <tt><cds/container/ellen_bintree_map_rcu.h></tt> - for RCU GC
             (see \ref cds_container_EllenBinTreeMap_rcu "RCU-based EllenBinTreeMap")
     */
@@ -89,7 +59,7 @@ namespace cds { namespace container {
         typename Key,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = ellen_bintree::type_traits
+        class Traits = ellen_bintree::traits
 #else
         class Traits
 #endif
@@ -106,26 +76,26 @@ namespace cds { namespace container {
         typedef typename maker::type base_class;
         //@endcond
     public:
-        typedef GC      gc              ;   ///< Garbage collector
-        typedef Key     key_type        ;   ///< type of a key stored in the map
-        typedef T       mapped_type      ;  ///< type of value stored in the map
+        typedef GC      gc;          ///< Garbage collector
+        typedef Key     key_type;    ///< type of a key stored in the map
+        typedef T       mapped_type; ///< type of value stored in the map
         typedef std::pair< key_type const, mapped_type >    value_type  ;   ///< Key-value pair stored in leaf node of the mp
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef Traits  traits;      ///< Map traits 
 
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key compare functor based on opt::compare and opt::less option setter.
+        typedef implementation_defined key_comparator; ///< key compare functor based on \p Traits::compare and \p Traits::less
 #   else
         typedef typename maker::intrusive_type_traits::compare   key_comparator;
 #   endif
-        typedef typename base_class::item_counter           item_counter        ; ///< Item counting policy used
-        typedef typename base_class::memory_model           memory_model        ; ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename base_class::node_allocator         node_allocator_type ; ///< allocator for maintaining internal node
-        typedef typename base_class::stat                   stat                ; ///< internal statistics type
-        typedef typename options::copy_policy               copy_policy         ; ///< key copy policy
+        typedef typename base_class::item_counter           item_counter; ///< Item counting policy
+        typedef typename base_class::memory_model           memory_model; ///< Memory ordering, see \p cds::opt::memory_model
+        typedef typename base_class::node_allocator         node_allocator_type; ///< allocator for maintaining internal node
+        typedef typename base_class::stat                   stat;         ///< internal statistics type
+        typedef typename traits::copy_policy                copy_policy;  ///< key copy policy
 
-        typedef typename options::allocator                 allocator_type      ;   ///< Allocator for leaf nodes
-        typedef typename base_class::node_allocator         node_allocator      ;   ///< Internal node allocator
-        typedef typename base_class::update_desc_allocator  update_desc_allocator ; ///< Update descriptor allocator
+        typedef typename traits::allocator                  allocator_type;   ///< Allocator for leaf nodes
+        typedef typename base_class::node_allocator         node_allocator;   ///< Internal node allocator
+        typedef typename base_class::update_desc_allocator  update_desc_allocator; ///< Update descriptor allocator
 
     protected:
         //@cond
@@ -146,9 +116,7 @@ namespace cds { namespace container {
         /// Default constructor
         EllenBinTreeMap()
             : base_class()
-        {
-            //static_assert( (std::is_same<gc, cds::gc::HP>::value || std::is_same<gc, cds::gc::PTB>::value), "GC must be cds::gc::HP or cds:gc::PTB" );
-        }
+        {}
 
         /// Clears the map
         ~EllenBinTreeMap()
@@ -177,8 +145,8 @@ namespace cds { namespace container {
             and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from \p key of type \p K.
-            - The \ref value_type should be constructible from \p val of type \p V.
+            - The \p key_type should be constructible from \p key of type \p K.
+            - The \p value_type should be constructible from \p val of type \p V.
 
             Returns \p true if \p val is inserted into the map, \p false otherwise.
         */
@@ -209,9 +177,6 @@ namespace cds { namespace container {
                 - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
                 - <tt>item.second</tt> is a reference to item's value that may be changed.
 
-            The user-defined functor can be passed by reference using \p std::ref
-            and it is called only if inserting is successful.
-
             The key_type should be constructible from value of type \p K.
 
             The function allows to split creating of new item into two part:
@@ -233,7 +198,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p value_type created in-place from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -273,11 +238,11 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \ref value_type.
 
-            You may pass \p func argument by reference using \p std::ref.
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
@@ -327,7 +292,6 @@ namespace cds { namespace container {
                 void operator()(value_type& item) { ... }
             };
             \endcode
-            The functor may be passed by reference using <tt>boost:ref</tt>
 
             Return \p true if key is found and deleted, \p false otherwise
         */
@@ -511,7 +475,7 @@ namespace cds { namespace container {
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );
         }
 
-        /// Clears the map
+        /// Clears the map (not atomic)
         void clear()
         {
             base_class::clear();
@@ -526,7 +490,16 @@ namespace cds { namespace container {
             return base_class::empty();
         }
 
-        /// Returns item count in the map
+        /// Returns item count in the set
+        /**
+            Only leaf nodes containing user data are counted.
+
+            The value returned depends on item counter type provided by \p Traits template parameter.
+            If it is \p atomicity::empty_item_counter this function always returns 0.
+
+            The function is not suitable for checking the tree emptiness, use \p empty()
+            member function for this purpose.
+        */
         size_t size() const
         {
             return base_class::size();
