@@ -330,10 +330,10 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
     TEST_MAP_NOLF_EXTRACT(SkipListMap_hp_cmp_pascal_stat)\
     TEST_MAP_NOLF_EXTRACT(SkipListMap_hp_less_xorshift)\
     TEST_MAP_NOLF_EXTRACT(SkipListMap_hp_cmp_xorshift_stat)\
-    TEST_MAP_NOLF_EXTRACT(SkipListMap_ptb_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(SkipListMap_ptb_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(SkipListMap_ptb_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(SkipListMap_ptb_cmp_xorshift_stat)\
+    TEST_MAP_NOLF_EXTRACT(SkipListMap_dhp_less_pascal)\
+    TEST_MAP_NOLF_EXTRACT(SkipListMap_dhp_cmp_pascal_stat)\
+    TEST_MAP_NOLF_EXTRACT(SkipListMap_dhp_less_xorshift)\
+    TEST_MAP_NOLF_EXTRACT(SkipListMap_dhp_cmp_xorshift_stat)\
     TEST_MAP_NOLF_EXTRACT(SkipListMap_rcu_gpi_less_pascal)\
     TEST_MAP_NOLF_EXTRACT(SkipListMap_rcu_gpi_cmp_pascal_stat)\
     TEST_MAP_NOLF_EXTRACT(SkipListMap_rcu_gpi_less_xorshift)\
@@ -354,10 +354,10 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
     CPPUNIT_TEST(SkipListMap_hp_cmp_pascal_stat)\
     CPPUNIT_TEST(SkipListMap_hp_less_xorshift)\
     CPPUNIT_TEST(SkipListMap_hp_cmp_xorshift_stat)\
-    CPPUNIT_TEST(SkipListMap_ptb_less_pascal)\
-    CPPUNIT_TEST(SkipListMap_ptb_cmp_pascal_stat)\
-    CPPUNIT_TEST(SkipListMap_ptb_less_xorshift)\
-    CPPUNIT_TEST(SkipListMap_ptb_cmp_xorshift_stat)\
+    CPPUNIT_TEST(SkipListMap_dhp_less_pascal)\
+    CPPUNIT_TEST(SkipListMap_dhp_cmp_pascal_stat)\
+    CPPUNIT_TEST(SkipListMap_dhp_less_xorshift)\
+    CPPUNIT_TEST(SkipListMap_dhp_cmp_xorshift_stat)\
     CPPUNIT_TEST(SkipListMap_rcu_gpi_less_pascal)\
     CPPUNIT_TEST(SkipListMap_rcu_gpi_cmp_pascal_stat)\
     CPPUNIT_TEST(SkipListMap_rcu_gpi_less_xorshift)\

@@ -1292,17 +1292,11 @@ namespace map2 {
             , co::hash< hash2 >
         > RefinableMap_map;
 
-#if (CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600
-        typedef RefinableHashMap_ord<
-            stdext::hash_map< Key, Value, stdext::hash_compare<Key, less > >
-            , co::hash< hash2 >
-        > RefinableMap_hashmap;
-#else
         typedef RefinableHashMap_ord<
             std::unordered_map< Key, Value, hash, equal_to >
             , co::hash< hash2 >
         > RefinableMap_hashmap;
-#endif
+
         typedef RefinableHashMap_ord<
             boost::unordered_map< Key, Value, hash, equal_to >
             , co::hash< hash2 >
@@ -1320,12 +1314,10 @@ namespace map2 {
             , co::hash< hash2 >
         > RefinableMap_boost_map;
 
-//#   ifdef CDS_UNIT_MAP_TYPES_ENABLE_BOOST_FLAT_CONTAINERS
         typedef RefinableHashMap_ord<
             boost::container::flat_map< Key, Value, less >
             , co::hash< hash2 >
         > RefinableMap_boost_flat_map;
-//#   endif
 #endif // #if BOOST_VERSION >= 104800
 
 
@@ -1493,663 +1485,155 @@ namespace map2 {
         > CuckooRefinableMap_vector_ord_storehash;
 
         // ***************************************************************************
-        // SkipListMap - HP
+        // SkipListMap
 
-        class traits_SkipListMap_hp_less_pascal: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_pascal: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_less_pascal > SkipListMap_hp_less_pascal;
-
-        class traits_SkipListMap_hp_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_less_pascal_seqcst > SkipListMap_hp_less_pascal_seqcst;
-
-        class traits_SkipListMap_hp_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_less_pascal_stat > SkipListMap_hp_less_pascal_stat;
-
-        class traits_SkipListMap_hp_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_cmp_pascal > SkipListMap_hp_cmp_pascal;
-
-        class traits_SkipListMap_hp_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_cmp_pascal_stat > SkipListMap_hp_cmp_pascal_stat;
-
-        class traits_SkipListMap_hp_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_less_xorshift > SkipListMap_hp_less_xorshift;
-
-        class traits_SkipListMap_hp_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_less_xorshift_stat > SkipListMap_hp_less_xorshift_stat;
-
-        class traits_SkipListMap_hp_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_cmp_xorshift > SkipListMap_hp_cmp_xorshift;
-
-        class traits_SkipListMap_hp_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_hp_cmp_xorshift_stat > SkipListMap_hp_cmp_xorshift_stat;
-
-        // ***************************************************************************
-        // SkipListMap - DHP
-
-        class traits_SkipListMap_ptb_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_pascal > SkipListMap_ptb_less_pascal;
-
-        class traits_SkipListMap_ptb_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_pascal_seqcst > SkipListMap_ptb_less_pascal_seqcst;
-
-        class traits_SkipListMap_ptb_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_pascal_stat > SkipListMap_ptb_less_pascal_stat;
-
-        class traits_SkipListMap_ptb_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_pascal > SkipListMap_ptb_cmp_pascal;
-
-        class traits_SkipListMap_ptb_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_pascal_stat > SkipListMap_ptb_cmp_pascal_stat;
-
-        class traits_SkipListMap_ptb_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_xorshift > SkipListMap_ptb_less_xorshift;
-
-        class traits_SkipListMap_ptb_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_less_xorshift_stat > SkipListMap_ptb_less_xorshift_stat;
-
-        class traits_SkipListMap_ptb_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_xorshift > SkipListMap_ptb_cmp_xorshift;
-
-        class traits_SkipListMap_ptb_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_ptb_cmp_xorshift_stat > SkipListMap_ptb_cmp_xorshift_stat;
-
-        // ***************************************************************************
-        // SkipListMap< gc::nogc >
-
-        class traits_SkipListMap_nogc_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal >
-        > SkipListMap_nogc_less_pascal;
-
-        class traits_SkipListMap_nogc_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal_seqcst >
-        > SkipListMap_nogc_less_pascal_seqcst;
-
-        class traits_SkipListMap_nogc_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_pascal_stat >
-        > SkipListMap_nogc_less_pascal_stat;
-
-        class traits_SkipListMap_nogc_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_pascal >
-        > SkipListMap_nogc_cmp_pascal;
-
-        class traits_SkipListMap_nogc_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_pascal_stat >
-        > SkipListMap_nogc_cmp_pascal_stat;
-
-        class traits_SkipListMap_nogc_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_xorshift >
-        > SkipListMap_nogc_less_xorshift;
-
-        class traits_SkipListMap_nogc_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_less_xorshift_stat >
-        > SkipListMap_nogc_less_xorshift_stat;
-
-        class traits_SkipListMap_nogc_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor< cc::SkipListMap<
-            cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_xorshift >
-        > SkipListMap_nogc_cmp_xorshift;
-
-        class traits_SkipListMap_nogc_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef NogcMapWrapper_dctor<
-            cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_nogc_cmp_xorshift_stat >
-        > SkipListMap_nogc_cmp_xorshift_stat;
-
-        // ***************************************************************************
-        // SkipListMap - RCU general_instant
-
-        class traits_SkipListMap_rcu_gpi_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_less_pascal > SkipListMap_rcu_gpi_less_pascal;
-
-        class traits_SkipListMap_rcu_gpi_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_less_pascal_seqcst > SkipListMap_rcu_gpi_less_pascal_seqcst;
-
-        class traits_SkipListMap_rcu_gpi_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_less_pascal_stat > SkipListMap_rcu_gpi_less_pascal_stat;
-
-        class traits_SkipListMap_rcu_gpi_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_cmp_pascal > SkipListMap_rcu_gpi_cmp_pascal;
-
-        class traits_SkipListMap_rcu_gpi_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_cmp_pascal_stat > SkipListMap_rcu_gpi_cmp_pascal_stat;
-
-        class traits_SkipListMap_rcu_gpi_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_less_xorshift > SkipListMap_rcu_gpi_less_xorshift;
-
-        class traits_SkipListMap_rcu_gpi_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_less_xorshift_stat > SkipListMap_rcu_gpi_less_xorshift_stat;
-
-        class traits_SkipListMap_rcu_gpi_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_cmp_xorshift > SkipListMap_rcu_gpi_cmp_xorshift;
-
-        class traits_SkipListMap_rcu_gpi_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_rcu_gpi_cmp_xorshift_stat > SkipListMap_rcu_gpi_cmp_xorshift_stat;
-
-        // ***************************************************************************
-        // SkipListMap - RCU general_buffered
-
-        class traits_SkipListMap_rcu_gpb_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_less_pascal > SkipListMap_rcu_gpb_less_pascal;
-
-        class traits_SkipListMap_rcu_gpb_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_less_pascal_seqcst > SkipListMap_rcu_gpb_less_pascal_seqcst;
-
-        class traits_SkipListMap_rcu_gpb_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_less_pascal_stat > SkipListMap_rcu_gpb_less_pascal_stat;
-
-        class traits_SkipListMap_rcu_gpb_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_cmp_pascal > SkipListMap_rcu_gpb_cmp_pascal;
-
-        class traits_SkipListMap_rcu_gpb_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_cmp_pascal_stat > SkipListMap_rcu_gpb_cmp_pascal_stat;
-
-        class traits_SkipListMap_rcu_gpb_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_less_xorshift > SkipListMap_rcu_gpb_less_xorshift;
-
-        class traits_SkipListMap_rcu_gpb_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_less_xorshift_stat > SkipListMap_rcu_gpb_less_xorshift_stat;
-
-        class traits_SkipListMap_rcu_gpb_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_cmp_xorshift > SkipListMap_rcu_gpb_cmp_xorshift;
-
-        class traits_SkipListMap_rcu_gpb_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_rcu_gpb_cmp_xorshift_stat > SkipListMap_rcu_gpb_cmp_xorshift_stat;
-
-        // ***************************************************************************
-        // SkipListMap - RCU general_threaded
-
-        class traits_SkipListMap_rcu_gpt_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_less_pascal > SkipListMap_rcu_gpt_less_pascal;
-
-        class traits_SkipListMap_rcu_gpt_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_less_pascal_seqcst > SkipListMap_rcu_gpt_less_pascal_seqcst;
-
-        class traits_SkipListMap_rcu_gpt_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_less_pascal_stat > SkipListMap_rcu_gpt_less_pascal_stat;
-
-        class traits_SkipListMap_rcu_gpt_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_cmp_pascal > SkipListMap_rcu_gpt_cmp_pascal;
-
-        class traits_SkipListMap_rcu_gpt_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_cmp_pascal_stat > SkipListMap_rcu_gpt_cmp_pascal_stat;
-
-        class traits_SkipListMap_rcu_gpt_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_less_xorshift > SkipListMap_rcu_gpt_less_xorshift;
-
-        class traits_SkipListMap_rcu_gpt_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_less_xorshift_stat > SkipListMap_rcu_gpt_less_xorshift_stat;
-
-        class traits_SkipListMap_rcu_gpt_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_cmp_xorshift > SkipListMap_rcu_gpt_cmp_xorshift;
-
-        class traits_SkipListMap_rcu_gpt_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_rcu_gpt_cmp_xorshift_stat > SkipListMap_rcu_gpt_cmp_xorshift_stat;
-
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_hp_less_pascal;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_dhp_less_pascal;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpi_less_pascal;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpb_less_pascal;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpt_less_pascal;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        // ***************************************************************************
-        // SkipListMap - RCU signal_buffered
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_shb_less_pascal;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_sht_less_pascal;
+#endif
 
-        class traits_SkipListMap_rcu_shb_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_less_pascal > SkipListMap_rcu_shb_less_pascal;
-
-        class traits_SkipListMap_rcu_shb_less_pascal_seqcst: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_pascal_seqcst: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
                 ,co::memory_model< co::v::sequential_consistent >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_less_pascal_seqcst > SkipListMap_rcu_shb_less_pascal_seqcst;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_hp_less_pascal_seqcst;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_dhp_less_pascal_seqcst;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpi_less_pascal_seqcst;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpb_less_pascal_seqcst;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpt_less_pascal_seqcst;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_shb_less_pascal_seqcst;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_sht_less_pascal_seqcst;
+#endif
 
-        class traits_SkipListMap_rcu_shb_less_pascal_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_pascal_stat: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_less_pascal_stat > SkipListMap_rcu_shb_less_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_hp_less_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_dhp_less_pascal_stat;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpi_less_pascal_stat;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpb_less_pascal_stat;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpt_less_pascal_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_shb_less_pascal_stat;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_sht_less_pascal_stat;
+#endif
 
-        class traits_SkipListMap_rcu_shb_cmp_pascal: public cc::skip_list::make_traits <
+        class traits_SkipListMap_cmp_pascal: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
+                ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_cmp_pascal > SkipListMap_rcu_shb_cmp_pascal;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_hp_cmp_pascal;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_dhp_cmp_pascal;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpi_cmp_pascal;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpb_cmp_pascal;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpt_cmp_pascal;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_shb_cmp_pascal;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_sht_cmp_pascal;
+#endif
 
-        class traits_SkipListMap_rcu_shb_cmp_pascal_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_cmp_pascal_stat: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_cmp_pascal_stat > SkipListMap_rcu_shb_cmp_pascal_stat;
-
-        class traits_SkipListMap_rcu_shb_less_xorshift: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_less_xorshift > SkipListMap_rcu_shb_less_xorshift;
-
-        class traits_SkipListMap_rcu_shb_less_xorshift_stat: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_less_xorshift_stat > SkipListMap_rcu_shb_less_xorshift_stat;
-
-        class traits_SkipListMap_rcu_shb_cmp_xorshift: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_cmp_xorshift > SkipListMap_rcu_shb_cmp_xorshift;
-
-        class traits_SkipListMap_rcu_shb_cmp_xorshift_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_rcu_shb_cmp_xorshift_stat > SkipListMap_rcu_shb_cmp_xorshift_stat;
-
-        // ***************************************************************************
-        // SkipListMap - RCU signal_threaded
-
-        class traits_SkipListMap_rcu_sht_less_pascal: public cc::skip_list::make_traits <
-                co::less< less >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_less_pascal > SkipListMap_rcu_sht_less_pascal;
-
-        class traits_SkipListMap_rcu_sht_less_pascal_seqcst: public cc::skip_list::make_traits <
-                co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_less_pascal_seqcst > SkipListMap_rcu_sht_less_pascal_seqcst;
-
-        class traits_SkipListMap_rcu_sht_less_pascal_stat: public cc::skip_list::make_traits <
-                co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_less_pascal_stat > SkipListMap_rcu_sht_less_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_hp_cmp_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_dhp_cmp_pascal_stat;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpi_cmp_pascal_stat;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpb_cmp_pascal_stat;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpt_cmp_pascal_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_shb_cmp_pascal_stat;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_sht_cmp_pascal_stat;
+#endif
 
-        class traits_SkipListMap_rcu_sht_cmp_pascal: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_cmp_pascal > SkipListMap_rcu_sht_cmp_pascal;
-
-        class traits_SkipListMap_rcu_sht_cmp_pascal_stat: public cc::skip_list::make_traits <
-                co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
-                ,co::item_counter< cds::atomicity::item_counter >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_cmp_pascal_stat > SkipListMap_rcu_sht_cmp_pascal_stat;
-
-        class traits_SkipListMap_rcu_sht_less_xorshift: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_xorshift: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_less_xorshift > SkipListMap_rcu_sht_less_xorshift;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_hp_less_xorshift;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_dhp_less_xorshift;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpi_less_xorshift;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpb_less_xorshift;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpt_less_xorshift;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_shb_less_xorshift;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_sht_less_xorshift;
+#endif
 
-        class traits_SkipListMap_rcu_sht_less_xorshift_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_xorshift_stat: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_less_xorshift_stat > SkipListMap_rcu_sht_less_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_hp_less_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_dhp_less_xorshift_stat;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpi_less_xorshift_stat;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpb_less_xorshift_stat;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpt_less_xorshift_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_shb_less_xorshift_stat;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_sht_less_xorshift_stat;
+#endif
 
-        class traits_SkipListMap_rcu_sht_cmp_xorshift: public cc::skip_list::make_traits <
+        class traits_SkipListMap_cmp_xorshift: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+                ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_cmp_xorshift > SkipListMap_rcu_sht_cmp_xorshift;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_hp_cmp_xorshift;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_dhp_cmp_xorshift;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpi_cmp_xorshift;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpb_cmp_xorshift;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpt_cmp_xorshift;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_shb_cmp_xorshift;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_sht_cmp_xorshift;
+#endif
 
-        class traits_SkipListMap_rcu_sht_cmp_xorshift_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_cmp_xorshift_stat: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
                 ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
                 ,co::stat< cc::skip_list::stat<> >
+                ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_rcu_sht_cmp_xorshift_stat > SkipListMap_rcu_sht_cmp_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_hp_cmp_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_dhp_cmp_xorshift_stat;
+        typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpi_cmp_xorshift_stat;
+        typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpb_cmp_xorshift_stat;
+        typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpt_cmp_xorshift_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_shb_cmp_xorshift_stat;
+        typedef cc::SkipListMap< rcu_sht, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_sht_cmp_xorshift_stat;
 #endif
 
 
