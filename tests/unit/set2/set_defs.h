@@ -354,10 +354,10 @@
     TEST_SET_NOLF_EXTRACT(SkipListSet_hp_cmp_pascal_stat)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_hp_less_xorshift)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_hp_cmp_xorshift_stat)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_ptb_less_pascal)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_ptb_cmp_pascal_stat)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_ptb_less_xorshift)\
-    TEST_SET_NOLF_EXTRACT(SkipListSet_ptb_cmp_xorshift_stat)\
+    TEST_SET_NOLF_EXTRACT(SkipListSet_dhp_less_pascal)\
+    TEST_SET_NOLF_EXTRACT(SkipListSet_dhp_cmp_pascal_stat)\
+    TEST_SET_NOLF_EXTRACT(SkipListSet_dhp_less_xorshift)\
+    TEST_SET_NOLF_EXTRACT(SkipListSet_dhp_cmp_xorshift_stat)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_rcu_gpi_less_pascal)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_rcu_gpi_cmp_pascal_stat)\
     TEST_SET_NOLF_EXTRACT(SkipListSet_rcu_gpi_less_xorshift)\
@@ -377,10 +377,10 @@
     CPPUNIT_TEST(SkipListSet_hp_cmp_pascal_stat)\
     CPPUNIT_TEST(SkipListSet_hp_less_xorshift)\
     CPPUNIT_TEST(SkipListSet_hp_cmp_xorshift_stat)\
-    CPPUNIT_TEST(SkipListSet_ptb_less_pascal)\
-    CPPUNIT_TEST(SkipListSet_ptb_cmp_pascal_stat)\
-    CPPUNIT_TEST(SkipListSet_ptb_less_xorshift)\
-    CPPUNIT_TEST(SkipListSet_ptb_cmp_xorshift_stat)\
+    CPPUNIT_TEST(SkipListSet_dhp_less_pascal)\
+    CPPUNIT_TEST(SkipListSet_dhp_cmp_pascal_stat)\
+    CPPUNIT_TEST(SkipListSet_dhp_less_xorshift)\
+    CPPUNIT_TEST(SkipListSet_dhp_cmp_xorshift_stat)\
     CPPUNIT_TEST(SkipListSet_rcu_gpi_less_pascal)\
     CPPUNIT_TEST(SkipListSet_rcu_gpi_cmp_pascal_stat)\
     CPPUNIT_TEST(SkipListSet_rcu_gpi_less_xorshift)\
