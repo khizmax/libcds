@@ -936,25 +936,25 @@ namespace tree {
         void EllenBinTree_hp_member_less_pool();
         void EllenBinTree_hp_member_less_pool_ic_stat();
 
-        void EllenBinTree_ptb_base_less();
-        void EllenBinTree_ptb_base_cmp();
-        void EllenBinTree_ptb_base_cmpless();
-        void EllenBinTree_ptb_base_less_ic();
-        void EllenBinTree_ptb_base_cmp_ic();
-        void EllenBinTree_ptb_base_less_stat();
-        void EllenBinTree_ptb_base_cmp_ic_stat();
-        void EllenBinTree_ptb_base_less_pool();
-        void EllenBinTree_ptb_base_less_pool_ic_stat();
+        void EllenBinTree_dhp_base_less();
+        void EllenBinTree_dhp_base_cmp();
+        void EllenBinTree_dhp_base_cmpless();
+        void EllenBinTree_dhp_base_less_ic();
+        void EllenBinTree_dhp_base_cmp_ic();
+        void EllenBinTree_dhp_base_less_stat();
+        void EllenBinTree_dhp_base_cmp_ic_stat();
+        void EllenBinTree_dhp_base_less_pool();
+        void EllenBinTree_dhp_base_less_pool_ic_stat();
 
-        void EllenBinTree_ptb_member_less();
-        void EllenBinTree_ptb_member_cmp();
-        void EllenBinTree_ptb_member_cmpless();
-        void EllenBinTree_ptb_member_less_ic();
-        void EllenBinTree_ptb_member_cmp_ic();
-        void EllenBinTree_ptb_member_less_stat();
-        void EllenBinTree_ptb_member_cmp_ic_stat();
-        void EllenBinTree_ptb_member_less_pool();
-        void EllenBinTree_ptb_member_less_pool_ic_stat();
+        void EllenBinTree_dhp_member_less();
+        void EllenBinTree_dhp_member_cmp();
+        void EllenBinTree_dhp_member_cmpless();
+        void EllenBinTree_dhp_member_less_ic();
+        void EllenBinTree_dhp_member_cmp_ic();
+        void EllenBinTree_dhp_member_less_stat();
+        void EllenBinTree_dhp_member_cmp_ic_stat();
+        void EllenBinTree_dhp_member_less_pool();
+        void EllenBinTree_dhp_member_less_pool_ic_stat();
 
         void EllenBinTree_rcu_gpi_base_less();
         void EllenBinTree_rcu_gpi_base_cmp();
@@ -1077,25 +1077,25 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_hp_member_less_pool)
             CPPUNIT_TEST(EllenBinTree_hp_member_less_pool_ic_stat)
 
-            CPPUNIT_TEST(EllenBinTree_ptb_base_less)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_cmp)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_less_stat)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_cmpless)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_less_ic)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_cmp_ic)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_less_pool)
-            CPPUNIT_TEST(EllenBinTree_ptb_base_less_pool_ic_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_less)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_cmp)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_less_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_cmpless)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_less_ic)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_cmp_ic)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_cmp_ic_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_less_pool)
+            CPPUNIT_TEST(EllenBinTree_dhp_base_less_pool_ic_stat)
 
-            CPPUNIT_TEST(EllenBinTree_ptb_member_less)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_cmp)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_less_stat)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_cmpless)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_less_ic)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_cmp_ic)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_less_pool)
-            CPPUNIT_TEST(EllenBinTree_ptb_member_less_pool_ic_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_less)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_cmp)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_less_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_cmpless)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_less_ic)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_cmp_ic)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_cmp_ic_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_less_pool)
+            CPPUNIT_TEST(EllenBinTree_dhp_member_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_less)
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_cmp)

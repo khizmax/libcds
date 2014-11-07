@@ -684,6 +684,13 @@ namespace cds { namespace intrusive {
         {
             return find_( key, f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f ) const
+        {
+            return find_( key, f );
+        }
+        //@endcond
 
         /// Finds the key \p key with comparing functor \p pred
         /**
@@ -698,6 +705,13 @@ namespace cds { namespace intrusive {
         {
             return find_with_( key, pred, f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f ) const
+        {
+            return find_with_( key, pred, f );
+        }
+        //@endcond
 
         /// Finds \p key and returns the item found
         /** @anchor cds_intrusive_EllenBinTree_get

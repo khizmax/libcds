@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_PTB_H
-#define CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_PTB_H
+#ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_DHP_H
+#define CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_DHP_H
 
 #include "tree/hdr_intrusive_bintree.h"
 #include <cds/intrusive/ellen_bintree_dhp.h>
@@ -11,7 +11,7 @@
 
 namespace tree {
 
-    namespace ellen_bintree_ptb {
+    namespace ellen_bintree_dhp {
         typedef cds::intrusive::ellen_bintree::node_types<cds::gc::PTB, IntrusiveBinTreeHdrTest::key_type>   node_types;
         typedef node_types::leaf_node_type                                  leaf_node;
         typedef IntrusiveBinTreeHdrTest::base_hook_value< leaf_node >       base_value;
@@ -53,8 +53,8 @@ namespace tree {
             }
         };
 
-    } // namespace ellen_bintree_ptb
+    } // namespace ellen_bintree_dhp
 
 } // namespace tree
 
-#endif // #ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_PTB_H
+#endif // #ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_DHP_H

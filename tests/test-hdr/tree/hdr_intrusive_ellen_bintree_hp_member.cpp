@@ -29,6 +29,13 @@ namespace tree {
 
     void IntrusiveBinTreeHdrTest::EllenBinTree_hp_member_less()
     {
+        struct tree_traits : public ci::ellen_bintree::traits
+        {
+            typedef ci::ellen_bintree::member_hook< offsetof( member_value, hook ), co::gc< cds::gc::HP >> hook;
+            typedef IntrusiveBinTreeHdrTest::key_extractor< member_value > key_extractor;
+            typedef IntrusiveBinTreeHdrTest::less< member_value > less;
+            typedef IntrusiveBinTreeHdrTest::disposer< member_value > disposer;
+        };
         typedef ci::EllenBinTree< cds::gc::HP, key_type, member_value,
             ci::ellen_bintree::make_traits<
                 member_hook

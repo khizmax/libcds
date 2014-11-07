@@ -538,8 +538,8 @@
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_bintree.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_dhp.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_hp.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_ptb.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_rcu.h" />
   </ItemGroup>
   <ItemGroup>
@@ -557,10 +557,10 @@
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_hp_member.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_ptb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_ptb_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpb_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpi.cpp" />

@@ -3,7 +3,7 @@
 #include "tree/hdr_intrusive_bintree.h"
 #include "tree/hdr_intrusive_ellen_bintree_pool_rcu.h"
 #include "tree/hdr_intrusive_ellen_bintree_pool_hp.h"
-#include "tree/hdr_intrusive_ellen_bintree_pool_ptb.h"
+#include "tree/hdr_intrusive_ellen_bintree_pool_dhp.h"
 
 #include "tree/hdr_ellenbintree_set.h"
 #include "tree/hdr_ellenbintree_map.h"
@@ -17,7 +17,7 @@ namespace tree {
         internal_node_pool_type s_InternalNodePool( 1024 * 8 );
         update_desc_pool_type   s_UpdateDescPool;
     }
-    namespace ellen_bintree_ptb {
+    namespace ellen_bintree_dhp {
         internal_node_pool_type s_InternalNodePool( 1024 * 8 );
         update_desc_pool_type   s_UpdateDescPool;
     }

@@ -27,14 +27,14 @@ namespace tree {
 
     void IntrusiveBinTreeHdrTest::EllenBinTree_hp_base_less()
     {
-        typedef ci::EllenBinTree< cds::gc::HP, key_type, base_value,
-            ci::ellen_bintree::make_traits<
-                ci::opt::hook< ci::ellen_bintree::base_hook< co::gc< cds::gc::HP > > >
-                ,ci::ellen_bintree::key_extractor< key_extractor< base_value > >
-                ,co::less< less< base_value > >
-                ,ci::opt::disposer< disposer< base_value > >
-            >::type
-        > tree_type;
+        struct tree_traits : public ci::ellen_bintree::traits
+        {
+            typedef ci::ellen_bintree::base_hook< co::gc< cds::gc::HP >> hook;
+            typedef IntrusiveBinTreeHdrTest::key_extractor< base_value > key_extractor;
+            typedef IntrusiveBinTreeHdrTest::less< base_value > less;
+            typedef IntrusiveBinTreeHdrTest::disposer< base_value > disposer;
+        };
+        typedef ci::EllenBinTree< cds::gc::HP, key_type, base_value, tree_traits > tree_type;
 
         test<tree_type, print_stat>();
     }

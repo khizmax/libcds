@@ -3,7 +3,7 @@
 #include "tree/hdr_ellenbintree_map.h"
 #include <cds/container/ellen_bintree_map_ptb.h>
 
-#include "tree/hdr_intrusive_ellen_bintree_pool_ptb.h"
+#include "tree/hdr_intrusive_ellen_bintree_pool_dhp.h"
 #include "unit/print_ellenbintree_stat.h"
 
 namespace tree {
@@ -114,8 +114,8 @@ namespace tree {
         typedef cc::EllenBinTreeMap< gc_type, key_type, value_type,
             cc::ellen_bintree::make_map_traits<
                 co::less< less >
-                ,co::node_allocator< cds::memory::pool_allocator< tree_internal_node, ellen_bintree_ptb::internal_node_pool_accessor > >
-                ,cc::ellen_bintree::update_desc_allocator< cds::memory::pool_allocator< tree_update_desc, ellen_bintree_ptb::update_desc_pool_accessor > >
+                ,co::node_allocator< cds::memory::pool_allocator< tree_internal_node, ellen_bintree_dhp::internal_node_pool_accessor > >
+                ,cc::ellen_bintree::update_desc_allocator< cds::memory::pool_allocator< tree_update_desc, ellen_bintree_dhp::update_desc_pool_accessor > >
             >::type
         > set_type;
 
@@ -127,8 +127,8 @@ namespace tree {
         typedef cc::EllenBinTreeMap< gc_type, key_type, value_type,
             cc::ellen_bintree::make_map_traits<
                 co::less< less >
-                ,co::node_allocator< cds::memory::pool_allocator< tree_internal_node, ellen_bintree_ptb::internal_node_pool_accessor > >
-                ,cc::ellen_bintree::update_desc_allocator< cds::memory::pool_allocator< tree_update_desc, ellen_bintree_ptb::update_desc_pool_accessor > >
+                ,co::node_allocator< cds::memory::pool_allocator< tree_internal_node, ellen_bintree_dhp::internal_node_pool_accessor > >
+                ,cc::ellen_bintree::update_desc_allocator< cds::memory::pool_allocator< tree_update_desc, ellen_bintree_dhp::update_desc_pool_accessor > >
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< cc::ellen_bintree::stat<> >
             >::type

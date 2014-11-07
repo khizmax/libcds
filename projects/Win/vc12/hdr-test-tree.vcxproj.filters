@@ -24,7 +24,7 @@
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_hp.h">
       <Filter>intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_ptb.h">
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_dhp.h">
       <Filter>intrusive</Filter>
     </ClInclude>
   </ItemGroup>
@@ -96,12 +96,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_hp_member.cpp">
       <Filter>intrusive</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_ptb.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_ptb_member.cpp">
-      <Filter>intrusive</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_hp.cpp">
       <Filter>container</Filter>
     </ClCompile>
@@ -113,6 +107,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_ptb.cpp">
       <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp_member.cpp">
+      <Filter>intrusive</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
