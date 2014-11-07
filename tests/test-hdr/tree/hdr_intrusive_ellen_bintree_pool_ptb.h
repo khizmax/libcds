@@ -4,7 +4,7 @@
 #define CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_PTB_H
 
 #include "tree/hdr_intrusive_bintree.h"
-#include <cds/intrusive/ellen_bintree_ptb.h>
+#include <cds/intrusive/ellen_bintree_dhp.h>
 
 #include <cds/memory/vyukov_queue_pool.h>
 #include <cds/memory/pool_allocator.h>

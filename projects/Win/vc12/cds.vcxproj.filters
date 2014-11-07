@@ -1019,9 +1019,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_hp.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_ptb.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_rcu.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1231,6 +1228,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\skip_list_map_dhp.h">
       <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_dhp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

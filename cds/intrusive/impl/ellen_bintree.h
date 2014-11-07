@@ -4,7 +4,6 @@
 #define __CDS_INTRUSIVE_IMPL_ELLEN_BINTREE_H
 
 #include <memory>
-#include <functional>   // ref
 #include <cds/intrusive/details/ellen_bintree_base.h>
 #include <cds/opt/compare.h>
 #include <cds/details/binary_functor_wrapper.h>
@@ -21,16 +20,16 @@ namespace cds { namespace intrusive {
         Source:
             - [2010] F.Ellen, P.Fatourou, E.Ruppert, F.van Breugel "Non-blocking Binary Search Tree"
 
-        %EllenBinTree is an unbalanced leaf-oriented binary search tree that implements the <i>set</i>
+        %EllenBinTree is an <i>unbalanced</i> leaf-oriented binary search tree that implements the <i>set</i>
         abstract data type. Nodes maintains child pointers but not parent pointers.
         Every internal node has exactly two children, and all data of type \p T currently in
-        the tree are stored in the leaves. Internal nodes of the tree are used to direct \p find
+        the tree are stored in the leaves. Internal nodes of the tree are used to direct \p find()
         operation along the path to the correct leaf. The keys (of \p Key type) stored in internal nodes
         may or may not be in the set. \p Key type is a subset of \p T type.
         There should be exactly defined a key extracting functor for converting object of type \p T to
         object of type \p Key.
 
-        Due to \p extract_min and \p extract_max member functions the \p %EllenBinTree can act as
+        Due to \p extract_min() and \p extract_max() member functions the \p %EllenBinTree can act as
         a <i>priority queue</i>. In this case you should provide unique compound key, for example,
         the priority value plus some uniformly distributed random value.
 
@@ -44,56 +43,24 @@ namespace cds { namespace intrusive {
 
         @note Do not include <tt><cds/intrusive/impl/ellen_bintree.h></tt> header file explicitly.
         There are header file for each GC type:
-        - <tt><cds/intrusive/ellen_bintree_hp.h></tt> - for Hazard Pointer GC cds::gc::HP
-        - <tt><cds/intrusive/ellen_bintree_ptb.h></tt> - for Pass-the-Buck GC cds::gc::PTB
-        - <tt><cds/intrusive/ellen_bintree_rcu.h></tt> - for RCU GC
-            (see \ref cds_intrusive_EllenBinTree_rcu "RCU-based EllenBinTree")
+        - <tt><cds/intrusive/ellen_bintree_hp.h></tt> - for Hazard Pointer GC \p cds::gc::HP
+        - <tt><cds/intrusive/ellen_bintree_dhp.h></tt> - for Pass-the-Buck GC \p cds::gc::DHP
+        - <tt><cds/intrusive/ellen_bintree_rcu.h></tt> - for RCU (see \ref cds_intrusive_EllenBinTree_rcu "RCU-based EllenBinTree")
 
         <b>Template arguments</b> :
-        - \p GC - garbage collector used, possible types are cds::gc::HP, cds::gc::PTB.
-            Note that cds::gc::HRC is not supported.
+        - \p GC - garbage collector, possible types are cds::gc::HP, cds::gc::DHP.
         - \p Key - key type, a subset of \p T
-        - \p T - type to be stored in tree's leaf nodes. The type must be based on ellen_bintree::node
-            (for ellen_bintree::base_hook) or it must have a member of type ellen_bintree::node
-            (for ellen_bintree::member_hook).
-        - \p Traits - type traits. See ellen_bintree::type_traits for explanation.
-
-        It is possible to declare option-based tree with cds::intrusive::ellen_bintree::make_traits metafunction
-        instead of \p Traits template argument.
-        Template argument list \p Options of cds::intrusive::ellen_bintree::make_traits metafunction are:
-        - opt::hook - hook used. Possible values are: ellen_bintree::base_hook, ellen_bintree::member_hook, ellen_bintree::traits_hook.
-            If the option is not specified, <tt>ellen_bintree::base_hook<></tt> is used.
-        - ellen_bintree::key_extractor - key extracting functor, mandatory option. The functor has the following prototype:
-            \code
-                struct key_extractor {
-                    void operator ()( Key& dest, T const& src );
-                };
-            \endcode
-            It should initialize \p dest key from \p src data. The functor is used to initialize internal nodes.
-        - opt::compare - key compare functor. No default functor is provided.
-            If the option is not specified, \p %opt::less is used.
-        - opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
-        - opt::disposer - the functor used for dispose removed nodes. Default is opt::v::empty_disposer. Due the nature
-            of GC schema the disposer may be called asynchronously. The disposer is used only for leaf nodes.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that means no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",
-            default is CDS_DEFAULT_ALLOCATOR.
-            Note that update descriptor is helping data structure with short lifetime and it is good candidate for pooling.
-            The number of simultaneously existing descriptors is bounded and depends on the number of threads
-            working with the tree and GC internals.
-            A bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue is good candidate
-            for the free-list of update descriptors, see cds::memory::vyukov_queue_pool free-list implementation.
-            Also notice that size of update descriptor is constant and not dependent on the type of data
-            stored in the tree so single free-list object can be used for all \p %EllenBinTree objects.
-        - opt::node_allocator - the allocator used for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::stat - internal statistics. Available types: ellen_bintree::stat, ellen_bintree::empty_stat (the default)
+        - \p T - type to be stored in tree's leaf nodes. The type must be based on \p ellen_bintree::node
+            (for \p ellen_bintree::base_hook) or it must have a member of type \p ellen_bintree::node
+            (for \p ellen_bintree::member_hook).
+        - \p Traits - tree traits, default is \p ellen_bintree::traits
+            It is possible to declare option-based tree with \p ellen_bintree::make_traits metafunction
+            instead of \p Traits template argument.
 
         @anchor cds_intrusive_EllenBinTree_less
         <b>Predicate requirements</b>
 
-        opt::less, opt::compare and other predicates using with member fuctions should accept at least parameters
+        \p Traits::less, \p Traits::compare and other predicates using with member fuctions should accept at least parameters
         of type \p T and \p Key in any combination.
         For example, for \p Foo struct with \p std::string key field the appropiate \p less functor is:
         \code
@@ -127,12 +94,14 @@ namespace cds { namespace intrusive {
             { return v.m_strKey.compare(p) > 0; }
         };
         \endcode
+
+        Usage examples see \ref cds_intrusive_EllenBinTree_usage "here"
     */
     template < class GC,
         typename Key,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = ellen_bintree::type_traits
+        class Traits = ellen_bintree::traits
 #else
         class Traits
 #endif
@@ -140,33 +109,33 @@ namespace cds { namespace intrusive {
     class EllenBinTree
     {
     public:
-        typedef GC      gc              ;   ///< Garbage collector used
-        typedef Key     key_type        ;   ///< type of a key stored in internal nodes; key is a part of \p value_type
-        typedef T       value_type      ;   ///< type of value stored in the binary tree
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef GC      gc;         ///< Garbage collector
+        typedef Key     key_type;   ///< type of a key to be stored in internal nodes; key is a part of \p value_type
+        typedef T       value_type; ///< type of value stored in the binary tree
+        typedef Traits  traits;     ///< Traits template parameter
 
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
-        typedef typename options::disposer  disposer    ;   ///< leaf node disposer
+        typedef typename traits::hook      hook;        ///< hook type
+        typedef typename hook::node_type   node_type;   ///< node type
+        typedef typename traits::disposer  disposer;    ///< leaf node disposer
 
         typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
 
     protected:
         //@cond
-        typedef ellen_bintree::base_node< gc >                      tree_node       ; ///< Base type of tree node
-        typedef node_type                                           leaf_node       ; ///< Leaf node type
+        typedef ellen_bintree::base_node< gc >            tree_node; ///< Base type of tree node
+        typedef node_type                                 leaf_node; ///< Leaf node type
         typedef ellen_bintree::node_types< gc, key_type, typename leaf_node::tag > node_factory;
-        typedef typename node_factory::internal_node_type internal_node ; ///< Internal node type
-        typedef typename node_factory::update_desc_type   update_desc   ; ///< Update descriptor
-        typedef typename update_desc::update_ptr                    update_ptr  ; ///< Marked pointer to update descriptor
+        typedef typename node_factory::internal_node_type internal_node; ///< Internal node type
+        typedef typename node_factory::update_desc_type   update_desc;   ///< Update descriptor
+        typedef typename update_desc::update_ptr          update_ptr;    ///< Marked pointer to update descriptor
         //@endcond
 
     public:
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key compare functor based on opt::compare and opt::less option setter.
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ; ///< Node traits
+        typedef implementation_defined key_comparator;    ///< key compare functor based on \p Traits::compare and \p Traits::less
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits; ///< Node traits
 #   else
-        typedef typename opt::details::make_comparator< value_type, options >::type key_comparator;
+        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
         struct node_traits: public get_node_traits< value_type, node_type, hook>::type
         {
             static internal_node const& to_internal_node( tree_node const& n )
@@ -183,13 +152,13 @@ namespace cds { namespace intrusive {
         };
 #   endif
 
-        typedef typename options::item_counter  item_counter;   ///< Item counting policy used
-        typedef typename options::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::stat          stat        ;   ///< internal statistics type
-        typedef typename options::key_extractor         key_extractor   ;   ///< key extracting functor
+        typedef typename traits::item_counter  item_counter;   ///< Item counting policy
+        typedef typename traits::memory_model  memory_model;   ///< Memory ordering, see \p cds::opt::memory_model
+        typedef typename traits::stat          stat;           ///< internal statistics type
+        typedef typename traits::key_extractor key_extractor;  ///< key extracting functor
 
-        typedef typename options::node_allocator        node_allocator  ;   ///< Internal node allocator
-        typedef typename options::update_desc_allocator update_desc_allocator ; ///< Update descriptor allocator
+        typedef typename traits::node_allocator        node_allocator;        ///< Allocator for internal node
+        typedef typename traits::update_desc_allocator update_desc_allocator; ///< Update descriptor allocator
 
     protected:
         //@cond
@@ -221,13 +190,13 @@ namespace cds { namespace intrusive {
             leaf_node *         pLeaf;
             update_ptr          updParent;
             update_ptr          updGrandParent;
-            bool                bRightLeaf      ; // true if pLeaf is right child of pParent, false otherwise
-            bool                bRightParent    ; // true if pParent is right child of pGrandParent, false otherwise
+            bool                bRightLeaf;   // true if pLeaf is right child of pParent, false otherwise
+            bool                bRightParent; // true if pParent is right child of pGrandParent, false otherwise
 
             search_result()
                 :pGrandParent( nullptr )
-                , pParent( nullptr )
-                , pLeaf( nullptr )
+                ,pParent( nullptr )
+                ,pLeaf( nullptr )
                 ,bRightLeaf( false )
                 ,bRightParent( false )
             {}
@@ -241,13 +210,13 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        internal_node       m_Root          ;   ///< Tree root node (key= Infinite2)
-        leaf_node           m_LeafInf1      ;   ///< Infinite leaf 1 (key= Infinite1)
-        leaf_node           m_LeafInf2      ;   ///< Infinite leaf 2 (key= Infinite2)
+        internal_node       m_Root;     ///< Tree root node (key= Infinite2)
+        leaf_node           m_LeafInf1; ///< Infinite leaf 1 (key= Infinite1)
+        leaf_node           m_LeafInf2; ///< Infinite leaf 2 (key= Infinite2)
         //@endcond
 
-        item_counter        m_ItemCounter   ;   ///< item counter
-        mutable stat        m_Stat          ;   ///< internal statistics
+        item_counter        m_ItemCounter;  ///< item counter
+        mutable stat        m_Stat;         ///< internal statistics
 
     protected:
         //@cond
@@ -324,7 +293,7 @@ namespace cds { namespace intrusive {
         /// Default constructor
         EllenBinTree()
         {
-            static_assert( (!std::is_same< key_extractor, opt::none >::value), "The key extractor option must be specified" );
+            static_assert( !std::is_same< key_extractor, opt::none >::value, "The key extractor option must be specified" );
             make_empty_tree();
         }
 
@@ -361,8 +330,7 @@ namespace cds { namespace intrusive {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this tree's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success and may be passed by reference
-            using \p std::ref
+            The user-defined functor is called only if the inserting is success.
         */
         template <typename Func>
         bool insert( value_type& val, Func f )
@@ -413,19 +381,19 @@ namespace cds { namespace intrusive {
             \endcode
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the tree
-            - \p val - argument \p val passed into the \p ensure function
+            - \p item - an item of the tree
+            - \p val - the argument \p val passed to the \p ensure function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 
             The functor can change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            You can pass \p func argument by value or by reference using \p std::ref.
-
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the tree.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
@@ -471,10 +439,9 @@ namespace cds { namespace intrusive {
 
             Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
             and deletes the item found. \p unlink finds an item by key and deletes it
-            only if \p val is an item of the tree, i.e. the pointer to item found
-            is equal to <tt> &val </tt>.
+            only if \p val is a node, i.e. the pointer to item found is equal to <tt> &val </tt>.
 
-            The \ref disposer specified in \p Traits class template parameter is called
+            The \p disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously.
 
             The function returns \p true if success and \p false otherwise.
@@ -488,16 +455,16 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the tree
         /** \anchor cds_intrusive_EllenBinTree_erase
-            The function searches an item with key equal to \p val in the tree,
+            The function searches an item with key equal to \p key in the tree,
             unlinks it from the tree, and returns \p true.
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool erase( const Q& val )
+        bool erase( const Q& key )
         {
-            return erase_( val, node_compare(),
+            return erase_( key, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [](value_type const&) {} );
         }
@@ -511,7 +478,7 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less>
-        bool erase_with( const Q& val, Less pred )
+        bool erase_with( const Q& key, Less pred )
         {
             typedef ellen_bintree::details::compare<
                 key_type,
@@ -520,14 +487,14 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-            return erase_( val, compare_functor(),
+            return erase_( key, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [](value_type const&) {} );
         }
 
         /// Deletes the item from the tree
         /** \anchor cds_intrusive_EllenBinTree_erase_func
-            The function searches an item with key equal to \p val in the tree,
+            The function searches an item with key equal to \p key in the tree,
             call \p f functor with item found, unlinks it from the tree, and returns \p true.
             The \ref disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously.
@@ -540,14 +507,14 @@ namespace cds { namespace intrusive {
             \endcode
             The functor can be passed by reference with <tt>boost:ref</tt>
 
-            If the item with key equal to \p val is not found the function return \p false.
+            If the item with key equal to \p key is not found the function return \p false.
 
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q, typename Func>
-        bool erase( Q const& val, Func f )
+        bool erase( Q const& key, Func f )
         {
-            return erase_( val, node_compare(),
+            return erase_( key, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 f );
         }
@@ -561,7 +528,7 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less, typename Func>
-        bool erase_with( Q const& val, Less pred, Func f )
+        bool erase_with( Q const& key, Less pred, Func f )
         {
             typedef ellen_bintree::details::compare<
                 key_type,
@@ -570,7 +537,7 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-            return erase_( val, compare_functor(),
+            return erase_( key, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 f );
         }
@@ -643,19 +610,19 @@ namespace cds { namespace intrusive {
             return extract_with_( dest.guard(), key, pred );
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** @anchor cds_intrusive_EllenBinTree_find_val
-            The function searches the item with key equal to \p val
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool find( Q const& val ) const
+        bool find( Q const& key ) const
         {
             search_result    res;
-            if ( search( res, val, node_compare() )) {
+            if ( search( res, key, node_compare() )) {
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -664,7 +631,7 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        /// Finds the key \p val with comparing functor \p pred
+        /// Finds the key \p key with comparing functor \p pred
         /**
             The function is an analog of \ref cds_intrusive_EllenBinTree_find_val "find(Q const&)"
             but \p pred is used for key compare.
@@ -674,7 +641,7 @@ namespace cds { namespace intrusive {
             \p pred should accept arguments of type \p Q, \p key_type, \p value_type in any combination.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& val, Less pred ) const
+        bool find_with( Q const& key, Less pred ) const
         {
             typedef ellen_bintree::details::compare<
                 key_type,
@@ -684,7 +651,7 @@ namespace cds { namespace intrusive {
             > compare_functor;
 
             search_result    res;
-            if ( search( res, val, compare_functor() )) {
+            if ( search( res, key, compare_functor() )) {
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -692,16 +659,16 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        /// Finds the key \p val
+        /// Finds the key \p key
         /** @anchor cds_intrusive_EllenBinTree_find_func
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
+            The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item, Q& val );
+                void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
+            where \p item is the item found, \p key is the <tt>find</tt> function argument.
 
             You can pass \p f argument by value or by reference using \p std::ref.
 
@@ -710,18 +677,15 @@ namespace cds { namespace intrusive {
             The functor does not serialize simultaneous access to the tree \p item. If such access is
             possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
 
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
-            can modify both arguments.
-
-            The function returns \p true if \p val is found, \p false otherwise.
+            The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& val, Func f ) const
+        bool find( Q& key, Func f ) const
         {
-            return find_( val, f );
+            return find_( key, f );
         }
 
-        /// Finds the key \p val with comparing functor \p pred
+        /// Finds the key \p key with comparing functor \p pred
         /**
             The function is an analog of \ref cds_intrusive_EllenBinTree_find_func "find(Q&, Func)"
             but \p pred is used for key comparison.
@@ -730,49 +694,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& val, Less pred, Func f ) const
+        bool find_with( Q& key, Less pred, Func f ) const
         {
-            return find_with_( val, pred, f );
-        }
-
-        /// Finds the key \p val
-        /** @anchor cds_intrusive_EllenBinTree_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            You can pass \p f argument by value or by reference using \p std::ref.
-
-            The functor can change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the tree \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f ) const
-        {
-            return find_( val, f );
-        }
-
-        /// Finds the key \p val with comparing functor \p pred
-        /**
-            The function is an analog of \ref cds_intrusive_EllenBinTree_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key compare.
-            \p Less functor has the interface like \p std::less and should meet \ref cds_intrusive_EllenBinTree_less
-            "Predicate requirements".
-            \p pred must imply the same element order as the comparator used for building the tree.
-        */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& val, Less pred, Func f ) const
-        {
-            return find_with_( val, pred, f );
+            return find_with_( key, pred, f );
         }
 
         /// Finds \p key and returns the item found
@@ -810,7 +734,7 @@ namespace cds { namespace intrusive {
             return m_Root.m_pLeft.load( memory_model::memory_order_relaxed )->is_leaf();
         }
 
-        /// Clears the tree (thread safe, non-atomic)
+        /// Clears the tree (thread safe, not atomic)
         /**
             The function unlink all items from the tree.
             The function is thread safe but not atomic: in multi-threaded environment with parallel insertions
@@ -821,7 +745,7 @@ namespace cds { namespace intrusive {
             \endcode
             the assertion could be raised.
 
-            For each leaf the \ref disposer will be called after unlinking.
+            For each leaf the \p disposer will be called after unlinking.
         */
         void clear()
         {
@@ -869,8 +793,8 @@ namespace cds { namespace intrusive {
             Only leaf nodes containing user data are counted.
 
             The value returned depends on item counter type provided by \p Traits template parameter.
-            If it is atomicity::empty_item_counter this function always returns 0.
-            Therefore, the function is not suitable for checking the tree emptiness, use \ref empty
+            If it is \p atomicity::empty_item_counter this function always returns 0.
+            The function is not suitable for checking the tree emptiness, use \p empty()
             member function for this purpose.
         */
         size_t size() const

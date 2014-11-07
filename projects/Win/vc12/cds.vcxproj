@@ -757,8 +757,8 @@
     <ClInclude Include="..\..\..\cds\intrusive\details\single_link_struct.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\skip_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\split_list_base.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_hp.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_ptb.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\lazy_list.h" />

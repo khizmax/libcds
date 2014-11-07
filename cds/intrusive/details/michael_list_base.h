@@ -19,8 +19,8 @@ namespace cds { namespace intrusive {
         /// Michael's list node
         /**
             Template parameters:
-            - GC - garbage collector
-            - Tag - a \ref cds_intrusive_hook_tag "tag"
+            - \p GC - garbage collector
+            - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none>
         struct node

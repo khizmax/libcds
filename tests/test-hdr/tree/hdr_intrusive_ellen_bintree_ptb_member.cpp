@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include "tree/hdr_intrusive_bintree.h"
-#include <cds/intrusive/ellen_bintree_ptb.h>
+#include <cds/intrusive/ellen_bintree_dhp.h>
 
 #include "tree/hdr_intrusive_ellen_bintree_pool_ptb.h"
 #include "unit/print_ellenbintree_stat.h"

@@ -151,7 +151,7 @@ namespace cds { namespace intrusive {
         /**
             Template parameters:
             - \p GC - one of \ref cds_garbage_collector "garbage collector type"
-            - \p Tag - a tag used to distinguish between different implementation. An incomplete type may be used as a tag.
+            - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename GC,
 #   ifdef CDS_DOXYGEN_INVOKED
@@ -169,8 +169,8 @@ namespace cds { namespace intrusive {
             typedef base_node< GC >   base_class;
             //@endcond
 
-            typedef GC              gc       ;   ///< Garbage collector type
-            typedef Tag             tag      ;   ///< Tag
+            typedef GC              gc;   ///< Garbage collector
+            typedef Tag             tag;  ///< Tag
 
             /// Default ctor
             node()
@@ -194,17 +194,17 @@ namespace cds { namespace intrusive {
             typedef base_node<typename LeafNode::gc>   base_class;
             //@endcond
 
-            typedef Key         key_type    ;   ///< key type
-            typedef LeafNode    leaf_node   ;   ///< type of leaf node
+            typedef Key         key_type;    ///< key type
+            typedef LeafNode    leaf_node;   ///< type of leaf node
             typedef update_desc< leaf_node, internal_node > update_desc_type; ///< Update descriptor
-            typedef typename update_desc_type::update_ptr  update_ptr ; ///< Marked pointer to update descriptor
+            typedef typename update_desc_type::update_ptr  update_ptr; ///< Marked pointer to update descriptor
 
-            key_type                         m_Key       ;   ///< Regular key
-            atomics::atomic<base_class *> m_pLeft     ;   ///< Left subtree
-            atomics::atomic<base_class *> m_pRight    ;   ///< Right subtree
-            atomics::atomic<update_ptr>   m_pUpdate   ;   ///< Update descriptor
+            key_type                      m_Key;     ///< Regular key
+            atomics::atomic<base_class *> m_pLeft;   ///< Left subtree
+            atomics::atomic<base_class *> m_pRight;  ///< Right subtree
+            atomics::atomic<update_ptr>   m_pUpdate; ///< Update descriptor
             //@cond
-            uintptr_t                           m_nEmptyUpdate; ///< ABA prevention for m_pUpdate, from 0..2^16 step 4
+            uintptr_t  m_nEmptyUpdate; ///< ABA prevention for m_pUpdate, from 0..2^16 step 4
             //@endcond
 
             /// Default ctor
@@ -228,13 +228,18 @@ namespace cds { namespace intrusive {
         /**
             This struct declares different \p %EllenBinTree node types.
             It can be useful for simplifying \p %EllenBinTree node declaration in your application.
+
+            Template parameters:
+            - \p GC - one of \ref cds_garbage_collector "garbage collector type"
+            - \p Key - key type
+            - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename GC, typename Key, typename Tag = opt::none>
         struct node_types
         {
-            typedef node<GC, Tag>                       leaf_node_type      ;   ///< Leaf node type
-            typedef internal_node<Key, leaf_node_type>  internal_node_type  ;   ///< Internal node type
-            typedef update_desc<leaf_node_type, internal_node_type> update_desc_type ;  ///< Update descriptor type
+            typedef node<GC, Tag>                       leaf_node_type;         ///< Leaf node type
+            typedef internal_node<Key, leaf_node_type>  internal_node_type;     ///< Internal node type
+            typedef update_desc<leaf_node_type, internal_node_type> update_desc_type;  ///< Update descriptor type
         };
 
         //@cond
@@ -260,8 +265,8 @@ namespace cds { namespace intrusive {
         /// Base hook
         /**
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a tag
+            - \p opt::gc - garbage collector
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         struct base_hook: public hook< opt::base_hook_tag, Options... >
@@ -273,8 +278,8 @@ namespace cds { namespace intrusive {
             Use \p offsetof macro to define \p MemberOffset
 
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a tag
+            - \p opt::gc - garbage collector
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         struct member_hook: public hook< opt::member_hook_tag, Options... >
@@ -290,8 +295,8 @@ namespace cds { namespace intrusive {
             See \ref node_traits for \p NodeTraits interface description
 
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a tag
+            - opt::gc - garbage collector
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         struct traits_hook: public hook< opt::traits_hook_tag, Options... >
@@ -422,12 +427,12 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Type traits for EllenBinTree class
-        struct type_traits
+        /// EllenBinTree traits
+        struct traits
         {
             /// Hook used
             /**
-                Possible values are: ellen_bintree::base_hook, ellen_bintree::member_hook, ellen_bintree::traits_hook.
+                Possible values are: \p ellen_bintree::base_hook, \p ellen_bintree::member_hook, \p ellen_bintree::traits_hook.
             */
             typedef base_hook<>       hook;
 
@@ -449,7 +454,7 @@ namespace cds { namespace intrusive {
             /**
                 No default functor is provided. If the option is not specified, the \p less is used.
 
-                See cds::opt::compare option description for functor interface.
+                See \p cds::opt::compare option description for functor interface.
 
                 You should provide \p compare or \p less functor.
                 See \ref cds_intrusive_EllenBinTree_rcu_less "predicate requirements".
@@ -458,7 +463,7 @@ namespace cds { namespace intrusive {
 
             /// Specifies binary predicate used for key compare.
             /**
-                See cds::opt::less option description for predicate interface.
+                See \p cds::opt::less option description for predicate interface.
 
                 You should provide \p compare or \p less functor.
                 See \ref cds_intrusive_EllenBinTree_rcu_less "predicate requirements".
@@ -467,33 +472,33 @@ namespace cds { namespace intrusive {
 
             /// Disposer
             /**
-                The functor used for dispose removed items. Default is opt::v::empty_disposer.
+                The functor used for dispose removed items. Default is \p opt::v::empty_disposer.
             */
             typedef opt::v::empty_disposer          disposer;
 
             /// Item counter
             /**
-                The type for item counting feature (see cds::opt::item_counter).
-                Default is no item counter (\ref atomicity::empty_item_counter)
+                The type for item counter, by default it is disabled (\p atomicity::empty_item_counter).
+                To enable it use \p atomicity::item_counter
             */
             typedef atomicity::empty_item_counter     item_counter;
 
             /// C++ memory ordering model
             /**
-                List of available memory ordering see opt::memory_model
+                List of available memory ordering see \p opt::memory_model
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
             /// Allocator for update descriptors
             /**
-                The allocator type is used for \ref update_desc.
+                The allocator type is used for \p ellen_bintree::update_desc.
 
                 Update descriptor is helping data structure with short lifetime and it is good candidate
-                for pooling. The number of simultaneously existing descriptors is bounded number
+                for pooling. The number of simultaneously existing descriptors is bounded and it is
                 limited the number of threads working with the tree.
                 Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue
                 is good choice for the free-list of update descriptors,
-                see cds::memory::vyukov_queue_pool free-list implementation.
+                see \p cds::memory::vyukov_queue_pool free-list implementation.
 
                 Also notice that size of update descriptor is constant and not dependent on the type of data
                 stored in the tree so single free-list object can be used for several \p EllenBinTree object.
@@ -502,28 +507,58 @@ namespace cds { namespace intrusive {
 
             /// Allocator for internal nodes
             /**
-                The allocator type is used for \ref internal_node.
+                The allocator type is used for \p ellen_bintree::internal_node.
             */
             typedef CDS_DEFAULT_ALLOCATOR           node_allocator;
 
             /// Internal statistics
             /**
-                Possible types: \p ellen_bintree::empty_stat (the default), \p ellen_bintree::stat or any
-                other with interface like \p %stat.
+                By default, internal statistics is disabled (\p ellen_bintree::empty_stat).
+                To enable it use \p ellen_bintree::stat.
             */
             typedef empty_stat                      stat;
 
             /// RCU deadlock checking policy (only for \ref cds_intrusive_EllenBinTree_rcu "RCU-based EllenBinTree")
             /**
-                List of available options see opt::rcu_check_deadlock
+                List of available options see \p opt::rcu_check_deadlock
             */
             typedef cds::opt::v::rcu_throw_deadlock      rcu_check_deadlock;
         };
 
         /// Metafunction converting option list to EllenBinTree traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-            \p Options list see \ref EllenBinTree.
+            \p Options are:
+            - \p opt::hook - hook used. Possible values are: \p ellen_bintree::base_hook, \p ellen_bintree::member_hook, \p ellen_bintree::traits_hook.
+                If the option is not specified, <tt>ellen_bintree::base_hook<></tt> is used.
+            - \p ellen_bintree::key_extractor - key extracting functor, mandatory option. The functor has the following prototype:
+                \code
+                    struct key_extractor {
+                        void operator ()( Key& dest, T const& src );
+                    };
+                \endcode
+                It should initialize \p dest key from \p src data. The functor is used to initialize internal nodes.
+            - \p opt::compare - key compare functor. No default functor is provided.
+                If the option is not specified, \p %opt::less is used.
+            - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
+            - \p opt::disposer - the functor used for dispose removed nodes. Default is \p opt::v::empty_disposer. Due the nature
+                of GC schema the disposer may be called asynchronously. The disposer is used only for leaf nodes.
+            - \p opt::item_counter - the type of item counting feature, by defaulr it is disabled (\p atomicity::empty_item_counter)
+                To enable it use \p atomicity::item_counter
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+            - \p ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",
+                default is \ref CDS_DEFAULT_ALLOCATOR.
+                Note that update descriptor is helping data structure with short lifetime and it is good candidate for pooling.
+                The number of simultaneously existing descriptors is bounded and depends on the number of threads
+                working with the tree and GC internals.
+                A bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue is good candidate
+                for the free-list of update descriptors, see cds::memory::vyukov_queue_pool free-list implementation.
+                Also notice that size of update descriptor is constant and not dependent on the type of data
+                stored in the tree so single free-list object can be used for all \p %EllenBinTree objects.
+            - \p opt::node_allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::stat - internal statistics, by default it is disabled (\p ellen_bintree::empty_stat)
+                To enable statistics use \p \p ellen_bintree::stat
+            - \p opt::rcu_check_deadlock - a deadlock checking policy for RCU-based tree, default is \p opt::v::rcu_throw_deadlock
         */
         template <typename... Options>
         struct make_traits {
@@ -531,7 +566,7 @@ namespace cds { namespace intrusive {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -676,11 +711,10 @@ namespace cds { namespace intrusive {
 
         } // namespace details
         //@endcond
-
     }   // namespace ellen_bintree
 
     // Forwards
-    template < class GC, typename Key, typename T, class Traits = ellen_bintree::type_traits >
+    template < class GC, typename Key, typename T, class Traits = ellen_bintree::traits >
     class EllenBinTree;
 
 }} // namespace cds::intrusive
