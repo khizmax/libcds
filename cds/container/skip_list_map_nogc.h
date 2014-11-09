@@ -19,7 +19,6 @@ namespace cds { namespace container {
     }} // namespace skip_list::details
     //@endcond
 
-
     /// Lock-free skip-list map (template specialization for gc::nogc)
     /** @ingroup cds_nonintrusive_map
         \anchor cds_nonintrusive_SkipListMap_nogc

@@ -23,17 +23,15 @@ namespace tree {
                 std::cout << t.statistics();
             }
         };
-
     }
 
     void EllenBinTreeSetHdrTest::EllenBinTree_hp_less()
     {
-        typedef cc::EllenBinTreeSet< gc_type, key_type, value_type,
-            cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< key_extractor >
-                ,co::less< less >
-            >::type
-        > set_type;
+        struct set_traits : public cc::ellen_bintree::traits{
+            typedef EllenBinTreeSetHdrTest::key_extractor key_extractor;
+            typedef EllenBinTreeSetHdrTest::less less;
+        };
+        typedef cc::EllenBinTreeSet< gc_type, key_type, value_type, set_traits > set_type;
 
         test<set_type, print_stat>();
     }

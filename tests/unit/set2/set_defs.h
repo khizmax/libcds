@@ -416,8 +416,8 @@
 #define CDSUNIT_DECLARE_EllenBinTreeSet \
     TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_hp)\
     TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_hp_stat)\
-    TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_ptb)\
-    TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_ptb_stat)\
+    TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_dhp)\
+    TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_dhp_stat)\
     TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_rcu_gpi)\
     TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_rcu_gpi_stat)\
     TEST_SET_NOLF_EXTRACT(EllenBinTreeSet_rcu_gpb)\
@@ -429,8 +429,8 @@
 #define CDSUNIT_TEST_EllenBinTreeSet \
     CPPUNIT_TEST(EllenBinTreeSet_hp)\
     CPPUNIT_TEST(EllenBinTreeSet_hp_stat)\
-    CPPUNIT_TEST(EllenBinTreeSet_ptb)\
-    CPPUNIT_TEST(EllenBinTreeSet_ptb_stat)\
+    CPPUNIT_TEST(EllenBinTreeSet_dhp)\
+    CPPUNIT_TEST(EllenBinTreeSet_dhp_stat)\
     CPPUNIT_TEST(EllenBinTreeSet_rcu_gpi)\
     /*CPPUNIT_TEST(EllenBinTreeSet_rcu_gpi_stat)*/\
     CPPUNIT_TEST(EllenBinTreeSet_rcu_gpb)\

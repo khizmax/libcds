@@ -3,7 +3,7 @@
 #ifndef __CDS_CONTAINER_IMPL_ELLEN_BINTREE_MAP_H
 #define __CDS_CONTAINER_IMPL_ELLEN_BINTREE_MAP_H
 
-#include <traits>
+#include <type_traits>
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/impl/ellen_bintree.h>
 #include <cds/container/details/guarded_ptr_cast.h>
@@ -85,7 +85,7 @@ namespace cds { namespace container {
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator; ///< key compare functor based on \p Traits::compare and \p Traits::less
 #   else
-        typedef typename maker::intrusive_type_traits::compare   key_comparator;
+        typedef typename maker::intrusive_traits::compare   key_comparator;
 #   endif
         typedef typename base_class::item_counter           item_counter; ///< Item counting policy
         typedef typename base_class::memory_model           memory_model; ///< Memory ordering, see \p cds::opt::memory_model

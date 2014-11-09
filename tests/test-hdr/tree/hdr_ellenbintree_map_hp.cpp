@@ -12,7 +12,7 @@ namespace tree {
     namespace {
         typedef cds::gc::HP gc_type;
 
-        typedef cc::ellen_bintree::map_node<gc_type, EllenBinTreeMapHdrTest::key_type, EllenBinTreeMapHdrTest::value_type> tree_leaf_node;
+        typedef cc::ellen_bintree::map_node<gc_type, EllenBinTreeMapHdrTest::key_type, EllenBinTreeMapHdrTest::value_type>  tree_leaf_node;
         typedef cc::ellen_bintree::internal_node< EllenBinTreeMapHdrTest::key_type, tree_leaf_node >                        tree_internal_node;
         typedef cc::ellen_bintree::update_desc<tree_leaf_node, tree_internal_node>                                          tree_update_desc;
 
@@ -28,11 +28,11 @@ namespace tree {
 
     void EllenBinTreeMapHdrTest::EllenBinTree_hp_less()
     {
-        typedef cc::EllenBinTreeMap< gc_type, key_type, value_type,
-            cc::ellen_bintree::make_map_traits<
-                co::less< less >
-            >::type
-        > set_type;
+        struct set_traits : public cc::ellen_bintree::traits
+        {
+            typedef EllenBinTreeMapHdrTest::less less;
+        };
+        typedef cc::EllenBinTreeMap< gc_type, key_type, value_type, set_traits > set_type;
 
         test<set_type, print_stat>();
     }

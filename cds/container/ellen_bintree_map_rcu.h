@@ -40,40 +40,9 @@ namespace cds { namespace container {
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p Key - key type
         - \p T - value type to be stored in tree's leaf nodes.
-        - \p Traits - type traits. See ellen_bintree::type_traits for explanation.
-
-        It is possible to declare option-based tree with ellen_bintree::make_map_traits metafunction
-        instead of \p Traits template argument.
-        Template argument list \p Options of ellen_bintree::make_map_traits metafunction are:
-        - opt::compare - key compare functor. No default functor is provided.
-            If the option is not specified, \p %opt::less is used.
-        - opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
-        - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
-            or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - opt::allocator - the allocator used for \ref ellen_bintree::map_node "leaf nodes" which contains data.
-            Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - opt::node_allocator - the allocator used for \ref ellen_bintree::internal_node "internal nodes".
-            Default is \ref CDS_DEFAULT_ALLOCATOR.
-        - ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",
-            default is \ref CDS_DEFAULT_ALLOCATOR.
-            Note that update descriptor is helping data structure with short lifetime and it is good candidate for pooling.
-            The number of simultaneously existing descriptors is a relatively small number limited the number of threads
-            working with the tree and RCU buffer size.
-            Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue is good choice for the free-list
-            of update descriptors, see cds::memory::vyukov_queue_pool free-list implementation.
-            Also notice that size of update descriptor is not dependent on the type of data
-            stored in the tree so single free-list object can be used for several EllenBinTree-based object.
-        - opt::stat - internal statistics. Available types: ellen_bintree::stat, ellen_bintree::empty_stat (the default)
-        - opt::rcu_check_deadlock - a deadlock checking policy. Default is opt::v::rcu_throw_deadlock
-        - opt::copy_policy - key copy policy defines a functor to copy leaf node's key to internal node.
-            By default, assignment operator is used.
-            The copy functor interface is:
-            \code
-            struct copy_functor {
-                void operator()( Key& dest, Key const& src );
-            };
-            \endcode
+        - \p Traits - map traits, default is \p ellen_bintree::traits.
+            It is possible to declare option-based tree with \p ellen_bintree::make_map_traits metafunction
+            instead of \p Traits template argument.
 
         @note Before including <tt><cds/container/ellen_bintree_map_rcu.h></tt> you should include appropriate RCU header file,
         see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
@@ -83,7 +52,7 @@ namespace cds { namespace container {
         typename Key,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = ellen_bintree::type_traits
+        class Traits = ellen_bintree::traits
 #else
         class Traits
 #endif
@@ -100,27 +69,27 @@ namespace cds { namespace container {
         typedef typename maker::type base_class;
         //@endcond
     public:
-        typedef cds::urcu::gc<RCU>  gc  ;   ///< RCU Garbage collector
-        typedef Key     key_type        ;   ///< type of a key stored in the map
-        typedef T       mapped_type      ;  ///< type of value stored in the map
-        typedef std::pair< key_type const, mapped_type >    value_type  ;   ///< Key-value pair stored in leaf node of the mp
-        typedef Traits  options         ;   ///< Traits template parameter
+        typedef cds::urcu::gc<RCU>  gc;   ///< RCU Garbage collector
+        typedef Key     key_type;    ///< type of a key stored in the map
+        typedef T       mapped_type; ///< type of value stored in the map
+        typedef std::pair< key_type const, mapped_type >    value_type;   ///< Key-value pair stored in leaf node of the mp
+        typedef Traits  traits;      ///< Traits template parameter
 
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key compare functor based on opt::compare and opt::less option setter.
+        typedef implementation_defined key_comparator  ;    ///< key compare functor based on \p Traits::compare and \p Traits::less
 #   else
-        typedef typename maker::intrusive_type_traits::compare   key_comparator;
+        typedef typename maker::intrusive_traits::compare   key_comparator;
 #   endif
-        typedef typename base_class::item_counter           item_counter        ; ///< Item counting policy used
-        typedef typename base_class::memory_model           memory_model        ; ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename base_class::node_allocator         node_allocator_type ; ///< allocator for maintaining internal node
-        typedef typename base_class::stat                   stat                ; ///< internal statistics type
-        typedef typename base_class::rcu_check_deadlock     rcu_check_deadlock  ; ///< Deadlock checking policy
-        typedef typename options::copy_policy               copy_policy         ; ///< key copy policy
+        typedef typename base_class::item_counter           item_counter;       ///< Item counting policy
+        typedef typename base_class::memory_model           memory_model;       ///< Memory ordering, see \p cds::opt::memory_model option
+        typedef typename base_class::node_allocator         node_allocator_type; ///< allocator for maintaining internal node
+        typedef typename base_class::stat                   stat;               ///< internal statistics
+        typedef typename base_class::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
+        typedef typename traits::copy_policy                copy_policy;        ///< key copy policy
 
-        typedef typename options::allocator                 allocator_type      ;   ///< Allocator for leaf nodes
-        typedef typename base_class::node_allocator         node_allocator      ;   ///< Internal node allocator
-        typedef typename base_class::update_desc_allocator  update_desc_allocator ; ///< Update descriptor allocator
+        typedef typename traits::allocator                  allocator_type;        ///< Allocator for leaf nodes
+        typedef typename base_class::node_allocator         node_allocator;        ///< Internal node allocator
+        typedef typename base_class::update_desc_allocator  update_desc_allocator; ///< Update descriptor allocator
 
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
 
@@ -139,7 +108,7 @@ namespace cds { namespace container {
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
 
         /// pointer to extracted node
-        typedef cds::urcu::exempt_ptr< gc, leaf_node, value_type, typename maker::intrusive_type_traits::disposer,
+        typedef cds::urcu::exempt_ptr< gc, leaf_node, value_type, typename maker::intrusive_traits::disposer,
             cds::urcu::details::conventional_exempt_member_cast<leaf_node, value_type>
         > exempt_ptr;
 
@@ -158,11 +127,10 @@ namespace cds { namespace container {
             The function creates a node with \p key and default value, and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from a value of type \p K.
-                In trivial case, \p K is equal to \ref key_type.
-            - The \ref mapped_type should be default-constructible.
+            - The \p key_type should be constructible from a value of type \p K.
+            - The \p mapped_type should be default-constructible.
 
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() can be called. RCU should not be locked.
 
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -178,10 +146,10 @@ namespace cds { namespace container {
             and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from \p key of type \p K.
-            - The \ref value_type should be constructible from \p val of type \p V.
+            - The \p key_type should be constructible from \p key of type \p K.
+            - The \p value_type should be constructible from \p val of type \p V.
 
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() method can be called. RCU should not be locked.
 
             Returns \p true if \p val is inserted into the map, \p false otherwise.
         */
@@ -222,7 +190,7 @@ namespace cds { namespace container {
             This can be useful if complete initialization of object of \p value_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
 
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() method can be called. RCU should not be locked.
         */
         template <typename K, typename Func>
         bool insert_key( const K& key, Func func )
@@ -235,11 +203,11 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p value_type created in-place from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() method can be called. RCU should not be locked.
         */
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
@@ -277,11 +245,13 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \ref value_type.
 
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() method can be called. RCU should not be locked.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the list.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
@@ -298,7 +268,7 @@ namespace cds { namespace container {
         /// Delete \p key from the map
         /**\anchor cds_nonintrusive_EllenBinTreeMap_rcu_erase_val
 
-            RCU \p synchronize method can be called. RCU should not be locked.
+            RCU \p synchronize() method can be called. RCU should not be locked.
 
             Return \p true if \p key is found and deleted, \p false otherwise
         */
@@ -537,15 +507,21 @@ namespace cds { namespace container {
         }
 
         /// Checks if the map is empty
-        /**
-            Emptiness is checked by item counting: if item count is zero then the map is empty.
-        */
         bool empty() const
         {
             return base_class::empty();
         }
 
         /// Returns item count in the map
+        /**
+            Only leaf nodes containing user data are counted.
+
+            The value returned depends on item counter type provided by \p Traits template parameter.
+            If it is \p atomicity::empty_item_counter this function always returns 0.
+
+            The function is not suitable for checking the tree emptiness, use \p empty()
+            member function for this purpose.
+        */
         size_t size() const
         {
             return base_class::size();
@@ -565,7 +541,6 @@ namespace cds { namespace container {
         {
             return base_class::check_consistency();
         }
-
     };
 }} // namespace cds::container
 

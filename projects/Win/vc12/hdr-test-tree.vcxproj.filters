@@ -99,13 +99,7 @@
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_hp.cpp">
       <Filter>container</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_ptb.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_hp.cpp">
-      <Filter>container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_ptb.cpp">
       <Filter>container</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp.cpp">
@@ -113,6 +107,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp_member.cpp">
       <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_dhp.cpp">
+      <Filter>container</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -30,7 +30,7 @@
 
 #include <cds/container/ellen_bintree_set_rcu.h>
 #include <cds/container/ellen_bintree_set_hp.h>
-#include <cds/container/ellen_bintree_set_ptb.h>
+#include <cds/container/ellen_bintree_set_dhp.h>
 
 #include <cds/container/striped_set/std_list.h>
 #include <cds/container/striped_set/std_vector.h>
@@ -1634,7 +1634,7 @@ namespace set2 {
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
             };
 
-            struct ptb_gc {
+            struct dhp_gc {
                 typedef cc::ellen_bintree::node<cds::gc::DHP, key_val>              leaf_node;
                 typedef cc::ellen_bintree::internal_node< key_type, leaf_node >     internal_node;
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
@@ -1669,179 +1669,107 @@ namespace set2 {
 #endif
         };
 
-
-        // ***************************************************************************
-        // EllenBinTreeSet - HP
-
-        class traits_EllenBinTreeSet_hp: public cc::ellen_bintree::make_set_traits<
+        struct traits_EllenBinTreeSet: public cc::ellen_bintree::make_set_traits<
             cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
             ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
             ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
         >::type
         {};
+
+        struct traits_EllenBinTreeSet_hp : public traits_EllenBinTreeSet
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
         typedef cc::EllenBinTreeSet< cds::gc::HP, key_type, key_val, traits_EllenBinTreeSet_hp > EllenBinTreeSet_hp;
 
-        class traits_EllenBinTreeSet_hp_stat: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-            ,co::stat< cc::ellen_bintree::stat<> >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< cds::gc::HP, key_type, key_val, traits_EllenBinTreeSet_hp_stat > EllenBinTreeSet_hp_stat;
+        struct traits_EllenBinTreeSet_dhp : public traits_EllenBinTreeSet
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::dhp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< cds::gc::DHP, key_type, key_val, traits_EllenBinTreeSet_dhp > EllenBinTreeSet_dhp;
 
-        // ***************************************************************************
-        // EllenBinTreeSet - DHP
+        struct traits_EllenBinTreeSet_gpi : public traits_EllenBinTreeSet
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpi::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_gpi, key_type, key_val, traits_EllenBinTreeSet_gpi > EllenBinTreeSet_rcu_gpi;
 
-        class traits_EllenBinTreeSet_ptb: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::ptb_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< cds::gc::DHP, key_type, key_val, traits_EllenBinTreeSet_ptb > EllenBinTreeSet_ptb;
+        struct traits_EllenBinTreeSet_gpb : public traits_EllenBinTreeSet
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_gpb, key_type, key_val, traits_EllenBinTreeSet_gpb > EllenBinTreeSet_rcu_gpb;
 
-        class traits_EllenBinTreeSet_ptb_stat: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::ptb_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-            ,co::stat< cc::ellen_bintree::stat<> >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< cds::gc::DHP, key_type, key_val, traits_EllenBinTreeSet_ptb_stat > EllenBinTreeSet_ptb_stat;
-
-
-        // ***************************************************************************
-        // EllenBinTreeSet - RCU
-
-        class traits_EllenBinTreeSet_rcu_gpi: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::gpi::update_desc, ellen_bintree_pool::bounded_update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_gpi, key_type, key_val, traits_EllenBinTreeSet_rcu_gpi > EllenBinTreeSet_rcu_gpi;
-
-        class traits_EllenBinTreeSet_rcu_gpi_stat: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::gpi::update_desc, ellen_bintree_pool::bounded_update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-            ,co::stat< cc::ellen_bintree::stat<> >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_gpi, key_type, key_val, traits_EllenBinTreeSet_rcu_gpi_stat > EllenBinTreeSet_rcu_gpi_stat;
-
-        class traits_EllenBinTreeSet_rcu_gpb: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_gpb, key_type, key_val, traits_EllenBinTreeSet_rcu_gpb > EllenBinTreeSet_rcu_gpb;
-
-        class traits_EllenBinTreeSet_rcu_gpb_stat: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-            ,co::stat< cc::ellen_bintree::stat<> >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_gpb, key_type, key_val, traits_EllenBinTreeSet_rcu_gpb_stat > EllenBinTreeSet_rcu_gpb_stat;
-
-        class traits_EllenBinTreeSet_rcu_gpt: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::gpt::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_gpt, key_type, key_val, traits_EllenBinTreeSet_rcu_gpt > EllenBinTreeSet_rcu_gpt;
-
-        class traits_EllenBinTreeSet_rcu_gpt_stat: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::gpt::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-            ,co::stat< cc::ellen_bintree::stat<> >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_gpt, key_type, key_val, traits_EllenBinTreeSet_rcu_gpt_stat > EllenBinTreeSet_rcu_gpt_stat;
+        struct traits_EllenBinTreeSet_gpt : public traits_EllenBinTreeSet
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpt::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_gpt, key_type, key_val, traits_EllenBinTreeSet_gpt > EllenBinTreeSet_rcu_gpt;
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        class traits_EllenBinTreeSet_rcu_shb: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_shb, key_type, key_val, traits_EllenBinTreeSet_rcu_shb > EllenBinTreeSet_rcu_shb;
+        struct traits_EllenBinTreeSet_shb : public traits_EllenBinTreeSet
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_shb, key_type, key_val, traits_EllenBinTreeSet_shb > EllenBinTreeSet_rcu_shb;
 
-        class traits_EllenBinTreeSet_rcu_shb_stat: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-            ,co::stat< cc::ellen_bintree::stat<> >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_shb, key_type, key_val, traits_EllenBinTreeSet_rcu_shb_stat > EllenBinTreeSet_rcu_shb_stat;
+        struct traits_EllenBinTreeSet_sht : public traits_EllenBinTreeSet
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_sht, key_type, key_val, traits_EllenBinTreeSet_sht > EllenBinTreeSet_rcu_sht;
+#endif
 
-        class traits_EllenBinTreeSet_rcu_sht: public cc::ellen_bintree::make_set_traits<
+        struct traits_EllenBinTreeSet_stat: public cc::ellen_bintree::make_set_traits<
             cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
             ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
-            ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-        >::type
-        {};
-        typedef cc::EllenBinTreeSet< rcu_sht, key_type, key_val, traits_EllenBinTreeSet_rcu_sht > EllenBinTreeSet_rcu_sht;
-
-        class traits_EllenBinTreeSet_rcu_sht_stat: public cc::ellen_bintree::make_set_traits<
-            cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
-            ,co::less< typename ellen_bintree_props::less >
-            ,cc::ellen_bintree::update_desc_allocator<
-                cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
-            >
             ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
             ,co::stat< cc::ellen_bintree::stat<> >
         >::type
         {};
-        typedef cc::EllenBinTreeSet< rcu_sht, key_type, key_val, traits_EllenBinTreeSet_rcu_sht_stat > EllenBinTreeSet_rcu_sht_stat;
 
+        struct traits_EllenBinTreeSet_stat_hp : public traits_EllenBinTreeSet_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< cds::gc::HP, key_type, key_val, traits_EllenBinTreeSet_stat_hp > EllenBinTreeSet_hp_stat;
+
+        struct traits_EllenBinTreeSet_stat_dhp : public traits_EllenBinTreeSet_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::dhp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< cds::gc::DHP, key_type, key_val, traits_EllenBinTreeSet_stat_dhp > EllenBinTreeSet_dhp_stat;
+
+        struct traits_EllenBinTreeSet_stat_gpi : public traits_EllenBinTreeSet_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpi::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_gpi, key_type, key_val, traits_EllenBinTreeSet_stat_gpi > EllenBinTreeSet_rcu_gpi_stat;
+
+        struct traits_EllenBinTreeSet_stat_gpb : public traits_EllenBinTreeSet_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_gpb, key_type, key_val, traits_EllenBinTreeSet_stat_gpb > EllenBinTreeSet_rcu_gpb_stat;
+
+        struct traits_EllenBinTreeSet_stat_gpt : public traits_EllenBinTreeSet_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpt::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_gpt, key_type, key_val, traits_EllenBinTreeSet_stat_gpt > EllenBinTreeSet_rcu_gpt_stat;
+
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        struct traits_EllenBinTreeSet_stat_shb : public traits_EllenBinTreeSet_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_shb, key_type, key_val, traits_EllenBinTreeSet_stat_shb > EllenBinTreeSet_rcu_shb_stat;
+
+        struct traits_EllenBinTreeSet_stat_sht : public traits_EllenBinTreeSet_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_sht, key_type, key_val, traits_EllenBinTreeSet_stat_sht > EllenBinTreeSet_rcu_sht_stat;
 #endif
 
         // ***************************************************************************

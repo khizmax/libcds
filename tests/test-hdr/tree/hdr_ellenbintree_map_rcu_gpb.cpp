@@ -33,9 +33,9 @@ namespace tree {
             cc::ellen_bintree::make_map_traits<
                 co::less< less >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_cmp()
@@ -44,9 +44,9 @@ namespace tree {
             cc::ellen_bintree::make_map_traits<
                 co::compare< compare >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_cmpless()
@@ -56,9 +56,9 @@ namespace tree {
                 co::compare< compare >
                 ,co::less< less >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_less_ic()
@@ -68,21 +68,20 @@ namespace tree {
                 co::less< less >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_cmp_ic()
     {
-        typedef cc::EllenBinTreeMap< rcu_type, key_type, value_type,
-            cc::ellen_bintree::make_map_traits<
-                co::item_counter< cds::atomicity::item_counter >
-                ,co::compare< compare >
-            >::type
-        > set_type;
+        struct map_traits : public cc::ellen_bintree::traits {
+            typedef cds::atomicity::item_counter item_counter;
+            typedef EllenBinTreeMapHdrTest::compare compare;
+        };
+        typedef cc::EllenBinTreeMap< rcu_type, key_type, value_type, map_traits > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_less_stat()
@@ -92,9 +91,9 @@ namespace tree {
                 co::less< less >
                 ,co::stat< cc::ellen_bintree::stat<> >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_cmp_ic_stat()
@@ -105,9 +104,9 @@ namespace tree {
                 ,co::stat< cc::ellen_bintree::stat<> >
                 ,co::compare< compare >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_less_pool()
@@ -118,9 +117,9 @@ namespace tree {
                 ,co::node_allocator< cds::memory::pool_allocator< tree_internal_node, ellen_bintree_rcu::internal_node_pool_accessor > >
                 ,cc::ellen_bintree::update_desc_allocator< cds::memory::pool_allocator< tree_update_desc, ellen_bintree_rcu::update_desc_pool_accessor > >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_less_pool_ic_stat()
@@ -133,9 +132,9 @@ namespace tree {
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< cc::ellen_bintree::stat<> >
             >::type
-        > set_type;
+        > map_type;
 
-        test_rcu<set_type, print_stat>();
+        test_rcu<map_type, print_stat>();
     }
 
 } // namespace tree

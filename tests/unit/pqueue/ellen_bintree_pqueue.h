@@ -4,7 +4,7 @@
 #define __CDSUNIT_STD_ELLEN_BINTREE_PQUEUE_H
 
 #include <cds/container/ellen_bintree_set_hp.h>
-#include <cds/container/ellen_bintree_set_ptb.h>
+#include <cds/container/ellen_bintree_set_dhp.h>
 #include <cds/urcu/general_instant.h>
 #include <cds/urcu/general_buffered.h>
 #include <cds/urcu/general_threaded.h>

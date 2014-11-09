@@ -1052,13 +1052,7 @@
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_hp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_ptb.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_ptb.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\mspriority_queue.h">
@@ -1231,6 +1225,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_dhp.h">
       <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

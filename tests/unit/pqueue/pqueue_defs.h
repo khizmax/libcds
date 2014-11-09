@@ -55,7 +55,9 @@
     TEST_CASE(EllenBinTree_HP_min)          \
     TEST_CASE(EllenBinTree_HP_min_stat)     \
     TEST_CASE(EllenBinTree_DHP_max)         \
+    TEST_CASE(EllenBinTree_DHP_max_stat)    \
     TEST_CASE(EllenBinTree_DHP_min)         \
+    TEST_CASE(EllenBinTree_DHP_min_stat)    \
     TEST_CASE(EllenBinTree_RCU_gpi_max)     \
     TEST_CASE(EllenBinTree_RCU_gpi_max_stat)     \
     TEST_CASE(EllenBinTree_RCU_gpi_min)     \
@@ -75,7 +77,9 @@
     CPPUNIT_TEST(EllenBinTree_HP_min)       \
     CPPUNIT_TEST(EllenBinTree_HP_min_stat)  \
     CPPUNIT_TEST(EllenBinTree_DHP_max)      \
+    CPPUNIT_TEST(EllenBinTree_DHP_max_stat) \
     CPPUNIT_TEST(EllenBinTree_DHP_min)      \
+    CPPUNIT_TEST(EllenBinTree_DHP_min_stat) \
     /*CPPUNIT_TEST(EllenBinTree_RCU_gpi_max)*/  \
     /*CPPUNIT_TEST(EllenBinTree_RCU_gpi_max_stat)*/  \
     /*CPPUNIT_TEST(EllenBinTree_RCU_gpi_min)*/  \
@@ -114,7 +118,9 @@
     TEST_CASE(SkipList_HP_min)          \
     TEST_CASE(SkipList_HP_min_stat)     \
     TEST_CASE(SkipList_DHP_max)         \
+    TEST_CASE(SkipList_DHP_max_stat)    \
     TEST_CASE(SkipList_DHP_min)         \
+    TEST_CASE(SkipList_DHP_min_stat)    \
     TEST_CASE(SkipList_RCU_gpi_max)     \
     TEST_CASE(SkipList_RCU_gpi_min)     \
     TEST_CASE(SkipList_RCU_gpb_max)     \
@@ -128,7 +134,9 @@
     CPPUNIT_TEST(SkipList_HP_min)       \
     CPPUNIT_TEST(SkipList_HP_min_stat)  \
     CPPUNIT_TEST(SkipList_DHP_max)      \
+    CPPUNIT_TEST(SkipList_DHP_max_stat) \
     CPPUNIT_TEST(SkipList_DHP_min)      \
+    CPPUNIT_TEST(SkipList_DHP_min_stat) \
     CPPUNIT_TEST(SkipList_RCU_gpi_max)  \
     CPPUNIT_TEST(SkipList_RCU_gpi_min)  \
     CPPUNIT_TEST(SkipList_RCU_gpb_max)  \

@@ -662,15 +662,15 @@ namespace tree {
         void EllenBinTree_hp_less_pool();
         void EllenBinTree_hp_less_pool_ic_stat();
 
-        void EllenBinTree_ptb_less();
-        void EllenBinTree_ptb_cmp();
-        void EllenBinTree_ptb_cmpless();
-        void EllenBinTree_ptb_less_ic();
-        void EllenBinTree_ptb_cmp_ic();
-        void EllenBinTree_ptb_less_stat();
-        void EllenBinTree_ptb_cmp_ic_stat();
-        void EllenBinTree_ptb_less_pool();
-        void EllenBinTree_ptb_less_pool_ic_stat();
+        void EllenBinTree_dhp_less();
+        void EllenBinTree_dhp_cmp();
+        void EllenBinTree_dhp_cmpless();
+        void EllenBinTree_dhp_less_ic();
+        void EllenBinTree_dhp_cmp_ic();
+        void EllenBinTree_dhp_less_stat();
+        void EllenBinTree_dhp_cmp_ic_stat();
+        void EllenBinTree_dhp_less_pool();
+        void EllenBinTree_dhp_less_pool_ic_stat();
 
         void EllenBinTree_rcu_gpi_less();
         void EllenBinTree_rcu_gpi_cmp();
@@ -733,15 +733,15 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_hp_less_pool)
             CPPUNIT_TEST(EllenBinTree_hp_less_pool_ic_stat)
 
-            CPPUNIT_TEST(EllenBinTree_ptb_less)
-            CPPUNIT_TEST(EllenBinTree_ptb_cmp)
-            CPPUNIT_TEST(EllenBinTree_ptb_less_stat)
-            CPPUNIT_TEST(EllenBinTree_ptb_cmpless)
-            CPPUNIT_TEST(EllenBinTree_ptb_less_ic)
-            CPPUNIT_TEST(EllenBinTree_ptb_cmp_ic)
-            CPPUNIT_TEST(EllenBinTree_ptb_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_ptb_less_pool)
-            CPPUNIT_TEST(EllenBinTree_ptb_less_pool_ic_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_less)
+            CPPUNIT_TEST(EllenBinTree_dhp_cmp)
+            CPPUNIT_TEST(EllenBinTree_dhp_less_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_cmpless)
+            CPPUNIT_TEST(EllenBinTree_dhp_less_ic)
+            CPPUNIT_TEST(EllenBinTree_dhp_cmp_ic)
+            CPPUNIT_TEST(EllenBinTree_dhp_cmp_ic_stat)
+            CPPUNIT_TEST(EllenBinTree_dhp_less_pool)
+            CPPUNIT_TEST(EllenBinTree_dhp_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_less)
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_cmp)

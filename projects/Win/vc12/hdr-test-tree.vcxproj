@@ -543,15 +543,15 @@
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_rcu.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_ptb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_gpt.cpp" />

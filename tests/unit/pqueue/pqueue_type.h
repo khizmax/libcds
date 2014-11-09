@@ -38,6 +38,14 @@ namespace pqueue {
             }
         };
 
+        typedef cds::urcu::gc< cds::urcu::general_instant<> >   rcu_gpi;
+        typedef cds::urcu::gc< cds::urcu::general_buffered<> >  rcu_gpb;
+        typedef cds::urcu::gc< cds::urcu::general_threaded<> >  rcu_gpt;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cds::urcu::gc< cds::urcu::signal_buffered<> >  rcu_shb;
+        typedef cds::urcu::gc< cds::urcu::signal_threaded<> >  rcu_sht;
+#endif
+
 
         // MSPriorityQueue
         struct traits_MSPriorityQueue_static_less : public
@@ -103,303 +111,136 @@ namespace pqueue {
 
 
         // Priority queue based on EllenBinTreeSet
-        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-            >::type
-        > EllenBinTree_HP_max;
-
-        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
+        struct traits_EllenBinTree_max :
+            public cc::ellen_bintree::make_set_traits<
                 cc::ellen_bintree::key_extractor< typename Value::key_extractor >
                 ,cc::opt::less< std::less<Value> >
                 ,co::stat< cc::ellen_bintree::stat<> >
             >::type
-        > EllenBinTree_HP_max_stat;
-
-        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-            >::type, false
-        > EllenBinTree_HP_min;
-
-        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type, false
-        > EllenBinTree_HP_min_stat;
-
-        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-            >::type
-        > EllenBinTree_DHP_max;
-
-        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-            >::type, false
-        > EllenBinTree_DHP_min;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_instant<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-            >::type
-        > EllenBinTree_RCU_gpi_max;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_instant<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type
-        > EllenBinTree_RCU_gpi_max_stat;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_instant<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-            >::type, false
-        > EllenBinTree_RCU_gpi_min;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_instant<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type, false
-        > EllenBinTree_RCU_gpi_min_stat;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-            >::type
-        > EllenBinTree_RCU_gpb_max;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type
-        > EllenBinTree_RCU_gpb_max_stat;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-            >::type, false
-        > EllenBinTree_RCU_gpb_min;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type, false
-        > EllenBinTree_RCU_gpb_min_stat;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-            >::type
-        > EllenBinTree_RCU_gpt_max;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type
-        > EllenBinTree_RCU_gpt_max_stat;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-            >::type, false
-        > EllenBinTree_RCU_gpt_min;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::general_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type, false
-        > EllenBinTree_RCU_gpt_min_stat;
-
+        {};
+        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_HP_max;
+        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_DHP_max;
+        typedef EllenBinTreePQueue< rcu_gpi, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_gpi_max;
+        typedef EllenBinTreePQueue< rcu_gpb, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_gpb_max;
+        typedef EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_gpt_max;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
-            >::type
-        > EllenBinTree_RCU_shb_max;
+        typedef EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_shb_max;
+        typedef EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_sht_max;
+#endif
 
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
+        struct traits_EllenBinTree_max_stat :
+            public cc::ellen_bintree::make_set_traits<
                 cc::ellen_bintree::key_extractor< typename Value::key_extractor >
                 ,cc::opt::less< std::less<Value> >
                 ,co::stat< cc::ellen_bintree::stat<> >
             >::type
-        > EllenBinTree_RCU_shb_max_stat;
+        {};
+        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_HP_max_stat;
+        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_DHP_max_stat;
+        typedef EllenBinTreePQueue< rcu_gpi, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_gpi_max_stat;
+        typedef EllenBinTreePQueue< rcu_gpb, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_gpb_max_stat;
+        typedef EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_gpt_max_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_shb_max_stat;
+        typedef EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_sht_max_stat;
+#endif
 
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
+        struct traits_EllenBinTree_min :
+            public cc::ellen_bintree::make_set_traits<
                 cc::ellen_bintree::key_extractor< typename Value::key_extractor >
                 ,cc::opt::less< std::greater<Value> >
-            >::type, false
-        > EllenBinTree_RCU_shb_min;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_buffered<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type, false
-        > EllenBinTree_RCU_shb_min_stat;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
             >::type
-        > EllenBinTree_RCU_sht_max;
+        {};
+        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_HP_min;
+        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_DHP_min;
+        typedef EllenBinTreePQueue< rcu_gpi, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_gpi_min;
+        typedef EllenBinTreePQueue< rcu_gpb, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_gpb_min;
+        typedef EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_gpt_min;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_shb_min;
+        typedef EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_sht_min;
+#endif
 
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
+        struct traits_EllenBinTree_min_stat :
+            public cc::ellen_bintree::make_set_traits<
                 cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::less<Value> >
+                ,cc::opt::less< std::greater<Value> >
                 ,co::stat< cc::ellen_bintree::stat<> >
             >::type
-        > EllenBinTree_RCU_sht_max_stat;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-            >::type, false
-        > EllenBinTree_RCU_sht_min;
-
-        typedef EllenBinTreePQueue< cds::urcu::gc< cds::urcu::signal_threaded<> >, typename Value::key_type, Value,
-            typename cc::ellen_bintree::make_set_traits<
-                cc::ellen_bintree::key_extractor< typename Value::key_extractor >
-                ,cc::opt::less< std::greater<Value> >
-                ,co::stat< cc::ellen_bintree::stat<> >
-            >::type, false
-        > EllenBinTree_RCU_sht_min_stat;
+        {};
+        typedef EllenBinTreePQueue< cds::gc::HP, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_HP_min_stat;
+        typedef EllenBinTreePQueue< cds::gc::DHP, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_DHP_min_stat;
+        typedef EllenBinTreePQueue< rcu_gpi, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_gpi_min_stat;
+        typedef EllenBinTreePQueue< rcu_gpb, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_gpb_min_stat;
+        typedef EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_gpt_min_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_shb_min_stat;
+        typedef EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_sht_min_stat;
 #endif
 
         // Priority queue based on SkipListSet
-        typedef SkipListPQueue< cds::gc::HP, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_HP_max;
-
-        typedef SkipListPQueue< cds::gc::HP, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type
-        > SkipList_HP_max_stat;
-
-        typedef SkipListPQueue< cds::gc::HP, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_HP_min;
-
-        typedef SkipListPQueue< cds::gc::HP, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-                ,co::stat< cc::skip_list::stat<> >
-            >::type, false
-        > SkipList_HP_min_stat;
-
-
-        typedef SkipListPQueue< cds::gc::DHP, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_DHP_max;
-
-        typedef SkipListPQueue< cds::gc::DHP, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_DHP_min;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::general_instant<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_RCU_gpi_max;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::general_instant<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_RCU_gpi_min;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::general_buffered<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_RCU_gpb_max;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::general_buffered<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_RCU_gpb_min;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::general_threaded<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_RCU_gpt_max;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::general_threaded<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_RCU_gpt_min;
-
+        struct traits_SkipList_max :
+            public cc::skip_list::make_traits <
+            cc::opt::less < std::less<Value> >
+            > ::type
+        {};
+        typedef SkipListPQueue< cds::gc::HP, Value, traits_SkipList_max > SkipList_HP_max;
+        typedef SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_max > SkipList_DHP_max;
+        typedef SkipListPQueue< rcu_gpi, Value, traits_SkipList_max > SkipList_RCU_gpi_max;
+        typedef SkipListPQueue< rcu_gpb, Value, traits_SkipList_max > SkipList_RCU_gpb_max;
+        typedef SkipListPQueue< rcu_gpt, Value, traits_SkipList_max > SkipList_RCU_gpt_max;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::signal_buffered<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_RCU_shb_max;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::signal_buffered<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_RCU_shb_min;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::signal_threaded<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::less<Value> >
-            >::type
-        > SkipList_RCU_sht_max;
-
-        typedef SkipListPQueue< cds::urcu::gc< cds::urcu::signal_threaded<> >, Value,
-            typename cc::skip_list::make_traits<
-                cc::opt::less< std::greater<Value> >
-            >::type, false
-        > SkipList_RCU_sht_min;
+        typedef SkipListPQueue< rcu_shb, Value, traits_SkipList_max > SkipList_RCU_shb_max;
+        typedef SkipListPQueue< rcu_sht, Value, traits_SkipList_max > SkipList_RCU_sht_max;
 #endif
+
+        struct traits_SkipList_max_stat :
+            public cc::skip_list::make_traits<
+                cc::opt::less< std::less<Value> >
+                ,co::stat< cc::skip_list::stat<> >
+            >::type
+        {};
+        typedef SkipListPQueue< cds::gc::HP, Value, traits_SkipList_max_stat > SkipList_HP_max_stat;
+        typedef SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_max_stat > SkipList_DHP_max_stat;
+        typedef SkipListPQueue< rcu_gpi, Value, traits_SkipList_max_stat > SkipList_RCU_gpi_max_stat;
+        typedef SkipListPQueue< rcu_gpb, Value, traits_SkipList_max_stat > SkipList_RCU_gpb_max_stat;
+        typedef SkipListPQueue< rcu_gpt, Value, traits_SkipList_max_stat > SkipList_RCU_gpt_max_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListPQueue< rcu_shb, Value, traits_SkipList_max_stat > SkipList_RCU_shb_max_stat;
+        typedef SkipListPQueue< rcu_sht, Value, traits_SkipList_max_stat > SkipList_RCU_sht_max_stat;
+#endif
+
+        struct traits_SkipList_min :
+            public cc::skip_list::make_traits<
+                cc::opt::less< std::greater<Value> >
+            >::type
+        {};
+        typedef SkipListPQueue< cds::gc::HP, Value, traits_SkipList_min, false > SkipList_HP_min;
+        typedef SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_min, false > SkipList_DHP_min;
+        typedef SkipListPQueue< rcu_gpi, Value, traits_SkipList_min, false > SkipList_RCU_gpi_min;
+        typedef SkipListPQueue< rcu_gpb, Value, traits_SkipList_min, false > SkipList_RCU_gpb_min;
+        typedef SkipListPQueue< rcu_gpt, Value, traits_SkipList_min, false > SkipList_RCU_gpt_min;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListPQueue< rcu_shb, Value, traits_SkipList_min, false > SkipList_RCU_shb_min;
+        typedef SkipListPQueue< rcu_sht, Value, traits_SkipList_min, false > SkipList_RCU_sht_min;
+#endif
+
+        struct traits_SkipList_min_stat :
+            public cc::skip_list::make_traits<
+                cc::opt::less< std::greater<Value> >
+                ,co::stat< cc::skip_list::stat<> >
+            >::type
+        {};
+        typedef SkipListPQueue< cds::gc::HP, Value, traits_SkipList_min_stat, false > SkipList_HP_min_stat;
+        typedef SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_min_stat, false > SkipList_DHP_min_stat;
+        typedef SkipListPQueue< rcu_gpi, Value, traits_SkipList_min_stat, false > SkipList_RCU_gpi_min_stat;
+        typedef SkipListPQueue< rcu_gpb, Value, traits_SkipList_min_stat, false > SkipList_RCU_gpb_min_stat;
+        typedef SkipListPQueue< rcu_gpt, Value, traits_SkipList_min_stat, false > SkipList_RCU_gpt_min_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListPQueue< rcu_shb, Value, traits_SkipList_min_stat, false > SkipList_RCU_shb_min_stat;
+        typedef SkipListPQueue< rcu_sht, Value, traits_SkipList_min_stat, false > SkipList_RCU_sht_min_stat;
+#endif
+
 
         // FCPriorityQueue
         struct traits_FCPQueue_stat : public
