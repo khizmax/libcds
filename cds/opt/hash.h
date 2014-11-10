@@ -4,7 +4,7 @@
 #define __CDS_OPT_HASH_H
 
 #include <tuple>
-#include<functional>
+#include <functional>
 #include <cds/opt/options.h>
 
 namespace cds { namespace opt {
@@ -103,6 +103,10 @@ namespace cds { namespace opt {
         };
     } // namespace details
     //@endcond
+
+    /// Declare tuple for hash functors \p Functors
+    template <typename... Functors>
+    using hash_tuple = details::hash_list< std::tuple< Functors... >>;
 
     //@cond
     // At least, two functors must be provided. Single functor is not supported

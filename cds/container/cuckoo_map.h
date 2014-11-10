@@ -13,14 +13,14 @@ namespace cds { namespace container {
         template <typename Key, typename T, typename Traits>
         struct make_cuckoo_map
         {
-            typedef Key key_type    ;   ///< key type
-            typedef T   mapped_type ;   ///< type of value stored in the map
-            typedef std::pair<key_type const, mapped_type>   value_type  ;   ///< Pair type
+            typedef Key key_type;    ///< key type
+            typedef T   mapped_type; ///< type of value stored in the map
+            typedef std::pair<key_type const, mapped_type>   value_type;   ///< Pair type
 
-            typedef Traits original_type_traits;
-            typedef typename original_type_traits::probeset_type probeset_type;
-            static bool const store_hash = original_type_traits::store_hash;
-            static unsigned int const store_hash_count = store_hash ? ((unsigned int) std::tuple_size< typename original_type_traits::hash::hash_tuple_type >::value) : 0;
+            typedef Traits original_traits;
+            typedef typename original_traits::probeset_type probeset_type;
+            static bool const store_hash = original_traits::store_hash;
+            static unsigned int const store_hash_count = store_hash ? ((unsigned int) std::tuple_size< typename original_traits::hash::hash_tuple_type >::value) : 0;
 
             struct node_type: public intrusive::cuckoo::node<probeset_type, store_hash_count>
             {
@@ -42,34 +42,6 @@ namespace cds { namespace container {
                 {}
             };
 
-            /*
-            template <typename Pred, typename ReturnValue>
-            struct predicate_wrapper {
-                typedef Pred native_predicate;
-
-                ReturnValue operator()( node_type const& n1, node_type const& n2) const
-                {
-                    return native_predicate()(n1.m_val.first, n2.m_val.first );
-                }
-                template <typename Q>
-                ReturnValue operator()( node_type const& n, Q const& v) const
-                {
-                    return native_predicate()(n.m_val.first, v);
-                }
-                template <typename Q>
-                ReturnValue operator()( Q const& v, node_type const& n) const
-                {
-                    return native_predicate()(v, n.m_val.first);
-                }
-
-                template <typename Q1, typename Q2>
-                ReturnValue operator()( Q1 const& v1, Q2 const& v2) const
-                {
-                    return native_predicate()(v1, v2);
-                }
-            };
-            */
-
             struct key_accessor {
                 key_type const& operator()( node_type const& node ) const
                 {
@@ -77,34 +49,34 @@ namespace cds { namespace container {
                 }
             };
 
-            struct intrusive_traits: public original_type_traits
+            struct intrusive_traits: public original_traits
             {
                 typedef intrusive::cuckoo::base_hook<
                     cds::intrusive::cuckoo::probeset_type< probeset_type >
                     ,cds::intrusive::cuckoo::store_hash< store_hash_count >
                 >  hook;
 
-                typedef cds::intrusive::cuckoo::type_traits::disposer   disposer;
+                typedef cds::intrusive::cuckoo::traits::disposer   disposer;
 
                 typedef typename std::conditional<
-                    std::is_same< typename original_type_traits::equal_to, opt::none >::value
+                    std::is_same< typename original_traits::equal_to, opt::none >::value
                     , opt::none
-                    , cds::details::predicate_wrapper< node_type, typename original_type_traits::equal_to, key_accessor >
+                    , cds::details::predicate_wrapper< node_type, typename original_traits::equal_to, key_accessor >
                 >::type equal_to;
 
                 typedef typename std::conditional<
-                    std::is_same< typename original_type_traits::compare, opt::none >::value
+                    std::is_same< typename original_traits::compare, opt::none >::value
                     , opt::none
-                    , cds::details::compare_wrapper< node_type, typename original_type_traits::compare, key_accessor >
+                    , cds::details::compare_wrapper< node_type, typename original_traits::compare, key_accessor >
                 >::type compare;
 
                 typedef typename std::conditional<
-                    std::is_same< typename original_type_traits::less, opt::none >::value
+                    std::is_same< typename original_traits::less, opt::none >::value
                     ,opt::none
-                    ,cds::details::predicate_wrapper< node_type, typename original_type_traits::less, key_accessor >
+                    ,cds::details::predicate_wrapper< node_type, typename original_traits::less, key_accessor >
                 >::type less;
 
-                typedef opt::details::hash_list_wrapper< typename original_type_traits::hash, node_type, key_accessor >    hash;
+                typedef opt::details::hash_list_wrapper< typename original_traits::hash, node_type, key_accessor >    hash;
             };
 
             typedef intrusive::CuckooSet< node_type, intrusive_traits > type;
@@ -167,41 +139,9 @@ namespace cds { namespace container {
         Template arguments:
         - \p Key - key type
         - \p T - the type stored in the map.
-        - \p Traits - type traits. See cuckoo::type_traits for explanation.
-            It is possible to declare option-based set with cuckoo::make_traits metafunction result as \p Traits template argument.
-
-        Template argument list \p Options... of cuckoo::make_traits metafunction are:
-        - opt::hash - hash functor tuple, mandatory option. At least, two hash functors should be provided. All hash functor
-            should be orthogonal (different): for each <tt> i,j: i != j => h[i](x) != h[j](x) </tt>.
-            The hash functors are passed as <tt> std::tuple< H1, H2, ... Hn > </tt>. The number of hash functors specifies
-            the number \p k - the count of hash tables in cuckoo hashing. If the compiler supports variadic templates
-            then k is unlimited, otherwise up to 10 different hash functors are supported.
-        - opt::mutex_policy - concurrent access policy.
-            Available policies: cuckoo::striping, cuckoo::refinable.
-            Default is cuckoo::striping.
-        - opt::equal_to - key equality functor like \p std::equal_to.
-            If this functor is defined then the probe-set will be unordered.
-            If opt::compare or opt::less option is specified too, then the probe-set will be ordered
-            and opt::equal_to will be ignored.
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-            If opt::compare or opt::less option is specified, then the probe-set will be ordered.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            If opt::compare or opt::less option is specified, then the probe-set will be ordered.
-        - opt::item_counter - the type of item counting feature. Default is \ref opt::v::sequential_item_counter.
-        - opt::allocator - the allocator type using for allocating bucket tables.
-            Default is \p CDS_DEFAULT_ALLOCATOR
-        - opt::node_allocator - the allocator type using for allocating map's items. If this option
-            is not specified then the type defined in opt::allocator option is used.
-        - cuckoo::store_hash - this option reserves additional space in the node to store the hash value
-            of the object once it's introduced in the container. When this option is used,
-            the map will store the calculated hash value in the node and rehashing operations won't need
-            to recalculate the hash of the value. This option will improve the performance of maps
-            when rehashing is frequent or hashing the value is a slow operation. Default value is \p false.
-        - \ref intrusive::cuckoo::probeset_type "cuckoo::probeset_type" - type of probe set, may be \p cuckoo::list or <tt>cuckoo::vector<Capacity></tt>,
-            Default is \p cuckoo::list.
-        - opt::stat - internal statistics. Possibly types: cuckoo::stat, cuckoo::empty_stat.
-            Default is cuckoo::empty_stat
+        - \p Traits - map traits., default is \p cuckoo::traits.
+            It is possible to declare option-based set with \p cuckoo::make_traits metafunction 
+            result as \p Traits template argument.
 
        <b>Examples</b>
 
@@ -229,7 +169,7 @@ namespace cds { namespace container {
         #include <cds/container/cuckoo_map.h>
 
         // Declare type traits
-        struct my_traits: public cds::container::cuckoo::type_traits
+        struct my_traits: public cds::container::cuckoo::traits
         {
             typedef std::equal_to< std::string > equal_to;
             typedef std::tuple< hash1, hash2 >  hash;
@@ -260,7 +200,7 @@ namespace cds { namespace container {
 
         // Declare type traits
         // We use a vector of capacity 4 as probe-set container and store hash values in the node
-        struct my_traits: public cds::container::cuckoo::type_traits
+        struct my_traits: public cds::container::cuckoo::traits
         {
             typedef std::less< std::string > less;
             typedef std::tuple< hash1, hash2 >  hash;
@@ -284,7 +224,7 @@ namespace cds { namespace container {
         \endcode
 
     */
-    template <typename Key, typename T, typename Traits = cuckoo::type_traits>
+    template <typename Key, typename T, typename Traits = cuckoo::traits>
     class CuckooMap:
 #ifdef CDS_DOXYGEN_INVOKED
         protected intrusive::CuckooSet< std::pair< Key const, T>, Traits>
@@ -297,36 +237,35 @@ namespace cds { namespace container {
         typedef typename maker::type  base_class;
         //@endcond
     public:
-        typedef Key     key_type    ;   ///< key type
-        typedef T       mapped_type ;   ///< value type stored in the container
-        typedef std::pair<key_type const, mapped_type>   value_type  ;   ///< Key-value pair type stored in the map
+        typedef Key     key_type;    ///< key type
+        typedef T       mapped_type; ///< value type stored in the container
+        typedef std::pair<key_type const, mapped_type> value_type;   ///< Key-value pair type stored in the map
+        typedef Traits  traits;     ///< Map traits
 
-        typedef Traits  options     ;   ///< traits
+        typedef typename traits::hash                 hash;            ///< hash functor tuple wrapped for internal use
+        typedef typename base_class::hash_tuple_type  hash_tuple_type; ///< hash tuple type
 
-        typedef typename options::hash                  hash             ; ///< hash functor tuple wrapped for internal use
-        typedef typename base_class::hash_tuple_type    hash_tuple_type  ; ///< hash tuple type
+        typedef typename base_class::mutex_policy mutex_policy; ///< Concurrent access policy, see \p cuckoo::traits::mutex_policy
+        typedef typename base_class::stat         stat;         ///< internal statistics type
 
-        typedef typename base_class::mutex_policy       mutex_policy     ;  ///< Concurrent access policy, see cuckoo::type_traits::mutex_policy
-        typedef typename base_class::stat               stat             ;  ///< internal statistics type
+        static bool const c_isSorted = base_class::c_isSorted; ///< whether the probe set should be ordered
+        static size_t const c_nArity = base_class::c_nArity;   ///< the arity of cuckoo hashing: the number of hash functors provided; minimum 2.
 
-        static bool const c_isSorted = base_class::c_isSorted   ; ///< whether the probe set should be ordered
-        static size_t const c_nArity = base_class::c_nArity     ; ///< the arity of cuckoo hashing: the number of hash functors provided; minimum 2.
+        typedef typename base_class::key_equal_to key_equal_to; ///< Key equality functor; used only for unordered probe-set
 
-        typedef typename base_class::key_equal_to key_equal_to  ; ///< Key equality functor; used only for unordered probe-set
+        typedef typename base_class::key_comparator  key_comparator; ///< key comparing functor based on opt::compare and opt::less option setter. Used only for ordered probe set
 
-        typedef typename base_class::key_comparator  key_comparator ; ///< key comparing functor based on opt::compare and opt::less option setter. Used only for ordered probe set
-
-        typedef typename base_class::allocator     allocator   ; ///< allocator type used for internal bucket table allocations
+        typedef typename base_class::allocator     allocator; ///< allocator type used for internal bucket table allocations
 
         /// Node allocator type
         typedef typename std::conditional<
-            std::is_same< typename options::node_allocator, opt::none >::value,
+            std::is_same< typename traits::node_allocator, opt::none >::value,
             allocator,
-            typename options::node_allocator
+            typename traits::node_allocator
         >::type node_allocator;
 
         /// item counter type
-        typedef typename options::item_counter  item_counter;
+        typedef typename traits::item_counter  item_counter;
 
     protected:
         //@cond
@@ -340,9 +279,9 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        static unsigned int const   c_nDefaultProbesetSize = base_class::c_nDefaultProbesetSize ;   ///< default probeset size
-        static size_t const         c_nDefaultInitialSize = base_class::c_nDefaultInitialSize   ;   ///< default initial size
-        static unsigned int const   c_nRelocateLimit = base_class::c_nRelocateLimit             ;   ///< Count of attempts to relocate before giving up
+        static unsigned int const   c_nDefaultProbesetSize = base_class::c_nDefaultProbesetSize; ///< default probeset size
+        static size_t const         c_nDefaultInitialSize = base_class::c_nDefaultInitialSize;   ///< default initial size
+        static unsigned int const   c_nRelocateLimit = base_class::c_nRelocateLimit;             ///< Count of attempts to relocate before giving up
 
     protected:
         //@cond

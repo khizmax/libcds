@@ -23,12 +23,11 @@ namespace map {
     {
         CPPUNIT_MESSAGE( "equal");
         {
-            typedef cc::CuckooMap< CuckooMapHdrTest::key_type, CuckooMapHdrTest::value_type,
-                cc::cuckoo::make_traits<
-                    co::equal_to< std::equal_to<int> >
-                    ,co::hash< std::tuple< hash1, hash2 > >
-                >::type
-            > map_t;
+            struct map_traits : public cc::cuckoo::traits {
+                typedef std::equal_to<int> equal_to;
+                typedef co::hash_tuple< hash1, hash2 > hash;
+            };
+            typedef cc::CuckooMap< CuckooMapHdrTest::key_type, CuckooMapHdrTest::value_type, map_traits > map_t;
 
             test_cuckoo<map_t>();
         }

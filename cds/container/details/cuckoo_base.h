@@ -118,7 +118,7 @@ namespace cds { namespace container {
         using intrusive::cuckoo::vector;
 
         /// Type traits for CuckooSet and CuckooMap classes
-        struct type_traits
+        struct traits
         {
             /// Hash functors tuple
             /**
@@ -129,7 +129,13 @@ namespace cds { namespace container {
                 The hash functors are defined as <tt> std::tuple< H1, H2, ... Hn > </tt>:
                 \@code cds::opt::hash< std::tuple< h1, h2 > > \@endcode
                 The number of hash functors specifies the number \p k - the count of hash tables in cuckoo hashing.
-                Up to 10 different hash functors are supported.
+
+                To specify hash tuple in traits you should use \p cds::opt::hash_tuple:
+                \code
+                struct my_traits: public cds::container::cuckoo::traits {
+                    typedef cds::opt::hash_tuple< hash1, hash2 > hash;
+                };
+                \endcode
             */
             typedef cds::opt::none      hash;
 
@@ -168,7 +174,7 @@ namespace cds { namespace container {
 
                 Only atomic item counter type is allowed.
             */
-            typedef cds::intrusive::cuckoo::type_traits::item_counter   item_counter;
+            typedef cds::intrusive::cuckoo::traits::item_counter   item_counter;
 
             /// Allocator type
             /**
@@ -195,13 +201,42 @@ namespace cds { namespace container {
 
         /// Metafunction converting option list to CuckooSet/CuckooMap traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-            \p Options list see CuckooSet and CuckooMap
+            Template argument list \p Options... are:
+            - \p opt::hash - hash functor tuple, mandatory option. At least, two hash functors should be provided. All hash functor
+                should be orthogonal (different): for each <tt> i,j: i != j => h[i](x) != h[j](x) </tt>.
+                The hash functors are passed as <tt> std::tuple< H1, H2, ... Hn > </tt>. The number of hash functors specifies
+                the number \p k - the count of hash tables in cuckoo hashing.
+            - \p opt::mutex_policy - concurrent access policy.
+                Available policies: \p cuckoo::striping, \p cuckoo::refinable.
+                Default is \p %cuckoo::striping.
+            - \p opt::equal_to - key equality functor like \p std::equal_to.
+                If this functor is defined then the probe-set will be unordered.
+                If \p %opt::compare or \p %opt::less option is specified too, then the probe-set will be ordered
+                and \p %opt::equal_to will be ignored.
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p %opt::less is used.
+                If \p %opt::compare or \p %opt::less option is specified, then the probe-set will be ordered.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+                If \p %opt::compare or \p %opt::less option is specified, then the probe-set will be ordered.
+            - \p opt::item_counter - the type of item counting feature. Default is \p opt::v::sequential_item_counter.
+            - \p opt::allocator - the allocator type using for allocating bucket tables.
+                Default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p opt::node_allocator - the allocator type using for allocating set's items. If this option
+                is not specified then the type defined in \p %opt::allocator option is used.
+            - \p cuckoo::store_hash - this option reserves additional space in the node to store the hash value
+                of the object once it's introduced in the container. When this option is used,
+                the unordered container will store the calculated hash value in the node and rehashing operations won't need
+                to recalculate the hash of the value. This option will improve the performance of unordered containers
+                when rehashing is frequent or hashing the value is a slow operation. Default value is \p false.
+            - \ref intrusive::cuckoo::probeset_type "cuckoo::probeset_type" - type of probe set, may be \p cuckoo::list or <tt>cuckoo::vector<Capacity></tt>,
+                Default is \p cuckoo::list.
+            - \p opt::stat - internal statistics. Possibly types: \p cuckoo::stat, \p cuckoo::empty_stat.
+                Default is \p %cuckoo::empty_stat
         */
         template <typename... Options>
         struct make_traits {
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< cuckoo::type_traits, Options... >::type
+                typename cds::opt::find_type_traits< cuckoo::traits, Options... >::type
                 ,Options...
             >::type   type ;    ///< Result of metafunction
         };

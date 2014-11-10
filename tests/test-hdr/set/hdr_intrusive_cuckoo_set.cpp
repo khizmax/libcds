@@ -11,12 +11,11 @@ namespace set {
     void IntrusiveCuckooSetHdrTest::Cuckoo_striped_list_basehook_equal()
     {
         typedef IntrusiveCuckooSetHdrTest::base_item< ci::cuckoo::node< ci::cuckoo::list, 0 > >  item_type;
-        typedef ci::CuckooSet< item_type
-            ,ci::cuckoo::make_traits<
-                co::hash< std::tuple< hash1, hash2 > >
-                ,co::equal_to< equal_to<item_type> >
-            >::type
-        > set_type;
+        struct set_traits : public ci::cuckoo::traits {
+            typedef co::hash_tuple< hash1, hash2 > hash;
+            typedef set::equal_to<item_type> equal_to;
+        };
+        typedef ci::CuckooSet< item_type, set_traits > set_type;
 
         test_cuckoo<set_type>();
     }
@@ -25,15 +24,12 @@ namespace set {
     {
         typedef IntrusiveCuckooSetHdrTest::base_item< ci::cuckoo::node< ci::cuckoo::vector<4>, 0 > >  item_type;
 
-        typedef ci::CuckooSet< item_type
-            ,ci::cuckoo::make_traits<
-                ci::opt::hook< ci::cuckoo::base_hook<
-                    ci::cuckoo::probeset_type< item_type::probeset_type >
-                > >
-                ,co::hash< std::tuple< hash1, hash2 > >
-                ,co::equal_to< equal_to<item_type> >
-            >::type
-        > set_type;
+        struct set_traits : public ci::cuckoo::traits {
+            typedef ci::cuckoo::base_hook< ci::cuckoo::probeset_type< item_type::probeset_type >> hook;
+            typedef co::hash_tuple< hash1, hash2 > hash;
+            typedef set::equal_to<item_type> equal_to;
+        };
+        typedef ci::CuckooSet< item_type, set_traits > set_type;
 
         test_cuckoo<set_type>();
     }

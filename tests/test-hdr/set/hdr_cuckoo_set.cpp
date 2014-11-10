@@ -7,12 +7,17 @@ namespace set {
 
     void CuckooSetHdrTest::Cuckoo_Striped_list_unord()
     {
-        typedef cc::CuckooSet< item,
-             cc::cuckoo::make_traits<
-                co::equal_to< equal< item > >
-                ,co::hash< std::tuple< hash1, hash2 > >
-            >::type
-        > set_t;
+        struct set_traits : public cc::cuckoo::traits {
+            typedef equal<item> equal_to;
+            typedef co::hash_tuple< hash1, hash2 > hash;
+        };
+
+        typedef cc::CuckooSet< item, set_traits > set_t;
+        //     cc::cuckoo::make_traits<
+        //        co::equal_to< equal< item > >
+        //        ,co::hash< std::tuple< hash1, hash2 > >
+        //    >::type
+        //> set_t;
 
         test_int<set_t, equal< item > >();
     }

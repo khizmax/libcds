@@ -92,8 +92,7 @@ namespace cds { namespace intrusive {
                 or \p cds::intrusive::cuckoo::vector<Capacity>.
             - \p StoreHashCount - constant that defines whether to store node hash values.
                 See cuckoo::store_hash option for explanation
-            - Tag - a tag used to distinguish between different implementation when two or more
-                \p node is needed in single struct.
+            - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename ProbesetType = cuckoo::list, unsigned int StoreHashCount = 0, typename Tag = opt::none>
         struct node
@@ -241,11 +240,11 @@ namespace cds { namespace intrusive {
         template < typename HookType, typename... Options>
         struct hook
         {
-            typedef typename opt::make_options< default_hook, Options...>::type  options;
+            typedef typename opt::make_options< default_hook, Options...>::type  traits;
 
-            typedef typename options::probeset_type probeset_type;
-            typedef typename options::tag tag;
-            static unsigned int const store_hash = options::store_hash;
+            typedef typename traits::probeset_type probeset_type;
+            typedef typename traits::tag tag;
+            static unsigned int const store_hash = traits::store_hash;
 
             typedef node<probeset_type, store_hash, tag>   node_type;
 
@@ -256,9 +255,9 @@ namespace cds { namespace intrusive {
         /// Base hook
         /**
             \p Options are:
-            - cuckoo::probeset_type - probeset type. Defaul is \p cuckoo::list
-            - cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
-            - opt::tag - tag to distinguish different nodes in one struct. Default is opt::none
+            - \p cuckoo::probeset_type - probeset type. Defaul is \p cuckoo::list
+            - \p cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         struct base_hook: public hook< opt::base_hook_tag, Options... >
@@ -270,9 +269,9 @@ namespace cds { namespace intrusive {
             Use \p offsetof macro to define \p MemberOffset
 
             \p Options are:
-            - cuckoo::probeset_type - probeset type. Defaul is \p cuckoo::list
-            - cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
-            - opt::tag - tag to distinguish different nodes in one struct. Default is opt::none
+            - \p cuckoo::probeset_type - probeset type. Defaul is \p cuckoo::list
+            - \p cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         struct member_hook: public hook< opt::member_hook_tag, Options... >
@@ -288,9 +287,9 @@ namespace cds { namespace intrusive {
             See \ref node_traits for \p NodeTraits interface description
 
             \p Options are:
-            - cuckoo::probeset_type - probeset type. Defaul is \p cuckoo::list
-            - cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
-            - opt::tag - tag to distinguish different nodes in one struct. Default is opt::none
+            - \p cuckoo::probeset_type - probeset type. Defaul is \p cuckoo::list
+            - \p cuckoo::store_hash - store hash values in the node or not. Default is 0 (no storing)
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         struct traits_hook: public hook< opt::traits_hook_tag, Options... >
@@ -1086,7 +1085,7 @@ namespace cds { namespace intrusive {
         };
 
         /// Type traits for CuckooSet class
-        struct type_traits
+        struct traits
         {
             /// Hook used
             /**
@@ -1103,17 +1102,23 @@ namespace cds { namespace intrusive {
                 The hash functors are defined as <tt> std::tuple< H1, H2, ... Hn > </tt>:
                 \@code cds::opt::hash< std::tuple< h1, h2 > > \@endcode
                 The number of hash functors specifies the number \p k - the count of hash tables in cuckoo hashing.
-                Up to 10 different hash functors are supported.
+
+                To specify hash tuple in traits you should use \p cds::opt::hash_tuple:
+                \code
+                struct my_traits: public cds::intrusive::cuckoo::traits {
+                    typedef cds::opt::hash_tuple< hash1, hash2 > hash;
+                };
+                \endcode
             */
             typedef cds::opt::none      hash;
 
             /// Concurrent access policy
             /**
                 Available opt::mutex_policy types:
-                - cuckoo::striping - simple, but the lock array is not resizable
-                - cuckoo::refinable - resizable lock array, but more complex access to set data.
+                - \p cuckoo::striping - simple, but the lock array is not resizable
+                - \p cuckoo::refinable - resizable lock array, but more complex access to set data.
 
-                Default is cuckoo::striping.
+                Default is \p cuckoo::striping.
             */
             typedef cuckoo::striping<>               mutex_policy;
 
@@ -1123,7 +1128,7 @@ namespace cds { namespace intrusive {
             */
             typedef opt::none                       equal_to;
 
-            /// Key comparison functor
+            /// Key comparing functor
             /**
                 No default functor is provided. If the option is not specified, the \p less is used.
             */
@@ -1138,7 +1143,7 @@ namespace cds { namespace intrusive {
             /// Item counter
             /**
                 The type for item counting feature.
-                Default is cds::atomicity::item_counter
+                Default is \p cds::atomicity::item_counter
 
                 Only atomic item counter type is allowed.
             */
@@ -1152,24 +1157,53 @@ namespace cds { namespace intrusive {
 
             /// Disposer
             /**
-                The disposer functor is used in CuckooSet::clear member function
+                The disposer functor is used in \p CuckooSet::clear() member function
                 to free set's node.
             */
             typedef intrusive::opt::v::empty_disposer   disposer;
 
-            /// Internal statistics. Available statistics: cuckoo::stat, cuckoo::empty_stat
+            /// Internal statistics. Available statistics: \p cuckoo::stat, \p cuckoo::empty_stat
             typedef empty_stat                  stat;
         };
 
-        /// Metafunction converting option list to CuckooSet traits
+        /// Metafunction converting option list to \p CuckooSet traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
-            \p Options list see \ref CuckooSet.
+            Template argument list \p Options... are:
+            - \p intrusive::opt::hook - hook used. Possible values are: \p cuckoo::base_hook, \p cuckoo::member_hook, 
+                \p cuckoo::traits_hook.
+                If the option is not specified, <tt>%cuckoo::base_hook<></tt> is used.
+            - \p opt::hash - hash functor tuple, mandatory option. At least, two hash functors should be provided. All hash functor
+                should be orthogonal (different): for each <tt> i,j: i != j => h[i](x) != h[j](x) </tt>.
+                The hash functors are passed as <tt> std::tuple< H1, H2, ... Hn > </tt>. The number of hash functors specifies
+                the number \p k - the count of hash tables in cuckoo hashing.
+            - \p opt::mutex_policy - concurrent access policy.
+                Available policies: \p cuckoo::striping, \p cuckoo::refinable.
+                Default is \p %cuckoo::striping.
+            - \p opt::equal_to - key equality functor like \p std::equal_to.
+                If this functor is defined then the probe-set will be unordered.
+                If \p %opt::compare or \p %opt::less option is specified too, then the probe-set will be ordered
+                and \p %opt::equal_to will be ignored.
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p %opt::less is used.
+                If \p %opt::compare or \p %opt::less option is specified, then the probe-set will be ordered.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+                If \p %opt::compare or \p %opt::less option is specified, then the probe-set will be ordered.
+            - \p opt::item_counter - the type of item counting feature. Default is \p atomicity::item_counter
+                The item counter should be atomic.
+            - \p opt::allocator - the allocator type using for allocating bucket tables.
+                Default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p intrusive::opt::disposer - the disposer type used in \p clear() member function for
+                freeing nodes. Default is \p intrusive::opt::v::empty_disposer
+            - \p opt::stat - internal statistics. Possibly types: \p cuckoo::stat, \p cuckoo::empty_stat.
+                Default is \p %cuckoo::empty_stat
+
+            The probe set traits \p cuckoo::probeset_type and \p cuckoo::store_hash are taken from \p node type
+            specified by \p opt::hook option.
         */
         template <typename... Options>
         struct make_traits {
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< cuckoo::type_traits, Options... >::type
+                typename cds::opt::find_type_traits< cuckoo::traits, Options... >::type
                 ,Options...
             >::type   type ;    ///< Result of metafunction
         };
@@ -1618,46 +1652,14 @@ namespace cds { namespace intrusive {
         - \p T - the type stored in the set.  The type must be based on cuckoo::node (for cuckoo::base_hook)
             or it must have a member of type %cuckoo::node (for cuckoo::member_hook),
             or it must be convertible to \p %cuckoo::node (for cuckoo::traits_hook)
-        - \p Traits - type traits. See cuckoo::type_traits for explanation. It is possible to declare option-based
-            set with cuckoo::make_traits metafunction result as \p Traits template argument.
-
-        Template argument list \p Options... of cuckoo::make_traits metafunction are:
-        - intrusive::opt::hook - hook used. Possible values are: cuckoo::base_hook, cuckoo::member_hook, cuckoo::traits_hook.
-            If the option is not specified, <tt>%cuckoo::base_hook<></tt> is used.
-        - opt::hash - hash functor tuple, mandatory option. At least, two hash functors should be provided. All hash functor
-            should be orthogonal (different): for each <tt> i,j: i != j => h[i](x) != h[j](x) </tt>.
-            The hash functors are passed as <tt> std::tuple< H1, H2, ... Hn > </tt>. The number of hash functors specifies
-            the number \p k - the count of hash tables in cuckoo hashing. If the compiler supports variadic templates
-            then k is unlimited, otherwise up to 10 different hash functors are supported.
-        - opt::mutex_policy - concurrent access policy.
-            Available policies: cuckoo::striping, cuckoo::refinable.
-            Default is cuckoo::striping.
-        - opt::equal_to - key equality functor like \p std::equal_to.
-            If this functor is defined then the probe-set will be unordered.
-            If opt::compare or opt::less option is specified too, then the probe-set will be ordered
-            and opt::equal_to will be ignored.
-        - opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-            If opt::compare or opt::less option is specified, then the probe-set will be ordered.
-        - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            If opt::compare or opt::less option is specified, then the probe-set will be ordered.
-        - opt::item_counter - the type of item counting feature. Default is \ref atomicity::item_counter
-            The item counter should be atomic.
-        - opt::allocator - the allocator type using for allocating bucket tables.
-            Default is \p CDS_DEFAULT_ALLOCATOR
-        - intrusive::opt::disposer - the disposer type used in \ref clear() member function for
-            freeing nodes. Default is intrusive::opt::v::empty_disposer
-        - opt::stat - internal statistics. Possibly types: cuckoo::stat, cuckoo::empty_stat.
-            Default is cuckoo::empty_stat
-
-        The probe set options cuckoo::probeset_type and cuckoo::store_hash are taken from \p node type
-        specified by \p opt::hook option.
+        - \p Traits - type traits, default is  cuckoo::traits. It is possible to declare option-based
+            set with \p cuckoo::make_traits metafunction result as \p Traits template argument.
 
         <b>How to use</b>
 
-        You should incorporate cuckoo::node into your struct \p T and provide
-        appropriate cuckoo::type_traits::hook in your \p Traits template parameters. Usually, for \p Traits you
-        define a struct based on cuckoo::type_traits.
+        You should incorporate \p cuckoo::node into your struct \p T and provide
+        appropriate \p cuckoo::traits::hook in your \p Traits template parameters. 
+        Usually, for \p Traits you define a struct based on \p cuckoo::traits.
 
         Example for base hook and list-based probe-set:
         \code
@@ -1718,14 +1720,14 @@ namespace cds { namespace intrusive {
         };
 
         // Declare type traits
-        struct my_traits: public cds::intrusive::cuckoo::type_traits
+        struct my_traits: public cds::intrusive::cuckoo::traits
         {
             typedef cds::intrusive::cuckoo::base_hook<
                 cds::intrusive::cuckoo::probeset_type< my_data::probeset_type >
                 ,cds::intrusive::cuckoo::store_hash< my_data::hash_array_size >
             >   hook;
             typedef my_data_equa_to equal_to;
-            typedef std::tuple< hash1, hash2 >  hash;
+            typedef cds::opt::hash_tuple< hash1, hash2 > hash;
         };
 
         // Declare CuckooSet type
@@ -1807,14 +1809,14 @@ namespace cds { namespace intrusive {
         };
 
         // Declare type traits
-        struct my_traits: public cds::intrusive::cuckoo::type_traits
+        struct my_traits: public cds::intrusive::cuckoo::traits
         {
             typedef cds::intrusive::cuckoo::base_hook<
                 cds::intrusive::cuckoo::probeset_type< my_data::probeset_type >
                 ,cds::intrusive::cuckoo::store_hash< my_data::hash_array_size >
             >   hook;
             typedef my_data_compare compare;
-            typedef std::tuple< hash1, hash2 >  hash;
+            typedef cds::opt::hash_tuple< hash1, hash2 > hash;
         };
 
         // Declare CuckooSet type
@@ -1834,29 +1836,29 @@ namespace cds { namespace intrusive {
         \endcode
 
     */
-    template <typename T, typename Traits = cuckoo::type_traits>
+    template <typename T, typename Traits = cuckoo::traits>
     class CuckooSet
     {
     public:
-        typedef T   value_type  ;   ///< The value type stored in the set
-        typedef Traits options  ;   ///< Set traits
+        typedef T   value_type;   ///< The value type stored in the set
+        typedef Traits traits;    ///< Set traits
 
-        typedef typename options::hook      hook        ;   ///< hook type
-        typedef typename hook::node_type    node_type   ;   ///< node type
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
+        typedef typename traits::hook       hook;        ///< hook type
+        typedef typename hook::node_type    node_type;   ///< node type
+        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;    ///< node traits
 
-        typedef typename options::hash              hash ;   ///< hash functor tuple wrapped for internal use
-        typedef typename hash::hash_tuple_type      hash_tuple_type ; ///< Type of hash tuple
+        typedef typename traits::hash          hash;   ///< hash functor tuple wrapped for internal use
+        typedef typename hash::hash_tuple_type hash_tuple_type; ///< Type of hash tuple
 
-        typedef typename options::stat              stat    ;   ///< internal statistics type
+        typedef typename traits::stat          stat;   ///< internal statistics type
 
-        typedef typename options::mutex_policy      original_mutex_policy   ;   ///< Concurrent access policy, see cuckoo::type_traits::mutex_policy
+        typedef typename traits::mutex_policy  original_mutex_policy; ///< Concurrent access policy, see \p cuckoo::traits::mutex_policy
 
         /// Actual mutex policy
         /**
-            Actual mutex policy is built from mutex policy type provided by \p Traits template argument (see cuckoo::type_traits::mutex_policy)
-            but mutex policy internal statistics is conformed with cukoo::type_traits::stat type provided by \p Traits:
-            - if \p %cuckoo::type_traits::stat is cuckoo::empty_stat then mutex policy statistics is already empty one
+            Actual mutex policy is built from mutex policy type provided by \p Traits template argument (see \p cuckoo::traits::mutex_policy)
+            but mutex policy internal statistics is conformed with \p cukoo::traits::stat type provided by \p Traits:
+            - if \p %cuckoo::traits::stat is \p cuckoo::empty_stat then mutex policy statistics is already empty
             - otherwise real mutex policy statistics is used
         */
         typedef typename original_mutex_policy::template rebind_statistics<
@@ -1867,24 +1869,24 @@ namespace cds { namespace intrusive {
             >::type
         >::other    mutex_policy;
 
-        static bool const c_isSorted = !( std::is_same< typename options::compare, opt::none >::value
-                && std::is_same< typename options::less, opt::none >::value ) ; ///< whether the probe set should be ordered
+        static bool const c_isSorted = !( std::is_same< typename traits::compare, opt::none >::value
+                && std::is_same< typename traits::less, opt::none >::value ) ; ///< whether the probe set should be ordered
         static size_t const c_nArity = hash::size ; ///< the arity of cuckoo hashing: the number of hash functors provided; minimum 2.
 
         /// Key equality functor; used only for unordered probe-set
-        typedef typename opt::details::make_equal_to< value_type, options, !c_isSorted>::type key_equal_to;
+        typedef typename opt::details::make_equal_to< value_type, traits, !c_isSorted>::type key_equal_to;
 
         /// key comparing functor based on opt::compare and opt::less option setter. Used only for ordered probe set
-        typedef typename opt::details::make_comparator< value_type, options >::type key_comparator;
+        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 
         /// allocator type
-        typedef typename options::allocator     allocator;
+        typedef typename traits::allocator     allocator;
 
         /// item counter type
-        typedef typename options::item_counter  item_counter;
+        typedef typename traits::item_counter  item_counter;
 
         /// node disposer
-        typedef typename options::disposer      disposer;
+        typedef typename traits::disposer      disposer;
 
     protected:
         //@cond
@@ -1922,9 +1924,9 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        static unsigned int const   c_nDefaultProbesetSize = 4  ;   ///< default probeset size
-        static size_t const         c_nDefaultInitialSize = 16  ;   ///< default initial size
-        static unsigned int const   c_nRelocateLimit = c_nArity * 2 - 1 ;   ///< Count of attempts to relocate before giving up
+        static unsigned int const   c_nDefaultProbesetSize = 4;   ///< default probeset size
+        static size_t const         c_nDefaultInitialSize = 16;   ///< default initial size
+        static unsigned int const   c_nRelocateLimit = c_nArity * 2 - 1; ///< Count of attempts to relocate before giving up
 
     protected:
         bucket_entry *      m_BucketTable[ c_nArity ] ; ///< Bucket tables
@@ -2740,7 +2742,7 @@ namespace cds { namespace intrusive {
             };
             \endcode
 
-            The \ref disposer specified in \p Traits options is not called.
+            The \ref disposer specified in \p Traits traits is not called.
         */
         template <typename Disposer>
         void clear_and_dispose( Disposer oDisposer )
