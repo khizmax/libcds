@@ -1495,6 +1495,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_hp_less_pascal;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_dhp_less_pascal;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_nogc_less_pascal;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpi_less_pascal;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpb_less_pascal;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpt_less_pascal;
@@ -1512,6 +1513,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_hp_less_pascal_seqcst;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_dhp_less_pascal_seqcst;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_nogc_less_pascal_seqcst;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpi_less_pascal_seqcst;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpb_less_pascal_seqcst;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpt_less_pascal_seqcst;
@@ -1529,6 +1531,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_hp_less_pascal_stat;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_dhp_less_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_nogc_less_pascal_stat;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpi_less_pascal_stat;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpb_less_pascal_stat;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpt_less_pascal_stat;
@@ -1545,6 +1548,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_hp_cmp_pascal;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_dhp_cmp_pascal;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_nogc_cmp_pascal;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpi_cmp_pascal;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpb_cmp_pascal;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpt_cmp_pascal;
@@ -1562,6 +1566,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_hp_cmp_pascal_stat;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_dhp_cmp_pascal_stat;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_nogc_cmp_pascal_stat;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpi_cmp_pascal_stat;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpb_cmp_pascal_stat;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpt_cmp_pascal_stat;
@@ -1578,6 +1583,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_hp_less_xorshift;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_dhp_less_xorshift;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_nogc_less_xorshift;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpi_less_xorshift;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpb_less_xorshift;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpt_less_xorshift;
@@ -1595,6 +1601,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_hp_less_xorshift_stat;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_dhp_less_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_nogc_less_xorshift_stat;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpi_less_xorshift_stat;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpb_less_xorshift_stat;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpt_less_xorshift_stat;
@@ -1611,6 +1618,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_hp_cmp_xorshift;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_dhp_cmp_xorshift;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_nogc_cmp_xorshift;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpi_cmp_xorshift;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpb_cmp_xorshift;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpt_cmp_xorshift;
@@ -1628,6 +1636,7 @@ namespace map2 {
         {};
         typedef cc::SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_hp_cmp_xorshift_stat;
         typedef cc::SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_dhp_cmp_xorshift_stat;
+        typedef cc::SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_nogc_cmp_xorshift_stat;
         typedef cc::SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpi_cmp_xorshift_stat;
         typedef cc::SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpb_cmp_xorshift_stat;
         typedef cc::SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpt_cmp_xorshift_stat;
