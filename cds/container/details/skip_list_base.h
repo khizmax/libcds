@@ -219,7 +219,8 @@ namespace cds { namespace container {
                 typedef typename node_type::stored_value_type   value_type;
                 static bool const c_isConst = intrusive_iterator::c_isConst;
 
-                typedef typename std::conditional< c_isConst, value_type const &, value_type &>::type   value_ref;
+                typedef typename std::conditional< c_isConst, value_type const&, value_type&>::type   value_ref;
+                template <typename FwdIt> friend class iterator;
 
                 intrusive_iterator      m_It;
 
@@ -227,11 +228,6 @@ namespace cds { namespace container {
                 iterator( intrusive_iterator const& it )
                     : m_It( it )
                 {}
-
-                intrusive_iterator const& underlying_iterator() const
-                {
-                    return m_It;
-                }
 
             public:
                 iterator()
@@ -268,7 +264,7 @@ namespace cds { namespace container {
                 template <typename FwIt>
                 bool operator ==(iterator<FwIt> const& i ) const
                 {
-                    return m_It == i.underlying_iterator();
+                    return m_It == i.m_It;
                 }
                 template <typename FwIt>
                 bool operator !=(iterator<FwIt> const& i ) const

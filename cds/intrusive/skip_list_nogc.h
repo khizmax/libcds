@@ -126,13 +126,14 @@ namespace cds { namespace intrusive {
             typedef BackOff                             back_off;
             typedef typename node_traits::node_type     node_type;
             typedef typename node_traits::value_type    value_type;
-            static bool const c_isConst = IsConst;
+            static CDS_CONSTEXPR bool const c_isConst = IsConst;
 
             typedef typename std::conditional< c_isConst, value_type const &, value_type &>::type   value_ref;
+            friend class iterator< gc, node_traits, back_off, !c_isConst >;
 
         protected:
-            typedef typename node_type::atomic_ptr   atomic_ptr;
-            node_type *             m_pNode;
+            typedef typename node_type::atomic_ptr atomic_ptr;
+            node_type * m_pNode;
 
         public: // for internal use only!!!
             iterator( node_type& refHead )
@@ -144,11 +145,6 @@ namespace cds { namespace intrusive {
                 iterator it;
                 it.m_pNode = pNode;
                 return it;
-            }
-
-            node_type * node() const
-            {
-                return m_pNode;
             }
 
         public:
@@ -193,7 +189,7 @@ namespace cds { namespace intrusive {
             template <typename Bkoff, bool C>
             bool operator ==(iterator<gc, node_traits, Bkoff, C> const& i ) const
             {
-                return m_pNode == i.node();
+                return m_pNode == i.m_pNode;
             }
             template <typename Bkoff, bool C>
             bool operator !=(iterator<gc, node_traits, Bkoff, C> const& i ) const
