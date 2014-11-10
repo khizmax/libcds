@@ -21,9 +21,6 @@
     <Filter Include="Header Files\cds\gc\hzp">
       <UniqueIdentifier>{21a6c665-7381-45b8-9f03-b21f3da5503d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\gc\hrc">
-      <UniqueIdentifier>{695568b2-b136-4b80-bd18-6e3e13c22301}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\cds\gc\ptb">
       <UniqueIdentifier>{53d28ee4-5fe9-4fa1-a617-53d8b0628eac}</UniqueIdentifier>
     </Filter>
@@ -162,9 +159,6 @@
     <ClCompile Include="..\..\..\src\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\hrc_gc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\hzp_gc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -251,9 +245,6 @@
     <ClInclude Include="..\..\..\cds\gc\hp.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\nogc.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
@@ -277,21 +268,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\hzp\hzp.h">
       <Filter>Header Files\cds\gc\hzp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc\gc_fwd.h">
-      <Filter>Header Files\cds\gc\hrc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc\hrc.h">
-      <Filter>Header Files\cds\gc\hrc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_fwd.h">
-      <Filter>Header Files\cds\gc\hrc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_inline.h">
-      <Filter>Header Files\cds\gc\hrc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_retired.h">
-      <Filter>Header Files\cds\gc\hrc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\ptb\ptb.h">
       <Filter>Header Files\cds\gc\ptb</Filter>
@@ -687,12 +663,6 @@
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\hp_impl.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc_decl.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hrc_impl.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\ptb_decl.h">

@@ -31,19 +31,6 @@ namespace cds { namespace threading {
         return Manager::getHZPGC();
     }
 
-    /// Get cds::gc::HRC thread GC implementation for current thread
-    /**
-        The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution
-        or if you did not use cds::gc::HRC.
-        To initialize cds::gc::HRC GC you must constuct cds::gc::HRC object in the beginning of your application,
-        see \ref cds_how_to_use "How to use libcds"
-    */
-    template <>
-    inline cds::gc::HRC::thread_gc_impl&   getGC<cds::gc::HRC>()
-    {
-        return Manager::getHRCGC();
-    }
-
     /// Get cds::gc::PTB thread GC implementation for current thread
     /**
         The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution

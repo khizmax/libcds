@@ -196,8 +196,7 @@ namespace opt {
     /**
         Possible values of \p GC template parameter are:
         - cds::gc::HP - Hazard Pointer garbage collector
-        - cds::gc::HRC - Gidenstam's garbage collector
-        - cds::gc::PTB - Pass-the-Buck garbage collector
+        - cds::gc::DHP - Dynamic Hazard Pointer garbage collector
         - cds::gc::none::GC - No garbage collector (not supported for some containers)
     */
     template <typename GC>

@@ -42,9 +42,7 @@
    The main part of lock-free data structs is garbage collecting. The garbage collector (GC) solves the problem of safe
    memory reclamation that is one of the main problems for lock-free programming.
    The library contains the implementations of several light-weight \ref cds_garbage_collector "memory reclamation schemes":
-   - M.Michael's Hazard Pointer - see cds::gc::HP for more explanation
-   - Gidenstam's memory reclamation schema based on Hazard Pointer and reference counting - see cds::gc::HRC
-   - M.Herlihy and M.Moir's Pass The Buck algorithm - see cds::gc::PTB
+   - M.Michael's Hazard Pointer - \p see cds::gc::HP, \p cds::gc::DHP for more explanation
    - User-space Read-Copy Update (RCU) - see cds::urcu namespace
    - there is cds::gc::nogc "GC" for containers that do not support item reclamation.
 
@@ -118,7 +116,6 @@
    Usually, the application is based on only one type of GC.
 
    In the next example we mean that your application uses Hazard Pointer (cds::gc::HP) - based containers.
-   Other GCs (cds::gc::HRC, cds::gc::PTB) are applied analogously.
 
     First, in your code you should initialize \p cds library and a garbage collector in \p main function:
     \code

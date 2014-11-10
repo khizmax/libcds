@@ -10,7 +10,6 @@
     TEST_CASE( Treiber_HP_pause, cds::intrusive::treiber_stack::node< cds::gc::HP >  ) \
     TEST_CASE( Treiber_HP_exp, cds::intrusive::treiber_stack::node< cds::gc::HP >    ) \
     TEST_CASE( Treiber_HP_stat, cds::intrusive::treiber_stack::node< cds::gc::HP >   ) \
-    /*TEST_CASE( Treiber_HRC_yield, cds::intrusive::treiber_stack::node< cds::gc::HRC > )*/ \
     TEST_CASE( Treiber_DHP, cds::intrusive::treiber_stack::node< cds::gc::DHP >       ) \
     /*TEST_CASE( Treiber_DHP_yield, cds::intrusive::treiber_stack::node< cds::gc::DHP > )*/ \
     TEST_CASE( Treiber_DHP_pause, cds::intrusive::treiber_stack::node< cds::gc::DHP > ) \

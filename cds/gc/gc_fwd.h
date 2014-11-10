@@ -8,7 +8,6 @@
 //@cond
 namespace cds { namespace gc {
     class HP;
-    class HRC;
     class PTB;
 
     class nogc;

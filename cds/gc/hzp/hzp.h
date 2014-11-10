@@ -37,24 +37,20 @@ namespace cds {
             <tr>
                 <th>Feature</th>
                 <th>%cds::gc::HP</th>
-                <th>%cds::gc::HRC</th>
                 <th>%cds::gc::PTB</th>
             </tr>
             <tr>
                 <td>Implementation quality</td>
                 <td>stable</td>
-                <td>unstable</td>
                 <td>stable</td>
             </tr>
             <tr>
                 <td>Performance rank (1 - slowest, 5 - fastest)</td>
                 <td>5</td>
-                <td>1</td>
                 <td>4</td>
             </tr>
             <tr>
                 <td>Max number of guarded (hazard) pointers per thread</td>
-                <td>limited (specifies in GC object ctor)</td>
                 <td>limited (specifies in GC object ctor)</td>
                 <td>unlimited (dynamically allocated when needed)</td>
             </tr>
@@ -62,18 +58,15 @@ namespace cds {
                 <td>Max number of retired pointers<sup>1</sup></td>
                 <td>bounded</td>
                 <td>bounded</td>
-                <td>bounded</td>
            </tr>
             <tr>
                 <td>Array of retired pointers</td>
-                <td>preallocated for each thread, limited in size</td>
                 <td>preallocated for each thread, limited in size</td>
                 <td>global for the entire process, unlimited (dynamically allocated when needed)</td>
             </tr>
             <tr>
                 <td>Support direct pointer to item of lock-free container (useful for iterators)</td>
                 <td>not supported</td>
-                <td>potentially supported (not implemented)</td>
                 <td>not supported</td>
             </tr>
         </table>

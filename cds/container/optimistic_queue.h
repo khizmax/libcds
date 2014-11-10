@@ -140,7 +140,7 @@ namespace cds { namespace container {
             - [2008] Edya Ladan-Mozes, Nir Shavit "An Optimistic Approach to Lock-Free FIFO Queues"
 
         Template arguments:
-        - \p GC - garbage collector type: gc::HP, gc::PTB. Note that gc::HRC is <b>not</b> supported
+        - \p GC - garbage collector type: \p gc::HP, \p gc::DHP.
         - \p T - type of values to be stored in the queue
         - \p Traits - queue traits, default is \p optimistic_queue::traits. You can use \p optimistic_queue::make_traits
             metafunction to make your traits or just derive your traits from \p %optimistic_queue::traits:

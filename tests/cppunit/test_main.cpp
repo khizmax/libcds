@@ -28,7 +28,6 @@
 
 #include <cds/init.h>
 #include <cds/gc/hp.h>
-#include <cds/gc/hrc.h>
 #include <cds/gc/ptb.h>
 #include <cds/urcu/general_instant.h>
 #include <cds/urcu/general_buffered.h>
@@ -69,33 +68,6 @@ std::ostream& operator << (std::ostream& s, const cds::gc::hzp::GarbageCollector
         << "\n\t\tScan calls from HelpScan=" << stat.evcScanFromHelpScan
         << "\n\t\tretired objects deleting=" << stat.evcDeletedNode
         << "\n\t\tguarded objects on Scan=" << stat.evcDeferredNode
-        << std::endl;
-
-    return s;
-}
-
-std::ostream& operator << (std::ostream& s, const cds::gc::hrc::GarbageCollector::internal_state& stat)
-{
-    s << "\nHRC GC internal state:"
-        << "\n\t\tHRC record allocated=" << stat.nHRCRecAllocated
-        << "\n\t\tHRC records used=" << stat.nHRCRecUsed
-        << "\n\t\tTotal retired ptr count=" << stat.nTotalRetiredPtrCount
-        << "\n\t\tRetired ptr in free HRC records=" << stat.nRetiredPtrInFreeHRCRecs
-        << "\n\tEvents:"
-        << "\n\t\tHRCrec allocations=" << stat.evcAllocHRCRec
-        << "\n\t\tHRCrec retire events=" << stat.evcRetireHRCRec
-        << "\n\t\tnew HRCrec allocations from heap=" << stat.evcAllocNewHRCRec
-        << "\n\t\tHRCrec deletions=" << stat.evcDeleteHRCRec
-        << "\n\t\tScan calling=" << stat.evcScanCall
-        << "\n\t\tHelpScan calling=" << stat.evcHelpScanCalls
-        << "\n\t\tCleanUpAll calling=" << stat.evcCleanUpAllCalls
-        << "\n\t\tretired objects deleting=" << stat.evcDeletedNode
-        << "\n\t\tguarded nodes on Scan=" << stat.evcScanGuarded
-        << "\n\t\tclaimed node on Scan=" << stat.evcScanClaimGuarded
-#ifdef _DEBUG
-        << "\n\t\tnode constructed count=" << stat.evcNodeConstruct
-        << "\n\t\tnode destructed count=" << stat.evcNodeDestruct
-#endif
         << std::endl;
 
     return s;
@@ -148,11 +120,6 @@ namespace CppUnitMini
           {
               cds::gc::hzp::GarbageCollector::InternalState stat;
               std::cout << cds::gc::hzp::GarbageCollector::instance().getInternalState( stat ) << std::endl;
-          }
-
-          {
-              cds::gc::hrc::GarbageCollector::internal_state stat;
-              std::cout << cds::gc::hrc::GarbageCollector::instance().getInternalState( stat ) << std::endl;
           }
       }
   }
@@ -364,7 +331,6 @@ int main(int argc, char** argv)
 
       // Safe reclamation schemes
       cds::gc::HP hzpGC( nHazardPtrCount );
-      cds::gc::HRC hrcGC( nHazardPtrCount );
       cds::gc::PTB ptbGC;
 
       // RCU varieties

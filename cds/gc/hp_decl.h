@@ -473,20 +473,12 @@ namespace cds { namespace gc {
         static void retire( T * p ) ;   // inline in hp_impl.h
 
         /// Get current scan strategy
-        /**@anchor hrc_gc_HP_getScanType
-            See hzp::GarbageCollector::Scan for scan algo description
-        */
         hzp::scan_type getScanType() const
         {
             return hzp::GarbageCollector::instance().getScanType();
         }
 
         /// Set current scan strategy
-        /**
-            Scan strategy changing is allowed on the fly.
-
-            About scan strategy see \ref hrc_gc_HP_getScanType "getScanType"
-        */
         void setScanType(
             hzp::scan_type nScanType     ///< new scan strategy
         )

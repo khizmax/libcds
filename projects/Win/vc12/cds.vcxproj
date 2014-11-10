@@ -620,7 +620,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\dllmain.cpp" />
-    <ClCompile Include="..\..\..\src\hrc_gc.cpp" />
     <ClCompile Include="..\..\..\src\hzp_gc.cpp" />
     <ClCompile Include="..\..\..\src\init.cpp" />
     <ClCompile Include="..\..\..\src\michael_heap.cpp" />
@@ -742,8 +741,6 @@
     <ClInclude Include="..\..\..\cds\gc\guarded_ptr.h" />
     <ClInclude Include="..\..\..\cds\gc\hp_decl.h" />
     <ClInclude Include="..\..\..\cds\gc\hp_impl.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc_decl.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc_impl.h" />
     <ClInclude Include="..\..\..\cds\gc\ptb_decl.h" />
     <ClInclude Include="..\..\..\cds\gc\ptb_impl.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
@@ -835,7 +832,6 @@
     <ClInclude Include="..\..\..\cds\details\type_padding.h" />
     <ClInclude Include="..\..\..\cds\gc\default_gc.h" />
     <ClInclude Include="..\..\..\cds\gc\hp.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc.h" />
     <ClInclude Include="..\..\..\cds\gc\nogc.h" />
     <ClInclude Include="..\..\..\cds\gc\ptb.h" />
     <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_alloc.h" />
@@ -844,11 +840,6 @@
     <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_retired.h" />
     <ClInclude Include="..\..\..\cds\gc\hzp\details\hp_type.h" />
     <ClInclude Include="..\..\..\cds\gc\hzp\hzp.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc\gc_fwd.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc\hrc.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_fwd.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_inline.h" />
-    <ClInclude Include="..\..\..\cds\gc\hrc\details\hrc_retired.h" />
     <ClInclude Include="..\..\..\cds\gc\ptb\ptb.h" />
     <ClInclude Include="..\..\..\cds\gc\details\retired_ptr.h" />
     <ClInclude Include="..\..\..\cds\user_setup\allocator.h" />

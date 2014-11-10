@@ -18,8 +18,8 @@ namespace cds { namespace intrusive {
         /// Optimistic queue node
         /**
             Template parameters:
-            - GC - garbage collector used. gc::HRC is not supported.
-            - Tag - a tag used to distinguish between different implementation
+            - \p GC - garbage collector
+            - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none>
         struct node: public GC::container_node
