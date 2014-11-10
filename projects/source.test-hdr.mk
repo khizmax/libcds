@@ -24,7 +24,7 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_refinable_hashmap_boost_unordered_map.cpp \
     tests/test-hdr/map/hdr_refinable_hashmap_slist.cpp \
     tests/test-hdr/map/hdr_skiplist_map_hp.cpp \
-    tests/test-hdr/map/hdr_skiplist_map_ptb.cpp \
+    tests/test-hdr/map/hdr_skiplist_map_dhp.cpp \
     tests/test-hdr/map/hdr_skiplist_map_rcu_gpi.cpp \
     tests/test-hdr/map/hdr_skiplist_map_rcu_gpb.cpp \
     tests/test-hdr/map/hdr_skiplist_map_rcu_gpt.cpp \
@@ -136,7 +136,7 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_intrusive_refinable_hashset_treapset.cpp \
     tests/test-hdr/set/hdr_intrusive_refinable_hashset_uset.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_hp.cpp \
-    tests/test-hdr/set/hdr_intrusive_skiplist_ptb.cpp \
+    tests/test-hdr/set/hdr_intrusive_skiplist_dhp.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_gpb.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_gpi.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_gpt.cpp \
@@ -180,7 +180,7 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_refinable_hashset_slist.cpp \
     tests/test-hdr/set/hdr_refinable_hashset_vector.cpp \
     tests/test-hdr/set/hdr_skiplist_set_hp.cpp \
-    tests/test-hdr/set/hdr_skiplist_set_ptb.cpp \
+    tests/test-hdr/set/hdr_skiplist_set_dhp.cpp \
     tests/test-hdr/set/hdr_skiplist_set_rcu_gpi.cpp \
     tests/test-hdr/set/hdr_skiplist_set_rcu_gpb.cpp \
     tests/test-hdr/set/hdr_skiplist_set_rcu_gpt.cpp \
@@ -226,21 +226,21 @@ CDS_TESTHDR_STACK := \
 CDS_TESTHDR_TREE := \
     tests/test-hdr/tree/hdr_tree_reg.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_hp.cpp \
-    tests/test-hdr/tree/hdr_intrusive_ellen_bintree_ptb.cpp \
+    tests/test-hdr/tree/hdr_intrusive_ellen_bintree_dhp.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_gpb.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_gpi.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_gpt.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_shb.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_sht.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_map_hp.cpp \
-    tests/test-hdr/tree/hdr_ellenbintree_map_ptb.cpp \
+    tests/test-hdr/tree/hdr_ellenbintree_map_dhp.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_map_rcu_gpb.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_map_rcu_gpi.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_map_rcu_gpt.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_map_rcu_shb.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_map_rcu_sht.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_set_hp.cpp \
-    tests/test-hdr/tree/hdr_ellenbintree_set_ptb.cpp \
+    tests/test-hdr/tree/hdr_ellenbintree_set_dhp.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_set_rcu_gpb.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_set_rcu_gpi.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_set_rcu_gpt.cpp \

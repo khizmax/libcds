@@ -24,7 +24,7 @@ CDS_TESTHDR_OFFSETOF_SET := \
     tests/test-hdr/set/hdr_intrusive_michael_set_rcu_shb_lazy.cpp \
     tests/test-hdr/set/hdr_intrusive_michael_set_rcu_sht_lazy.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_hp_member.cpp \
-    tests/test-hdr/set/hdr_intrusive_skiplist_ptb_member.cpp \
+    tests/test-hdr/set/hdr_intrusive_skiplist_dhp_member.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_gpi_member.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_gpb_member.cpp \
     tests/test-hdr/set/hdr_intrusive_skiplist_rcu_gpt_member.cpp \
@@ -84,7 +84,7 @@ CDS_TESTHDR_OFFSETOF_STACK := \
 
 CDS_TESTHDR_OFFSETOF_TREE := \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_hp_member.cpp \
-    tests/test-hdr/tree/hdr_intrusive_ellen_bintree_ptb_member.cpp \
+    tests/test-hdr/tree/hdr_intrusive_ellen_bintree_dhp_member.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_gpb_member.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_gpi_member.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_gpt_member.cpp \
