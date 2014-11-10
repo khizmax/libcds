@@ -22,7 +22,7 @@ namespace cds { namespace intrusive {
             - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none>
-        struct node: public GC::container_node
+        struct node
         {
             typedef GC  gc  ;   ///< Garbage collector
             typedef Tag tag ;   ///< tag

@@ -83,14 +83,6 @@ namespace cds { namespace gc {
             ~thread_gc()    ;   // inline in ptb_impl.h
         };
 
-        /// Base for container node
-        /**
-            @headerfile cds/gc/ptb.h
-            This struct is empty for Pass-the-Buck GC
-        */
-        struct container_node
-        {};
-
 
         /// Pass-the-Buck guard
         /**

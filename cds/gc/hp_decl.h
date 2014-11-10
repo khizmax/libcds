@@ -82,14 +82,6 @@ namespace cds { namespace gc {
             ~thread_gc() ;  // inline in hp_impl.h
         };
 
-        /// Base for container node
-        /**
-            @headerfile cds/gc/hp.h
-            This struct is empty for Hazard Pointer GC
-        */
-        struct container_node
-        {};
-
         /// Hazard Pointer guard
         /**
             @headerfile cds/gc/hp.h
