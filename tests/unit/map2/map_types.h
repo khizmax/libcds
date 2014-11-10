@@ -114,54 +114,15 @@ namespace map2 {
         }
     };
 
-    template <typename K, typename V, typename... Options>
-    class CuckooStripedMap:
-        public cc::CuckooMap< K, V,
-            typename cc::cuckoo::make_traits<
-                co::mutex_policy< cc::cuckoo::striping<> >
-                ,Options...
-            >::type
-        >
+    template <typename K, typename V, typename Traits>
+    class CuckooMap :
+        public cc::CuckooMap< K, V, Traits >
     {
     public:
-        typedef typename cc::cuckoo::make_traits<
-            co::mutex_policy< cc::cuckoo::striping<> >
-            ,Options...
-        >::type cuckoo_traits;
-
-        typedef cc::CuckooMap< K, V, cuckoo_traits > cuckoo_base_class;
+        typedef cc::CuckooMap< K, V, Traits > cuckoo_base_class;
 
     public:
-        CuckooStripedMap( size_t nCapacity, size_t nLoadFactor )
-            : cuckoo_base_class( nCapacity / (nLoadFactor * 16), (unsigned int) 4 )
-        {}
-
-        template <typename Q, typename Pred>
-        bool erase_with( Q const& key, Pred pred )
-        {
-            return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
-        }
-    };
-
-    template <typename K, typename V, typename... Options>
-    class CuckooRefinableMap:
-        public cc::CuckooMap< K, V,
-            typename cc::cuckoo::make_traits<
-                co::mutex_policy< cc::cuckoo::refinable<> >
-                ,Options...
-            >::type
-        >
-    {
-    public:
-        typedef typename cc::cuckoo::make_traits<
-            co::mutex_policy< cc::cuckoo::refinable<> >
-            ,Options...
-        >::type cuckoo_traits;
-
-        typedef cc::CuckooMap< K, V, cuckoo_traits > cuckoo_base_class;
-
-    public:
-        CuckooRefinableMap( size_t nCapacity, size_t nLoadFactor )
+        CuckooMap( size_t nCapacity, size_t nLoadFactor )
             : cuckoo_base_class( nCapacity / (nLoadFactor * 16), (unsigned int) 4 )
         {}
 
@@ -1324,165 +1285,112 @@ namespace map2 {
         // ***************************************************************************
         // CuckooMap
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedMap_list_unord;
+        template <typename Traits>
+        struct traits_CuckooStripedMap: public Traits
+        {
+            typedef cc::cuckoo::striping<> mutex_policy;
+        };
+        template <typename Traits>
+        struct traits_CuckooRefinableMap : public Traits
+        {
+            typedef cc::cuckoo::refinable<> mutex_policy;
+        };
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedMap_list_unord_stat;
+        struct traits_CuckooMap_list_unord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::list >
+                , co::equal_to< equal_to >
+                , co::hash< std::tuple< hash, hash2 > >
+            > ::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord>> CuckooStripedMap_list_unord;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord>> CuckooRefinableMap_list_unord;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedMap_list_unord_storehash;
+        struct traits_CuckooMap_list_unord_stat : public traits_CuckooMap_list_unord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord_stat>> CuckooStripedMap_list_unord_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord_stat>> CuckooRefinableMap_list_unord_stat;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedMap_list_ord;
+        struct traits_CuckooMap_list_unord_storehash : public traits_CuckooMap_list_unord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord_storehash>> CuckooStripedMap_list_unord_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord_storehash>> CuckooRefinableMap_list_unord_storehash;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedMap_list_ord_stat;
+        struct traits_CuckooMap_list_ord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::list >
+                , co::compare< compare >
+                , co::hash< std::tuple< hash, hash2 > >
+            >::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord>> CuckooStripedMap_list_ord;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord>> CuckooRefinableMap_list_ord;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedMap_list_ord_storehash;
+        struct traits_CuckooMap_list_ord_stat : public traits_CuckooMap_list_ord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord_stat>> CuckooStripedMap_list_ord_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord_stat>> CuckooRefinableMap_list_ord_stat;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedMap_vector_unord;
+        struct traits_CuckooMap_list_ord_storehash : public traits_CuckooMap_list_ord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord_storehash>> CuckooStripedMap_list_ord_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord_storehash>> CuckooRefinableMap_list_ord_storehash;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedMap_vector_unord_stat;
+        struct traits_CuckooMap_vector_unord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
+                , co::equal_to< equal_to >
+                , co::hash< std::tuple< hash, hash2 > >
+            >::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord>> CuckooStripedMap_vector_unord;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord>> CuckooRefinableMap_vector_unord;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedMap_vector_unord_storehash;
+        struct traits_CuckooMap_vector_unord_stat : public traits_CuckooMap_vector_unord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord_stat>> CuckooStripedMap_vector_unord_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord_stat>> CuckooRefinableMap_vector_unord_stat;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedMap_vector_ord;
+        struct traits_CuckooMap_vector_unord_storehash : public traits_CuckooMap_vector_unord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord_storehash>> CuckooStripedMap_vector_unord_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord_storehash>> CuckooRefinableMap_vector_unord_storehash;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedMap_vector_ord_stat;
+        struct traits_CuckooMap_vector_ord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
+                , co::compare< compare >
+                , co::hash< std::tuple< hash, hash2 > >
+            >::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord>> CuckooStripedMap_vector_ord;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord>> CuckooRefinableMap_vector_ord;
 
-        typedef CuckooStripedMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedMap_vector_ord_storehash;
+        struct traits_CuckooMap_vector_ord_stat : public traits_CuckooMap_vector_ord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_stat>> CuckooStripedMap_vector_ord_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_stat>> CuckooRefinableMap_vector_ord_stat;
 
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableMap_list_unord;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableMap_list_unord_stat;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableMap_list_unord_storehash;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableMap_list_ord;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableMap_list_ord_stat;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableMap_list_ord_storehash;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableMap_vector_unord;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableMap_vector_unord_stat;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableMap_vector_unord_storehash;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableMap_vector_ord;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableMap_vector_ord_stat;
-
-        typedef CuckooRefinableMap< Key, Value,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableMap_vector_ord_storehash;
+        struct traits_CuckooMap_vector_ord_storehash : public traits_CuckooMap_vector_ord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_storehash>> CuckooStripedMap_vector_ord_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_storehash>> CuckooRefinableMap_vector_ord_storehash;
 
         // ***************************************************************************
         // SkipListMap
@@ -1872,20 +1780,12 @@ namespace map2 {
     }
 
 
-    template <typename K, typename V, typename... Options>
-    static inline void print_stat( CuckooStripedMap< K, V, Options... > const& m )
+    template <typename K, typename V, typename Traits>
+    static inline void print_stat( CuckooMap< K, V, Traits > const& m )
     {
-        typedef CuckooStripedMap< K, V, Options... > map_type;
+        typedef CuckooMap< K, V, Traits > map_type;
         print_stat( static_cast<typename map_type::cuckoo_base_class const&>(m) );
     }
-
-    template <typename K, typename V, typename... Options>
-    static inline void print_stat( CuckooRefinableMap< K, V, Options... > const& m )
-    {
-        typedef CuckooRefinableMap< K, V, Options... > map_type;
-        print_stat( static_cast<typename map_type::cuckoo_base_class const&>(m) );
-    }
-
 }   // namespace map2
 
 #endif // ifndef _CDSUNIT_MAP2_MAP_TYPES_H

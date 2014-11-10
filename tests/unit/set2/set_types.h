@@ -75,55 +75,15 @@ namespace set2 {
     typedef cds::urcu::gc< cds::urcu::signal_threaded<> >  rcu_sht;
 #endif
 
-    template <typename V, typename... Options>
-    class CuckooStripedSet:
-        public cc::CuckooSet< V,
-            typename cc::cuckoo::make_traits<
-                co::mutex_policy< cc::cuckoo::striping<> >
-                ,Options...
-            >::type
-        >
+    template <typename V, typename Traits>
+    class CuckooSet : public cc::CuckooSet< V, Traits >
     {
     public:
-        typedef typename cc::cuckoo::make_traits<
-            co::mutex_policy< cc::cuckoo::striping<> >
-            ,Options...
-        >::type cuckoo_traits;
-
-        typedef cc::CuckooSet< V, cuckoo_traits > cuckoo_base_class;
+        typedef cc::CuckooSet< V, Traits > cuckoo_base_class;
 
     public:
-        CuckooStripedSet( size_t nCapacity, size_t nLoadFactor )
-            : cuckoo_base_class( nCapacity / (nLoadFactor * 16), (unsigned int) 4 )
-        {}
-
-        template <typename Q, typename Pred>
-        bool erase_with( Q const& key, Pred pred )
-        {
-            return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
-        }
-    };
-
-    template <typename V, typename... Options>
-    class CuckooRefinableSet:
-        public cc::CuckooSet< V,
-            typename cc::cuckoo::make_traits<
-                co::mutex_policy< cc::cuckoo::refinable<> >
-                ,Options...
-            >::type
-        >
-    {
-    public:
-        typedef typename cc::cuckoo::make_traits<
-            co::mutex_policy< cc::cuckoo::refinable<> >
-            ,Options...
-        >::type cuckoo_traits;
-
-        typedef cc::CuckooSet< V, cuckoo_traits > cuckoo_base_class;
-
-    public:
-        CuckooRefinableSet( size_t nCapacity, size_t nLoadFactor )
-            : cuckoo_base_class( nCapacity / (nLoadFactor * 16), (unsigned int) 4 )
+        CuckooSet( size_t nCapacity, size_t nLoadFactor )
+            : cuckoo_base_class( nCapacity / (nLoadFactor * 16), (unsigned int)4 )
         {}
 
         template <typename Q, typename Pred>
@@ -1285,165 +1245,113 @@ namespace set2 {
         // ***************************************************************************
         // CuckooSet
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedSet_list_unord;
+        template <typename Traits>
+        struct traits_CuckooStripedSet : public Traits
+        {
+            typedef cc::cuckoo::striping<> mutex_policy;
+        };
+        template <typename Traits>
+        struct traits_CuckooRefinableSet : public Traits
+        {
+            typedef cc::cuckoo::refinable<> mutex_policy;
+        };
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedSet_list_unord_stat;
+        struct traits_CuckooSet_list_unord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::list >
+                , co::equal_to< equal_to >
+                , co::hash< std::tuple< hash, hash2 > >
+            > ::type
+        {};
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_unord>> CuckooStripedSet_list_unord;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_unord>> CuckooRefinableSet_list_unord;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedSet_list_unord_storehash;
+        struct traits_CuckooSet_list_unord_stat : public traits_CuckooSet_list_unord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_unord_stat>> CuckooStripedSet_list_unord_stat;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_unord_stat>> CuckooRefinableSet_list_unord_stat;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedSet_list_ord;
+        struct traits_CuckooSet_list_unord_storehash : public traits_CuckooSet_list_unord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_unord_storehash>> CuckooStripedSet_list_unord_storehash;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_unord_storehash>> CuckooRefinableSet_list_unord_storehash;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedSet_list_ord_stat;
+        struct traits_CuckooSet_list_ord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::list >
+                , co::compare< compare >
+                , co::hash< std::tuple< hash, hash2 > >
+            > ::type
+        {};
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_ord>> CuckooStripedSet_list_ord;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_ord>> CuckooRefinableSet_list_ord;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedSet_list_ord_storehash;
+        struct traits_CuckooSet_list_ord_stat : public traits_CuckooSet_list_ord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_ord_stat>> CuckooStripedSet_list_ord_stat;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_ord_stat>> CuckooRefinableSet_list_ord_stat;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedSet_vector_unord;
+        struct traits_CuckooSet_list_ord_storehash : public traits_CuckooSet_list_ord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_ord_storehash>> CuckooStripedSet_list_ord_storehash;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_ord_storehash>> CuckooRefinableSet_list_ord_storehash;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedSet_vector_unord_stat;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedSet_vector_unord_storehash;
+        struct traits_CuckooSet_vector_unord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
+                , co::equal_to< equal_to >
+                , co::hash< std::tuple< hash, hash2 > >
+            > ::type
+        {};
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_unord>> CuckooStripedSet_vector_unord;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_unord>> CuckooRefinableSet_vector_unord;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooStripedSet_vector_ord;
+        struct traits_CuckooSet_vector_unord_stat : public traits_CuckooSet_vector_unord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_unord_stat>> CuckooStripedSet_vector_unord_stat;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_unord_stat>> CuckooRefinableSet_vector_unord_stat;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooStripedSet_vector_ord_stat;
+        struct traits_CuckooSet_vector_unord_storehash : public traits_CuckooSet_vector_unord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_unord_storehash>> CuckooStripedSet_vector_unord_storehash;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_unord_storehash>> CuckooRefinableSet_vector_unord_storehash;
 
-        typedef CuckooStripedSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooStripedSet_vector_ord_storehash;
+        struct traits_CuckooSet_vector_ord :
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
+                , co::compare< compare >
+                , co::hash< std::tuple< hash, hash2 > >
+            > ::type
+        {};
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_ord>> CuckooStripedSet_vector_ord;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_ord>> CuckooRefinableSet_vector_ord;
 
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableSet_list_unord;
+        struct traits_CuckooSet_vector_ord_stat : public traits_CuckooSet_vector_ord
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_ord_stat>> CuckooStripedSet_vector_ord_stat;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_ord_stat>> CuckooRefinableSet_vector_ord_stat;
 
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableSet_list_unord_stat;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableSet_list_unord_storehash;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableSet_list_ord;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableSet_list_ord_stat;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::list >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableSet_list_ord_storehash;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableSet_vector_unord;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableSet_vector_unord_stat;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::equal_to< equal_to >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableSet_vector_unord_storehash;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-        > CuckooRefinableSet_vector_ord;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,co::stat< cc::cuckoo::stat >
-        > CuckooRefinableSet_vector_ord_stat;
-
-        typedef CuckooRefinableSet< key_val,
-            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
-            ,co::compare< compare >
-            ,co::hash< std::tuple< hash, hash2 > >
-            ,cc::cuckoo::store_hash< true >
-        > CuckooRefinableSet_vector_ord_storehash;
+        struct traits_CuckooSet_vector_ord_storehash : public traits_CuckooSet_vector_ord
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_ord_storehash>> CuckooStripedSet_vector_ord_storehash;
+        typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_ord_storehash>> CuckooRefinableSet_vector_ord_storehash;
 
 
         // ***************************************************************************
@@ -1816,20 +1724,12 @@ namespace set2 {
         CPPUNIT_MSG( s.statistics() << s.mutex_policy_statistics() );
     }
 
-    template <typename V, typename... Options>
-    static inline void print_stat( CuckooStripedSet< V, Options... > const& s )
+    template <typename V, typename Traits>
+    static inline void print_stat( CuckooSet< V, Traits > const& s )
     {
-        typedef CuckooStripedSet< V, Options... > set_type;
+        typedef CuckooSet< V, Traits > set_type;
         print_stat( static_cast<typename set_type::cuckoo_base_class const&>(s) );
     }
-
-    template <typename V, typename... Options>
-    static inline void print_stat( CuckooRefinableSet< V, Options... > const& s )
-    {
-        typedef CuckooRefinableSet< V, Options... > set_type;
-        print_stat( static_cast<typename set_type::cuckoo_base_class const&>(s) );
-    }
-
 
 
     //*******************************************************
