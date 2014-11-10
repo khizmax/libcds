@@ -146,6 +146,11 @@ namespace cds { namespace intrusive {
                 return it;
             }
 
+            node_type * node() const
+            {
+                return m_pNode;
+            }
+
         public:
             iterator()
                 : m_pNode( nullptr )
@@ -188,7 +193,7 @@ namespace cds { namespace intrusive {
             template <typename Bkoff, bool C>
             bool operator ==(iterator<gc, node_traits, Bkoff, C> const& i ) const
             {
-                return m_pNode == i.m_pNode;
+                return m_pNode == i.node();
             }
             template <typename Bkoff, bool C>
             bool operator !=(iterator<gc, node_traits, Bkoff, C> const& i ) const

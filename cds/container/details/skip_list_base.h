@@ -228,6 +228,11 @@ namespace cds { namespace container {
                     : m_It( it )
                 {}
 
+                intrusive_iterator const& underlying_iterator() const
+                {
+                    return m_It;
+                }
+
             public:
                 iterator()
                     : m_It()
@@ -263,7 +268,7 @@ namespace cds { namespace container {
                 template <typename FwIt>
                 bool operator ==(iterator<FwIt> const& i ) const
                 {
-                    return m_It == i.m_It;
+                    return m_It == i.underlying_iterator();
                 }
                 template <typename FwIt>
                 bool operator !=(iterator<FwIt> const& i ) const
