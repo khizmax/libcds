@@ -4,6 +4,7 @@
 #define __CDS_COMPILER_CXX11_ATOMIC_H
 //@cond
 
+#include <stddef.h>     // ptrdiff_t
 #include <type_traits>  // make_unsigned
 #include <cds/details/defs.h>
 #include <cds/details/aligned_type.h>
