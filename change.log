@@ -3,6 +3,11 @@
     - switch to C++11 standard
     - Removed: MichaelDeque, reason: the implementation is heavy-weighted, inefficient,
       and, seems, unstable.
+    - Removed: cds::gc::HRC garbage collector, reason: the implementation is inefficient 
+      and unstable.
+    - Changed: all container's declaration except StripedSet has been unified to the
+      following traits-based form: 
+           class Container< GC, T, Traits >
     - Added: new member function pop_with(Func) to cds::container::TreiberStack
     - Added: new member functions enqueue_with(Func), dequeue_with(Func) to 
              cds::container::MSQueue

@@ -28,7 +28,7 @@ namespace cds { namespace container {
         {
             typedef cds::gc::nogc   gc;
             typedef T               value_type;
-            typedef Traits          type_traits;
+            typedef Traits          traits;
 
             typedef cds::intrusive::skip_list::node< gc >   intrusive_node_type;
             struct node_type: public intrusive_node_type
@@ -64,7 +64,7 @@ namespace cds { namespace container {
                 node_type() = delete;   // no default ctor
             };
 
-            typedef skip_list::details::node_allocator< node_type, type_traits> node_allocator;
+            typedef skip_list::details::node_allocator< node_type, traits> node_allocator;
 
             struct node_deallocator {
                 void operator ()( node_type * pNode )
@@ -75,8 +75,8 @@ namespace cds { namespace container {
 
             typedef skip_list::details::dummy_node_builder<intrusive_node_type> dummy_node_builder;
 
-            typedef typename type_traits::key_accessor key_accessor;
-            typedef typename opt::details::make_comparator< value_type, type_traits >::type key_comparator;
+            typedef typename traits::key_accessor key_accessor;
+            typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 
             /*
             template <typename Less>
@@ -86,7 +86,7 @@ namespace cds { namespace container {
             */
 
             typedef typename cds::intrusive::skip_list::make_traits<
-                cds::opt::type_traits< type_traits >
+                cds::opt::type_traits< traits >
                 ,cds::intrusive::opt::hook< intrusive::skip_list::base_hook< cds::opt::gc< gc > > >
                 ,cds::intrusive::opt::disposer< node_deallocator >
                 ,cds::intrusive::skip_list::internal_node_builder< dummy_node_builder >
@@ -108,7 +108,7 @@ namespace cds { namespace container {
 
         Template arguments:
         - \p T - type to be stored in the list.
-        - \p Traits - type traits. See skip_list::type_traits for explanation.
+        - \p Traits - type traits. See skip_list::traits for explanation.
 
         It is possible to declare option-based list with cds::container::skip_list::make_traits metafunction istead of \p Traits template
         argument. \p Options template arguments of cds::container::skip_list::make_traits metafunction are:
@@ -128,7 +128,7 @@ namespace cds { namespace container {
     template <
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        class Traits = skip_list::type_traits
+        class Traits = skip_list::traits
 #else
         class Traits
 #endif

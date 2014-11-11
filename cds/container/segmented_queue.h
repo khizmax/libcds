@@ -169,7 +169,7 @@ namespace cds { namespace container {
         Template parameters:
         - \p GC - a garbage collector, possible types are cds::gc::HP, cds::gc::PTB
         - \p T - the type of values stored in the queue
-        - \p Traits - queue type traits, default is \p segmented_queue::type_traits.
+        - \p Traits - queue type traits, default is \p segmented_queue::traits.
             \p segmented_queue::make_traits metafunction can be used to construct your
             type traits.
     */

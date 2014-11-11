@@ -96,7 +96,7 @@ namespace cds { namespace container {
             - \p opt::compare - key comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            - \p opt::item_counter - the type of item counting feature. Default is \pf atomicity::empty_item_counter that is no item counting.
+            - \p opt::item_counter - the type of item counting feature. Default is \p atomicity::empty_item_counter that is no item counting.
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift, \p skip_list::turbo_pascal or

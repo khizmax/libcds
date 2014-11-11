@@ -33,34 +33,33 @@ namespace cds { namespace container {
         among \p Options template arguments.
 
         The \p Options are:
-            - opt::mutex_policy - concurrent access policy.
-                Available policies: intrusive::striped_set::striping, intrusive::striped_set::refinable.
-                Default is %striped_set::striping.
-            - opt::hash - hash functor. Default option value see opt::v::hash_selector<opt::none> which selects default hash functor for
-                your compiler.
-            - opt::compare - key comparison functor. No default functor is provided.
-                If the option is not specified, the opt::less is used.
-            - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            - opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
-                without locks. Note that item counting is an essential part of the set algorithm, so dummy type like atomicity::empty_item_counter
-                is not suitable.
-            - opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is CDS_DEFAULT_ALLOCATOR.
-            - opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash set.
+            - \p opt::mutex_policy - concurrent access policy.
+                Available policies: \p intrusive::striped_set::striping, \p intrusive::striped_set::refinable.
+                Default is \p %striped_set::striping.
+            - \p opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector<opt::none> </tt> 
+                which selects default hash functor for your compiler.
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p %opt::less is used.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
+                without locks. Note that item counting is an essential part of the set algorithm, so dummy counter 
+                like as \p atomicity::empty_item_counter is not suitable.
+            - \p opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash set.
                 Default option value depends on bucket container type:
-                    for sequential containers like \p std::list, \p std::vector the resizing policy is striped_set::load_factor_resizing<4>;
-                    for other type of containers like \p std::set, \p std::unordered_set the resizing policy is striped_set::no_resizing.
-                See \ref striped_set namespace for list of all possible types of the option.
+                    for sequential containers like \p std::list, \p std::vector the resizing policy is <tt>striped_set::load_factor_resizing<4> </tt>;
+                    for other type of containers like \p std::set, \p std::unordered_set the resizing policy is \p striped_set::no_resizing.
+                See \ref cds_striped_resizing_policy "available resizing policy".
                 Note that the choose of resizing policy depends of \p Container type:
                 for sequential containers like \p std::list, \p std::vector and so on, right choosing of the policy can
                 significantly improve performance.
-                For other, non-sequential types of \p Container (like a \p std::set)
-                the resizing policy is not so important.
-            - opt::copy_policy - the copy policy which is used to copy items from the old set to the new one when resizing.
+                For other, non-sequential types of \p Container (like a \p std::set) the resizing policy is not so important.
+            - \p opt::copy_policy - the copy policy which is used to copy items from the old set to the new one when resizing.
                 The policy can be optionally used in adapted bucket container for performance reasons of resizing.
                 The detail of copy algorithm depends on type of bucket container and explains below.
 
-            opt::compare or opt::less options are used in some \p Container class for searching an item.
-            opt::compare option has the highest priority: if opt::compare is specified, opt::less is not used.
+            \p %opt::compare or \p %opt::less options are used in some \p Container class for searching an item.
+            \p %opt::compare option has the highest priority: if \p %opt::compare is specified, \p %opt::less is not used.
 
         You can pass other option that would be passed to <tt>adapt</tt> metafunction, see below.
 
@@ -74,7 +73,7 @@ namespace cds { namespace container {
             All you need is to include a right header before <tt>striped_hash_set.h</tt>.
 
             By default, <tt>striped_set::adapt<AnyContainer, Options...> </tt> metafunction does not make any wrapping to \p AnyContainer,
-            so, the result <tt>%striped_set::adapt<AnyContainer, Options...>::type </tt> is the same as \p AnyContainer.
+            so, the result <tt>striped_set::adapt<AnyContainer, Options...>::type </tt> is the same as \p AnyContainer.
             However, there are a lot of specializations of <tt>striped_set::adapt</tt> for well-known containers, see table below.
             Any of this specialization wraps corresponding container making it suitable for the set's bucket.
             Remember, you should include the proper header file for \p adapt <b>before</b> including <tt>striped_hash_set.h</tt>.
@@ -116,7 +115,7 @@ namespace cds { namespace container {
                     </td>
                     <td>
                         The vector is ordered.
-                        Template argument pack \p Options <b>must</b> contain cds::opt::less or cds::opt::compare for type \p T stored in the list
+                        Template argument pack \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare for type \p T stored in the list
                     </td>
                 </tr>
                 <tr>
@@ -149,28 +148,7 @@ namespace cds { namespace container {
                     \endcode
                     </td>
                     <td>
-                        You should provide two different hash function \p h1 and \p h2 - one for std::unordered_set and other for \p %StripedSet.
-                        For the best result, \p h1 and \p h2 must be orthogonal i.e. <tt> h1(X) != h2(X) </tt> for any value \p X.
-                    </td>
-                </tr>
-                <tr>
-                    <td>\p stdext::hash_set (only for MS VC++ 2008)</td>
-                    <td><tt><cds/container/striped_set/std_hash_set.h></tt></td>
-                    <td>\code
-                        #include <cds/container/striped_set/std_hash_set.h>
-                        #include <cds/container/striped_hash_set.h>
-                        typedef cds::container::StripedSet<
-                            stdext::hash_set< T,
-                                stdext::hash_compare<
-                                    T,
-                                    std::less<T>
-                                >
-                            >
-                        > striped_set;
-                    \endcode
-                    </td>
-                    <td>
-                        You should provide two different hash function \p h1 and \p h2 - one for stdext::hash_set and other for \p %StripedSet.
+                        You should provide two different hash function \p h1 and \p h2 - one for \p std::unordered_set and other for \p %StripedSet.
                         For the best result, \p h1 and \p h2 must be orthogonal i.e. <tt> h1(X) != h2(X) </tt> for any value \p X.
                     </td>
                 </tr>
@@ -187,7 +165,7 @@ namespace cds { namespace container {
                     </td>
                     <td>
                         The list is ordered.
-                        \p Options <b>must</b> contain cds::opt::less or cds::opt::compare.
+                        \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare.
                     </td>
                 </tr>
                 <tr>
@@ -203,7 +181,7 @@ namespace cds { namespace container {
                     </td>
                     <td>
                         The list is ordered.
-                        \p Options <b>must</b> contain cds::opt::less or cds::opt::compare.
+                        \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare.
                     </td>
                 </tr>
                 <tr>
@@ -220,7 +198,7 @@ namespace cds { namespace container {
                     </td>
                     <td>
                         The vector is ordered.
-                        Template argument pack \p Options <b>must</b> contain cds::opt::less or cds::opt::compare for type \p T stored in the list
+                        Template argument pack \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare for type \p T stored in the vector
                     </td>
                 </tr>
                 <tr>
@@ -237,7 +215,7 @@ namespace cds { namespace container {
                     </td>
                     <td>
                         The vector is ordered.
-                        Template argument pack \p Options <b>must</b> contain cds::opt::less or cds::opt::compare for type \p T stored in the list
+                        Template argument pack \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare for type \p T stored in the vector
                     </td>
                 </tr>
                 <tr>
@@ -284,7 +262,7 @@ namespace cds { namespace container {
                     \endcode
                     </td>
                     <td>
-                        You should provide two different hash function \p h1 and \p h2 - one for boost::unordered_set and other for \p %StripedSet.
+                        You should provide two different hash function \p h1 and \p h2 - one for \p boost::unordered_set and other for \p %StripedSet.
                         For the best result, \p h1 and \p h2 must be orthogonal i.e. <tt> h1(X) != h2(X) </tt> for any value \p X.
                     </td>
                 </tr>
@@ -362,7 +340,6 @@ namespace cds { namespace container {
                     <td>
                         - \p std::set
                         - \p std::unordered_set
-                        - \p stdext::hash_set (only for MS VC++ 2008)
                     </td>
                     <td>\code
                         struct copy_item {
@@ -415,7 +392,7 @@ namespace cds { namespace container {
 
         <b>Advanced functions</b>
 
-            <b>libcds</b> provides some advanced functions like \p erase_with, \p find_with,
+            <b>libcds</b> provides some advanced functions like \p erase_with(), \p find_with(),
             that cannot be supported by all underlying containers.
             The table below shows whether underlying container supports those functions
             (the sign "+" means "container supports the function"):
@@ -443,11 +420,6 @@ namespace cds { namespace container {
                 </tr>
                 <tr>
                     <td> \p std::unordered_set</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>\p stdext::hash_set (only for MS VC++ 2008)</td>
                     <td>-</td>
                     <td>-</td>
                 </tr>
@@ -561,8 +533,8 @@ namespace cds { namespace container {
             and then inserts the node created into the set.
 
             The type \p Q should contain as minimum the complete key for the node.
-            The object of \ref value_type should be constructible from a value of type \p Q.
-            In trivial case, \p Q is equal to \ref value_type.
+            The object of \p value_type should be constructible from a value of type \p Q.
+            In trivial case, \p Q is equal to \p value_type.
 
             Returns \p true if \p val is inserted into the set, \p false otherwise.
         */
@@ -585,7 +557,7 @@ namespace cds { namespace container {
             \endcode
             where \p item is the item inserted.
 
-            The type \p Q can differ from \ref value_type of items storing in the set.
+            The type \p Q can differ from \p value_type of items storing in the set.
             Therefore, the \p value_type should be constructible from type \p Q.
 
             The user-defined functor is called only if the inserting is success.
@@ -788,7 +760,7 @@ namespace cds { namespace container {
             The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
             can modify both arguments.
 
-            The type \p Q can differ from \ref value_type of items storing in the container.
+            The type \p Q can differ from \p value_type of items storing in the container.
             Therefore, the \p value_type should be comparable with type \p Q.
 
             The function returns \p true if \p val is found, \p false otherwise.
@@ -831,7 +803,7 @@ namespace cds { namespace container {
 
             The functor can change non-key fields of \p item.
 
-            The type \p Q can differ from \ref value_type of items storing in the container.
+            The type \p Q can differ from \p value_type of items storing in the container.
             Therefore, the \p value_type should be comparable with type \p Q.
 
             The function returns \p true if \p val is found, \p false otherwise.
@@ -867,7 +839,7 @@ namespace cds { namespace container {
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \ref value_type.
+            should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
         bool find( Q const& val )

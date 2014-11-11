@@ -35,7 +35,7 @@ namespace cds { namespace container {
         Template arguments:
         - \p RCU - one of \ref cds_urcu_gc "RCU type".
         - \p T - type to be stored in the list.
-        - \p Traits - type traits. See skip_list::type_traits for explanation.
+        - \p Traits - set traits, default is skip_list::traits for explanation.
 
         It is possible to declare option-based list with cds::container::skip_list::make_traits metafunction istead of \p Traits template
         argument.
@@ -85,7 +85,7 @@ namespace cds { namespace container {
 
         // Traits for your skip-list.
         // At least, you should define cds::opt::less or cds::opt::compare for Foo struct
-        struct my_traits: public cds::continer::skip_list::type_traits
+        struct my_traits: public cds::continer::skip_list::traits
         {
             // ...
         };
@@ -141,7 +141,7 @@ namespace cds { namespace container {
         typename RCU,
         typename T,
 #ifdef CDS_DOXYGEN_INVOKED
-        typename Traits = skip_list::type_traits
+        typename Traits = skip_list::traits
 #else
         typename Traits
 #endif
@@ -160,16 +160,16 @@ namespace cds { namespace container {
     public:
         typedef typename base_class::gc gc  ; ///< Garbage collector used
         typedef T       value_type  ;   ///< Value type stored in the set
-        typedef Traits  options     ;   ///< Options specified
+        typedef Traits  traits     ;   ///< Options specified
 
         typedef typename base_class::back_off       back_off        ;   ///< Back-off strategy used
-        typedef typename options::allocator         allocator_type  ;   ///< Allocator type used for allocate/deallocate the skip-list nodes
+        typedef typename traits::allocator         allocator_type  ;   ///< Allocator type used for allocate/deallocate the skip-list nodes
         typedef typename base_class::item_counter   item_counter    ;   ///< Item counting policy used
         typedef typename maker::key_comparator      key_comparator  ;   ///< key compare functor
         typedef typename base_class::memory_model   memory_model    ;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename options::random_level_generator random_level_generator ; ///< random level generator
-        typedef typename options::stat              stat            ;   ///< internal statistics type
-        typedef typename options::rcu_check_deadlock    rcu_check_deadlock ; ///< Deadlock checking policy
+        typedef typename traits::random_level_generator random_level_generator ; ///< random level generator
+        typedef typename traits::stat              stat            ;   ///< internal statistics type
+        typedef typename traits::rcu_check_deadlock    rcu_check_deadlock ; ///< Deadlock checking policy
 
     protected:
         //@cond

@@ -68,33 +68,33 @@ namespace cds { namespace container {
         among \p Options template arguments.
 
         The \p Options are:
-            - opt::mutex_policy - concurrent access policy.
-                Available policies: intrusive::striped_set::striping, intrusive::striped_set::refinable.
+            - \p opt::mutex_policy - concurrent access policy.
+                Available policies: \p intrusive::striped_set::striping, \p intrusive::striped_set::refinable.
                 Default is %striped_set::striping.
-            - opt::hash - hash functor. Default option value see opt::v::hash_selector<opt::none> which selects default hash functor for
-                your compiler.
-            - opt::compare - key comparison functor. No default functor is provided.
-                If the option is not specified, the opt::less is used.
-            - opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            - opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
-                without locks. Note that item counting is an essential part of the map algorithm, so dummy type like atomicity::empty_item_counter
-                is not suitable.
-            - opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is CDS_DEFAULT_ALLOCATOR.
-            - opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash map.
+            - \p opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector<opt::none> </tt>
+                which selects default hash functor for your compiler.
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p %opt::less is used.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
+                without locks. Note that item counting is an essential part of the map algorithm, so dummy counter 
+                like as \p atomicity::empty_item_counter is not suitable.
+            - \p opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash map.
                 Default option value depends on bucket container type:
-                    for sequential containers like \p std::list, \p std::vector the resizing policy is hash_set::load_factor_resizing<4>;
-                    for other type of containers like \p std::map, \p std::unordered_map the resizing policy is hash_set::no_resizing.
-                See \ref intrusive::striped_set namespace for list of all possible types of the option.
+                    for sequential containers like \p std::list, \p std::vector the resizing policy is <tt>striped_set::load_factor_resizing<4> </tt>;
+                    for other type of containers like \p std::map, \p std::unordered_map the resizing policy is \p striped_set::no_resizing.
+                See \ref cds_striped_resizing_policy "available resizing policy".
                 Note that the choose of resizing policy depends of \p Container type:
                 for sequential containers like \p std::list, \p std::vector and so on, right choosing of the policy can
                 significantly improve performance.
                 For other, non-sequential types of \p Container (like a \p std::map)
                 the resizing policy is not so important.
-            - opt::copy_policy - the copy policy which is used to copy items from the old map to the new one when resizing.
+            - \p opt::copy_policy - the copy policy which is used to copy items from the old map to the new one when resizing.
                 The policy can be optionally used in adapted bucket container for performance reasons of resizing.
                 The detail of copy algorithm depends on type of bucket container and explains below.
 
-            \p opt::compare or \p opt::less options are used only in some \p Container class for searching an item.
+            \p %opt::compare or \p %opt::less options are used only in some \p Container class for searching an item.
             \p %opt::compare option has the highest priority: if \p %opt::compare is specified, \p %opt::less is not used.
 
         You can pass other option that would be passed to <tt>adapt</tt> metafunction, see below.
@@ -102,14 +102,14 @@ namespace cds { namespace container {
         <b>Internal details</b>
 
             The \p %StripedMap class cannot utilize the \p Container container specified directly, but only its adapted variant which
-            supports an unified interface. Internally, the adaptation is made via hash_set::adapt metafunction that wraps bucket container
+            supports an unified interface. Internally, the adaptation is made via \p striped_set::adapt metafunction that wraps bucket container
             and provides the unified bucket interface suitable for \p %StripedMap. Such adaptation is completely transparent for you -
             you don't need to call \p adapt metafunction directly, \p %StripedMap class's internal machinery itself invokes appropriate
             \p adapt metafunction to adjust your \p Container container class to \p %StripedMap bucket's internal interface.
             All you need is to include a right header before <tt>striped_hash_map.h</tt>.
 
-            By default, <tt>intrusive::striped_set::adapt<AnyContainer, Options...> </tt> metafunction does not make any wrapping to \p AnyContainer,
-            so, the result <tt>%intrusive::striped_set::adapt<AnyContainer, Options...>::type </tt> is the same as \p AnyContainer.
+            By default, <tt>striped_set::adapt<AnyContainer, Options...> </tt> metafunction does not make any wrapping to \p AnyContainer,
+            so, the result <tt>striped_set::adapt<AnyContainer, Options...>::type </tt> is the same as \p AnyContainer.
             However, there are a lot of specializations of \p adapt for well-known containers, see table below.
             Any of this specialization wraps corresponding container making it suitable for the map's bucket.
             Remember, you should include the proper header file for \p adapt <b>before</b> <tt>striped_map.h</tt>.
@@ -135,7 +135,7 @@ namespace cds { namespace container {
                     <td>
                         The type of values stored in the \p std::list must be <tt> std::pair< const Key, V > </tt>, where \p Key - key type,  and \p V - value type
                         The list is ordered by key \p Key.
-                        Template argument pack \p Options <b>must</b> contain cds::opt::less or cds::opt::compare for type \p Key stored in the list.
+                        Template argument pack \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare for type \p Key stored in the list.
                     </td>
                 </tr>
                 <tr>
@@ -173,27 +173,6 @@ namespace cds { namespace container {
                     </td>
                 </tr>
                 <tr>
-                    <td>\p stdext::hash_map (only for MS VC++ 2008)</td>
-                    <td><tt><cds/container/striped_map/std_hash_map.h></tt></td>
-                    <td>\code
-                        #include <cds/container/striped_map/std_hash_map.h>
-                        #include <cds/container/striped_hash_map.h>
-                        typedef cds::container::StripedMap<
-                            stdext::hash_map< Key, T,
-                                stdext::hash_compare<
-                                    Key,
-                                    std::less<Key>
-                                >
-                            >
-                        > striped_map;
-                    \endcode
-                    </td>
-                    <td>
-                        You should provide two different hash function \p h1 and \p h2 - one for stdext::hash_map and other for \p %StripedMap.
-                        For the best result, \p h1 and \p h2 must be orthogonal i.e. <tt> h1(X) != h2(X) </tt> for any value \p X of type \p Key.
-                    </td>
-                </tr>
-                <tr>
                     <td> \p boost::container::slist</td>
                     <td><tt><cds/container/striped_map/boost_slist.h></tt></td>
                     <td>\code
@@ -207,7 +186,7 @@ namespace cds { namespace container {
                     <td>
                         The type of values stored in the \p boost::container::slist must be <tt> std::pair< const Key, T > </tt>,
                         where \p Key - key type,  and \p T - value type. The list is ordered.
-                        \p Options <b>must</b> contain cds::opt::less or cds::opt::compare.
+                        \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare.
                     </td>
                 </tr>
                 <tr>
@@ -224,7 +203,7 @@ namespace cds { namespace container {
                     <td>
                         The type of values stored in the \p boost::container::list must be <tt> std::pair< const Key, T > </tt>,
                         where \p Key - key type,  and \p T - value type. The list is ordered.
-                        \p Options <b>must</b> contain cds::opt::less or cds::opt::compare.
+                        \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare.
                     </td>
                 </tr>
                 <tr>
@@ -278,26 +257,26 @@ namespace cds { namespace container {
             Suppose, you have a container class \p MyBestContainer and you want to integrate it with \p %StripedMap as bucket type.
             There are two possibility:
             - either your \p MyBestContainer class has native support of bucket's interface;
-                in this case, you can use default <tt>hash_set::adapt</tt> metafunction;
+                in this case, you can use default <tt>striped_set::adapt</tt> metafunction;
             - or your \p MyBestContainer class does not support bucket's interface, which means, that you should develop a specialization
-                <tt>cds::container::hash_set::adapt<MyBestContainer> </tt> metafunction providing necessary interface.
+                <tt>cds::container::striped_set::adapt<MyBestContainer> </tt> metafunction providing necessary interface.
 
-            The <tt>hash_set::adapt< Container, Options... ></tt> metafunction has two template argument:
+            The <tt>striped_set::adapt< Container, Options... ></tt> metafunction has two template argument:
             - \p Container is the class that should be used as the bucket, for example, <tt>std::list< std::pair< Key, T > ></tt>.
             - \p Options pack is the options from \p %StripedMap declaration. The \p adapt metafunction can use
                 any option from \p Options for its internal use. For example, a \p compare option can be passed to \p adapt
                 metafunction via \p Options argument of \p %StripedMap declaration.
 
-            See hash_set::adapt metafunction for the description of interface that the bucket container must provide
+            See striped_set::adapt metafunction for the description of interface that the bucket container must provide
             to be \p %StripedMap compatible.
 
         <b>Copy policy</b>
             There are three predefined copy policy:
-            - \p cds::container::hash_set::copy_item - copy item from old bucket to new one when resizing using copy ctor. It is default policy for
+            - \p cds::container::striped_set::copy_item - copy item from old bucket to new one when resizing using copy ctor. It is default policy for
                 any compiler that do not support move semantics
-            - \p cds::container::hash_set::move_item - move item from old bucket to new one when resizing using move semantics. It is default policy for
+            - \p cds::container::striped_set::move_item - move item from old bucket to new one when resizing using move semantics. It is default policy for
                 any compiler that support move semantics. If compiler does not support move semantics, the move policy is the same as \p copy_item
-            - \p cds::container::hash_set::swap_item - copy item from old bucket to new one when resizing using \p std::swap. Not all containers support
+            - \p cds::container::striped_set::swap_item - copy item from old bucket to new one when resizing using \p std::swap. Not all containers support
                 this copy policy, see details in table below.
 
             You can define your own copy policy specifically for your case.
@@ -353,7 +332,6 @@ namespace cds { namespace container {
                     <td>
                         - \p std::map
                         - \p std::unordered_map
-                        - \p stdext::hash_map (only for MS VC++ 2008)
                         - \p boost::container::map
                         - \p boost::container::flat_map
                         - \p boost::unordered_map
@@ -429,7 +407,7 @@ namespace cds { namespace container {
 
         <b>Advanced functions</b>
 
-        <b>libcds</b> provides some advanced functions like \p erase_with, \p find_with,
+        The library provides some advanced functions like \p erase_with(), \p find_with(),
         that cannot be supported by all underlying containers.
         The table below shows whether underlying container supports those functions
         (the sign "+" means "container supports the function"):
@@ -452,11 +430,6 @@ namespace cds { namespace container {
             </tr>
             <tr>
                 <td> \p std::unordered_map</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>\p stdext::hash_map (only for MS VC++ 2008)</td>
                 <td>-</td>
                 <td>-</td>
             </tr>
@@ -578,9 +551,9 @@ template <class Container, typename... Options>
             The function creates a node with \p key and default value, and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from a value of type \p K.
-                In trivial case, \p K is equal to \ref key_type.
-            - The \ref mapped_type should be default-constructible.
+            - The \p key_type should be constructible from a value of type \p K.
+                In trivial case, \p K is equal to \p key_type.
+            - The \p mapped_type should be default-constructible.
 
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -596,8 +569,8 @@ template <class Container, typename... Options>
             and then inserts the node created into the map.
 
             Preconditions:
-            - The \ref key_type should be constructible from \p key of type \p K.
-            - The \ref mapped_type should be constructible from \p val of type \p V.
+            - The \p key_type should be constructible from \p key of type \p K.
+            - The \p mapped_type should be constructible from \p val of type \p V.
 
             Returns \p true if \p val is inserted into the set, \p false otherwise.
         */
@@ -638,7 +611,7 @@ template <class Container, typename... Options>
             return base_class::insert( key, func );
         }
 
-        /// For key \p key inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
+        /// For key \p key inserts data of type \p mapped_type created in-place from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -668,7 +641,7 @@ template <class Container, typename... Options>
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
+            is inserted into the map (note that in this case the \p key_type should be
             constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
             The functor \p Func may be a function with signature:
@@ -686,7 +659,7 @@ template <class Container, typename... Options>
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
 
-            The functor may change any fields of the \p item.second that is \ref mapped_type.
+            The functor may change any fields of the \p item.second that is \p mapped_type.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -755,8 +728,6 @@ template <class Container, typename... Options>
             \endcode
 
             Return \p true if key is found and deleted, \p false otherwise
-
-            See also: \ref erase
         */
         template <typename K, typename Func>
         bool erase( K const& key, Func f )

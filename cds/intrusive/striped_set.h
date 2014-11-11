@@ -10,6 +10,12 @@
 namespace cds { namespace intrusive {
     /// StripedSet related definitions
     namespace striped_set {
+
+        /** @defgroup cds_striped_resizing_policy Resizing policy for striped/refinable set/map
+
+            Resizing policy for \p intrusive::StripedSet, \p container::StripedSet and \p container::StripedMap.
+        */
+
     }   // namespace striped_set
 
     /// Striped hash set
@@ -28,47 +34,48 @@ namespace cds { namespace intrusive {
         Template arguments:
             - \p Container - the container class that is used as bucket table entry. The \p Container class should support
                 an uniform interface described below.
-            - \p Options - options
+            - \p Options - options 
 
         The \p %StripedSet class does not exactly dictate the type of container that should be used as a \p Container bucket.
-        Instead, the class supports different intrusive container type for the bucket, for exampe, \p boost::intrusive::list, \p boost::intrusive::set and others.
+        Instead, the class supports different intrusive container type for the bucket, for exampe, 
+        \p boost::intrusive::list, \p boost::intrusive::set and others.
 
         Remember that \p %StripedSet class algorithm ensures sequential blocking access to its bucket through the mutex type you specify
         among \p Options template arguments.
 
         The \p Options are:
-        - opt::mutex_policy - concurrent access policy.
-            Available policies: striped_set::striping, striped_set::refinable.
-            Default is striped_set::striping.
-        - cds::opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector <opt::none></tt> which selects default hash functor for
-            your compiler.
-        - cds::opt::compare - key comparison functor. No default functor is provided.
-            If the option is not specified, the opt::less is used.
-        - cds::opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-        - cds::opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
-            without locks. Note that item counting is an essential part of the set algorithm, so dummy type like atomicity::empty_item_counter
+        - \p opt::mutex_policy - concurrent access policy.
+            Available policies: \p striped_set::striping, \p striped_set::refinable.
+            Default is \p %striped_set::striping.
+        - \p cds::opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector <opt::none></tt> 
+            which selects default hash functor for your compiler.
+        - \p cds::opt::compare - key comparison functor. No default functor is provided.
+            If the option is not specified, the \p opt::less is used.
+        - \p cds::opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+        - \p cds::opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
+            without locks. Note that item counting is an essential part of the set algorithm, so dummy counter like \p atomicity::empty_item_counter
             is not suitable.
-        - cds::opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is CDS_DEFAULT_ALLOCATOR.
-        - cds::opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash set.
+        - \p cds::opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
+        - \p cds::opt::resizing_policy - the resizing policy - a functor that decides when to resize the hash set.
             Default option value depends on bucket container type:
-                for sequential containers like \p boost::intrusive::list the resizing policy is <tt>cds::container::striped_set::load_factor_resizing <4></tt>;
-                for other type of containers like \p boost::intrusive::set  the resizing policy is cds::container::striped_set::no_resizing.
-            See cds::container::striped_set namespace for list of all possible types of the option.
+                for sequential containers like \p boost::intrusive::list the resizing policy is <tt>cds::container::striped_set::load_factor_resizing<4> </tt>;
+                for other type of containers like \p boost::intrusive::set the resizing policy is cds::container::striped_set::no_resizing.
+            See \ref cds_striped_resizing_policy "available resizing policy".
             Note that the choose of resizing policy depends of \p Container type:
-            for sequential containers like \p boost::intrusive::list right choosing of the policy can significantly improve performance.
+            for sequential containers like \p boost::intrusive::list the right policy can significantly improve performance.
             For other, non-sequential types of \p Container (like a \p boost::intrusive::set) the resizing policy is not so important.
-        - cds::opt::buffer - a buffer type used only for boost::intrusive::unordered_set.
-            Default is cds::opt::v::static_buffer< cds::any_type, 256 >.
+        - \p cds::opt::buffer - a buffer type used only for \p boost::intrusive::unordered_set.
+            Default is <tt>cds::opt::v::static_buffer< cds::any_type, 256 > </tt>.
 
-            opt::compare or opt::less options are used in some \p Container class for ordering.
-            opt::compare option has the highest priority: if opt::compare is specified, opt::less is not used.
+            \p opt::compare or \p opt::less options are used in some \p Container class for ordering.
+            \p %opt::compare option has the highest priority: if \p %opt::compare is specified, \p %opt::less is not used.
 
-            You can pass other option that would be passed to <tt>adapt</tt> metafunction, see below.
+            You can pass other option that would be passed to \p adapt metafunction, see below.
 
         <b>Internal details</b>
 
-            The \p %StripedSet class cannot utilize the \p Container container specified directly, but only its adapted variant which
-            supports an unified interface. Internally, the adaptation is made via intrusive::striped_set::adapt metafunction that wraps bucket container
+            The \p %StripedSet class cannot utilize the \p Container specified directly, but only its adapted variant which
+            supports an unified interface. Internally, the adaptation is made via \p intrusive::striped_set::adapt metafunction that wraps bucket container
             and provides the unified bucket interface suitable for \p %StripedSet. Such adaptation is completely transparent for you -
             you don't need to call \p adapt metafunction directly, \p %StripedSet class's internal machinery itself invokes appropriate
             \p adapt metafunction specialization to adjust your \p Container container class to \p %StripedSet bucket's internal interface.
@@ -122,7 +129,7 @@ namespace cds { namespace intrusive {
                     </td>
                     <td>
                         The list is ordered.
-                        Template argument pack \p Options <b>must</b> contain cds::opt::less or cds::opt::compare for type \p T stored in the list
+                        Template argument pack \p Options <b>must</b> contain \p cds::opt::less or \p cds::opt::compare for type \p T stored in the list
                     </td>
                 </tr>
                 <tr>
@@ -139,7 +146,7 @@ namespace cds { namespace intrusive {
                     <td>
                         Note that \p boost::intrusive::compare option using in \p boost::intrusive::set
                         should support \p T type stored in the set and any type \p Q that you can use
-                        in \p erase and \p find member functions.
+                        in \p erase() and \p find() member functions.
                     </td>
                 </tr>
                 <tr>
@@ -157,12 +164,12 @@ namespace cds { namespace intrusive {
                     \endcode
                     </td>
                     <td>
-                        You should provide two different hash function h1 and h2 - one for boost::intrusive::unordered_set
-                        and other for %StripedSet. For the best result, h1 and h2 must be orthogonal i.e. h1(X) != h2(X) for any value X
+                        You should provide two different hash function \p h1 and \p h2 - one for \p boost::intrusive::unordered_set
+                        and other for \p %StripedSet. For the best result, \p h1 and \p h2 must be orthogonal i.e. <tt>h1(X) != h2(X)</tt> for any value \p X
 
-                        The option opt::buffer is used for boost::intrusive::bucket_traits. Default is cds::opt::v::static_buffer< cds::any_type, 256 >.
+                        The option \p opt::buffer is used for \p boost::intrusive::bucket_traits. Default is <tt> cds::opt::v::static_buffer< cds::any_type, 256 > </tt>.
                         The resizing policy should correlate with the buffer capacity.
-                        The default resizing policy is cds::container::striped_set::load_factor_resizing<256> what gives load factor 1 for
+                        The default resizing policy is <tt>cds::container::striped_set::load_factor_resizing<256> </tt> what gives load factor 1 for
                         default bucket buffer that is the best for \p boost::intrusive::unordered_set.
                     </td>
                 </tr>
@@ -180,7 +187,7 @@ namespace cds { namespace intrusive {
                     <td>
                         Note that \p boost::intrusive::compare option using in \p boost::intrusive::avl_set
                         should support \p T type stored in the set and any type \p Q that you can use
-                        in \p erase and \p find member functions.
+                        in \p erase() and \p find() member functions.
                     </td>
                 </tr>
                 <tr>
@@ -197,7 +204,7 @@ namespace cds { namespace intrusive {
                     <td>
                         Note that \p boost::intrusive::compare option using in \p boost::intrusive::sg_set
                         should support \p T type stored in the set and any type \p Q that you can use
-                        in \p erase and \p find member functions.
+                        in \p erase() and \p find() member functions.
                     </td>
                 </tr>
                 <tr>
@@ -214,7 +221,7 @@ namespace cds { namespace intrusive {
                     <td>
                         Note that \p boost::intrusive::compare option using in \p boost::intrusive::splay_set
                         should support \p T type stored in the set and any type \p Q that you can use
-                        in \p erase and \p find member functions.
+                        in \p erase() and \p find() member functions.
                     </td>
                 </tr>
                 <tr>
@@ -231,7 +238,7 @@ namespace cds { namespace intrusive {
                     <td>
                         Note that \p boost::intrusive::compare option using in \p boost::intrusive::treap_set
                         should support \p T type stored in the set and any type \p Q that you can use
-                        in \p erase and \p find member functions.
+                        in \p erase() and \p find() member functions.
                     </td>
                 </tr>
             </table>
@@ -241,7 +248,7 @@ namespace cds { namespace intrusive {
             There are two possibility:
             - either your \p MyBestContainer class has native support of bucket's interface;
                 in this case, you can use default \p intrusive::striped_set::adapt metafunction;
-            - or your \p MyBestContainer class does not support bucket's interface, which means, that you should develop a specialization
+            - or your \p MyBestContainer class does not support bucket's interface, which means, that you should create a specialization of
                 <tt>cds::intrusive::striped_set::adapt<MyBestContainer> </tt> metafunction providing necessary interface.
 
             The <tt>intrusive::striped_set::adapt< Container, OptionPack ></tt> metafunction has two template argument:
@@ -250,7 +257,7 @@ namespace cds { namespace intrusive {
                 any option from \p OptionPack for its internal use. For example, a \p compare option can be passed to \p adapt
                 metafunction via \p OptionPack argument of \p %StripedSet declaration.
 
-            See intrusive::striped_set::adapt metafunction for the description of interface that the bucket container must provide
+            See \p intrusive::striped_set::adapt metafunction for the description of interface that the bucket container must provide
             to be \p %StripedSet compatible.
     */
     template <class Container, typename... Options>

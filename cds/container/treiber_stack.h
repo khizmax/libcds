@@ -77,7 +77,6 @@ namespace cds { namespace container {
 
         /// Metafunction converting option list to \p TreiberStack traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             Supported \p Options are:
             - opt::allocator - allocator (like \p std::allocator) used for allocating stack nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
             - opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.

@@ -3,7 +3,6 @@
 #ifndef __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H
 #define __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H
 
-#include <functional>   // ref
 #include <cds/opt/options.h>
 #include <cds/intrusive/striped_set/resizing_policy.h>
 #include <cds/opt/hash.h>
@@ -19,8 +18,8 @@ namespace cds { namespace intrusive {
             By default, the metafunction does not make any transformation for container type \p Container.
             \p Container should provide interface suitable for the hash set.
 
-            The \p SetOptions template argument contains option pack
-            that has been passed to cds::intrusive::StripedSet.
+            The \p Options template argument contains option pack
+            that will be passed to \p cds::intrusive::StripedSet.
 
         <b>Bucket interface</b>
 

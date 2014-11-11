@@ -8,7 +8,7 @@
 namespace cds { namespace intrusive { namespace striped_set {
 
     /// Load factor based resizing policy
-    /**
+    /** @ingroup cds_striped_resizing_policy
         When total item count in a container exceeds
         <tt>container.bucket_count() * LoadFactor</tt>
         then resizing is needed.
@@ -38,7 +38,7 @@ namespace cds { namespace intrusive { namespace striped_set {
     };
 
     /// Load factor based resizing policy, stateful specialization
-    /**
+    /** @ingroup cds_striped_resizing_policy
         This specialization allows to specify a load factor at runtime.
     */
     template <>
@@ -86,7 +86,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
 
     /// Single bucket threshold resizing policy
-    /**
+    /** @ingroup cds_striped_resizing_policy
         If any single bucket size exceeds the global \p Threshold then resizing is needed.
 
         This policy is stateless.
@@ -112,7 +112,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
 
     /// Single bucket threshold resizing policy, stateful specialization
-    /**
+    /** @ingroup cds_striped_resizing_policy
         This specialization allows to specify and modify a threshold at runtime.
     */
     template <>
@@ -157,7 +157,7 @@ namespace cds { namespace intrusive { namespace striped_set {
     };
 
     /// Dummy resizing policy
-    /**
+    /** @ingroup cds_striped_resizing_policy
         This policy is dummy and always returns \p false that means no resizing is needed.
 
         This policy is stateless.

@@ -16,7 +16,7 @@ namespace cds { namespace container { namespace details {
         typedef K       key_type;
         typedef T       mapped_type;
         typedef std::pair< key_type const, mapped_type> value_type;
-        typedef Traits  type_traits;
+        typedef Traits  traits;
 
         typedef cds::intrusive::skip_list::node< gc >   intrusive_node_type;
         struct node_type: public intrusive_node_type
@@ -61,9 +61,9 @@ namespace cds { namespace container { namespace details {
             }
         };
 
-        class node_allocator: public skip_list::details::node_allocator< node_type, type_traits>
+        class node_allocator : public skip_list::details::node_allocator< node_type, traits>
         {
-            typedef skip_list::details::node_allocator< node_type, type_traits> base_class;
+            typedef skip_list::details::node_allocator< node_type, traits> base_class;
         public:
             template <typename Q>
             node_type * New( unsigned int nHeight, Q const& key )
@@ -108,10 +108,10 @@ namespace cds { namespace container { namespace details {
                 return node.m_Value.first;
             }
         };
-        typedef typename opt::details::make_comparator< key_type, type_traits >::type key_comparator;
+        typedef typename opt::details::make_comparator< key_type, traits >::type key_comparator;
 
         class intrusive_type_traits: public cds::intrusive::skip_list::make_traits<
-            cds::opt::type_traits< type_traits >
+            cds::opt::type_traits< traits >
             ,cds::intrusive::opt::hook< intrusive::skip_list::base_hook< cds::opt::gc< gc > > >
             ,cds::intrusive::opt::disposer< node_deallocator >
             ,cds::intrusive::skip_list::internal_node_builder< dummy_node_builder >

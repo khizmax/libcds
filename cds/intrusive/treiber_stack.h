@@ -207,9 +207,7 @@ namespace cds { namespace intrusive {
 
         /// Metafunction converting option list to \p treiber_stack::traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             Supported \p Options are:
-
             - opt::hook - hook used. Possible hooks are: \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook.
                 If the option is not specified, \p %treiber_stack::base_hook<> is used.
             - opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.

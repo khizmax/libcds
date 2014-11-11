@@ -86,7 +86,7 @@ namespace cds { namespace container {
         This struct is empty and it is used only as a tag for selecting MichaelList
         as ordered list implementation in declaration of some classes.
 
-        See split_list::type_traits::ordered_list as an example.
+        See split_list::traits::ordered_list as an example.
     */
     struct michael_list_tag
     {};

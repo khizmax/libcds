@@ -42,7 +42,7 @@ namespace cds { namespace container {
                 }
             };
 
-            // Declare type_traits
+            // Declare traits
             struct my_traits: public cds::container::lazy_list::traits
             {
                 typedef my_compare compare;
