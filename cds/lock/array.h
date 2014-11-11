@@ -6,7 +6,6 @@
 #include <mutex>    //unique_lock
 #include <cds/details/allocator.h>
 #include <cds/algo/int_algo.h>
-#include <boost/mpl/if.hpp>
 
 namespace cds { namespace lock {
 
@@ -91,7 +90,7 @@ namespace cds { namespace lock {
         can be simultaneous.
 
         Template arguments:
-        - \p Lock - lock type, for example, \p boost::mutex, \p cds::lock::Spinlock
+        - \p Lock - lock type, for example, \p std::mutex, \p cds::lock::Spinlock
         - \p SelectPolicy - array cell selection policy, the default is \ref mod_select_policy
              Available policies: \ref trivial_select_policy, \ref pow2_select_policy, \ref mod_select_policy.
         - \p Alloc - memory allocator for array

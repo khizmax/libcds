@@ -15,8 +15,6 @@ namespace cds { namespace opt {
 
         The default value  of template argument \p Functor is \p cds::opt::v::hash
         that is synonym for <tt>std::hash</tt> implementation of standard library.
-        If standard C++ library of the compiler you use does not provide TR1 implementation
-        the \p cds library automatically selects <tt>boost::hash</tt>.
     */
     template <typename Functor>
     struct hash {
