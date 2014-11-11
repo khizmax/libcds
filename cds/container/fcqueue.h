@@ -47,7 +47,7 @@ namespace cds { namespace container {
         };
 
         /// FCQueue type traits
-        struct traits: public cds::algo::flat_combining::type_traits
+        struct traits: public cds::algo::flat_combining::traits
         {
             typedef empty_stat      stat;   ///< Internal statistics
             static CDS_CONSTEXPR const bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"

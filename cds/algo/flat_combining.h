@@ -179,10 +179,10 @@ namespace cds { namespace algo {
         /// Type traits of \ref kernel class
         /**
             You can define different type traits for \ref kernel
-            by specifying your struct based on \p %type_traits
+            by specifying your struct based on \p %traits
             or by using \ref make_traits metafunction.
         */
-        struct type_traits
+        struct traits
         {
             typedef cds::lock::Spin             lock_type;  ///< Lock type
             typedef cds::backoff::delay_of<2>   back_off;   ///< Back-off strategy
@@ -193,7 +193,6 @@ namespace cds { namespace algo {
 
         /// Metafunction converting option list to traits
         /**
-            This is a wrapper for <tt> cds::opt::make_options< type_traits, Options...> </tt>
             \p Options are:
             - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
             - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::delay_of<2>
@@ -209,7 +208,7 @@ namespace cds { namespace algo {
             typedef implementation_defined type ;   ///< Metafunction result
 #   else
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< type_traits, Options... >::type
+                typename cds::opt::find_type_traits< traits, Options... >::type
                 ,Options...
             >::type   type;
 #   endif
@@ -219,7 +218,7 @@ namespace cds { namespace algo {
         /**
             Template parameters:
             - \p PublicationRecord - a type derived from \ref publication_record
-            - \p Traits - a type traits of flat combining, default is flat_combining::type_traits.
+            - \p Traits - a type traits of flat combining, default is \p flat_combining::traits.
                 \ref make_traits metafunction can be used to create type traits
 
             The kernel object should be a member of a container class. The container cooperates with flat combining
@@ -243,18 +242,18 @@ namespace cds { namespace algo {
         */
         template <
             typename PublicationRecord
-            ,typename Traits = type_traits
+            ,typename Traits = traits
         >
         class kernel
         {
         public:
-            typedef PublicationRecord   publication_record_type;        ///< publication record type
-            typedef Traits              type_traits;                    ///< Type traits
-            typedef typename type_traits::lock_type global_lock_type;   ///< Global lock type
-            typedef typename type_traits::back_off  back_off;           ///< back-off strategy type
-            typedef typename type_traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
-            typedef typename type_traits::stat      stat;               ///< Internal statistics
-            typedef typename type_traits::memory_model memory_model;    ///< C++ memory model
+            typedef PublicationRecord   publication_record_type;   ///< publication record type
+            typedef Traits   traits;                               ///< Type traits
+            typedef typename traits::lock_type global_lock_type;   ///< Global lock type
+            typedef typename traits::back_off  back_off;           ///< back-off strategy type
+            typedef typename traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
+            typedef typename traits::stat      stat;               ///< Internal statistics
+            typedef typename traits::memory_model memory_model;    ///< C++ memory model
 
         protected:
             //@cond

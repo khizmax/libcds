@@ -44,7 +44,7 @@ namespace cds { namespace container {
         };
 
         /// FCPriorityQueue traits
-        struct traits: public cds::algo::flat_combining::type_traits
+        struct traits: public cds::algo::flat_combining::traits
         {
             typedef empty_stat      stat;   ///< Internal statistics
         };

@@ -43,7 +43,7 @@ namespace cds { namespace intrusive {
         };
 
         /// FCQueue type traits
-        struct traits: public cds::algo::flat_combining::type_traits
+        struct traits: public cds::algo::flat_combining::traits
         {
             typedef cds::intrusive::opt::v::empty_disposer  disposer ; ///< Disposer to erase removed elements. Used only in \p FCQueue::clear() function
             typedef empty_stat      stat;   ///< Internal statistics
