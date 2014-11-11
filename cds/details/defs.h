@@ -3,6 +3,7 @@
 #ifndef __CDS_DEFS_H
 #define __CDS_DEFS_H
 
+#include <stddef.h>
 #include <assert.h>
 #include <cstdint>
 #include <exception>
