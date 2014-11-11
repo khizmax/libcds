@@ -3,18 +3,10 @@
 #ifndef __CDS_DETAILS_ALLOCATOR_H
 #define __CDS_DETAILS_ALLOCATOR_H
 
-/*
-    Allocator class for the library. Supports allocating and constructing of objects
-
-    Editions:
-        2008.03.08    Maxim.Khiszinsky    Created
-*/
-
 #include <type_traits>
 #include <memory>
 #include <cds/details/defs.h>
 #include <cds/user_setup/allocator.h>
-#include <boost/type_traits/has_trivial_destructor.hpp>
 
 namespace cds {
     namespace details {
@@ -155,31 +147,6 @@ namespace cds {
             }
             //@endcond
         };
-
-        //@cond
-        namespace {
-            template <class T>
-            static inline void impl_call_dtor(T* p, boost::false_type const&)
-            {
-                p->T::~T();
-            }
-
-            template <class T>
-            static inline void impl_call_dtor(T* p, boost::true_type const&)
-            {}
-        }
-        //@endcond
-
-        /// Helper function to call destructor of type T
-        /**
-            This function is empty for the type T that has trivial destructor.
-        */
-        template <class T>
-        static inline void call_dtor( T* p )
-        {
-            impl_call_dtor( p, ::boost::has_trivial_destructor<T>() );
-        }
-
 
         /// Deferral removing of the object of type \p T. Helper class
         template <typename T, typename Alloc = CDS_DEFAULT_ALLOCATOR>
