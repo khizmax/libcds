@@ -580,24 +580,28 @@ namespace tree {
                 int i = 0;
                 value_type v;
                 while ( !s.empty() ) {
-                    CPPUNIT_ASSERT( s.extract_min( ep ) );
+                    ep = s.extract_min();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty());
                     CPPUNIT_CHECK( ep->nKey == i );
                     ++i;
-                    ep.release();
+                    //ep.release();
                 }
+                ep.release();
                 CPPUNIT_ASSERT( s.empty() );
                 CPPUNIT_ASSERT( check_size( s, 0 ));
 
                 fill_set( s, arr );
                 i = (int) c_nItemCount - 1;
                 while ( !s.empty() ) {
-                    CPPUNIT_ASSERT( s.extract_max( ep ) );
+                    ep = s.extract_max();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty());
                     CPPUNIT_CHECK( ep->nKey == i );
                     --i;
-                    ep.release();
+                    //ep.release();
                 }
+                ep.release();
                 CPPUNIT_ASSERT( s.empty() );
                 CPPUNIT_ASSERT( check_size( s, 0 ));
 
@@ -610,16 +614,17 @@ namespace tree {
                         CPPUNIT_ASSERT( p != nullptr );
                         CPPUNIT_CHECK( p->nKey == nKey );
                     }
-                    CPPUNIT_ASSERT( s.extract( ep, nKey ));
+                    ep = s.extract( nKey );
                     CPPUNIT_ASSERT( !ep.empty());
                     CPPUNIT_CHECK( ep->nKey == nKey);
-                    ep.release();
+                    //ep.release();
 
                     {
                         typename set_type::rcu_lock l;
                         CPPUNIT_CHECK( s.get( nKey ) == nullptr );
                     }
-                    CPPUNIT_CHECK( !s.extract( ep, nKey ));
+                    ep = s.extract( nKey );
+                    CPPUNIT_CHECK( !ep );
                 }
                 CPPUNIT_ASSERT( s.empty() );
                 CPPUNIT_ASSERT( check_size( s, 0 ));
@@ -633,16 +638,18 @@ namespace tree {
                         CPPUNIT_ASSERT( p != nullptr );
                         CPPUNIT_CHECK( p->nKey == nKey );
                     }
-                    CPPUNIT_ASSERT( s.extract_with( ep, wrapped_int(nKey), wrapped_less() ));
+                    ep = s.extract_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty());
                     CPPUNIT_CHECK( ep->nKey == nKey);
-                    ep.release();
+                    //ep.release();
 
                     {
                         typename set_type::rcu_lock l;
                         CPPUNIT_CHECK( s.get_with( wrapped_int( nKey ), wrapped_less() ) == nullptr );
                     }
-                    CPPUNIT_CHECK( !s.extract_with( ep, wrapped_int(nKey), wrapped_less() ));
+                    ep = s.extract_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_CHECK( !ep );
                 }
                 CPPUNIT_ASSERT( s.empty() );
                 CPPUNIT_ASSERT( check_size( s, 0 ));

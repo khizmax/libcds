@@ -448,7 +448,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef cds::urcu::exempt_ptr< gc, value_type, value_type, disposer, void > exempt_ptr; ///< pointer to extracted node
+        using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, disposer, void >; ///< pointer to extracted node
 
     public:
 #   ifdef CDS_DOXYGEN_INVOKED
@@ -965,8 +965,9 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item with minimal key from the tree
         /**
-            The function searches an item with minimal key, unlinks it, and returns pointer to an item found in \p result parameter.
-            If the tree is empty the function returns \p false.
+            The function searches an item with minimal key, unlinks it, and returns 
+            \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the leftmost item.
+            If the tree is empty the function returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the tree, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
@@ -975,19 +976,19 @@ namespace cds { namespace intrusive {
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not call the disposer for the item found.
-            The disposer will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
         */
-        bool extract_min(exempt_ptr& result)
+        exempt_ptr extract_min()
         {
-            return extract_min_(result);
+            return exempt_ptr( extract_min_() );
         }
 
         /// Extracts an item with maximal key from the tree
         /**
-            The function searches an item with maximal key, unlinks it, and returns pointer to an item found in \p result prameter.
-            If the tree is empty the function returns \p false.
+            The function searches an item with maximal key, unlinks it, and returns 
+            \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the rightmost item.
+            If the tree is empty the function returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the tree, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -996,31 +997,29 @@ namespace cds { namespace intrusive {
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not call the disposer for the item found.
-            The disposer will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
         */
-        bool extract_max(exempt_ptr& result)
+        exempt_ptr extract_max()
         {
-            return extract_max_(result);
+            return exempt_ptr( extract_max_() );
         }
 
         /// Extracts an item from the tree
         /** \anchor cds_intrusive_EllenBinTree_rcu_extract
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns pointer to an item found in \p result parameter.
-            If the item with the key equal to \p key is not found the function returns \p false.
+            unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to an item found.
+            If the item with the key equal to \p key is not found the function returns empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not call the disposer for the item found.
-            The disposer will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
         */
         template <typename Q>
-        bool extract( exempt_ptr& result, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            return extract_( result, key, node_compare() );
+            return exempt_ptr( extract_( key, node_compare() ));
         }
 
         /// Extracts an item from the set using \p pred for searching
@@ -1032,9 +1031,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest,  Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            return extract_with_( dest, key, pred );
+            return exempt_ptr( extract_with_( key, pred ));
         }
 
         /// Finds the key \p key
@@ -1203,8 +1202,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            exempt_ptr ep;
-            while ( extract_min(ep) )
+            for ( exempt_ptr ep = extract_min(); !ep.empty(); ep = extract_min() )
                 ep.release();
         }
 
@@ -1639,8 +1637,8 @@ namespace cds { namespace intrusive {
             return true;
         }
 
-        template <typename ExemptPtr, typename Q, typename Less>
-        bool extract_with_( ExemptPtr& dest,  Q const& val, Less pred )
+        template <typename Q, typename Less>
+        value_type * extract_with_( Q const& val, Less pred )
         {
             typedef ellen_bintree::details::compare<
                 key_type,
@@ -1649,11 +1647,11 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-            return extract_( dest, val, compare_functor() );
+            return extract_( val, compare_functor() );
         }
 
-        template <typename ExemptPtr, typename Q, typename Compare>
-        bool extract_( ExemptPtr& ptr, Q const& val, Compare cmp )
+        template <typename Q, typename Compare>
+        value_type * extract_( Q const& val, Compare cmp )
         {
             check_deadlock_policy::check();
 
@@ -1661,6 +1659,7 @@ namespace cds { namespace intrusive {
             update_desc * pOp = nullptr;
             search_result res;
             back_off bkoff;
+            value_type * pResult;
 
             {
                 rcu_lock l;
@@ -1669,7 +1668,7 @@ namespace cds { namespace intrusive {
                         if ( pOp )
                             retire_update_desc( pOp, updRetire, false );
                         m_Stat.onEraseFailed();
-                        return false;
+                        return nullptr;
                     }
 
                     if ( res.updGrandParent.bits() != update_desc::Clean )
@@ -1693,7 +1692,7 @@ namespace cds { namespace intrusive {
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
                                 if ( help_delete( pOp, updRetire )) {
-                                    ptr = node_traits::to_value_ptr( res.pLeaf );
+                                    pResult = node_traits::to_value_ptr( res.pLeaf );
                                     break;
                                 }
                                 pOp = nullptr;
@@ -1712,12 +1711,11 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onEraseSuccess();
-            return true;
+            return pResult;
         }
 
 
-        template <typename ExemptPtr>
-        bool extract_max_( ExemptPtr& result )
+        value_type * extract_max_()
         {
             check_deadlock_policy::check();
 
@@ -1725,6 +1723,7 @@ namespace cds { namespace intrusive {
             update_desc * pOp = nullptr;
             search_result res;
             back_off bkoff;
+            value_type * pResult;
 
             {
                 rcu_lock l;
@@ -1734,7 +1733,7 @@ namespace cds { namespace intrusive {
                         if ( pOp )
                             retire_update_desc( pOp, updRetire, false );
                         m_Stat.onExtractMaxFailed();
-                        return false;
+                        return nullptr;
                     }
 
                     if ( res.updGrandParent.bits() != update_desc::Clean )
@@ -1758,7 +1757,7 @@ namespace cds { namespace intrusive {
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
                                 if ( help_delete( pOp, updRetire )) {
-                                    result = node_traits::to_value_ptr( res.pLeaf );
+                                    pResult = node_traits::to_value_ptr( res.pLeaf );
                                     break;
                                 }
                                 pOp = nullptr;
@@ -1777,11 +1776,10 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMaxSuccess();
-            return true;
+            return pResult;
         }
 
-        template <typename ExemptPtr>
-        bool extract_min_(ExemptPtr& result)
+        value_type * extract_min_()
         {
             check_deadlock_policy::check();
 
@@ -1789,6 +1787,7 @@ namespace cds { namespace intrusive {
             update_desc * pOp = nullptr;
             search_result res;
             back_off bkoff;
+            value_type * pResult;
 
             {
                 rcu_lock l;
@@ -1798,7 +1797,7 @@ namespace cds { namespace intrusive {
                         if ( pOp )
                             retire_update_desc( pOp, updRetire, false );
                         m_Stat.onExtractMinFailed();
-                        return false;
+                        return nullptr;
                     }
 
                     if ( res.updGrandParent.bits() != update_desc::Clean )
@@ -1822,7 +1821,7 @@ namespace cds { namespace intrusive {
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
                                 if ( help_delete( pOp, updRetire )) {
-                                    result = node_traits::to_value_ptr( res.pLeaf );
+                                    pResult = node_traits::to_value_ptr( res.pLeaf );
                                     break;
                                 }
                                 pOp = nullptr;
@@ -1841,7 +1840,7 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMinSuccess();
-            return true;
+            return pResult;
         }
 
         template <typename Q, typename Less, typename Func>

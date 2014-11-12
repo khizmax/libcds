@@ -33,18 +33,19 @@ namespace cds { namespace urcu {
     /**
         This special pointer class is intended for returning extracted node from RCU-based container.
         The destructor (and \p release() member function) invokes <tt>RCU::retire_ptr< Disposer >()</tt> function to dispose the node.
-        For non-intrusive containers from \p cds::container namespace \p Disposer is an invocation
+        For non-intrusive containers from \p cds::container namespace \p Disposer is usually an invocation
         of node deallocator. For intrusive containers the disposer can be empty or it can trigger an event "node can be reused safely".
         In any case, the exempt pointer concept keeps RCU semantics.
 
-        You don't need use this helper class directly. Any RCU-based container defines a proper typedef for this template.
+        You don't need use this helper class directly. Any RCU-based container typedefs a simplified version of this template.
 
         Template arguments:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p NodeType - container's node type
         - \p ValueType - value type stored in container's node. For intrusive containers it is the same as \p NodeType
         - \p Disposer - a disposer functor
-        - \p Cast - a functor for casting from \p NodeType to \p ValueType. Usually, for intrusive containers \p Cast may be \p void.
+        - \p Cast - a functor for casting from \p NodeType to \p ValueType. For intrusive containers 
+            the casting is usually disabled, i.e. \p Cast is \p void.
     */
     template <
         class RCU,
@@ -59,7 +60,6 @@ namespace cds { namespace urcu {
     >
     class exempt_ptr
     {
-        //TODO: use move semantics and explicit operator bool!
     public:
         typedef RCU         rcu         ;   ///< RCU type - one of <tt>cds::urcu::gc< ... ></tt>
         typedef NodeType    node_type   ;   ///< Node type
@@ -72,18 +72,31 @@ namespace cds { namespace urcu {
         node_type *     m_pNode;
         //@endcond
 
-    private:
-        //@cond
-        // No copy-constructible
-        exempt_ptr( exempt_ptr const& );
-        exempt_ptr& operator=( exempt_ptr const& );
-        //@endcond
-
     public:
         /// Constructs empty pointer
         exempt_ptr() CDS_NOEXCEPT
             : m_pNode( nullptr )
         {}
+
+        //@cond
+        /// Creates exempt pointer for \p pNode. Only for internal use.
+        explicit exempt_ptr( node_type * pNode ) CDS_NOEXCEPT
+            : m_pNode( pNode )
+        {}
+        explicit exempt_ptr( std::nullptr_t ) CDS_NOEXCEPT
+            : m_pNode( nullptr )
+        {}
+        //@endcond
+
+        /// Move ctor
+        exempt_ptr( exempt_ptr&& p ) CDS_NOEXCEPT
+            : m_pNode( p.m_pNode )
+        {
+            p.m_pNode = nullptr;
+        }
+
+        /// The exempt pointer is not copy-constructible
+        exempt_ptr( exempt_ptr const& ) = delete;
 
         /// Releases the pointer
         ~exempt_ptr()
@@ -95,6 +108,12 @@ namespace cds { namespace urcu {
         bool empty() const CDS_NOEXCEPT
         {
             return m_pNode == nullptr;
+        }
+
+        /// \p bool operator returns <tt>!empty()</tt>
+        explicit operator bool() const CDS_NOEXCEPT
+        {
+            return !empty();
         }
 
         /// Dereference operator
@@ -110,17 +129,17 @@ namespace cds { namespace urcu {
             return *node_to_value_cast()( m_pNode );
         }
 
-        //@cond
-        /// Assignment operator, the object should be empty. For internal use only
-        exempt_ptr& operator =( node_type * pNode )
+        /// Move assignment. Can be called only outside of RCU critical section
+        exempt_ptr& operator =( exempt_ptr&& p ) CDS_NOEXCEPT
         {
-            // release() cannot be called in this point since RCU should be locked
-            assert( empty() );
-            assert( rcu::is_locked() );
-            m_pNode = pNode;
+            release();
+            m_pNode = p.m_pNode;
+            p.m_pNode = nullptr;
             return *this;
         }
-        //@endcond
+
+        /// The exempt pointer is not copy-assignable
+        exempt_ptr& operator=(exempt_ptr const&) = delete;
 
         /// Disposes the pointer. Should be called only outside of RCU critical section
         void release()
@@ -142,7 +161,6 @@ namespace cds { namespace urcu {
     >
     class exempt_ptr< RCU, NodeType, NodeType, Disposer, void >
     {
-        //TODO: use move semantics and explicit operator bool!
     public:
         typedef RCU         rcu         ;   ///< RCU type - one of <tt>cds::urcu::gc< ... ></tt>
         typedef NodeType    node_type   ;   ///< Node type
@@ -153,16 +171,30 @@ namespace cds { namespace urcu {
     private:
         node_type *     m_pNode;
 
-    private:
-        // No copy-constructible
-        exempt_ptr( exempt_ptr const& );
-        exempt_ptr& operator=( exempt_ptr const& );
-
     public:
         /// Constructs empty pointer
         exempt_ptr() CDS_NOEXCEPT
             : m_pNode( nullptr )
         {}
+
+        /// Creates exempt pointer for \p pNode. Only for internal use.
+        explicit exempt_ptr( node_type * pNode ) CDS_NOEXCEPT
+            : m_pNode( pNode )
+        {}
+        explicit exempt_ptr( std::nullptr_t ) CDS_NOEXCEPT
+            : m_pNode( nullptr )
+        {}
+
+        /// Move ctor
+        exempt_ptr( exempt_ptr&& p ) CDS_NOEXCEPT
+            : m_pNode( p.m_pNode )
+        {
+            p.m_pNode = nullptr;
+        }
+
+
+        /// The exempt pointer is not copy-constructible
+        exempt_ptr( exempt_ptr const& ) = delete;
 
         /// Releases the pointer
         ~exempt_ptr()
@@ -174,6 +206,12 @@ namespace cds { namespace urcu {
         bool empty() const CDS_NOEXCEPT
         {
             return m_pNode == nullptr;
+        }
+
+        /// \p bool operator returns <tt>!empty()</tt>
+        explicit operator bool() const CDS_NOEXCEPT
+        {
+            return !empty();
         }
 
         /// Dereference operator.
@@ -189,15 +227,17 @@ namespace cds { namespace urcu {
             return *m_pNode;
         }
 
-        /// Assignment operator, the object should be empty. For internal use only
-        exempt_ptr& operator =( node_type * pNode )
+        /// Move assignment. Can be called only outside of RCU critical section
+        exempt_ptr& operator =(exempt_ptr&& p) CDS_NOEXCEPT
         {
-            // release() cannot be called in this point since RCU should be locked
-            assert( empty() );
-            assert( rcu::is_locked() );
-            m_pNode = pNode;
+            release();
+            m_pNode = p.m_pNode;
+            p.m_pNode = nullptr;
             return *this;
         }
+
+        /// The exempt pointer is not copy-assignable
+        exempt_ptr& operator=(exempt_ptr const&) = delete;
 
         /// Disposes the pointer. Should be called only outside of RCU critical section
         void release()

@@ -145,9 +145,9 @@ namespace cds { namespace container {
         typedef typename gc::scoped_lock    rcu_lock;  ///< RCU scoped lock
 
         /// pointer to extracted node
-        typedef cds::urcu::exempt_ptr< gc, leaf_node, value_type, typename maker::intrusive_traits::disposer,
-            cds::urcu::details::conventional_exempt_member_cast<leaf_node, value_type>
-        > exempt_ptr;
+        using exempt_ptr = cds::urcu::exempt_ptr < gc, leaf_node, value_type, typename maker::intrusive_traits::disposer,
+            cds::urcu::details::conventional_exempt_member_cast < leaf_node, value_type >
+        > ;
 
     public:
         /// Default constructor
@@ -347,8 +347,8 @@ namespace cds { namespace container {
 
         /// Extracts an item with minimal key from the set
         /**
-            If the set is not empty, the function returns \p true, \p result contains a pointer to value.
-            If the set is empty, the function returns \p false, \p result is left unchanged.
+            Returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the leftmost item.
+            If the set is empty, returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the set, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
@@ -357,19 +357,18 @@ namespace cds { namespace container {
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
-            The deallocator will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The deallocator will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
         */
-        bool extract_min( exempt_ptr& result )
+        exempt_ptr extract_min()
         {
-            return base_class::extract_min_( result );
+            return exempt_ptr( base_class::extract_min_());
         }
 
         /// Extracts an item with maximal key from the set
         /**
-            If the set is not empty, the function returns \p true, \p result contains a pointer to extracted item.
-            If the set is empty, the function returns \p false, \p result is left unchanged.
+            Returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the rightmost item.
+            If the set is empty, returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the set, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -378,31 +377,29 @@ namespace cds { namespace container {
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
-            The deallocator will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The deallocator will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
         */
-        bool extract_max( exempt_ptr& result )
+        exempt_ptr extract_max()
         {
-            return base_class::extract_max_( result );
+            return exempt_ptr( base_class::extract_max_());
         }
 
         /// Extracts an item from the set
         /** \anchor cds_nonintrusive_EllenBinTreeSet_rcu_extract
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns pointer to an item found in \p result parameter.
-            If \p key is not found the function returns \p false.
+            unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to an item found.
+            If \p key is not found the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not destroy the item found.
-            The dealloctor will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The dealloctor will be implicitly invoked when the returned object is destroyed or when
+            its release() member function is called.
         */
         template <typename Q>
-        bool extract( exempt_ptr& result, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            return base_class::extract_( result, key, typename base_class::node_compare());
+            return exempt_ptr( base_class::extract_( key, typename base_class::node_compare()));
         }
 
         /// Extracts an item from the set using \p pred for searching
@@ -414,10 +411,10 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& result,  Q const& val, Less pred )
+        exempt_ptr extract_with( Q const& val, Less pred )
         {
-            return base_class::extract_with_( result, val,
-                cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >() );
+            return exempt_ptr( base_class::extract_with_( val,
+                cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >() ));
         }
 
         /// Find the key \p key
