@@ -286,7 +286,8 @@ namespace map {
                         CPPUNIT_CHECK( pVal->first == nKey );
                         CPPUNIT_CHECK( pVal->second.m_val == nKey );
 
-                        CPPUNIT_ASSERT( m.extract( ep, nKey ));
+                        ep = m.extract( nKey );
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( pVal->first == ep->first );
                         CPPUNIT_CHECK( pVal->second.m_val == ep->second.m_val );
@@ -295,7 +296,8 @@ namespace map {
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( m.get( nKey ) == nullptr );
-                        CPPUNIT_CHECK( !m.extract( ep, nKey ));
+                        ep = m.extract( nKey );
+                        CPPUNIT_CHECK( !ep );
                         CPPUNIT_CHECK( ep.empty() );
 
                         nKey = arr[i+1];
@@ -304,7 +306,8 @@ namespace map {
                         CPPUNIT_CHECK( pVal->first == nKey );
                         CPPUNIT_CHECK( pVal->second.m_val == nKey );
 
-                        CPPUNIT_ASSERT( m.extract_with( ep, other_item(nKey), other_less() ));
+                        ep = m.extract_with( other_item( nKey ), other_less() );
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( pVal->first == ep->first );
                         CPPUNIT_CHECK( pVal->second.m_val == (*ep).second.m_val );
@@ -313,7 +316,7 @@ namespace map {
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( m.get_with( other_item(nKey), other_less() ) == nullptr );
-                        CPPUNIT_CHECK( !m.extract_with( ep, other_item(nKey), other_less() ));
+                        CPPUNIT_CHECK( !m.extract_with( other_item(nKey), other_less() ));
                         CPPUNIT_CHECK( ep.empty() );
                     }
                 }
@@ -322,7 +325,8 @@ namespace map {
                 {
                     rcu_lock l;
                     CPPUNIT_CHECK( m.get( int(nLimit / 2) ) == nullptr );
-                    CPPUNIT_CHECK( !m.extract( ep, int(nLimit / 2) ));
+                    ep = m.extract( int( nLimit / 2 ) );
+                    CPPUNIT_CHECK( !ep );
                     CPPUNIT_CHECK( ep.empty() );
                 }
             }

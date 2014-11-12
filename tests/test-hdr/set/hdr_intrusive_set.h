@@ -1031,7 +1031,8 @@ namespace set {
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey * 2 );
 
-                        CPPUNIT_ASSERT( s.extract( ep, nKey ));
+                        ep = s.extract( nKey );
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( pVal->nKey == ep->nKey );
                         CPPUNIT_CHECK( pVal->nVal == (*ep).nVal );
@@ -1040,7 +1041,7 @@ namespace set {
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( s.get( nKey ) == nullptr );
-                        CPPUNIT_CHECK( !s.extract( ep, nKey ));
+                        CPPUNIT_CHECK( !s.extract( nKey ));
                         CPPUNIT_CHECK( ep.empty() );
 
                         nKey = arr[i+1];
@@ -1049,7 +1050,8 @@ namespace set {
                         CPPUNIT_CHECK( pVal->nKey == nKey );
                         CPPUNIT_CHECK( pVal->nVal == nKey * 2 );
 
-                        CPPUNIT_ASSERT( s.extract_with( ep, nKey, less<value_type>() ));
+                        ep = s.extract_with( nKey, less<value_type>() );
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( pVal->nKey == ep->nKey );
                         CPPUNIT_CHECK( pVal->nVal == (*ep).nVal );
@@ -1058,7 +1060,8 @@ namespace set {
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( s.get_with( nKey, less<value_type>() ) == nullptr );
-                        CPPUNIT_CHECK( !s.extract_with( ep, nKey, less<value_type>() ));
+                        ep = s.extract_with( nKey, less<value_type>() );
+                        CPPUNIT_CHECK( !ep );
                         CPPUNIT_CHECK( ep.empty() );
                     }
                 }
@@ -1067,7 +1070,8 @@ namespace set {
                 {
                     rcu_lock l;
                     CPPUNIT_CHECK( s.get( 100 ) == nullptr );
-                    CPPUNIT_CHECK( !s.extract( ep, 100 ));
+                    ep = s.extract( 100 );
+                    CPPUNIT_CHECK( !ep );
                     CPPUNIT_CHECK( ep.empty() );
                 }
 
