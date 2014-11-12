@@ -923,6 +923,7 @@ namespace tree {
         void EllenBinTree_hp_base_cmp_ic();
         void EllenBinTree_hp_base_less_stat();
         void EllenBinTree_hp_base_cmp_ic_stat();
+        void EllenBinTree_hp_base_cmp_ic_stat_yield();
         void EllenBinTree_hp_base_less_pool();
         void EllenBinTree_hp_base_less_pool_ic_stat();
 
@@ -933,6 +934,7 @@ namespace tree {
         void EllenBinTree_hp_member_cmp_ic();
         void EllenBinTree_hp_member_less_stat();
         void EllenBinTree_hp_member_cmp_ic_stat();
+        void EllenBinTree_hp_member_cmp_ic_stat_yield();
         void EllenBinTree_hp_member_less_pool();
         void EllenBinTree_hp_member_less_pool_ic_stat();
 
@@ -943,6 +945,7 @@ namespace tree {
         void EllenBinTree_dhp_base_cmp_ic();
         void EllenBinTree_dhp_base_less_stat();
         void EllenBinTree_dhp_base_cmp_ic_stat();
+        void EllenBinTree_dhp_base_cmp_ic_stat_yield();
         void EllenBinTree_dhp_base_less_pool();
         void EllenBinTree_dhp_base_less_pool_ic_stat();
 
@@ -953,6 +956,7 @@ namespace tree {
         void EllenBinTree_dhp_member_cmp_ic();
         void EllenBinTree_dhp_member_less_stat();
         void EllenBinTree_dhp_member_cmp_ic_stat();
+        void EllenBinTree_dhp_member_cmp_ic_stat_yield();
         void EllenBinTree_dhp_member_less_pool();
         void EllenBinTree_dhp_member_less_pool_ic_stat();
 
@@ -963,6 +967,7 @@ namespace tree {
         void EllenBinTree_rcu_gpi_base_cmp_ic();
         void EllenBinTree_rcu_gpi_base_less_stat();
         void EllenBinTree_rcu_gpi_base_cmp_ic_stat();
+        void EllenBinTree_rcu_gpi_base_cmp_ic_stat_yield();
         void EllenBinTree_rcu_gpi_base_less_pool();
         void EllenBinTree_rcu_gpi_base_less_pool_ic_stat();
 
@@ -973,6 +978,7 @@ namespace tree {
         void EllenBinTree_rcu_gpi_member_cmp_ic();
         void EllenBinTree_rcu_gpi_member_less_stat();
         void EllenBinTree_rcu_gpi_member_cmp_ic_stat();
+        void EllenBinTree_rcu_gpi_member_cmp_ic_stat_yield();
         void EllenBinTree_rcu_gpi_member_less_pool();
         void EllenBinTree_rcu_gpi_member_less_pool_ic_stat();
 
@@ -983,6 +989,7 @@ namespace tree {
         void EllenBinTree_rcu_gpb_base_cmp_ic();
         void EllenBinTree_rcu_gpb_base_less_stat();
         void EllenBinTree_rcu_gpb_base_cmp_ic_stat();
+        void EllenBinTree_rcu_gpb_base_cmp_ic_stat_yield();
         void EllenBinTree_rcu_gpb_base_less_pool();
         void EllenBinTree_rcu_gpb_base_less_pool_ic_stat();
 
@@ -993,6 +1000,7 @@ namespace tree {
         void EllenBinTree_rcu_gpb_member_cmp_ic();
         void EllenBinTree_rcu_gpb_member_less_stat();
         void EllenBinTree_rcu_gpb_member_cmp_ic_stat();
+        void EllenBinTree_rcu_gpb_member_cmp_ic_stat_yield();
         void EllenBinTree_rcu_gpb_member_less_pool();
         void EllenBinTree_rcu_gpb_member_less_pool_ic_stat();
 
@@ -1003,6 +1011,7 @@ namespace tree {
         void EllenBinTree_rcu_gpt_base_cmp_ic();
         void EllenBinTree_rcu_gpt_base_less_stat();
         void EllenBinTree_rcu_gpt_base_cmp_ic_stat();
+        void EllenBinTree_rcu_gpt_base_cmp_ic_stat_yield();
         void EllenBinTree_rcu_gpt_base_less_pool();
         void EllenBinTree_rcu_gpt_base_less_pool_ic_stat();
 
@@ -1013,6 +1022,7 @@ namespace tree {
         void EllenBinTree_rcu_gpt_member_cmp_ic();
         void EllenBinTree_rcu_gpt_member_less_stat();
         void EllenBinTree_rcu_gpt_member_cmp_ic_stat();
+        void EllenBinTree_rcu_gpt_member_cmp_ic_stat_yield();
         void EllenBinTree_rcu_gpt_member_less_pool();
         void EllenBinTree_rcu_gpt_member_less_pool_ic_stat();
 
@@ -1023,6 +1033,7 @@ namespace tree {
         void EllenBinTree_rcu_shb_base_cmp_ic();
         void EllenBinTree_rcu_shb_base_less_stat();
         void EllenBinTree_rcu_shb_base_cmp_ic_stat();
+        void EllenBinTree_rcu_shb_base_cmp_ic_stat_yield();
         void EllenBinTree_rcu_shb_base_less_pool();
         void EllenBinTree_rcu_shb_base_less_pool_ic_stat();
 
@@ -1033,6 +1044,7 @@ namespace tree {
         void EllenBinTree_rcu_shb_member_cmp_ic();
         void EllenBinTree_rcu_shb_member_less_stat();
         void EllenBinTree_rcu_shb_member_cmp_ic_stat();
+        void EllenBinTree_rcu_shb_member_cmp_ic_stat_yield();
         void EllenBinTree_rcu_shb_member_less_pool();
         void EllenBinTree_rcu_shb_member_less_pool_ic_stat();
 
@@ -1043,6 +1055,7 @@ namespace tree {
         void EllenBinTree_rcu_sht_base_cmp_ic();
         void EllenBinTree_rcu_sht_base_less_stat();
         void EllenBinTree_rcu_sht_base_cmp_ic_stat();
+        void EllenBinTree_rcu_sht_base_cmp_ic_stat_yield();
         void EllenBinTree_rcu_sht_base_less_pool();
         void EllenBinTree_rcu_sht_base_less_pool_ic_stat();
 
@@ -1053,6 +1066,7 @@ namespace tree {
         void EllenBinTree_rcu_sht_member_cmp_ic();
         void EllenBinTree_rcu_sht_member_less_stat();
         void EllenBinTree_rcu_sht_member_cmp_ic_stat();
+        void EllenBinTree_rcu_sht_member_cmp_ic_stat_yield();
         void EllenBinTree_rcu_sht_member_less_pool();
         void EllenBinTree_rcu_sht_member_less_pool_ic_stat();
 
@@ -1064,7 +1078,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_hp_base_less_ic)
             CPPUNIT_TEST(EllenBinTree_hp_base_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_hp_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_hp_base_less_pool)
+            CPPUNIT_TEST( EllenBinTree_hp_base_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_hp_base_less_pool )
             CPPUNIT_TEST(EllenBinTree_hp_base_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_hp_member_less)
@@ -1073,7 +1088,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_hp_member_cmpless)
             CPPUNIT_TEST(EllenBinTree_hp_member_less_ic)
             CPPUNIT_TEST(EllenBinTree_hp_member_cmp_ic)
-            CPPUNIT_TEST(EllenBinTree_hp_member_cmp_ic_stat)
+            CPPUNIT_TEST( EllenBinTree_hp_member_cmp_ic_stat )
+            CPPUNIT_TEST( EllenBinTree_hp_member_cmp_ic_stat_yield )
             CPPUNIT_TEST(EllenBinTree_hp_member_less_pool)
             CPPUNIT_TEST(EllenBinTree_hp_member_less_pool_ic_stat)
 
@@ -1084,7 +1100,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_dhp_base_less_ic)
             CPPUNIT_TEST(EllenBinTree_dhp_base_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_dhp_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_dhp_base_less_pool)
+            CPPUNIT_TEST( EllenBinTree_dhp_base_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_dhp_base_less_pool )
             CPPUNIT_TEST(EllenBinTree_dhp_base_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_dhp_member_less)
@@ -1094,7 +1111,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_dhp_member_less_ic)
             CPPUNIT_TEST(EllenBinTree_dhp_member_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_dhp_member_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_dhp_member_less_pool)
+            CPPUNIT_TEST( EllenBinTree_dhp_member_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_dhp_member_less_pool )
             CPPUNIT_TEST(EllenBinTree_dhp_member_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_less)
@@ -1104,7 +1122,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_gpi_base_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_gpi_base_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_base_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_member_less)
@@ -1114,7 +1133,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_member_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_member_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_member_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_gpi_member_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_gpi_member_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_gpi_member_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_gpi_member_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_base_less)
@@ -1124,7 +1144,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_base_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_base_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_gpb_base_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_gpb_base_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_gpb_base_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_base_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_member_less)
@@ -1134,7 +1155,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_member_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_member_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_member_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_gpb_member_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_gpb_member_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_gpb_member_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_gpb_member_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_base_less)
@@ -1144,7 +1166,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_base_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_base_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_gpt_base_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_gpt_base_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_gpt_base_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_base_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_member_less)
@@ -1154,7 +1177,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_member_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_member_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_member_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_gpt_member_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_gpt_member_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_gpt_member_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_gpt_member_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_shb_base_less)
@@ -1164,7 +1188,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_shb_base_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_shb_base_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_shb_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_shb_base_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_shb_base_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_shb_base_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_shb_base_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_shb_member_less)
@@ -1174,7 +1199,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_shb_member_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_shb_member_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_shb_member_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_shb_member_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_shb_member_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_shb_member_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_shb_member_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_sht_base_less)
@@ -1184,7 +1210,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_sht_base_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_sht_base_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_sht_base_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_sht_base_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_sht_base_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_sht_base_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_sht_base_less_pool_ic_stat)
 
             CPPUNIT_TEST(EllenBinTree_rcu_sht_member_less)
@@ -1194,7 +1221,8 @@ namespace tree {
             CPPUNIT_TEST(EllenBinTree_rcu_sht_member_less_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_sht_member_cmp_ic)
             CPPUNIT_TEST(EllenBinTree_rcu_sht_member_cmp_ic_stat)
-            CPPUNIT_TEST(EllenBinTree_rcu_sht_member_less_pool)
+            CPPUNIT_TEST( EllenBinTree_rcu_sht_member_cmp_ic_stat_yield )
+            CPPUNIT_TEST( EllenBinTree_rcu_sht_member_less_pool )
             CPPUNIT_TEST(EllenBinTree_rcu_sht_member_less_pool_ic_stat)
 
         CPPUNIT_TEST_SUITE_END()

@@ -1639,6 +1639,26 @@ namespace map2 {
         typedef cc::EllenBinTreeMap< rcu_sht, Key, Value, traits_EllenBinTreeMap_sht >EllenBinTreeMap_rcu_sht;
 #endif
 
+        struct traits_EllenBinTreeMap_yield : public traits_EllenBinTreeMap
+        {
+            typedef cds::backoff::yield back_off;
+        };
+        struct traits_EllenBinTreeMap_hp_yield : traits_EllenBinTreeMap_yield {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_hp_yield >EllenBinTreeMap_hp_yield;
+
+        struct traits_EllenBinTreeMap_dhp_yield : traits_EllenBinTreeMap_yield {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::dhp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeMap< cds::gc::DHP, Key, Value, traits_EllenBinTreeMap_dhp_yield >EllenBinTreeMap_dhp_yield;
+
+        struct traits_EllenBinTreeMap_gpb_yield : traits_EllenBinTreeMap_yield {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeMap< rcu_gpb, Key, Value, traits_EllenBinTreeMap_gpb_yield >EllenBinTreeMap_rcu_gpb_yield;
+
+
         struct traits_EllenBinTreeMap_stat: public cc::ellen_bintree::make_set_traits<
                 co::less< less >
                 ,cc::ellen_bintree::update_desc_allocator<

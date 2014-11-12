@@ -1628,6 +1628,32 @@ namespace set2 {
         typedef cc::EllenBinTreeSet< rcu_sht, key_type, key_val, traits_EllenBinTreeSet_sht > EllenBinTreeSet_rcu_sht;
 #endif
 
+        //
+        struct traits_EllenBinTreeSet_yield : public traits_EllenBinTreeSet
+        {
+            typedef cds::backoff::yield back_off;
+        };
+
+        struct traits_EllenBinTreeSet_yield_hp : public traits_EllenBinTreeSet_yield
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< cds::gc::HP, key_type, key_val, traits_EllenBinTreeSet_yield_hp > EllenBinTreeSet_yield_hp;
+
+        struct traits_EllenBinTreeSet_yield_dhp : public traits_EllenBinTreeSet_yield
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::dhp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< cds::gc::DHP, key_type, key_val, traits_EllenBinTreeSet_yield_dhp > EllenBinTreeSet_yield_dhp;
+
+
+        struct traits_EllenBinTreeSet_yield_gpb : public traits_EllenBinTreeSet_yield
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef cc::EllenBinTreeSet< rcu_gpb, key_type, key_val, traits_EllenBinTreeSet_yield_gpb > EllenBinTreeSet_yield_rcu_gpb;
+
+
         struct traits_EllenBinTreeSet_stat: public cc::ellen_bintree::make_set_traits<
             cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
             ,co::less< typename ellen_bintree_props::less >

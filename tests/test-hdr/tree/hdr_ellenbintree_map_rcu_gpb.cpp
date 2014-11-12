@@ -109,6 +109,20 @@ namespace tree {
         test_rcu<map_type, print_stat>();
     }
 
+    void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_cmp_ic_stat_yield()
+    {
+        typedef cc::EllenBinTreeMap< rcu_type, key_type, value_type,
+            cc::ellen_bintree::make_map_traits<
+                co::item_counter< cds::atomicity::item_counter >
+                ,co::stat< cc::ellen_bintree::stat<> >
+                ,co::compare< compare >
+                , co::back_off< cds::backoff::yield >
+            >::type
+        > map_type;
+
+        test_rcu<map_type, print_stat>();
+    }
+
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_less_pool()
     {
         typedef cc::EllenBinTreeMap< rcu_type, key_type, value_type,

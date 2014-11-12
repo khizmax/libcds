@@ -117,6 +117,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::hook      hook;        ///< hook type
         typedef typename hook::node_type   node_type;   ///< node type
         typedef typename traits::disposer  disposer;    ///< leaf node disposer
+        typedef typename traits::back_off  back_off;    ///< back-off strategy
 
         typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
 
@@ -339,8 +340,9 @@ namespace cds { namespace intrusive {
             guardInsert.assign( &val );
 
             unique_internal_node_ptr pNewInternal;
-
             search_result res;
+            back_off bkoff;
+
             for ( ;; ) {
                 if ( search( res, val, node_compare() )) {
                     if ( pNewInternal.get() )
@@ -361,6 +363,7 @@ namespace cds { namespace intrusive {
                     }
                 }
 
+                bkoff();
                 m_Stat.onInsertRetry();
             }
 
@@ -402,8 +405,9 @@ namespace cds { namespace intrusive {
             guardInsert.assign( &val );
 
             unique_internal_node_ptr pNewInternal;
-
             search_result res;
+            back_off bkoff;
+
             for ( ;; ) {
                 if ( search( res, val, node_compare() )) {
                     func( false, *node_traits::to_value_ptr( res.pLeaf ), val );
@@ -424,6 +428,8 @@ namespace cds { namespace intrusive {
                         break;
                     }
                 }
+
+                bkoff();
                 m_Stat.onEnsureRetry();
             }
 
@@ -1058,6 +1064,7 @@ namespace cds { namespace intrusive {
             return true;
         }
 
+        /*
         void help( update_ptr pUpdate )
         {
             // pUpdate must be guarded!
@@ -1076,6 +1083,7 @@ namespace cds { namespace intrusive {
                     break;
             }
         }
+        */
 
         void help_insert( update_desc * pOp )
         {
@@ -1198,18 +1206,17 @@ namespace cds { namespace intrusive {
             assert( res.pLeaf->is_leaf() );
 
             // check search result
-            if ( ( res.bRightLeaf
+            if ( (res.bRightLeaf
                 ? res.pParent->m_pRight.load( memory_model::memory_order_acquire )
-                : res.pParent->m_pLeft.load( memory_model::memory_order_acquire ) ) == res.pLeaf )
-            {
+                : res.pParent->m_pLeft.load( memory_model::memory_order_acquire )) == res.pLeaf ) {
                 leaf_node * pNewLeaf = node_traits::to_node_ptr( val );
 
-                int nCmp = node_compare()( val, *res.pLeaf );
+                int nCmp = node_compare()(val, *res.pLeaf);
                 if ( nCmp < 0 ) {
                     if ( res.pGrandParent ) {
                         assert( !res.pLeaf->infinite_key() );
                         pNewInternal->infinite_key( 0 );
-                        key_extractor()( pNewInternal->m_Key, *node_traits::to_value_ptr( res.pLeaf ) );
+                        key_extractor()(pNewInternal->m_Key, *node_traits::to_value_ptr( res.pLeaf ));
                     }
                     else {
                         assert( res.pLeaf->infinite_key() == tree_node::key_infinite1 );
@@ -1222,10 +1229,10 @@ namespace cds { namespace intrusive {
                     assert( !res.pLeaf->is_internal() );
                     pNewInternal->infinite_key( 0 );
 
-                    key_extractor()( pNewInternal->m_Key, val );
+                    key_extractor()(pNewInternal->m_Key, val);
                     pNewInternal->m_pLeft.store( static_cast<tree_node *>(res.pLeaf), memory_model::memory_order_relaxed );
                     pNewInternal->m_pRight.store( static_cast<tree_node *>(pNewLeaf), memory_model::memory_order_release );
-                    assert( !res.pLeaf->infinite_key());
+                    assert( !res.pLeaf->infinite_key() );
                 }
 
                 typename gc::Guard guard;
@@ -1239,8 +1246,7 @@ namespace cds { namespace intrusive {
 
                 update_ptr updCur( res.updParent.ptr() );
                 if ( res.pParent->m_pUpdate.compare_exchange_strong( updCur, update_ptr( pOp, update_desc::IFlag ),
-                    memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
-                {
+                    memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
                     // do insert
                     help_insert( pOp );
                     retire_update_desc( pOp );
@@ -1251,6 +1257,7 @@ namespace cds { namespace intrusive {
                     free_update_desc( pOp );
                 }
             }
+
             return false;
         }
 
@@ -1259,6 +1266,7 @@ namespace cds { namespace intrusive {
         {
             update_desc * pOp = nullptr;
             search_result res;
+            back_off bkoff;
 
             for ( ;; ) {
                 if ( !search( res, val, cmp ) || !eq( val, *res.pLeaf ) ) {
@@ -1284,11 +1292,10 @@ namespace cds { namespace intrusive {
 
                         update_ptr updGP( res.updGrandParent.ptr() );
                         if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
-                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
-                        {
-                            if ( help_delete( pOp )) {
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                            if ( help_delete( pOp ) ) {
                                 // res.pLeaf is not deleted yet since it is guarded
-                                f( *node_traits::to_value_ptr( res.pLeaf ));
+                                f( *node_traits::to_value_ptr( res.pLeaf ) );
                                 break;
                             }
                             pOp = nullptr;
@@ -1296,6 +1303,7 @@ namespace cds { namespace intrusive {
                     }
                 }
 
+                bkoff();
                 m_Stat.onEraseRetry();
             }
 
@@ -1331,6 +1339,7 @@ namespace cds { namespace intrusive {
         {
             update_desc * pOp = nullptr;
             search_result res;
+            back_off bkoff;
 
             for ( ;; ) {
                 if ( !search_max( res )) {
@@ -1341,7 +1350,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                if ( res.updGrandParent.bits() == update_desc::Clean && res.updParent.bits() == update_desc::Clean )  {
+                if ( res.updGrandParent.bits() == update_desc::Clean && res.updParent.bits() == update_desc::Clean ) {
                     if ( !pOp )
                         pOp = alloc_update_desc();
                     if ( check_delete_precondition( res ) ) {
@@ -1357,15 +1366,16 @@ namespace cds { namespace intrusive {
 
                         update_ptr updGP( res.updGrandParent.ptr() );
                         if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
-                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                                memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) 
                         {
-                            if ( help_delete( pOp ))
+                            if ( help_delete( pOp ) )
                                 break;
                             pOp = nullptr;
                         }
                     }
                 }
 
+                bkoff();
                 m_Stat.onExtractMaxRetry();
             }
 
@@ -1379,6 +1389,7 @@ namespace cds { namespace intrusive {
         {
             update_desc * pOp = nullptr;
             search_result res;
+            back_off bkoff;
 
             for ( ;; ) {
                 if ( !search_min( res )) {
@@ -1414,6 +1425,7 @@ namespace cds { namespace intrusive {
                     }
                 }
 
+                bkoff();
                 m_Stat.onExtractMinRetry();
             }
 

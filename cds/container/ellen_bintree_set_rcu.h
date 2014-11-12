@@ -124,6 +124,8 @@ namespace cds { namespace container {
         typedef typename base_class::stat                   stat;               ///< internal statistics type
         typedef typename base_class::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename traits::key_extractor              key_extractor;      ///< key extracting functor
+        typedef typename traits::back_off                   back_off;           ///< Back-off strategy
+
 
         typedef typename traits::allocator                  allocator_type;     ///< Allocator for leaf nodes
         typedef typename base_class::node_allocator         node_allocator;     ///< Internal node allocator

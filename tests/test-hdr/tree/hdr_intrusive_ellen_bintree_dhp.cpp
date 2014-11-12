@@ -113,7 +113,7 @@ namespace tree {
         test<tree_type, print_stat>();
     }
 
-        void IntrusiveBinTreeHdrTest::EllenBinTree_dhp_base_cmp_ic_stat()
+    void IntrusiveBinTreeHdrTest::EllenBinTree_dhp_base_cmp_ic_stat()
     {
         typedef ci::EllenBinTree< cds::gc::DHP, key_type, base_value,
             ci::ellen_bintree::make_traits<
@@ -123,6 +123,23 @@ namespace tree {
                 ,ci::opt::disposer< disposer< base_value > >
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< ci::ellen_bintree::stat<> >
+            >::type
+        > tree_type;
+
+        test<tree_type, print_stat>();
+    }
+
+    void IntrusiveBinTreeHdrTest::EllenBinTree_dhp_base_cmp_ic_stat_yield()
+    {
+        typedef ci::EllenBinTree< cds::gc::DHP, key_type, base_value,
+            ci::ellen_bintree::make_traits<
+                ci::opt::hook< ci::ellen_bintree::base_hook< co::gc< cds::gc::DHP > > >
+                , ci::ellen_bintree::key_extractor< key_extractor< base_value > >
+                , co::compare< compare< base_value > >
+                , ci::opt::disposer< disposer< base_value > >
+                , co::item_counter< cds::atomicity::item_counter >
+                , co::stat< ci::ellen_bintree::stat<> >
+                , co::back_off< cds::backoff::yield >
             >::type
         > tree_type;
 

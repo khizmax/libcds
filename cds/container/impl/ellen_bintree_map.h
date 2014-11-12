@@ -92,6 +92,7 @@ namespace cds { namespace container {
         typedef typename base_class::node_allocator         node_allocator_type; ///< allocator for maintaining internal node
         typedef typename base_class::stat                   stat;         ///< internal statistics type
         typedef typename traits::copy_policy                copy_policy;  ///< key copy policy
+        typedef typename traits::back_off                   back_off;      ///< Back-off strategy
 
         typedef typename traits::allocator                  allocator_type;   ///< Allocator for leaf nodes
         typedef typename base_class::node_allocator         node_allocator;   ///< Internal node allocator

@@ -9,6 +9,7 @@
 #include <cds/urcu/options.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/details/allocator.h>
+#include <cds/algo/backoff_strategy.h>
 
 namespace cds { namespace intrusive {
 
@@ -518,6 +519,9 @@ namespace cds { namespace intrusive {
             */
             typedef empty_stat                      stat;
 
+            /// Back-off strategy
+            typedef cds::backoff::empty             back_off;
+
             /// RCU deadlock checking policy (only for \ref cds_intrusive_EllenBinTree_rcu "RCU-based EllenBinTree")
             /**
                 List of available options see \p opt::rcu_check_deadlock
@@ -558,6 +562,7 @@ namespace cds { namespace intrusive {
             - \p opt::node_allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \p opt::stat - internal statistics, by default it is disabled (\p ellen_bintree::empty_stat)
                 To enable statistics use \p \p ellen_bintree::stat
+            - \p opt::backoff - back-off strategy, by default no strategy is used (\p cds::backoff::empty)
             - \p opt::rcu_check_deadlock - a deadlock checking policy for RCU-based tree, default is \p opt::v::rcu_throw_deadlock
         */
         template <typename... Options>

@@ -118,7 +118,7 @@ namespace tree {
         test_rcu<tree_type, print_stat>();
     }
 
-        void IntrusiveBinTreeHdrTest::EllenBinTree_rcu_gpi_member_cmp_ic_stat()
+    void IntrusiveBinTreeHdrTest::EllenBinTree_rcu_gpi_member_cmp_ic_stat()
     {
         typedef ci::EllenBinTree< rcu_type, key_type, member_value,
             ci::ellen_bintree::make_traits<
@@ -128,6 +128,23 @@ namespace tree {
                 ,ci::opt::disposer< disposer< member_value > >
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< ci::ellen_bintree::stat<> >
+            >::type
+        > tree_type;
+
+        test_rcu<tree_type, print_stat>();
+    }
+
+    void IntrusiveBinTreeHdrTest::EllenBinTree_rcu_gpi_member_cmp_ic_stat_yield()
+    {
+        typedef ci::EllenBinTree< rcu_type, key_type, member_value,
+            ci::ellen_bintree::make_traits<
+                member_hook
+                ,ci::ellen_bintree::key_extractor< key_extractor< member_value > >
+                ,co::compare< compare< member_value > >
+                ,ci::opt::disposer< disposer< member_value > >
+                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::stat< ci::ellen_bintree::stat<> >
+                , co::back_off< cds::backoff::yield >
             >::type
         > tree_type;
 

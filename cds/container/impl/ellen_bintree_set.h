@@ -129,6 +129,7 @@ namespace cds { namespace container {
         typedef typename base_class::memory_model           memory_model;  ///< Memory ordering. See cds::opt::memory_model option
         typedef typename base_class::stat                   stat;          ///< internal statistics type
         typedef typename traits::key_extractor              key_extractor; ///< key extracting functor
+        typedef typename traits::back_off                   back_off;      ///< Back-off strategy
 
         typedef typename traits::allocator                  allocator_type;   ///< Allocator for leaf nodes
         typedef typename base_class::node_allocator         node_allocator;   ///< Internal node allocator

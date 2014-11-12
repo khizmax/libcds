@@ -180,6 +180,9 @@ namespace cds { namespace container {
             */
             typedef empty_stat                      stat;
 
+            /// Back-off strategy
+            typedef cds::backoff::empty             back_off;
+
             /// RCU deadlock checking policy (only for RCU-based EllenBinTree<i>XXX</i> classes)
             /**
                 List of available options see \p opt::rcu_check_deadlock
@@ -234,6 +237,7 @@ namespace cds { namespace container {
                 stored in the tree so single free-list object can be used for several EllenBinTree-based object.
             - \p opt::stat - internal statistics, by default disabled (\p ellen_bintree::empty_stat). To enable
                 it use \p ellen_bintree::stat.
+            - \p opt::backoff - back-off strategy, by default no strategy is used (\p cds::backoff::empty)
             - \p opt::rcu_check_deadlock - a deadlock checking policy, only for RCU-based tree. 
                 Default is \p opt::v::rcu_throw_deadlock.
         */
@@ -274,6 +278,7 @@ namespace cds { namespace container {
                 stored in the tree so single free-list object can be used for several EllenBinTree-based object.
             - \p opt::stat - internal statistics, by default disabled (\p ellen_bintree::empty_stat). To enable
                 it use \p ellen_bintree::stat.
+            - \p opt::backoff - back-off strategy, by default no strategy is used (\p cds::backoff::empty)
             - \p opt::rcu_check_deadlock - a deadlock checking policy, only for RCU-based tree. Default is \p opt::v::rcu_throw_deadlock
             - opt::copy_policy - key copying policy defines a functor to copy leaf node's key to internal node.
                 By default, assignment operator is used.

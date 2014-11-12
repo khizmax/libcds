@@ -436,6 +436,7 @@ namespace cds { namespace intrusive {
         typedef typename hook::node_type node_type; ///< node type
 
         typedef typename traits::disposer disposer;   ///< leaf node disposer
+        typedef typename traits::back_off back_off;   ///< back-off strategy
 
     protected:
         //@cond
@@ -734,6 +735,7 @@ namespace cds { namespace intrusive {
 
             unique_internal_node_ptr pNewInternal;
             retired_list updRetire;
+            back_off bkoff;
 
             {
                 rcu_lock l;
@@ -760,6 +762,7 @@ namespace cds { namespace intrusive {
                         }
                     }
 
+                    bkoff();
                     m_Stat.onInsertRetry();
                 }
             }
@@ -805,6 +808,7 @@ namespace cds { namespace intrusive {
 
             unique_internal_node_ptr pNewInternal;
             retired_list updRetire;
+            back_off bkoff;
 
             {
                 rcu_lock l;
@@ -831,6 +835,8 @@ namespace cds { namespace intrusive {
                             break;
                         }
                     }
+
+                    bkoff();
                     m_Stat.onEnsureRetry();
                 }
             }
@@ -1577,6 +1583,7 @@ namespace cds { namespace intrusive {
             retired_list updRetire;
             update_desc * pOp = nullptr;
             search_result res;
+            back_off bkoff;
 
             {
                 rcu_lock l;
@@ -1622,6 +1629,7 @@ namespace cds { namespace intrusive {
                         }
                     }
 
+                    bkoff();
                     m_Stat.onEraseRetry();
                 }
             }
@@ -1652,6 +1660,7 @@ namespace cds { namespace intrusive {
             retired_list updRetire;
             update_desc * pOp = nullptr;
             search_result res;
+            back_off bkoff;
 
             {
                 rcu_lock l;
@@ -1696,6 +1705,7 @@ namespace cds { namespace intrusive {
                         }
                     }
 
+                    bkoff();
                     m_Stat.onEraseRetry();
                 }
             }
@@ -1714,6 +1724,7 @@ namespace cds { namespace intrusive {
             retired_list updRetire;
             update_desc * pOp = nullptr;
             search_result res;
+            back_off bkoff;
 
             {
                 rcu_lock l;
@@ -1758,6 +1769,8 @@ namespace cds { namespace intrusive {
                             }
                         }
                     }
+
+                    bkoff();
                     m_Stat.onExtractMaxRetry();
                 }
             }
@@ -1775,6 +1788,7 @@ namespace cds { namespace intrusive {
             retired_list updRetire;
             update_desc * pOp = nullptr;
             search_result res;
+            back_off bkoff;
 
             {
                 rcu_lock l;
@@ -1820,6 +1834,7 @@ namespace cds { namespace intrusive {
                         }
                     }
 
+                    bkoff();
                     m_Stat.onExtractMinRetry();
                 }
             }

@@ -132,6 +132,23 @@ namespace tree {
 #endif
     }
 
+    void EllenBinTreeSetHdrTest::EllenBinTree_rcu_shb_cmp_ic_stat_yield()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::EllenBinTreeSet< rcu_type, key_type, value_type,
+            cc::ellen_bintree::make_set_traits<
+                cc::ellen_bintree::key_extractor< key_extractor >
+                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::stat< cc::ellen_bintree::stat<> >
+                , co::back_off< cds::backoff::yield >
+                ,co::compare< compare >
+            >::type
+        > set_type;
+
+        test_rcu<set_type, print_stat>();
+#endif
+    }
+
     void EllenBinTreeSetHdrTest::EllenBinTree_rcu_shb_less_pool()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED

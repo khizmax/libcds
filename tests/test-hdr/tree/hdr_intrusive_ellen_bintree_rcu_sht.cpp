@@ -148,6 +148,25 @@ namespace tree {
 #endif
     }
 
+    void IntrusiveBinTreeHdrTest::EllenBinTree_rcu_sht_base_cmp_ic_stat_yield()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef ci::EllenBinTree< rcu_type, key_type, base_value,
+            ci::ellen_bintree::make_traits<
+                ci::opt::hook< ci::ellen_bintree::base_hook< co::gc< rcu_type > > >
+                ,ci::ellen_bintree::key_extractor< key_extractor< base_value > >
+                ,co::compare< compare< base_value > >
+                ,ci::opt::disposer< disposer< base_value > >
+                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::stat< ci::ellen_bintree::stat<> >
+                ,co::back_off< cds::backoff::yield >
+            >::type
+        > tree_type;
+
+        test_rcu<tree_type, print_stat>();
+#endif
+    }
+
     void IntrusiveBinTreeHdrTest::EllenBinTree_rcu_sht_base_less_pool()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED

@@ -403,12 +403,15 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
 
 #define CDSUNIT_DECLARE_EllenBinTreeMap \
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_hp)\
+    TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_hp_yield)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_hp_stat)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_dhp)\
+    TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_dhp_yield)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_dhp_stat)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_rcu_gpi)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_rcu_gpi_stat)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_rcu_gpb)\
+    TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_rcu_gpb_yield)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_rcu_gpb_stat)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_rcu_gpt)\
     TEST_MAP_NOLF_EXTRACT(EllenBinTreeMap_rcu_gpt_stat)\
@@ -416,12 +419,15 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
 
 #define CDSUNIT_TEST_EllenBinTreeMap \
     CPPUNIT_TEST(EllenBinTreeMap_hp)\
+    CPPUNIT_TEST(EllenBinTreeMap_hp_yield)\
     CPPUNIT_TEST(EllenBinTreeMap_hp_stat)\
     CPPUNIT_TEST(EllenBinTreeMap_dhp)\
+    CPPUNIT_TEST(EllenBinTreeMap_dhp_yield)\
     CPPUNIT_TEST(EllenBinTreeMap_dhp_stat)\
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpi)\
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpi_stat)\
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpb)\
+    CPPUNIT_TEST(EllenBinTreeMap_rcu_gpb_yield)\
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpb_stat)\
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpt)\
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpt_stat)\
