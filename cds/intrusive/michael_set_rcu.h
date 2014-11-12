@@ -394,8 +394,8 @@ namespace cds { namespace intrusive {
         /// Extracts an item from the set
         /** \anchor cds_intrusive_MichaelHashSet_rcu_extract
             The function searches an item with key equal to \p key in the set,
-            unlinks it from the set, places item pointer into \p dest argument, and returns \p true.
-            If the item with the key equal to \p key is not found the function return \p false.
+            unlinks it from the set, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
+            If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the set
@@ -415,14 +415,15 @@ namespace cds { namespace intrusive {
             rcu_michael_set theSet;
             // ...
 
-            rcu_michael_set::exempt_ptr p;
+            typename rcu_michael_set::exempt_ptr p;
             {
                 // first, we should lock RCU
-                rcu_michael_set::rcu_lock lock;
+                typename rcu_michael_set::rcu_lock lock;
 
                 // Now, you can apply extract function
                 // Note that you must not delete the item found inside the RCU lock
-                if ( theSet.extract( p, 10 )) {
+                p = theSet.extract( 10 )
+                if ( p ) {
                     // do something with p
                     ...
                 }
@@ -435,13 +436,12 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& dest, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            if ( bucket( key ).extract( dest, key )) {
+            exempt_ptr p( bucket( key ).extract( key ) );
+            if ( p )
                 --m_ItemCounter;
-                return true;
-            }
-            return false;
+            return p;
         }
 
         /// Extracts an item from the set using \p pred predicate for searching
@@ -452,13 +452,12 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest, Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            if ( bucket( key ).extract_with( dest, key, pred )) {
+            exempt_ptr p( bucket( key ).extract_with( key, pred ) );
+            if ( p )
                 --m_ItemCounter;
-                return true;
-            }
-            return false;
+            return p;
         }
 
         /// Finds the key \p key
