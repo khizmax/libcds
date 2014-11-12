@@ -230,7 +230,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef cds::urcu::exempt_ptr< gc, value_type, value_type, clear_and_dispose, void > exempt_ptr ; ///< pointer to extracted node
+        /// pointer to extracted node
+        using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, clear_and_dispose, void >; 
 
     protected:
         //@cond
@@ -580,14 +581,13 @@ namespace cds { namespace intrusive {
         /**
         \anchor cds_intrusive_LazyList_rcu_extract
             The function searches an item with key equal to \p key in the list,
-            unlinks it from the list, and returns pointer to an item found in \p dest parameter.
-            If the item with the key equal to \p key is not found the function returns \p false,
-            \p dest is empty.
+            unlinks it from the list, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to an item found.
+            If the item is not found the function returns empty \p exempt_ptr.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the list
-            and returns a pointer to item found.
-            You should lock RCU before calling this function, and you should manually synchronize RCU
+            and returns a pointer to it.
+            You should manually lock RCU before calling this function, and you should manually synchronize RCU
             outside the RCU lock region before reusing returned pointer.
 
             \code
@@ -607,7 +607,8 @@ namespace cds { namespace intrusive {
 
                 // Now, you can apply extract function
                 // Note that you must not delete the item found inside the RCU lock
-                if ( theList.extract( p1, 10 )) {
+                p1 = theList.extract(  10 )
+                if ( p1 ) {
                     // do something with p1
                     ...
                 }
@@ -620,10 +621,9 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& dest, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            dest = extract_at( &m_Head, key, key_comparator() );
-            return !dest.empty();
+            return exempt_ptr( extract_at( &m_Head, key, key_comparator() ));
         }
 
         /// Extracts an item from the list using \p pred predicate for searching
@@ -635,10 +635,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as \ref key_comparator.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest, Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            dest = extract_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
-            return !dest.empty();
+            return exempt_ptr( extract_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() ));
         }
 
         /// Finds the key \p key
@@ -663,6 +662,13 @@ namespace cds { namespace intrusive {
         {
             return find_at( const_cast<node_type *>( &m_Head ), key, key_comparator(), f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f ) const
+        {
+            return find_at( const_cast<node_type *>(&m_Head), key, key_comparator(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key using \p pred predicate for searching
         /**
@@ -676,6 +682,13 @@ namespace cds { namespace intrusive {
         {
             return find_at( const_cast<node_type *>( &m_Head ), key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f ) const
+        {
+            return find_at( const_cast<node_type *>(&m_Head), key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key
         /** \anchor cds_intrusive_LazyList_rcu_find_val

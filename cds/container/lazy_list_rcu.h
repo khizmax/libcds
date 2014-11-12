@@ -129,7 +129,7 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer > exempt_ptr; ///< pointer to extracted node
+        using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >; ///< pointer to extracted node
 
     private:
         //@cond
@@ -490,8 +490,8 @@ namespace cds { namespace container {
         /**
         @anchor cds_nonintrusive_LazyList_rcu_extract
             The function searches an item with key equal to \p key in the list,
-            unlinks it from the list, and returns pointer to an item found in \p dest argument.
-            If the item with the key equal to \p key is not found the function returns \p false.
+            unlinks it from the list, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to an item found.
+            If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the list
@@ -515,7 +515,8 @@ namespace cds { namespace container {
 
                 // Now, you can apply extract function
                 // Note that you must not delete the item found inside the RCU lock
-                if ( theList.extract( p, 10 )) {
+                p = theList.extract( 10 );
+                if ( p ) {
                     // do something with p
                     ...
                 }
@@ -526,10 +527,9 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& dest, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            dest = extract_at( head(), key, intrusive_key_comparator() );
-            return !dest.empty();
+            return exempt_ptr(extract_at( head(), key, intrusive_key_comparator()));
         }
 
         /// Extracts an item from the list using \p pred predicate for searching
@@ -541,10 +541,9 @@ namespace cds { namespace container {
             \p pred must imply the same element order as \ref key_comparator.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest, Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            dest = extract_at( head(), key, typename maker::template less_wrapper<Less>::type() );
-            return !dest.empty();
+            return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type()));
         }
 
         /// Finds the key \p key
