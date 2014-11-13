@@ -692,8 +692,8 @@ namespace cds { namespace intrusive {
         /// Extracts an item from the set
         /** \anchor cds_intrusive_SplitListSet_rcu_extract
             The function searches an item with key equal to \p key in the set,
-            unlinks it, and returns pointer to an item found in \p dest argument.
-            If the item with the key equal to \p key is not found the function returns \p false.
+            unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
+            If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the set
@@ -716,7 +716,8 @@ namespace cds { namespace intrusive {
 
                 // Now, you can apply extract function
                 // Note that you must not delete the item found inside the RCU lock
-                if ( theList.extract( p, 10 )) {
+                p = theList.extract( 10 );
+                if ( p ) {
                     // do something with p
                     ...
                 }
@@ -729,14 +730,9 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& dest, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            value_type * pNode = extract_( key, key_comparator() );
-            if ( pNode ) {
-                dest = pNode;
-                return true;
-            }
-            return false;
+            return exempt_ptr(extract_( key, key_comparator() ));
         }
 
         /// Extracts an item from the set using \p pred for searching
@@ -747,14 +743,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& dest, Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            value_type * pNode = extract_with_( key, pred );
-            if ( pNode ) {
-                dest = pNode;
-                return true;
-            }
-            return false;
+            return exempt_ptr( extract_with_( key, pred ));
         }
 
         /// Finds the key \p key

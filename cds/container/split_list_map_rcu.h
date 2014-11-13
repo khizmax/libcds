@@ -453,8 +453,8 @@ namespace cds { namespace container {
         /// Extracts an item from the map
         /** \anchor cds_nonintrusive_SplitListMap_rcu_extract
             The function searches an item with key equal to \p key in the map,
-            unlinks it from the map, places item pointer into \p dest argument, and returns \p true.
-            If the item with the key equal to \p key is not found the function return \p false.
+            unlinks it from the map, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
+            If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
             @note The function does NOT call RCU read-side lock or synchronization,
             and does NOT dispose the item found. It just excludes the item from the map
@@ -476,7 +476,8 @@ namespace cds { namespace container {
 
                 // Now, you can apply extract function
                 // Note that you must not delete the item found inside the RCU lock
-                if ( theMap.extract( p, 10 )) {
+                p = theMap.extract( 10 )
+                if ( p ) {
                     // do something with p
                     ...
                 }
@@ -488,9 +489,9 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename K>
-        bool extract( exempt_ptr& dest, K const& key )
+        exempt_ptr extract( K const& key )
         {
-            return base_class::extract( dest, key );
+            return base_class::extract( key );
         }
 
         /// Extracts an item from the map using \p pred predicate for searching
@@ -501,9 +502,9 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        bool extract_with( exempt_ptr& dest, K const& key, Less pred )
+        exempt_ptr extract_with( K const& key, Less pred )
         {
-            return base_class::extract_with( dest, key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
+            return base_class::extract_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 
         /// Finds the key \p key
