@@ -614,7 +614,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef cds::urcu::exempt_ptr< gc, value_type, value_type, node_disposer, void > exempt_ptr; ///< pointer to extracted node
+        using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, node_disposer, void >; ///< pointer to extracted node
 
     protected:
         //@cond
@@ -1133,136 +1133,105 @@ retry:
             return pDel ? node_traits::to_value_ptr( pDel ) : nullptr;
         }
 
-        template <typename ExemptPtr, typename Q>
-        bool do_extract( ExemptPtr& result, Q const& key )
+        template <typename Q>
+        value_type * do_extract( Q const& key )
         {
             check_deadlock_policy::check();
-
-            bool bReturn;
+            value_type * pDel = nullptr;
             {
                 rcu_lock l;
-                value_type * pDel = do_extract_key( key, key_comparator() );
-                bReturn = pDel != nullptr;
-                if ( bReturn )
-                    result = pDel;
+                pDel = do_extract_key( key, key_comparator() );
             }
 
             dispose_deferred();
-            return bReturn;
+            return pDel;
         }
 
-        template <typename ExemptPtr, typename Q, typename Less>
-        bool do_extract_with( ExemptPtr& result, Q const& key, Less pred )
+        template <typename Q, typename Less>
+        value_type * do_extract_with( Q const& key, Less pred )
         {
             check_deadlock_policy::check();
+            value_type * pDel = nullptr;
 
-            bool bReturn;
             {
                 rcu_lock l;
-                value_type * pDel = do_extract_key( key, cds::opt::details::make_comparator_from_less<Less>() );
-                bReturn = pDel != nullptr;
-                if ( bReturn )
-                    result = pDel;
+                pDel = do_extract_key( key, cds::opt::details::make_comparator_from_less<Less>() );
             }
 
             dispose_deferred();
-            return bReturn;
+            return pDel;
         }
 
-        node_type * do_extract_min()
+        value_type * do_extract_min()
         {
-            assert( gc::is_locked() );
+            assert( !gc::is_locked() );
 
             position pos;
             node_type * pDel;
 
-            if ( !find_min_position( pos ) ) {
-                m_Stat.onExtractMinFailed();
-                pDel = nullptr;
-            }
-            else {
-                pDel = pos.pCur;
-                unsigned int const nHeight = pDel->height();
+            {
+                rcu_lock l;
 
-                if ( try_remove_at( pDel, pos, [](value_type const&) {}, true )) {
-                    --m_ItemCounter;
-                    m_Stat.onRemoveNode( nHeight );
-                    m_Stat.onExtractMinSuccess();
-                }
-                else {
+                if ( !find_min_position( pos ) ) {
                     m_Stat.onExtractMinFailed();
                     pDel = nullptr;
                 }
-            }
+                else {
+                    pDel = pos.pCur;
+                    unsigned int const nHeight = pDel->height();
 
-            defer_chain( pos );
-            return pDel;
-        }
+                    if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true ) ) {
+                        --m_ItemCounter;
+                        m_Stat.onRemoveNode( nHeight );
+                        m_Stat.onExtractMinSuccess();
+                    }
+                    else {
+                        m_Stat.onExtractMinFailed();
+                        pDel = nullptr;
+                    }
+                }
 
-        template <typename ExemptPtr>
-        bool do_extract_min( ExemptPtr& result )
-        {
-            check_deadlock_policy::check();
-
-            bool bReturn;
-            {
-                rcu_lock l;
-                node_type * pDel = do_extract_min();
-                bReturn = pDel != nullptr;
-                if ( bReturn )
-                    result = node_traits::to_value_ptr(pDel);
+                defer_chain( pos );
             }
 
             dispose_deferred();
-            return bReturn;
+            return pDel ? node_traits::to_value_ptr( pDel ) : nullptr;
         }
 
-        node_type * do_extract_max()
+        value_type * do_extract_max()
         {
-            assert( gc::is_locked() );
+            assert( !gc::is_locked() );
 
             position pos;
             node_type * pDel;
 
-            if ( !find_max_position( pos ) ) {
-                m_Stat.onExtractMaxFailed();
-                pDel = nullptr;
-            }
-            else {
-                pDel = pos.pCur;
-                unsigned int const nHeight = pDel->height();
+            {
+                rcu_lock l;
 
-                if ( try_remove_at( pDel, pos, [](value_type const&) {}, true )) {
-                    --m_ItemCounter;
-                    m_Stat.onRemoveNode( nHeight );
-                    m_Stat.onExtractMaxSuccess();
-                }
-                else {
+                if ( !find_max_position( pos ) ) {
                     m_Stat.onExtractMaxFailed();
                     pDel = nullptr;
                 }
-            }
+                else {
+                    pDel = pos.pCur;
+                    unsigned int const nHeight = pDel->height();
 
-            defer_chain( pos );
-            return pDel;
-        }
+                    if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true ) ) {
+                        --m_ItemCounter;
+                        m_Stat.onRemoveNode( nHeight );
+                        m_Stat.onExtractMaxSuccess();
+                    }
+                    else {
+                        m_Stat.onExtractMaxFailed();
+                        pDel = nullptr;
+                    }
+                }
 
-        template <typename ExemptPtr>
-        bool do_extract_max( ExemptPtr& result )
-        {
-            check_deadlock_policy::check();
-
-            bool bReturn;
-            {
-                rcu_lock l;
-                node_type * pDel = do_extract_max();
-                bReturn = pDel != nullptr;
-                if ( bReturn )
-                    result = node_traits::to_value_ptr(pDel);
+                defer_chain( pos );
             }
 
             dispose_deferred();
-            return bReturn;
+            return pDel ? node_traits::to_value_ptr( pDel ) : nullptr;
         }
 
         void increase_height( unsigned int nHeight )
@@ -1645,24 +1614,23 @@ retry:
         /// Extracts the item from the set with specified \p key
         /** \anchor cds_intrusive_SkipListSet_rcu_extract
             The function searches an item with key equal to \p key in the set,
-            unlinks it from the set, places it to \p result parameter, and returns \p true.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the set, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
+            If the item with key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not call the disposer for the item found.
-            The disposer will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
             Example:
             \code
             typedef cds::intrusive::SkipListSet< cds::urcu::gc< cds::urcu::general_buffered<> >, foo, my_traits > skip_list;
             skip_list theList;
             // ...
 
-            typename skip_list::exempt_ptr ep;
-            if ( theList.extract( ep, 5 ) ) {
+            typename skip_list::exempt_ptr ep( theList.extract( 5 ));
+            if ( ep ) {
                 // Deal with ep
                 //...
 
@@ -1672,9 +1640,9 @@ retry:
             \endcode
         */
         template <typename Q>
-        bool extract( exempt_ptr& result, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            return do_extract( result, key );
+            return exempt_ptr( do_extract( key ));
         }
 
         /// Extracts the item from the set with comparing functor \p pred
@@ -1685,29 +1653,28 @@ retry:
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& result, Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            return do_extract_with( result, key, pred );
+            return exempt_ptr( do_extract_with( key, pred ));
         }
 
         /// Extracts an item with minimal key from the list
         /**
-            The function searches an item with minimal key, unlinks it, and returns the item found in \p result parameter.
-            If the skip-list is empty the function returns \p false.
+            The function searches an item with minimal key, unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item.
+            If the skip-list is empty the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not call the disposer for the item found.
-            The disposer will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is manually called.
             Example:
             \code
             typedef cds::intrusive::SkipListSet< cds::urcu::gc< cds::urcu::general_buffered<> >, foo, my_traits > skip_list;
             skip_list theList;
             // ...
 
-            typename skip_list::exempt_ptr ep;
-            if ( theList.extract_min(ep)) {
+            typename skip_list::exempt_ptr ep(theList.extract_min());
+            if ( ep ) {
                 // Deal with ep
                 //...
 
@@ -1721,29 +1688,28 @@ retry:
             During unlinking, a concurrent thread may insert an item with key less than leftmost item's key.
             So, the function returns the item with minimum key at the moment of list traversing.
         */
-        bool extract_min( exempt_ptr& result )
+        exempt_ptr extract_min()
         {
-            return do_extract_min( result );
+            return exempt_ptr( do_extract_min());
         }
 
         /// Extracts an item with maximal key from the list
         /**
-            The function searches an item with maximal key, unlinks it, and returns the item found in \p result parameter.
-            If the skip-list is empty the function returns \p false.
+            The function searches an item with maximal key, unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item.
+            If the skip-list is empty the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not call the disposer for the item found.
-            The disposer will be implicitly invoked when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is manually called.
             Example:
             \code
             typedef cds::intrusive::SkipListSet< cds::urcu::gc< cds::urcu::general_buffered<> >, foo, my_traits > skip_list;
             skip_list theList;
             // ...
 
-            typename skip_list::exempt_ptr ep;
-            if ( theList.extract_max(ep) ) {
+            typename skip_list::exempt_ptr ep( theList.extract_max() );
+            if ( ep ) {
                 // Deal with ep
                 //...
                 // Dispose returned item.
@@ -1756,9 +1722,9 @@ retry:
             During unlinking, a concurrent thread can insert an item with key greater than rightmost item's key.
             So, the function returns the item with maximum key at the moment of list traversing.
         */
-        bool extract_max( exempt_ptr& result )
+        exempt_ptr extract_max()
         {
-            return do_extract_max( result );
+            return exempt_ptr( do_extract_max());
         }
 
         /// Deletes the item from the set
@@ -1990,8 +1956,7 @@ retry:
         void clear()
         {
             exempt_ptr ep;
-            while ( extract_min(ep) )
-                ep.release();
+            while ( (ep = extract_min()) );
         }
 
         /// Returns maximum height of skip-list. The max height is a constant for each object and does not exceed 32.

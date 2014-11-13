@@ -174,17 +174,18 @@ namespace map {
                         CPPUNIT_CHECK( pVal->second.m_val == nKey * 2 );
                     }
 
-                    CPPUNIT_ASSERT( m.extract( ep, nKey ));
+                    ep = m.extract( nKey );
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == nKey );
                     CPPUNIT_CHECK( ep->second.m_val == nKey * 2 );
-                    ep.release();
 
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( m.get( nKey ) ==  nullptr );
                     }
-                    CPPUNIT_CHECK( !m.extract(ep, nKey) );
+                    ep = m.extract( nKey );
+                    CPPUNIT_CHECK( !ep );
                 }
                 CPPUNIT_ASSERT( m.empty() );
 
@@ -202,17 +203,18 @@ namespace map {
                         CPPUNIT_CHECK( pVal->second.m_val == nKey * 2 );
                     }
 
-                    CPPUNIT_ASSERT( m.extract_with( ep, wrapped_item(nKey), wrapped_less() ));
+                    ep = m.extract_with( wrapped_item( nKey ), wrapped_less() );
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == nKey );
                     CPPUNIT_CHECK( ep->second.m_val == nKey * 2 );
-                    ep.release();
 
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( m.get_with( wrapped_item(nKey), wrapped_less() ) ==  nullptr );
                     }
-                    CPPUNIT_CHECK( !m.extract_with(ep, wrapped_item(nKey), wrapped_less()) );
+                    ep = m.extract_with( wrapped_item( nKey ), wrapped_less() );
+                    CPPUNIT_CHECK( !ep );
                 }
                 CPPUNIT_ASSERT( m.empty() );
 
@@ -220,27 +222,29 @@ namespace map {
                 for ( int i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( m.insert(arrItem[i], arrItem[i]*2) );
                 for ( int i = 0; i < nLimit; ++i ) {
-                    CPPUNIT_ASSERT( m.extract_min(ep));
+                    ep = m.extract_min();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == i );
                     CPPUNIT_CHECK( ep->second.m_val == i * 2 );
-                    ep.release();
                 }
                 CPPUNIT_ASSERT( m.empty() );
-                CPPUNIT_CHECK( !m.extract_min(ep) );
+                ep = m.extract_min();
+                CPPUNIT_CHECK( !ep );
 
                 // extract_max
                 for ( int i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( m.insert(arrItem[i], arrItem[i]*2) );
                 for ( int i = nLimit-1; i >= 0; --i ) {
-                    CPPUNIT_ASSERT( m.extract_max(ep));
+                    ep = m.extract_max();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == i );
                     CPPUNIT_CHECK( ep->second.m_val == i * 2 );
-                    ep.release();
                 }
                 CPPUNIT_ASSERT( m.empty() );
-                CPPUNIT_CHECK( !m.extract_max(ep) );
+                ep = m.extract_max();
+                CPPUNIT_CHECK( !ep );
             }
 
             CPPUNIT_MSG( PrintStat()(m, nullptr) );

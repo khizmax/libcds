@@ -435,22 +435,21 @@ namespace map2 {
                                 if ( Map::c_bExtractLockExternal ) {
                                     {
                                         typename Map::rcu_lock l;
-                                        if ( rMap.extract_with( xp, arrData[i], key_less() )) {
+                                        xp = rMap.extract_with( arrData[i], key_less() );
+                                        if ( xp )
                                             ++m_nDeleteSuccess;
-                                        }
                                         else
                                             ++m_nDeleteFailed;
                                     }
-                                    xp.release();
                                 }
                                 else {
-                                    if ( rMap.extract_with( xp, arrData[i], key_less() )) {
+                                    xp = rMap.extract_with( arrData[i], key_less() );
+                                    if ( xp )
                                         ++m_nDeleteSuccess;
-                                        xp.release();
-                                    }
                                     else
                                         ++m_nDeleteFailed;
                                 }
+                                xp.release();
                             }
                         }
                         if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
@@ -464,21 +463,21 @@ namespace map2 {
                                 if ( Map::c_bExtractLockExternal ) {
                                     {
                                         typename Map::rcu_lock l;
-                                        if ( rMap.extract_with( xp, arrData[i], key_less() ))
+                                        xp = rMap.extract_with( arrData[i], key_less() );
+                                        if ( xp )
                                             ++m_nDeleteSuccess;
                                         else
                                             ++m_nDeleteFailed;
                                     }
-                                    xp.release();
                                 }
                                 else {
-                                    if ( rMap.extract_with( xp, arrData[i], key_less() )) {
+                                    xp = rMap.extract_with( arrData[i], key_less() );
+                                    if ( xp )
                                         ++m_nDeleteSuccess;
-                                        xp.release();
-                                    }
                                     else
                                         ++m_nDeleteFailed;
                                 }
+                                xp.release();
                             }
                         }
                         if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )

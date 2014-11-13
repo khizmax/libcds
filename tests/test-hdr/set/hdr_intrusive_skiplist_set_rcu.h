@@ -268,17 +268,19 @@ namespace set {
                             pVal->nVal *= 2;
                         }
 
-                        CPPUNIT_ASSERT( s.extract( ep, i ));
+                        ep = s.extract( i );
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( ep->nKey == i );
                         CPPUNIT_CHECK( ep->nVal == i * 4 );
-                        ep.release();
+                        //ep.release();
 
                         {
                             rcu_lock l;
                             CPPUNIT_CHECK( s.get( i ) == nullptr );
                         }
-                        CPPUNIT_CHECK( !s.extract( ep, i ) );
+                        ep = s.extract( i );
+                        CPPUNIT_CHECK( !ep );
                         CPPUNIT_ASSERT( ep.empty() );
                     }
                     CPPUNIT_CHECK( s.empty() );
@@ -298,17 +300,19 @@ namespace set {
                             pVal->nVal *= 2;
                         }
 
-                        CPPUNIT_ASSERT( s.extract_with( ep, other_key(i), other_key_less<typename Set::value_type>() ));
+                        ep = s.extract_with( other_key( i ), other_key_less<typename Set::value_type>() );
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( ep->nKey == i );
                         CPPUNIT_CHECK( ep->nVal == i * 4 );
-                        ep.release();
+                        //ep.release();
 
                         {
                             rcu_lock l;
                             CPPUNIT_CHECK( s.get_with( other_key( i ), other_key_less<typename Set::value_type>() ) == nullptr );
                         }
-                        CPPUNIT_CHECK( !s.extract_with( ep, other_key(i), other_key_less<typename Set::value_type>() ));
+                        ep = s.extract_with( other_key( i ), other_key_less<typename Set::value_type>() );
+                        CPPUNIT_CHECK( !ep );
                     }
                     CPPUNIT_CHECK( s.empty() );
                 }
@@ -319,21 +323,24 @@ namespace set {
                     fill_skiplist( s, v );
                     int nPrevKey;
 
-                    CPPUNIT_ASSERT( s.extract_min(ep));
+                    ep = s.extract_min();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty());
                     nPrevKey = ep->nKey;
-                    ep.release();
+                    //ep.release();
 
                     while ( !s.empty() ) {
-                        CPPUNIT_ASSERT( s.extract_min(ep) );
+                        ep = s.extract_min();
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty());
                         CPPUNIT_CHECK( ep->nKey == nPrevKey + 1 );
                         CPPUNIT_CHECK( ep->nVal == (nPrevKey + 1) * 2 );
                         nPrevKey = ep->nKey;
-                        ep.release();
+                        //ep.release();
                     }
-                    CPPUNIT_CHECK( !s.extract_min(ep) );
-                    CPPUNIT_CHECK( !s.extract_max(ep) );
+                    ep = s.extract_min();
+                    CPPUNIT_CHECK( !ep );
+                    CPPUNIT_CHECK( !s.extract_max() );
                 }
                 Set::gc::force_dispose();
 
@@ -342,23 +349,26 @@ namespace set {
                     fill_skiplist( s, v );
                     int nPrevKey;
 
-                    CPPUNIT_ASSERT( s.extract_max(ep));
+                    ep = s.extract_max();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty());
                     nPrevKey = ep->nKey;
-                    ep.release();
+                    //ep.release();
 
                     while ( !s.empty() ) {
-                        CPPUNIT_ASSERT( s.extract_max(ep));
+                        ep = s.extract_max();
+                        CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty());
                         CPPUNIT_CHECK( ep->nKey == nPrevKey - 1 );
                         CPPUNIT_CHECK( ep->nVal == (nPrevKey - 1) * 2 );
                         nPrevKey = ep->nKey;
-                        ep.release();
+                        //ep.release();
                     }
+                    ep = s.extract_min();
+                    CPPUNIT_CHECK( !ep );
+                    CPPUNIT_CHECK( !s.extract_max() );
                 }
                 Set::gc::force_dispose();
-                CPPUNIT_CHECK( !s.extract_min(ep) );
-                CPPUNIT_CHECK( !s.extract_max(ep) );
             }
 
             CPPUNIT_MSG( PrintStat()(s, nullptr) );

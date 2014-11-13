@@ -168,17 +168,18 @@ namespace set {
                         CPPUNIT_CHECK( pVal->nVal == nKey * 2 );
                     }
 
-                    CPPUNIT_ASSERT( s.extract( ep, nKey ));
+                    ep = s.extract( nKey );
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == nKey );
                     CPPUNIT_CHECK( ep->nVal == nKey * 2 );
-                    ep.release();
 
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( s.get( nKey ) == nullptr );
                     }
-                    CPPUNIT_CHECK( !s.extract( ep, nKey ));
+                    ep = s.extract( nKey );
+                    CPPUNIT_CHECK( !ep );
                 }
                 CPPUNIT_CHECK( s.empty());
 
@@ -196,17 +197,18 @@ namespace set {
                         CPPUNIT_CHECK( pVal->nVal == nKey );
                     }
 
-                    CPPUNIT_ASSERT( s.extract_with( ep, wrapped_item(nKey), wrapped_less() ));
+                    ep = s.extract_with( wrapped_item( nKey ), wrapped_less() );
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == nKey );
                     CPPUNIT_CHECK( ep->nVal == nKey );
-                    ep.release();
 
                     {
                         rcu_lock l;
                         CPPUNIT_CHECK( s.get_with( wrapped_item( nKey ), wrapped_less() ) == nullptr );
                     }
-                    CPPUNIT_CHECK( !s.extract_with( ep, wrapped_item(nKey), wrapped_less() ));
+                    ep = s.extract_with( wrapped_item( nKey ), wrapped_less() );
+                    CPPUNIT_CHECK( !ep );
                 }
                 CPPUNIT_CHECK( s.empty());
 
@@ -215,12 +217,12 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( arrRandom[i]) );
 
                 for ( int i = 0; i < nLimit; ++i ) {
-                    CPPUNIT_ASSERT( s.extract_min(ep) );
+                    ep = s.extract_min();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == i );
                     CPPUNIT_CHECK( ep->nVal == i );
                     CPPUNIT_CHECK( !s.find(i) );
-                    ep.release();
                 }
                 CPPUNIT_CHECK( s.empty());
 
@@ -229,16 +231,17 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( arrRandom[i]) );
 
                 for ( int i = nLimit-1; i >= 0; --i ) {
-                    CPPUNIT_ASSERT( s.extract_max(ep) );
+                    ep = s.extract_max();
+                    CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == i );
                     CPPUNIT_CHECK( ep->nVal == i );
                     CPPUNIT_CHECK( !s.find(i) );
-                    ep.release();
                 }
                 CPPUNIT_CHECK( s.empty());
-                CPPUNIT_CHECK( !s.extract_min(ep) );
-                CPPUNIT_CHECK( !s.extract_max(ep) );
+                ep = s.extract_min();
+                CPPUNIT_CHECK( !ep );
+                CPPUNIT_CHECK( !s.extract_max() );
             }
 
             CPPUNIT_MSG( PrintStat()(s, nullptr) );

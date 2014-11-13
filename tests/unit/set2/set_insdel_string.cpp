@@ -272,21 +272,21 @@ namespace set2 {
                             if ( Set::c_bExtractLockExternal ) {
                                 {
                                     typename Set::rcu_lock l;
-                                    if ( rSet.extract( xp, arrString[nItem % nArrSize] ) )
+                                    xp = rSet.extract( arrString[nItem % nArrSize] );
+                                    if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
                                         ++m_nDeleteFailed;
                                 }
-                                xp.release();
                             }
                             else {
-                                if ( rSet.extract( xp, arrString[nItem % nArrSize] ) ) {
+                                xp = rSet.extract( arrString[nItem % nArrSize] );
+                                if ( xp )
                                     ++m_nDeleteSuccess;
-                                    xp.release();
-                                }
                                 else
                                     ++m_nDeleteFailed;
                             }
+                            xp.release();
                         }
                     }
                 }
@@ -296,21 +296,21 @@ namespace set2 {
                             if ( Set::c_bExtractLockExternal ) {
                                 {
                                     typename Set::rcu_lock l;
-                                    if ( rSet.extract( xp, arrString[nItem % nArrSize] ) )
+                                    xp = rSet.extract( arrString[nItem % nArrSize] );
+                                    if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
                                         ++m_nDeleteFailed;
                                 }
-                                xp.release();
                             }
                             else {
-                                if ( rSet.extract( xp, arrString[nItem % nArrSize] ) ) {
+                                xp = rSet.extract( arrString[nItem % nArrSize] );
+                                if ( xp )
                                     ++m_nDeleteSuccess;
-                                    xp.release();
-                                }
                                 else
                                     ++m_nDeleteFailed;
                             }
+                            xp.release();
                         }
                     }
                 }

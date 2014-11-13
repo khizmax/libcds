@@ -475,13 +475,15 @@ namespace set2 {
                             if ( arrData[i] & 1 ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    if ( rSet.extract_with( xp, arrData[i], key_less() ))
+                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    if ( rSet.extract_with( xp, arrData[i], key_less() ))
+                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
@@ -499,13 +501,15 @@ namespace set2 {
                             if ( arrData[i] & 1 ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    if ( rSet.extract_with( xp, arrData[i], key_less() ))
+                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    if ( rSet.extract_with( xp, arrData[i], key_less() ))
+                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;

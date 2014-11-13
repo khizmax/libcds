@@ -185,7 +185,7 @@ namespace cds { namespace container {
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
 
         /// pointer to extracted node
-        typedef cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer > exempt_ptr;
+        using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >;
 
     protected:
         //@cond
@@ -441,22 +441,22 @@ namespace cds { namespace container {
         /// Extracts the item from the set with specified \p key
         /** \anchor cds_nonintrusive_SkipListSet_rcu_extract
             The function searches an item with key equal to \p key in the set,
-            unlinks it from the set, and returns it in \p result parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the set, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
+            If the item is not found the function returns an empty \p exempt_ptr
 
             Note the compare functor from \p Traits class' template argument
             should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
+
             The function does not free the item found.
-            The item will be implicitly freed when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see \p cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The item will be implicitly freed when the returned object is destroyed or when
+            its \p release() member function is called.
         */
         template <typename Q>
-        bool extract( exempt_ptr& result, Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            return base_class::do_extract( result, key );
+            return exempt_ptr( base_class::do_extract( key ));
         }
 
         /// Extracts the item from the set with comparing functor \p pred
@@ -467,41 +467,43 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( exempt_ptr& result, Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            return base_class::do_extract_with( result, key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
+            return exempt_ptr( base_class::do_extract_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >()));
         }
 
         /// Extracts an item with minimal key from the set
         /**
-            The function searches an item with minimal key, unlinks it, and returns the item found in \p result parameter.
-            If the skip-list is empty the function returns \p false.
+            The function searches an item with minimal key, unlinks it, 
+            and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item.
+            If the skip-list is empty the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
+
             The function does not free the item found.
-            The item will be implicitly freed when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The item will be implicitly freed when the returned object is destroyed or when
+            its \p release() member function is called.
         */
-        bool extract_min( exempt_ptr& result )
+        exempt_ptr extract_min()
         {
-            return base_class::do_extract_min(result);
+            return exempt_ptr( base_class::do_extract_min());
         }
 
         /// Extracts an item with maximal key from the set
         /**
-            The function searches an item with maximal key, unlinks it from the set, and returns the item found
-            in \p result parameter. If the skip-list is empty the function returns \p false.
+            The function searches an item with maximal key, unlinks it from the set, 
+            and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item.
+            If the skip-list is empty the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
+
             The function does not free the item found.
-            The item will be implicitly freed when \p result object is destroyed or when
-            <tt>result.release()</tt> is called, see cds::urcu::exempt_ptr for explanation.
-            @note Before reusing \p result object you should call its \p release() method.
+            The item will be implicitly freed when the returned object is destroyed or when
+            its \p release() member function is called.
         */
-        bool extract_max(exempt_ptr& result)
+        exempt_ptr extract_max()
         {
-            return base_class::do_extract_max(result);
+            return exempt_ptr( base_class::do_extract_max());
         }
 
         /// Find the key \p val
