@@ -1425,7 +1425,7 @@ namespace cds { namespace intrusive {
         {
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
-        //@ndcond
+        //@endcond
 
         /// Finds \p key
         /** \anchor cds_intrusive_SkipListSet_hp_find_val
