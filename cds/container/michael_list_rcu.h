@@ -595,6 +595,13 @@ namespace cds { namespace container {
         {
             return find_at( head(), key, intrusive_key_comparator(), f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f ) const
+        {
+            return find_at( head(), key, intrusive_key_comparator(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key using \p pred predicate for searching
         /**
@@ -608,6 +615,13 @@ namespace cds { namespace container {
         {
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f ) const
+        {
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelList_rcu_get

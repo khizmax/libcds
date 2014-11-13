@@ -620,6 +620,13 @@ namespace cds { namespace container {
         {
             return find_( key, f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f )
+        {
+            return find_( key, f );
+        }
+        //@endcond
 
         /// Finds the key \p key using \p pred predicate for searching
         /**
@@ -633,6 +640,13 @@ namespace cds { namespace container {
         {
             return find_with_( key, pred, f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f )
+        {
+            return find_with_( key, pred, f );
+        }
+        //@endcond
 
         /// Finds the key \p key
         /** \anchor cds_nonintrusive_SplitListSet_find_val

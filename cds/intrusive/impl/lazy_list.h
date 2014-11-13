@@ -702,6 +702,13 @@ namespace cds { namespace intrusive {
         {
             return find_at( &m_Head, key, key_comparator(), f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f )
+        {
+            return find_at( &m_Head, key, key_comparator(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key using \p pred predicate for searching
         /**
@@ -715,6 +722,13 @@ namespace cds { namespace intrusive {
         {
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f )
+        {
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key
         /** \anchor cds_intrusive_LazyList_hp_find_val
@@ -722,7 +736,7 @@ namespace cds { namespace intrusive {
             and returns \p true if it is found, and \p false otherwise
         */
         template <typename Q>
-        bool find( Q const & key )
+        bool find( Q const& key )
         {
             return find_at( &m_Head, key, key_comparator() );
         }

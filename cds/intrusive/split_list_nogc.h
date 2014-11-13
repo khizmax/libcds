@@ -391,6 +391,13 @@ namespace cds { namespace intrusive {
         {
             return find_( key, key_comparator(), f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f )
+        {
+            return find_( key, key_comparator(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key with \p pred predicate for comparing
         /**
@@ -404,6 +411,13 @@ namespace cds { namespace intrusive {
         {
             return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f )
+        {
+            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+        }
+        //@endcond
 
         /// Checks if the set is empty
         /**

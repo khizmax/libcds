@@ -1822,6 +1822,13 @@ retry:
         {
             return do_find_with( key, key_comparator(), f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f )
+        {
+            return do_find_with( key, key_comparator(), f );
+        }
+        //@endcond
 
         /// Finds the key \p key with comparing functor \p pred
         /**
@@ -1835,6 +1842,13 @@ retry:
         {
             return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f )
+        {
+            return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+        //@endcond
 
         /// Finds \p key
         /** @anchor cds_intrusive_SkipListSet_rcu_find_val

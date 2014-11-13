@@ -505,6 +505,13 @@ namespace cds { namespace container {
         {
             return base_class::find( key, [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); });
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f )
+        {
+            return base_class::find( key, [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
+        }
+        //@endcond
 
         /// Finds \p key using \p pred predicate for searching
         /**
@@ -519,6 +526,14 @@ namespace cds { namespace container {
             return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
                 [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f )
+        {
+            return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
+                                          [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
+        }
+        //@endcond
 
         /// Find \p key
         /** \anchor cds_nonintrusive_SkipListSet_find_val

@@ -512,6 +512,13 @@ namespace cds { namespace intrusive {
         {
             return bucket( key ).find( key, f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f ) const
+        {
+            return bucket( key ).find( key, f );
+        }
+        //@endcond
 
         /// Finds the key \p key using \p pred predicate for searching
         /**
@@ -525,6 +532,13 @@ namespace cds { namespace intrusive {
         {
             return bucket( key ).find_with( key, pred, f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f ) const
+        {
+            return bucket( key ).find_with( key, pred, f );
+        }
+        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_MichaelHashSet_rcu_get

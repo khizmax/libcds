@@ -705,6 +705,13 @@ namespace cds { namespace intrusive {
         {
             return find_at( m_pHead, key, key_comparator(), f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& key, Func f )
+        {
+            return find_at( m_pHead, key, key_comparator(), f );
+        }
+        //@endcond
 
         /// Finds the \p key using \p pred predicate for searching
         /**
@@ -718,6 +725,13 @@ namespace cds { namespace intrusive {
         {
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
+        //@cond
+        template <typename Q, typename Less, typename Func>
+        bool find_with( Q const& key, Less pred, Func f )
+        {
+            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+        //@endcond
 
         /// Finds the \p key
         /** \anchor cds_intrusive_MichaelList_hp_find_val

@@ -539,6 +539,13 @@ namespace cds { namespace container {
         {
             return base_class::find( val, [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); });
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& val, Func f )
+        {
+            return base_class::find( val, [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
+        }
+        //@endcond
 
         /// Finds the key \p val using \p pred predicate for searching
         /**
@@ -553,50 +560,14 @@ namespace cds { namespace container {
             return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
                 [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
         }
-
-        /// Find the key \p val
-        /** @anchor cds_nonintrusive_SkipListSet_rcu_find_cfunc
-
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            The functor may change non-key fields of \p item. Note that the functor is only guarantee
-            that \p item cannot be disposed during functor is executing.
-            The functor does not serialize simultaneous access to the set's \p item. If such access is
-            possible you must provide your own synchronization schema on item level to exclude unsafe item modifications.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \p value_type.
-
-            The function applies RCU lock internally.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return base_class::find( val, [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); });
-        }
-
-        /// Finds the key \p val using \p pred predicate for searching
-        /**
-            The function is an analog of \ref cds_nonintrusive_SkipListSet_rcu_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparing.
-            \p Less functor has the semantics like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
-        */
+        //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& val, Less pred, Func f )
         {
             return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); } );
+                                          [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
         }
+        //@endcond
 
         /// Find the key \p val
         /** @anchor cds_nonintrusive_SkipListSet_rcu_find_val
