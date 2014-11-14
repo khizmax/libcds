@@ -36,7 +36,7 @@ namespace cds {
             <tr>
                 <th>Feature</th>
                 <th>%cds::gc::HP</th>
-                <th>%cds::gc::PTB</th>
+                <th>%cds::gc::DHP</th>
             </tr>
             <tr>
                 <td>Implementation quality</td>

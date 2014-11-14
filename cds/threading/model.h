@@ -31,17 +31,17 @@ namespace cds { namespace threading {
         return Manager::getHZPGC();
     }
 
-    /// Get cds::gc::PTB thread GC implementation for current thread
+    /// Get cds::gc::DHP thread GC implementation for current thread
     /**
         The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution
-        or if you did not use cds::gc::PTB.
-        To initialize cds::gc::PTB GC you must constuct cds::gc::PTB object in the beginning of your application,
+        or if you did not use cds::gc::DHP.
+        To initialize cds::gc::DHP GC you must constuct cds::gc::DHP object in the beginning of your application,
         see \ref cds_how_to_use "How to use libcds"
     */
     template <>
-    inline cds::gc::PTB::thread_gc_impl&   getGC<cds::gc::PTB>()
+    inline cds::gc::DHP::thread_gc_impl&   getGC<cds::gc::DHP>()
     {
-        return Manager::getPTBGC();
+        return Manager::getDHPGC();
     }
 
     //@cond

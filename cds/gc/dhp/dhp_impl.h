@@ -8,7 +8,7 @@
 //@cond
 namespace cds { namespace gc {
 
-    inline PTB::thread_gc::thread_gc(
+    inline DHP::thread_gc::thread_gc(
         bool    bPersistent
         )
         : m_bPersistent( bPersistent )
@@ -17,24 +17,24 @@ namespace cds { namespace gc {
             cds::threading::Manager::attachThread();
     }
 
-    inline PTB::thread_gc::~thread_gc()
+    inline DHP::thread_gc::~thread_gc()
     {
         if ( !m_bPersistent )
             cds::threading::Manager::detachThread();
     }
 
-    inline PTB::Guard::Guard()
-        : Guard::base_class( cds::threading::getGC<PTB>() )
+    inline DHP::Guard::Guard()
+        : Guard::base_class( cds::threading::getGC<DHP>() )
     {}
 
     template <size_t COUNT>
-    inline PTB::GuardArray<COUNT>::GuardArray()
-        : GuardArray::base_class( cds::threading::getGC<PTB>() )
+    inline DHP::GuardArray<COUNT>::GuardArray()
+        : GuardArray::base_class( cds::threading::getGC<DHP>() )
     {}
 
-    inline void PTB::scan()
+    inline void DHP::scan()
     {
-        cds::threading::getGC<PTB>().scan();
+        cds::threading::getGC<DHP>().scan();
     }
 
 }} // namespace cds::gc

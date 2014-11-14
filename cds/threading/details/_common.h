@@ -74,8 +74,8 @@ namespace cds {
             // Get cds::gc::HP thread GC implementation for current thread
             static gc::HP::thread_gc_impl&   getHZPGC();
 
-            // Get cds::gc::PTB thread GC implementation for current thread;
-            static gc::PTB::thread_gc_impl&   getPTBGC();
+            // Get cds::gc::DHP thread GC implementation for current thread;
+            static gc::DHP::thread_gc_impl&   getDHPGC();
         };
         \endcode
 
@@ -109,8 +109,8 @@ namespace cds {
         struct ThreadData {
 
             //@cond
-            char CDS_DATA_ALIGNMENT(8) m_hpManagerPlaceholder[sizeof(cds::gc::HP::thread_gc_impl)]   ;   ///< Michael's Hazard Pointer GC placeholder
-            char CDS_DATA_ALIGNMENT(8) m_ptbManagerPlaceholder[sizeof(cds::gc::PTB::thread_gc_impl)]  ;   ///< Pass The Buck GC placeholder
+            char CDS_DATA_ALIGNMENT(8) m_hpManagerPlaceholder[sizeof(cds::gc::HP::thread_gc_impl)];   ///< Michael's Hazard Pointer GC placeholder
+            char CDS_DATA_ALIGNMENT(8) m_dhpManagerPlaceholder[sizeof(cds::gc::DHP::thread_gc_impl)]; ///< Dynamic Hazard Pointer GC placeholder
 
             cds::urcu::details::thread_data< cds::urcu::general_instant_tag > *     m_pGPIRCU;
             cds::urcu::details::thread_data< cds::urcu::general_buffered_tag > *    m_pGPBRCU;
@@ -123,7 +123,7 @@ namespace cds {
             //@endcond
 
             cds::gc::HP::thread_gc_impl  * m_hpManager     ;   ///< Michael's Hazard Pointer GC thread-specific data
-            cds::gc::PTB::thread_gc_impl * m_ptbManager    ;   ///< Pass The Buck GC thread-specific data
+            cds::gc::DHP::thread_gc_impl * m_dhpManager    ;   ///< Dynamic Hazard Pointer GC thread-specific data
 
             size_t  m_nFakeProcessorNumber  ;   ///< fake "current processor" number
 
@@ -156,10 +156,10 @@ namespace cds {
                 else
                     m_hpManager = nullptr;
 
-                if ( cds::gc::PTB::isUsed() )
-                    m_ptbManager = new (m_ptbManagerPlaceholder) cds::gc::PTB::thread_gc_impl;
+                if ( cds::gc::DHP::isUsed() )
+                    m_dhpManager = new (m_dhpManagerPlaceholder) cds::gc::DHP::thread_gc_impl;
                 else
-                    m_ptbManager = nullptr;
+                    m_dhpManager = nullptr;
             }
 
             ~ThreadData()
@@ -170,10 +170,10 @@ namespace cds {
                     m_hpManager = nullptr;
                 }
 
-                if ( m_ptbManager ) {
-                    typedef cds::gc::PTB::thread_gc_impl ptb_thread_gc_impl;
-                    m_ptbManager->~ptb_thread_gc_impl();
-                    m_ptbManager = nullptr;
+                if ( m_dhpManager ) {
+                    typedef cds::gc::DHP::thread_gc_impl dhp_thread_gc_impl;
+                    m_dhpManager->~dhp_thread_gc_impl();
+                    m_dhpManager = nullptr;
                 }
 
                 assert( m_pGPIRCU == nullptr );
@@ -190,8 +190,8 @@ namespace cds {
                 if ( m_nAttachCount++ == 0 ) {
                     if ( cds::gc::HP::isUsed() )
                         m_hpManager->init();
-                    if ( cds::gc::PTB::isUsed() )
-                        m_ptbManager->init();
+                    if ( cds::gc::DHP::isUsed() )
+                        m_dhpManager->init();
 
                     if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed() )
                         m_pGPIRCU = cds::urcu::details::singleton<cds::urcu::general_instant_tag>::attach_thread();
@@ -211,8 +211,8 @@ namespace cds {
             bool fini()
             {
                 if ( --m_nAttachCount == 0 ) {
-                    if ( cds::gc::PTB::isUsed() )
-                        m_ptbManager->fini();
+                    if ( cds::gc::DHP::isUsed() )
+                        m_dhpManager->fini();
                     if ( cds::gc::HP::isUsed() )
                         m_hpManager->fini();
 

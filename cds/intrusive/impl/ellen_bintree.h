@@ -44,7 +44,7 @@ namespace cds { namespace intrusive {
         @note Do not include <tt><cds/intrusive/impl/ellen_bintree.h></tt> header file explicitly.
         There are header file for each GC type:
         - <tt><cds/intrusive/ellen_bintree_hp.h></tt> - for Hazard Pointer GC \p cds::gc::HP
-        - <tt><cds/intrusive/ellen_bintree_dhp.h></tt> - for Pass-the-Buck GC \p cds::gc::DHP
+        - <tt><cds/intrusive/ellen_bintree_dhp.h></tt> - for Dynamic Hazard Pointer GC \p cds::gc::DHP
         - <tt><cds/intrusive/ellen_bintree_rcu.h></tt> - for RCU (see \ref cds_intrusive_EllenBinTree_rcu "RCU-based EllenBinTree")
 
         <b>Template arguments</b> :

@@ -9,22 +9,14 @@
 
 namespace cds { namespace gc {
 
-    /// Pass-the-Buck garbage collector
+    /// Dynamic Hazard Pointer garbage collector
     /**  @ingroup cds_garbage_collector
         @headerfile cds/gc/dhp.h
-        This class is a wrapper for Pass-the-Buck garbage collector internal implementation.
-
-        Sources:
-        - [2002] M. Herlihy, V. Luchangco, and M. Moir. The repeat offender problem: A mechanism for supporting
-            dynamic-sized lockfree data structures. Technical Report TR-2002-112, Sun Microsystems Laboratories, 2002
-        - [2002] M. Herlihy, V. Luchangco, P. Martin, and M. Moir. Dynamic-sized Lockfree Data Structures.
-            Technical Report TR-2002-110, Sun Microsystems Laboratories, 2002
-        - [2005] M. Herlihy, V. Luchangco, P. Martin, and M. Moir. Nonblocking Memory Management Support
-            for Dynamic_Sized Data Structures. ACM Transactions on Computer Systems, Vol.23, No.2, May 2005
+        This class is a wrapper for Dynamic Hazard Pointer garbage collector internal implementation.
 
         See \ref cds_how_to_use "How to use" section for details of garbage collector applying.
     */
-    class PTB
+    class DHP
     {
     public:
         /// Native guarded pointer type
@@ -54,7 +46,7 @@ namespace cds { namespace gc {
         /// Wrapper for dhp::ThreadGC class
         /**
             @headerfile cds/gc/dhp.h
-            This class performs automatically attaching/detaching Pass-the-Buck GC
+            This class performs automatically attaching/detaching Dynamic Hazard Pointer GC
             for the current thread.
         */
         class thread_gc: public thread_gc_impl
@@ -65,26 +57,26 @@ namespace cds { namespace gc {
         public:
             /// Constructor
             /**
-                The constructor attaches the current thread to the Pass-the-Buck GC
+                The constructor attaches the current thread to the Dynamic Hazard Pointer GC
                 if it is not yet attached.
                 The \p bPersistent parameter specifies attachment persistence:
-                - \p true - the class destructor will not detach the thread from Pass-the-Buck GC.
-                - \p false (default) - the class destructor will detach the thread from Pass-the-Buck GC.
+                - \p true - the class destructor will not detach the thread from Dynamic Hazard Pointer GC.
+                - \p false (default) - the class destructor will detach the thread from Dynamic Hazard Pointer GC.
             */
             thread_gc(
                 bool    bPersistent = false
-            )   ;   // inline in ptb_impl.h
+            )   ;   // inline in dhp_impl.h
 
             /// Destructor
             /**
                 If the object has been created in persistent mode, the destructor does nothing.
-                Otherwise it detaches the current thread from Pass-the-Buck GC.
+                Otherwise it detaches the current thread from Dynamic Hazard Pointer GC.
             */
-            ~thread_gc()    ;   // inline in ptb_impl.h
+            ~thread_gc()    ;   // inline in dhp_impl.h
         };
 
 
-        /// Pass-the-Buck guard
+        /// Dynamic Hazard Pointer guard
         /**
             @headerfile cds/gc/dhp.h
             This class is a wrapper for dhp::Guard.
@@ -97,7 +89,7 @@ namespace cds { namespace gc {
 
         public:
             //@cond
-            Guard() ;   // inline in ptb_impl.h
+            Guard() ;   // inline in dhp_impl.h
             //@endcond
 
             /// Protects a pointer of type <tt> atomic<T*> </tt>
@@ -205,11 +197,11 @@ namespace cds { namespace gc {
 
         };
 
-        /// Array of Pass-the-Buck guards
+        /// Array of Dynamic Hazard Pointer guards
         /**
             @headerfile cds/gc/dhp.h
             This class is a wrapper for dhp::GuardArray template.
-            Template parameter \p Count defines the size of PTB array.
+            Template parameter \p Count defines the size of DHP array.
         */
         template <size_t Count>
         class GuardArray: public dhp::GuardArray<Count>
@@ -226,7 +218,7 @@ namespace cds { namespace gc {
 
         public:
             //@cond
-            GuardArray()    ;   // inline in ptb_impl.h
+            GuardArray()    ;   // inline in dhp_impl.h
             //@endcond
 
             /// Protects a pointer of type \p atomic<T*>
@@ -341,7 +333,7 @@ namespace cds { namespace gc {
             The constructor calls GarbageCollector::Construct with passed parameters.
             See dhp::GarbageCollector::Construct for explanation of parameters meaning.
         */
-        PTB(
+        DHP(
             size_t nLiberateThreshold = 1024
             , size_t nInitialThreadGuardCount = 8
         )
@@ -356,7 +348,7 @@ namespace cds { namespace gc {
         /**
             The destructor calls \code dhp::GarbageCollector::Destruct() \endcode
         */
-        ~PTB()
+        ~DHP()
         {
             dhp::GarbageCollector::Destruct();
         }
@@ -364,7 +356,7 @@ namespace cds { namespace gc {
         /// Checks if count of hazard pointer is no less than \p nCountNeeded
         /**
             The function always returns \p true since the guard count is unlimited for
-            PTB garbage collector.
+            DHP garbage collector.
         */
         static bool check_available_guards( size_t nCountNeeded, bool /*bRaiseException*/ = true )
         {
@@ -397,7 +389,7 @@ namespace cds { namespace gc {
             retire( p, cds::details::static_functor<Disposer, T>::call );
         }
 
-        /// Checks if Pass-the-Buck GC is constructed and may be used
+        /// Checks if Dynamic Hazard Pointer GC is constructed and may be used
         static bool isUsed()
         {
             return dhp::GarbageCollector::isUsed();
@@ -407,7 +399,7 @@ namespace cds { namespace gc {
         /**
             Usually, this function should not be called directly.
         */
-        static void scan()  ;   // inline in ptb_impl.h
+        static void scan()  ;   // inline in dhp_impl.h
 
         /// Synonym for \ref scan()
         static void force_dispose()

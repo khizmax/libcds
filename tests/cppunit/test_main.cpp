@@ -331,7 +331,7 @@ int main(int argc, char** argv)
 
       // Safe reclamation schemes
       cds::gc::HP hzpGC( nHazardPtrCount );
-      cds::gc::PTB ptbGC;
+      cds::gc::DHP dhpGC;
 
       // RCU varieties
       typedef cds::urcu::gc< cds::urcu::general_instant<> >    rcu_gpi;

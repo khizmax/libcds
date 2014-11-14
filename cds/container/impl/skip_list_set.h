@@ -65,7 +65,7 @@ namespace cds { namespace container {
         before end of the set. Therefore, such iteration is more suitable for debugging purpose only
 
         Remember, each iterator object requires 2 additional hazard pointers, that may be
-        a limited resource for \p GC like \p gc::HP (for \p gc::PTB the count of
+        a limited resource for \p GC like \p gc::HP (for \p gc::DHP the count of
         guards is unlimited).
 
         The iterator class supports the following minimalistic interface:

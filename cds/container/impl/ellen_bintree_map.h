@@ -50,7 +50,7 @@ namespace cds { namespace container {
         @note Do not include <tt><cds/container/impl/ellen_bintree_map.h></tt> header file directly.
         There are header file for each GC type:
         - <tt><cds/container/ellen_bintree_map_hp.h></tt> - for Hazard Pointer GC cds::gc::HP
-        - <tt><cds/container/ellen_bintree_map_dhp.h></tt> - for Pass-the-Buck GC cds::gc::DHP
+        - <tt><cds/container/ellen_bintree_map_dhp.h></tt> - for Dynamic Hazard Pointer GC cds::gc::DHP
         - <tt><cds/container/ellen_bintree_map_rcu.h></tt> - for RCU GC
             (see \ref cds_container_EllenBinTreeMap_rcu "RCU-based EllenBinTreeMap")
     */

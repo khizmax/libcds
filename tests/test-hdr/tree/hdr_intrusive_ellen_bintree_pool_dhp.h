@@ -12,7 +12,7 @@
 namespace tree {
 
     namespace ellen_bintree_dhp {
-        typedef cds::intrusive::ellen_bintree::node_types<cds::gc::PTB, IntrusiveBinTreeHdrTest::key_type>   node_types;
+        typedef cds::intrusive::ellen_bintree::node_types<cds::gc::DHP, IntrusiveBinTreeHdrTest::key_type>   node_types;
         typedef node_types::leaf_node_type                                  leaf_node;
         typedef IntrusiveBinTreeHdrTest::base_hook_value< leaf_node >       base_value;
         typedef node_types::internal_node_type                              internal_node;

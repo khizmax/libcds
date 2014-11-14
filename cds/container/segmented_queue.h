@@ -167,7 +167,7 @@ namespace cds { namespace container {
         quasi factor. It means that the consumer dequeues any item from the current first segment.
 
         Template parameters:
-        - \p GC - a garbage collector, possible types are cds::gc::HP, cds::gc::PTB
+        - \p GC - a garbage collector, possible types are cds::gc::HP, cds::gc::DHP
         - \p T - the type of values stored in the queue
         - \p Traits - queue type traits, default is \p segmented_queue::traits.
             \p segmented_queue::make_traits metafunction can be used to construct your

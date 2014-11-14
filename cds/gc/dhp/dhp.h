@@ -17,30 +17,21 @@
 
 namespace cds { namespace gc {
 
-    /// Pass The Buck reclamation schema
+    /// Dynamic Hazard Pointer reclamation schema
     /**
-        \par Sources:
-        - [2002] M. Herlihy, V. Luchangco, and M. Moir. The repeat offender problem: A mechanism for supporting
-            dynamic-sized lockfree data structures. Technical Report TR-2002-112, Sun Microsystems Laboratories, 2002
-        - [2002] M. Herlihy, V. Luchangco, P. Martin, and M. Moir. Dynamic-sized Lockfree Data Structures.
-            Technical Report TR-2002-110, Sun Microsystems Laboratories, 2002
-        - [2005] M. Herlihy, V. Luchangco, P. Martin, and M. Moir. Nonblocking Memory Management Support
-            for Dynamic-Sized Data Structures. ACM Transactions on Computer Systems, Vol.23, No.2, May 2005
+        The cds::gc::dhp namespace and its members are internal representation of the GC and should not be used directly.
+        Use cds::gc::DHP class in your code.
 
-
-        The cds::gc::dhp namespace and its members are internal representation of the Pass-the-Buck GC and should not be used directly.
-        Use cds::gc::PTB class in your code.
-
-        Pass-the-Buck (PTB) garbage collector is a singleton. The main user-level part of PTB schema is
-        GC class and its nested classes. Before use any PTB-related class you must initialize PTB garbage collector
-        by contructing cds::gc::PTB object in beginning of your main().
-        See cds::gc::PTB class for explanation.
+        Dynamic Hazard Pointer (DHP) garbage collector is a singleton. The main user-level part of DHP schema is
+        GC class and its nested classes. Before use any DHP-related class you must initialize DHP garbage collector
+        by contructing cds::gc::DHP object in beginning of your main().
+        See cds::gc::DHP class for explanation.
 
         \par Implementation issues
-            The global list of free guards (cds::gc::dhp::details::guard_allocator) is protected by spin-lock (i.e. serialized).
-            It seems that solution should not introduce significant performance bottleneck, because each thread has own set
-            of guards allocated from global list of free guards and access to global list is occurred only when
-            all thread's guard is busy. In this case the thread allocates next block of guards from global list.
+            The global list of free guards (\p cds::gc::dhp::details::guard_allocator) is protected by a spin-lock (i.e. serialized).
+            It seems that this solution should not introduce significant performance bottleneck, because each thread has its own set
+            of guards allocated from the global list of free guards and the access to the global list is occurred only when
+            all thread's guard is busy. In this case the thread allocates a next block of guards from the global list.
             Guards allocated for the thread is push back to the global list only when the thread terminates.
     */
     namespace dhp {
@@ -56,7 +47,7 @@ namespace cds { namespace gc {
 
         using cds::gc::details::free_retired_ptr_func;
 
-        /// Details of Pass the Buck algorithm
+        /// Details of Dynamic Hazard Pointer algorithm
         namespace details {
 
             // Forward declaration
@@ -292,14 +283,14 @@ namespace cds { namespace gc {
                     return m_nItemCount.fetch_add( 1, atomics::memory_order_relaxed ) + 1;
                 }
 
-                /// Result of \ref ptb_gc_privatve "privatize" function.
+                /// Result of \ref dhp_gc_privatve "privatize" function.
                 /**
                     The \p privatize function returns retired node list as \p first and the size of that list as \p second.
                 */
                 typedef std::pair<retired_ptr_node *, size_t> privatize_result;
 
                 /// Gets current list of retired pointer and clears the list
-                /**@anchor ptb_gc_privatve
+                /**@anchor dhp_gc_privatve
                 */
                 privatize_result privatize()
                 {
@@ -585,7 +576,7 @@ namespace cds { namespace gc {
             /// Returns guard allocated back to pool of free guards
             ~Guard();    // inline after GarbageCollector
 
-            /// Returns PTB GC object
+            /// Returns DHP GC object
             ThreadGC& getGC()
             {
                 return m_gc;
@@ -644,7 +635,7 @@ namespace cds { namespace gc {
                 return c_nCapacity;
             }
 
-            /// Returns PTB ThreadGC object
+            /// Returns DHP ThreadGC object
             ThreadGC& getGC() CDS_NOEXCEPT
             {
                 return m_gc;
@@ -709,7 +700,7 @@ namespace cds { namespace gc {
 
         public:
             /// Exception "No GarbageCollector object is created"
-            CDS_DECLARE_EXCEPTION( PTBManagerEmpty, "Global PTB GarbageCollector is NULL" );
+            CDS_DECLARE_EXCEPTION( DHPManagerEmpty, "Global DHP GarbageCollector is NULL" );
 
             /// Internal GC statistics
             struct InternalState
@@ -748,17 +739,17 @@ namespace cds { namespace gc {
             bool            m_bStatEnabled  ;   ///< Internal Statistics enabled
 
         public:
-            /// Initializes PTB memory manager singleton
+            /// Initializes DHP memory manager singleton
             /**
-                This member function creates and initializes PTB global object.
-                The function should be called before using CDS data structure based on cds::gc::PTB GC. Usually,
+                This member function creates and initializes DHP global object.
+                The function should be called before using CDS data structure based on cds::gc::DHP GC. Usually,
                 this member function is called in the \p main() function. See cds::gc::dhp for example.
-                After calling of this function you may use CDS data structures based on cds::gc::PTB.
+                After calling of this function you may use CDS data structures based on cds::gc::DHP.
 
                 \par Parameters
                 \li \p nLiberateThreshold - the liberate threshold. When count of retired pointers reaches this value,
-                    the \ref ptb_gc_liberate "liberate" member function would be called for freeing retired pointers.
-                    If \p nLiberateThreshold <= 1, \p liberate would called after each \ref ptb_gc_retirePtr "retirePtr" call.
+                    the \ref dhp_gc_liberate "liberate" member function would be called for freeing retired pointers.
+                    If \p nLiberateThreshold <= 1, \p liberate would called after each \ref dhp_gc_retirePtr "retirePtr" call.
                 \li \p nInitialThreadGuardCount - initial count of guard allocated for ThreadGC. When a thread
                     is initialized the GC allocates local guard pool for the thread from common guard pool.
                     By perforce the local thread's guard pool is grown automatically from common pool.
@@ -770,22 +761,22 @@ namespace cds { namespace gc {
                 , size_t nInitialThreadGuardCount = 8
             );
 
-            /// Destroys PTB memory manager
+            /// Destroys DHP memory manager
             /**
-                The member function destroys PTB global object. After calling of this function you may \b NOT
-                use CDS data structures based on cds::gc::PTB. Usually, the \p Destruct function is called
+                The member function destroys DHP global object. After calling of this function you may \b NOT
+                use CDS data structures based on cds::gc::DHP. Usually, the \p Destruct function is called
                 at the end of your \p main(). See cds::gc::dhp for example.
             */
             static void CDS_STDCALL Destruct();
 
             /// Returns pointer to GarbageCollector instance
             /**
-                If PTB GC is not initialized, \p PTBManagerEmpty exception is thrown
+                If DHP GC is not initialized, \p DHPManagerEmpty exception is thrown
             */
             static GarbageCollector&   instance()
             {
                 if ( m_pManager == nullptr )
-                    throw PTBManagerEmpty();
+                    throw DHPManagerEmpty();
                 return *m_pManager;
             }
 
@@ -824,7 +815,7 @@ namespace cds { namespace gc {
             }
 
             /// Places retired pointer \p and its deleter \p pFunc into thread's array of retired pointer for deferred reclamation
-            /**@anchor ptb_gc_retirePtr
+            /**@anchor dhp_gc_retirePtr
             */
             template <typename T>
             void retirePtr( T * p, void (* pFunc)(T *) )
@@ -841,8 +832,8 @@ namespace cds { namespace gc {
 
         protected:
             /// Liberate function
-            /** @anchor ptb_gc_liberate
-                The main function of Pass The Buck algorithm. It tries to free retired pointers if they are not
+            /** @anchor dhp_gc_liberate
+                The main function of Dynamic Hazard Pointer algorithm. It tries to free retired pointers if they are not
                 trapped by any guard.
             */
             void liberate();
@@ -886,9 +877,9 @@ namespace cds { namespace gc {
 
         /// Thread GC
         /**
-            To use Pass The Buck reclamation schema each thread object must be linked with the object of ThreadGC class
+            To use Dynamic Hazard Pointer reclamation schema each thread object must be linked with the object of ThreadGC class
             that interacts with GarbageCollector global object. The linkage is performed by calling \ref cds_threading "cds::threading::Manager::attachThread()"
-            on the start of each thread that uses PTB GC. Before terminating the thread linked to PTB GC it is necessary to call
+            on the start of each thread that uses DHP GC. Before terminating the thread linked to DHP GC it is necessary to call
             \ref cds_threading "cds::threading::Manager::detachThread()".
 
             The ThreadGC object maintains two list:

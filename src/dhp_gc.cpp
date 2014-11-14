@@ -1,6 +1,6 @@
 //$$CDS-header$$
 
-// Pass The Buck (PTB) Memory manager implementation
+// Dynamic Hazard Pointer memory manager implementation
 
 #include <algorithm>   // std::fill
 #include <functional>  // std::hash

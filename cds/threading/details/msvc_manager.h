@@ -107,16 +107,16 @@ namespace cds { namespace threading {
                 return *(_threadData()->m_hpManager);
             }
 
-            /// Get gc::PTB thread GC implementation for current thread
+            /// Get gc::DHP thread GC implementation for current thread
             /**
                 The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution
-                or if you did not use gc::PTB.
-                To initialize gc::PTB GC you must constuct cds::gc::PTB object in the beginning of your application
+                or if you did not use gc::DHP.
+                To initialize gc::DHP GC you must constuct cds::gc::DHP object in the beginning of your application
             */
-            static gc::PTB::thread_gc_impl&   getPTBGC()
+            static gc::DHP::thread_gc_impl&   getDHPGC()
             {
-                assert( _threadData()->m_ptbManager );
-                return *(_threadData()->m_ptbManager);
+                assert( _threadData()->m_dhpManager );
+                return *(_threadData()->m_dhpManager);
             }
 
             //@cond

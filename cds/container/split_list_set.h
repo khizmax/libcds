@@ -90,13 +90,13 @@ namespace cds { namespace container {
 
         Now you are ready to declare our set class based on \p %SplitListSet:
         \code
-        typedef cc::SplitListSet< cds::gc::PTB, foo, foo_set_traits > foo_set;
+        typedef cc::SplitListSet< cds::gc::DHP, foo, foo_set_traits > foo_set;
         \endcode
 
         You may use the modern option-based declaration instead of classic traits-based one:
         \code
         typedef cc:SplitListSet<
-            cs::gc::PTB             // GC used
+            cs::gc::DHP             // GC used
             ,foo                    // type of data stored
             ,cc::split_list::make_traits<      // metafunction to build split-list traits
                 cc::split_list::ordered_list<cc::lazy_list_tag>  // tag for underlying ordered list implementation

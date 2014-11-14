@@ -70,13 +70,13 @@ namespace cds { namespace container {
 
         Now you are ready to declare our map class based on \p %SplitListMap:
         \code
-        typedef cc::SplitListMap< cds::gc::PTB, int, std::string, foo_set_traits > int_string_map;
+        typedef cc::SplitListMap< cds::gc::DHP, int, std::string, foo_set_traits > int_string_map;
         \endcode
 
         You may use the modern option-based declaration instead of classic type-traits-based one:
         \code
         typedef cc:SplitListMap<
-            cs::gc::PTB             // GC used
+            cs::gc::DHP             // GC used
             ,int                    // key type
             ,std::string            // value type
             ,cc::split_list::make_traits<      // metafunction to build split-list traits
