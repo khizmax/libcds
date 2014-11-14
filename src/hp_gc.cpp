@@ -12,7 +12,7 @@
 #include <cds/gc/hp/hp.h>
 
 #include <algorithm>    // std::sort
-#include "hzp_const.h"
+#include "hp_const.h"
 
 #define    CDS_HAZARDPTR_STATISTIC( _x )    if ( m_bStatEnabled ) { _x; }
 

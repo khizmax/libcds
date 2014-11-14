@@ -1,6 +1,7 @@
-CDS_SOURCES=src/hzp_gc.cpp \
+CDS_SOURCES= \
+         src/hp_gc.cpp \
          src/init.cpp \
-         src/ptb_gc.cpp \
+         src/dhp_gc.cpp \
          src/urcu_gp.cpp \
          src/urcu_sh.cpp \
          src/michael_heap.cpp \

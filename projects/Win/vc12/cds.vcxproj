@@ -619,11 +619,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\dhp_gc.cpp" />
     <ClCompile Include="..\..\..\src\dllmain.cpp" />
-    <ClCompile Include="..\..\..\src\hzp_gc.cpp" />
+    <ClCompile Include="..\..\..\src\hp_gc.cpp" />
     <ClCompile Include="..\..\..\src\init.cpp" />
     <ClCompile Include="..\..\..\src\michael_heap.cpp" />
-    <ClCompile Include="..\..\..\src\ptb_gc.cpp" />
     <ClCompile Include="..\..\..\src\topology_hpux.cpp" />
     <ClCompile Include="..\..\..\src\topology_linux.cpp" />
     <ClCompile Include="..\..\..\src\topology_osx.cpp" />
@@ -818,7 +818,6 @@
     <ClInclude Include="..\..\..\cds\urcu\options.h" />
     <ClInclude Include="..\..\..\cds\urcu\signal_buffered.h" />
     <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h" />
-    <ClInclude Include="..\..\..\src\hzp_const.h" />
     <ClInclude Include="..\..\..\cds\init.h" />
     <ClInclude Include="..\..\..\cds\refcounter.h" />
     <ClInclude Include="..\..\..\cds\version.h" />
@@ -965,6 +964,7 @@
     <ClInclude Include="..\..\..\cds\container\details\make_lazy_list.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_michael_kvlist.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_michael_list.h" />
+    <ClInclude Include="..\..\..\src\hp_const.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

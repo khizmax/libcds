@@ -159,16 +159,10 @@
     <ClCompile Include="..\..\..\src\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\hzp_gc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\michael_heap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ptb_gc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\topology_hpux.cpp">
@@ -186,11 +180,14 @@
     <ClCompile Include="..\..\..\src\topology_osx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\hp_gc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\dhp_gc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\hzp_const.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\init.h">
       <Filter>Header Files\cds</Filter>
     </ClInclude>
@@ -1189,6 +1186,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\hp\hp_impl.h">
       <Filter>Header Files\cds\gc\hp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\hp_const.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

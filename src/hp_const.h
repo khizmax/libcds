@@ -1,10 +1,10 @@
 //$$CDS-header$$
 
-#ifndef __CDSIMPL_HZP_CONST_H
-#define __CDSIMPL_HZP_CONST_H
+#ifndef __CDSIMPL_HP_CONST_H
+#define __CDSIMPL_HP_CONST_H
 
 /*
-    File: hzp_const.h
+    File: hp_const.h
 
     Michael's Hazard Pointer reclamation schema global constants
     Gidenstam's reclamation schema global constants
