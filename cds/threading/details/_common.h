@@ -3,8 +3,8 @@
 #ifndef __CDS_THREADING__COMMON_H
 #define __CDS_THREADING__COMMON_H
 
-#include <cds/gc/hp_decl.h>
-#include <cds/gc/dhp_decl.h>
+#include <cds/gc/hp/hp_decl.h>
+#include <cds/gc/dhp/dhp_decl.h>
 
 #include <cds/urcu/details/gp_decl.h>
 #include <cds/urcu/details/sh_decl.h>

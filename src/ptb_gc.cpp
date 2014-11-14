@@ -5,7 +5,7 @@
 #include <algorithm>   // std::fill
 #include <functional>  // std::hash
 
-#include <cds/gc/ptb/ptb.h>
+#include <cds/gc/dhp/dhp.h>
 #include <cds/algo/int_algo.h>
 
 namespace cds { namespace gc { namespace ptb {

@@ -18,9 +18,6 @@
     <Filter Include="Header Files\cds\gc">
       <UniqueIdentifier>{a3c9928d-5261-4593-a8b9-728235f7056f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\gc\ptb">
-      <UniqueIdentifier>{53d28ee4-5fe9-4fa1-a617-53d8b0628eac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\cds\gc\details">
       <UniqueIdentifier>{d7c48c0e-cc45-4a1a-b8e9-aa5b50abd22a}</UniqueIdentifier>
     </Filter>
@@ -154,6 +151,9 @@
     <Filter Include="Header Files\cds\gc\hp">
       <UniqueIdentifier>{043c4eba-3bd4-4226-b214-e26f18b422a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\cds\gc\dhp">
+      <UniqueIdentifier>{9c0f5739-8d9d-46c2-bb91-90ca5beecc6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\dllmain.cpp">
@@ -247,9 +247,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\nogc.h">
       <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\ptb\ptb.h">
-      <Filter>Header Files\cds\gc\ptb</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\details\retired_ptr.h">
       <Filter>Header Files\cds\gc\details</Filter>
@@ -638,12 +635,6 @@
     <ClInclude Include="..\..\..\cds\container\details\make_michael_list.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp_decl.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp_impl.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h">
       <Filter>Header Files\cds\compiler</Filter>
     </ClInclude>
@@ -926,9 +917,6 @@
     <ClInclude Include="..\..\..\cds\details\binary_functor_wrapper.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\gc_fwd.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\urcu\details\sh.h">
       <Filter>Header Files\cds\urcu\details</Filter>
     </ClInclude>
@@ -1169,12 +1157,6 @@
     <ClInclude Include="..\..\..\cds\gc\dhp.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\dhp_decl.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\dhp_impl.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_alloc.h">
       <Filter>Header Files\cds\gc\hp</Filter>
     </ClInclude>
@@ -1190,7 +1172,22 @@
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_type.h">
       <Filter>Header Files\cds\gc\hp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp\hzp.h">
+    <ClInclude Include="..\..\..\cds\gc\hp\hp.h">
+      <Filter>Header Files\cds\gc\hp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\dhp\dhp.h">
+      <Filter>Header Files\cds\gc\dhp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\dhp\dhp_decl.h">
+      <Filter>Header Files\cds\gc\dhp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\dhp\dhp_impl.h">
+      <Filter>Header Files\cds\gc\dhp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hp\hp_decl.h">
+      <Filter>Header Files\cds\gc\hp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hp\hp_impl.h">
       <Filter>Header Files\cds\gc\hp</Filter>
     </ClInclude>
   </ItemGroup>
