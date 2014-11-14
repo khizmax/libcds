@@ -5,8 +5,8 @@
 
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
-#include <cds/gc/hzp/details/hp_fwd.h>
-#include <cds/gc/hzp/details/hp_type.h>
+#include <cds/gc/hp/details/hp_fwd.h>
+#include <cds/gc/hp/details/hp_type.h>
 
 //@cond
 namespace cds {

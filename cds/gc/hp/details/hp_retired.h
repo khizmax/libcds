@@ -3,8 +3,8 @@
 #ifndef __CDS_GC_HZP_DETAILS_HP_RETIRED_H
 #define __CDS_GC_HZP_DETAILS_HP_RETIRED_H
 
-#include <cds/gc/hzp/details/hp_fwd.h>
-#include <cds/gc/hzp/details/hp_type.h>
+#include <cds/gc/hp/details/hp_fwd.h>
+#include <cds/gc/hp/details/hp_type.h>
 
 #include <cds/details/bounded_array.h>
 

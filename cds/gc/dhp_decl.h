@@ -11,7 +11,7 @@ namespace cds { namespace gc {
 
     /// Pass-the-Buck garbage collector
     /**  @ingroup cds_garbage_collector
-        @headerfile cds/gc/ptb.h
+        @headerfile cds/gc/dhp.h
         This class is a wrapper for Pass-the-Buck garbage collector internal implementation.
 
         Sources:
@@ -32,19 +32,19 @@ namespace cds { namespace gc {
 
         /// Atomic reference
         /**
-            @headerfile cds/gc/ptb.h
+            @headerfile cds/gc/dhp.h
         */
         template <typename T> using atomic_ref = atomics::atomic<T *>;
 
         /// Atomic type
         /**
-            @headerfile cds/gc/ptb.h
+            @headerfile cds/gc/dhp.h
         */
         template <typename T> using atomic_type = atomics::atomic<T>;
 
         /// Atomic marked pointer
         /**
-            @headerfile cds/gc/ptb.h
+            @headerfile cds/gc/dhp.h
         */
         template <typename MarkedPtr> using atomic_marked_ptr = atomics::atomic<MarkedPtr>;
 
@@ -53,7 +53,7 @@ namespace cds { namespace gc {
 
         /// Wrapper for ptb::ThreadGC class
         /**
-            @headerfile cds/gc/ptb.h
+            @headerfile cds/gc/dhp.h
             This class performs automatically attaching/detaching Pass-the-Buck GC
             for the current thread.
         */
@@ -86,7 +86,7 @@ namespace cds { namespace gc {
 
         /// Pass-the-Buck guard
         /**
-            @headerfile cds/gc/ptb.h
+            @headerfile cds/gc/dhp.h
             This class is a wrapper for ptb::Guard.
         */
         class Guard: public ptb::Guard
@@ -207,7 +207,7 @@ namespace cds { namespace gc {
 
         /// Array of Pass-the-Buck guards
         /**
-            @headerfile cds/gc/ptb.h
+            @headerfile cds/gc/dhp.h
             This class is a wrapper for ptb::GuardArray template.
             Template parameter \p Count defines the size of PTB array.
         */

@@ -28,7 +28,7 @@
 
 #include <cds/init.h>
 #include <cds/gc/hp.h>
-#include <cds/gc/ptb.h>
+#include <cds/gc/dhp.h>
 #include <cds/urcu/general_instant.h>
 #include <cds/urcu/general_buffered.h>
 #include <cds/urcu/general_threaded.h>

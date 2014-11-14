@@ -1,14 +1,10 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_DHP_H
-#define __CDS_GC_DHP_H
+#ifndef __CDS_GC_PTB_H
+#define __CDS_GC_PTB_H
 
-#include <cds/gc/ptb.h>
+#include <cds/gc/dhp_decl.h>
+#include <cds/gc/dhp_impl.h>
+#include <cds/details/lib.h>
 
-//@cond
-namespace cds { namespace gc {
-    typedef PTB DHP;
-}} // namespace cds::gc
-//@endcond
-
-#endif // #ifndef __CDS_GC_DHP_H
+#endif // #ifndef __CDS_GC_PTB_H

@@ -4,7 +4,7 @@
 #define __CDS_GC_HP_DECL_H
 
 #include <stdexcept>    // overflow_error
-#include <cds/gc/hzp/hzp.h>
+#include <cds/gc/hp/hp.h>
 #include <cds/details/marked_ptr.h>
 
 namespace cds { namespace gc {

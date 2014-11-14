@@ -4,7 +4,7 @@
 #define __CDS_THREADING__COMMON_H
 
 #include <cds/gc/hp_decl.h>
-#include <cds/gc/ptb_decl.h>
+#include <cds/gc/dhp_decl.h>
 
 #include <cds/urcu/details/gp_decl.h>
 #include <cds/urcu/details/sh_decl.h>

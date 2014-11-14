@@ -6,9 +6,9 @@
 #include <vector>
 #include <cds/cxx11_atomic.h>
 #include <cds/os/thread.h>
-#include <cds/gc/hzp/details/hp_fwd.h>
-#include <cds/gc/hzp/details/hp_alloc.h>
-#include <cds/gc/hzp/details/hp_retired.h>
+#include <cds/gc/hp/details/hp_fwd.h>
+#include <cds/gc/hp/details/hp_alloc.h>
+#include <cds/gc/hp/details/hp_retired.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
@@ -646,7 +646,7 @@ namespace cds {
 }}  // namespace cds::gc
 
 // Inlines
-#include <cds/gc/hzp/details/hp_inline.h>
+#include <cds/gc/hp/details/hp_inline.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(pop)

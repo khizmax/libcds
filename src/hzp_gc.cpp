@@ -9,7 +9,7 @@
         2008.02.10    Maxim.Khiszinsky    Created
 */
 
-#include <cds/gc/hzp/hzp.h>
+#include <cds/gc/hp/hp.h>
 
 #include <algorithm>    // std::sort
 #include "hzp_const.h"
