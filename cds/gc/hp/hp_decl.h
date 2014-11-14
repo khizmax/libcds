@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HP_DECL_H
-#define __CDS_GC_HP_DECL_H
+#ifndef __CDS_GC_HP_HP_DECL_H
+#define __CDS_GC_HP_HP_DECL_H
 
 #include <stdexcept>    // overflow_error
 #include <cds/gc/hp/hp.h>
@@ -501,4 +501,4 @@ namespace cds { namespace gc {
     };
 }}  // namespace cds::gc
 
-#endif  // #ifndef __CDS_GC_HP_DECL_H
+#endif  // #ifndef __CDS_GC_HP_HP_DECL_H

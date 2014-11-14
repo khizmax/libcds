@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_PTB_DECL_H
-#define __CDS_GC_PTB_DECL_H
+#ifndef __CDS_GC_DHP_DHP_DECL_H
+#define __CDS_GC_DHP_DHP_DECL_H
 
 #include <cds/gc/dhp/dhp.h>
 #include <cds/details/marked_ptr.h>
@@ -418,4 +418,4 @@ namespace cds { namespace gc {
 
 }} // namespace cds::gc
 
-#endif // #ifndef __CDS_GC_PTB_DECL_H
+#endif // #ifndef __CDS_GC_DHP_DHP_DECL_H

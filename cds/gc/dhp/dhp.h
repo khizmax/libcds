@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_PTB_PASS_THE_BUCK_H
-#define __CDS_GC_PTB_PASS_THE_BUCK_H
+#ifndef __CDS_GC_DHP_DHP_H
+#define __CDS_GC_DHP_DHP_H
 
 #include <mutex>        // unique_lock
 #include <cds/cxx11_atomic.h>
@@ -1051,4 +1051,4 @@ namespace cds { namespace gc {
 #endif
 
 
-#endif // #ifndef __CDS_GC_PTB_PASS_THE_BUCK_H
+#endif // #ifndef __CDS_GC_DHP_DHP_H

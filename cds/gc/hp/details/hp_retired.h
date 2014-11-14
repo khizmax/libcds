@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HZP_DETAILS_HP_RETIRED_H
-#define __CDS_GC_HZP_DETAILS_HP_RETIRED_H
+#ifndef __CDS_GC_HP_DETAILS_HP_RETIRED_H
+#define __CDS_GC_HP_DETAILS_HP_RETIRED_H
 
 #include <cds/gc/hp/details/hp_fwd.h>
 #include <cds/gc/hp/details/hp_type.h>
@@ -83,4 +83,4 @@ namespace cds {
     } } }    // namespace gc::hzp::details
 }    // namespace cds
 
-#endif // #ifndef __CDS_GC_HZP_DETAILS_HP_RETIRED_H
+#endif // #ifndef __CDS_GC_HP_DETAILS_HP_RETIRED_H

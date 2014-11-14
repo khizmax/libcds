@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HZP_DETAILS_HP_ALLOC_H
-#define __CDS_GC_HZP_DETAILS_HP_ALLOC_H
+#ifndef __CDS_GC_HP_DETAILS_HP_ALLOC_H
+#define __CDS_GC_HP_DETAILS_HP_ALLOC_H
 
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
@@ -321,4 +321,4 @@ namespace cds {
 }   // namespace cds
 //@endcond
 
-#endif // #ifndef __CDS_GC_HZP_DETAILS_HP_ALLOC_H
+#endif // #ifndef __CDS_GC_HP_DETAILS_HP_ALLOC_H

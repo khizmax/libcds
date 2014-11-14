@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HZP_HZP_H
-#define __CDS_GC_HZP_HZP_H
+#ifndef __CDS_GC_HP_HP_H
+#define __CDS_GC_HP_HP_H
 
 #include <vector>
 #include <cds/cxx11_atomic.h>
@@ -652,4 +652,4 @@ namespace cds {
 #   pragma warning(pop)
 #endif
 
-#endif  // #ifndef __CDS_GC_HZP_HZP_H
+#endif  // #ifndef __CDS_GC_HP_HP_H
