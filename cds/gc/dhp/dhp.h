@@ -28,7 +28,7 @@ namespace cds { namespace gc {
             for Dynamic-Sized Data Structures. ACM Transactions on Computer Systems, Vol.23, No.2, May 2005
 
 
-        The cds::gc::ptb namespace and its members are internal representation of the Pass-the-Buck GC and should not be used directly.
+        The cds::gc::dhp namespace and its members are internal representation of the Pass-the-Buck GC and should not be used directly.
         Use cds::gc::PTB class in your code.
 
         Pass-the-Buck (PTB) garbage collector is a singleton. The main user-level part of PTB schema is
@@ -37,13 +37,13 @@ namespace cds { namespace gc {
         See cds::gc::PTB class for explanation.
 
         \par Implementation issues
-            The global list of free guards (cds::gc::ptb::details::guard_allocator) is protected by spin-lock (i.e. serialized).
+            The global list of free guards (cds::gc::dhp::details::guard_allocator) is protected by spin-lock (i.e. serialized).
             It seems that solution should not introduce significant performance bottleneck, because each thread has own set
             of guards allocated from global list of free guards and access to global list is occurred only when
             all thread's guard is busy. In this case the thread allocates next block of guards from global list.
             Guards allocated for the thread is push back to the global list only when the thread terminates.
     */
-    namespace ptb {
+    namespace dhp {
 
         // Forward declarations
         class Guard;
@@ -201,7 +201,7 @@ namespace cds { namespace gc {
                 /**
                     The list returned is linked by guard's \p pThreadNext and \p pNextFree fields.
 
-                    cds::gc::ptb::ThreadGC supporting method
+                    cds::gc::dhp::ThreadGC supporting method
                 */
                 guard_data * allocList( size_t nCount )
                 {
@@ -230,7 +230,7 @@ namespace cds { namespace gc {
                 /**
                     The list \p pList is linked by guard's \p pThreadNext field.
 
-                    cds::gc::ptb::ThreadGC supporting method
+                    cds::gc::dhp::ThreadGC supporting method
                 */
                 void freeList( guard_data * pList )
                 {
@@ -539,7 +539,7 @@ namespace cds { namespace gc {
             public: // for ThreadGC.
                 /*
                     GCC cannot compile code for template versions of ThreasGC::allocGuard/freeGuard,
-                    the compiler produces error: ‘cds::gc::ptb::details::guard_data* cds::gc::ptb::details::guard::m_pGuard’ is protected
+                    the compiler produces error: ‘cds::gc::dhp::details::guard_data* cds::gc::dhp::details::guard::m_pGuard’ is protected
                     despite the fact that ThreadGC is declared as friend for guard class.
                     We should not like to declare m_pGuard member as public one.
                     Therefore, we have to add set_guard/get_guard public functions
@@ -752,7 +752,7 @@ namespace cds { namespace gc {
             /**
                 This member function creates and initializes PTB global object.
                 The function should be called before using CDS data structure based on cds::gc::PTB GC. Usually,
-                this member function is called in the \p main() function. See cds::gc::ptb for example.
+                this member function is called in the \p main() function. See cds::gc::dhp for example.
                 After calling of this function you may use CDS data structures based on cds::gc::PTB.
 
                 \par Parameters
@@ -774,7 +774,7 @@ namespace cds { namespace gc {
             /**
                 The member function destroys PTB global object. After calling of this function you may \b NOT
                 use CDS data structures based on cds::gc::PTB. Usually, the \p Destruct function is called
-                at the end of your \p main(). See cds::gc::ptb for example.
+                at the end of your \p main(). See cds::gc::dhp for example.
             */
             static void CDS_STDCALL Destruct();
 
@@ -1043,7 +1043,7 @@ namespace cds { namespace gc {
             getGC().freeGuard( *this );
         }
 
-    }   // namespace ptb
+    }   // namespace dhp
 }}  // namespace cds::gc
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC

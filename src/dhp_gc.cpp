@@ -8,7 +8,7 @@
 #include <cds/gc/dhp/dhp.h>
 #include <cds/algo/int_algo.h>
 
-namespace cds { namespace gc { namespace ptb {
+namespace cds { namespace gc { namespace dhp {
 
     namespace details {
 
@@ -163,28 +163,6 @@ namespace cds { namespace gc { namespace ptb {
     GarbageCollector::~GarbageCollector()
     {
         liberate();
-
-#if 0
-        details::retired_ptr_node * pHead = nullptr;
-        details::retired_ptr_node * pTail = nullptr;
-
-        for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_relaxed)) {
-            details::guard_data::handoff_ptr h = pGuard->pHandOff;
-            pGuard->pHandOff  = nullptr;
-            while ( h ) {
-                details::guard_data::handoff_ptr pNext = h->m_pNextFree;
-                if ( h->m_ptr.m_p )
-                    h->m_ptr.free();
-                if ( !pHead )
-                    pTail = pHead = h;
-                else
-                    pTail = pTail->m_pNextFree = h;
-                h = pNext;
-            }
-        }
-        if ( pHead )
-            m_RetiredAllocator.free_range( pHead, pTail );
-#endif
     }
 
     void GarbageCollector::liberate()
@@ -241,67 +219,4 @@ namespace cds { namespace gc { namespace ptb {
             }
         }
     }
-
-#if 0
-    void GarbageCollector::liberate( details::liberate_set& set )
-    {
-        details::guard_data::handoff_ptr const nullHandOff = nullptr;
-
-        for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire) )
-        {
-            // get guarded pointer
-            details::guard_data::guarded_ptr  valGuarded = pGuard->pPost.load(atomics::memory_order_acquire);
-            details::guard_data::handoff_ptr h;
-
-            if ( valGuarded ) {
-                details::retired_ptr_node * pRetired = set.erase( valGuarded );
-                if ( pRetired ) {
-                    // Retired pointer is being guarded
-
-                    // pRetired is the head of retired pointers list for which the m_ptr.m_p field is equal
-                    // List is linked on m_pNextFree field
-
-                    // Now, try to set retired node pRetired as a hand-off node for the guard
-                    cds::lock::Auto<details::guard_data::handoff_spin> al( pGuard->spinHandOff );
-                    if ( valGuarded == pGuard->pPost.load(atomics::memory_order_acquire) ) {
-                        if ( pGuard->pHandOff && pGuard->pHandOff->m_ptr.m_p == pRetired->m_ptr.m_p ) {
-                            h = nullHandOff ; //nullptr;
-                            details::retired_ptr_node * pTail = pGuard->pHandOff;
-                            while ( pTail->m_pNextFree )
-                                pTail = pTail->m_pNextFree;
-                            pTail->m_pNextFree = pRetired;
-                        }
-                        else {
-                            // swap h and pGuard->pHandOff
-                            h = pGuard->pHandOff;
-                            pGuard->pHandOff = pRetired;
-                        }
-                    }
-                    else
-                        h = pRetired;
-                }
-                else {
-                    cds::lock::Auto<details::guard_data::handoff_spin> al( pGuard->spinHandOff );
-                    h = pGuard->pHandOff;
-                    if ( h ) {
-                        if ( h->m_ptr.m_p != valGuarded )
-                            pGuard->pHandOff = nullHandOff;
-                        else
-                            h = nullHandOff;
-                    }
-                }
-            }
-            else {
-                cds::lock::Auto<details::guard_data::handoff_spin> al( pGuard->spinHandOff );
-                h = pGuard->pHandOff;
-                pGuard->pHandOff = nullHandOff;
-            }
-
-            // h is the head of a list linked on m_pNextFree field
-            if ( h ) {
-                set.insert( *h );
-            }
-        }
-    }
-#endif
-}}} // namespace cds::gc::ptb
+}}} // namespace cds::gc::dhp

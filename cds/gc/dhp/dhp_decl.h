@@ -49,9 +49,9 @@ namespace cds { namespace gc {
         template <typename MarkedPtr> using atomic_marked_ptr = atomics::atomic<MarkedPtr>;
 
         /// Thread GC implementation for internal usage
-        typedef ptb::ThreadGC   thread_gc_impl;
+        typedef dhp::ThreadGC   thread_gc_impl;
 
-        /// Wrapper for ptb::ThreadGC class
+        /// Wrapper for dhp::ThreadGC class
         /**
             @headerfile cds/gc/dhp.h
             This class performs automatically attaching/detaching Pass-the-Buck GC
@@ -87,12 +87,12 @@ namespace cds { namespace gc {
         /// Pass-the-Buck guard
         /**
             @headerfile cds/gc/dhp.h
-            This class is a wrapper for ptb::Guard.
+            This class is a wrapper for dhp::Guard.
         */
-        class Guard: public ptb::Guard
+        class Guard: public dhp::Guard
         {
             //@cond
-            typedef ptb::Guard base_class;
+            typedef dhp::Guard base_class;
             //@endcond
 
         public:
@@ -208,14 +208,14 @@ namespace cds { namespace gc {
         /// Array of Pass-the-Buck guards
         /**
             @headerfile cds/gc/dhp.h
-            This class is a wrapper for ptb::GuardArray template.
+            This class is a wrapper for dhp::GuardArray template.
             Template parameter \p Count defines the size of PTB array.
         */
         template <size_t Count>
-        class GuardArray: public ptb::GuardArray<Count>
+        class GuardArray: public dhp::GuardArray<Count>
         {
             //@cond
-            typedef ptb::GuardArray<Count> base_class;
+            typedef dhp::GuardArray<Count> base_class;
             //@endcond
         public:
             /// Rebind array for other size \p COUNT2
@@ -336,29 +336,29 @@ namespace cds { namespace gc {
         };
 
     public:
-        /// Initializes ptb::GarbageCollector singleton
+        /// Initializes dhp::GarbageCollector singleton
         /**
             The constructor calls GarbageCollector::Construct with passed parameters.
-            See ptb::GarbageCollector::Construct for explanation of parameters meaning.
+            See dhp::GarbageCollector::Construct for explanation of parameters meaning.
         */
         PTB(
             size_t nLiberateThreshold = 1024
             , size_t nInitialThreadGuardCount = 8
         )
         {
-            ptb::GarbageCollector::Construct(
+            dhp::GarbageCollector::Construct(
                 nLiberateThreshold,
                 nInitialThreadGuardCount
             );
         }
 
-        /// Terminates ptb::GarbageCollector singleton
+        /// Terminates dhp::GarbageCollector singleton
         /**
-            The destructor calls \code ptb::GarbageCollector::Destruct() \endcode
+            The destructor calls \code dhp::GarbageCollector::Destruct() \endcode
         */
         ~PTB()
         {
-            ptb::GarbageCollector::Destruct();
+            dhp::GarbageCollector::Destruct();
         }
 
         /// Checks if count of hazard pointer is no less than \p nCountNeeded
@@ -381,7 +381,7 @@ namespace cds { namespace gc {
         template <typename T>
         static void retire( T * p, void (* pFunc)(T *) )
         {
-            ptb::GarbageCollector::instance().retirePtr( p, pFunc );
+            dhp::GarbageCollector::instance().retirePtr( p, pFunc );
         }
 
         /// Retire pointer \p p with functor of type \p Disposer
@@ -400,7 +400,7 @@ namespace cds { namespace gc {
         /// Checks if Pass-the-Buck GC is constructed and may be used
         static bool isUsed()
         {
-            return ptb::GarbageCollector::isUsed();
+            return dhp::GarbageCollector::isUsed();
         }
 
         /// Forced GC cycle call for current thread
