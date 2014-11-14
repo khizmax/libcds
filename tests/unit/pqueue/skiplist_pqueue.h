@@ -34,11 +34,10 @@ namespace pqueue {
         template <typename T, typename Set>
         bool operator()( T& dest, Set& container ) const
         {
-            typename Set::exempt_ptr ep;
-            bool bRet = container.extract_max( ep );
-            if ( bRet )
+            typename Set::exempt_ptr ep( container.extract_max());
+            if ( ep )
                 dest = *ep;
-            return bRet;
+            return !ep.empty();
         }
     };
 
@@ -62,11 +61,10 @@ namespace pqueue {
         template <typename T, typename Set>
         bool operator()( T& dest, Set& container ) const
         {
-            typename Set::exempt_ptr ep;
-            bool bRet = container.extract_min( ep );
-            if ( bRet )
+            typename Set::exempt_ptr ep( container.extract_min());
+            if ( ep )
                 dest = *ep;
-            return bRet;
+            return !ep.empty();
         }
     };
 
