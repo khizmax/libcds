@@ -10,7 +10,7 @@
 
 //@cond
 namespace cds {
-    namespace gc { namespace hzp {
+    namespace gc { namespace hp {
     /// Hazard Pointer schema implementation details
     namespace details {
 
@@ -317,7 +317,7 @@ namespace cds {
             //@endcond
         };
 
-    }}} // namespace gc::hzp::details
+    }}} // namespace gc::hp::details
 }   // namespace cds
 //@endcond
 

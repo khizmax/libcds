@@ -4,7 +4,7 @@
 #define __CDS_GC_HP_DETAILS_HP_FWD_H
 
 namespace cds {
-    namespace gc { namespace hzp {
+    namespace gc { namespace hp {
 
         // forward declarations
         class GarbageCollector;

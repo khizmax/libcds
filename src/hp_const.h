@@ -17,13 +17,13 @@ namespace cds { namespace gc {
 
     //---------------------------------------------------------------
     // Hazard Pointers reclamation schema constants
-    namespace hzp {
+    namespace hp {
         // Max number of threads expected
         static const size_t c_nMaxThreadCount     = 100;
 
         // Number of Hazard Pointers per thread
         static const size_t c_nHazardPointerPerThread = 8;
-    } // namespace hzp
+    } // namespace hp
 
 } /* namespace gc */ }    /* namespace cds */
 

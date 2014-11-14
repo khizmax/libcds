@@ -51,7 +51,7 @@
 #endif
 
 
-std::ostream& operator << (std::ostream& s, const cds::gc::hzp::GarbageCollector::InternalState& stat)
+std::ostream& operator << (std::ostream& s, const cds::gc::hp::GarbageCollector::InternalState& stat)
 {
     s << "\nHZP GC internal state:"
         << "\n\t\tHP record allocated=" << stat.nHPRecAllocated
@@ -118,8 +118,8 @@ namespace CppUnitMini
   {
       if ( m_bPrintGCState ) {
           {
-              cds::gc::hzp::GarbageCollector::InternalState stat;
-              std::cout << cds::gc::hzp::GarbageCollector::instance().getInternalState( stat ) << std::endl;
+              cds::gc::hp::GarbageCollector::InternalState stat;
+              std::cout << cds::gc::hp::GarbageCollector::instance().getInternalState( stat ) << std::endl;
           }
       }
   }
@@ -363,18 +363,18 @@ int main(int argc, char** argv)
         CppUnitMini::TestCfg& cfg = CppUnitMini::TestCase::m_Cfg.get( "General" );
         std::string strHZPScanStrategy = cfg.get( "HZP_scan_strategy", std::string("classic") );
         if ( strHZPScanStrategy == "inplace" )
-            hzpGC.setScanType( cds::gc::hzp::inplace );
+            hzpGC.setScanType( cds::gc::hp::inplace );
         else if ( strHZPScanStrategy == "classic" )
-            hzpGC.setScanType( cds::gc::hzp::classic );
+            hzpGC.setScanType( cds::gc::hp::classic );
         else {
             std::cout << "Error value of HZP_scan_strategy in General section of test config\n";
         }
 
         switch (hzpGC.getScanType()) {
-        case cds::gc::hzp::inplace:
+        case cds::gc::hp::inplace:
             std::cout << "Use in-place scan strategy for Hazard Pointer memory reclamation algorithm\n";
             break;
-        case cds::gc::hzp::classic:
+        case cds::gc::hp::classic:
             std::cout << "Use classic scan strategy for Hazard Pointer memory reclamation algorithm\n";
             break;
         default:
@@ -388,8 +388,8 @@ int main(int argc, char** argv)
       }
 
       if ( CppUnitMini::TestCase::m_bPrintGCState ) {
-        cds::gc::hzp::GarbageCollector::InternalState stat;
-        cds::gc::hzp::GarbageCollector::instance().getInternalState( stat );
+        cds::gc::hp::GarbageCollector::InternalState stat;
+        cds::gc::hp::GarbageCollector::instance().getInternalState( stat );
 
         std::cout << "HP constants:"
             << "\n\tHP count per thread=" << stat.nHPCount

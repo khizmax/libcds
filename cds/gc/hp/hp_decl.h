@@ -27,7 +27,7 @@ namespace cds { namespace gc {
     {
     public:
         /// Native guarded pointer type
-        typedef gc::hzp::hazard_pointer guarded_pointer;
+        typedef gc::hp::hazard_pointer guarded_pointer;
 
         /// Atomic reference
         /**
@@ -48,9 +48,9 @@ namespace cds { namespace gc {
         template <typename T> using atomic_type = atomics::atomic<T>;
 
         /// Thread GC implementation for internal usage
-        typedef hzp::ThreadGC   thread_gc_impl;
+        typedef hp::ThreadGC   thread_gc_impl;
 
-        /// Wrapper for hzp::ThreadGC class
+        /// Wrapper for hp::ThreadGC class
         /**
             @headerfile cds/gc/hp.h
             This class performs automatically attaching/detaching Hazard Pointer GC
@@ -86,12 +86,12 @@ namespace cds { namespace gc {
         /// Hazard Pointer guard
         /**
             @headerfile cds/gc/hp.h
-            This class is a wrapper for hzp::AutoHPGuard.
+            This class is a wrapper for hp::AutoHPGuard.
         */
-        class Guard: public hzp::AutoHPGuard
+        class Guard : public hp::AutoHPGuard
         {
             //@cond
-            typedef hzp::AutoHPGuard base_class;
+            typedef hp::AutoHPGuard base_class;
             //@endcond
 
         public:
@@ -206,14 +206,14 @@ namespace cds { namespace gc {
         /// Array of Hazard Pointer guards
         /**
             @headerfile cds/gc/hp.h
-            This class is a wrapper for hzp::AutoHPArray template.
+            This class is a wrapper for hp::AutoHPArray template.
             Template parameter \p Count defines the size of HP array.
         */
         template <size_t Count>
-        class GuardArray: public hzp::AutoHPArray<Count>
+        class GuardArray : public hp::AutoHPArray<Count>
         {
             //@cond
-            typedef hzp::AutoHPArray<Count> base_class;
+            typedef hp::AutoHPArray<Count> base_class;
             //@endcond
         public:
             /// Rebind array for other size \p Count2
@@ -333,7 +333,7 @@ namespace cds { namespace gc {
         };
 
     public:
-        /// Initializes hzp::GarbageCollector singleton
+        /// Initializes hp::GarbageCollector singleton
         /**
             The constructor initializes GC singleton with passed parameters.
             If GC instance is not exist then the function creates the instance.
@@ -351,10 +351,10 @@ namespace cds { namespace gc {
             size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
             size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
             size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
-            hzp::scan_type nScanType = hzp::inplace   ///< Scan type (see \ref hzp::scan_type enum)
+            hp::scan_type nScanType = hp::inplace   ///< Scan type (see \ref hp::scan_type enum)
         )
         {
-            hzp::GarbageCollector::Construct(
+            hp::GarbageCollector::Construct(
                 nHazardPtrCount,
                 nMaxThreadCount,
                 nMaxRetiredPtrCount,
@@ -364,11 +364,11 @@ namespace cds { namespace gc {
 
         /// Terminates GC singleton
         /**
-            The destructor calls \code hzp::GarbageCollector::Destruct( true ) \endcode
+            The destructor calls \code hp::GarbageCollector::Destruct( true ) \endcode
         */
         ~HP()
         {
-            hzp::GarbageCollector::Destruct( true );
+            hp::GarbageCollector::Destruct( true );
         }
 
         /// Checks if count of hazard pointer is no less than \p nCountNeeded
@@ -379,7 +379,7 @@ namespace cds { namespace gc {
         */
         static bool check_available_guards( size_t nCountNeeded, bool bRaiseException = true )
         {
-            if ( hzp::GarbageCollector::instance().getHazardPointerCount() < nCountNeeded ) {
+            if ( hp::GarbageCollector::instance().getHazardPointerCount() < nCountNeeded ) {
                 if ( bRaiseException )
                     throw std::overflow_error( "Too few hazard pointers" );
                 return false;
@@ -390,19 +390,19 @@ namespace cds { namespace gc {
         /// Returns max Hazard Pointer count
         size_t max_hazard_count() const
         {
-            return hzp::GarbageCollector::instance().getHazardPointerCount();
+            return hp::GarbageCollector::instance().getHazardPointerCount();
         }
 
         /// Returns max count of thread
         size_t max_thread_count() const
         {
-            return hzp::GarbageCollector::instance().getMaxThreadCount();
+            return hp::GarbageCollector::instance().getMaxThreadCount();
         }
 
         /// Returns capacity of retired pointer array
         size_t retired_array_capacity() const
         {
-            return hzp::GarbageCollector::instance().getMaxRetiredPtrCount();
+            return hp::GarbageCollector::instance().getMaxRetiredPtrCount();
         }
 
         /// Retire pointer \p p with function \p pFunc
@@ -467,23 +467,23 @@ namespace cds { namespace gc {
         static void retire( T * p ) ;   // inline in hp_impl.h
 
         /// Get current scan strategy
-        hzp::scan_type getScanType() const
+        hp::scan_type getScanType() const
         {
-            return hzp::GarbageCollector::instance().getScanType();
+            return hp::GarbageCollector::instance().getScanType();
         }
 
         /// Set current scan strategy
         void setScanType(
-            hzp::scan_type nScanType     ///< new scan strategy
+            hp::scan_type nScanType     ///< new scan strategy
         )
         {
-            hzp::GarbageCollector::instance().setScanType( nScanType );
+            hp::GarbageCollector::instance().setScanType( nScanType );
         }
 
         /// Checks if Hazard Pointer GC is constructed and may be used
         static bool isUsed()
         {
-            return hzp::GarbageCollector::isUsed();
+            return hp::GarbageCollector::isUsed();
         }
 
 

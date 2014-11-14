@@ -7,7 +7,7 @@
 
 namespace cds {
     namespace gc {
-        namespace hzp {
+        namespace hp {
 
             /// Hazard pointer
             typedef void *    hazard_pointer;

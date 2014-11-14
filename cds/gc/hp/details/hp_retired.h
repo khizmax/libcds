@@ -9,7 +9,7 @@
 #include <cds/details/bounded_array.h>
 
 namespace cds {
-    namespace gc{ namespace hzp { namespace details {
+    namespace gc{ namespace hp { namespace details {
 
         /// Retired pointer
         typedef cds::gc::details::retired_ptr   retired_ptr;
@@ -34,13 +34,13 @@ namespace cds {
             typedef    retired_vector_impl::iterator    iterator;
 
             /// Constructor
-            retired_vector( const cds::gc::hzp::GarbageCollector& HzpMgr )    ;    // inline
+            retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr );    // inline
             ~retired_vector()
             {}
 
             /// Vector capacity.
             /**
-                The capacity is constant for any thread. It is defined by cds::gc::hzp::GarbageCollector.
+                The capacity is constant for any thread. It is defined by cds::gc::hp::GarbageCollector.
             */
             size_t capacity() const     { return m_arr.capacity(); }
 
@@ -80,7 +80,7 @@ namespace cds {
             }
         };
 
-    } } }    // namespace gc::hzp::details
+    } } }    // namespace gc::hp::details
 }    // namespace cds
 
 #endif // #ifndef __CDS_GC_HP_DETAILS_HP_RETIRED_H

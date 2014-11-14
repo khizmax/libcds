@@ -12,8 +12,8 @@
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
-    // warning C4251: 'cds::gc::hzp::GarbageCollector::m_pListHead' : class 'cds::cxx11_atomic::atomic<T>'
-    // needs to have dll-interface to be used by clients of class 'cds::gc::hzp::GarbageCollector'
+    // warning C4251: 'cds::gc::hp::GarbageCollector::m_pListHead' : class 'cds::cxx11_atomic::atomic<T>'
+    // needs to have dll-interface to be used by clients of class 'cds::gc::hp::GarbageCollector'
 #   pragma warning(disable: 4251)
 #endif
 
@@ -89,7 +89,7 @@ namespace cds {
         - [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers"
 
 
-        The cds::gc::hzp namespace and its members are internal representation of Hazard Pointer GC and should not be used directly.
+        The cds::gc::hp namespace and its members are internal representation of Hazard Pointer GC and should not be used directly.
         Use cds::gc::HP class in your code.
 
         Hazard Pointer garbage collector is a singleton. The main user-level part of Hazard Pointer schema is
@@ -97,7 +97,7 @@ namespace cds {
         by contructing cds::gc::HP object in beginning of your main().
         See cds::gc::HP class for explanation.
     */
-    namespace hzp {
+    namespace hp {
 
         namespace details {
             /// Hazard pointer record of the thread
@@ -110,7 +110,7 @@ namespace cds {
                 retired_vector            m_arrRetired ; ///< Retired pointer array
 
                 /// Ctor
-                HPRec( const cds::gc::hzp::GarbageCollector& HzpMgr ) ;    // inline
+                HPRec( const cds::gc::hp::GarbageCollector& HzpMgr );    // inline
                 ~HPRec()
                 {}
 
@@ -193,7 +193,7 @@ namespace cds {
                 event_counter  m_DeferredNode            ;    ///< Count of objects that cannot be deleted in Scan phase because of a hazard_pointer guards it
             };
 
-            /// Internal list of cds::gc::hzp::details::HPRec
+            /// Internal list of cds::gc::hp::details::HPRec
             struct hplist_node: public details::HPRec
             {
                 hplist_node *                       m_pNextNode ; ///< next hazard ptr record in list
@@ -609,7 +609,7 @@ namespace cds {
 
         /// Auto-managed array of hazard pointers
         /**
-            This class is wrapper around cds::gc::hzp::details::HPArray class.
+            This class is wrapper around cds::gc::hp::details::HPArray class.
             \p Count is the size of HP array
         */
         template <size_t Count>
@@ -642,7 +642,7 @@ namespace cds {
             ThreadGC&    getGC() const { return m_mgr; }
         };
 
-    }   // namespace hzp
+    }   // namespace hp
 }}  // namespace cds::gc
 
 // Inlines

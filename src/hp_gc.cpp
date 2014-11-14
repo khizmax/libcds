@@ -17,7 +17,7 @@
 #define    CDS_HAZARDPTR_STATISTIC( _x )    if ( m_bStatEnabled ) { _x; }
 
 namespace cds { namespace gc {
-    namespace hzp {
+    namespace hp {
 
         /// Max array size of retired pointers
         static const size_t c_nMaxRetireNodeCount = c_nHazardPointerPerThread * c_nMaxThreadCount * 2;
@@ -360,5 +360,5 @@ namespace cds { namespace gc {
         }
 
 
-    } //namespace hzp
+    } //namespace hp
 }} // namespace cds::gc
