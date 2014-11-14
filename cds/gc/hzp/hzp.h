@@ -6,7 +6,6 @@
 #include <vector>
 #include <cds/cxx11_atomic.h>
 #include <cds/os/thread.h>
-#include <cds/gc/exception.h>
 #include <cds/gc/hzp/details/hp_fwd.h>
 #include <cds/gc/hzp/details/hp_alloc.h>
 #include <cds/gc/hzp/details/hp_retired.h>

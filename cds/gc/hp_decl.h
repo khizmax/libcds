@@ -3,6 +3,7 @@
 #ifndef __CDS_GC_HP_DECL_H
 #define __CDS_GC_HP_DECL_H
 
+#include <stdexcept>    // overflow_error
 #include <cds/gc/hzp/hzp.h>
 #include <cds/details/marked_ptr.h>
 
@@ -372,14 +373,15 @@ namespace cds { namespace gc {
 
         /// Checks if count of hazard pointer is no less than \p nCountNeeded
         /**
-            If \p bRaiseException is \p true (that is the default), the function raises an exception gc::too_few_hazard_pointers
+            If \p bRaiseException is \p true (that is the default), the function raises 
+            an \p std::overflow_error exception "Too few hazard pointers"
             if \p nCountNeeded is more than the count of hazard pointer per thread.
         */
         static bool check_available_guards( size_t nCountNeeded, bool bRaiseException = true )
         {
             if ( hzp::GarbageCollector::instance().getHazardPointerCount() < nCountNeeded ) {
                 if ( bRaiseException )
-                    throw cds::gc::too_few_hazard_pointers();
+                    throw std::overflow_error( "Too few hazard pointers" );
                 return false;
             }
             return true;
