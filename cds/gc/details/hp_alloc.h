@@ -27,14 +27,10 @@ namespace cds {
         public:
             typedef hazard_pointer   hazard_ptr;    ///< Hazard pointer type
         private:
-            //@cond
             typedef atomics::atomic<hazard_ptr>  base_class;
-            //@endcond
 
         protected:
-            //@cond
             template <class Allocator> friend class hp_allocator;
-            //@endcond
 
         public:
             hp_guard() CDS_NOEXCEPT
@@ -55,13 +51,11 @@ namespace cds {
                 return p;
             }
 
-            //@cond
             std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
             {
                 clear();
                 return nullptr;
             }
-            //@endcond
 
             /// Returns current value of hazard pointer
             /**
@@ -126,10 +120,8 @@ namespace cds {
             static CDS_CONSTEXPR const size_t c_nCapacity = Count ;   ///< Capacity of the array
 
         private:
-            //@cond
             atomic_hazard_ptr *     m_arr               ;   ///< Hazard pointer array of size = \p Count
             template <class Allocator> friend class hp_allocator;
-            //@endcond
 
         public:
             /// Constructs uninitialized array.
@@ -197,14 +189,11 @@ namespace cds {
             typedef Allocator       allocator_type;     ///< allocator type
 
         private:
-            //@cond
             typedef cds::details::Allocator< atomic_hazard_ptr, allocator_type > allocator_impl;
 
             atomic_hazard_ptr * m_arrHazardPtr  ;   ///< Array of hazard pointers
             size_t              m_nTop          ;   ///< The top of stack
             const size_t        m_nCapacity     ;   ///< Array capacity
-
-            //@endcond
 
         public:
             /// Default ctor
@@ -298,7 +287,6 @@ namespace cds {
             }
 
         private:
-            //@cond
             void make_free() CDS_NOEXCEPT
             {
                 for ( size_t i = 0; i < capacity(); ++i )
@@ -310,7 +298,6 @@ namespace cds {
             {
                 return allocator_impl().NewArray( nCapacity );
             }
-            //@endcond
         };
 
     }}} // namespace gc::hp::details

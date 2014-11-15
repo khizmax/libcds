@@ -5,6 +5,7 @@
 
 #include <cds/gc/details/retired_ptr.h> // free_retired_ptr_func
 
+//@cond
 namespace cds {
     namespace gc {
         namespace hp {
@@ -17,6 +18,7 @@ namespace cds {
         }
     }
 }
+//@endcond
 
 #endif // #ifndef __CDS_GC_DETAILS_HP_TYPE_H
 

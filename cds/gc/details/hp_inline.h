@@ -3,6 +3,7 @@
 #ifndef __CDS_GC_DETAILS_HP_INLINE_H
 #define __CDS_GC_DETAILS_HP_INLINE_H
 
+//@cond
 namespace cds {
     namespace gc{ namespace hp { namespace details {
 
@@ -19,8 +20,8 @@ namespace cds {
             m_arrRetired( HzpMgr )
         {}
 
-    } } }    // namespace gc::hp::details
+    }}}    // namespace gc::hp::details
 }    // namespace cds
-
+//@endcond
 
 #endif // #ifndef __CDS_GC_DETAILS_HP_INLINE_H

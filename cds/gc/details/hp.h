@@ -27,6 +27,7 @@
         2010.01.27  khizmax Introducing memory order constraint
 */
 
+//@cond
 namespace cds {
     /**
         @page cds_garbage_collectors_comparison GC comparison
@@ -286,7 +287,6 @@ namespace cds {
                 atomics::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
                 atomics::atomic<bool>            m_bFree     ; ///< true if record if free (not owned)
 
-                //@cond
                 hplist_node( const GarbageCollector& HzpMgr )
                     : hp_record( HzpMgr ),
                     m_pNextNode( nullptr ),
@@ -299,7 +299,6 @@ namespace cds {
                     assert( m_idOwner.load( atomics::memory_order_relaxed ) == OS::c_NullThreadId );
                     assert( m_bFree.load(atomics::memory_order_relaxed) );
                 }
-                //@endcond
             };
 
             atomics::atomic<hplist_node *>   m_pListHead  ;  ///< Head of GC list
@@ -342,9 +341,7 @@ namespace cds {
             */
             void                DeletePtr( details::retired_ptr& p );
 
-            //@cond
             void detachAllThread();
-            //@endcond
 
         public:
             /// Creates GarbageCollector singleton
@@ -646,13 +643,11 @@ namespace cds {
                 }
             }
 
-            //@cond
             void scan()
             {
                 m_HzpManager.Scan( m_pHzpRec );
                 m_HzpManager.HelpScan( m_pHzpRec );
             }
-            //@endcond
         };
 
         /// Auto hp_guard.
@@ -663,13 +658,12 @@ namespace cds {
         */
         class guard
         {
-            //@cond
             details::hp_guard&   m_hp    ; ///< Hazard pointer guarded
             ThreadGC&           m_gc    ; ///< Thread GC
-            //@endcond
 
         public:
             typedef details::hp_guard::hazard_ptr hazard_ptr ;  ///< Hazard pointer type
+
         public:
             /// Allocates HP guard from \p gc
             guard( ThreadGC& gc )
@@ -705,7 +699,6 @@ namespace cds {
                 return m_hp = p;
             }
 
-            //@cond
             std::nullptr_t operator =(std::nullptr_t)
             {
                 return m_hp = nullptr;
@@ -715,7 +708,6 @@ namespace cds {
             {
                 return m_hp;
             }
-            //@endcond
         };
 
         /// Auto-managed array of hazard pointers
@@ -755,6 +747,7 @@ namespace cds {
 
     }   // namespace hp
 }}  // namespace cds::gc
+//@endcond
 
 // Inlines
 #include <cds/gc/details/hp_inline.h>

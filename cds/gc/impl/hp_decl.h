@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HP_HP_DECL_H
-#define __CDS_GC_HP_HP_DECL_H
+#ifndef __CDS_GC_IMPL_HP_DECL_H
+#define __CDS_GC_IMPL_HP_DECL_H
 
 #include <stdexcept>    // overflow_error
 #include <cds/gc/details/hp.h>
@@ -360,6 +360,11 @@ namespace cds { namespace gc {
         };
 
     public:
+        /// \p scan() type
+        enum class scan_type {
+            classic = hp::classic,    ///< classic scan as described in Michael's papers
+            inplace = hp::inplace     ///< inplace scan without allocation
+        };
         /// Initializes hp::GarbageCollector singleton
         /**
             The constructor initializes GC singleton with passed parameters.
@@ -378,14 +383,14 @@ namespace cds { namespace gc {
             size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
             size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
             size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
-            hp::scan_type nScanType = hp::inplace   ///< Scan type (see \ref hp::scan_type enum)
+            scan_type nScanType = scan_type::inplace   ///< Scan type (see \p scan_type enum)
         )
         {
             hp::GarbageCollector::Construct(
                 nHazardPtrCount,
                 nMaxThreadCount,
                 nMaxRetiredPtrCount,
-                nScanType
+                static_cast<hp::scan_type>(nScanType)
             );
         }
 
@@ -494,17 +499,17 @@ namespace cds { namespace gc {
         static void retire( T * p ) ;   // inline in hp_impl.h
 
         /// Get current scan strategy
-        hp::scan_type getScanType() const
+        scan_type getScanType() const
         {
-            return hp::GarbageCollector::instance().getScanType();
+            return static_cast<scan_type>( hp::GarbageCollector::instance().getScanType());
         }
 
         /// Set current scan strategy
         void setScanType(
-            hp::scan_type nScanType     ///< new scan strategy
+            scan_type nScanType     ///< new scan strategy
         )
         {
-            hp::GarbageCollector::instance().setScanType( nScanType );
+            hp::GarbageCollector::instance().setScanType( static_cast<hp::scan_type>(nScanType) );
         }
 
         /// Checks if Hazard Pointer GC is constructed and may be used
@@ -512,7 +517,6 @@ namespace cds { namespace gc {
         {
             return hp::GarbageCollector::isUsed();
         }
-
 
         /// Forced GC cycle call for current thread
         /**
@@ -528,4 +532,4 @@ namespace cds { namespace gc {
     };
 }}  // namespace cds::gc
 
-#endif  // #ifndef __CDS_GC_HP_HP_DECL_H
+#endif  // #ifndef __CDS_GC_IMPL_HP_DECL_H

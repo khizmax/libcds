@@ -15,6 +15,7 @@
 #   pragma warning(disable:4251)    // C4251: 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2'
 #endif
 
+//@cond
 namespace cds { namespace gc {
 
     /// Dynamic Hazard Pointer reclamation schema
@@ -72,7 +73,6 @@ namespace cds { namespace gc {
 
                 guard_data *             pThreadNext ;   ///< next item of thread's local list of guards
 
-                //@cond
                 guard_data() CDS_NOEXCEPT
                     : pPost( nullptr )
                     , pGlobalNext( nullptr )
@@ -84,7 +84,6 @@ namespace cds { namespace gc {
                 {
                     pPost.store( nullptr, atomics::memory_order_relaxed );
                 }
-                //@endcond
 
                 /// Checks if the guard is free, that is, it does not contain any pointer guarded
                 bool isFree() const CDS_NOEXCEPT
@@ -250,7 +249,6 @@ namespace cds { namespace gc {
                 atomics::atomic<size_t>              m_nItemCount;   ///< buffer's item count
 
             public:
-                //@cond
                 CDS_CONSTEXPR retired_ptr_buffer() CDS_NOEXCEPT
                     : m_pHead( nullptr )
                     , m_nItemCount(0)
@@ -260,7 +258,6 @@ namespace cds { namespace gc {
                 {
                     assert( m_pHead.load( atomics::memory_order_relaxed ) == nullptr );
                 }
-                //@endcond
 
                 /// Pushes new node into the buffer. Returns current buffer size
                 size_t push( retired_ptr_node& node ) CDS_NOEXCEPT
@@ -331,7 +328,6 @@ namespace cds { namespace gc {
                 cds::details::Allocator< block, Alloc > m_BlockAllocator    ;   ///< block allocator
 
             private:
-                //@cond
                 void allocNewBlock()
                 {
                     // allocate new block
@@ -372,10 +368,8 @@ namespace cds { namespace gc {
                 {
                     return (m_nCurEpoch.load(atomics::memory_order_acquire) - 1) & (c_nEpochCount - 1);
                 }
-                //@endcond
 
             public:
-                //@cond
                 retired_ptr_pool()
                     : m_pBlockListHead( nullptr )
                     , m_nCurEpoch(0)
@@ -401,8 +395,6 @@ namespace cds { namespace gc {
                 {
                     m_nCurEpoch.fetch_add( 1, atomics::memory_order_acq_rel );
                 }
-
-                //@endcond
 
                 /// Allocates new retired pointer
                 retired_ptr_node&  alloc()
@@ -503,13 +495,11 @@ namespace cds { namespace gc {
                     return p;
                 }
 
-                //@cond
                 std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
                 {
                     clear();
                     return nullptr;
                 }
-                //@endcond
 
             public: // for ThreadGC.
                 /*
@@ -547,10 +537,8 @@ namespace cds { namespace gc {
         */
         class Guard: public details::guard
         {
-            //@cond
             typedef details::guard    base_class;
             friend class ThreadGC;
-            //@endcond
 
             ThreadGC&    m_gc    ;    ///< ThreadGC object of current thread
         public:
@@ -573,12 +561,10 @@ namespace cds { namespace gc {
                 return base_class::operator =<T>( p );
             }
 
-            //@cond
             std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
             {
                 return base_class::operator =(nullptr);
             }
-            //@endcond
         };
 
         /// Array of guards
@@ -666,7 +652,6 @@ namespace cds { namespace gc {
         class CDS_EXPORT_API GarbageCollector
         {
         private:
-            //@cond
             friend class ThreadGC;
 
             /// Internal GC statistics
@@ -680,7 +665,6 @@ namespace cds { namespace gc {
                     , m_nFreeGuardCount(0)
                 {}
             };
-            //@endcond
 
         public:
             /// Exception "No GarbageCollector object is created"
@@ -692,7 +676,6 @@ namespace cds { namespace gc {
                 size_t m_nGuardCount       ;   ///< Total guard count
                 size_t m_nFreeGuardCount   ;   ///< Count of free guard
 
-                //@cond
                 InternalState()
                     : m_nGuardCount(0)
                     , m_nFreeGuardCount(0)
@@ -705,7 +688,6 @@ namespace cds { namespace gc {
 
                     return *this;
                 }
-                //@endcond
             };
 
         private:
@@ -844,10 +826,8 @@ namespace cds { namespace gc {
             }
 
         private:
-            //@cond none
             GarbageCollector( size_t nLiberateThreshold, size_t nInitialThreadGuardCount );
             ~GarbageCollector();
-            //@endcond
         };
 
         /// Thread GC
@@ -975,13 +955,10 @@ namespace cds { namespace gc {
                 m_gc.retirePtr( p, pFunc );
             }
 
-            //@cond
             void scan()
             {
                 m_gc.scan();
             }
-            //@endcond
-
         };
 
         //////////////////////////////////////////////////////////
@@ -1011,6 +988,7 @@ namespace cds { namespace gc {
 
     }   // namespace dhp
 }}  // namespace cds::gc
+//@endcond
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(pop)
