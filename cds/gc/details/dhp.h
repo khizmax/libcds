@@ -249,7 +249,7 @@ namespace cds { namespace gc {
                 atomics::atomic<size_t>              m_nItemCount;   ///< buffer's item count
 
             public:
-                CDS_CONSTEXPR retired_ptr_buffer() CDS_NOEXCEPT
+                retired_ptr_buffer() CDS_NOEXCEPT
                     : m_pHead( nullptr )
                     , m_nItemCount(0)
                 {}
@@ -543,10 +543,10 @@ namespace cds { namespace gc {
             ThreadGC&    m_gc    ;    ///< ThreadGC object of current thread
         public:
             /// Allocates a guard from \p gc GC. \p gc must be ThreadGC object of current thread
-            Guard( ThreadGC& gc ) CDS_NOEXCEPT;
+            Guard( ThreadGC& gc );
 
             /// Returns guard allocated back to pool of free guards
-            ~Guard() CDS_NOEXCEPT;    // inline after GarbageCollector
+            ~Guard();    // inline after GarbageCollector
 
             /// Returns DHP GC object
             ThreadGC& getGC() CDS_NOEXCEPT
@@ -588,7 +588,7 @@ namespace cds { namespace gc {
 
         public:
             /// Allocates array of guards from \p gc which must be the ThreadGC object of current thread
-            GuardArray( ThreadGC& gc ) CDS_NOEXCEPT;    // inline below
+            GuardArray( ThreadGC& gc );    // inline below
 
             /// The object is not default-constructible
             GuardArray() = delete;
@@ -597,7 +597,7 @@ namespace cds { namespace gc {
             GuardArray( GuardArray const& ) = delete;
 
             /// Returns guards allocated back to pool
-            ~GuardArray() CDS_NOEXCEPT;    // inline below
+            ~GuardArray();    // inline below
 
             /// Returns the capacity of array
             CDS_CONSTEXPR size_t capacity() const CDS_NOEXCEPT

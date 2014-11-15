@@ -363,18 +363,18 @@ int main(int argc, char** argv)
         CppUnitMini::TestCfg& cfg = CppUnitMini::TestCase::m_Cfg.get( "General" );
         std::string strHZPScanStrategy = cfg.get( "HZP_scan_strategy", std::string("classic") );
         if ( strHZPScanStrategy == "inplace" )
-            hzpGC.setScanType( cds::gc::hp::inplace );
+            hzpGC.setScanType( cds::gc::HP::scan_type::inplace );
         else if ( strHZPScanStrategy == "classic" )
-            hzpGC.setScanType( cds::gc::hp::classic );
+            hzpGC.setScanType( cds::gc::HP::scan_type::classic );
         else {
             std::cout << "Error value of HZP_scan_strategy in General section of test config\n";
         }
 
         switch (hzpGC.getScanType()) {
-        case cds::gc::hp::inplace:
+        case cds::gc::HP::scan_type::inplace:
             std::cout << "Use in-place scan strategy for Hazard Pointer memory reclamation algorithm\n";
             break;
-        case cds::gc::hp::classic:
+        case cds::gc::HP::scan_type::classic:
             std::cout << "Use classic scan strategy for Hazard Pointer memory reclamation algorithm\n";
             break;
         default:
