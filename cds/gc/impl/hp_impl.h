@@ -24,12 +24,12 @@ namespace cds { namespace gc {
             cds::threading::Manager::detachThread();
     }
 
-    inline HP::Guard::Guard()
+    inline HP::Guard::Guard() CDS_CONSTEXPR
         : Guard::base_class( cds::threading::getGC<HP>() )
     {}
 
     template <size_t COUNT>
-    inline HP::GuardArray<COUNT>::GuardArray()
+    inline HP::GuardArray<COUNT>::GuardArray() CDS_CONSTEXPR
         : GuardArray::base_class( cds::threading::getGC<HP>() )
     {}
 

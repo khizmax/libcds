@@ -14,19 +14,22 @@ namespace cds { namespace gc {
     /**  @ingroup cds_garbage_collector
         @headerfile cds/gc/hp.h
 
-        This class realizes a wrapper for Hazard Pointer garbage collector internal implementation.
+        Implementation of classic Hazard Pointer garbage collector.
 
         Sources:
             - [2002] Maged M.Michael "Safe memory reclamation for dynamic lock-freeobjects using atomic reads and writes"
             - [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects"
             - [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers"
 
-        See \ref cds_how_to_use "How to use" section for details of garbage collector applying.
+        See \ref cds_how_to_use "How to use" section for details how to apply garbage collector.
     */
     class HP
     {
     public:
         /// Native guarded pointer type
+        /**
+            @headerfile cds/gc/hp.h
+        */
         typedef gc::hp::hazard_pointer guarded_pointer;
 
         /// Atomic reference
@@ -48,6 +51,9 @@ namespace cds { namespace gc {
         template <typename T> using atomic_type = atomics::atomic<T>;
 
         /// Thread GC implementation for internal usage
+        /**
+            @headerfile cds/gc/hp.h
+        */
         typedef hp::ThreadGC   thread_gc_impl;
 
         /// Wrapper for hp::ThreadGC class
@@ -86,7 +92,12 @@ namespace cds { namespace gc {
         /// Hazard Pointer guard
         /**
             @headerfile cds/gc/hp.h
-            This class is a wrapper for \p hp::guard.
+
+            A guard is the hazard pointer.
+            Additionally, the \p %Guard class manages allocation and deallocation of the hazard pointer
+
+            A \p %Guard object is not copy- and move-constructible 
+            and not copy- and move-assignable.
         */
         class Guard : public hp::guard
         {
@@ -95,8 +106,14 @@ namespace cds { namespace gc {
             //@endcond
 
         public:
+            /// Default ctor
+            Guard() CDS_NOEXCEPT;   // inline in hp_impl.h
+
             //@cond
-            Guard() ;   // inline in hp_impl.h
+            Guard( Guard const& ) = delete;
+            Guard( Guard&& s ) = delete;
+            Guard& operator=(Guard const&) = delete;
+            Guard& operator=(Guard&&) = delete;
             //@endcond
 
             /// Protects a pointer of type \p atomic<T*>
@@ -107,7 +124,7 @@ namespace cds { namespace gc {
                 to the HP slot repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect( atomics::atomic<T> const& toGuard )
+            T protect( atomics::atomic<T> const& toGuard ) CDS_NOEXCEPT
             {
                 T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
@@ -136,7 +153,7 @@ namespace cds { namespace gc {
                 Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
-            T protect( atomics::atomic<T> const& toGuard, Func f )
+            T protect( atomics::atomic<T> const& toGuard, Func f ) CDS_NOEXCEPT_( f( toGuard.load( atomics::memory_order_relaxed ) ) )
             {
                 T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
@@ -154,20 +171,20 @@ namespace cds { namespace gc {
                 Can be used for a pointer that cannot be changed concurrently
             */
             template <typename T>
-            T * assign( T * p )
+            T * assign( T * p ) CDS_NOEXCEPT
             {
                 return base_class::operator =(p);
             }
 
             //@cond
-            std::nullptr_t assign( std::nullptr_t )
+            std::nullptr_t assign( std::nullptr_t ) CDS_NOEXCEPT
             {
                 return base_class::operator =(nullptr);
             }
             //@endcond
 
             /// Copy from \p src guard to \p this guard
-            void copy( Guard const& src )
+            void copy( Guard const& src ) CDS_NOEXCEPT
             {
                 assign( src.get_native() );
             }
@@ -178,26 +195,26 @@ namespace cds { namespace gc {
                 Can be used for a marked pointer that cannot be changed concurrently.
             */
             template <typename T, int BITMASK>
-            T * assign( cds::details::marked_ptr<T, BITMASK> p )
+            T * assign( cds::details::marked_ptr<T, BITMASK> p ) CDS_NOEXCEPT
             {
                 return base_class::operator =( p.ptr() );
             }
 
             /// Clear value of the guard
-            void clear()
+            void clear() CDS_NOEXCEPT
             {
                 assign( nullptr );
             }
 
             /// Get the value currently protected
             template <typename T>
-            T * get() const
+            T * get() const CDS_NOEXCEPT
             {
                 return reinterpret_cast<T *>( get_native() );
             }
 
             /// Get native hazard pointer stored
-            guarded_pointer get_native() const
+            guarded_pointer get_native() const CDS_NOEXCEPT
             {
                 return base_class::get();
             }
@@ -206,8 +223,11 @@ namespace cds { namespace gc {
         /// Array of Hazard Pointer guards
         /**
             @headerfile cds/gc/hp.h
-            This class is a wrapper for \p hp::array template.
-            Template parameter \p Count defines the size of HP array.
+            The class is intended for allocating an array of hazard pointer guards.
+            Template parameter \p Count defines the size of the array.
+
+            A \p %GuardArray object is not copy- and move-constructible
+            and not copy- and move-assignable.
         */
         template <size_t Count>
         class GuardArray : public hp::array<Count>
@@ -223,9 +243,16 @@ namespace cds { namespace gc {
             };
 
         public:
+            /// Default ctor
+            GuardArray() CDS_NOEXCEPT;  // inline in hp_impl.h
+
             //@cond
-            GuardArray()    ;   // inline in hp_impl.h
+            GuardArray( GuardArray const& ) = delete;
+            GuardArray( GuardArray&& ) = delete;
+            GuardArray& operator=(GuardArray const&) = delete;
+            GuardArray& operator-(GuardArray&&) = delete;
             //@endcond
+
             /// Protects a pointer of type \p atomic<T*>
             /**
                 Return the value of \p toGuard
@@ -234,7 +261,7 @@ namespace cds { namespace gc {
                 to the slot \p nIndex repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect(size_t nIndex, atomics::atomic<T> const& toGuard )
+            T protect( size_t nIndex, atomics::atomic<T> const& toGuard ) CDS_NOEXCEPT
             {
                 T pRet;
                 do {
@@ -262,7 +289,7 @@ namespace cds { namespace gc {
                 Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
-            T protect(size_t nIndex, atomics::atomic<T> const& toGuard, Func f )
+            T protect( size_t nIndex, atomics::atomic<T> const& toGuard, Func f ) CDS_NOEXCEPT_( f( toGuard.load( atomics::memory_order_acquire )))
             {
                 T pRet;
                 do {
@@ -277,7 +304,7 @@ namespace cds { namespace gc {
                 The function equals to a simple assignment, no loop is performed.
             */
             template <typename T>
-            T * assign( size_t nIndex, T * p )
+            T * assign( size_t nIndex, T * p ) CDS_NOEXCEPT
             {
                 base_class::set(nIndex, p);
                 return p;
@@ -289,44 +316,44 @@ namespace cds { namespace gc {
                 Can be used for a marked pointer that cannot be changed concurrently.
             */
             template <typename T, int BITMASK>
-            T * assign( size_t nIndex, cds::details::marked_ptr<T, BITMASK> p )
+            T * assign( size_t nIndex, cds::details::marked_ptr<T, BITMASK> p ) CDS_NOEXCEPT
             {
                 return assign( nIndex, p.ptr() );
             }
 
             /// Copy guarded value from \p src guard to slot at index \p nIndex
-            void copy( size_t nIndex, Guard const& src )
+            void copy( size_t nIndex, Guard const& src ) CDS_NOEXCEPT
             {
                 assign( nIndex, src.get_native() );
             }
 
             /// Copy guarded value from slot \p nSrcIndex to slot at index \p nDestIndex
-            void copy( size_t nDestIndex, size_t nSrcIndex )
+            void copy( size_t nDestIndex, size_t nSrcIndex ) CDS_NOEXCEPT
             {
                 assign( nDestIndex, get_native( nSrcIndex ));
             }
 
             /// Clear value of the slot \p nIndex
-            void clear( size_t nIndex)
+            void clear( size_t nIndex ) CDS_NOEXCEPT
             {
                 base_class::clear( nIndex );
             }
 
             /// Get current value of slot \p nIndex
             template <typename T>
-            T * get( size_t nIndex) const
+            T * get( size_t nIndex ) const CDS_NOEXCEPT
             {
                 return reinterpret_cast<T *>( get_native( nIndex ) );
             }
 
             /// Get native hazard pointer stored
-            guarded_pointer get_native( size_t nIndex ) const
+            guarded_pointer get_native( size_t nIndex ) const CDS_NOEXCEPT
             {
                 return base_class::operator[](nIndex).get();
             }
 
             /// Capacity of the guard array
-            static CDS_CONSTEXPR size_t capacity()
+            static CDS_CONSTEXPR size_t capacity() CDS_NOEXCEPT
             {
                 return Count;
             }

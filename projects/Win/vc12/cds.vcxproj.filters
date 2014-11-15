@@ -148,11 +148,8 @@
     <Filter Include="Header Files\cds\container\impl">
       <UniqueIdentifier>{0a2328b4-ff6f-4afb-8de0-9884ae172fa9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\gc\hp">
-      <UniqueIdentifier>{043c4eba-3bd4-4226-b214-e26f18b422a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\cds\gc\dhp">
-      <UniqueIdentifier>{9c0f5739-8d9d-46c2-bb91-90ca5beecc6d}</UniqueIdentifier>
+    <Filter Include="Header Files\cds\gc\impl">
+      <UniqueIdentifier>{3195cce2-1710-4b79-a1cf-6c7cea085fa3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1154,21 +1151,6 @@
     <ClInclude Include="..\..\..\cds\gc\dhp.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp\hp.h">
-      <Filter>Header Files\cds\gc\hp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\dhp\dhp_decl.h">
-      <Filter>Header Files\cds\gc\dhp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\dhp\dhp_impl.h">
-      <Filter>Header Files\cds\gc\dhp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp\hp_decl.h">
-      <Filter>Header Files\cds\gc\hp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp\hp_impl.h">
-      <Filter>Header Files\cds\gc\hp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\hp_const.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1186,6 +1168,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\details\dhp.h">
       <Filter>Header Files\cds\gc\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\impl\dhp_decl.h">
+      <Filter>Header Files\cds\gc\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\impl\dhp_impl.h">
+      <Filter>Header Files\cds\gc\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\impl\hp_decl.h">
+      <Filter>Header Files\cds\gc\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\impl\hp_impl.h">
+      <Filter>Header Files\cds\gc\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
