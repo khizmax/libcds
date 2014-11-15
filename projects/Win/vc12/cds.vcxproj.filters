@@ -1157,9 +1157,6 @@
     <ClInclude Include="..\..\..\cds\gc\hp\hp.h">
       <Filter>Header Files\cds\gc\hp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\dhp\dhp.h">
-      <Filter>Header Files\cds\gc\dhp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\dhp\dhp_decl.h">
       <Filter>Header Files\cds\gc\dhp</Filter>
     </ClInclude>
@@ -1185,6 +1182,9 @@
       <Filter>Header Files\cds\gc\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\details\hp.h">
+      <Filter>Header Files\cds\gc\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\details\dhp.h">
       <Filter>Header Files\cds\gc\details</Filter>
     </ClInclude>
   </ItemGroup>

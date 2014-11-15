@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_DHP_DHP_H
-#define __CDS_GC_DHP_DHP_H
+#ifndef __CDS_GC_DETAILS_DHP_H
+#define __CDS_GC_DETAILS_DHP_H
 
 #include <mutex>        // unique_lock
 #include <cds/cxx11_atomic.h>
@@ -67,36 +67,27 @@ namespace cds { namespace gc {
 
                 atomics::atomic<guarded_ptr>         pPost   ;   ///< pointer guarded
 
-#if 0
-                typedef cds::SpinLock   handoff_spin ;  ///< type of spin-lock for accessing to \p pHandOff field
-                handoff_spin    spinHandOff     ;   ///< access to \p pHandOff field
-                handoff_ptr     pHandOff        ;   ///< trapped pointer
-#endif
-
                 atomics::atomic<guard_data *>     pGlobalNext ;   ///< next item of global list of allocated guards
                 atomics::atomic<guard_data *>     pNextFree   ;   ///< pointer to the next item in global or thread-local free-list
 
                 guard_data *             pThreadNext ;   ///< next item of thread's local list of guards
 
                 //@cond
-                guard_data()
+                guard_data() CDS_NOEXCEPT
                     : pPost( nullptr )
-#if 0
-                    , pHandOff( nullptr )
-#endif
                     , pGlobalNext( nullptr )
                     , pNextFree( nullptr )
                     , pThreadNext( nullptr )
                 {}
 
-                void init()
+                void init() CDS_NOEXCEPT
                 {
                     pPost.store( nullptr, atomics::memory_order_relaxed );
                 }
                 //@endcond
 
                 /// Checks if the guard is free, that is, it does not contain any pointer guarded
-                bool isFree() const
+                bool isFree() const CDS_NOEXCEPT
                 {
                     return pPost.load( atomics::memory_order_acquire ) == nullptr;
                 }
@@ -141,7 +132,7 @@ namespace cds { namespace gc {
 
             public:
                 // Default ctor
-                guard_allocator()
+                guard_allocator() CDS_NOEXCEPT
                     : m_GuardList( nullptr )
                     , m_FreeGuardList( nullptr )
                 {}
@@ -179,7 +170,7 @@ namespace cds { namespace gc {
                 /**
                     The function places the guard \p pGuard into free-list
                 */
-                void free( guard_data * pGuard )
+                void free( guard_data * pGuard ) CDS_NOEXCEPT
                 {
                     pGuard->pPost.store( nullptr, atomics::memory_order_relaxed );
 
@@ -223,7 +214,7 @@ namespace cds { namespace gc {
 
                     cds::gc::dhp::ThreadGC supporting method
                 */
-                void freeList( guard_data * pList )
+                void freeList( guard_data * pList ) CDS_NOEXCEPT
                 {
                     assert( pList != nullptr );
 
@@ -241,7 +232,7 @@ namespace cds { namespace gc {
                 }
 
                 /// Returns the list's head of guards allocated
-                guard_data * begin()
+                guard_data * begin() CDS_NOEXCEPT
                 {
                     return m_GuardList.load(atomics::memory_order_acquire);
                 }
@@ -250,7 +241,7 @@ namespace cds { namespace gc {
             /// Retired pointer buffer
             /**
                 The buffer of retired nodes ready for liberating.
-                When size of buffer exceeds a threshold the GC calls \p liberate procedure to free
+                When size of buffer exceeds a threshold the GC calls \p scan() procedure to free
                 retired nodes.
             */
             class retired_ptr_buffer
@@ -260,19 +251,19 @@ namespace cds { namespace gc {
 
             public:
                 //@cond
-                retired_ptr_buffer()
+                CDS_CONSTEXPR retired_ptr_buffer() CDS_NOEXCEPT
                     : m_pHead( nullptr )
                     , m_nItemCount(0)
                 {}
 
-                ~retired_ptr_buffer()
+                ~retired_ptr_buffer() CDS_NOEXCEPT
                 {
                     assert( m_pHead.load( atomics::memory_order_relaxed ) == nullptr );
                 }
                 //@endcond
 
                 /// Pushes new node into the buffer. Returns current buffer size
-                size_t push( retired_ptr_node& node )
+                size_t push( retired_ptr_node& node ) CDS_NOEXCEPT
                 {
                     retired_ptr_node * pHead = m_pHead.load(atomics::memory_order_acquire);
                     do {
@@ -292,19 +283,19 @@ namespace cds { namespace gc {
                 /// Gets current list of retired pointer and clears the list
                 /**@anchor dhp_gc_privatve
                 */
-                privatize_result privatize()
+                privatize_result privatize() CDS_NOEXCEPT
                 {
                     privatize_result res;
                     res.first = m_pHead.exchange( nullptr, atomics::memory_order_acq_rel );
 
-                    // Item counter is needed only as a threshold for liberate function
+                    // Item counter is needed only as a threshold for \p scan() function
                     // So, we may clear the item counter without synchronization with m_pHead
                     res.second = m_nItemCount.exchange( 0, atomics::memory_order_relaxed );
                     return res;
                 }
 
                 /// Returns current size of buffer (approximate)
-                size_t size() const
+                size_t size() const CDS_NOEXCEPT
                 {
                     return m_nItemCount.load(atomics::memory_order_relaxed);
                 }
@@ -372,11 +363,12 @@ namespace cds { namespace gc {
                     }
                 }
 
-                unsigned int current_epoch() const
+                unsigned int current_epoch() const CDS_NOEXCEPT
                 {
                     return m_nCurEpoch.load(atomics::memory_order_acquire) & (c_nEpochCount - 1);
                 }
-                unsigned int next_epoch() const
+
+                unsigned int next_epoch() const CDS_NOEXCEPT
                 {
                     return (m_nCurEpoch.load(atomics::memory_order_acquire) - 1) & (c_nEpochCount - 1);
                 }
@@ -405,7 +397,7 @@ namespace cds { namespace gc {
                 }
 
                 /// Increments current epoch
-                void inc_epoch()
+                void inc_epoch() CDS_NOEXCEPT
                 {
                     m_nCurEpoch.fetch_add( 1, atomics::memory_order_acq_rel );
                 }
@@ -424,14 +416,6 @@ namespace cds { namespace gc {
                         if ( m_pEpochFree[nEpoch].compare_exchange_weak( pItem, pItem->m_pNextFree, atomics::memory_order_release, atomics::memory_order_relaxed ))
                             goto success;
                     }
-
-                    /*
-                    item * pItem = m_pEpochFree[ nEpoch = current_epoch() ].load(atomics::memory_order_acquire);
-                    while ( pItem ) {
-                        if ( m_pEpochFree[nEpoch].compare_exchange_weak( pItem, pItem->m_pNextFree, atomics::memory_order_release, atomics::memory_order_relaxed ))
-                            goto success;
-                    }
-                    */
 
                     // Epoch free list is empty
                     // Alloc from global free list
@@ -462,7 +446,7 @@ namespace cds { namespace gc {
                 /**
                     The list is linked on the m_pNextFree field
                 */
-                void free_range( retired_ptr_node * pHead, retired_ptr_node * pTail )
+                void free_range( retired_ptr_node * pHead, retired_ptr_node * pTail ) CDS_NOEXCEPT
                 {
                     assert( pHead != nullptr );
                     assert( pTail != nullptr );
@@ -484,7 +468,7 @@ namespace cds { namespace gc {
                 details::guard_data * m_pGuard ;    ///< Pointer to guard data
             public:
                 /// Initialize empty guard.
-                guard()
+                CDS_CONSTEXPR guard() CDS_NOEXCEPT
                     : m_pGuard( nullptr )
                 {}
 
@@ -492,11 +476,11 @@ namespace cds { namespace gc {
                 guard( guard const& ) = delete;
 
                 /// Object destructor, does nothing
-                ~guard()
+                ~guard() CDS_NOEXCEPT
                 {}
 
                 /// Guards pointer \p p
-                void set( void * p )
+                void set( void * p ) CDS_NOEXCEPT
                 {
                     assert( m_pGuard != nullptr );
                     m_pGuard->pPost.store( p, atomics::memory_order_release );
@@ -504,7 +488,7 @@ namespace cds { namespace gc {
                 }
 
                 /// Clears the guard
-                void clear()
+                void clear() CDS_NOEXCEPT
                 {
                     assert( m_pGuard != nullptr );
                     m_pGuard->pPost.store( nullptr, atomics::memory_order_relaxed );
@@ -513,14 +497,14 @@ namespace cds { namespace gc {
 
                 /// Guards pointer \p p
                 template <typename T>
-                T * operator =( T * p )
+                T * operator =(T * p) CDS_NOEXCEPT
                 {
                     set( reinterpret_cast<void *>( const_cast<T *>(p) ));
                     return p;
                 }
 
                 //@cond
-                std::nullptr_t operator=(std::nullptr_t)
+                std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
                 {
                     clear();
                     return nullptr;
@@ -536,19 +520,19 @@ namespace cds { namespace gc {
                     Therefore, we have to add set_guard/get_guard public functions
                 */
                 /// Set guard data
-                void set_guard( details::guard_data * pGuard )
+                void set_guard( details::guard_data * pGuard ) CDS_NOEXCEPT
                 {
                     assert( m_pGuard == nullptr );
                     m_pGuard = pGuard;
                 }
 
                 /// Get current guard data
-                details::guard_data * get_guard()
+                details::guard_data * get_guard() CDS_NOEXCEPT
                 {
                     return m_pGuard;
                 }
                 /// Get current guard data
-                details::guard_data * get_guard() const
+                details::guard_data * get_guard() const CDS_NOEXCEPT
                 {
                     return m_pGuard;
                 }
@@ -571,26 +555,26 @@ namespace cds { namespace gc {
             ThreadGC&    m_gc    ;    ///< ThreadGC object of current thread
         public:
             /// Allocates a guard from \p gc GC. \p gc must be ThreadGC object of current thread
-            Guard(ThreadGC& gc);
+            Guard( ThreadGC& gc ) CDS_NOEXCEPT;
 
             /// Returns guard allocated back to pool of free guards
-            ~Guard();    // inline after GarbageCollector
+            ~Guard() CDS_NOEXCEPT;    // inline after GarbageCollector
 
             /// Returns DHP GC object
-            ThreadGC& getGC()
+            ThreadGC& getGC() CDS_NOEXCEPT
             {
                 return m_gc;
             }
 
             /// Guards pointer \p p
             template <typename T>
-            T * operator =( T * p )
+            T * operator =(T * p) CDS_NOEXCEPT
             {
                 return base_class::operator =<T>( p );
             }
 
             //@cond
-            std::nullptr_t operator=(std::nullptr_t)
+            std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
             {
                 return base_class::operator =(nullptr);
             }
@@ -618,7 +602,7 @@ namespace cds { namespace gc {
 
         public:
             /// Allocates array of guards from \p gc which must be the ThreadGC object of current thread
-            GuardArray( ThreadGC& gc )    ;    // inline below
+            GuardArray( ThreadGC& gc ) CDS_NOEXCEPT;    // inline below
 
             /// The object is not default-constructible
             GuardArray() = delete;
@@ -627,7 +611,7 @@ namespace cds { namespace gc {
             GuardArray( GuardArray const& ) = delete;
 
             /// Returns guards allocated back to pool
-            ~GuardArray()    ;    // inline below
+            ~GuardArray() CDS_NOEXCEPT;    // inline below
 
             /// Returns the capacity of array
             CDS_CONSTEXPR size_t capacity() const CDS_NOEXCEPT
@@ -642,14 +626,14 @@ namespace cds { namespace gc {
             }
 
             /// Returns reference to the guard of index \p nIndex (0 <= \p nIndex < \p Count)
-            details::guard& operator []( size_t nIndex )
+            details::guard& operator []( size_t nIndex ) CDS_NOEXCEPT
             {
                 assert( nIndex < capacity() );
                 return m_arr[nIndex];
             }
 
             /// Returns reference to the guard of index \p nIndex (0 <= \p nIndex < \p Count) [const version]
-            const details::guard& operator []( size_t nIndex ) const
+            const details::guard& operator []( size_t nIndex ) const CDS_NOEXCEPT
             {
                 assert( nIndex < capacity() );
                 return m_arr[nIndex];
@@ -657,21 +641,21 @@ namespace cds { namespace gc {
 
             /// Set the guard \p nIndex. 0 <= \p nIndex < \p Count
             template <typename T>
-            void set( size_t nIndex, T * p )
+            void set( size_t nIndex, T * p ) CDS_NOEXCEPT
             {
                 assert( nIndex < capacity() );
                 m_arr[nIndex].set( p );
             }
 
             /// Clears (sets to \p nullptr) the guard \p nIndex
-            void clear( size_t nIndex )
+            void clear( size_t nIndex ) CDS_NOEXCEPT
             {
                 assert( nIndex < capacity() );
                 m_arr[nIndex].clear();
             }
 
             /// Clears all guards in the array
-            void clearAll()
+            void clearAll() CDS_NOEXCEPT
             {
                 for ( size_t i = 0; i < capacity(); ++i )
                     clear(i);
@@ -730,9 +714,8 @@ namespace cds { namespace gc {
             details::guard_allocator<>      m_GuardPool         ;   ///< Guard pool
             details::retired_ptr_pool<>     m_RetiredAllocator  ;   ///< Pool of free retired pointers
             details::retired_ptr_buffer     m_RetiredBuffer     ;   ///< Retired pointer buffer for liberating
-            //atomics::atomic<size_t>      m_nInLiberate       ;   ///< number of parallel \p liberate fnction call
 
-            atomics::atomic<size_t>      m_nLiberateThreshold;   ///< Max size of retired pointer buffer to call liberate
+            atomics::atomic<size_t>      m_nLiberateThreshold;   ///< Max size of retired pointer buffer to call \p scan()
             const size_t    m_nInitialThreadGuardCount; ///< Initial count of guards allocated for ThreadGC
 
             internal_stat   m_stat  ;   ///< Internal statistics
@@ -747,9 +730,9 @@ namespace cds { namespace gc {
                 After calling of this function you may use CDS data structures based on cds::gc::DHP.
 
                 \par Parameters
-                \li \p nLiberateThreshold - the liberate threshold. When count of retired pointers reaches this value,
-                    the \ref dhp_gc_liberate "liberate" member function would be called for freeing retired pointers.
-                    If \p nLiberateThreshold <= 1, \p liberate would called after each \ref dhp_gc_retirePtr "retirePtr" call.
+                \li \p nLiberateThreshold - \p scan() threshold. When count of retired pointers reaches this value,
+                    the \ref dhp_gc_liberate "scan()" member function would be called for freeing retired pointers.
+                    If \p nLiberateThreshold <= 1, \p scan() would called after each \ref dhp_gc_retirePtr "retirePtr" call.
                 \li \p nInitialThreadGuardCount - initial count of guard allocated for ThreadGC. When a thread
                     is initialized the GC allocates local guard pool for the thread from common guard pool.
                     By perforce the local thread's guard pool is grown automatically from common pool.
@@ -827,7 +810,7 @@ namespace cds { namespace gc {
             void retirePtr( retired_ptr const& p )
             {
                 if ( m_RetiredBuffer.push( m_RetiredAllocator.alloc(p)) >= m_nLiberateThreshold.load(atomics::memory_order_relaxed) )
-                    liberate();
+                    scan();
             }
 
         protected:
@@ -836,16 +819,8 @@ namespace cds { namespace gc {
                 The main function of Dynamic Hazard Pointer algorithm. It tries to free retired pointers if they are not
                 trapped by any guard.
             */
-            void liberate();
-
+            void scan();
             //@}
-
-        private:
-            //@cond
-#if 0
-            void liberate( details::liberate_set& set );
-#endif
-            //@endcond
 
         public:
             /// Get internal statistics
@@ -1003,7 +978,7 @@ namespace cds { namespace gc {
             //@cond
             void scan()
             {
-                m_gc.liberate();
+                m_gc.scan();
             }
             //@endcond
 
@@ -1041,5 +1016,4 @@ namespace cds { namespace gc {
 #   pragma warning(pop)
 #endif
 
-
-#endif // #ifndef __CDS_GC_DHP_DHP_H
+#endif // #ifndef __CDS_GC_DETAILS_DHP_H

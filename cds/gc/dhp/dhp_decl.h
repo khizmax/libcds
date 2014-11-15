@@ -3,7 +3,7 @@
 #ifndef __CDS_GC_DHP_DHP_DECL_H
 #define __CDS_GC_DHP_DHP_DECL_H
 
-#include <cds/gc/dhp/dhp.h>
+#include <cds/gc/details/dhp.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/details/static_functor.h>
 

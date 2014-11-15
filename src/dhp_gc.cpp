@@ -5,7 +5,7 @@
 #include <algorithm>   // std::fill
 #include <functional>  // std::hash
 
-#include <cds/gc/dhp/dhp.h>
+#include <cds/gc/details/dhp.h>
 #include <cds/algo/int_algo.h>
 
 namespace cds { namespace gc { namespace dhp {
@@ -162,10 +162,10 @@ namespace cds { namespace gc { namespace dhp {
 
     GarbageCollector::~GarbageCollector()
     {
-        liberate();
+        scan();
     }
 
-    void GarbageCollector::liberate()
+    void GarbageCollector::scan()
     {
         details::retired_ptr_buffer::privatize_result retiredList = m_RetiredBuffer.privatize();
         if ( retiredList.first ) {
@@ -214,7 +214,7 @@ namespace cds { namespace gc { namespace dhp {
                 m_RetiredAllocator.free_range( range.first, range.second );
             }
             else {
-                // liberate cycle did not free any retired pointer - double liberate threshold
+                // scan() cycle did not free any retired pointer - double scan() threshold
                 m_nLiberateThreshold.compare_exchange_strong( nLiberateThreshold, nLiberateThreshold * 2, atomics::memory_order_release, atomics::memory_order_relaxed );
             }
         }
