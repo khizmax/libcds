@@ -4,7 +4,7 @@
 #define __CDS_GC_HP_HP_DECL_H
 
 #include <stdexcept>    // overflow_error
-#include <cds/gc/hp/hp.h>
+#include <cds/gc/details/hp.h>
 #include <cds/details/marked_ptr.h>
 
 namespace cds { namespace gc {
@@ -86,12 +86,12 @@ namespace cds { namespace gc {
         /// Hazard Pointer guard
         /**
             @headerfile cds/gc/hp.h
-            This class is a wrapper for hp::AutoHPGuard.
+            This class is a wrapper for \p hp::guard.
         */
-        class Guard : public hp::AutoHPGuard
+        class Guard : public hp::guard
         {
             //@cond
-            typedef hp::AutoHPGuard base_class;
+            typedef hp::guard base_class;
             //@endcond
 
         public:
@@ -206,14 +206,14 @@ namespace cds { namespace gc {
         /// Array of Hazard Pointer guards
         /**
             @headerfile cds/gc/hp.h
-            This class is a wrapper for hp::AutoHPArray template.
+            This class is a wrapper for \p hp::array template.
             Template parameter \p Count defines the size of HP array.
         */
         template <size_t Count>
-        class GuardArray : public hp::AutoHPArray<Count>
+        class GuardArray : public hp::array<Count>
         {
             //@cond
-            typedef hp::AutoHPArray<Count> base_class;
+            typedef hp::array<Count> base_class;
             //@endcond
         public:
             /// Rebind array for other size \p Count2

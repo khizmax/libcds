@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HP_DETAILS_HP_TYPE_H
-#define __CDS_GC_HP_DETAILS_HP_TYPE_H
+#ifndef __CDS_GC_DETAILS_HP_TYPE_H
+#define __CDS_GC_DETAILS_HP_TYPE_H
 
 #include <cds/gc/details/retired_ptr.h> // free_retired_ptr_func
 
@@ -18,6 +18,6 @@ namespace cds {
     }
 }
 
-#endif // #ifndef __CDS_GC_HP_DETAILS_HP_TYPE_H
+#endif // #ifndef __CDS_GC_DETAILS_HP_TYPE_H
 
 

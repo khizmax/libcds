@@ -9,7 +9,7 @@
         2008.02.10    Maxim.Khiszinsky    Created
 */
 
-#include <cds/gc/hp/hp.h>
+#include <cds/gc/details/hp.h>
 
 #include <algorithm>    // std::sort
 #include "hp_const.h"
@@ -103,7 +103,7 @@ namespace cds { namespace gc {
             p.free();
         }
 
-        details::hp_record * GarbageCollector::AllocateHPRec()
+        details::hp_record * GarbageCollector::alloc_hp_record()
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocHPRec );
 
@@ -136,7 +136,7 @@ namespace cds { namespace gc {
             return hprec;
         }
 
-        void GarbageCollector::RetireHPRec( details::hp_record * pRec )
+        void GarbageCollector::free_hp_record( details::hp_record * pRec )
         {
             assert( pRec != nullptr );
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_RetireHPRec );
@@ -154,7 +154,7 @@ namespace cds { namespace gc {
             for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_acquire); hprec; hprec = pNext ) {
                 pNext = hprec->m_pNextNode;
                 if ( hprec->m_idOwner.load(atomics::memory_order_relaxed) != nullThreadId ) {
-                    RetireHPRec( hprec );
+                    free_hp_record( hprec );
                 }
             }
         }

@@ -1,14 +1,14 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HP_HP_H
-#define __CDS_GC_HP_HP_H
+#ifndef __CDS_GC_DETAILS_HP_H
+#define __CDS_GC_DETAILS_HP_H
 
 #include <cds/cxx11_atomic.h>
 #include <cds/os/thread.h>
 #include <cds/details/bounded_array.h>
 
-#include <cds/gc/hp/details/hp_type.h>
-#include <cds/gc/hp/details/hp_alloc.h>
+#include <cds/gc/details/hp_type.h>
+#include <cds/gc/details/hp_alloc.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
@@ -460,10 +460,10 @@ namespace cds {
         public:    // Internals for threads
 
             /// Allocates Hazard Pointer GC record. For internal use only
-            details::hp_record * AllocateHPRec();
+            details::hp_record * alloc_hp_record();
 
             /// Free HP record. For internal use only
-            void RetireHPRec( details::hp_record * pRec );
+            void free_hp_record( details::hp_record * pRec );
 
             /// The main garbage collecting function
             /**
@@ -570,7 +570,7 @@ namespace cds {
             void init()
             {
                 if ( !m_pHzpRec )
-                    m_pHzpRec = m_HzpManager.AllocateHPRec();
+                    m_pHzpRec = m_HzpManager.alloc_hp_record();
             }
 
             /// Finalization. Repeat call is available
@@ -579,7 +579,7 @@ namespace cds {
                 if ( m_pHzpRec ) {
                     details::hp_record * pRec = m_pHzpRec;
                     m_pHzpRec = nullptr;
-                    m_HzpManager.RetireHPRec( pRec );
+                    m_HzpManager.free_hp_record( pRec );
                 }
             }
 
@@ -617,11 +617,26 @@ namespace cds {
             template <typename T>
             void retirePtr( T * p, void (* pFunc)(T *) )
             {
+                /*
+                union {
+                    T * p;
+                    hazard_pointer hp;
+                } cast_ptr;
+                cast_ptr.p = p;
+
+                uinion{
+                    void( *pFunc )(T *);
+                    free_retired_ptr_func hpFunc;
+                } cast_func;
+                cast_func.pFunc = pFunc;
+
+                retirePtr( details::retired_ptr( cast_ptr.hp, cast_func.hpFunc ) );
+                */
                 retirePtr( details::retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ) ) );
             }
 
             /// Places retired pointer \p into thread's array of retired pointer for deferred reclamation
-            void retirePtr( const details::retired_ptr& p )
+            void retirePtr( details::retired_ptr const& p )
             {
                 m_pHzpRec->m_arrRetired.push( p );
 
@@ -643,9 +658,10 @@ namespace cds {
         /// Auto hp_guard.
         /**
             This class encapsulates Hazard Pointer guard to protect a pointer against deletion .
-            It allocates one HP from thread's HP array in constructor and free the HP allocated in destruction time.
+            It allocates one HP from thread's HP array in constructor and free the hazard pointer allocated 
+            in destructor.
         */
-        class AutoHPGuard
+        class guard
         {
             //@cond
             details::hp_guard&   m_hp    ; ///< Hazard pointer guarded
@@ -656,14 +672,14 @@ namespace cds {
             typedef details::hp_guard::hazard_ptr hazard_ptr ;  ///< Hazard pointer type
         public:
             /// Allocates HP guard from \p gc
-            AutoHPGuard( ThreadGC& gc )
+            guard( ThreadGC& gc )
                 : m_hp( gc.allocGuard() )
                 , m_gc( gc )
             {}
 
             /// Allocates HP guard from \p gc and protects the pointer \p p of type \p T
             template <typename T>
-            AutoHPGuard( ThreadGC& gc, T * p  )
+            guard( ThreadGC& gc, T * p )
                 : m_hp( gc.allocGuard() )
                 , m_gc( gc )
             {
@@ -671,7 +687,7 @@ namespace cds {
             }
 
             /// Frees HP guard. The pointer guarded may be deleted after this.
-            ~AutoHPGuard()
+            ~guard()
             {
                 m_gc.freeGuard( m_hp );
             }
@@ -708,7 +724,7 @@ namespace cds {
             \p Count is the size of HP array
         */
         template <size_t Count>
-        class AutoHPArray : public details::hp_array<Count>
+        class array : public details::hp_array<Count>
         {
             ThreadGC&    m_mgr    ;    ///< Thread GC
 
@@ -716,19 +732,19 @@ namespace cds {
             /// Rebind array for other size \p COUNT2
             template <size_t Count2>
             struct rebind {
-                typedef AutoHPArray<Count2>  other   ;   ///< rebinding result
+                typedef array<Count2>  other;   ///< rebinding result
             };
 
         public:
             /// Allocates array of HP guard from \p mgr
-            AutoHPArray( ThreadGC& mgr )
+            array( ThreadGC& mgr )
                 : m_mgr( mgr )
             {
                 mgr.allocGuard( *this );
             }
 
             /// Frees array of HP guard
-            ~AutoHPArray()
+            ~array()
             {
                 m_mgr.freeGuard( *this );
             }
@@ -741,10 +757,10 @@ namespace cds {
 }}  // namespace cds::gc
 
 // Inlines
-#include <cds/gc/hp/details/hp_inline.h>
+#include <cds/gc/details/hp_inline.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(pop)
 #endif
 
-#endif  // #ifndef __CDS_GC_HP_HP_H
+#endif  // #ifndef __CDS_GC_DETAILS_HP_H

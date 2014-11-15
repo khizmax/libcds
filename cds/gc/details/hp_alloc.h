@@ -1,11 +1,11 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HP_DETAILS_HP_ALLOC_H
-#define __CDS_GC_HP_DETAILS_HP_ALLOC_H
+#ifndef __CDS_GC_DETAILS_HP_ALLOC_H
+#define __CDS_GC_DETAILS_HP_ALLOC_H
 
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
-#include <cds/gc/hp/details/hp_type.h>
+#include <cds/gc/details/hp_type.h>
 
 //@cond
 namespace cds {
@@ -20,7 +20,7 @@ namespace cds {
         /// Hazard pointer guard
         /**
             It is unsafe to use this class directly.
-            Instead, the AutoHPGuard class should be used.
+            Instead, the \p hp::guard class should be used.
         */
         class hp_guard : protected atomics::atomic < hazard_pointer >
         {
@@ -104,7 +104,7 @@ namespace cds {
             Template parameter \p Count defines the size of hazard pointer array. \p Count parameter should not exceed
             GarbageCollector::getHazardPointerCount().
 
-            It is unsafe to use this class directly. Instead, the AutoHPArray should be used.
+            It is unsafe to use this class directly. Instead, the \p hp::array should be used.
 
             While creating the object of \p hp_array class an array of size \p Count of hazard pointers is reserved by
             the HP Manager of current thread. The object's destructor cleans all of reserved hazard pointer and
@@ -317,4 +317,4 @@ namespace cds {
 }   // namespace cds
 //@endcond
 
-#endif // #ifndef __CDS_GC_HP_DETAILS_HP_ALLOC_H
+#endif // #ifndef __CDS_GC_DETAILS_HP_ALLOC_H
