@@ -864,7 +864,7 @@ namespace tree {
                 CPPUNIT_ASSERT( ep.empty() );
 
                 ep = t.extract_max();
-                CPPUNIT_ASSERT( ep.empty());
+                CPPUNIT_ASSERT( !ep.empty());
                 CPPUNIT_CHECK( ep->nKey == v3.nKey );
                 {
                     typename tree_type::rcu_lock l;
