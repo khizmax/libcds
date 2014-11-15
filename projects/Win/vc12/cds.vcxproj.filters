@@ -1157,13 +1157,7 @@
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_alloc.h">
       <Filter>Header Files\cds\gc\hp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp\details\hp_fwd.h">
-      <Filter>Header Files\cds\gc\hp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_inline.h">
-      <Filter>Header Files\cds\gc\hp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp\details\hp_retired.h">
       <Filter>Header Files\cds\gc\hp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_type.h">

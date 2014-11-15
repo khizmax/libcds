@@ -3,12 +3,12 @@
 #ifndef __CDS_GC_HP_HP_H
 #define __CDS_GC_HP_HP_H
 
-#include <vector>
 #include <cds/cxx11_atomic.h>
 #include <cds/os/thread.h>
-#include <cds/gc/hp/details/hp_fwd.h>
+#include <cds/details/bounded_array.h>
+
+#include <cds/gc/hp/details/hp_type.h>
 #include <cds/gc/hp/details/hp_alloc.h>
-#include <cds/gc/hp/details/hp_retired.h>
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma warning(push)
@@ -88,30 +88,116 @@ namespace cds {
         - [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects"
         - [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers"
 
-
-        The cds::gc::hp namespace and its members are internal representation of Hazard Pointer GC and should not be used directly.
-        Use cds::gc::HP class in your code.
+        The \p cds::gc::hp namespace and its members are internal representation of Hazard Pointer GC and should not be used directly.
+        Use \p cds::gc::HP class in your code.
 
         Hazard Pointer garbage collector is a singleton. The main user-level part of Hazard Pointer schema is
         GC class and its nested classes. Before use any HP-related class you must initialize HP garbage collector
-        by contructing cds::gc::HP object in beginning of your main().
-        See cds::gc::HP class for explanation.
+        by contructing \p cds::gc::HP object in beginning of your \p main().
+        See \p cds::gc::HP class for explanation.
     */
     namespace hp {
 
+        // forwards
+        class GarbageCollector;
+        class ThreadGC;
+
         namespace details {
+
+            /// Retired pointer
+            typedef cds::gc::details::retired_ptr   retired_ptr;
+
+            /// Array of retired pointers
+            /**
+                The vector of retired pointer ready to delete.
+
+                The Hazard Pointer schema is build on thread-static arrays. For each HP-enabled thread the HP manager allocates
+                array of retired pointers. The array belongs to the thread: owner thread writes to the array, other threads
+                just read it.
+            */
+            class retired_vector {
+                /// Underlying vector implementation
+                typedef cds::details::bounded_array<retired_ptr>    retired_vector_impl;
+
+                retired_vector_impl m_arr   ;   ///< the array of retired pointers
+                size_t              m_nSize ;   ///< Current size of \p m_arr
+
+            public:
+                /// Iterator
+                typedef    retired_vector_impl::iterator    iterator;
+
+                /// Constructor
+                retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ) CDS_NOEXCEPT; // inline
+                ~retired_vector()
+                {}
+
+                /// Vector capacity.
+                /**
+                    The capacity is constant for any thread. It is defined by cds::gc::hp::GarbageCollector.
+                */
+                size_t capacity() const CDS_NOEXCEPT
+                { 
+                    return m_arr.capacity(); 
+                }
+
+                /// Current vector size (count of retired pointers in the vector)
+                size_t size() const CDS_NOEXCEPT
+                { 
+                    return m_nSize; 
+                }
+
+                /// Set vector size. Uses internally
+                void size( size_t nSize )
+                {
+                    assert( nSize <= capacity() );
+                    m_nSize = nSize;
+                }
+
+                /// Pushes retired pointer to the vector
+                void push( const retired_ptr& p )
+                {
+                    assert( m_nSize < capacity() );
+                    m_arr[ m_nSize ] = p;
+                    ++m_nSize;
+                }
+
+                /// Checks if the vector is full (size() == capacity() )
+                bool isFull() const CDS_NOEXCEPT
+                {
+                    return m_nSize >= capacity();
+                }
+
+                /// Begin iterator
+                iterator    begin() CDS_NOEXCEPT
+                { 
+                    return m_arr.begin(); 
+                }
+
+                /// End iterator
+                iterator    end() CDS_NOEXCEPT
+                { 
+                    return m_arr.begin() +  m_nSize ; 
+                }
+
+                /// Clears the vector. After clearing, size() == 0
+                void clear() CDS_NOEXCEPT
+                {
+                    m_nSize = 0;
+                }
+            };
+
             /// Hazard pointer record of the thread
             /**
                 The structure of type "single writer - multiple reader": only the owner thread may write to this structure
                 other threads have read-only access.
             */
-            struct HPRec {
-                HPAllocator<hazard_pointer>    m_hzp        ; ///< array of hazard pointers. Implicit \ref CDS_DEFAULT_ALLOCATOR dependency
-                retired_vector            m_arrRetired ; ///< Retired pointer array
+            struct hp_record {
+                hp_allocator<>    m_hzp; ///< array of hazard pointers. Implicit \ref CDS_DEFAULT_ALLOCATOR dependency
+                retired_vector    m_arrRetired ; ///< Retired pointer array
 
                 /// Ctor
-                HPRec( const cds::gc::hp::GarbageCollector& HzpMgr );    // inline
-                ~HPRec()
+                hp_record( const cds::gc::hp::GarbageCollector& HzpMgr );    // inline
+                ~hp_record()
                 {}
 
                 /// Clears all hazard pointers
@@ -158,10 +244,10 @@ namespace cds {
                 size_t              nTotalRetiredPtrCount   ;   ///< Current total count of retired pointers
                 size_t              nRetiredPtrInFreeHPRecs ;   ///< Count of retired pointer in free (unused) HP records
 
-                event_counter::value_type   evcAllocHPRec   ;   ///< Count of HPRec allocations
-                event_counter::value_type   evcRetireHPRec  ;   ///< Count of HPRec retire events
-                event_counter::value_type   evcAllocNewHPRec;   ///< Count of new HPRec allocations from heap
-                event_counter::value_type   evcDeleteHPRec  ;   ///< Count of HPRec deletions
+                event_counter::value_type   evcAllocHPRec   ;   ///< Count of \p hp_record allocations
+                event_counter::value_type   evcRetireHPRec  ;   ///< Count of \p hp_record retire events
+                event_counter::value_type   evcAllocNewHPRec;   ///< Count of new \p hp_record allocations from heap
+                event_counter::value_type   evcDeleteHPRec  ;   ///< Count of \p hp_record deletions
 
                 event_counter::value_type   evcScanCall     ;   ///< Count of Scan calling
                 event_counter::value_type   evcHelpScanCall ;   ///< Count of HelpScan calling
@@ -180,10 +266,10 @@ namespace cds {
         private:
             /// Internal GC statistics
             struct Statistics {
-                event_counter  m_AllocHPRec            ;    ///< Count of HPRec allocations
-                event_counter  m_RetireHPRec            ;    ///< Count of HPRec retire events
-                event_counter  m_AllocNewHPRec            ;    ///< Count of new HPRec allocations from heap
-                event_counter  m_DeleteHPRec            ;    ///< Count of HPRec deletions
+                event_counter  m_AllocHPRec            ;    ///< Count of \p hp_record allocations
+                event_counter  m_RetireHPRec            ;    ///< Count of \p hp_record retire events
+                event_counter  m_AllocNewHPRec            ;    ///< Count of new \p hp_record allocations from heap
+                event_counter  m_DeleteHPRec            ;    ///< Count of \p hp_record deletions
 
                 event_counter  m_ScanCallCount            ;    ///< Count of Scan calling
                 event_counter  m_HelpScanCallCount        ;    ///< Count of HelpScan calling
@@ -193,8 +279,8 @@ namespace cds {
                 event_counter  m_DeferredNode            ;    ///< Count of objects that cannot be deleted in Scan phase because of a hazard_pointer guards it
             };
 
-            /// Internal list of cds::gc::hp::details::HPRec
-            struct hplist_node: public details::HPRec
+            /// Internal list of cds::gc::hp::details::hp_record
+            struct hplist_node : public details::hp_record
             {
                 hplist_node *                       m_pNextNode ; ///< next hazard ptr record in list
                 atomics::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
@@ -202,7 +288,7 @@ namespace cds {
 
                 //@cond
                 hplist_node( const GarbageCollector& HzpMgr )
-                    : HPRec( HzpMgr ),
+                    : hp_record( HzpMgr ),
                     m_pNextNode( nullptr ),
                     m_idOwner( OS::c_NullThreadId ),
                     m_bFree( true )
@@ -305,19 +391,28 @@ namespace cds {
             }
 
             /// Checks if global GC object is constructed and may be used
-            static bool isUsed()
+            static bool isUsed() CDS_NOEXCEPT
             {
                 return m_pHZPManager != nullptr;
             }
 
             /// Returns max Hazard Pointer count defined in construction time
-            size_t            getHazardPointerCount() const        { return m_nHazardPointerCount; }
+            size_t            getHazardPointerCount() const CDS_NOEXCEPT
+            { 
+                return m_nHazardPointerCount; 
+            }
 
             /// Returns max thread count defined in construction time
-            size_t            getMaxThreadCount() const             { return m_nMaxThreadCount; }
+            size_t            getMaxThreadCount() const CDS_NOEXCEPT
+            { 
+                return m_nMaxThreadCount; 
+            }
 
             /// Returns max size of retired objects array. It is defined in construction time
-            size_t            getMaxRetiredPtrCount() const        { return m_nMaxRetiredPtrCount; }
+            size_t            getMaxRetiredPtrCount() const CDS_NOEXCEPT
+            { 
+                return m_nMaxRetiredPtrCount; 
+            }
 
             // Internal statistics
 
@@ -365,10 +460,10 @@ namespace cds {
         public:    // Internals for threads
 
             /// Allocates Hazard Pointer GC record. For internal use only
-            details::HPRec * AllocateHPRec();
+            details::hp_record * AllocateHPRec();
 
             /// Free HP record. For internal use only
-            void RetireHPRec( details::HPRec * pRec );
+            void RetireHPRec( details::hp_record * pRec );
 
             /// The main garbage collecting function
             /**
@@ -381,7 +476,7 @@ namespace cds {
 
                 Use \ref hzp_gc_setScanType "setScanType" member function to setup appropriate scan algorithm.
             */
-            void Scan( details::HPRec * pRec )
+            void Scan( details::hp_record * pRec )
             {
                 switch ( m_nScanType ) {
                     case inplace:
@@ -404,7 +499,7 @@ namespace cds {
 
                 The function is called internally by Scan.
             */
-            void HelpScan( details::HPRec * pThis );
+            void HelpScan( details::hp_record * pThis );
 
         protected:
             /// Classic scan algorithm
@@ -431,14 +526,14 @@ namespace cds {
                 This function is called internally by ThreadGC object when upper bound of thread's list of reclaimed pointers
                 is reached.
             */
-            void classic_scan( details::HPRec * pRec );
+            void classic_scan( details::hp_record * pRec );
 
             /// In-place scan algorithm
             /** @anchor hzp_gc_inplace_scan
                 Unlike the \ref hzp_gc_classic_scan "classic_scan" algorithm, \p inplace_scan does not allocate any memory.
                 All operations are performed in-place.
             */
-            void inplace_scan( details::HPRec * pRec );
+            void inplace_scan( details::hp_record * pRec );
         };
 
         /// Thread's hazard pointer manager
@@ -450,8 +545,8 @@ namespace cds {
         */
         class ThreadGC
         {
-            GarbageCollector&   m_HzpManager    ; ///< Hazard Pointer GC singleton
-            details::HPRec *    m_pHzpRec       ; ///< Pointer to thread's HZP record
+            GarbageCollector&    m_HzpManager; ///< Hazard Pointer GC singleton
+            details::hp_record * m_pHzpRec;    ///< Pointer to thread's HZP record
 
         public:
             /// Default constructor
@@ -482,21 +577,21 @@ namespace cds {
             void fini()
             {
                 if ( m_pHzpRec ) {
-                    details::HPRec * pRec = m_pHzpRec;
+                    details::hp_record * pRec = m_pHzpRec;
                     m_pHzpRec = nullptr;
                     m_HzpManager.RetireHPRec( pRec );
                 }
             }
 
             /// Initializes HP guard \p guard
-            details::HPGuard& allocGuard()
+            details::hp_guard& allocGuard()
             {
                 assert( m_pHzpRec );
                 return m_pHzpRec->m_hzp.alloc();
             }
 
             /// Frees HP guard \p guard
-            void freeGuard( details::HPGuard& guard )
+            void freeGuard( details::hp_guard& guard )
             {
                 assert( m_pHzpRec );
                 m_pHzpRec->m_hzp.free( guard );
@@ -504,7 +599,7 @@ namespace cds {
 
             /// Initializes HP guard array \p arr
             template <size_t Count>
-            void allocGuard( details::HPArray<Count>& arr )
+            void allocGuard( details::hp_array<Count>& arr )
             {
                 assert( m_pHzpRec );
                 m_pHzpRec->m_hzp.alloc( arr );
@@ -512,7 +607,7 @@ namespace cds {
 
             /// Frees HP guard array \p arr
             template <size_t Count>
-            void freeGuard( details::HPArray<Count>& arr )
+            void freeGuard( details::hp_array<Count>& arr )
             {
                 assert( m_pHzpRec );
                 m_pHzpRec->m_hzp.free( arr );
@@ -545,7 +640,7 @@ namespace cds {
             //@endcond
         };
 
-        /// Auto HPGuard.
+        /// Auto hp_guard.
         /**
             This class encapsulates Hazard Pointer guard to protect a pointer against deletion .
             It allocates one HP from thread's HP array in constructor and free the HP allocated in destruction time.
@@ -553,12 +648,12 @@ namespace cds {
         class AutoHPGuard
         {
             //@cond
-            details::HPGuard&   m_hp    ; ///< Hazard pointer guarded
+            details::hp_guard&   m_hp    ; ///< Hazard pointer guarded
             ThreadGC&           m_gc    ; ///< Thread GC
             //@endcond
 
         public:
-            typedef details::HPGuard::hazard_ptr hazard_ptr ;  ///< Hazard pointer type
+            typedef details::hp_guard::hazard_ptr hazard_ptr ;  ///< Hazard pointer type
         public:
             /// Allocates HP guard from \p gc
             AutoHPGuard( ThreadGC& gc )
@@ -609,11 +704,11 @@ namespace cds {
 
         /// Auto-managed array of hazard pointers
         /**
-            This class is wrapper around cds::gc::hp::details::HPArray class.
+            This class is wrapper around cds::gc::hp::details::hp_array class.
             \p Count is the size of HP array
         */
         template <size_t Count>
-        class AutoHPArray: public details::HPArray<Count>
+        class AutoHPArray : public details::hp_array<Count>
         {
             ThreadGC&    m_mgr    ;    ///< Thread GC
 

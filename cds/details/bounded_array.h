@@ -198,7 +198,7 @@ namespace cds {
             }
 
             /// Returns pointer to the first item in the array
-            value_type * top()
+            value_type * top() CDS_NOEXCEPT
             {
                 return m_arr;
             }

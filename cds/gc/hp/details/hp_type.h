@@ -3,7 +3,7 @@
 #ifndef __CDS_GC_HP_DETAILS_HP_TYPE_H
 #define __CDS_GC_HP_DETAILS_HP_TYPE_H
 
-#include <cds/gc/details/retired_ptr.h>
+#include <cds/gc/details/retired_ptr.h> // free_retired_ptr_func
 
 namespace cds {
     namespace gc {

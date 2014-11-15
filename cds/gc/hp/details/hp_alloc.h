@@ -5,12 +5,15 @@
 
 #include <cds/cxx11_atomic.h>
 #include <cds/details/allocator.h>
-#include <cds/gc/hp/details/hp_fwd.h>
 #include <cds/gc/hp/details/hp_type.h>
 
 //@cond
 namespace cds {
     namespace gc { namespace hp {
+        // forwards
+        class GarbageCollector;
+        class ThreadGC;
+
     /// Hazard Pointer schema implementation details
     namespace details {
 
@@ -18,15 +21,11 @@ namespace cds {
         /**
             It is unsafe to use this class directly.
             Instead, the AutoHPGuard class should be used.
-
-            Template parameter:
-                \li HazardPointer - type of hazard pointer. It is \ref hazard_pointer for Michael's Hazard Pointer reclamation schema
         */
-        template <typename HazardPointer>
-        class HPGuardT: protected atomics::atomic<HazardPointer>
+        class hp_guard : protected atomics::atomic < hazard_pointer >
         {
         public:
-            typedef HazardPointer   hazard_ptr ;    ///< Hazard pointer type
+            typedef hazard_pointer   hazard_ptr;    ///< Hazard pointer type
         private:
             //@cond
             typedef atomics::atomic<hazard_ptr>  base_class;
@@ -34,30 +33,30 @@ namespace cds {
 
         protected:
             //@cond
-            template <typename OtherHazardPointer, class Allocator> friend class HPAllocator;
+            template <class Allocator> friend class hp_allocator;
             //@endcond
 
         public:
-            HPGuardT() CDS_NOEXCEPT
+            hp_guard() CDS_NOEXCEPT
                 : base_class( nullptr )
             {}
-            ~HPGuardT() CDS_NOEXCEPT
+            ~hp_guard() CDS_NOEXCEPT
             {}
 
             /// Sets HP value. Guards pointer \p p from reclamation.
             /**
                 Storing has release semantics.
-            */
-            template <typename T>
-            T * operator =( T * p ) CDS_NOEXCEPT
+                */
+                template <typename T>
+            T * operator =(T * p) CDS_NOEXCEPT
             {
                 // We use atomic store with explicit memory order because other threads may read this hazard pointer concurrently
-                base_class::store( reinterpret_cast<hazard_ptr>(p), atomics::memory_order_release );
+                set( p );
                 return p;
             }
 
             //@cond
-            std::nullptr_t operator=( std::nullptr_t ) CDS_NOEXCEPT
+            std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
             {
                 clear();
                 return nullptr;
@@ -77,25 +76,27 @@ namespace cds {
             /**
                 Loading has acquire semantics
             */
-            hazard_ptr get() const CDS_NOEXCEPT
+            hazard_ptr get( atomics::memory_order order = atomics::memory_order_acquire ) const CDS_NOEXCEPT
             {
-                return base_class::load( atomics::memory_order_acquire );
+                return base_class::load( order );
+            }
+
+                template <typename T>
+            void set( T * p, atomics::memory_order order = atomics::memory_order_release ) CDS_NOEXCEPT
+            {
+                base_class::store( reinterpret_cast<hazard_ptr>(p), order );
             }
 
             /// Clears HP
             /**
                 Clearing has relaxed semantics.
             */
-            void clear() CDS_NOEXCEPT
+            void clear( atomics::memory_order order = atomics::memory_order_relaxed ) CDS_NOEXCEPT
             {
                 // memory order is not necessary here
-                base_class::store( nullptr, atomics::memory_order_relaxed );
-                //CDS_COMPILER_RW_BARRIER;
+                base_class::store( nullptr, order );
             }
         };
-
-        /// Specialization of HPGuardT for hazard_pointer type
-        typedef HPGuardT<hazard_pointer> HPGuard;
 
         /// Array of hazard pointers.
         /**
@@ -105,39 +106,38 @@ namespace cds {
 
             It is unsafe to use this class directly. Instead, the AutoHPArray should be used.
 
-            While creating the object of HPArray class an array of size \p Count of hazard pointers is reserved by
+            While creating the object of \p hp_array class an array of size \p Count of hazard pointers is reserved by
             the HP Manager of current thread. The object's destructor cleans all of reserved hazard pointer and
             returns reserved HP to the HP pool of ThreadGC.
 
             Usually, it is not necessary to create an object of this class. The object of class ThreadGC contains
-            the HPArray object and implements interface for HP setting and freeing.
+            the \p hp_array object and implements interface for HP setting and freeing.
 
             Template parameter:
-                \li HazardPointer - type of hazard pointer. It is hazard_pointer usually
                 \li Count - capacity of array
 
         */
-        template <typename HazardPointer, size_t Count>
-        class HPArrayT
+        template <size_t Count>
+        class hp_array
         {
         public:
-            typedef HazardPointer   hazard_ptr_type ;   ///< Hazard pointer type
-            typedef HPGuardT<hazard_ptr_type>   atomic_hazard_ptr    ; ///< Element type of the array
-            static const size_t c_nCapacity = Count ;   ///< Capacity of the array
+            typedef hazard_pointer  hazard_ptr_type;   ///< Hazard pointer type
+            typedef hp_guard        atomic_hazard_ptr; ///< Element type of the array
+            static CDS_CONSTEXPR const size_t c_nCapacity = Count ;   ///< Capacity of the array
 
         private:
             //@cond
             atomic_hazard_ptr *     m_arr               ;   ///< Hazard pointer array of size = \p Count
-            template <typename OtherHazardPointer, class Allocator> friend class HPAllocator;
+            template <class Allocator> friend class hp_allocator;
             //@endcond
 
         public:
             /// Constructs uninitialized array.
-            HPArrayT() CDS_NOEXCEPT
+            hp_array() CDS_NOEXCEPT
             {}
 
             /// Destructs object
-            ~HPArrayT() CDS_NOEXCEPT
+            ~hp_array() CDS_NOEXCEPT
             {}
 
             /// Returns max count of hazard pointer for this array
@@ -175,9 +175,6 @@ namespace cds {
             }
         };
 
-        /// Specialization of HPArrayT class for hazard_pointer type
-        template <size_t Count> using HPArray = HPArrayT<hazard_pointer, Count >;
-
         /// Allocator of hazard pointers for the thread
         /**
             The hazard pointer array is the free-list of unused hazard pointer for the thread.
@@ -187,18 +184,17 @@ namespace cds {
             Each allocator object is thread-private.
 
             Template parameters:
-                \li HazardPointer - type of hazard pointer (hazard_pointer usually)
                 \li Allocator - memory allocator class, default is \ref CDS_DEFAULT_ALLOCATOR
 
             This helper class should not be used directly.
         */
-        template < typename HazardPointer, class Allocator = CDS_DEFAULT_ALLOCATOR >
-        class HPAllocator
+        template <class Allocator = CDS_DEFAULT_ALLOCATOR >
+        class hp_allocator
         {
         public:
-            typedef HazardPointer               hazard_ptr_type     ;   ///< type of hazard pointer
-            typedef HPGuardT<hazard_ptr_type>   atomic_hazard_ptr   ;   ///< Atomic hazard pointer type
-            typedef Allocator                   allocator_type      ;   ///< allocator type
+            typedef hazard_pointer  hazard_ptr_type;    ///< type of hazard pointer
+            typedef hp_guard        atomic_hazard_ptr;  ///< Atomic hazard pointer type
+            typedef Allocator       allocator_type;     ///< allocator type
 
         private:
             //@cond
@@ -212,7 +208,7 @@ namespace cds {
 
         public:
             /// Default ctor
-            explicit HPAllocator(
+            explicit hp_allocator(
                 size_t  nCapacity            ///< max count of hazard pointer per thread
                 )
                 : m_arrHazardPtr( alloc_array( nCapacity ) )
@@ -222,7 +218,7 @@ namespace cds {
             }
 
             /// Dtor
-            ~HPAllocator()
+            ~hp_allocator()
             {
                 allocator_impl().Delete( m_arrHazardPtr, capacity() );
             }
@@ -268,7 +264,7 @@ namespace cds {
                 Returns initialized object \p arr
             */
             template <size_t Count>
-            void alloc( HPArrayT<hazard_ptr_type, Count>& arr ) CDS_NOEXCEPT
+            void alloc( hp_array<Count>& arr ) CDS_NOEXCEPT
             {
                 assert( m_nTop >= Count );
                 m_nTop -= Count;
@@ -280,7 +276,7 @@ namespace cds {
                 Frees the array of hazard pointers allocated by previous call \p this->alloc.
             */
             template <size_t Count>
-            void free( const HPArrayT<hazard_ptr_type, Count>& arr ) CDS_NOEXCEPT
+            void free( hp_array<Count> const& arr ) CDS_NOEXCEPT
             {
                 assert( m_nTop + Count <= capacity());
                 for ( size_t i = m_nTop; i < m_nTop + Count; ++i )

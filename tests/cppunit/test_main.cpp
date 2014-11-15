@@ -54,20 +54,20 @@
 std::ostream& operator << (std::ostream& s, const cds::gc::hp::GarbageCollector::InternalState& stat)
 {
     s << "\nHZP GC internal state:"
-        << "\n\t\tHP record allocated=" << stat.nHPRecAllocated
-        << "\n\t\tHP records used=" << stat.nHPRecUsed
-        << "\n\t\tTotal retired ptr count=" << stat.nTotalRetiredPtrCount
-        << "\n\t\tRetired ptr in free HP records=" << stat.nRetiredPtrInFreeHPRecs
+        << "\n\t            HP record allocated=" << stat.nHPRecAllocated
+        << "\n\t                HP records used=" << stat.nHPRecUsed
+        << "\n\t        Total retired ptr count=" << stat.nTotalRetiredPtrCount
+        << "\n\t Retired ptr in free HP records=" << stat.nRetiredPtrInFreeHPRecs
         << "\n\tEvents:"
-        << "\n\t\tHPRec allocations=" << stat.evcAllocHPRec
-        << "\n\t\tHPRec retire events=" << stat.evcRetireHPRec
-        << "\n\t\tnew HPRec allocations from heap=" << stat.evcAllocNewHPRec
-        << "\n\t\tHPRec deletions=" << stat.evcDeleteHPRec
-        << "\n\t\tScan calling=" << stat.evcScanCall
-        << "\n\t\tHelpScan calling=" << stat.evcHelpScanCall
-        << "\n\t\tScan calls from HelpScan=" << stat.evcScanFromHelpScan
-        << "\n\t\tretired objects deleting=" << stat.evcDeletedNode
-        << "\n\t\tguarded objects on Scan=" << stat.evcDeferredNode
+        << "\n\t              HPRec allocations=" << stat.evcAllocHPRec
+        << "\n\t            HPRec retire events=" << stat.evcRetireHPRec
+        << "\n\tnew HPRec allocations from heap=" << stat.evcAllocNewHPRec
+        << "\n\t                HPRec deletions=" << stat.evcDeleteHPRec
+        << "\n\t                Scan call count=" << stat.evcScanCall
+        << "\n\t            HelpScan call count=" << stat.evcHelpScanCall
+        << "\n\t       Scan calls from HelpScan=" << stat.evcScanFromHelpScan
+        << "\n\t       retired object deleting=" << stat.evcDeletedNode
+        << "\n\t        guarded object on Scan=" << stat.evcDeferredNode
         << std::endl;
 
     return s;

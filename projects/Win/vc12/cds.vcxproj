@@ -740,9 +740,7 @@
     <ClInclude Include="..\..\..\cds\gc\dhp\dhp_impl.h" />
     <ClInclude Include="..\..\..\cds\gc\guarded_ptr.h" />
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_alloc.h" />
-    <ClInclude Include="..\..\..\cds\gc\hp\details\hp_fwd.h" />
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_inline.h" />
-    <ClInclude Include="..\..\..\cds\gc\hp\details\hp_retired.h" />
     <ClInclude Include="..\..\..\cds\gc\hp\details\hp_type.h" />
     <ClInclude Include="..\..\..\cds\gc\hp\hp.h" />
     <ClInclude Include="..\..\..\cds\gc\hp\hp_decl.h" />

@@ -24,32 +24,32 @@ namespace cds { namespace gc {
             free_retired_ptr_func   m_funcFree    ; ///< pointer to the destructor function
 
             /// Comparison of two retired pointers
-            static bool less( const retired_ptr& p1, const retired_ptr& p2 )
+            static bool less( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
             {
                 return p1.m_p < p2.m_p;
             }
 
             /// Default ctor initializes pointer to \p nullptr
-            retired_ptr()
+            retired_ptr() CDS_NOEXCEPT
                 : m_p( nullptr )
                 , m_funcFree( nullptr )
             {}
 
             /// Ctor
-            retired_ptr( pointer p, free_retired_ptr_func func )
+            retired_ptr( pointer p, free_retired_ptr_func func ) CDS_NOEXCEPT
                 : m_p( p ),
                 m_funcFree( func )
             {}
 
             /// Typecasting ctor
             template <typename T>
-            retired_ptr( T * p, void (* pFreeFunc)(T *))
+            retired_ptr( T * p, void (* pFreeFunc)(T *)) CDS_NOEXCEPT
                 : m_p( reinterpret_cast<pointer>( p ) )
                 , m_funcFree( reinterpret_cast< free_retired_ptr_func >( pFreeFunc ))
             {}
 
             /// Assignment operator
-            retired_ptr& operator =( const retired_ptr& s)
+            retired_ptr& operator =( const retired_ptr& s) CDS_NOEXCEPT
             {
                 m_p = s.m_p;
                 m_funcFree = s.m_funcFree;
@@ -69,23 +69,21 @@ namespace cds { namespace gc {
         };
 
         //@cond
-        static inline bool operator <( const retired_ptr& p1, const retired_ptr& p2 )
+        static inline bool operator <( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
         {
             return retired_ptr::less( p1, p2 );
         }
 
-        static inline bool operator ==( const retired_ptr& p1, const retired_ptr& p2 )
+        static inline bool operator ==( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
         {
             return p1.m_p == p2.m_p;
         }
 
-        static inline bool operator !=( const retired_ptr& p1, const retired_ptr& p2 )
+        static inline bool operator !=( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
         {
             return !(p1 == p2);
         }
         //@endcond
-
-
     }  // namespace details
 }}   // namespace cds::gc
 

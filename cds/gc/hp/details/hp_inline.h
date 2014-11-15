@@ -9,12 +9,12 @@ namespace cds {
         /************************************************************************/
         /* INLINES                                                              */
         /************************************************************************/
-        inline retired_vector::retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr )
+        inline retired_vector::retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ) CDS_NOEXCEPT
             : m_arr( HzpMgr.getMaxRetiredPtrCount() ),
             m_nSize(0)
         {}
 
-        inline HPRec::HPRec( const cds::gc::hp::GarbageCollector& HzpMgr )
+        inline hp_record::hp_record( const cds::gc::hp::GarbageCollector& HzpMgr )
             : m_hzp( HzpMgr.getHazardPointerCount() ),
             m_arrRetired( HzpMgr )
         {}

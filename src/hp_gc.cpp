@@ -103,7 +103,7 @@ namespace cds { namespace gc {
             p.free();
         }
 
-        details::HPRec * GarbageCollector::AllocateHPRec()
+        details::hp_record * GarbageCollector::AllocateHPRec()
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocHPRec );
 
@@ -136,7 +136,7 @@ namespace cds { namespace gc {
             return hprec;
         }
 
-        void GarbageCollector::RetireHPRec( details::HPRec * pRec )
+        void GarbageCollector::RetireHPRec( details::hp_record * pRec )
         {
             assert( pRec != nullptr );
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_RetireHPRec );
@@ -159,7 +159,7 @@ namespace cds { namespace gc {
             }
         }
 
-        void GarbageCollector::classic_scan( details::HPRec * pRec )
+        void GarbageCollector::classic_scan( details::hp_record * pRec )
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_ScanCallCount );
 
@@ -205,7 +205,7 @@ namespace cds { namespace gc {
             }
         }
 
-        void GarbageCollector::inplace_scan( details::HPRec * pRec )
+        void GarbageCollector::inplace_scan( details::hp_record * pRec )
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_ScanCallCount );
 
@@ -265,7 +265,7 @@ namespace cds { namespace gc {
             pRec->m_arrRetired.size( itInsert - itRetired );
         }
 
-        void GarbageCollector::HelpScan( details::HPRec * pThis )
+        void GarbageCollector::HelpScan( details::hp_record * pThis )
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_HelpScanCallCount );
 
@@ -294,7 +294,7 @@ namespace cds { namespace gc {
                     }
                 }
 
-                // We own the thread successfully. Now, we can see whether HPRec has retired pointers.
+                // We own the thread successfully. Now, we can see whether hp_record has retired pointers.
                 // If it has ones then we move to pThis that is private for current thread.
                 details::retired_vector& src = hprec->m_arrRetired;
                 details::retired_vector& dest = pThis->m_arrRetired;
