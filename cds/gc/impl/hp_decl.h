@@ -153,7 +153,7 @@ namespace cds { namespace gc {
                 Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
-            T protect( atomics::atomic<T> const& toGuard, Func f ) CDS_NOEXCEPT_( noexcept( Func( atomics::atomic<T>().load(atomics::memory_order_relaxed))))
+            T protect( atomics::atomic<T> const& toGuard, Func f )
             {
                 T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
@@ -289,7 +289,7 @@ namespace cds { namespace gc {
                 Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
-            T protect( size_t nIndex, atomics::atomic<T> const& toGuard, Func f ) CDS_NOEXCEPT_( noexcept( Func( atomics::atomic<T>().load(atomics::memory_order_relaxed))))
+            T protect( size_t nIndex, atomics::atomic<T> const& toGuard, Func f )
             {
                 T pRet;
                 do {

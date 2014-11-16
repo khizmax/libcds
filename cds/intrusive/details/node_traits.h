@@ -153,7 +153,7 @@ namespace cds { namespace intrusive {
     /// Functor converting container's node type to value type
     template <class Container>
     struct node_to_value {
-        typename Container::value_type * operator()( typename Container::node_type * p )
+        typename Container::value_type * operator()( typename Container::node_type * p ) const
         {
             typedef typename Container::node_traits node_traits;
             return node_traits::to_value_ptr( p );
