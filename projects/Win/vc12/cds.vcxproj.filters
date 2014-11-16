@@ -1157,9 +1157,6 @@
     <ClInclude Include="..\..\..\cds\gc\details\hp_alloc.h">
       <Filter>Header Files\cds\gc\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\details\hp_inline.h">
-      <Filter>Header Files\cds\gc\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\details\hp_type.h">
       <Filter>Header Files\cds\gc\details</Filter>
     </ClInclude>
