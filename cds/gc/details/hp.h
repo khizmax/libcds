@@ -125,7 +125,7 @@ namespace cds {
 
             public:
                 /// Iterator
-                typedef    retired_vector_impl::iterator    iterator;
+                typedef retired_vector_impl::iterator  iterator;
 
                 /// Constructor
                 retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ) CDS_NOEXCEPT; // inline
@@ -283,9 +283,9 @@ namespace cds {
             /// Internal list of cds::gc::hp::details::hp_record
             struct hplist_node : public details::hp_record
             {
-                hplist_node *                       m_pNextNode ; ///< next hazard ptr record in list
-                atomics::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
-                atomics::atomic<bool>            m_bFree     ; ///< true if record if free (not owned)
+                hplist_node *                    m_pNextNode; ///< next hazard ptr record in list
+                atomics::atomic<OS::ThreadId>    m_idOwner;   ///< Owner thread id; 0 - the record is free (not owned)
+                atomics::atomic<bool>            m_bFree;     ///< true if record if free (not owned)
 
                 hplist_node( const GarbageCollector& HzpMgr )
                     : hp_record( HzpMgr ),

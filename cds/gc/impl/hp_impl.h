@@ -50,7 +50,6 @@ namespace cds { namespace gc {
         cds::threading::getGC<HP>().scan();
     }
 
-
 }} // namespace cds::gc
 //@endcond
 

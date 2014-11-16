@@ -20,8 +20,8 @@ namespace cds { namespace gc {
             /// Pointer type
             typedef void *          pointer;
 
-            pointer                 m_p    ;        ///< retired pointer
-            free_retired_ptr_func   m_funcFree    ; ///< pointer to the destructor function
+            pointer                 m_p;        ///< retired pointer
+            free_retired_ptr_func   m_funcFree; ///< pointer to the destructor function
 
             /// Comparison of two retired pointers
             static bool less( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
@@ -49,7 +49,7 @@ namespace cds { namespace gc {
             {}
 
             /// Assignment operator
-            retired_ptr& operator =( const retired_ptr& s) CDS_NOEXCEPT
+            retired_ptr& operator =( retired_ptr const& s) CDS_NOEXCEPT
             {
                 m_p = s.m_p;
                 m_funcFree = s.m_funcFree;

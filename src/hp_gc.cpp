@@ -189,7 +189,7 @@ namespace cds { namespace gc {
             details::retired_vector::iterator itRetired     = arrRetired.begin();
             details::retired_vector::iterator itRetiredEnd  = arrRetired.end();
             // arrRetired is not a std::vector!
-            // clear is just set up item counter to 0, the items is not destroying
+            // clear() is just set up item counter to 0, the items is not destroyed
             arrRetired.clear();
 
             std::vector< void * >::iterator itBegin = plist.begin();
@@ -217,8 +217,8 @@ namespace cds { namespace gc {
             // LSB is used for marking pointers that cannot be deleted yet
             details::retired_vector::iterator itRetired     = pRec->m_arrRetired.begin();
             details::retired_vector::iterator itRetiredEnd  = pRec->m_arrRetired.end();
-            for ( details::retired_vector::iterator it = itRetired; it != itRetiredEnd; ++it ) {
-                if ( reinterpret_cast<ptr_atomic_t>(it->m_p) & 1 ) {
+            for ( auto it = itRetired; it != itRetiredEnd; ++it ) {
+                if ( reinterpret_cast<uintptr_t>(it->m_p) & 1 ) {
                     // found a pointer with LSB bit set - use classic_scan
                     classic_scan( pRec );
                     return;
@@ -229,40 +229,43 @@ namespace cds { namespace gc {
             std::sort( itRetired, itRetiredEnd, cds::gc::details::retired_ptr::less );
 
             // Search guarded pointers in retired array
+            hplist_node * pNode = m_pListHead.load( atomics::memory_order_acquire );
 
-            hplist_node * pNode = m_pListHead.load(atomics::memory_order_acquire);
-
-            while ( pNode ) {
-                for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
-                    void * hptr = pNode->m_hzp[i];
-                    if ( hptr ) {
-                        details::retired_ptr    dummyRetired;
-                        dummyRetired.m_p = hptr;
-                        details::retired_vector::iterator it = std::lower_bound( itRetired, itRetiredEnd, dummyRetired, cds::gc::details::retired_ptr::less );
-                        if ( it != itRetiredEnd && it->m_p == hptr )  {
-                            // Mark retired pointer as guarded
-                            it->m_p = reinterpret_cast<void *>(reinterpret_cast<ptr_atomic_t>(it->m_p ) | 1);
+            {
+                details::retired_ptr dummyRetired;
+                while ( pNode ) {
+                    for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
+                        void * hptr = pNode->m_hzp[i];
+                        if ( hptr ) {
+                            dummyRetired.m_p = hptr;
+                            details::retired_vector::iterator it = std::lower_bound( itRetired, itRetiredEnd, dummyRetired, cds::gc::details::retired_ptr::less );
+                            if ( it != itRetiredEnd && it->m_p == hptr ) {
+                                // Mark retired pointer as guarded
+                                it->m_p = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(it->m_p) | 1);
+                            }
                         }
                     }
+                    pNode = pNode->m_pNextNode;
                 }
-                pNode = pNode->m_pNextNode;
             }
 
             // Move all marked pointers to head of array
-            details::retired_vector::iterator itInsert = itRetired;
-            for ( details::retired_vector::iterator it = itRetired; it != itRetiredEnd; ++it ) {
-                if ( reinterpret_cast<ptr_atomic_t>(it->m_p) & 1 ) {
-                    it->m_p = reinterpret_cast<void *>(reinterpret_cast<ptr_atomic_t>(it->m_p ) & ~1);
-                    *itInsert = *it;
-                    ++itInsert;
-                    CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeferredNode );
+            {
+                details::retired_vector::iterator itInsert = itRetired;
+                for ( auto it = itRetired; it != itRetiredEnd; ++it ) {
+                    if ( reinterpret_cast<uintptr_t>(it->m_p) & 1 ) {
+                        it->m_p = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(it->m_p) & ~1);
+                        *itInsert = *it;
+                        ++itInsert;
+                        CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeferredNode );
+                    }
+                    else {
+                        // Retired pointer may be freed
+                        DeletePtr( *it );
+                    }
                 }
-                else {
-                    // Retired pointer may be freed
-                    DeletePtr( *it );
-                }
+                pRec->m_arrRetired.size( itInsert - itRetired );
             }
-            pRec->m_arrRetired.size( itInsert - itRetired );
         }
 
         void GarbageCollector::HelpScan( details::hp_record * pThis )

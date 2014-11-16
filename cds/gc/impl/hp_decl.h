@@ -265,8 +265,8 @@ namespace cds { namespace gc {
             {
                 T pRet;
                 do {
-                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire) );
-                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
+                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_relaxed) );
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }
@@ -293,8 +293,8 @@ namespace cds { namespace gc {
             {
                 T pRet;
                 do {
-                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire) ));
-                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
+                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_relaxed) ));
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }
@@ -420,19 +420,19 @@ namespace cds { namespace gc {
         }
 
         /// Returns max Hazard Pointer count
-        size_t max_hazard_count() const
+        static size_t max_hazard_count()
         {
             return hp::GarbageCollector::instance().getHazardPointerCount();
         }
 
         /// Returns max count of thread
-        size_t max_thread_count() const
+        static size_t max_thread_count()
         {
             return hp::GarbageCollector::instance().getMaxThreadCount();
         }
 
         /// Returns capacity of retired pointer array
-        size_t retired_array_capacity() const
+        static size_t retired_array_capacity()
         {
             return hp::GarbageCollector::instance().getMaxRetiredPtrCount();
         }
@@ -499,13 +499,13 @@ namespace cds { namespace gc {
         static void retire( T * p ) ;   // inline in hp_impl.h
 
         /// Get current scan strategy
-        scan_type getScanType() const
+        static scan_type getScanType()
         {
             return static_cast<scan_type>( hp::GarbageCollector::instance().getScanType());
         }
 
         /// Set current scan strategy
-        void setScanType(
+        static void setScanType(
             scan_type nScanType     ///< new scan strategy
         )
         {
