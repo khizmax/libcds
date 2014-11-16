@@ -75,7 +75,7 @@ namespace cds {
                 return base_class::load( order );
             }
 
-                template <typename T>
+            template <typename T>
             void set( T * p, atomics::memory_order order = atomics::memory_order_release ) CDS_NOEXCEPT
             {
                 base_class::store( reinterpret_cast<hazard_ptr>(p), order );
