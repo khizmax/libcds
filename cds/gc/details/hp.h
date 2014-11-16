@@ -621,7 +621,7 @@ namespace cds {
                 } cast_ptr;
                 cast_ptr.p = p;
 
-                uinion{
+                union{
                     void( *pFunc )(T *);
                     free_retired_ptr_func hpFunc;
                 } cast_func;
@@ -629,7 +629,7 @@ namespace cds {
 
                 retirePtr( details::retired_ptr( cast_ptr.hp, cast_func.hpFunc ) );
                 */
-                retirePtr( details::retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ) ) );
+                retirePtr( details::retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc )));
             }
 
             /// Places retired pointer \p into thread's array of retired pointer for deferred reclamation
