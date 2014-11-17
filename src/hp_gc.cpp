@@ -218,7 +218,7 @@ namespace cds { namespace gc {
             details::retired_vector::iterator itRetired     = pRec->m_arrRetired.begin();
             details::retired_vector::iterator itRetiredEnd  = pRec->m_arrRetired.end();
             for ( auto it = itRetired; it != itRetiredEnd; ++it ) {
-                if ( reinterpret_cast<uintptr_t>(it->m_p) & 1 ) {
+                if ( it->m_n & 1 ) {
                     // found a pointer with LSB bit set - use classic_scan
                     classic_scan( pRec );
                     return;
@@ -241,7 +241,7 @@ namespace cds { namespace gc {
                             details::retired_vector::iterator it = std::lower_bound( itRetired, itRetiredEnd, dummyRetired, cds::gc::details::retired_ptr::less );
                             if ( it != itRetiredEnd && it->m_p == hptr ) {
                                 // Mark retired pointer as guarded
-                                it->m_p = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(it->m_p) | 1);
+                                it->m_n |= 1;
                             }
                         }
                     }
@@ -251,11 +251,12 @@ namespace cds { namespace gc {
 
             // Move all marked pointers to head of array
             {
-                details::retired_vector::iterator itInsert = itRetired;
+                auto itInsert = itRetired;
                 for ( auto it = itRetired; it != itRetiredEnd; ++it ) {
-                    if ( reinterpret_cast<uintptr_t>(it->m_p) & 1 ) {
-                        it->m_p = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(it->m_p) & ~1);
-                        *itInsert = *it;
+                    if ( it->m_n & 1 ) {
+                        it->m_n &= ~1;
+                        if ( itInsert != it )
+                            *itInsert = *it;
                         ++itInsert;
                         CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeferredNode );
                     }

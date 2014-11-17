@@ -5,6 +5,7 @@
 
 #include <cds/details/defs.h>
 
+//@cond
 namespace cds { namespace gc {
     /// Common implementation details for any GC
     namespace details {
@@ -20,7 +21,10 @@ namespace cds { namespace gc {
             /// Pointer type
             typedef void *          pointer;
 
-            pointer                 m_p;        ///< retired pointer
+            union {
+                pointer                 m_p;        ///< retired pointer
+                uintptr_t               m_n;
+            };
             free_retired_ptr_func   m_funcFree; ///< pointer to the destructor function
 
             /// Comparison of two retired pointers
@@ -37,14 +41,14 @@ namespace cds { namespace gc {
 
             /// Ctor
             retired_ptr( pointer p, free_retired_ptr_func func ) CDS_NOEXCEPT
-                : m_p( p ),
-                m_funcFree( func )
+                : m_p( p )
+                , m_funcFree( func )
             {}
 
             /// Typecasting ctor
             template <typename T>
             retired_ptr( T * p, void (* pFreeFunc)(T *)) CDS_NOEXCEPT
-                : m_p( reinterpret_cast<pointer>( p ) )
+                : m_p( reinterpret_cast<pointer>(p))
                 , m_funcFree( reinterpret_cast< free_retired_ptr_func >( pFreeFunc ))
             {}
 
@@ -68,7 +72,6 @@ namespace cds { namespace gc {
             }
         };
 
-        //@cond
         static inline bool operator <( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
         {
             return retired_ptr::less( p1, p2 );
@@ -83,8 +86,8 @@ namespace cds { namespace gc {
         {
             return !(p1 == p2);
         }
-        //@endcond
     }  // namespace details
 }}   // namespace cds::gc
+//@endcond
 
 #endif // #ifndef __CDS_GC_DETAILS_RETIRED_PTR_H
