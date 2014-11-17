@@ -613,7 +613,7 @@ namespace cds {
         */
         class guard
         {
-            details::hp_guard&   m_hp    ; ///< Hazard pointer guarded
+            details::hp_guard&  m_hp    ; ///< Hazard pointer guarded
             ThreadGC&           m_gc    ; ///< Thread GC
 
         public:

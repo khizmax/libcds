@@ -318,70 +318,78 @@ namespace cds { namespace container {
 
         /// Extracts an item with minimal key from the map
         /**
-            If the map is not empty, the function returns \p true, \p result contains a pointer to minimum value.
-            If the map is empty, the function returns \p false, \p result is left unchanged.
+            If the map is not empty, the function returns an guarded pointer to minimum value.
+            If the map is empty, the function returns an empty \p guarded_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
             During unlinking, a concurrent thread may insert an item with key less than leftmost item's key.
             So, the function returns the item with minimum key at the moment of tree traversing.
 
-            The guarded pointer \p result prevents deallocation of returned item,
-            see cds::gc::guarded_ptr for explanation.
+            The guarded pointer prevents deallocation of returned item,
+            see \p cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
-        bool extract_min( guarded_ptr& result )
+        guarded_ptr extract_min()
         {
-            return base_class::extract_min_( result.guard() );
+            guarded_ptr gp;
+            base_class::extract_min_( gp.guard() );
+            return gp;
         }
 
         /// Extracts an item with maximal key from the map
         /**
-            If the map is not empty, the function returns \p true, \p result contains a pointer to maximal value.
-            If the map is empty, the function returns \p false, \p result is left unchanged.
+            If the map is not empty, the function returns a guarded pointer to maximal value.
+            If the map is empty, the function returns an empty \p guarded_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
             During unlinking, a concurrent thread may insert an item with key great than leftmost item's key.
             So, the function returns the item with maximum key at the moment of tree traversing.
 
-            The guarded pointer \p result prevents deallocation of returned item,
-            see cds::gc::guarded_ptr for explanation.
+            The guarded pointer prevents deallocation of returned item,
+            see \p cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
-        bool extract_max( guarded_ptr& result )
+        guarded_ptr extract_max()
         {
-            return base_class::extract_max_( result.guard() );
+            guarded_ptr gp;
+            base_class::extract_max_( gp.guard() );
+            return gp;
         }
 
         /// Extracts an item from the tree
         /** \anchor cds_nonintrusive_EllenBinTreeMap_extract
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns pointer to an item found in \p result parameter.
-            If the item  is not found the function returns \p false.
+            unlinks it, and returns a guarded pointer to an item found.
+            If the item  is not found the function returns an empty \p guarded_ptr.
 
-            The guarded pointer \p result prevents deallocation of returned item,
-            see cds::gc::guarded_ptr for explanation.
+            The guarded pointer prevents deallocation of returned item,
+            see \p cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
         template <typename Q>
-        bool extract( guarded_ptr& result, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            return base_class::extract_( result.guard(), key );
+            guarded_ptr gp;
+            base_class::extract_( gp.guard(), key );
+            return gp;
         }
 
         /// Extracts an item from the map using \p pred for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_extract "extract(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_extract "extract(Q const&)"
             but \p pred is used for key compare.
             \p Less has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& result, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
-            return base_class::extract_with_( result.guard(), key,
+            guarded_ptr gp;
+            base_class::extract_with_( gp.guard(), key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >());
+            return gp;
         }
 
         /// Find the key \p key
@@ -447,31 +455,35 @@ namespace cds { namespace container {
 
         /// Finds \p key and returns the item found
         /** @anchor cds_nonintrusive_EllenBinTreeMap_get
-            The function searches the item with key equal to \p key and returns the item found in \p result parameter.
-            The function returns \p true if \p key is found, \p false otherwise.
+            The function searches the item with key equal to \p key and returns the item found as a guarded pointer.
+            If \p key is not foudn the function returns an empty \p guarded_ptr.
 
-            The guarded pointer \p result prevents deallocation of returned item,
-            see cds::gc::guarded_ptr for explanation.
+            The guarded pointer prevents deallocation of returned item,
+            see \p cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
         template <typename Q>
-        bool get( guarded_ptr& result, Q const& key )
+        guarded_ptr get( Q const& key )
         {
-            return base_class::get_( result.guard(), key );
+            guarded_ptr gp;
+            base_class::get_( gp.guard(), key );
+            return gp;
         }
 
         /// Finds \p key with predicate \p pred and returns the item found
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_get "get(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_get "get(Q const&)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& result, Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred )
         {
-            return base_class::get_with_( result.guard(), key,
+            guarded_ptr gp;
+            base_class::get_with_( gp.guard(), key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );
+            return gp;
         }
 
         /// Clears the map (not atomic)

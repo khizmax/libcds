@@ -24,7 +24,7 @@ namespace tree {
         };
 
         typedef ci::ellen_bintree::internal_node< IntrusiveBinTreeHdrTest::key_type, leaf_node > internal_node;
-        typedef ci::ellen_bintree::update_desc< leaf_node, internal_node >   update_desc;
+        typedef ci::ellen_bintree::update_desc< leaf_node, internal_node > update_desc;
     }
 
     void IntrusiveBinTreeHdrTest::EllenBinTree_dhp_member_less()

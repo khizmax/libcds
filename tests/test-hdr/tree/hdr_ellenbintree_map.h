@@ -386,11 +386,11 @@ namespace tree {
                 int i = 0;
                 std::pair<key_type, value_type> v;
                 while ( !m.empty() ) {
-                    CPPUNIT_ASSERT( m.extract_min( gp ) );
+                    gp = m.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( gp->first == i );
                     ++i;
-                    gp.release();
                 }
                 CPPUNIT_ASSERT( m.empty() );
                 CPPUNIT_ASSERT( check_size( m, 0 ));
@@ -399,11 +399,11 @@ namespace tree {
                 fill_map( m, arr );
                 i = (int) c_nItemCount - 1;
                 while ( !m.empty() ) {
-                    CPPUNIT_ASSERT( m.extract_max( gp ) );
+                    gp = m.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( gp->first == i );
                     --i;
-                    gp.release();
                 }
                 CPPUNIT_ASSERT( m.empty() );
                 CPPUNIT_ASSERT( check_size( m, 0 ));
@@ -411,19 +411,20 @@ namespace tree {
                 fill_map( m, arr );
                 for ( int i = 0; i < static_cast<int>( c_nItemCount ); ++i ) {
                     int nKey = arr[i];
-                    CPPUNIT_ASSERT( m.get( gp, nKey ));
+                    gp = m.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
 
-                    gp.release();
-                    CPPUNIT_ASSERT( m.extract( gp, nKey ));
+                    gp = m.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
 
-                    gp.release();
-                    CPPUNIT_CHECK( !m.get( gp, nKey ));
+                    gp = m.get( nKey );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
-                    CPPUNIT_CHECK( !m.extract( gp, nKey ));
+                    CPPUNIT_CHECK( !m.extract( nKey ));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( m.empty() );
@@ -432,19 +433,20 @@ namespace tree {
                 fill_map( m, arr );
                 for ( int i = 0; i < static_cast<int>( c_nItemCount ); ++i ) {
                     int nKey = arr[i];
-                    CPPUNIT_ASSERT( m.get_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    gp = m.get_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
 
-                    gp.release();
-                    CPPUNIT_ASSERT( m.extract_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    gp = m.extract_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
 
-                    gp.release();
-                    CPPUNIT_CHECK( !m.get_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    gp = m.get_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
-                    CPPUNIT_CHECK( !m.extract_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    CPPUNIT_CHECK( !m.extract_with( wrapped_int(nKey), wrapped_less() ));
                     CPPUNIT_CHECK( gp.empty());
                 }
 

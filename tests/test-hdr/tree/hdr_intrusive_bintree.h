@@ -673,50 +673,58 @@ namespace tree {
                 {
                     typename tree_type::guarded_ptr gp;
 
-                    CPPUNIT_ASSERT( t.get( gp, v2.nKey ));
+                    gp = t.get( v2.nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == v2.nKey );
-                    gp.release();
-                    CPPUNIT_ASSERT( t.extract( gp, v2.nKey ));
+                    gp = t.extract( v2.nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 4 ));
                     CPPUNIT_ASSERT( gp->nKey == v2.nKey );
-                    CPPUNIT_ASSERT( !t.extract( gp, v2.nKey ));
-                    CPPUNIT_CHECK( !t.get( gp, v2.nKey ));
+                    gp = t.extract( v2.nKey );
+                    CPPUNIT_ASSERT( !gp );
+                    gp = t.get( v2.nKey );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 4 ));
 
-                    CPPUNIT_ASSERT( t.extract_min(gp));
+                    gp = t.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 3 ));
                     CPPUNIT_ASSERT( gp->nKey == v5.nKey );
 
-                    CPPUNIT_ASSERT( t.extract_min(gp));
+                    gp = t.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 2 ));
                     CPPUNIT_ASSERT( gp->nKey == v1.nKey );
 
-                    CPPUNIT_ASSERT( t.extract_min(gp));
+                    gp = t.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 1 ));
                     CPPUNIT_ASSERT( gp->nKey == v4.nKey );
 
-                    CPPUNIT_ASSERT( t.extract_min(gp));
+                    gp = t.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 0 ));
                     CPPUNIT_ASSERT( gp->nKey == v3.nKey );
 
-                    CPPUNIT_ASSERT( !t.extract_min(gp));
-                    CPPUNIT_ASSERT( !t.extract_max(gp));
-                    CPPUNIT_ASSERT( !t.extract( gp, v1.nKey ));
+                    gp = t.extract_min();
+                    CPPUNIT_ASSERT( !gp );
+                    CPPUNIT_ASSERT( !t.extract_max());
+                    CPPUNIT_ASSERT( !t.extract( v1.nKey ));
                 }
 
                 tree_type::gc::force_dispose();
@@ -733,38 +741,45 @@ namespace tree {
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 5 ));
 
-                    CPPUNIT_ASSERT( t.get_with( gp, wrapped_int(v4.nKey), wrapped_less<value_type>() ));
+                    gp = t.get_with( wrapped_int( v4.nKey ), wrapped_less<value_type>());
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == v4.nKey );
-                    CPPUNIT_ASSERT( t.extract_with( gp, wrapped_int(v4.nKey), wrapped_less<value_type>() ));
+                    gp = t.extract_with( wrapped_int( v4.nKey ), wrapped_less<value_type>());
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 4 ));
                     CPPUNIT_ASSERT( gp->nKey == v4.nKey );
 
-                    CPPUNIT_ASSERT( !t.extract_with( gp, v4.nKey, less<value_type>() ) );
+                    gp = t.extract_with( v4.nKey, less<value_type>());
+                    CPPUNIT_ASSERT( !gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
-                    CPPUNIT_ASSERT( !t.get_with( gp, v4.nKey, less<value_type>() ) );
+                    CPPUNIT_ASSERT( !t.get_with( v4.nKey, less<value_type>() ) );
 
-                    CPPUNIT_ASSERT( t.extract_max(gp));
+                    gp = t.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 3 ));
                     CPPUNIT_ASSERT( gp->nKey == v3.nKey );
 
-                    CPPUNIT_ASSERT( t.extract_max(gp) );
+                    gp = t.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 2 ));
                     CPPUNIT_ASSERT( gp->nKey == v2.nKey );
 
-                    CPPUNIT_ASSERT( t.extract_max(gp) );
+                    gp = t.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( !t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 1 ));
                     CPPUNIT_ASSERT( gp->nKey == v1.nKey );
 
-                    CPPUNIT_ASSERT( t.extract_max(gp) );
+                    gp = t.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( t.check_consistency() );
                     CPPUNIT_ASSERT( t.empty() );
                     CPPUNIT_ASSERT( misc::check_size( t, 0 ));
@@ -783,8 +798,7 @@ namespace tree {
                     CPPUNIT_ASSERT( t.ensure( *p, ensure_functor()).second );
                 }
                 for ( int n = 0; n < (int) c_nItemCount; ++n ) {
-                    typename tree_type::guarded_ptr gp;
-                    CPPUNIT_ASSERT( t.extract_min(gp));
+                    typename tree_type::guarded_ptr gp( t.extract_min() );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == n );
                 }
@@ -793,8 +807,7 @@ namespace tree {
                     CPPUNIT_ASSERT( t.insert( *p ) );
                 }
                 for ( int n = (int) c_nItemCount - 1; n >= 0; --n ) {
-                    typename tree_type::guarded_ptr gp;
-                    CPPUNIT_ASSERT( t.extract_max(gp));
+                    typename tree_type::guarded_ptr gp( t.extract_max());
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == n );
                 }

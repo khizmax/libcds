@@ -495,7 +495,8 @@ namespace tree {
 
                 int i = 0;
                 while ( !s.empty() ) {
-                    CPPUNIT_ASSERT( s.extract_min( gp ) );
+                    gp = s.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( gp->nKey == i );
                     ++i;
                 }
@@ -505,7 +506,8 @@ namespace tree {
                 fill_set( s, arr );
                 i = (int) c_nItemCount - 1;
                 while ( !s.empty() ) {
-                    CPPUNIT_ASSERT( s.extract_max( gp ) );
+                    gp = s.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( gp->nKey == i );
                     --i;
                 }
@@ -515,19 +517,20 @@ namespace tree {
                 fill_set( s, arr );
                 for ( int i = 0; i < static_cast<int>( c_nItemCount ); ++i ) {
                     int nKey = arr[i];
-                    CPPUNIT_ASSERT( s.get( gp, nKey ));
+                    gp = s.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
 
-                    gp.release();
-                    CPPUNIT_ASSERT( s.extract( gp, nKey ));
+                    gp = s.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
 
-                    gp.release();
-                    CPPUNIT_CHECK( !s.get( gp, nKey ));
+                    gp = s.get( nKey );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
-                    CPPUNIT_CHECK( !s.extract( gp, nKey ));
+                    CPPUNIT_CHECK( !s.extract( nKey ));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( s.empty() );
@@ -536,19 +539,20 @@ namespace tree {
                 fill_set( s, arr );
                 for ( int i = 0; i < static_cast<int>( c_nItemCount ); ++i ) {
                     int nKey = arr[i];
-                    CPPUNIT_ASSERT( s.get_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    gp = s.get_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
 
-                    gp.release();
-                    CPPUNIT_ASSERT( s.extract_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    gp = s.extract_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
 
-                    gp.release();
-                    CPPUNIT_CHECK( !s.get_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    gp = s.get_with( wrapped_int( nKey ), wrapped_less() );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
-                    CPPUNIT_CHECK( !s.extract_with( gp, wrapped_int(nKey), wrapped_less() ));
+                    CPPUNIT_CHECK( !s.extract_with( wrapped_int(nKey), wrapped_less() ));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( s.empty() );

@@ -146,7 +146,7 @@ namespace cds { namespace gc {
                 to the HP slot repeatedly until the guard's value equals \p toGuard.
 
                 The function is useful for intrusive containers when \p toGuard is a node pointer
-                that should be converted to a pointer to the value type before protecting.
+                that should be converted to a pointer to the value before protecting.
                 The parameter \p f of type Func is a functor that makes this conversion:
                 \code
                     struct functor {

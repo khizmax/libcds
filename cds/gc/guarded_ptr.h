@@ -15,7 +15,7 @@ namespace cds { namespace gc {
         After destructing \p %guarded_ptr object the pointer can be automatically disposed (freed) at any time.
 
         Template arguments:
-        - \p GC - a garbage collector type like cds::gc::HP and any other from cds::gc namespace
+        - \p GC - a garbage collector type like \p cds::gc::HP and any other from cds::gc namespace
         - \p GuardedType - a type which the guard stores
         - \p ValueType - a value type
         - \p Cast - a functor for converting <tt>GuardedType*</tt> to <tt>ValueType*</tt>. Default is \p void (no casting).
@@ -52,10 +52,10 @@ namespace cds { namespace gc {
     {
         //TODO: use moce semantics and explicit operator bool!
     public:
-        typedef GC          gc         ;   ///< Garbage collector like cds::gc::HP and any other from cds::gc namespace
-        typedef GuardedType guarded_type;  ///< Guarded type
-        typedef ValueType   value_type ;   ///< Value type
-        typedef Cast        value_cast ;   ///< Functor for casting \p guarded_type to \p value_type
+        typedef GC          gc;           ///< Garbage collector like cds::gc::HP and any other from cds::gc namespace
+        typedef GuardedType guarded_type; ///< Guarded type
+        typedef ValueType   value_type;   ///< Value type
+        typedef Cast        value_cast;   ///< Functor for casting \p guarded_type to \p value_type
 
     private:
         //@cond
@@ -67,17 +67,25 @@ namespace cds { namespace gc {
         guarded_ptr() CDS_NOEXCEPT
         {}
 
+        //@cond
         /// Initializes guarded pointer with \p p
         guarded_ptr( guarded_type * p ) CDS_NOEXCEPT
         {
             m_guard.assign( p );
         }
+        guarded_ptr( std::nullptr_t ) CDS_NOEXCEPT
+        {}
+        //@endcond
 
-        /// Copy constructor
-        guarded_ptr( guarded_ptr const& gp ) CDS_NOEXCEPT
+        /// Move ctor
+        guarded_ptr( guarded_ptr&& gp ) CDS_NOEXCEPT
         {
-            m_guard.copy( gp.m_guard );
+            m_guard.assign( gp.m_guard.get_native() );
+            gp.release();
         }
+
+        /// The guarded pointer is not copy-constructible
+        guarded_ptr( guarded_ptr const& gp ) = delete;
 
         /// Clears the guarded pointer
         /**
@@ -88,12 +96,16 @@ namespace cds { namespace gc {
             release();
         }
 
-        /// Assignment operator
-        guarded_ptr& operator=( guarded_ptr const& gp ) CDS_NOEXCEPT
+        /// Move-assignment operator
+        guarded_ptr& operator=( guarded_ptr&& gp ) CDS_NOEXCEPT
         {
-            m_guard.copy( gp.m_guard );
+            m_guard.assign( gp.m_guard.get_native() );
+            gp.release();
             return *this;
         }
+
+        /// The guarded pointer is not copy-assignable
+        guarded_ptr& operator=(guarded_ptr const& gp) = delete;
 
         /// Returns a pointer to guarded value
         value_type * operator ->() const CDS_NOEXCEPT
@@ -119,6 +131,12 @@ namespace cds { namespace gc {
         bool empty() const CDS_NOEXCEPT
         {
             return m_guard.template get<guarded_type>() == nullptr;
+        }
+
+        /// \p bool operator returns <tt>!empty()</tt>
+        explicit operator bool() const CDS_NOEXCEPT
+        {
+            return !empty();
         }
 
         /// Clears guarded pointer
@@ -163,21 +181,27 @@ namespace cds { namespace gc {
             m_guard.assign( p );
         }
 
-        guarded_ptr( guarded_ptr const& gp ) CDS_NOEXCEPT
+        guarded_ptr( guarded_ptr&& gp ) CDS_NOEXCEPT
         {
-            m_guard.copy( gp.m_guard );
+            m_guard.assign( gp.m_guard.get_native() );
+            gp.release();
         }
+
+        guarded_ptr( guarded_ptr const& gp ) = delete;
 
         ~guarded_ptr() CDS_NOEXCEPT
         {
             release();
         }
 
-        guarded_ptr& operator=( guarded_ptr const& gp ) CDS_NOEXCEPT
+        guarded_ptr& operator=(guarded_ptr&& gp) CDS_NOEXCEPT
         {
-            m_guard.copy( gp.m_guard );
+            m_guard.assign( gp.m_guard.get_native() );
+            gp.release();
             return *this;
         }
+
+        guarded_ptr& operator=(guarded_ptr const& gp) = delete;
 
         value_type * operator ->() const CDS_NOEXCEPT
         {
@@ -199,6 +223,11 @@ namespace cds { namespace gc {
         bool empty() const CDS_NOEXCEPT
         {
             return m_guard.template get<guarded_type>() == nullptr;
+        }
+
+        explicit operator bool() const CDS_NOEXCEPT
+        {
+            return !empty();
         }
 
         void release() CDS_NOEXCEPT

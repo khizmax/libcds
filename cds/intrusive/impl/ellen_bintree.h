@@ -549,70 +549,78 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item with minimal key from the tree
         /**
-            The function searches an item with minimal key, unlinks it, and returns pointer to an item found in \p dest parameter.
-            If the tree is empty the function returns \p false.
+            The function searches an item with minimal key, unlinks it, and returns a guarded pointer to an item found.
+            If the tree is empty the function returns an empty guarded pointer.
 
             @note Due the concurrent nature of the tree, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
             During unlinking, a concurrent thread may insert an item with key less than leftmost item's key.
             So, the function returns the item with minimum key at the moment of tree traversing.
 
-            The guarded pointer \p dest prevents disposer invocation for returned item,
-            see cds::gc::guarded_ptr for explanation.
+            The returned \p guarded_ptr prevents disposer invocation for returned item,
+            see \p cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
-        bool extract_min( guarded_ptr& dest )
+        guarded_ptr extract_min()
         {
-            return extract_min_( dest.guard());
+            guarded_ptr gp;
+            extract_min_( gp.guard() );
+            return gp;
         }
 
         /// Extracts an item with maximal key from the tree
         /**
-            The function searches an item with maximal key, unlinks it, and returns pointer to an item found in \p dest parameter.
-            If the tree is empty the function returns \p false.
+            The function searches an item with maximal key, unlinks it, and returns a guarded pointer to an item found.
+            If the tree is empty the function returns an empty \p guarded_ptr.
 
             @note Due the concurrent nature of the tree, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
             During unlinking, a concurrent thread may insert an item with key great than rightmost item's key.
             So, the function returns the item with maximal key at the moment of tree traversing.
 
-            The guarded pointer \p dest prevents disposer invocation for returned item,
+            The returned \p guarded_ptr prevents disposer invocation for returned item,
             see cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
-        bool extract_max( guarded_ptr& dest )
+        guarded_ptr extract_max()
         {
-            return extract_max_( dest.guard() );
+            guarded_ptr gp;
+            extract_max_( gp.guard());
+            return gp;
         }
 
         /// Extracts an item from the tree
         /** \anchor cds_intrusive_EllenBinTree_extract
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns pointer to an item found in \p dest parameter.
-            If the item  is not found the function returns \p false.
+            unlinks it, and returns a guarded pointer to an item found.
+            If the item  is not found the function returns an empty \p guarded_ptr.
 
-            The guarded pointer \p dest prevents disposer invocation for returned item,
+            \p guarded_ptr prevents disposer invocation for returned item,
             see cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
         template <typename Q>
-        bool extract( guarded_ptr& dest, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            return extract_( dest.guard(), key );
+            guarded_ptr gp;
+            extract_( gp.guard(), key );
+            return gp;
         }
 
         /// Extracts an item from the tree using \p pred for searching
         /**
-            The function is an analog of \ref cds_intrusive_EllenBinTree_extract "extract(guarded_ptr& dest, Q const&)"
+            The function is an analog of \ref cds_intrusive_EllenBinTree_extract "extract(Q const&)"
             but \p pred is used for key compare.
             \p Less has the interface like \p std::less and should meet \ref cds_intrusive_EllenBinTree_less
             "Predicate requirements".
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
-            return extract_with_( dest.guard(), key, pred );
+            guarded_ptr gp;
+            extract_with_( gp.guard(), key, pred );
+            return gp;
         }
 
         /// Finds the key \p key
@@ -718,31 +726,35 @@ namespace cds { namespace intrusive {
 
         /// Finds \p key and returns the item found
         /** @anchor cds_intrusive_EllenBinTree_get
-            The function searches the item with key equal to \p key and returns the item found in \p dest parameter.
-            The function returns \p true if \p key is found, \p false otherwise.
+            The function searches the item with key equal to \p key and returns the item found as \p guarded_ptr object.
+            The function returns an empty guarded pointer is \p key is not found.
 
-            The guarded pointer \p dest prevents disposer invocation for returned item,
-            see cds::gc::guarded_ptr for explanation.
+            \p guarded_ptr prevents disposer invocation for returned item,
+            see \p cds::gc::guarded_ptr for explanation.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
         */
         template <typename Q>
-        bool get( guarded_ptr& dest, Q const& key ) const
+        guarded_ptr get( Q const& key ) const
         {
-            return get_( dest.guard(), key );
+            guarded_ptr gp;
+            get_( gp.guard(), key );
+            return gp;
         }
 
         /// Finds \p key with predicate \p pred and returns the item found
         /**
-            The function is an analog of \ref cds_intrusive_EllenBinTree_get "get(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_intrusive_EllenBinTree_get "get(Q const&)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less and should meet \ref cds_intrusive_EllenBinTree_less
             "Predicate requirements".
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& dest, Q const& key, Less pred ) const
+        guarded_ptr get_with( Q const& key, Less pred ) const
         {
-            return get_with_( dest.guard(), key, pred );
+            guarded_ptr gp;
+            get_with_( gp.guard(), key, pred );
+            return gp;
         }
 
         /// Checks if the tree is empty
@@ -767,7 +779,9 @@ namespace cds { namespace intrusive {
         void clear()
         {
             guarded_ptr gp;
-            while ( extract_min(gp));
+            do {
+                gp = extract_min();
+            }  while ( gp );
         }
 
         /// Clears the tree (not thread safe)
@@ -1315,6 +1329,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool extract_( typename gc::Guard& guard, Q const& key )
         {
+            guarded_ptr gp;
             return erase_( key, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
                 [&guard]( value_type& found ) { guard.assign( &found ); } );
@@ -1335,7 +1350,7 @@ namespace cds { namespace intrusive {
                 [&guard]( value_type& found ) { guard.assign( &found ); } );
         }
 
-        bool extract_max_( typename gc::Guard& guard )
+        bool extract_max_( typename gc::Guard& gp )
         {
             update_desc * pOp = nullptr;
             search_result res;
@@ -1381,11 +1396,11 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMaxSuccess();
-            guard.assign( node_traits::to_value_ptr( res.pLeaf ) );
+            gp.assign( node_traits::to_value_ptr( res.pLeaf ));
             return true;
         }
 
-        bool extract_min_( typename gc::Guard& guard )
+        bool extract_min_( typename gc::Guard& gp )
         {
             update_desc * pOp = nullptr;
             search_result res;
@@ -1431,7 +1446,7 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMinSuccess();
-            guard.assign( node_traits::to_value_ptr( res.pLeaf ));
+            gp.assign( node_traits::to_value_ptr( res.pLeaf ));
             return true;
         }
 
