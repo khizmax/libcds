@@ -21,6 +21,9 @@ namespace cds { namespace gc {
             - [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects"
             - [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers"
 
+        Hazard Pointer garbage collector is a singleton. The main user-level part of Hazard Pointer schema is
+        GC class \p %cds::gc::HP and its nested classes. Before use any HP-related class you must initialize HP garbage collector
+        by contructing \p %cds::gc::HP object in beginning of your \p main().
         See \ref cds_how_to_use "How to use" section for details how to apply garbage collector.
     */
     class HP
