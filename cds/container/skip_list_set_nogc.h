@@ -310,6 +310,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         iterator find_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             node_type * pNode = base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, key_accessor>() );
             if ( pNode )
                 return node_to_iterator( pNode );

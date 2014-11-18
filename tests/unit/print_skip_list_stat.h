@@ -11,8 +11,8 @@ namespace std {
     static inline ostream& operator <<( ostream& o, cds::intrusive::skip_list::stat<> const& s )
     {
         o << "Skip-list stat [cds::intrusive::skip_list::stat]\n"
-            << "\t\t node height (add/delete):\n"
-;
+            << "\t\t node height (add/delete):\n";
+
         for ( unsigned int i = 0; i < 9; ++i )
             o << "\t\t\t[ " << (i + 1) << "]: " << s.m_nNodeHeightAdd[i].get() << '/' << s.m_nNodeHeightDel[i].get() << "\n";
         for ( unsigned int i = 9; i < sizeof(s.m_nNodeHeightAdd) / sizeof(s.m_nNodeHeightAdd[0] ); ++i )
@@ -52,7 +52,7 @@ namespace std {
             << "\t\t       m_nExtractWhileFind: " << s.m_nExtractWhileFind.get()        << "\n";
     }
 
-    static inline ostream& operator <<( ostream& o, cds::intrusive::skip_list::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::intrusive::skip_list::empty_stat const& /*s*/ )
     {
         return o;
     }

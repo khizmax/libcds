@@ -106,7 +106,7 @@ namespace ordlist {
             }
         };
         struct dummy_insert_functor {
-            void operator ()( item& i )
+            void operator ()( item& /*i*/ )
             {
                 // This functor should not be called
                 TestCase::current_test()->error( "CPPUNIT_ASSERT", "dummy_insert_functor should not be called", __FILE__, __LINE__ );
@@ -130,7 +130,7 @@ namespace ordlist {
         {
             i.nVal = i.nKey * 1024;
         }
-        static void dummy_insert_function( item& i )
+        static void dummy_insert_function( item& /*i*/ )
         {
             // This function should not be called
             TestCase::current_test()->error( "CPPUNIT_ASSERT", "dummy_insert_function should not be called", __FILE__, __LINE__ );
@@ -172,7 +172,7 @@ namespace ordlist {
         };
 
         struct dummy_check_value {
-            void operator()( item& i, int )
+            void operator()( item& /*i*/, int )
             {
                 // This functor should not be called
                 TestCase::current_test()->error( "CPPUNIT_ASSERT", "dummy_check_value should not be called", __FILE__, __LINE__ );
@@ -180,13 +180,13 @@ namespace ordlist {
         };
 
         struct ensure_functor {
-            void operator()( bool bNew, item& i, int n )
+            void operator()( bool /*bNew*/, item& i, int n )
             {
                 i.nVal = i.nKey * 1024;
             }
         };
 
-        static void ensure_func( bool bNew, item& i, int n )
+        static void ensure_func( bool /*bNew*/, item& i, int n )
         {
             i.nVal = n * 1033;
         }

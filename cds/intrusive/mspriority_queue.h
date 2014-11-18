@@ -326,7 +326,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear_with( []( value_type const& src ) {} );
+            clear_with( []( value_type const& /*src*/ ) {} );
         }
 
         /// Clears the queue (not atomic)

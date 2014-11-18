@@ -565,7 +565,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_unordered_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_hashmap_std.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_hashmap_vc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_list.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_slist.cpp" />
@@ -598,7 +597,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_boost_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_boost_unordered_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_hashmap_std.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_hashmap_vc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_list.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_slist.cpp" />

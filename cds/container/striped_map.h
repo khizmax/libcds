@@ -750,6 +750,7 @@ template <class Container, typename... Options>
             ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_erase_with >::type >
         bool erase_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >(), f );
         }
 
@@ -790,6 +791,7 @@ template <class Container, typename... Options>
             ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_find_with >::type >
         bool find_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >(),
                 [&f]( value_type& pair, K const& ) mutable { f(pair); } );
         }
@@ -821,6 +823,7 @@ template <class Container, typename... Options>
             ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_find_with >::type >
         bool find_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >() );
         }
 

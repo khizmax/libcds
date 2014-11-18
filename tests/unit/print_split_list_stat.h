@@ -29,7 +29,7 @@ namespace std {
             << "\t\t     m_nBusyWaitBucketInit: " << s.m_nBusyWaitBucketInit.get()      << "\n";
     }
 
-    static inline ostream& operator <<( ostream& o, cds::intrusive::split_list::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::intrusive::split_list::empty_stat const& /*s*/ )
     {
         return o;
     }

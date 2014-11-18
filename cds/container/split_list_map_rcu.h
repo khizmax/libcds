@@ -411,6 +411,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool erase_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
         }
 
@@ -447,6 +448,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>(), f );
         }
 
@@ -504,6 +506,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         exempt_ptr extract_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::extract_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 
@@ -544,6 +547,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool find_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key,
                 cds::details::predicate_wrapper<value_type, Less, key_accessor>(),
                 [&f](value_type& pair, K const&){ f( pair ); } );
@@ -573,6 +577,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool find_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
         }
 
@@ -622,6 +627,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         value_type * get_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::get_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 

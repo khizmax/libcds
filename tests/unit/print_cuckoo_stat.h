@@ -18,7 +18,7 @@ namespace std {
             << "\t\t      m_nResizeCount: " << s.m_nResizeCount.get()       << "\n"
 ;
     }
-    static inline ostream& operator <<( ostream& o, cds::intrusive::cuckoo::empty_striping_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::intrusive::cuckoo::empty_striping_stat const& /*s*/ )
     {
         return o;
     }

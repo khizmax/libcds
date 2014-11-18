@@ -213,6 +213,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with_( Q& val, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( val, typename maker::template predicate_wrapper<Less>::type(),
                 [&f]( node_type& item, Q& val ) { f(item.m_Value, val) ; } );
         }
@@ -536,6 +537,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
              return base_class::erase_with( key, typename maker::template predicate_wrapper<Less>::type() );
         }
 
@@ -576,6 +578,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, typename maker::template predicate_wrapper<Less>::type(),
                 [&f](node_type& node) { f( node.m_Value ); } );
         }
@@ -634,6 +637,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         exempt_ptr extract_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return exempt_ptr( base_class::extract_with_( key, typename maker::template predicate_wrapper<Less>::type()));
         }
 
@@ -721,6 +725,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, typename maker::template predicate_wrapper<Less>::type() );
         }
 
@@ -771,6 +776,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         value_type * get_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             node_type * pNode = base_class::get_with( key, typename maker::template predicate_wrapper<Less>::type());
             return pNode ? &pNode->m_Value : nullptr;
         }

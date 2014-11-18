@@ -148,7 +148,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
 
                 template <typename Q, typename Less, typename Func>
-                value_type * erase( Q const& key, Less pred, Func f )
+                value_type * erase( Q const& key, Less /*pred*/, Func f )
                 {
                     return erase_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
                 }

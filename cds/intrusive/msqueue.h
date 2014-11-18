@@ -126,7 +126,7 @@ namespace cds { namespace intrusive {
             void onBadTail()                {}
 
             void reset() {}
-            empty_stat& operator +=( empty_stat const& s )
+            empty_stat& operator +=( empty_stat const& )
             {
                 return *this;
             }

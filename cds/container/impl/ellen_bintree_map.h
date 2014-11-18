@@ -278,6 +278,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool erase_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >());
         }
 
@@ -312,6 +313,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >(),
                 [&f]( leaf_node& node) { f( node.m_Value ); } );
         }
@@ -386,6 +388,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         guarded_ptr extract_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             guarded_ptr gp;
             base_class::extract_with_( gp.guard(), key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >());
@@ -424,6 +427,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool find_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >(),
                 [&f](leaf_node& item, K const& ) { f( item.m_Value );});
         }
@@ -450,6 +454,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool find_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );
         }
 
@@ -480,6 +485,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         guarded_ptr get_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             guarded_ptr gp;
             base_class::get_with_( gp.guard(), key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );

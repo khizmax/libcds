@@ -262,6 +262,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         iterator find_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
         }
 

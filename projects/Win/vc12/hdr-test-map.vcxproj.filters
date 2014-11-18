@@ -31,9 +31,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_hashmap_std.cpp">
       <Filter>striped</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_hashmap_vc.cpp">
-      <Filter>striped</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_list.cpp">
       <Filter>striped</Filter>
     </ClCompile>
@@ -71,9 +68,6 @@
       <Filter>striped</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_hashmap_std.cpp">
-      <Filter>striped</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_hashmap_vc.cpp">
       <Filter>striped</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_striped_hashmap_list.cpp">

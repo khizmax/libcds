@@ -95,7 +95,7 @@ namespace cds { namespace urcu { namespace details {
     {}
 
     template <typename RCUtag>
-    void sh_singleton<RCUtag>::signal_handler( int signo, siginfo_t * sigInfo, void * context )
+    void sh_singleton<RCUtag>::signal_handler( int /*signo*/, siginfo_t * /*sigInfo*/, void * /*context*/ )
     {
         thread_record * pRec = cds::threading::getRCU<RCUtag>();
         if ( pRec ) {

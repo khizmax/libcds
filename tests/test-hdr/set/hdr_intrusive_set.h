@@ -193,7 +193,7 @@ namespace set {
         struct find_functor
         {
             template <typename Item, typename T>
-            void operator()( Item& item, T& val )
+            void operator()( Item& item, T& /*val*/ )
             {
                 ++item.nFindCount;
             }
@@ -211,7 +211,7 @@ namespace set {
         struct ensure_functor
         {
             template <typename Item>
-            void operator()( bool bNew, Item& item, Item& val )
+            void operator()( bool bNew, Item& item, Item& /*val*/ )
             {
                 if ( bNew )
                     ++item.nEnsureNewCount;
