@@ -181,7 +181,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::item_counter item_counter;   ///< Item counting policy used
         typedef typename traits::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
-        typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
+        typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
         //@cond
         // Rebind traits (split-list support)
@@ -633,8 +633,8 @@ namespace cds { namespace intrusive {
         /// Extracts the item from the list with specified \p key
         /** \anchor cds_intrusive_MichaelList_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the list, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the list, and returns it as \p guarded_ptr.
+            If \p key is not found returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -648,24 +648,26 @@ namespace cds { namespace intrusive {
             ord_list theList;
             // ...
             {
-                ord_list::guarded_ptr gp;
-                theList.extract( gp, 5 );
-                // Deal with gp
-                // ...
-
+                ord_list::guarded_ptr gp(theList.extract( 5 ));
+                if ( gp ) {
+                    // Deal with gp
+                    // ...
+                }
                 // Destructor of gp releases internal HP guard
             }
             \endcode
         */
         template <typename Q>
-        bool extract( guarded_ptr& dest, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            return extract_at( m_pHead, dest.guard(), key, key_comparator() );
+            guarded_ptr gp;
+            extract_at( m_pHead, gp.guard(), key, key_comparator() );
+            return gp;
         }
 
         /// Extracts the item using compare functor \p pred
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_extract "extract(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_intrusive_MichaelList_hp_extract "extract(Q const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -673,9 +675,11 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
-            return extract_at( m_pHead, dest.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            guarded_ptr gp;
+            extract_at( m_pHead, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            return gp;
         }
 
         /// Finds \p key in the list
@@ -759,9 +763,8 @@ namespace cds { namespace intrusive {
         /// Finds the \p key and return the item found
         /** \anchor cds_intrusive_MichaelList_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns it as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
             The \ref disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC automatically when returned \ref guarded_ptr object
@@ -774,8 +777,8 @@ namespace cds { namespace intrusive {
             ord_list theList;
             // ...
             {
-                ord_list::guarded_ptr gp;
-                if ( theList.get( gp, 5 )) {
+                ord_list::guarded_ptr gp(theList.get( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -787,14 +790,16 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& key )
+        guarded_ptr get( Q const& key )
         {
-            return get_at( m_pHead, ptr.guard(), key, key_comparator() );
+            guarded_ptr gp;
+            get_at( m_pHead, gp.guard(), key, key_comparator() );
+            return gp;
         }
 
         /// Finds the \p key and return the item found
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_get "get( guarded_ptr& ptr, Q const&)"
+            The function is an analog of \ref cds_intrusive_MichaelList_hp_get "get( Q const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -802,9 +807,11 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred )
         {
-            return get_at( m_pHead, ptr.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            guarded_ptr gp;
+            get_at( m_pHead, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            return gp;
         }
 
         /// Clears the list
@@ -992,13 +999,13 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_at( atomic_node_ptr& refHead, typename gc::Guard& dest, Q const& val, Compare cmp )
+        bool extract_at( atomic_node_ptr& refHead, typename guarded_ptr::native_guard& dest, Q const& val, Compare cmp )
         {
             position pos;
             back_off bkoff;
             while ( search( refHead, val, pos, cmp )) {
                 if ( unlink_node( pos ) ) {
-                    dest.assign( pos.guards.template get<value_type>( position::guard_current_item ) );
+                    dest.set( pos.guards.template get<value_type>( position::guard_current_item ) );
                     --m_ItemCounter;
                     return true;
                 }
@@ -1027,11 +1034,11 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_at( atomic_node_ptr& refHead, typename gc::Guard& guard, Q const& val, Compare cmp )
+        bool get_at( atomic_node_ptr& refHead, typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
         {
             position pos;
             if ( search( refHead, val, pos, cmp )) {
-                guard.assign( pos.guards.template get<value_type>( position::guard_current_item ));
+                guard.set( pos.guards.template get<value_type>( position::guard_current_item ));
                 return true;
             }
             return false;

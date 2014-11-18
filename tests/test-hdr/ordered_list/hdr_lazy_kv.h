@@ -297,27 +297,28 @@ namespace ordlist {
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arr[i];
 
-                    CPPUNIT_ASSERT( l.get(gp, nKey));
+                    gp = l.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
-                    gp.release();
 
-                    CPPUNIT_ASSERT( l.extract(gp, nKey));
+                    gp = l.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey*2 );
-                    gp.release();
 
-                    CPPUNIT_CHECK( !l.get(gp, nKey));
+                    gp = l.get( nKey );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
-                    CPPUNIT_CHECK( !l.extract( gp, nKey));
+                    CPPUNIT_CHECK( !l.extract( nKey));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( l.empty());
-                CPPUNIT_CHECK( !l.get(gp, arr[0]));
+                CPPUNIT_CHECK( !l.get(arr[0]));
                 CPPUNIT_CHECK( gp.empty());
-                CPPUNIT_CHECK( !l.extract( gp, arr[0]));
+                CPPUNIT_CHECK( !l.extract( arr[0]));
                 CPPUNIT_CHECK( gp.empty());
             }
 
@@ -330,27 +331,28 @@ namespace ordlist {
                     int nKey = arr[i];
                     other_key key = float(nKey + 0.3);
 
-                    CPPUNIT_ASSERT( l.get_with(gp, key, other_less()));
+                    gp = l.get_with( key, other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
-                    gp.release();
 
-                    CPPUNIT_ASSERT( l.extract_with(gp, key, other_less()));
+                    gp = l.extract_with( key, other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey*2 );
-                    gp.release();
 
-                    CPPUNIT_CHECK( !l.get_with(gp, key, other_less()));
+                    gp = l.get_with( key, other_less() );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
-                    CPPUNIT_CHECK( !l.extract_with( gp, key, other_less()));
+                    CPPUNIT_CHECK( !l.extract_with( key, other_less()));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( l.empty());
-                CPPUNIT_CHECK( !l.get_with(gp, 3.4f, other_less()));
+                CPPUNIT_CHECK( !l.get_with(3.4f, other_less()));
                 CPPUNIT_CHECK( gp.empty());
-                CPPUNIT_CHECK( !l.extract_with( gp, 3.4f, other_less()));
+                CPPUNIT_CHECK( !l.extract_with( 3.4f, other_less()));
                 CPPUNIT_CHECK( gp.empty());
             }
         }

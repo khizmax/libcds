@@ -121,7 +121,7 @@ namespace cds { namespace container {
 
     public:
         /// Guarded pointer
-        typedef cds::gc::guarded_ptr< gc, node_type, value_type, details::guarded_ptr_cast_map<node_type, value_type> > guarded_ptr;
+        typedef typename gc::template guarded_ptr< node_type, value_type, details::guarded_ptr_cast_map<node_type, value_type> > guarded_ptr;
 
     protected:
         //@cond
@@ -520,13 +520,13 @@ namespace cds { namespace container {
         /// Extracts the item from the list with specified \p key
         /** \anchor cds_nonintrusive_MichaelKVList_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the list, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the list, and returns it as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p K that can be not the same as \p key_type.
 
-            The \ref disposer specified in \p Traits class template parameter is called automatically
-            by garbage collector \p GC specified in class' template parameters when returned \ref guarded_ptr object
+            The \p disposer specified in \p Traits class template parameter is called automatically
+            by garbage collector \p GC specified in class' template parameters when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
@@ -536,24 +536,26 @@ namespace cds { namespace container {
             ord_list theList;
             // ...
             {
-                ord_list::guarded_ptr gp;
-                theList.extract( gp, 5 );
-                // Deal with gp
-                // ...
-
+                ord_list::guarded_ptr gp(theList.extract( 5 ));
+                if ( gp ) {
+                    // Deal with gp
+                    // ...
+                }
                 // Destructor of gp releases internal HP guard
             }
             \endcode
         */
         template <typename K>
-        bool extract( guarded_ptr& dest, K const& key )
+        guarded_ptr extract( K const& key )
         {
-            return extract_at( head(), dest.guard(), key, intrusive_key_comparator() );
+            guarded_ptr gp;
+            extract_at( head(), gp.guard(), key, intrusive_key_comparator() );
+            return gp;
         }
 
         /// Extracts the item from the list with comparing functor \p pred
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelKVList_hp_extract "extract(guarded_ptr&, K const&)"
+            The function is an analog of \ref cds_nonintrusive_MichaelKVList_hp_extract "extract(K const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref key_type and \p K
@@ -561,10 +563,12 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename K, typename Less>
-        bool extract_with( guarded_ptr& dest, K const& key, Less pred )
+        guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_at( head(), dest.guard(), key, typename maker::template less_wrapper<Less>::type() );
+            guarded_ptr gp;
+            extract_at( head(), gp.guard(), key, typename maker::template less_wrapper<Less>::type() );
+            return gp;
         }
 
         /// Finds the key \p key
@@ -633,12 +637,11 @@ namespace cds { namespace container {
         /// Finds the \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelKVList_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns it as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
-            The \ref disposer specified in \p Traits class template parameter is called
-            by garbage collector \p GC automatically when returned \ref guarded_ptr object
+            The \p disposer specified in \p Traits class template parameter is called
+            by garbage collector \p GC automatically when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -648,8 +651,8 @@ namespace cds { namespace container {
             ord_list theList;
             // ...
             {
-                ord_list::guarded_ptr gp;
-                if ( theList.get( gp, 5 )) {
+                ord_list::guarded_ptr gp(theList.get( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -661,9 +664,11 @@ namespace cds { namespace container {
             should accept a parameter of type \p K that can be not the same as \p key_type.
         */
         template <typename K>
-        bool get( guarded_ptr& ptr, K const& key )
+        guarded_ptr get( K const& key )
         {
-            return get_at( head(), ptr.guard(), key, intrusive_key_comparator() );
+            guarded_ptr gp;
+            get_at( head(), gp.guard(), key, intrusive_key_comparator() );
+            return gp;
         }
 
         /// Finds the \p key and return the item found
@@ -676,10 +681,12 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename K, typename Less>
-        bool get_with( guarded_ptr& ptr, K const& key, Less pred )
+        guarded_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_at( head(), ptr.guard(), key, typename maker::template less_wrapper<Less>::type() );
+            guarded_ptr gp;
+            get_at( head(), gp.guard(), key, typename maker::template less_wrapper<Less>::type() );
+            return gp;
         }
 
         /// Checks if the list is empty
@@ -775,9 +782,9 @@ namespace cds { namespace container {
             return base_class::erase_at( refHead, key, cmp, [&f]( node_type const & node ){ f( const_cast<value_type&>(node.m_Data)); });
         }
         template <typename K, typename Compare>
-        bool extract_at( head_type& refHead, typename gc::Guard& dest, K const& key, Compare cmp )
+        bool extract_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
         {
-            return base_class::extract_at( refHead, dest, key, cmp );
+            return base_class::extract_at( refHead, guard, key, cmp );
         }
 
         template <typename K, typename Compare>
@@ -793,7 +800,7 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        bool get_at( head_type& refHead, typename gc::Guard& guard, K const& key, Compare cmp )
+        bool get_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
         {
             return base_class::get_at( refHead, guard, key, cmp );
         }

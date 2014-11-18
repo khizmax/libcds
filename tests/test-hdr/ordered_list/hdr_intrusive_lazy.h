@@ -439,7 +439,6 @@ namespace ordlist {
             static int const nLimit = 20;
             typename OrdList::value_type arrItem[nLimit];
 
-
             {
                 int a[nLimit];
                 for (int i = 0; i < nLimit; ++i)
@@ -456,28 +455,27 @@ namespace ordlist {
                     CPPUNIT_ASSERT( l.insert( arrItem[i] ) );
 
                 for ( int i=0; i < nLimit; ++i ) {
-                    CPPUNIT_ASSERT( l.get( gp, arrItem[i].nKey ));
+                    gp = l.get( arrItem[i].nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
-                    gp.release();
 
-                    CPPUNIT_ASSERT( l.extract( gp, arrItem[i].nKey ));
+                    gp = l.extract( arrItem[i].nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
-                    gp.release();
 
-                    CPPUNIT_ASSERT( !l.get( gp, arrItem[i].nKey ));
+                    gp = l.get( arrItem[i].nKey );
+                    CPPUNIT_ASSERT( !gp );
                     CPPUNIT_ASSERT( gp.empty());
-                    CPPUNIT_ASSERT( !l.extract( gp, arrItem[i].nKey ));
+                    CPPUNIT_ASSERT( !l.extract( arrItem[i].nKey ));
                     CPPUNIT_ASSERT( gp.empty());
                 }
                 CPPUNIT_ASSERT( l.empty() );
-                CPPUNIT_ASSERT( !l.get( gp, nLimit/2 ));
-                CPPUNIT_ASSERT( gp.empty());
-                CPPUNIT_ASSERT( !l.extract( gp, nLimit/2 ));
-                CPPUNIT_ASSERT( gp.empty());
+                CPPUNIT_ASSERT( !l.get( nLimit/2 ));
+                CPPUNIT_ASSERT( !l.extract( nLimit/2 ));
 
                 // Apply retired pointer
                 OrdList::gc::force_dispose();
@@ -488,27 +486,28 @@ namespace ordlist {
 
                 for ( int i=0; i < nLimit; ++i ) {
                     other_item itm( arrItem[i].nKey );
-                    CPPUNIT_ASSERT( l.get_with( gp, itm, other_less() ));
+                    gp = l.get_with( itm, other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
-                    gp.release();
 
-                    CPPUNIT_ASSERT( l.extract_with( gp, itm, other_less() ));
+                    gp = l.extract_with( itm, other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
-                    gp.release();
 
-                    CPPUNIT_ASSERT( !l.get_with( gp, itm, other_less() ));
+                    gp = l.get_with( itm, other_less() );
+                    CPPUNIT_ASSERT( !gp );
                     CPPUNIT_ASSERT( gp.empty());
-                    CPPUNIT_ASSERT( !l.extract_with( gp, itm, other_less() ));
+                    CPPUNIT_ASSERT( !l.extract_with( itm, other_less() ));
                     CPPUNIT_ASSERT( gp.empty());
                 }
                 CPPUNIT_ASSERT( l.empty() );
-                CPPUNIT_ASSERT( !l.get_with( gp, other_item(nLimit/2), other_less() ));
+                CPPUNIT_ASSERT( !l.get_with( other_item(nLimit/2), other_less() ));
                 CPPUNIT_ASSERT( gp.empty());
-                CPPUNIT_ASSERT( !l.extract_with( gp, other_item(nLimit/2), other_less() ));
+                CPPUNIT_ASSERT( !l.extract_with( other_item(nLimit/2), other_less() ));
                 CPPUNIT_ASSERT( gp.empty());
 
                 // Apply retired pointer

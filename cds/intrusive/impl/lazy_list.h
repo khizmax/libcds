@@ -177,7 +177,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::item_counter item_counter ;   ///< Item counting policy used
         typedef typename traits::memory_model  memory_model;   ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
 
-        typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
+        typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
         //@cond
         // Rebind traits (split-list support)
@@ -634,13 +634,13 @@ namespace cds { namespace intrusive {
         /// Extracts the item from the list with specified \p key
         /** \anchor cds_intrusive_LazyList_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the list, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the list, and returns it as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             The \ref disposer specified in \p Traits class template parameter is called automatically
-            by garbage collector \p GC specified in class' template parameters when returned \ref guarded_ptr object
+            by garbage collector \p GC specified in class' template parameters when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
@@ -650,8 +650,7 @@ namespace cds { namespace intrusive {
             ord_list theList;
             // ...
             {
-                ord_list::guarded_ptr gp;
-                theList.extract( gp, 5 );
+                ord_list::guarded_ptr gp( theList.extract( 5 ));
                 // Deal with gp
                 // ...
 
@@ -660,14 +659,16 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        bool extract( guarded_ptr& dest, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            return extract_at( &m_Head, dest.guard(), key, key_comparator() );
+            guarded_ptr gp;
+            extract_at( &m_Head, gp.guard(), key, key_comparator() );
+            return gp;
         }
 
         /// Extracts the item from the list with comparing functor \p pred
         /**
-            The function is an analog of \ref cds_intrusive_LazyList_hp_extract "extract(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_intrusive_LazyList_hp_extract "extract(Q const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -675,9 +676,11 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
-            return extract_at( &m_Head, dest.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            guarded_ptr gp;
+            extract_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            return gp;
         }
 
         /// Finds the key \p key
@@ -756,12 +759,11 @@ namespace cds { namespace intrusive {
         /// Finds \p key and return the item found
         /** \anchor cds_intrusive_LazyList_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns an guarded pointer to it.
+            If \p key is not found the function returns an empty guarded pointer.
 
             The \ref disposer specified in \p Traits class template parameter is called
-            by garbage collector \p GC automatically when returned \ref guarded_ptr object
+            by garbage collector \p GC automatically when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -771,8 +773,8 @@ namespace cds { namespace intrusive {
             ord_list theList;
             // ...
             {
-                ord_list::guarded_ptr gp;
-                if ( theList.get( gp, 5 )) {
+                ord_list::guarded_ptr gp(theList.get( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -784,14 +786,16 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& key )
+        guarded_ptr get( Q const& key )
         {
-            return get_at( &m_Head, ptr.guard(), key, key_comparator() );
+            guarded_ptr gp;
+            get_at( &m_Head, gp.guard(), key, key_comparator() );
+            return gp;
         }
 
         /// Finds \p key and return the item found
         /**
-            The function is an analog of \ref cds_intrusive_LazyList_hp_get "get( guarded_ptr& ptr, Q const&)"
+            The function is an analog of \ref cds_intrusive_LazyList_hp_get "get( Q const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -799,9 +803,11 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred )
         {
-            return get_at( &m_Head, ptr.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            guarded_ptr gp;
+            get_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            return gp;
         }
 
         /// Clears the list
@@ -1031,11 +1037,11 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_at( node_type * pHead, typename gc::Guard& gp, const Q& val, Compare cmp )
+        bool extract_at( node_type * pHead, typename guarded_ptr::native_guard& gp, const Q& val, Compare cmp )
         {
             position pos;
             if ( erase_at( pHead, val, cmp, [](value_type const &){}, pos )) {
-                gp.assign( pos.guards.template get<value_type>(position::guard_current_item) );
+                gp.set( pos.guards.template get<value_type>(position::guard_current_item) );
                 return true;
             }
             return false;
@@ -1071,7 +1077,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_at( node_type * pHead, typename gc::Guard& gp, Q const& val, Compare cmp )
+        bool get_at( node_type * pHead, typename guarded_ptr::native_guard& gp, Q const& val, Compare cmp )
         {
             position pos;
 
@@ -1080,7 +1086,7 @@ namespace cds { namespace intrusive {
                 && !pos.pCur->is_marked()
                 && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
             {
-                gp.assign( pos.guards.template get<value_type>( position::guard_current_item ));
+                gp.set( pos.guards.template get<value_type>( position::guard_current_item ));
                 return true;
             }
             return false;
