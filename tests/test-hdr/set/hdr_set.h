@@ -360,19 +360,21 @@ namespace set {
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrRandom[i];
-                    CPPUNIT_ASSERT( s.get(gp, nKey ));
+                    gp = s.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
 
-                    CPPUNIT_ASSERT( s.extract(gp, nKey));
+                    gp = s.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
-                    CPPUNIT_CHECK( !s.get(gp, nKey));
-                    gp.release();
+                    CPPUNIT_CHECK( !s.get(nKey));
 
-                    CPPUNIT_CHECK( !s.extract(gp, nKey));
+                    gp = s.extract( nKey );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( s.empty() );
@@ -383,19 +385,21 @@ namespace set {
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrRandom[i];
-                    CPPUNIT_ASSERT( s.get_with(gp, other_item(nKey), other_less() ));
+                    gp = s.get_with( other_item( nKey ), other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
 
-                    CPPUNIT_ASSERT( s.extract_with(gp, other_item(nKey), other_less() ));
+                    gp = s.extract_with( other_item( nKey ), other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
-                    CPPUNIT_CHECK( !s.get_with(gp, other_item(nKey), other_less() ));
-                    gp.release();
+                    gp = s.get_with( other_item( nKey ), other_less() );
+                    CPPUNIT_CHECK( !gp );
 
-                    CPPUNIT_CHECK( !s.extract_with(gp, other_item(nKey), other_less() ));
+                    CPPUNIT_CHECK( !s.extract_with(other_item(nKey), other_less() ));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( s.empty() );

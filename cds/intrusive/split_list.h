@@ -298,7 +298,7 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
-            bool extract_at( dummy_node_type * pHead, typename gc::Guard& guard, split_list::details::search_value_type<Q> const& val, Compare cmp )
+            bool extract_at( dummy_node_type * pHead, typename guarded_ptr::native_guard& guard, split_list::details::search_value_type<Q> const& val, Compare cmp )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
@@ -322,7 +322,7 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
-            bool get_at( dummy_node_type * pHead, typename gc::Guard& guard, split_list::details::search_value_type<Q> const& val, Compare cmp )
+            bool get_at( dummy_node_type * pHead, typename guarded_ptr::native_guard& guard, split_list::details::search_value_type<Q> const& val, Compare cmp )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
@@ -489,7 +489,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_( typename gc::Guard& guard, Q const& val, Compare cmp )
+        bool get_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
@@ -500,13 +500,13 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        bool get_( typename gc::Guard& guard, Q const& key)
+        bool get_( typename guarded_ptr::native_guard& guard, Q const& key )
         {
             return get_( guard, key, key_comparator());
         }
 
         template <typename Q, typename Less>
-        bool get_with_( typename gc::Guard& guard, Q const& key, Less )
+        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less )
         {
             return get_( guard, key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
         }
@@ -546,10 +546,10 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_( typename gc::Guard& guard, Q const& val, Compare cmp )
+        bool extract_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -563,17 +563,16 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        bool extract_( typename gc::Guard& guard, Q const& key)
+        bool extract_( typename guarded_ptr::native_guard& guard, Q const& key )
         {
             return extract_( guard, key, key_comparator());
         }
 
         template <typename Q, typename Less>
-        bool extract_with_( typename gc::Guard& guard, Q const& key, Less )
+        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less )
         {
             return extract_( guard, key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
         }
-
         //@endcond
 
     public:
@@ -811,13 +810,13 @@ namespace cds { namespace intrusive {
         /// Extracts the item with specified \p key
         /** \anchor cds_intrusive_SplitListSet_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the set, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the set, and returns it as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p Q that may be not the same as \p value_type.
 
-            The \ref disposer specified in \p OrderedList class' template parameter is called automatically
-            by garbage collector \p GC when returned \ref guarded_ptr object will be destroyed or released.
+            The \p disposer specified in \p OrderedList class' template parameter is called automatically
+            by garbage collector \p GC when returned \p guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
             Usage:
@@ -826,24 +825,26 @@ namespace cds { namespace intrusive {
             splitlist_set theSet;
             // ...
             {
-                splitlist_set::guarded_ptr gp;
-                theSet.extract( gp, 5 );
-                // Deal with gp
-                // ...
-
+                splitlist_set::guarded_ptr gp( theSet.extract( 5 ));
+                if ( gp) {
+                    // Deal with gp
+                    // ...
+                }
                 // Destructor of gp releases internal HP guard
             }
             \endcode
         */
         template <typename Q>
-        bool extract( guarded_ptr& dest, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            return extract_( dest.guard(), key );
+            guarded_ptr gp;
+            extract_( gp.guard(), key );
+            return gp;
         }
 
         /// Extracts the item using compare functor \p pred
         /**
-            The function is an analog of \ref cds_intrusive_SplitListSet_hp_extract "extract(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_intrusive_SplitListSet_hp_extract "extract(Q const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -851,9 +852,11 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
-            return extract_with_( dest.guard(), key, pred );
+            guarded_ptr gp;
+            extract_with_( gp.guard(), key, pred );
+            return gp;
         }
 
         /// Finds the key \p key
@@ -944,12 +947,11 @@ namespace cds { namespace intrusive {
         /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_SplitListSet_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns the item found as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
-            The \ref disposer specified in \p OrderedList class' template parameter is called
-            by garbage collector \p GC automatically when returned \ref guarded_ptr object
+            The \p disposer specified in \p OrderedList class' template parameter is called
+            by garbage collector \p GC automatically when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -959,8 +961,8 @@ namespace cds { namespace intrusive {
             splitlist_set theSet;
             // ...
             {
-                splitlist_set::guarded_ptr gp;
-                if ( theSet.get( gp, 5 )) {
+                splitlist_set::guarded_ptr gp = theSet.get( 5 );
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -972,14 +974,16 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& key )
+        guarded_ptr get( Q const& key )
         {
-            return get_( ptr.guard(), key );
+            guarded_ptr gp;
+            get_( gp.guard(), key );
+            return gp;
         }
 
         /// Finds the key \p key and return the item found
         /**
-            The function is an analog of \ref cds_intrusive_SplitListSet_hp_get "get( guarded_ptr& ptr, Q const&)"
+            The function is an analog of \ref cds_intrusive_SplitListSet_hp_get "get( Q const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -987,9 +991,11 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred )
         {
-            return get_with_( ptr.guard(), key, pred );
+            guarded_ptr gp;
+            get_with_( gp.guard(), key, pred );
+            return gp;
         }
 
         /// Returns item count in the set

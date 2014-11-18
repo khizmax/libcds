@@ -503,43 +503,47 @@ namespace set {
                 guarded_ptr gp;
                 for ( size_t i = 0; i < nLimit; i += 2 ) {
                     int nKey = arr[i];
-                    CPPUNIT_ASSERT( s.get( gp, nKey ));
+                    gp = s.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2 );
 
-                    CPPUNIT_ASSERT( s.extract( gp, nKey ));
+                    gp = s.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty() );
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2 );
-                    gp.release();
 
-                    CPPUNIT_CHECK( !s.get( gp, nKey ));
+                    gp = s.get( nKey );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_ASSERT( gp.empty() );
-                    CPPUNIT_CHECK( !s.extract( gp, nKey ));
+                    CPPUNIT_CHECK( !s.extract( nKey ));
                     CPPUNIT_CHECK( gp.empty() );
 
                     nKey = arr[i+1];
-                    CPPUNIT_ASSERT( s.get_with( gp, nKey, less<value_type>() ));
+                    gp = s.get_with( nKey, less<value_type>() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2 );
 
-                    CPPUNIT_ASSERT( s.extract_with( gp, nKey, less<value_type>() ));
+                    gp = s.extract_with( nKey, less<value_type>() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty() );
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2 );
-                    gp.release();
 
-                    CPPUNIT_CHECK( !s.get_with( gp, nKey, less<value_type>() ));
+                    gp = s.get_with( nKey, less<value_type>() );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( gp.empty());
-                    CPPUNIT_CHECK( !s.extract_with( gp, nKey, less<value_type>() ));
+                    CPPUNIT_CHECK( !s.extract_with( nKey, less<value_type>() ));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_CHECK( s.empty() );
                 CPPUNIT_CHECK( check_size( s, 0 ));
 
-                CPPUNIT_CHECK( !s.get( gp, 100 ));
-                CPPUNIT_CHECK( !s.extract( gp, 100 ));
+                CPPUNIT_CHECK( !s.get( 100 ));
+                CPPUNIT_CHECK( !s.extract( 100 ));
                 CPPUNIT_CHECK( gp.empty() );
 
                 Set::gc::force_dispose();

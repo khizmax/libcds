@@ -209,19 +209,21 @@ namespace map {
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrRandom[i];
-                    CPPUNIT_ASSERT( m.get(gp, nKey ));
+                    gp = m.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
 
-                    CPPUNIT_ASSERT( m.extract(gp, nKey));
+                    gp = m.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
-                    CPPUNIT_CHECK( !m.get(gp, nKey));
-                    gp.release();
+                    gp = m.get( nKey );
+                    CPPUNIT_CHECK( !gp );
 
-                    CPPUNIT_CHECK( !m.extract(gp, nKey));
+                    CPPUNIT_CHECK( !m.extract(nKey));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( m.empty() );
@@ -231,19 +233,21 @@ namespace map {
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrRandom[i];
-                    CPPUNIT_ASSERT( m.get_with(gp, other_item(nKey), other_less() ));
+                    gp = m.get_with( other_item( nKey ), other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
 
-                    CPPUNIT_ASSERT( m.extract_with(gp, other_item(nKey), other_less() ));
+                    gp = m.extract_with( other_item( nKey ), other_less() );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
-                    CPPUNIT_CHECK( !m.get_with(gp, other_item(nKey), other_less() ));
-                    gp.release();
+                    gp = m.get_with( other_item( nKey ), other_less() );
+                    CPPUNIT_CHECK( !gp );
 
-                    CPPUNIT_CHECK( !m.extract_with(gp, other_item(nKey), other_less() ));
+                    CPPUNIT_CHECK( !m.extract_with(other_item(nKey), other_less() ));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( m.empty() );

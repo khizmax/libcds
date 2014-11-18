@@ -145,7 +145,7 @@ namespace cds { namespace container {
 
     public:
         /// Guarded pointer
-        typedef cds::gc::guarded_ptr< gc, node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
+        typedef typename gc::template guarded_ptr< node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
 
     public:
         /// Forward iterator (see \p SplitListSet::iterator)
@@ -412,12 +412,12 @@ namespace cds { namespace container {
         /// Extracts the item with specified \p key
         /** \anchor cds_nonintrusive_SplitListMap_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the map, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the map, and returns it as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p K that may be not the same as \p value_type.
 
-            The extracted item is freed automatically when returned \ref guarded_ptr object will be destroyed or released.
+            The extracted item is freed automatically when returned \p guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
             Usage:
@@ -426,24 +426,26 @@ namespace cds { namespace container {
             splitlist_map theMap;
             // ...
             {
-                splitlist_map::guarded_ptr gp;
-                theMap.extract( gp, 5 );
-                // Deal with gp
-                // ...
-
+                splitlist_map::guarded_ptr gp(theMap.extract( 5 ));
+                if ( gp ) {
+                    // Deal with gp
+                    // ...
+                }
                 // Destructor of gp releases internal HP guard
             }
             \endcode
         */
         template <typename K>
-        bool extract( guarded_ptr& dest, K const& key )
+        guarded_ptr extract( K const& key )
         {
-            return base_class::extract_( dest.guard(), key );
+            guarded_ptr gp;
+            base_class::extract_( gp.guard(), key );
+            return gp;
         }
 
         /// Extracts the item using compare functor \p pred
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListMap_hp_extract "extract(guarded_ptr&, K const&)"
+            The function is an analog of \ref cds_nonintrusive_SplitListMap_hp_extract "extract(K const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p K
@@ -451,10 +453,12 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        bool extract_with( guarded_ptr& dest, K const& key, Less pred )
+        guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::extract_with_( dest.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            guarded_ptr gp;
+            base_class::extract_with_( gp.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return gp;
         }
 
         /// Finds the key \p key
@@ -527,9 +531,8 @@ namespace cds { namespace container {
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_SplitListMap_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns the item found as a guarded pointer.
+            If \p key is not found the function returns an empty guarded pointer.
 
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -539,8 +542,8 @@ namespace cds { namespace container {
             splitlist_map theMap;
             // ...
             {
-                splitlist_map::guarded_ptr gp;
-                if ( theMap.get( gp, 5 )) {
+                splitlist_map::guarded_ptr gp(theMap.get( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -552,14 +555,16 @@ namespace cds { namespace container {
             should accept a parameter of type \p K that can be not the same as \p value_type.
         */
         template <typename K>
-        bool get( guarded_ptr& ptr, K const& key )
+        guarded_ptr get( K const& key )
         {
-            return base_class::get_( ptr.guard(), key );
+            guarded_ptr gp;
+            base_class::get_( gp.guard(), key );
+            return gp;
         }
 
         /// Finds \p key and return the item found
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListMap_hp_get "get( guarded_ptr&, K const&)"
+            The function is an analog of \ref cds_nonintrusive_SplitListMap_hp_get "get( K const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p K
@@ -567,10 +572,12 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        bool get_with( guarded_ptr& ptr, K const& key, Less pred )
+        guarded_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::get_with_( ptr.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            guarded_ptr gp;
+            base_class::get_with_( gp.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return gp;
         }
 
         /// Clears the map (not atomic)

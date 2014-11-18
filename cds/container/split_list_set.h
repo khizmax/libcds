@@ -160,7 +160,7 @@ namespace cds { namespace container {
 
     public:
         /// Guarded pointer
-        typedef cds::gc::guarded_ptr< gc, node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
+        typedef typename gc::template guarded_ptr< node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
 
     protected:
         //@cond
@@ -549,12 +549,12 @@ namespace cds { namespace container {
         /// Extracts the item with specified \p key
         /** \anchor cds_nonintrusive_SplitListSet_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the set, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the set, and returns it as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p Q that may be not the same as \p value_type.
 
-            The extracted item is freed automatically when returned \ref guarded_ptr object will be destroyed or released.
+            The extracted item is freed automatically when returned \p guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
             Usage:
@@ -563,24 +563,26 @@ namespace cds { namespace container {
             splitlist_set theSet;
             // ...
             {
-                splitlist_set::guarded_ptr gp;
-                theSet.extract( gp, 5 );
-                // Deal with gp
-                // ...
-
+                splitlist_set::guarded_ptr gp(theSet.extract( 5 ));
+                if ( gp ) {
+                    // Deal with gp
+                    // ...
+                }
                 // Destructor of gp releases internal HP guard
             }
             \endcode
         */
         template <typename Q>
-        bool extract( guarded_ptr& dest, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            return extract_( dest.guard(), key );
+            guarded_ptr gp;
+            extract_( gp.guard(), key );
+            return gp;
         }
 
         /// Extracts the item using compare functor \p pred
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListSet_hp_extract "extract(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_nonintrusive_SplitListSet_hp_extract "extract(Q const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -588,9 +590,11 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
-            return extract_with_( dest.guard(), key, pred );
+            guarded_ptr gp;
+            extract_with_( gp.guard(), key, pred );
+            return gp;
         }
 
         /// Finds the key \p key
@@ -683,9 +687,8 @@ namespace cds { namespace container {
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SplitListSet_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns the item found as \p guarded_ptr.
+            If \p key is not found the function returns an empty guarded pointer.
 
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -695,8 +698,8 @@ namespace cds { namespace container {
             splitlist_set theSet;
             // ...
             {
-                splitlist_set::guarded_ptr gp;
-                if ( theSet.get( gp, 5 )) {
+                splitlist_set::guarded_ptr gp(theSet.get( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -708,14 +711,16 @@ namespace cds { namespace container {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& key )
+        guarded_ptr get( Q const& key )
         {
-            return get_( ptr.guard(), key );
+            guarded_ptr gp;
+            get_( gp.guard(), key );
+            return gp;
         }
 
         /// Finds \p key and return the item found
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListSet_hp_get "get( guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_nonintrusive_SplitListSet_hp_get "get( Q const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -723,9 +728,11 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred )
         {
-            return get_with_( ptr.guard(), key, pred );
+            guarded_ptr gp;
+            get_with_( gp.guard(), key, pred );
+            return gp;
         }
 
         /// Clears the set (not atomic)
@@ -762,14 +769,14 @@ namespace cds { namespace container {
         using base_class::get_;
 
         template <typename Q, typename Less>
-        bool extract_with_( typename gc::Guard& guard, Q const& key, Less pred )
+        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return base_class::extract_with_( guard, key, typename maker::template predicate_wrapper<Less>::type() );
         }
 
         template <typename Q, typename Less>
-        bool get_with_( typename gc::Guard& guard, Q const& key, Less pred )
+        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return base_class::get_with_( guard, key, typename maker::template predicate_wrapper<Less>::type() );

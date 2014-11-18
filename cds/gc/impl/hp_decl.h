@@ -444,13 +444,13 @@ namespace cds { namespace gc {
 
             //@cond
             /// Initializes guarded pointer with \p p
-            guarded_ptr( guarded_type * p ) CDS_NOEXCEPT
+            explicit guarded_ptr( guarded_type * p ) CDS_NOEXCEPT
             {
                 alloc_guard();
                 assert( m_pGuard );
                 m_pGuard->set(p);
             }
-            guarded_ptr( std::nullptr_t ) CDS_NOEXCEPT
+            explicit guarded_ptr( std::nullptr_t ) CDS_NOEXCEPT
                 : m_pGuard( nullptr )
             {}
             //@endcond
