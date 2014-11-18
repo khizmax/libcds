@@ -21,7 +21,7 @@ namespace std {
             << "\t         Segment deleted: " << s.m_nSegmentDeleted.get()    << "\n";
     }
 
-    static inline ostream& operator <<( ostream& o, cds::intrusive::segmented_queue::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::intrusive::segmented_queue::empty_stat const& /*s*/ )
     {
         return o;
     }

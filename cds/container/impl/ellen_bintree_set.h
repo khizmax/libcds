@@ -287,6 +287,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
         }
 
@@ -326,6 +327,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >(),
                 [&f]( leaf_node const& node) { f( node.m_Value ); } );
         }
@@ -394,6 +396,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool extract_with( guarded_ptr& result, Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::extract_with_( result.guard(), key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
         }
@@ -447,6 +450,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >(),
                 [&f]( leaf_node& node, Q& v ) { f( node.m_Value, v ); } );
         }
@@ -454,6 +458,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >(),
                                           [&f]( leaf_node& node, Q const& v ) { f( node.m_Value, v ); } );
         }
@@ -484,6 +489,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
         }
 
@@ -512,6 +518,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool get_with( guarded_ptr& result, Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::get_with_( result.guard(), key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >() );
         }

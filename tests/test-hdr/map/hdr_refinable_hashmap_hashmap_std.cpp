@@ -15,7 +15,7 @@ namespace map {
         struct my_copy_policy {
             typedef map_t::iterator iterator;
 
-            void operator()( map_t& m, iterator itInsert, iterator itWhat )
+            void operator()( map_t& m, iterator /*itInsert*/, iterator itWhat )
             {
                 m.insert( std::make_pair(itWhat->first, itWhat->second ) );
             }

@@ -1420,6 +1420,7 @@ namespace michael {
         /// Allocates new processor descriptor
         processor_desc * new_processor_desc( unsigned int nProcessorId )
         {
+            CDS_UNUSED( nProcessorId );
             processor_desc * pDesc;
             const size_t nPageHeapCount = m_SizeClassSelector.pageTypeCount();
 

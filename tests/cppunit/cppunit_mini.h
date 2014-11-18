@@ -144,7 +144,7 @@ namespace CppUnitMini
         return m_pCurTestCase;
     }
 
-    virtual void setUpParams( const TestCfg& cfg ) {}
+    virtual void setUpParams( const TestCfg& /*cfg*/ ) {}
     virtual void endTestCase() {}
     virtual void myRun(const char * /*in_name*/, bool /*invert*/ = false) {}
 

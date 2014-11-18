@@ -78,6 +78,7 @@ namespace cds { namespace opt {
             */
             static_buffer( size_t nCapacity )
             {
+                CDS_UNUSED( nCapacity );
                 // Capacity must be power of 2
                 static_assert( !c_bExp2 || (c_nCapacity & (c_nCapacity - 1)) == 0,  "Capacity must be power of two");
                 //assert( c_nCapacity == nCapacity );

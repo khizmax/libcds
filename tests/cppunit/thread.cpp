@@ -117,7 +117,7 @@ namespace CppUnitMini {
         pThread->m_nDuration = pThread->m_Timer.duration();
     }
 
-    void    ThreadPool::onThreadFiniDone( TestThread * pThread )
+    void    ThreadPool::onThreadFiniDone( TestThread * /*pThread*/ )
     {
         // Calls in context of caller thread
         // Wait while all threads done

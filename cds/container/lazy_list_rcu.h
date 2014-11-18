@@ -443,6 +443,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), [](value_type const&){} );
         }
 
@@ -483,6 +484,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
@@ -543,6 +545,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         exempt_ptr extract_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type()));
         }
 
@@ -569,6 +572,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
@@ -618,12 +622,14 @@ namespace cds { namespace container {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f ) const
         {
+            CDS_UNUSED( pred );
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f ) const
         {
+            CDS_UNUSED( pred );
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
         //@endcond
@@ -673,6 +679,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         value_type * get_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 

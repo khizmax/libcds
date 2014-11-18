@@ -105,7 +105,7 @@ namespace cds { namespace intrusive {
                 //@cond
                 typedef Node node_type;
 
-                static void is_empty( const node_type * pNode )
+                static void is_empty( const node_type * /*pNode*/ )
                 {}
                 //@endcond
             };

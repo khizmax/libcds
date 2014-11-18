@@ -6,7 +6,7 @@
 #include <cds/container/mspriority_queue.h>
 
 namespace std {
-    static inline ostream& operator <<( ostream& o, cds::container::mspriority_queue::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::container::mspriority_queue::empty_stat const& /*s*/ )
     {
         return o;
     }

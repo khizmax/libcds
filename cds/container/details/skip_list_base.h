@@ -207,7 +207,7 @@ namespace cds { namespace container {
                 }
 
                 struct node_disposer {
-                    void operator()( intrusive_node_type * pNode ) const {}
+                    void operator()( intrusive_node_type * /*pNode*/ ) const {}
                 };
             };
 

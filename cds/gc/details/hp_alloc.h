@@ -244,7 +244,6 @@ namespace cds {
                 assert( m_nTop < capacity() );
                 hp.clear();
                 ++m_nTop;
-                CDS_COMPILER_RW_BARRIER ;   // ???
             }
 
             /// Allocates hazard pointers array
@@ -267,9 +266,11 @@ namespace cds {
             template <size_t Count>
             void free( hp_array<Count> const& arr ) CDS_NOEXCEPT
             {
+                CDS_UNUSED( arr );
+
                 assert( m_nTop + Count <= capacity());
                 for ( size_t i = m_nTop; i < m_nTop + Count; ++i )
-                    m_arrHazardPtr[ i ].clear();
+                    m_arrHazardPtr[i].clear();
                 m_nTop += Count;
             }
 
@@ -290,7 +291,7 @@ namespace cds {
             void make_free() CDS_NOEXCEPT
             {
                 for ( size_t i = 0; i < capacity(); ++i )
-                    m_arrHazardPtr[ i ].clear();
+                    m_arrHazardPtr[i].clear();
                 m_nTop = capacity();
             }
 

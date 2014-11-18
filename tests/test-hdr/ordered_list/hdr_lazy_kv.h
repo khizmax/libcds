@@ -66,7 +66,7 @@ namespace ordlist {
 
         struct ensure_functor {
             template <typename T>
-            void operator()( bool bNew, T& pair )
+            void operator()( bool /*bNew*/, T& pair )
             {
                 pair.second.m_val = pair.first * 50;
             }

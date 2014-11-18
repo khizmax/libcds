@@ -16,12 +16,14 @@ namespace cds { namespace lock {
         size_t operator()( size_t nWhat, size_t nCapacity ) const
         {
             assert( nWhat < nCapacity );
+            CDS_UNUSED( nCapacity );
             return nWhat;
         }
 
         /// Checks if \p nCapacity is acceptable by policy. For trivial policy, any \p nCapacity is accepted.
         static bool is_capacity_accepted( size_t nCapacity )
         {
+            CDS_UNUSED( nCapacity );
             return true;
         }
     };

@@ -356,6 +356,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool erase_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >());
         }
 
@@ -390,6 +391,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::erase_with( key,
                 cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >(),
                 [&f]( node_type& node) { f( node.m_Value ); } );
@@ -440,6 +442,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool extract_with( guarded_ptr& ptr, K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >  wrapped_less;
             return base_class::extract_( ptr.guard(), key, cds::opt::details::make_comparator_from_less<wrapped_less>() );
         }
@@ -534,6 +537,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool find_with( K const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key,
                 cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >(),
                 [&f](node_type& item, K const& ) { f( item.m_Value );});
@@ -561,6 +565,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool find_with( K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >() );
         }
 
@@ -612,6 +617,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool get_with( guarded_ptr& ptr, K const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor > wrapped_less;
             return base_class::get_with_( ptr.guard(), key, cds::opt::details::make_comparator_from_less< wrapped_less >());
         }

@@ -1150,6 +1150,7 @@ retry:
         template <typename Q, typename Less>
         value_type * do_extract_with( Q const& key, Less pred )
         {
+            CDS_UNUSED(pred);
             check_deadlock_policy::check();
             value_type * pDel = nullptr;
 
@@ -1753,6 +1754,7 @@ retry:
         template <typename Q, typename Less>
         bool erase_with( const Q& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return do_erase( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
         }
 
@@ -1791,6 +1793,7 @@ retry:
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return do_erase( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
@@ -1840,12 +1843,14 @@ retry:
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@endcond
@@ -1873,6 +1878,7 @@ retry:
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
 
@@ -1928,6 +1934,7 @@ retry:
         template <typename Q, typename Less>
         value_type * get_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             assert( gc::is_locked());
 
             value_type * pFound;

@@ -7,7 +7,7 @@
 #include <ostream>
 
 namespace std {
-    static inline ostream& operator <<( ostream& o, cds::intrusive::ellen_bintree::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::intrusive::ellen_bintree::empty_stat const& /*s*/ )
     {
         return o;
     }

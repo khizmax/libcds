@@ -409,12 +409,14 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
         }
         //@endcond
@@ -569,6 +571,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less >
         iterator find_with_( Q& val, Less pred )
         {
+            CDS_UNUSED( pred );
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );

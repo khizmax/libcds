@@ -1230,6 +1230,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return extract_( dest.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
@@ -1329,6 +1330,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return erase_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
         }
 
@@ -1368,6 +1370,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return erase_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
@@ -1417,12 +1420,14 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@endcond
@@ -1452,6 +1457,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
 
@@ -1503,6 +1509,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return get_with_( ptr.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 

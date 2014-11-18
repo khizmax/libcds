@@ -795,12 +795,14 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f ) const
         {
+            CDS_UNUSED( pred );
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f ) != nullptr;
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f ) const
         {
+            CDS_UNUSED( pred );
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f ) != nullptr;
         }
         //@endcond
@@ -832,6 +834,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         value_type * find_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             node_type * pNode = find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
             if ( pNode )
                 return node_traits::to_value_ptr( pNode );

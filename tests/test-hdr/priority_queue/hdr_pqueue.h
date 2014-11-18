@@ -21,7 +21,7 @@ namespace priority_queue {
             {}
 
             template <typename T>
-            void operator()( T& p )
+            void operator()( T& )
             {
                 ++m_nCallCount;
             }

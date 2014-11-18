@@ -426,8 +426,8 @@ namespace cds { namespace intrusive {
         /// \p SkipListSet empty internal statistics
         struct empty_stat {
             //@cond
-            void onAddNode( unsigned int nHeight ) const {}
-            void onRemoveNode( unsigned int nHeight ) const {}
+            void onAddNode( unsigned int /*nHeight*/ ) const {}
+            void onRemoveNode( unsigned int /*nHeight*/ ) const {}
             void onInsertSuccess()          const {}
             void onInsertFailed()           const {}
             void onInsertRetry()            const {}
