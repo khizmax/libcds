@@ -4,7 +4,6 @@
 #define __CDS_CONTAINER_IMPL_SKIP_LIST_SET_H
 
 #include <cds/details/binary_functor_wrapper.h>
-#include <cds/gc/guarded_ptr.h>
 #include <cds/container/details/guarded_ptr_cast.h>
 
 namespace cds { namespace container {

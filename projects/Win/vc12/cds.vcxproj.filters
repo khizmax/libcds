@@ -215,9 +215,6 @@
     <ClInclude Include="..\..\..\cds\details\defs.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\guarded_ptr.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\details\is_aligned.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>

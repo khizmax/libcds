@@ -9,7 +9,6 @@
 #include <cds/intrusive/details/skip_list_base.h>
 #include <cds/opt/compare.h>
 #include <cds/details/binary_functor_wrapper.h>
-#include <cds/gc/guarded_ptr.h>
 
 namespace cds { namespace intrusive {
 

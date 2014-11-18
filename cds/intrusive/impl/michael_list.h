@@ -4,7 +4,6 @@
 #define __CDS_INTRUSIVE_IMPL_MICHAEL_LIST_H
 
 #include <cds/intrusive/details/michael_list_base.h>
-#include <cds/gc/guarded_ptr.h>
 #include <cds/details/make_const_type.h>
 
 namespace cds { namespace intrusive {

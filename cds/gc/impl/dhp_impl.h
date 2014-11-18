@@ -23,6 +23,15 @@ namespace cds { namespace gc {
             cds::threading::Manager::detachThread();
     }
 
+    inline /*static*/ void DHP::thread_gc::alloc_guard( cds::gc::dhp::details::guard& g )
+    {
+        return cds::threading::getGC<DHP>().allocGuard(g);
+    }
+    inline /*static*/ void DHP::thread_gc::free_guard( cds::gc::dhp::details::guard& g )
+    {
+        cds::threading::getGC<DHP>().freeGuard(g);
+    }
+
     inline DHP::Guard::Guard()
         : Guard::base_class( cds::threading::getGC<DHP>() )
     {}

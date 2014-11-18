@@ -5,7 +5,6 @@
 
 #include <mutex>        // unique_lock
 #include <cds/intrusive/details/lazy_list_base.h>
-#include <cds/gc/guarded_ptr.h>
 
 namespace cds { namespace intrusive {
 

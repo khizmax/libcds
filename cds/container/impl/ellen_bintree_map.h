@@ -111,7 +111,7 @@ namespace cds { namespace container {
 
     public:
         /// Guarded pointer
-        typedef cds::gc::guarded_ptr< gc, leaf_node, value_type, details::guarded_ptr_cast_set<leaf_node, value_type> > guarded_ptr;
+        typedef typename gc::template guarded_ptr< leaf_node, value_type, details::guarded_ptr_cast_set<leaf_node, value_type> > guarded_ptr;
 
     public:
         /// Default constructor

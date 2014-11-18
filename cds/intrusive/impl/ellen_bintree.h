@@ -8,7 +8,6 @@
 #include <cds/opt/compare.h>
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/urcu/details/check_deadlock.h>
-#include <cds/gc/guarded_ptr.h>
 
 namespace cds { namespace intrusive {
 
@@ -119,7 +118,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::disposer  disposer;    ///< leaf node disposer
         typedef typename traits::back_off  back_off;    ///< back-off strategy
 
-        typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
+        typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
     protected:
         //@cond
@@ -1327,16 +1326,15 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        bool extract_( typename gc::Guard& guard, Q const& key )
+        bool extract_( typename guarded_ptr::native_guard& guard, Q const& key )
         {
-            guarded_ptr gp;
             return erase_( key, node_compare(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
-                [&guard]( value_type& found ) { guard.assign( &found ); } );
+                [&guard]( value_type& found ) { guard.set( &found ); } );
         }
 
         template <typename Q, typename Less>
-        bool extract_with_( typename gc::Guard& guard, Q const& key, Less pred )
+        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
         {
             typedef ellen_bintree::details::compare<
                 key_type,
@@ -1347,10 +1345,10 @@ namespace cds { namespace intrusive {
 
             return erase_( key, compare_functor(),
                 []( Q const&, leaf_node const& ) -> bool { return true; },
-                [&guard]( value_type& found ) { guard.assign( &found ); } );
+                [&guard]( value_type& found ) { guard.set( &found ); } );
         }
 
-        bool extract_max_( typename gc::Guard& gp )
+        bool extract_max_( typename guarded_ptr::native_guard& gp )
         {
             update_desc * pOp = nullptr;
             search_result res;
@@ -1396,11 +1394,11 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMaxSuccess();
-            gp.assign( node_traits::to_value_ptr( res.pLeaf ));
+            gp.set( node_traits::to_value_ptr( res.pLeaf ));
             return true;
         }
 
-        bool extract_min_( typename gc::Guard& gp )
+        bool extract_min_( typename guarded_ptr::native_guard& gp )
         {
             update_desc * pOp = nullptr;
             search_result res;
@@ -1446,7 +1444,7 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMinSuccess();
-            gp.assign( node_traits::to_value_ptr( res.pLeaf ));
+            gp.set( node_traits::to_value_ptr( res.pLeaf ));
             return true;
         }
 
@@ -1490,15 +1488,15 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        bool get_( typename gc::Guard& guard, Q const& val ) const
+        bool get_( typename guarded_ptr::native_guard& guard, Q const& val ) const
         {
-            return find_( val, [&guard]( value_type& found, Q const& ) { guard.assign( &found ); } );
+            return find_( val, [&guard]( value_type& found, Q const& ) { guard.set( &found ); } );
         }
 
         template <typename Q, typename Less>
-        bool get_with_( typename gc::Guard& guard, Q const& val, Less pred ) const
+        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& val, Less pred ) const
         {
-            return find_with_( val, pred, [&guard]( value_type& found, Q const& ) { guard.assign( &found ); } );
+            return find_with_( val, pred, [&guard]( value_type& found, Q const& ) { guard.set( &found ); } );
         }
 
         //@endcond

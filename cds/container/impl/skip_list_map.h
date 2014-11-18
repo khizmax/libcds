@@ -3,7 +3,6 @@
 #ifndef __CDS_CONTAINER_IMPL_SKIP_LIST_MAP_H
 #define __CDS_CONTAINER_IMPL_SKIP_LIST_MAP_H
 
-#include <cds/gc/guarded_ptr.h>
 #include <cds/container/details/guarded_ptr_cast.h>
 
 namespace cds { namespace container {

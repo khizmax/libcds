@@ -90,6 +90,12 @@ namespace cds { namespace gc {
                 Otherwise it detaches the current thread from Hazard Pointer GC.
             */
             ~thread_gc() ;  // inline in hp_impl.h
+
+        public: // for internal use only!!!
+            //@cond
+            static cds::gc::hp::details::hp_guard& alloc_guard(); // inline in hp_impl.h
+            static void free_guard( cds::gc::hp::details::hp_guard& g ); // inline in hp_impl.h
+            //@endcond
         };
 
         /// Hazard Pointer guard
@@ -360,6 +366,196 @@ namespace cds { namespace gc {
             {
                 return Count;
             }
+        };
+
+        /// Guarded pointer
+        /**
+            A guarded pointer is a pair of a pointer and GC's guard.
+            Usually, it is used for returning a pointer to the item from an lock-free container.
+            The guard prevents the pointer to be early disposed (freed) by GC.
+            After destructing \p %guarded_ptr object the pointer can be disposed (freed) automatically at any time.
+
+            Template arguments:
+            - \p GuardedType - a type which the guard stores
+            - \p ValueType - a value type
+            - \p Cast - a functor for converting <tt>GuardedType*</tt> to <tt>ValueType*</tt>. Default is \p void (no casting).
+
+            For intrusive containers, \p GuardedType is the same as \p ValueType and no casting is needed.
+            In such case the \p %guarded_ptr is:
+            @code
+            typedef cds::gc::HP::guarded_ptr< foo > intrusive_guarded_ptr;
+            @endcode
+
+            For standard (non-intrusive) containers \p GuardedType is not the same as \p ValueType and casting is needed.
+            For example:
+            @code
+            struct foo {
+                int const   key;
+                std::string value;
+            };
+
+            struct value_accessor {
+                std::string* operator()( foo* pFoo ) const
+                {
+                    return &(pFoo->value);
+                }
+            };
+
+            // Guarded ptr
+            typedef cds::gc::HP::guarded_ptr< Foo, std::string, value_accessor > nonintrusive_guarded_ptr;
+            @endcode
+
+            You don't need use this class directly.
+            All set/map container classes from \p libcds declare the typedef for \p %guarded_ptr with appropriate casting functor.
+        */
+        template <typename GuardedType, typename ValueType=GuardedType, typename Cast=void >
+        class guarded_ptr
+        {
+            //@cond
+            struct trivial_cast {
+                ValueType * operator()( GuardedType * p ) const
+                {
+                    return p;
+                }
+            };
+            //@endcond
+
+        public:
+            typedef GuardedType guarded_type; ///< Guarded type
+            typedef ValueType   value_type;   ///< Value type
+
+            /// Functor for casting \p guarded_type to \p value_type
+            typedef typename std::conditional< std::is_same<Cast, void>::value, trivial_cast, Cast >::type value_cast;
+
+            //@cond
+            typedef cds::gc::hp::details::hp_guard native_guard;
+            //@endcond
+
+        private:
+            //@cond
+            native_guard *  m_pGuard;
+            //@endcond
+
+        public:
+            /// Creates empty guarded pointer
+            guarded_ptr() CDS_NOEXCEPT
+                : m_pGuard(nullptr)
+            {}
+
+            //@cond
+            /// Initializes guarded pointer with \p p
+            guarded_ptr( guarded_type * p ) CDS_NOEXCEPT
+            {
+                alloc_guard();
+                assert( m_pGuard );
+                m_pGuard->set(p);
+            }
+            guarded_ptr( std::nullptr_t ) CDS_NOEXCEPT
+                : m_pGuard( nullptr )
+            {}
+            //@endcond
+
+            /// Move ctor
+            guarded_ptr( guarded_ptr&& gp ) CDS_NOEXCEPT
+                : m_pGuard( gp.m_pGuard )
+            {
+                gp.m_pGuard = nullptr;
+            }
+
+            /// The guarded pointer is not copy-constructible
+            guarded_ptr( guarded_ptr const& gp ) = delete;
+
+            /// Clears the guarded pointer
+            /**
+                \ref release is called if guarded pointer is not \ref empty
+            */
+            ~guarded_ptr() CDS_NOEXCEPT
+            {
+                free_guard();
+            }
+
+            /// Move-assignment operator
+            guarded_ptr& operator=( guarded_ptr&& gp ) CDS_NOEXCEPT
+            {
+                free_guard();
+                m_pGuard = gp.m_pGuard;
+                gp.m_pGuard = nullptr;
+                return *this;
+            }
+
+            /// The guarded pointer is not copy-assignable
+            guarded_ptr& operator=(guarded_ptr const& gp) = delete;
+
+            /// Returns a pointer to guarded value
+            value_type * operator ->() const CDS_NOEXCEPT
+            {
+                assert( !empty() );
+                return value_cast()( reinterpret_cast<guarded_type *>(m_pGuard->get()));
+            }
+
+            /// Returns a reference to guarded value
+            value_type& operator *() CDS_NOEXCEPT
+            {
+                assert( !empty());
+                return *value_cast()(reinterpret_cast<guarded_type *>(m_pGuard->get()));
+            }
+
+            /// Returns const reference to guarded value
+            value_type const& operator *() const CDS_NOEXCEPT
+            {
+                assert( !empty() );
+                return *value_cast()(reinterpret_cast<guarded_type *>(m_pGuard->get()));
+            }
+
+            /// Checks if the guarded pointer is \p nullptr
+            bool empty() const CDS_NOEXCEPT
+            {
+                return !m_pGuard || m_pGuard->get() == nullptr;
+            }
+
+            /// \p bool operator returns <tt>!empty()</tt>
+            explicit operator bool() const CDS_NOEXCEPT
+            {
+                return !empty();
+            }
+
+            /// Clears guarded pointer
+            /**
+                If the guarded pointer has been released, the pointer can be disposed (freed) at any time.
+                Dereferncing the guarded pointer after \p release() is dangerous.
+            */
+            void release() CDS_NOEXCEPT
+            {
+                if ( m_pGuard )
+                    m_pGuard->clear();
+            }
+
+            //@cond
+            // For internal use only!!!
+            native_guard& guard() CDS_NOEXCEPT
+            {
+                alloc_guard();
+                assert( m_pGuard );
+                return *m_pGuard;
+            }
+            //@endcond
+
+        private:
+            //@cond
+            void alloc_guard()
+            {
+                if ( !m_pGuard )
+                    m_pGuard = &thread_gc::alloc_guard();
+            }
+
+            void free_guard()
+            {
+                if ( m_pGuard ) {
+                    thread_gc::free_guard( *m_pGuard );
+                    m_pGuard = nullptr;
+                }
+            }
+            //@endcond
         };
 
     public:
