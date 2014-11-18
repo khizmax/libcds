@@ -23,12 +23,12 @@ namespace cds { namespace gc {
             cds::threading::Manager::detachThread();
     }
 
-    inline DHP::Guard::Guard() CDS_NOEXCEPT
+    inline DHP::Guard::Guard()
         : Guard::base_class( cds::threading::getGC<DHP>() )
     {}
 
-    template <size_t COUNT>
-    inline DHP::GuardArray<COUNT>::GuardArray() CDS_NOEXCEPT
+    template <size_t Count>
+    inline DHP::GuardArray<Count>::GuardArray()
         : GuardArray::base_class( cds::threading::getGC<DHP>() )
     {}
 

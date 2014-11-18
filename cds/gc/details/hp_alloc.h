@@ -231,7 +231,7 @@ namespace cds {
             }
 
             /// Allocates hazard pointer
-            atomic_hazard_ptr& alloc() CDS_NOEXCEPT
+            atomic_hazard_ptr& alloc()
             {
                 assert( m_nTop > 0 );
                 --m_nTop;
@@ -252,7 +252,7 @@ namespace cds {
                 Returns initialized object \p arr
             */
             template <size_t Count>
-            void alloc( hp_array<Count>& arr ) CDS_NOEXCEPT
+            void alloc( hp_array<Count>& arr )
             {
                 assert( m_nTop >= Count );
                 m_nTop -= Count;
