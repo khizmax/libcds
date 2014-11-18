@@ -83,7 +83,7 @@ namespace cds {
                 typedef retired_vector_impl::iterator  iterator;
 
                 /// Constructor
-                retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ) CDS_NOEXCEPT; // inline
+                retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ); // inline
                 ~retired_vector()
                 {}
 
@@ -110,7 +110,7 @@ namespace cds {
                 }
 
                 /// Pushes retired pointer to the vector
-                void push( const retired_ptr& p )
+                void push( retired_ptr const& p )
                 {
                     assert( m_nSize < capacity() );
                     m_arr[ m_nSize ] = p;
@@ -707,9 +707,9 @@ namespace cds {
 //@cond
 // Inlines
 namespace cds {
-    namespace gc{ namespace hp { namespace details {
+    namespace gc { namespace hp { namespace details {
 
-        inline retired_vector::retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ) CDS_NOEXCEPT
+        inline retired_vector::retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr )
             : m_arr( HzpMgr.getMaxRetiredPtrCount() ),
             m_nSize(0)
         {}
@@ -719,8 +719,8 @@ namespace cds {
             m_arrRetired( HzpMgr )
         {}
 
-    }}}    // namespace gc::hp::details
-}    // namespace cds
+    }}} // namespace gc::hp::details
+} // namespace cds
 //@endcond
 
 

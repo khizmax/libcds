@@ -110,7 +110,7 @@ namespace cds { namespace gc {
 
         public:
             /// Default ctor
-            Guard() CDS_NOEXCEPT;   // inline in hp_impl.h
+            Guard();   // inline in hp_impl.h
 
             //@cond
             Guard( Guard const& ) = delete;
@@ -127,7 +127,7 @@ namespace cds { namespace gc {
                 to the HP slot repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect( atomics::atomic<T> const& toGuard ) CDS_NOEXCEPT
+            T protect( atomics::atomic<T> const& toGuard )
             {
                 T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
@@ -174,20 +174,20 @@ namespace cds { namespace gc {
                 Can be used for a pointer that cannot be changed concurrently
             */
             template <typename T>
-            T * assign( T * p ) CDS_NOEXCEPT
+            T * assign( T * p )
             {
                 return base_class::operator =(p);
             }
 
             //@cond
-            std::nullptr_t assign( std::nullptr_t ) CDS_NOEXCEPT
+            std::nullptr_t assign( std::nullptr_t )
             {
                 return base_class::operator =(nullptr);
             }
             //@endcond
 
             /// Copy from \p src guard to \p this guard
-            void copy( Guard const& src ) CDS_NOEXCEPT
+            void copy( Guard const& src )
             {
                 assign( src.get_native() );
             }
@@ -198,26 +198,26 @@ namespace cds { namespace gc {
                 Can be used for a marked pointer that cannot be changed concurrently.
             */
             template <typename T, int BITMASK>
-            T * assign( cds::details::marked_ptr<T, BITMASK> p ) CDS_NOEXCEPT
+            T * assign( cds::details::marked_ptr<T, BITMASK> p )
             {
                 return base_class::operator =( p.ptr() );
             }
 
             /// Clear value of the guard
-            void clear() CDS_NOEXCEPT
+            void clear()
             {
                 assign( nullptr );
             }
 
             /// Get the value currently protected
             template <typename T>
-            T * get() const CDS_NOEXCEPT
+            T * get() const
             {
                 return reinterpret_cast<T *>( get_native() );
             }
 
             /// Get native hazard pointer stored
-            guarded_pointer get_native() const CDS_NOEXCEPT
+            guarded_pointer get_native() const
             {
                 return base_class::get();
             }
@@ -247,7 +247,7 @@ namespace cds { namespace gc {
 
         public:
             /// Default ctor
-            GuardArray() CDS_NOEXCEPT;  // inline in hp_impl.h
+            GuardArray();  // inline in hp_impl.h
 
             //@cond
             GuardArray( GuardArray const& ) = delete;
@@ -264,7 +264,7 @@ namespace cds { namespace gc {
                 to the slot \p nIndex repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect( size_t nIndex, atomics::atomic<T> const& toGuard ) CDS_NOEXCEPT
+            T protect( size_t nIndex, atomics::atomic<T> const& toGuard )
             {
                 T pRet;
                 do {
@@ -307,7 +307,7 @@ namespace cds { namespace gc {
                 The function equals to a simple assignment, no loop is performed.
             */
             template <typename T>
-            T * assign( size_t nIndex, T * p ) CDS_NOEXCEPT
+            T * assign( size_t nIndex, T * p )
             {
                 base_class::set(nIndex, p);
                 return p;
@@ -319,44 +319,44 @@ namespace cds { namespace gc {
                 Can be used for a marked pointer that cannot be changed concurrently.
             */
             template <typename T, int BITMASK>
-            T * assign( size_t nIndex, cds::details::marked_ptr<T, BITMASK> p ) CDS_NOEXCEPT
+            T * assign( size_t nIndex, cds::details::marked_ptr<T, BITMASK> p )
             {
                 return assign( nIndex, p.ptr() );
             }
 
             /// Copy guarded value from \p src guard to slot at index \p nIndex
-            void copy( size_t nIndex, Guard const& src ) CDS_NOEXCEPT
+            void copy( size_t nIndex, Guard const& src )
             {
                 assign( nIndex, src.get_native() );
             }
 
             /// Copy guarded value from slot \p nSrcIndex to slot at index \p nDestIndex
-            void copy( size_t nDestIndex, size_t nSrcIndex ) CDS_NOEXCEPT
+            void copy( size_t nDestIndex, size_t nSrcIndex )
             {
                 assign( nDestIndex, get_native( nSrcIndex ));
             }
 
             /// Clear value of the slot \p nIndex
-            void clear( size_t nIndex ) CDS_NOEXCEPT
+            void clear( size_t nIndex )
             {
                 base_class::clear( nIndex );
             }
 
             /// Get current value of slot \p nIndex
             template <typename T>
-            T * get( size_t nIndex ) const CDS_NOEXCEPT
+            T * get( size_t nIndex ) const
             {
                 return reinterpret_cast<T *>( get_native( nIndex ) );
             }
 
             /// Get native hazard pointer stored
-            guarded_pointer get_native( size_t nIndex ) const CDS_NOEXCEPT
+            guarded_pointer get_native( size_t nIndex ) const
             {
                 return base_class::operator[](nIndex).get();
             }
 
             /// Capacity of the guard array
-            static CDS_CONSTEXPR size_t capacity() CDS_NOEXCEPT
+            static CDS_CONSTEXPR size_t capacity()
             {
                 return Count;
             }
@@ -447,7 +447,7 @@ namespace cds { namespace gc {
             Deleting the pointer is the function \p pFunc call.
         */
         template <typename T>
-        static void retire( T * p, void (* pFunc)(T *) )    ;   // inline in hp_impl.h
+        static void retire( T * p, void (* pFunc)(T *) );   // inline in hp_impl.h
 
         /// Retire pointer \p p with functor of type \p Disposer
         /**
@@ -499,7 +499,7 @@ namespace cds { namespace gc {
             \endcode
         */
         template <class Disposer, typename T>
-        static void retire( T * p ) ;   // inline in hp_impl.h
+        static void retire( T * p );   // inline in hp_impl.h
 
         /// Get current scan strategy
         static scan_type getScanType()

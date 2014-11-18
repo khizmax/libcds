@@ -109,7 +109,7 @@ namespace cds { namespace gc {
 
         public:
             // Default ctor
-            Guard() CDS_NOEXCEPT;   // inline in dhp_impl.h
+            Guard();   // inline in dhp_impl.h
 
             //@cond
             Guard( Guard const& ) = delete;
@@ -126,7 +126,7 @@ namespace cds { namespace gc {
                 to the HP slot repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect( atomics::atomic<T> const& toGuard ) CDS_NOEXCEPT
+            T protect( atomics::atomic<T> const& toGuard )
             {
                 T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
@@ -174,13 +174,13 @@ namespace cds { namespace gc {
                 or for already guarded pointer.
             */
             template <typename T>
-            T * assign( T * p ) CDS_NOEXCEPT
+            T * assign( T * p )
             {
                 return base_class::operator =(p);
             }
 
             //@cond
-            std::nullptr_t assign( std::nullptr_t ) CDS_NOEXCEPT
+            std::nullptr_t assign( std::nullptr_t )
             {
                 return base_class::operator =(nullptr);
             }
@@ -193,32 +193,32 @@ namespace cds { namespace gc {
                 or for already guarded pointer.
             */
             template <typename T, int BITMASK>
-            T * assign( cds::details::marked_ptr<T, BITMASK> p ) CDS_NOEXCEPT
+            T * assign( cds::details::marked_ptr<T, BITMASK> p )
             {
                 return base_class::operator =( p.ptr() );
             }
 
             /// Copy from \p src guard to \p this guard
-            void copy( Guard const& src ) CDS_NOEXCEPT
+            void copy( Guard const& src )
             {
                 assign( src.get_native() );
             }
 
             /// Clears value of the guard
-            void clear() CDS_NOEXCEPT
+            void clear()
             {
                 base_class::clear();
             }
 
             /// Gets the value currently protected (relaxed read)
             template <typename T>
-            T * get() const CDS_NOEXCEPT
+            T * get() const
             {
                 return reinterpret_cast<T *>( get_native() );
             }
 
             /// Gets native guarded pointer stored
-            guarded_pointer get_native() const CDS_NOEXCEPT
+            guarded_pointer get_native() const
             {
                 return base_class::get_guard()->pPost.load(atomics::memory_order_relaxed);
             }
@@ -248,7 +248,7 @@ namespace cds { namespace gc {
 
         public:
             // Default ctor
-            GuardArray() CDS_NOEXCEPT;   // inline in dhp_impl.h
+            GuardArray();   // inline in dhp_impl.h
 
             //@cond
             GuardArray( GuardArray const& ) = delete;
@@ -265,7 +265,7 @@ namespace cds { namespace gc {
                 to the slot \p nIndex repeatedly until the guard's value equals \p toGuard
             */
             template <typename T>
-            T protect( size_t nIndex, atomics::atomic<T> const& toGuard ) CDS_NOEXCEPT
+            T protect( size_t nIndex, atomics::atomic<T> const& toGuard )
             {
                 T pRet;
                 do {
@@ -308,7 +308,7 @@ namespace cds { namespace gc {
                 The function is just an assignment, no loop is performed.
             */
             template <typename T>
-            T * assign( size_t nIndex, T * p ) CDS_NOEXCEPT
+            T * assign( size_t nIndex, T * p )
             {
                 base_class::set(nIndex, p);
                 return p;
@@ -321,44 +321,44 @@ namespace cds { namespace gc {
                 or for already guarded pointer.
             */
             template <typename T, int Bitmask>
-            T * assign( size_t nIndex, cds::details::marked_ptr<T, Bitmask> p ) CDS_NOEXCEPT
+            T * assign( size_t nIndex, cds::details::marked_ptr<T, Bitmask> p )
             {
                 return assign( nIndex, p.ptr() );
             }
 
             /// Copy guarded value from \p src guard to slot at index \p nIndex
-            void copy( size_t nIndex, Guard const& src ) CDS_NOEXCEPT
+            void copy( size_t nIndex, Guard const& src )
             {
                 assign( nIndex, src.get_native() );
             }
 
             /// Copy guarded value from slot \p nSrcIndex to slot at index \p nDestIndex
-            void copy( size_t nDestIndex, size_t nSrcIndex ) CDS_NOEXCEPT
+            void copy( size_t nDestIndex, size_t nSrcIndex )
             {
                 assign( nDestIndex, get_native( nSrcIndex ));
             }
 
             /// Clear value of the slot \p nIndex
-            void clear( size_t nIndex ) CDS_NOEXCEPT
+            void clear( size_t nIndex )
             {
                 base_class::clear( nIndex );
             }
 
             /// Get current value of slot \p nIndex
             template <typename T>
-            T * get( size_t nIndex ) const CDS_NOEXCEPT
+            T * get( size_t nIndex ) const
             {
                 return reinterpret_cast<T *>( get_native( nIndex ) );
             }
 
             /// Get native guarded pointer stored
-            guarded_pointer get_native( size_t nIndex ) const CDS_NOEXCEPT
+            guarded_pointer get_native( size_t nIndex ) const
             {
                 return base_class::operator[](nIndex).get_guard()->pPost.load(atomics::memory_order_relaxed);
             }
 
             /// Capacity of the guard array
-            static CDS_CONSTEXPR size_t capacity() CDS_NOEXCEPT
+            static CDS_CONSTEXPR size_t capacity()
             {
                 return Count;
             }
