@@ -87,7 +87,7 @@ namespace cds { namespace memory {
         {
             return &x;
         }
-        pointer allocate( size_type n, void const * hint = 0)
+        pointer allocate( size_type n, void const * /*hint*/ = 0)
         {
             static_assert( sizeof(value_type) <= sizeof(typename accessor_type::value_type), "Incompatible type" );
 

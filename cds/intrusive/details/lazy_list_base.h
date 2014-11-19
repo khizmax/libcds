@@ -147,6 +147,7 @@ namespace cds { namespace intrusive {
             static void is_empty( node_type const * pNode )
             {
                 assert( pNode->m_pNext.load( atomics::memory_order_relaxed ) == nullptr );
+                CDS_UNUSED( pNode );
             }
         };
 

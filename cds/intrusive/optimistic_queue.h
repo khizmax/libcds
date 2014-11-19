@@ -116,6 +116,7 @@ namespace cds { namespace intrusive {
             {
                 assert( pNode->m_pNext.load( atomics::memory_order_relaxed ) == nullptr );
                 assert( pNode->m_pPrev.load( atomics::memory_order_relaxed ) == nullptr );
+                CDS_UNUSED( pNode );
             }
         };
 

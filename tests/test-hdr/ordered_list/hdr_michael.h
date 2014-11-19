@@ -180,7 +180,7 @@ namespace ordlist {
         };
 
         struct ensure_functor {
-            void operator()( bool /*bNew*/, item& i, int n )
+            void operator()( bool /*bNew*/, item& i, int /*n*/ )
             {
                 i.nVal = i.nKey * 1024;
             }

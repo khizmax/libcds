@@ -439,6 +439,7 @@ namespace cds { namespace memory {
         value_type * allocate( size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED( n );
 
             value_type * p = m_Queue.pop();
             if ( p ) {
@@ -459,6 +460,7 @@ namespace cds { namespace memory {
         void deallocate( value_type * p, size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED( n );
 
             if ( p ) {
                 assert( from_pool( p ));

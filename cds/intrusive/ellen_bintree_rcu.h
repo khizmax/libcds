@@ -900,6 +900,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool erase_with( const Q& key, Less pred )
         {
+            CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
                 key_type,
                 value_type,
@@ -951,6 +952,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
                 key_type,
                 value_type,
@@ -1072,6 +1074,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
                 key_type,
                 value_type,
@@ -1169,6 +1172,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         value_type * get_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
                 key_type,
                 value_type,
@@ -1640,6 +1644,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         value_type * extract_with_( Q const& val, Less pred )
         {
+            CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
                 key_type,
                 value_type,
@@ -1846,6 +1851,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with_( Q& val, Less pred, Func f ) const
         {
+            CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
                 key_type,
                 value_type,

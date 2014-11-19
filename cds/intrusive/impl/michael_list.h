@@ -596,6 +596,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
@@ -627,6 +628,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
@@ -677,6 +679,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr extract_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             guarded_ptr gp;
             extract_at( m_pHead, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
             return gp;
@@ -726,12 +729,14 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@endcond
@@ -757,6 +762,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
@@ -809,6 +815,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr get_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             guarded_ptr gp;
             get_at( m_pHead, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
             return gp;

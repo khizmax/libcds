@@ -269,12 +269,12 @@ namespace set {
         struct find_functor
         {
             template <typename Item, typename T>
-            void operator()( Item& i, T& val )
+            void operator()( Item& i, T& /*val*/ )
             {
                 ++i.nFindCount;
             }
             template <typename Item, typename T>
-            void operator()( Item& i, T const& val )
+            void operator()( Item& i, T const& /*val*/ )
             {
                 ++i.nFindCount;
             }

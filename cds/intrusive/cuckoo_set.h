@@ -1538,7 +1538,7 @@ namespace cds { namespace intrusive {
             struct contains<NodeTraits, true>
             {
                 template <typename BucketEntry, typename Position, typename Q, typename Compare>
-                static bool find( BucketEntry& probeset, Position& pos, unsigned int nTable, size_t nHash, Q const& val, Compare cmp )
+                static bool find( BucketEntry& probeset, Position& pos, unsigned int /*nTable*/, size_t /*nHash*/, Q const& val, Compare cmp )
                 {
                     // Ordered version
                     typedef typename BucketEntry::iterator bucket_iterator;
@@ -2576,6 +2576,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Predicate>
         value_type * erase_with( Q const& val, Predicate pred )
         {
+            CDS_UNUSED( pred );
             return erase_( val, typename predicate_wrapper<Predicate>::type(), [](value_type const&) {} );
         }
 
@@ -2612,6 +2613,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Predicate, typename Func>
         value_type * erase_with( Q const& val, Predicate pred, Func f )
         {
+            CDS_UNUSED( pred );
             return erase_( val, typename predicate_wrapper<Predicate>::type(), f );
         }
 
@@ -2653,6 +2655,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Predicate, typename Func>
         bool find_with( Q& val, Predicate pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_( val, typename predicate_wrapper<Predicate>::type(), f );
         }
 
@@ -2691,6 +2694,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Predicate, typename Func>
         bool find_with( Q const& val, Predicate pred, Func f )
         {
+            CDS_UNUSED( pred );
             return find_( val, typename predicate_wrapper<Predicate>::type(), f );
         }
 
@@ -2719,6 +2723,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Predicate>
         bool find_with( Q const& val, Predicate pred )
         {
+            CDS_UNUSED( pred );
             return find_with( val, typename predicate_wrapper<Predicate>::type(), [](value_type& , Q const& ) {} );
         }
 

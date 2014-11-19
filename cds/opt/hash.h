@@ -83,7 +83,7 @@ namespace cds { namespace opt {
             {}
 
             template <size_t I, typename T>
-            typename std::enable_if< (I == sizeof...(Functors)) >::type apply( size_t * dest, T const& v ) const
+            typename std::enable_if< (I == sizeof...(Functors)) >::type apply( size_t * /*dest*/, T const& /*v*/ ) const
             {}
 
             template <size_t I, typename T>

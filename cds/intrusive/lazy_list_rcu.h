@@ -535,9 +535,9 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return erase_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
-
 
         /// Deletes the item from the list
         /** \anchor cds_intrusive_LazyList_rcu_find_erase_func
@@ -574,6 +574,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func func )
         {
+            CDS_UNUSED( pred );
             return erase_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), func );
         }
 
@@ -637,6 +638,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         exempt_ptr extract_with( Q const& key, Less pred )
         {
+            CDS_UNUSED( pred );
             return exempt_ptr( extract_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() ));
         }
 
@@ -680,12 +682,14 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less, typename Func>
         bool find_with( Q& key, Less pred, Func f ) const
         {
+            CDS_UNUSED( pred );
             return find_at( const_cast<node_type *>( &m_Head ), key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f ) const
         {
+            CDS_UNUSED( pred );
             return find_at( const_cast<node_type *>(&m_Head), key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@endcond
@@ -711,6 +715,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         bool find_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             return find_at( const_cast<node_type *>( &m_Head ), key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
@@ -759,6 +764,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         value_type * get_with( Q const& key, Less pred ) const
         {
+            CDS_UNUSED( pred );
             return get_at( const_cast<node_type *>( &m_Head ), key, cds::opt::details::make_comparator_from_less<Less>());
         }
 

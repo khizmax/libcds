@@ -230,12 +230,12 @@ namespace tree {
 
         struct find_functor {
             template <typename T, typename Q>
-            void operator()( T const& v, Q& q ) const
+            void operator()( T const& v, Q& /*q*/ ) const
             {
                 ++v.stat.nFindFuncCall;
             }
             template <typename T, typename Q>
-            void operator()( T const& v, Q const& q ) const
+            void operator()( T const& v, Q const& /*q*/ ) const
             {
                 ++v.stat.nFindConstFuncCall;
             }
