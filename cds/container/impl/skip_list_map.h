@@ -144,7 +144,7 @@ namespace cds { namespace container {
 
     public:
         /// Guarded pointer
-        typedef cds::gc::guarded_ptr< gc, node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
+        typedef typename gc::template guarded_ptr< node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
 
     protected:
         //@cond
@@ -399,13 +399,13 @@ namespace cds { namespace container {
         /// Extracts the item from the map with specified \p key
         /** \anchor cds_nonintrusive_SkipListMap_hp_extract
             The function searches an item with key equal to \p key in the map,
-            unlinks it from the map, and returns it in \p ptr parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the map, and returns a guarded pointer to the item found.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p K that can be not the same as \p key_type.
 
             The item extracted is freed automatically by garbage collector \p GC
-            when returned \ref guarded_ptr object will be destroyed or released.
+            when returned \p guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
             Usage:
@@ -414,8 +414,8 @@ namespace cds { namespace container {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                if ( theList.extract( gp, 5 ) ) {
+                skip_list::guarded_ptr gp( theList.extract( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     // ...
                 }
@@ -424,9 +424,11 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename K>
-        bool extract( guarded_ptr& ptr, K const& key )
+        guarded_ptr extract( K const& key )
         {
-            return base_class::extract_( ptr.guard(), key, typename base_class::key_comparator() );
+            guarded_ptr gp;
+            base_class::extract_( gp.guard(), key, typename base_class::key_comparator() );
+            return gp;
         }
 
         /// Extracts the item from the map with comparing functor \p pred
@@ -439,20 +441,22 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        bool extract_with( guarded_ptr& ptr, K const& key, Less pred )
+        guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >  wrapped_less;
-            return base_class::extract_( ptr.guard(), key, cds::opt::details::make_comparator_from_less<wrapped_less>() );
+            guarded_ptr gp;
+            base_class::extract_( gp.guard(), key, cds::opt::details::make_comparator_from_less<wrapped_less>() );
+            return gp;
         }
 
         /// Extracts an item with minimal key from the map
         /**
-            The function searches an item with minimal key, unlinks it, and returns the item found in \p ptr parameter.
-            If the skip-list is empty the function returns \p false.
+            The function searches an item with minimal key, unlinks it, and returns an guarded pointer to the item found.
+            If the skip-list is empty the function returns an empty guarded pointer.
 
             The item extracted is freed automatically by garbage collector \p GC
-            when returned \ref guarded_ptr object will be destroyed or released.
+            when returned \p guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
             Usage:
@@ -461,8 +465,8 @@ namespace cds { namespace container {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                if ( theList.extract_min( gp )) {
+                skip_list::guarded_ptr gp( theList.extract_min());
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -470,18 +474,20 @@ namespace cds { namespace container {
             }
             \endcode
         */
-        bool extract_min( guarded_ptr& ptr)
+        guarded_ptr extract_min()
         {
-            return base_class::extract_min_( ptr.guard() );
+            guarded_ptr gp;
+            base_class::extract_min_( gp.guard() );
+            return gp;
         }
 
         /// Extracts an item with maximal key from the map
         /**
-            The function searches an item with maximal key, unlinks it, and returns the pointer to item found in \p ptr parameter.
-            If the skip-list is empty the function returns empty \p guarded_ptr.
+            The function searches an item with maximal key, unlinks it, and returns a guarded pointer to item found.
+            If the skip-list is empty the function returns an empty \p guarded_ptr.
 
             The item found is freed by garbage collector \p GC automatically
-            when returned \ref guarded_ptr object will be destroyed or released.
+            when returned \p guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
             Usage:
@@ -490,8 +496,8 @@ namespace cds { namespace container {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                if ( theList.extract_max( gp )) {
+                skip_list::guarded_ptr gp( theList.extract_max());
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -499,9 +505,11 @@ namespace cds { namespace container {
             }
             \endcode
         */
-        bool extract_max( guarded_ptr& dest )
+        guarded_ptr extract_max()
         {
-            return base_class::extract_max_( dest.guard() );
+            guarded_ptr gp;
+            base_class::extract_max_( gp.guard() );
+            return gp;
         }
 
         /// Find the key \p key
@@ -571,11 +579,10 @@ namespace cds { namespace container {
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SkipListMap_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns an guarded pointer to the item found.
+            If \p key is not found the function returns an empty guarded pointer.
 
-            It is safe when a concurrent thread erases the item returned in \p ptr guarded pointer.
+            It is safe when a concurrent thread erases the item returned as \p guarded_ptr.
             In this case the item will be freed later by garbage collector \p GC automatically
             when \p guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
@@ -586,8 +593,8 @@ namespace cds { namespace container {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                if ( theList.get( gp, 5 ) ) {
+                skip_list::guarded_ptr gp( theList.get( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -599,14 +606,16 @@ namespace cds { namespace container {
             should accept a parameter of type \p K that can be not the same as \p value_type.
         */
         template <typename K>
-        bool get( guarded_ptr& ptr, K const& key )
+        guarded_ptr get( K const& key )
         {
-            return base_class::get_with_( ptr.guard(), key, typename base_class::key_comparator() );
+            guarded_ptr gp;
+            base_class::get_with_( gp.guard(), key, typename base_class::key_comparator() );
+            return gp;
         }
 
         /// Finds the key \p key and return the item found
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListMap_hp_get "get( guarded_ptr& ptr, K const&)"
+            The function is an analog of \ref cds_nonintrusive_SkipListMap_hp_get "get( K const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref key_type and \p K
@@ -614,11 +623,13 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        bool get_with( guarded_ptr& ptr, K const& key, Less pred )
+        guarded_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor > wrapped_less;
-            return base_class::get_with_( ptr.guard(), key, cds::opt::details::make_comparator_from_less< wrapped_less >());
+            guarded_ptr gp;
+            base_class::get_with_( gp.guard(), key, cds::opt::details::make_comparator_from_less< wrapped_less >());
+            return gp;
         }
 
         /// Clears the map

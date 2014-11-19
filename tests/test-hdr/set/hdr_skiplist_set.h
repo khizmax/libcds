@@ -36,16 +36,17 @@ namespace set {
             CPPUNIT_ASSERT( s.empty() );
 
             for ( int i = 0; i < nLimit; ++i ) {
-                CPPUNIT_CHECK( !s.get(gp, i) );
+                gp = s.get( i );
+                CPPUNIT_CHECK( !gp );
                 CPPUNIT_CHECK( gp.empty() );
 
                 CPPUNIT_ASSERT( s.insert(i) );
 
-                CPPUNIT_CHECK( s.get(gp, i));
+                gp = s.get( i );
+                CPPUNIT_CHECK( gp );
                 CPPUNIT_ASSERT( !gp.empty());
                 CPPUNIT_CHECK( gp->nKey == i );
                 CPPUNIT_CHECK( gp->nVal == i );
-                gp.release();
             }
             CPPUNIT_MSG( PrintStat()(s, "Iterator test, ascending insert order") );
 
@@ -62,11 +63,11 @@ namespace set {
                 nPrevKey = it->nKey;
 
                 // get
-                CPPUNIT_CHECK( s.get( gp, it->nKey ));
+                gp = s.get( it->nKey );
+                CPPUNIT_CHECK( gp );
                 CPPUNIT_ASSERT( !gp.empty() );
                 CPPUNIT_CHECK( gp->nKey == it->nKey );
                 CPPUNIT_CHECK( gp->nVal == it->nKey * 2 );
-                gp.release();
             }
             CPPUNIT_ASSERT( nCount == nLimit );
 
@@ -86,17 +87,18 @@ namespace set {
             CPPUNIT_ASSERT( s.empty() );
 
             for ( int i = nLimit; i > 0; --i ) {
-                CPPUNIT_CHECK( !s.get_with(gp, i-1, base_class::less<typename Set::value_type>() ) );
+                gp = s.get_with( i - 1, base_class::less<typename Set::value_type>());
+                CPPUNIT_CHECK( !gp );
                 CPPUNIT_CHECK( gp.empty() );
 
                 CPPUNIT_ASSERT( s.insert( std::make_pair(i - 1, (i-1) * 2) ));
 
                 // get_with
-                CPPUNIT_CHECK( s.get_with(gp, i-1, base_class::less<typename Set::value_type>() ));
+                gp = s.get_with( i - 1, base_class::less<typename Set::value_type>());
+                CPPUNIT_CHECK( gp );
                 CPPUNIT_ASSERT( !gp.empty());
                 CPPUNIT_CHECK( gp->nKey == i-1 );
                 CPPUNIT_CHECK( gp->nVal == (i-1) * 2 );
-                gp.release();
             }
             CPPUNIT_MSG( PrintStat()(s, "Iterator test, descending insert order") );
 
@@ -167,22 +169,22 @@ namespace set {
                 // extract/get
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrRandom[i];
-                    CPPUNIT_ASSERT( s.get(gp, nKey));
+                    gp = s.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2);
-                    gp.release();
 
-                    CPPUNIT_ASSERT( s.extract(gp, nKey));
+                    gp = s.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2);
-                    gp.release();
 
-                    CPPUNIT_CHECK( !s.get(gp, nKey));
+                    gp = s.get( nKey );
+                    CPPUNIT_CHECK( !gp );
                     CPPUNIT_ASSERT( gp.empty());
-                    CPPUNIT_ASSERT( !s.extract(gp, nKey));
-                    CPPUNIT_ASSERT( gp.empty());
+                    CPPUNIT_ASSERT( !s.extract(nKey));
                 }
                 CPPUNIT_ASSERT( s.empty() );
 
@@ -192,19 +194,20 @@ namespace set {
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrRandom[i];
-                    CPPUNIT_ASSERT( s.get_with(gp, wrapped_item(nKey), wrapped_less() ));
+                    gp = s.get_with( wrapped_item( nKey ), wrapped_less());
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
-                    gp.release();
 
-                    CPPUNIT_ASSERT( s.extract_with(gp, wrapped_item(nKey), wrapped_less() ));
+                    gp = s.extract_with( wrapped_item( nKey ), wrapped_less());
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
-                    CPPUNIT_CHECK( !s.get_with(gp, wrapped_item(nKey), wrapped_less() ));
-                    CPPUNIT_ASSERT( !s.extract_with(gp, wrapped_item(nKey), wrapped_less() ));
-                    gp.release();
+                    gp = s.get_with( wrapped_item( nKey ), wrapped_less());
+                    CPPUNIT_CHECK( !gp );
+                    CPPUNIT_ASSERT( !s.extract_with( wrapped_item(nKey), wrapped_less() ));
                 }
                 CPPUNIT_ASSERT( s.empty() );
 
@@ -213,36 +216,34 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( arrRandom[i]) );
 
                 for ( int i = 0; i < nLimit; ++i ) {
-                    CPPUNIT_ASSERT( s.extract_min(gp));
+                    gp = s.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == i );
                     CPPUNIT_CHECK( gp->nVal == i );
-                    CPPUNIT_CHECK( !s.get(gp, i ));
-                    gp.release();
+                    gp = s.get( i );
+                    CPPUNIT_CHECK( !gp );
                 }
                 CPPUNIT_ASSERT( s.empty() );
-                CPPUNIT_CHECK( !s.extract_min(gp));
-                CPPUNIT_ASSERT( gp.empty() );
-                CPPUNIT_CHECK( !s.extract_max(gp));
-                CPPUNIT_ASSERT( gp.empty() );
+                CPPUNIT_CHECK( !s.extract_min());
+                CPPUNIT_CHECK( !s.extract_max());
 
                 // extract_max
                 for ( int i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( s.insert( arrRandom[i]) );
 
                 for ( int i = nLimit-1; i >= 0; --i ) {
-                    CPPUNIT_ASSERT( s.extract_max(gp));
+                    gp = s.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == i );
                     CPPUNIT_CHECK( gp->nVal == i );
-                    CPPUNIT_CHECK( !s.get(gp, i ));
-                    gp.release();
+                    gp = s.get( i );
+                    CPPUNIT_CHECK( !gp );
                 }
                 CPPUNIT_ASSERT( s.empty() );
-                CPPUNIT_CHECK( !s.extract_min(gp));
-                CPPUNIT_ASSERT( gp.empty() );
-                CPPUNIT_CHECK( !s.extract_max(gp));
-                CPPUNIT_ASSERT( gp.empty() );
+                CPPUNIT_CHECK( !s.extract_min());
+                CPPUNIT_CHECK( !s.extract_max());
             }
 
             CPPUNIT_MSG( PrintStat()(s, nullptr) );

@@ -147,18 +147,21 @@ namespace map {
                 // extract/get
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrItem[i];
-                    CPPUNIT_ASSERT( m.get( gp, nKey ));
+                    gp = m.get( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
-                    gp.release();
-                    CPPUNIT_ASSERT( m.extract(gp, nKey));
+
+                    gp = m.extract( nKey );
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
-                    gp.release();
-                    CPPUNIT_CHECK( !m.get( gp, nKey ));
-                    CPPUNIT_CHECK( !m.extract(gp, nKey));
+
+                    gp = m.get( nKey );
+                    CPPUNIT_CHECK( !gp );
+                    CPPUNIT_CHECK( !m.extract(nKey));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( m.empty());
@@ -169,18 +172,21 @@ namespace map {
                 // extract_with/get_with
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrItem[i];
-                    CPPUNIT_ASSERT( m.get_with( gp, wrapped_item(nKey), wrapped_less() ));
+                    gp = m.get_with( wrapped_item( nKey ), wrapped_less());
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
-                    gp.release();
-                    CPPUNIT_ASSERT( m.extract_with(gp, wrapped_item(nKey), wrapped_less()));
+                    
+                    gp = m.extract_with( wrapped_item( nKey ), wrapped_less());
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
-                    gp.release();
-                    CPPUNIT_CHECK( !m.get_with( gp, wrapped_item(nKey), wrapped_less()));
-                    CPPUNIT_CHECK( !m.extract_with( gp, wrapped_item(nKey), wrapped_less()));
+
+                    gp = m.get_with( wrapped_item( nKey ), wrapped_less() );
+                    CPPUNIT_CHECK( !gp );
+                    CPPUNIT_CHECK( !m.extract_with( wrapped_item(nKey), wrapped_less()));
                     CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( m.empty());
@@ -190,30 +196,30 @@ namespace map {
                     CPPUNIT_ASSERT( m.insert(arrItem[i], arrItem[i]*2) );
 
                 for ( int i = 0; i < nLimit; ++i ) {
-                    CPPUNIT_ASSERT( m.extract_min(gp));
+                    gp = m.extract_min();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == i );
                     CPPUNIT_CHECK( gp->second.m_val == i * 2 );
                     gp.release();
                     CPPUNIT_CHECK( gp.empty());
                 }
-                CPPUNIT_CHECK( !m.extract_min(gp));
-                CPPUNIT_CHECK( gp.empty());
-                CPPUNIT_ASSERT( m.empty());
+                CPPUNIT_CHECK( !m.extract_min());
 
                 // extract_max
                 for ( int i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( m.insert(arrItem[i], arrItem[i]*2) );
 
                 for ( int i = nLimit - 1; i >= 0; --i ) {
-                    CPPUNIT_ASSERT( m.extract_max(gp));
+                    gp = m.extract_max();
+                    CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == i );
                     CPPUNIT_CHECK( gp->second.m_val == i * 2 );
                     gp.release();
                     CPPUNIT_CHECK( gp.empty());
                 }
-                CPPUNIT_CHECK( !m.extract_max(gp));
+                CPPUNIT_CHECK( m.extract_max());
                 CPPUNIT_CHECK( gp.empty());
                 CPPUNIT_ASSERT( m.empty());
             }

@@ -346,7 +346,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat          stat;       ///< internal statistics type
 
     public:
-        typedef cds::gc::guarded_ptr< gc, value_type > guarded_ptr; ///< Guarded pointer
+        typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
         /// Max node height. The actual node height should be in range <tt>[0 .. c_nMaxHeight)</tt>
         /**
@@ -809,9 +809,9 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_with_( typename gc::Guard& guard, Q const& val, Compare cmp )
+        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
         {
-            return find_with_( val, cmp, [&guard](value_type& found, Q const& ) { guard.assign(&found); } );
+            return find_with_( val, cmp, [&guard](value_type& found, Q const& ) { guard.set(&found); } );
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -842,18 +842,19 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_( typename gc::Guard& guard, Q const& val, Compare cmp )
+        bool extract_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
         {
             position pos;
 
             for (;;) {
                 if ( !find_position( val, pos, cmp, false ) ) {
                     m_Stat.onExtractFailed();
+                    guard.clear();
                     return false;
                 }
 
                 node_type * pDel = pos.pCur;
-                guard.assign( node_traits::to_value_ptr(pDel));
+                guard.set( node_traits::to_value_ptr(pDel));
                 assert( cmp( *node_traits::to_value_ptr( pDel ), val ) == 0 );
 
                 unsigned int nHeight = pDel->height();
@@ -863,12 +864,11 @@ namespace cds { namespace intrusive {
                     m_Stat.onExtractSuccess();
                     return true;
                 }
-
                 m_Stat.onExtractRetry();
             }
         }
 
-        bool extract_min_( typename gc::Guard& gDel )
+        bool extract_min_( typename guarded_ptr::native_guard& gDel )
         {
             position pos;
 
@@ -876,13 +876,14 @@ namespace cds { namespace intrusive {
                 if ( !find_min_position( pos ) ) {
                     // The list is empty
                     m_Stat.onExtractMinFailed();
+                    gDel.clear();
                     return false;
                 }
 
                 node_type * pDel = pos.pCur;
 
                 unsigned int nHeight = pDel->height();
-                gDel.assign( node_traits::to_value_ptr(pDel) );
+                gDel.set( node_traits::to_value_ptr(pDel) );
 
                 if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
@@ -895,7 +896,7 @@ namespace cds { namespace intrusive {
             }
         }
 
-        bool extract_max_( typename gc::Guard& gDel )
+        bool extract_max_( typename guarded_ptr::native_guard& gDel )
         {
             position pos;
 
@@ -903,13 +904,14 @@ namespace cds { namespace intrusive {
                 if ( !find_max_position( pos ) ) {
                     // The list is empty
                     m_Stat.onExtractMaxFailed();
+                    gDel.clear();
                     return false;
                 }
 
                 node_type * pDel = pos.pCur;
 
                 unsigned int nHeight = pDel->height();
-                gDel.assign( node_traits::to_value_ptr(pDel) );
+                gDel.set( node_traits::to_value_ptr(pDel) );
 
                 if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
@@ -1186,12 +1188,12 @@ namespace cds { namespace intrusive {
         /// Extracts the item from the set with specified \p key
         /** \anchor cds_intrusive_SkipListSet_hp_extract
             The function searches an item with key equal to \p key in the set,
-            unlinks it from the set, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the set, and returns it as \p guarded_ptr object.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
-            The \ref disposer specified in \p Traits class template parameter is called automatically
+            The \p disposer specified in \p Traits class template parameter is called automatically
             by garbage collector \p GC specified in class' template parameters when returned \p guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
@@ -1202,19 +1204,21 @@ namespace cds { namespace intrusive {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                theList.extract( gp, 5 );
-                // Deal with gp
-                // ...
-
+                skip_list::guarded_ptr gp(theList.extract( 5 ));
+                if ( gp ) {
+                    // Deal with gp
+                    // ...
+                }
                 // Destructor of gp releases internal HP guard
             }
             \endcode
         */
         template <typename Q>
-        bool extract( guarded_ptr& dest, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            return extract_( dest.guard(), key, key_comparator() );
+            guarded_ptr gp;
+            extract_( gp.guard(), key, key_comparator() );
+            return gp;
         }
 
         /// Extracts the item from the set with comparing functor \p pred
@@ -1227,16 +1231,18 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_( dest.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            guarded_ptr gp;
+            extract_( gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            return gp;
         }
 
         /// Extracts an item with minimal key from the list
         /**
-            The function searches an item with minimal key, unlinks it, and returns the item found in \p dest parameter.
-            If the skip-list is empty the function returns \p false.
+            The function searches an item with minimal key, unlinks it, and returns it as \p guarded_ptr object.
+            If the skip-list is empty the function returns an empty guarded pointer.
 
             @note Due the concurrent nature of the list, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost item and tries to unlink it.
@@ -1254,8 +1260,8 @@ namespace cds { namespace intrusive {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                if ( theList.extract_min( gp )) {
+                skip_list::guarded_ptr gp(theList.extract_min());
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -1263,15 +1269,18 @@ namespace cds { namespace intrusive {
             }
             \endcode
         */
-        bool extract_min( guarded_ptr& dest)
+        guarded_ptr extract_min()
         {
-            return extract_min_( dest.guard() );
+            guarded_ptr gp;
+            extract_min_( gp.guard() );
+            return gp;
         }
 
         /// Extracts an item with maximal key from the list
         /**
-            The function searches an item with maximal key, unlinks it, and returns the pointer to item found in \p dest parameter.
-            If the skip-list is empty the function returns empty \p guarded_ptr.
+            The function searches an item with maximal key, unlinks it, and returns the pointer to item 
+            as \p guarded_ptr object.
+            If the skip-list is empty the function returns an empty \p guarded_ptr.
 
             @note Due the concurrent nature of the list, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost item and tries to unlink it.
@@ -1289,8 +1298,8 @@ namespace cds { namespace intrusive {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                if ( theList.extract_max( gp )) {
+                skip_list::guarded_ptr gp( theList.extract_max( gp ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -1298,9 +1307,11 @@ namespace cds { namespace intrusive {
             }
             \endcode
         */
-        bool extract_max( guarded_ptr& dest )
+        guarded_ptr extract_max()
         {
-            return extract_max_( dest.guard() );
+            guarded_ptr gp;
+            extract_max_( gp.guard() );
+            return gp;
         }
 
         /// Deletes the item from the set
@@ -1463,11 +1474,10 @@ namespace cds { namespace intrusive {
         /// Finds \p key and return the item found
         /** \anchor cds_intrusive_SkipListSet_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns the pointer to the item found as \p guarded_ptr.
+            If \p key is not found the function returns an empt guarded pointer.
 
-            The \ref disposer specified in \p Traits class template parameter is called
+            The \p disposer specified in \p Traits class template parameter is called
             by garbage collector \p GC asynchronously when returned \ref guarded_ptr object
             will be destroyed or released.
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
@@ -1478,8 +1488,8 @@ namespace cds { namespace intrusive {
             skip_list theList;
             // ...
             {
-                skip_list::guarded_ptr gp;
-                if ( theList.get( gp, 5 )) {
+                skip_list::guarded_ptr gp(theList.get( 5 ));
+                if ( gp ) {
                     // Deal with gp
                     //...
                 }
@@ -1491,14 +1501,16 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& key )
+        guarded_ptr get( Q const& key )
         {
-            return get_with_( ptr.guard(), key, key_comparator() );
+            guarded_ptr gp;
+            get_with_( gp.guard(), key, key_comparator() );
+            return gp;
         }
 
         /// Finds \p key and return the item found
         /**
-            The function is an analog of \ref cds_intrusive_SkipListSet_hp_get "get( guarded_ptr& ptr, Q const&)"
+            The function is an analog of \ref cds_intrusive_SkipListSet_hp_get "get( Q const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -1506,10 +1518,12 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_with_( ptr.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            guarded_ptr gp;
+            get_with_( gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            return gp;
         }
 
         /// Returns item count in the set
@@ -1546,7 +1560,7 @@ namespace cds { namespace intrusive {
         void clear()
         {
             guarded_ptr gp;
-            while ( extract_min( gp ));
+            while ( extract_min_( gp.guard() ));
         }
 
         /// Returns maximum height of skip-list. The max height is a constant for each object and does not exceed 32.
