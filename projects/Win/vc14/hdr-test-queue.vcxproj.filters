@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_fcqueue.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_hp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_fcqueue.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_hp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_hp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_optimisticqueue_hp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_hp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_tsigas_cycle_queue.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_vyukovmpmc_cycle_queue.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_rwqueue.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_vyukov_mpmc_cyclic.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_moirqueue_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_moirqueue_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_msqueue_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_queue_register.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_basketqueue_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_basketqueue_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_optimisticqueue_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_optimistic_hp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue_dhp.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue_dhp.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_tsigas_cycle_queue.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue.h">
+      <Filter>intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_segmented_queue.h">
+      <Filter>intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_segmented_queue.h">
+      <Filter>container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_fcqueue.h">
+      <Filter>container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_queue.h">
+      <Filter>container</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="intrusive">
+      <UniqueIdentifier>{68aaf08b-6544-4d6a-b912-0935954efdf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container">
+      <UniqueIdentifier>{a466b6f6-2b88-4c6e-84df-1f9d53122909}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
