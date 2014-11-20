@@ -203,7 +203,8 @@ namespace set2 {
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
-                            if ( rSet.extract( gp, arrString[nItem % nArrSize] ) )
+                            gp = rSet.extract( arrString[nItem % nArrSize]);
+                            if (  gp )
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
@@ -213,7 +214,8 @@ namespace set2 {
                 else {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( size_t nItem = c_nMapSize; nItem > 0; --nItem ) {
-                            if ( rSet.extract( gp, arrString[nItem % nArrSize] ) )
+                            gp = rSet.extract( arrString[nItem % nArrSize]);
+                            if ( gp )
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;

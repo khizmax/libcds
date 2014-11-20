@@ -360,7 +360,8 @@ namespace map2 {
                     for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                         for ( size_t i = 0; i < arrData.size(); ++i ) {
                             if ( arrData[i] & 1 ) {
-                                if ( rMap.extract_with( gp, arrData[i], key_less() ))
+                                gp = rMap.extract_with( arrData[i], key_less());
+                                if ( gp )
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
@@ -374,7 +375,8 @@ namespace map2 {
                     for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                         for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                             if ( arrData[i] & 1 ) {
-                                if ( rMap.extract_with( gp, arrData[i], key_less() ))
+                                gp = rMap.extract_with( arrData[i], key_less());
+                                if ( gp )
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;

@@ -20,11 +20,10 @@ namespace pqueue {
         template <typename T, typename Tree>
         bool operator()( T& dest, Tree& container ) const
         {
-            typename Tree::guarded_ptr gp;
-            bool bRet = container.extract_max( gp );
-            if ( bRet )
+            typename Tree::guarded_ptr gp( container.extract_max());
+            if ( gp )
                 dest = *gp;
-            return bRet;
+            return !gp.empty();
         }
     };
 
@@ -47,11 +46,10 @@ namespace pqueue {
         template <typename T, typename Tree>
         bool operator()( T& dest, Tree& container ) const
         {
-            typename Tree::guarded_ptr gp;
-            bool bRet = container.extract_min( gp );
-            if ( bRet )
+            typename Tree::guarded_ptr gp( container.extract_min());
+            if ( gp )
                 dest = *gp;
-            return bRet;
+            return !gp.empty();
         }
     };
 
