@@ -550,12 +550,12 @@ namespace cds { namespace intrusive {
         /// Extracts the item with specified \p key
         /** \anchor cds_intrusive_MichaelHashSet_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the set, and returns it in \p dest parameter.
-            If the item with key equal to \p key is not found the function returns \p false.
+            unlinks it from the set, and returns an guarded pointer to the item extracted.
+            If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p Q that may be not the same as \p value_type.
 
-            The \ref disposer specified in \p OrderedList class' template parameter is called automatically
+            The \p disposer specified in \p OrderedList class' template parameter is called automatically
             by garbage collector \p GC when returned \ref guarded_ptr object will be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
@@ -565,28 +565,27 @@ namespace cds { namespace intrusive {
             michael_set theSet;
             // ...
             {
-                michael_set::guarded_ptr gp;
-                theSet.extract( gp, 5 );
-                // Deal with gp
-                // ...
-
+                michael_set::guarded_ptr gp( theSet.extract( 5 ));
+                if ( gp ) {
+                    // Deal with gp
+                    // ...
+                }
                 // Destructor of gp releases internal HP guard
             }
             \endcode
         */
         template <typename Q>
-        bool extract( guarded_ptr& dest, Q const& key )
+        guarded_ptr extract( Q const& key )
         {
-            if ( bucket( key ).extract( dest, key )) {
+            guarded_ptr gp = bucket( key ).extract( key );
+            if ( gp )
                 --m_ItemCounter;
-                return true;
-            }
-            return false;
+            return gp;
         }
 
         /// Extracts the item using compare functor \p pred
         /**
-            The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_extract "extract(guarded_ptr&, Q const&)"
+            The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_extract "extract(Q const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -594,13 +593,12 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool extract_with( guarded_ptr& dest, Q const& key, Less pred )
+        guarded_ptr extract_with( Q const& key, Less pred )
         {
-            if ( bucket( key ).extract_with( dest, key, pred )) {
+            guarded_ptr gp = bucket( key ).extract_with( key, pred );
+            if ( gp )
                 --m_ItemCounter;
-                return true;
-            }
-            return false;
+            return gp;
         }
 
         /// Finds the key \p key
@@ -690,9 +688,8 @@ namespace cds { namespace intrusive {
         /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_MichaelHashSet_hp_get
             The function searches the item with key equal to \p key
-            and assigns the item found to guarded pointer \p ptr.
-            The function returns \p true if \p key is found, and \p false otherwise.
-            If \p key is not found the \p ptr parameter is not changed.
+            and returns the guarded pointer to the item found.
+            If \p key is not found the function returns an empty \p guarded_ptr.
 
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
@@ -702,8 +699,8 @@ namespace cds { namespace intrusive {
             michael_set theSet;
             // ...
             {
-                michael_set::guarded_ptr gp;
-                if ( theSet.get( gp, 5 )) {
+                michael_set::guarded_ptr gp( theSet.get( 5 ));
+                if ( theSet.get( 5 )) {
                     // Deal with gp
                     //...
                 }
@@ -715,14 +712,14 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool get( guarded_ptr& ptr, Q const& key )
+        guarded_ptr get( Q const& key )
         {
-            return bucket( key ).get( ptr, key );
+            return bucket( key ).get( key );
         }
 
         /// Finds the key \p key and return the item found
         /**
-            The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_get "get( guarded_ptr& ptr, Q const&)"
+            The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_get "get( Q const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -730,9 +727,9 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool get_with( guarded_ptr& ptr, Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred )
         {
-            return bucket( key ).get_with( ptr, key, pred );
+            return bucket( key ).get_with( key, pred );
         }
 
         /// Clears the set (non-atomic)
