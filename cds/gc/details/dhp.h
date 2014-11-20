@@ -453,7 +453,7 @@ namespace cds { namespace gc {
             /// Uninitialized guard
             class guard
             {
-                friend class ThreadGC;
+                friend class dhp::ThreadGC;
             protected:
                 details::guard_data * m_pGuard ;    ///< Pointer to guard data
 
