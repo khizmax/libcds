@@ -11,6 +11,7 @@
 // Supported compilers: MS VC 2013
 // C++ compiler versions:
 #define CDS_COMPILER_MSVC12 1800    // 2013 vc12
+#define CDS_COMPILER_MSVC14 1900    // 2015 vc14
 
 #if CDS_COMPILER_VERSION < CDS_COMPILER_MSVC12
 #   error "Only MS Visual C++ 12 (2013) and above is supported"
@@ -19,6 +20,9 @@
 #if _MSC_VER == 1800
 #   define  CDS_COMPILER__NAME  "MS Visual C++ 2013"
 #   define  CDS_COMPILER__NICK  "vc12"
+#elif _MSC_VER == 1900
+#   define  CDS_COMPILER__NAME  "MS Visual C++ 2015"
+#   define  CDS_COMPILER__NICK  "vc14"
 #else
 #   define  CDS_COMPILER__NAME  "MS Visual C++"
 #   define  CDS_COMPILER__NICK  "msvc"
@@ -80,14 +84,19 @@
 // constexpr is not yet supported
 #define CDS_CONSTEXPR
 
-// noexcept is not yet supported
-//#define CDS_NOEXCEPT_SUPPORT        noexcept
-//#define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-#define CDS_NOEXCEPT_SUPPORT
-#define CDS_NOEXCEPT_SUPPORT_(expr)
+// noexcept - vc14 +
+#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
+#   define CDS_NOEXCEPT_SUPPORT        noexcept
+#   define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
+#else
+#   define CDS_NOEXCEPT_SUPPORT
+#   define CDS_NOEXCEPT_SUPPORT_(expr)
+#endif
 
 // C++11 inline namespace
-//#define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
+#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
+#   define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
+#endif
 
 #if CDS_COMPILER_VERSION == CDS_COMPILER_MSVC12
     // VC12: move ctor cannot be defaulted
@@ -96,10 +105,9 @@
 #endif
 
 // Full SFINAE support
-//#if CDS_COMPILER_VERSION >= ????
-//#   define CDS_CXX11_SFINAE
-//#endif
-
+#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
+#   define CDS_CXX11_SFINAE
+#endif
 
 // *************************************************
 // Alignment macro
