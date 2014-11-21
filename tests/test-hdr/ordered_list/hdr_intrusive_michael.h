@@ -474,22 +474,22 @@ namespace ordlist {
 
                 for ( int i=0; i < nLimit; ++i ) {
                     gp = l.get( arrItem[i].nKey );
-                    CPPUNIT_ASSERT( gp );
+                    CPPUNIT_ASSERT_EX( gp, "i=" << i );
                     CPPUNIT_ASSERT( !gp.empty());
-                    CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
-                    CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
+                    CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
+                    CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
 
                     gp = l.extract( arrItem[i].nKey );
-                    CPPUNIT_ASSERT( gp );
+                    CPPUNIT_ASSERT_EX( gp, "i=" << i );
                     CPPUNIT_ASSERT( !gp.empty());
-                    CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
-                    CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
+                    CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
+                    CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
 
                     gp = l.get( arrItem[i].nKey );
-                    CPPUNIT_ASSERT( !gp );
-                    CPPUNIT_ASSERT( gp.empty());
-                    CPPUNIT_ASSERT( !l.extract( arrItem[i].nKey ));
-                    CPPUNIT_ASSERT( gp.empty());
+                    CPPUNIT_CHECK( !gp );
+                    CPPUNIT_CHECK( gp.empty());
+                    CPPUNIT_CHECK( !l.extract( arrItem[i].nKey ));
+                    CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( l.empty() );
                 CPPUNIT_ASSERT( !l.get( nLimit/2 ));
@@ -507,22 +507,22 @@ namespace ordlist {
                 for ( int i=0; i < nLimit; ++i ) {
                     other_item itm( arrItem[i].nKey );
                     gp = l.get_with( itm, other_less() );
-                    CPPUNIT_ASSERT( gp );
+                    CPPUNIT_ASSERT_EX( gp, "i=" << i );
                     CPPUNIT_ASSERT( !gp.empty());
-                    CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
-                    CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
+                    CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
+                    CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
 
                     gp = l.extract_with( itm, other_less() );
-                    CPPUNIT_ASSERT( gp );
+                    CPPUNIT_ASSERT_EX( gp, "i=" << i );
                     CPPUNIT_ASSERT( !gp.empty());
-                    CPPUNIT_ASSERT( gp->nKey == arrItem[i].nKey );
-                    CPPUNIT_ASSERT( gp->nVal == arrItem[i].nVal );
+                    CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
+                    CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
 
                     gp = l.get_with( itm, other_less() );
-                    CPPUNIT_ASSERT( !gp );
-                    CPPUNIT_ASSERT( gp.empty());
-                    CPPUNIT_ASSERT( !l.extract_with( itm, other_less() ));
-                    CPPUNIT_ASSERT( gp.empty());
+                    CPPUNIT_CHECK( !gp );
+                    CPPUNIT_CHECK( gp.empty());
+                    CPPUNIT_CHECK( !l.extract_with( itm, other_less() ));
+                    CPPUNIT_CHECK( gp.empty());
                 }
                 CPPUNIT_ASSERT( l.empty() );
                 CPPUNIT_ASSERT( !l.get_with( other_item(nLimit/2), other_less() ));
@@ -571,11 +571,13 @@ namespace ordlist {
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     {
-                        rcu_lock lock;
-                        value_type * pGet = l.get( a[i] );
-                        CPPUNIT_ASSERT( pGet != nullptr );
-                        CPPUNIT_CHECK( pGet->nKey == a[i] );
-                        CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
+                        {
+                            rcu_lock lock;
+                            value_type * pGet = l.get( a[i] );
+                            CPPUNIT_ASSERT( pGet != nullptr );
+                            CPPUNIT_CHECK( pGet->nKey == a[i] );
+                            CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
+                        }
 
                         ep = l.extract( a[i] );
                         CPPUNIT_ASSERT( ep );
@@ -611,11 +613,13 @@ namespace ordlist {
                 for ( int i = 0; i < nLimit; ++i ) {
                     other_item itm( a[i] );
                     {
-                        rcu_lock lock;
-                        value_type * pGet = l.get_with( itm, other_less() );
-                        CPPUNIT_ASSERT( pGet != nullptr );
-                        CPPUNIT_CHECK( pGet->nKey == a[i] );
-                        CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
+                        {
+                            rcu_lock lock;
+                            value_type * pGet = l.get_with( itm, other_less() );
+                            CPPUNIT_ASSERT( pGet != nullptr );
+                            CPPUNIT_CHECK( pGet->nKey == a[i] );
+                            CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
+                        }
 
                         ep = l.extract_with( itm, other_less() );
                         CPPUNIT_ASSERT( ep );

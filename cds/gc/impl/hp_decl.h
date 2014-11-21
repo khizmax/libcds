@@ -477,9 +477,16 @@ namespace cds { namespace gc {
             /// Move-assignment operator
             guarded_ptr& operator=( guarded_ptr&& gp ) CDS_NOEXCEPT
             {
-                free_guard();
-                m_pGuard = gp.m_pGuard;
-                gp.m_pGuard = nullptr;
+                // Hazard Pointer array is organized as a stack
+                if ( m_pGuard && m_pGuard > gp.m_pGuard ) {
+                    m_pGuard->set( gp.m_pGuard->get(atomics::memory_order_relaxed) );
+                    gp.free_guard();
+                }
+                else {
+                    free_guard();
+                    m_pGuard = gp.m_pGuard;
+                    gp.m_pGuard = nullptr;
+                }
                 return *this;
             }
 
@@ -510,7 +517,7 @@ namespace cds { namespace gc {
             /// Checks if the guarded pointer is \p nullptr
             bool empty() const CDS_NOEXCEPT
             {
-                return !m_pGuard || m_pGuard->get() == nullptr;
+                return !m_pGuard || m_pGuard->get( atomics::memory_order_relaxed ) == nullptr;
             }
 
             /// \p bool operator returns <tt>!empty()</tt>

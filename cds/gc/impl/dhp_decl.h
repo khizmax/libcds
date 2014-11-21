@@ -513,7 +513,7 @@ namespace cds { namespace gc {
             /// Checks if the guarded pointer is \p nullptr
             bool empty() const CDS_NOEXCEPT
             {
-                return !m_guard.is_initialized() || m_guard.get() == nullptr;
+                return !m_guard.is_initialized() || m_guard.get( atomics::memory_order_relaxed ) == nullptr;
             }
 
             /// \p bool operator returns <tt>!empty()</tt>
