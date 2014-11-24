@@ -3,6 +3,7 @@
 #ifndef __CDS_URCU_EXEMPT_PTR_H
 #define __CDS_URCU_EXEMPT_PTR_H
 
+#include <type_traits>
 #include <cds/details/defs.h>
 
 namespace cds { namespace urcu {
@@ -60,12 +61,21 @@ namespace cds { namespace urcu {
     >
     class exempt_ptr
     {
+        //@cond
+        struct trivial_cast {
+            ValueType * operator()( NodeType * p ) const
+            {
+                return p;
+            }
+        };
+        //@endcond
     public:
         typedef RCU         rcu         ;   ///< RCU type - one of <tt>cds::urcu::gc< ... ></tt>
         typedef NodeType    node_type   ;   ///< Node type
         typedef ValueType   value_type  ;   ///< Value type
         typedef Disposer    disposer    ;   ///< Disposer calling when release
-        typedef Cast        node_to_value_cast  ;   ///< Functor converting \p node_type to \p value_type
+        /// Functor converting \p node_type to \p value_type
+        typedef typename std::conditional< std::is_same< Cast, void >::value, trivial_cast, Cast>::type node_to_value_cast;
 
     private:
         //@cond
@@ -151,106 +161,6 @@ namespace cds { namespace urcu {
             }
         }
     };
-
-    //@cond
-    // Intrusive container specialization
-    template <
-        class RCU,
-            typename NodeType,
-            typename Disposer
-    >
-    class exempt_ptr< RCU, NodeType, NodeType, Disposer, void >
-    {
-    public:
-        typedef RCU         rcu         ;   ///< RCU type - one of <tt>cds::urcu::gc< ... ></tt>
-        typedef NodeType    node_type   ;   ///< Node type
-        typedef NodeType    value_type  ;   ///< Node type
-        typedef Disposer    disposer    ;   ///< Disposer calling when release
-        typedef void        node_to_value_cast; ///< No casting is needed
-
-    private:
-        node_type *     m_pNode;
-
-    public:
-        /// Constructs empty pointer
-        exempt_ptr() CDS_NOEXCEPT
-            : m_pNode( nullptr )
-        {}
-
-        /// Creates exempt pointer for \p pNode. Only for internal use.
-        explicit exempt_ptr( node_type * pNode ) CDS_NOEXCEPT
-            : m_pNode( pNode )
-        {}
-        explicit exempt_ptr( std::nullptr_t ) CDS_NOEXCEPT
-            : m_pNode( nullptr )
-        {}
-
-        /// Move ctor
-        exempt_ptr( exempt_ptr&& p ) CDS_NOEXCEPT
-            : m_pNode( p.m_pNode )
-        {
-            p.m_pNode = nullptr;
-        }
-
-
-        /// The exempt pointer is not copy-constructible
-        exempt_ptr( exempt_ptr const& ) = delete;
-
-        /// Releases the pointer
-        ~exempt_ptr()
-        {
-            release();
-        }
-
-        /// Checks if the pointer is \p nullptr
-        bool empty() const CDS_NOEXCEPT
-        {
-            return m_pNode == nullptr;
-        }
-
-        /// \p bool operator returns <tt>!empty()</tt>
-        explicit operator bool() const CDS_NOEXCEPT
-        {
-            return !empty();
-        }
-
-        /// Dereference operator.
-        value_type * operator->() const CDS_NOEXCEPT
-        {
-            return !empty() ? m_pNode : nullptr;
-        }
-
-        /// Returns a reference to the value
-        value_type& operator *() CDS_NOEXCEPT
-        {
-            assert( !empty());
-            return *m_pNode;
-        }
-
-        /// Move assignment. Can be called only outside of RCU critical section
-        exempt_ptr& operator =(exempt_ptr&& p) CDS_NOEXCEPT
-        {
-            release();
-            m_pNode = p.m_pNode;
-            p.m_pNode = nullptr;
-            return *this;
-        }
-
-        /// The exempt pointer is not copy-assignable
-        exempt_ptr& operator=(exempt_ptr const&) = delete;
-
-        /// Disposes the pointer. Should be called only outside of RCU critical section
-        void release()
-        {
-            if ( !empty() ) {
-                assert( !rcu::is_locked() );
-                rcu::template retire_ptr<disposer>( m_pNode );
-                m_pNode = nullptr;
-            }
-        }
-    };
-    //@endcond
-
 }} // namespace cds::urcu
 
 #endif //#ifndef __CDS_URCU_EXEMPT_PTR_H
