@@ -478,12 +478,14 @@ namespace ordlist {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
+                    gp.release();
 
                     gp = l.extract( arrItem[i].nKey );
                     CPPUNIT_ASSERT_EX( gp, "i=" << i );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
+                    gp.release();
 
                     gp = l.get( arrItem[i].nKey );
                     CPPUNIT_CHECK( !gp );
@@ -511,12 +513,14 @@ namespace ordlist {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
+                    gp.release();
 
                     gp = l.extract_with( itm, other_less() );
                     CPPUNIT_ASSERT_EX( gp, "i=" << i );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == arrItem[i].nKey );
                     CPPUNIT_CHECK( gp->nVal == arrItem[i].nVal );
+                    gp.release();
 
                     gp = l.get_with( itm, other_less() );
                     CPPUNIT_CHECK( !gp );
@@ -571,14 +575,15 @@ namespace ordlist {
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     {
-                        {
-                            rcu_lock lock;
-                            value_type * pGet = l.get( a[i] );
-                            CPPUNIT_ASSERT( pGet != nullptr );
-                            CPPUNIT_CHECK( pGet->nKey == a[i] );
-                            CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
-                        }
+                        rcu_lock lock;
+                        value_type * pGet = l.get( a[i] );
+                        CPPUNIT_ASSERT( pGet != nullptr );
+                        CPPUNIT_CHECK( pGet->nKey == a[i] );
+                        CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
+                    }
 
+                    {
+                        rcu_lock lock;
                         ep = l.extract( a[i] );
                         CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
@@ -586,6 +591,7 @@ namespace ordlist {
                         CPPUNIT_CHECK( (*ep).nVal == a[i] * 2 );
                     }
                     ep.release();
+
                     {
                         rcu_lock lock;
                         CPPUNIT_CHECK( l.get( a[i] ) == nullptr );
@@ -613,14 +619,15 @@ namespace ordlist {
                 for ( int i = 0; i < nLimit; ++i ) {
                     other_item itm( a[i] );
                     {
-                        {
-                            rcu_lock lock;
-                            value_type * pGet = l.get_with( itm, other_less() );
-                            CPPUNIT_ASSERT( pGet != nullptr );
-                            CPPUNIT_CHECK( pGet->nKey == a[i] );
-                            CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
-                        }
+                        rcu_lock lock;
+                        value_type * pGet = l.get_with( itm, other_less() );
+                        CPPUNIT_ASSERT( pGet != nullptr );
+                        CPPUNIT_CHECK( pGet->nKey == a[i] );
+                        CPPUNIT_CHECK( pGet->nVal == a[i] * 2 );
+                    }
 
+                    {
+                        rcu_lock lock;
                         ep = l.extract_with( itm, other_less() );
                         CPPUNIT_ASSERT( ep );
                         CPPUNIT_ASSERT( !ep.empty() );
@@ -628,6 +635,7 @@ namespace ordlist {
                         CPPUNIT_CHECK( ep->nVal == a[i] * 2 );
                     }
                     ep.release();
+
                     {
                         rcu_lock lock;
                         CPPUNIT_CHECK( l.get_with( itm, other_less() ) == nullptr );

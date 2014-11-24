@@ -529,8 +529,7 @@ namespace cds { namespace gc {
             */
             void release() CDS_NOEXCEPT
             {
-                if ( m_guard.is_initialized() )
-                    m_guard.clear();
+                free_guard();
             }
 
             //@cond

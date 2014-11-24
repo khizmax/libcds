@@ -533,8 +533,7 @@ namespace cds { namespace gc {
             */
             void release() CDS_NOEXCEPT
             {
-                if ( m_pGuard )
-                    m_pGuard->clear();
+                free_guard();
             }
 
             //@cond
