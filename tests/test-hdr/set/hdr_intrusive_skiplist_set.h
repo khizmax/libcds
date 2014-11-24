@@ -235,11 +235,14 @@ namespace set {
                     CPPUNIT_CHECK( gp->nKey == i );
                     CPPUNIT_CHECK( gp->nVal == i * 2 );
                     gp->nVal *= 2;
+                    gp.release();
 
                     gp = s.extract( i );
                     CPPUNIT_CHECK( gp );
                     CPPUNIT_CHECK_EX( gp->nKey == i, "i=" << i << ", gp->nKey=" << gp->nKey);
                     CPPUNIT_CHECK_EX( (*gp).nVal == i * 4, "i=" << i << ", gp->nVal=" << gp->nVal );
+                    gp.release();
+
                     gp = s.extract( i );
                     CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( !s.get( i ));
@@ -255,11 +258,14 @@ namespace set {
                     CPPUNIT_CHECK( gp->nKey == i );
                     CPPUNIT_CHECK( (*gp).nVal == i * 2 );
                     gp->nVal *= 2;
+                    gp.release();
 
                     gp = s.extract_with( other_key( i ), other_key_less<typename Set::value_type>() );
                     CPPUNIT_CHECK( gp );
                     CPPUNIT_CHECK_EX( gp->nKey == i, "i=" << i << ", gp->nKey=" << gp->nKey);
                     CPPUNIT_CHECK_EX( (*gp).nVal == i * 4, "i=" << i << ", gp->nVal=" << gp->nVal );
+                    gp.release();
+
                     gp = s.extract_with( other_key( i ), other_key_less<typename Set::value_type>() );
                     CPPUNIT_CHECK( !gp );
                     CPPUNIT_CHECK( !s.get_with( other_key(i), other_key_less<typename Set::value_type>() ));
@@ -281,6 +287,7 @@ namespace set {
                         CPPUNIT_CHECK( gp->nKey == nPrevKey + 1 );
                         CPPUNIT_CHECK( (*gp).nVal == (nPrevKey + 1) * 2 );
                         nPrevKey = gp->nKey;
+                        gp.release();
                     }
                     gp.release();
                     CPPUNIT_CHECK( !s.extract_min());
@@ -302,6 +309,7 @@ namespace set {
                         CPPUNIT_CHECK( gp->nKey == nPrevKey - 1 );
                         CPPUNIT_CHECK( (*gp).nVal == (nPrevKey - 1) * 2 );
                         nPrevKey = gp->nKey;
+                        gp.release();
                     }
                     gp.release();
                     CPPUNIT_CHECK( !s.extract_min());

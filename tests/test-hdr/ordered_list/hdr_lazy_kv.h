@@ -302,12 +302,14 @@ namespace ordlist {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
+                    gp.release();
 
                     gp = l.extract( nKey );
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey*2 );
+                    gp.release();
 
                     gp = l.get( nKey );
                     CPPUNIT_CHECK( !gp );
@@ -336,12 +338,14 @@ namespace ordlist {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
+                    gp.release();
 
                     gp = l.extract_with( key, other_less() );
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey*2 );
+                    gp.release();
 
                     gp = l.get_with( key, other_less() );
                     CPPUNIT_CHECK( !gp );
@@ -410,7 +414,6 @@ namespace ordlist {
                     rcu_lock lock;
                     CPPUNIT_CHECK( l.get( a[0] ) == nullptr );
                     CPPUNIT_CHECK( !l.extract( a[0] ) );
-                    //CPPUNIT_CHECK( ep.empty() );
                 }
 
                 // extract_with/get_with

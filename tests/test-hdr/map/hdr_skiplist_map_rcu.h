@@ -179,6 +179,7 @@ namespace map {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == nKey );
                     CPPUNIT_CHECK( ep->second.m_val == nKey * 2 );
+                    ep.release();
 
                     {
                         rcu_lock l;
@@ -208,6 +209,7 @@ namespace map {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == nKey );
                     CPPUNIT_CHECK( ep->second.m_val == nKey * 2 );
+                    ep.release();
 
                     {
                         rcu_lock l;
@@ -227,6 +229,7 @@ namespace map {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == i );
                     CPPUNIT_CHECK( ep->second.m_val == i * 2 );
+                    ep.release();
                 }
                 CPPUNIT_ASSERT( m.empty() );
                 ep = m.extract_min();
@@ -241,6 +244,7 @@ namespace map {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->first == i );
                     CPPUNIT_CHECK( ep->second.m_val == i * 2 );
+                    ep.release();
                 }
                 CPPUNIT_ASSERT( m.empty() );
                 ep = m.extract_max();

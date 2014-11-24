@@ -365,13 +365,15 @@ namespace set {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
+                    gp.release();
 
                     gp = s.extract( nKey );
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
-                    CPPUNIT_CHECK( !s.get(nKey));
+                    gp.release();
+                    CPPUNIT_CHECK( !s.get( nKey ) );
 
                     gp = s.extract( nKey );
                     CPPUNIT_CHECK( !gp );
@@ -390,12 +392,15 @@ namespace set {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
+                    gp.release();
 
                     gp = s.extract_with( other_item( nKey ), other_less() );
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
+                    gp.release();
+
                     gp = s.get_with( other_item( nKey ), other_less() );
                     CPPUNIT_CHECK( !gp );
 

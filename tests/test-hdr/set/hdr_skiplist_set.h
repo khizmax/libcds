@@ -47,6 +47,7 @@ namespace set {
                 CPPUNIT_ASSERT( !gp.empty());
                 CPPUNIT_CHECK( gp->nKey == i );
                 CPPUNIT_CHECK( gp->nVal == i );
+                gp.release();
             }
             CPPUNIT_MSG( PrintStat()(s, "Iterator test, ascending insert order") );
 
@@ -68,6 +69,7 @@ namespace set {
                 CPPUNIT_ASSERT( !gp.empty() );
                 CPPUNIT_CHECK( gp->nKey == it->nKey );
                 CPPUNIT_CHECK( gp->nVal == it->nKey * 2 );
+                gp.release();
             }
             CPPUNIT_ASSERT( nCount == nLimit );
 
@@ -99,6 +101,7 @@ namespace set {
                 CPPUNIT_ASSERT( !gp.empty());
                 CPPUNIT_CHECK( gp->nKey == i-1 );
                 CPPUNIT_CHECK( gp->nVal == (i-1) * 2 );
+                gp.release();
             }
             CPPUNIT_MSG( PrintStat()(s, "Iterator test, descending insert order") );
 
@@ -174,12 +177,14 @@ namespace set {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2);
+                    gp.release();
 
                     gp = s.extract( nKey );
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey * 2);
+                    gp.release();
 
                     gp = s.get( nKey );
                     CPPUNIT_CHECK( !gp );
@@ -199,12 +204,15 @@ namespace set {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
+                    gp.release();
 
                     gp = s.extract_with( wrapped_item( nKey ), wrapped_less());
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == nKey );
                     CPPUNIT_CHECK( gp->nVal == nKey );
+                    gp.release();
+
                     gp = s.get_with( wrapped_item( nKey ), wrapped_less());
                     CPPUNIT_CHECK( !gp );
                     CPPUNIT_ASSERT( !s.extract_with( wrapped_item(nKey), wrapped_less() ));
@@ -221,6 +229,8 @@ namespace set {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == i );
                     CPPUNIT_CHECK( gp->nVal == i );
+                    gp.release();
+
                     gp = s.get( i );
                     CPPUNIT_CHECK( !gp );
                 }
@@ -238,6 +248,8 @@ namespace set {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->nKey == i );
                     CPPUNIT_CHECK( gp->nVal == i );
+                    gp.release();
+
                     gp = s.get( i );
                     CPPUNIT_CHECK( !gp );
                 }

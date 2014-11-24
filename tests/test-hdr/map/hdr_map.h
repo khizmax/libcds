@@ -214,12 +214,15 @@ namespace map {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
+                    gp.release();
 
                     gp = m.extract( nKey );
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
+                    gp.release();
+
                     gp = m.get( nKey );
                     CPPUNIT_CHECK( !gp );
 
@@ -238,12 +241,15 @@ namespace map {
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
+                    gp.release();
 
                     gp = m.extract_with( other_item( nKey ), other_less() );
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey );
+                    gp.release();
+
                     gp = m.get_with( other_item( nKey ), other_less() );
                     CPPUNIT_CHECK( !gp );
 

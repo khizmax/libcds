@@ -273,7 +273,7 @@ namespace set {
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( ep->nKey == i );
                         CPPUNIT_CHECK( ep->nVal == i * 4 );
-                        //ep.release();
+                        ep.release();
 
                         {
                             rcu_lock l;
@@ -305,7 +305,7 @@ namespace set {
                         CPPUNIT_ASSERT( !ep.empty() );
                         CPPUNIT_CHECK( ep->nKey == i );
                         CPPUNIT_CHECK( ep->nVal == i * 4 );
-                        //ep.release();
+                        ep.release();
 
                         {
                             rcu_lock l;
@@ -327,7 +327,7 @@ namespace set {
                     CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty());
                     nPrevKey = ep->nKey;
-                    //ep.release();
+                    ep.release();
 
                     while ( !s.empty() ) {
                         ep = s.extract_min();
@@ -336,7 +336,7 @@ namespace set {
                         CPPUNIT_CHECK( ep->nKey == nPrevKey + 1 );
                         CPPUNIT_CHECK( ep->nVal == (nPrevKey + 1) * 2 );
                         nPrevKey = ep->nKey;
-                        //ep.release();
+                        ep.release();
                     }
                     ep = s.extract_min();
                     CPPUNIT_CHECK( !ep );
@@ -353,7 +353,7 @@ namespace set {
                     CPPUNIT_ASSERT( ep );
                     CPPUNIT_ASSERT( !ep.empty());
                     nPrevKey = ep->nKey;
-                    //ep.release();
+                    ep.release();
 
                     while ( !s.empty() ) {
                         ep = s.extract_max();
@@ -362,7 +362,7 @@ namespace set {
                         CPPUNIT_CHECK( ep->nKey == nPrevKey - 1 );
                         CPPUNIT_CHECK( ep->nVal == (nPrevKey - 1) * 2 );
                         nPrevKey = ep->nKey;
-                        //ep.release();
+                        ep.release();
                     }
                     ep = s.extract_min();
                     CPPUNIT_CHECK( !ep );

@@ -173,6 +173,7 @@ namespace set {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == nKey );
                     CPPUNIT_CHECK( ep->nVal == nKey * 2 );
+                    ep.release();
 
                     {
                         rcu_lock l;
@@ -202,6 +203,7 @@ namespace set {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == nKey );
                     CPPUNIT_CHECK( ep->nVal == nKey );
+                    ep.release();
 
                     {
                         rcu_lock l;
@@ -223,6 +225,7 @@ namespace set {
                     CPPUNIT_CHECK( ep->nKey == i );
                     CPPUNIT_CHECK( ep->nVal == i );
                     CPPUNIT_CHECK( !s.find(i) );
+                    ep.release();
                 }
                 CPPUNIT_CHECK( s.empty());
 
@@ -237,6 +240,7 @@ namespace set {
                     CPPUNIT_CHECK( ep->nKey == i );
                     CPPUNIT_CHECK( ep->nVal == i );
                     CPPUNIT_CHECK( !s.find(i) );
+                    ep.release();
                 }
                 CPPUNIT_CHECK( s.empty());
                 ep = s.extract_min();
