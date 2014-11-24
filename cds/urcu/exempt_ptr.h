@@ -144,8 +144,8 @@ namespace cds { namespace urcu {
         /// Disposes the pointer. Should be called only outside of RCU critical section
         void release()
         {
-            assert( !rcu::is_locked() );
             if ( !empty() ) {
+                assert( !rcu::is_locked() );
                 rcu::template retire_ptr<disposer>( m_pNode );
                 m_pNode = nullptr;
             }
