@@ -114,7 +114,9 @@ namespace cds { namespace container {
                 };
             };
 
-            typedef cds::intrusive::MichaelList< gc, node_type, ordered_list_traits > ordered_list;
+            class ordered_list: public cds::intrusive::MichaelList< gc, node_type, ordered_list_traits >
+            {};
+            //typedef cds::intrusive::MichaelList< gc, node_type, ordered_list_traits > ordered_list;
             typedef cds::intrusive::SplitListSet< gc, ordered_list, traits > type;
         };
 #endif  // ifdef __CDS_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
@@ -223,7 +225,9 @@ namespace cds { namespace container {
                 };
             };
 
-            typedef cds::intrusive::LazyList< gc, node_type, ordered_list_traits >  ordered_list;
+            class ordered_list: public cds::intrusive::LazyList< gc, node_type, ordered_list_traits >
+            {};
+            //typedef cds::intrusive::LazyList< gc, node_type, ordered_list_traits >  ordered_list;
             typedef cds::intrusive::SplitListSet< gc, ordered_list, traits >   type;
         };
 #endif  // ifdef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
