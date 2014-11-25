@@ -406,6 +406,7 @@ namespace set2 {
                                     ++m_nExtractSuccess;
                                 else
                                     ++m_nExtractFailed;
+                                gp.release();
                             }
                         }
                         if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
@@ -421,6 +422,7 @@ namespace set2 {
                                     ++m_nExtractSuccess;
                                 else
                                     ++m_nExtractFailed;
+                                gp.release();
                             }
                         }
                         if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )

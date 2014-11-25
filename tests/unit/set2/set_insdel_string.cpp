@@ -208,6 +208,7 @@ namespace set2 {
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
+                            gp.release();
                         }
                     }
                 }
@@ -219,6 +220,7 @@ namespace set2 {
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
+                            gp.release();
                         }
                     }
                 }
