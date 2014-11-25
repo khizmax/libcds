@@ -18,7 +18,7 @@ namespace set2 {
     public:
         typedef typename base_class::key_type value_type;
 
-        StdSet( size_t nMapSize, size_t nLoadFactor )
+        StdSet( size_t /*nMapSize*/, size_t /*nLoadFactor*/ )
         {}
 
         template <typename Key>

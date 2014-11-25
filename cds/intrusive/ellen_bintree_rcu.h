@@ -1305,7 +1305,7 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        void help( update_ptr pUpdate, retired_list& rl )
+        void help( update_ptr /*pUpdate*/, retired_list& /*rl*/ )
         {
             /*
             switch ( pUpdate.bits() ) {
@@ -1642,7 +1642,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Less>
-        value_type * extract_with_( Q const& val, Less pred )
+        value_type * extract_with_( Q const& val, Less /*pred*/ )
         {
             CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
@@ -1849,7 +1849,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Less, typename Func>
-        bool find_with_( Q& val, Less pred, Func f ) const
+        bool find_with_( Q& val, Less /*pred*/, Func f ) const
         {
             CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<

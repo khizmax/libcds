@@ -31,7 +31,7 @@ namespace set2 {
     public:
         typedef typename base_class::value_type value_type;
 
-        StdHashSet( size_t nSetSize, size_t nLoadFactor )
+        StdHashSet( size_t /*nSetSize*/, size_t /*nLoadFactor*/ )
         {}
 
         template <typename Key>

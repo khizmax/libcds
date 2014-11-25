@@ -1337,7 +1337,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Less>
-        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
+        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less /*pred*/ )
         {
             CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
@@ -1469,7 +1469,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Less, typename Func>
-        bool find_with_( Q& val, Less pred, Func f ) const
+        bool find_with_( Q& val, Less /*pred*/, Func f ) const
         {
             CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
