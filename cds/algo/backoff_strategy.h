@@ -16,6 +16,7 @@
     2009.09.10  Maxim Khiszinsky    reset() function added
 */
 
+#include <utility>      // declval
 #include <thread>
 #include <chrono>
 #include <cds/compiler/backoff.h>
@@ -59,7 +60,7 @@ namespace cds {
             {}
 
             template <typename Predicate>
-            bool operator()(Predicate pr) CDS_NOEXCEPT
+            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
             {
                 return pr();
             }
@@ -78,7 +79,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT
+            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
             {
                 if ( pr() )
                     return true;
@@ -106,7 +107,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT
+            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
             {
                 if ( pr() )
                     return true;
@@ -137,7 +138,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT
+            bool operator()(Predicate pr) CDS_NOEXCEPT_(noexcept(std::declval<Predicate>()() ))
             {
                 if ( pr() )
                     return true;
@@ -252,7 +253,7 @@ namespace cds {
             }
 
             //@cond
-            void operator ()() CDS_NOEXCEPT_(noexcept(spin_backoff()()) && noexcept(yield_backoff()()))
+            void operator ()() CDS_NOEXCEPT_(noexcept(std::declval<spin_backoff>()()) && noexcept(std::declval<yield_backoff>()()))
             {
                 if ( m_nExpCur <= m_nExpMax ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n )
@@ -264,7 +265,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT_(noexcept( spin_backoff()()) && noexcept( yield_backoff()()))
+            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()()) && noexcept(std::declval<spin_backoff>()()) && noexcept(std::declval<yield_backoff>()() ))
             {
                 if ( m_nExpCur <= m_nExpMax ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n ) {
@@ -278,7 +279,7 @@ namespace cds {
                 return false;
             }
 
-            void reset() CDS_NOEXCEPT_(noexcept(spin_backoff().reset()) && noexcept(yield_backoff().reset()))
+            void reset() CDS_NOEXCEPT_( noexcept( std::declval<spin_backoff>().reset() ) && noexcept( std::declval<yield_backoff>().reset() ))
             {
                 m_nExpCur = m_nExpMin;
                 m_bkSpin.reset();
@@ -365,13 +366,13 @@ namespace cds {
             {}
 
             //@cond
-            void operator()() const CDS_NOEXCEPT
+            void operator()() const
             {
                 std::this_thread::sleep_for( duration_type( m_nTimeout ));
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) const CDS_NOEXCEPT
+            bool operator()(Predicate pr) const
             {
                 for ( unsigned int i = 0; i < m_nTimeout; i += 2 ) {
                     if ( pr() )
