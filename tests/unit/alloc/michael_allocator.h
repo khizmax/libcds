@@ -35,12 +35,12 @@ namespace memory {
         };
 
 
-        pointer allocate( size_t nSize, const void * pHint )
+        pointer allocate( size_t nSize, const void * /*pHint*/ )
         {
             return reinterpret_cast<pointer>( s_MichaelHeap_NoStat.alloc( sizeof(T) * nSize ) );
         }
 
-        void deallocate( pointer p, size_t nCount )
+        void deallocate( pointer p, size_t /*nCount*/ )
         {
             s_MichaelHeap_NoStat.free( p );
         }
@@ -59,7 +59,7 @@ namespace memory {
             alignment = 1
         };
 
-        static void stat(summary_stat& s)
+        static void stat(summary_stat& /*s*/)
         {}
     };
 
@@ -74,12 +74,12 @@ namespace memory {
             alignment = 1
         };
 
-        pointer allocate( size_t nSize, const void * pHint )
+        pointer allocate( size_t nSize, const void * /*pHint*/ )
         {
             return reinterpret_cast<pointer>( s_MichaelHeap_Stat.alloc( sizeof(T) * nSize ) );
         }
 
-        void deallocate( pointer p, size_t nCount )
+        void deallocate( pointer p, size_t /*nCount*/ )
         {
             s_MichaelHeap_Stat.free( p );
         }
@@ -101,12 +101,12 @@ namespace memory {
             alignment = ALIGN
         };
 
-        pointer allocate( size_t nSize, const void * pHint )
+        pointer allocate( size_t nSize, const void * /*pHint*/ )
         {
             return reinterpret_cast<pointer>( s_MichaelHeap_NoStat.alloc_aligned( sizeof(T) * nSize, ALIGN ) );
         }
 
-        void deallocate( pointer p, size_t nCount )
+        void deallocate( pointer p, size_t /*nCount*/ )
         {
             s_MichaelHeap_NoStat.free_aligned( p );
         }
@@ -127,12 +127,12 @@ namespace memory {
             alignment = ALIGN
         };
 
-        pointer allocate( size_t nSize, const void * pHint )
+        pointer allocate( size_t nSize, const void * /*pHint*/ )
         {
             return reinterpret_cast<pointer>( s_MichaelHeap_Stat.alloc_aligned( sizeof(T) * nSize, ALIGN ) );
         }
 
-        void deallocate( pointer p, size_t nCount )
+        void deallocate( pointer p, size_t /*nCount*/ )
         {
             s_MichaelHeap_Stat.free_aligned( p );
         }
@@ -154,17 +154,17 @@ namespace memory {
             alignment = ALIGN
         };
 
-        pointer allocate( size_t nSize, const void * pHint )
+        pointer allocate( size_t nSize, const void * /*pHint*/ )
         {
             return reinterpret_cast<pointer>( cds::OS::aligned_malloc( sizeof(T) * nSize, ALIGN ) );
         }
 
-        void deallocate( pointer p, size_t nCount )
+        void deallocate( pointer p, size_t /*nCount*/ )
         {
             cds::OS::aligned_free( p );
         }
 
-        static void stat(summary_stat& s)
+        static void stat(summary_stat& /*s*/)
         {}
     };
 

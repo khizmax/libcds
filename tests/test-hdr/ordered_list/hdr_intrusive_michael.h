@@ -173,7 +173,7 @@ namespace ordlist {
         struct ensure_functor
         {
             template <typename T>
-            void operator ()(bool bNew, T& item, T& val )
+            void operator ()(bool bNew, T& item, T& /*val*/ )
             {
                 if ( bNew )
                     ++item.s.nEnsureNewCall;
@@ -185,7 +185,7 @@ namespace ordlist {
         struct find_functor
         {
             template <typename T, typename Q>
-            void operator ()( T& item, Q& val )
+            void operator ()( T& item, Q& /*val*/ )
             {
                 ++item.s.nFindCall;
             }

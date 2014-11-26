@@ -550,6 +550,7 @@ namespace cds { namespace container {
         template <typename K, typename Predicate>
         bool erase_with( K const& key, Predicate pred )
         {
+            CDS_UNUSED( pred );
             node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
             if ( pNode ) {
                 free_node( pNode );
@@ -598,6 +599,7 @@ namespace cds { namespace container {
         template <typename K, typename Predicate, typename Func>
         bool erase_with( K const& key, Predicate pred, Func f )
         {
+            CDS_UNUSED( pred );
             node_type * pNode = base_class::erase_with( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>() );
             if ( pNode ) {
                 f( pNode->m_val );
@@ -640,6 +642,7 @@ namespace cds { namespace container {
         template <typename K, typename Predicate, typename Func>
         bool find_with( K const& key, Predicate pred, Func f )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>(),
                 [&f](node_type& item, K const& ) { f( item.m_val );});
         }
@@ -667,6 +670,7 @@ namespace cds { namespace container {
         template <typename K, typename Predicate>
         bool find_with( K const& key, Predicate pred )
         {
+            CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>() );
         }
 

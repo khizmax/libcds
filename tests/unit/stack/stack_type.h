@@ -407,12 +407,12 @@ namespace std {
             << "\t     m_EliminationFailed: " << s.m_EliminationFailed.get()      << "\n";
     }
 
-    static inline ostream& operator <<(ostream& o, cds::container::treiber_stack::empty_stat const& s)
+    static inline ostream& operator <<(ostream& o, cds::container::treiber_stack::empty_stat const& /*s*/)
     {
         return o;
     }
 
-    static inline ostream& operator <<( ostream& o, cds::container::fcstack::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::container::fcstack::empty_stat const& /*s*/ )
     {
         return o;
     }
@@ -438,7 +438,7 @@ namespace std {
             << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
     }
 
-    static inline ostream& operator <<( ostream& o, cds::container::fcdeque::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::container::fcdeque::empty_stat const& /*s*/ )
     {
         return o;
     }

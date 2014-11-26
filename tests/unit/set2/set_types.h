@@ -87,7 +87,7 @@ namespace set2 {
         {}
 
         template <typename Q, typename Pred>
-        bool erase_with( Q const& key, Pred pred )
+        bool erase_with( Q const& key, Pred /*pred*/ )
         {
             return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
         }
@@ -1014,7 +1014,7 @@ namespace set2 {
             {}
 
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
+            bool erase_with( Q const& v, Less /*pred*/ )
             {
                 return base_class::erase( v );
             }
@@ -1038,12 +1038,12 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashSet_ord( size_t nCapacity, size_t nLoadFactor )
+            StripedHashSet_ord( size_t /*nCapacity*/, size_t nLoadFactor )
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
             {}
 
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
+            bool erase_with( Q const& v, Less /*pred*/ )
             {
                 return base_class::erase( v );
             }
@@ -1142,7 +1142,7 @@ namespace set2 {
             {}
 
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
+            bool erase_with( Q const& v, Less /*pred*/ )
             {
                 return base_class::erase( v );
             }
@@ -1166,12 +1166,12 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashSet_ord( size_t nCapacity, size_t nLoadFactor )
+            RefinableHashSet_ord( size_t /*nCapacity*/, size_t nLoadFactor )
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
             {}
 
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
+            bool erase_with( Q const& v, Less /*pred*/ )
             {
                 return base_class::erase( v );
             }
@@ -1723,7 +1723,7 @@ namespace set2 {
     // *************************************************
 
     template <typename Set>
-    static inline void print_stat( Set const& s )
+    static inline void print_stat( Set const& /*s*/ )
     {}
 
     template <typename GC, typename T, typename Traits>
@@ -1763,15 +1763,15 @@ namespace set2 {
     //*******************************************************
 
     template <typename Set>
-    static inline void additional_check( Set& set )
+    static inline void additional_check( Set& /*set*/ )
     {}
 
     template <typename Set>
-    static inline void additional_cleanup( Set& set )
+    static inline void additional_cleanup( Set& /*set*/ )
     {}
 
     namespace ellen_bintree_check {
-        static inline void check_stat( cds::intrusive::ellen_bintree::empty_stat const& s )
+        static inline void check_stat( cds::intrusive::ellen_bintree::empty_stat const& /*s*/ )
         {
             // Not true for threaded RCU
             /*
@@ -1801,7 +1801,7 @@ namespace set2 {
     }
 
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void additional_cleanup( cc::EllenBinTreeSet<GC, Key, T, Traits>& s )
+    static inline void additional_cleanup( cc::EllenBinTreeSet<GC, Key, T, Traits>& /*s*/ )
     {
         ellen_bintree_pool::internal_node_counter::reset();
     }

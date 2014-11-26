@@ -361,12 +361,12 @@ namespace std {
             << "\t     m_EliminationFailed: " << s.m_EliminationFailed.get()      << "\n";
     }
 
-    static inline ostream& operator <<( ostream& o, cds::intrusive::treiber_stack::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::intrusive::treiber_stack::empty_stat const& /*s*/ )
     {
         return o;
     }
 
-    static inline ostream& operator <<( ostream& o, cds::intrusive::fcstack::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::intrusive::fcstack::empty_stat const& /*s*/ )
     {
         return o;
     }

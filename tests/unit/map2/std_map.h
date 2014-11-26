@@ -21,7 +21,7 @@ namespace map2 {
         typedef typename base_class::value_type  pair_type;
         typedef size_t      item_counter;
 
-        StdMap( size_t nMapSize, size_t nLoadFactor )
+        StdMap( size_t /*nMapSize*/, size_t /*nLoadFactor*/ )
         {}
 
         bool find( const Key& key )

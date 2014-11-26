@@ -127,7 +127,7 @@ namespace map2 {
         {}
 
         template <typename Q, typename Pred>
-        bool erase_with( Q const& key, Pred pred )
+        bool erase_with( Q const& key, Pred /*pred*/ )
         {
             return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
         }
@@ -1124,7 +1124,7 @@ namespace map2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashMap_ord( size_t nCapacity, size_t nLoadFactor )
+            StripedHashMap_ord( size_t /*nCapacity*/, size_t nLoadFactor )
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
             {}
         };
@@ -1228,7 +1228,7 @@ namespace map2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashMap_ord( size_t nCapacity, size_t nLoadFactor )
+            RefinableHashMap_ord( size_t /*nCapacity*/, size_t nLoadFactor )
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
             {}
         };
@@ -1726,15 +1726,15 @@ namespace map2 {
     };
 
     template <typename Map>
-    static inline void print_stat( Map const& m )
+    static inline void print_stat( Map const& /*m*/ )
     {}
 
     template <typename Map>
-    static inline void additional_cleanup( Map& m )
+    static inline void additional_cleanup( Map& /*m*/ )
     {}
 
     template <typename Map>
-    static inline void additional_check( Map& m )
+    static inline void additional_check( Map& /*m*/ )
     {}
 
 
@@ -1763,12 +1763,12 @@ namespace map2 {
         CPPUNIT_MSG( s.statistics() );
     }
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void additional_cleanup( cc::EllenBinTreeMap<GC, Key, T, Traits>& s )
+    static inline void additional_cleanup( cc::EllenBinTreeMap<GC, Key, T, Traits>& /*s*/ )
     {
         ellen_bintree_pool::internal_node_counter::reset();
     }
     namespace ellen_bintree_check {
-        static inline void check_stat( cds::intrusive::ellen_bintree::empty_stat const& s )
+        static inline void check_stat( cds::intrusive::ellen_bintree::empty_stat const& /*s*/ )
         {
             // This check is not valid for thread-based RCU
             /*

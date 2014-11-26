@@ -156,7 +156,7 @@ namespace stack {
         }
 
         template <class Stack>
-        void analyze( CppUnitMini::ThreadPool& pool, Stack& testStack  )
+        void analyze( CppUnitMini::ThreadPool& pool, Stack& /*testStack*/  )
         {
             size_t nPushError = 0;
             size_t nPopEmpty = 0;

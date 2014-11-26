@@ -184,9 +184,9 @@ namespace set2 {
                     , nModified(0)
                 {}
 
-                void operator()( bool bNew, keyval_type& val, size_t nKey )
+                void operator()( bool bNew, keyval_type& val, size_t /*nKey*/ )
                 {
-                    std::unique_lock<typename value_type::lock_type>    ac( val.val.m_access );
+                    std::unique_lock<typename value_type::lock_type> ac( val.val.m_access );
                     if ( !val.val.bInitialized )
                     {
                         val.val.nKey = val.key;

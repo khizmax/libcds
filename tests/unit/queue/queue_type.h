@@ -544,7 +544,7 @@ namespace std {
             << "\t\tAdd basket attempts: " << s.m_TryAddBasket.get() << "\n"
             << "\t\t Add basket success: " << s.m_AddBasketCount.get() << "\n";
     }
-    static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::empty_stat const& s)
+    static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::empty_stat const& /*s*/)
     {
         return o;
     }
@@ -562,7 +562,7 @@ namespace std {
             << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::container::msqueue::empty_stat const& s )
+    static inline std::ostream& operator <<( std::ostream& o, cds::container::msqueue::empty_stat const& /*s*/ )
     {
         return o;
     }
@@ -587,7 +587,7 @@ namespace std {
             << "\t\t      fix list call: " << s.m_FixListCount.get() << "\n";
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::empty_stat const& s )
+    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::empty_stat const& /*s*/ )
     {
         return o;
     }
@@ -615,12 +615,12 @@ namespace std {
                 << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::container::fcqueue::empty_stat const& s )
+    static inline std::ostream& operator <<( std::ostream& o, cds::container::fcqueue::empty_stat const& /*s*/ )
     {
         return o;
     }
 
-    static inline ostream& operator <<( ostream& o, cds::container::fcdeque::empty_stat const& s )
+    static inline ostream& operator <<( ostream& o, cds::container::fcdeque::empty_stat const& /*s*/ )
     {
         return o;
     }

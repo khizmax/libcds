@@ -128,7 +128,7 @@ namespace boost {
 namespace set2 {
 
     template <typename Set>
-    static inline void check_before_clear( Set& s )
+    static inline void check_before_clear( Set& /*s*/ )
     {}
 
     template <typename GC, typename Key, typename T, typename Traits>
@@ -161,7 +161,7 @@ namespace set2 {
             struct ensure_func
             {
                 template <typename Q>
-                void operator()( bool bNew, key_value_pair const&, Q const& )
+                void operator()( bool /*bNew*/, key_value_pair const&, Q const& )
                 {}
             };
         public:

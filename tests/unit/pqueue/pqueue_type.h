@@ -288,7 +288,7 @@ namespace pqueue {
 
 
     template <typename Stat>
-    static inline void check_statistics( Stat const& s )
+    static inline void check_statistics( Stat const& /*s*/ )
     {}
 
     static inline void check_statistics( cds::container::ellen_bintree::stat<> const& s )

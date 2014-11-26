@@ -32,7 +32,7 @@ namespace map2 {
         typedef typename base_class::mapped_type value_type;
         typedef size_t      item_counter;
 
-        StdHashMap( size_t nMapSize, size_t nLoadFactor )
+        StdHashMap( size_t /*nMapSize*/, size_t /*nLoadFactor*/ )
         {}
 
         bool find( const Key& key )

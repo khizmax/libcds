@@ -211,7 +211,7 @@ namespace queue {
 
     protected:
         template <class Queue>
-        void analyze( CppUnitMini::ThreadPool& pool, Queue& testQueue, size_t nLeftOffset, size_t nRightOffset )
+        void analyze( CppUnitMini::ThreadPool& pool, Queue& testQueue, size_t /*nLeftOffset*/, size_t nRightOffset )
         {
             typedef Consumer<Queue> Reader;
             typedef Producer<Queue> Writer;
