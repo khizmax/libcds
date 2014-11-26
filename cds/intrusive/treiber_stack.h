@@ -391,7 +391,7 @@ namespace cds { namespace intrusive {
                     }
 
                     // Wait for colliding operation
-                    bkoff( [&op]() -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_busy; } );
+                    bkoff( [&op]() CDS_NOEXCEPT -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_busy; } );
                     {
                         slot_scoped_lock l( slot.lock );
                         if ( slot.pRec == myRec )

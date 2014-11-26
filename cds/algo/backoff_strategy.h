@@ -59,7 +59,7 @@ namespace cds {
             {}
 
             template <typename Predicate>
-            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(Predicate()()) )
+            bool operator()(Predicate pr) CDS_NOEXCEPT
             {
                 return pr();
             }
@@ -78,7 +78,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept( Predicate()() ) )
+            bool operator()( Predicate pr ) CDS_NOEXCEPT
             {
                 if ( pr() )
                     return true;
@@ -106,7 +106,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept( Predicate()() ) )
+            bool operator()( Predicate pr ) CDS_NOEXCEPT
             {
                 if ( pr() )
                     return true;
@@ -137,7 +137,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept( Predicate()() ) )
+            bool operator()( Predicate pr ) CDS_NOEXCEPT
             {
                 if ( pr() )
                     return true;
@@ -264,7 +264,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept(Predicate()()) && noexcept( spin_backoff()()) && noexcept( yield_backoff()()))
+            bool operator()( Predicate pr ) CDS_NOEXCEPT_(noexcept( spin_backoff()()) && noexcept( yield_backoff()()))
             {
                 if ( m_nExpCur <= m_nExpMax ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n ) {
@@ -371,7 +371,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) const CDS_NOEXCEPT_( noexcept(Predicate()()))
+            bool operator()( Predicate pr ) const CDS_NOEXCEPT
             {
                 for ( unsigned int i = 0; i < m_nTimeout; i += 2 ) {
                     if ( pr() )
