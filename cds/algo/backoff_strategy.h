@@ -55,16 +55,16 @@ namespace cds {
         /// Empty backoff strategy. Do nothing
         struct empty {
             //@cond
-            void operator ()()
+            void operator ()() const CDS_NOEXCEPT
             {}
 
             template <typename Predicate>
-            bool operator()( Predicate pr )
+            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(Predicate()()) )
             {
                 return pr();
             }
 
-            void reset()
+            void reset() const CDS_NOEXCEPT
             {}
             //@endcond
         };
@@ -72,13 +72,13 @@ namespace cds {
         /// Switch to another thread (yield). Good for thread preemption architecture.
         struct yield {
             //@cond
-            void operator ()()
+            void operator ()() CDS_NOEXCEPT
             {
                 std::this_thread::yield();
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr )
+            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept( Predicate()() ) )
             {
                 if ( pr() )
                     return true;
@@ -86,7 +86,7 @@ namespace cds {
                 return false;
             }
 
-            void reset()
+            void reset() const CDS_NOEXCEPT
             {}
             //@endcond
         };
@@ -98,7 +98,7 @@ namespace cds {
         */
         struct pause {
             //@cond
-            void operator ()()
+            void operator ()() CDS_NOEXCEPT
             {
 #            ifdef CDS_backoff_pause_defined
                 platform::backoff_pause();
@@ -106,7 +106,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr )
+            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept( Predicate()() ) )
             {
                 if ( pr() )
                     return true;
@@ -114,7 +114,7 @@ namespace cds {
                 return false;
             }
 
-            void reset()
+            void reset() const CDS_NOEXCEPT
             {}
             //@endcond
         };
@@ -127,7 +127,7 @@ namespace cds {
         struct hint
         {
         //@cond
-            void operator ()()
+            void operator ()() CDS_NOEXCEPT
             {
 #           if defined(CDS_backoff_hint_defined)
                 platform::backoff_hint();
@@ -137,7 +137,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr )
+            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept( Predicate()() ) )
             {
                 if ( pr() )
                     return true;
@@ -145,7 +145,7 @@ namespace cds {
                 return false;
             }
 
-            void reset()
+            void reset() const CDS_NOEXCEPT
             {}
         //@endcond
         };
@@ -230,7 +230,7 @@ namespace cds {
 
         public:
             /// Initializes m_nExpMin and m_nExpMax from default s_nExpMin and s_nExpMax respectively
-            exponential()
+            exponential() CDS_NOEXCEPT
                 : m_nExpMin( s_nExpMin )
                 , m_nExpMax( s_nExpMax )
             {
@@ -244,7 +244,7 @@ namespace cds {
             exponential(
                 size_t nExpMin,     ///< Minimum spinning
                 size_t nExpMax      ///< Maximum spinning
-                )
+                ) CDS_NOEXCEPT
                 : m_nExpMin( nExpMin )
                 , m_nExpMax( nExpMax )
             {
@@ -252,7 +252,7 @@ namespace cds {
             }
 
             //@cond
-            void operator ()()
+            void operator ()() CDS_NOEXCEPT_(noexcept(spin_backoff()()) && noexcept(yield_backoff()()))
             {
                 if ( m_nExpCur <= m_nExpMax ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n )
@@ -264,7 +264,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr )
+            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept(Predicate()()) && noexcept( spin_backoff()()) && noexcept( yield_backoff()()))
             {
                 if ( m_nExpCur <= m_nExpMax ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n ) {
@@ -278,7 +278,7 @@ namespace cds {
                 return false;
             }
 
-            void reset()
+            void reset() CDS_NOEXCEPT_(noexcept(spin_backoff().reset()) && noexcept(yield_backoff().reset()))
             {
                 m_nExpCur = m_nExpMin;
                 m_bkSpin.reset();
@@ -355,23 +355,23 @@ namespace cds {
 
         public:
             /// Default ctor takes the timeout from s_nTimeout
-            delay()
+            delay() CDS_NOEXCEPT
                 : m_nTimeout( s_nTimeout )
             {}
 
             /// Initializes timeout from \p nTimeout
-            CDS_CONSTEXPR delay( unsigned int nTimeout )
+            CDS_CONSTEXPR delay( unsigned int nTimeout ) CDS_NOEXCEPT
                 : m_nTimeout( nTimeout )
             {}
 
             //@cond
-            void operator()() const
+            void operator()() const CDS_NOEXCEPT
             {
                 std::this_thread::sleep_for( duration_type( m_nTimeout ));
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) const
+            bool operator()( Predicate pr ) const CDS_NOEXCEPT_( noexcept(Predicate()()))
             {
                 for ( unsigned int i = 0; i < m_nTimeout; i += 2 ) {
                     if ( pr() )
@@ -381,7 +381,7 @@ namespace cds {
                 return false;
             }
 
-            void reset() const
+            void reset() const CDS_NOEXCEPT
             {}
             //@endcond
         };
@@ -405,7 +405,7 @@ namespace cds {
         //@cond
             typedef delay<Duration> base_class;
         public:
-            delay_of()
+            delay_of() CDS_NOEXCEPT
                 : base_class( Timeout )
             {}
         //@endcond
