@@ -1,12 +1,14 @@
 CDS (Concurrent Data Structures) C++ library
 
 CDS library is (mostly) header-only template library. The shared library contains only garbage collector's core implementation.
-CDS contains implementation of some well-known lock-free and fine-grained data structures:
+Download the latest release from http://sourceforge.net/projects/libcds/files/.
+
+The library contains implementation of some well-known lock-free and fine-grained data structures:
 
 Stack:
     TreiberStack
         [1986] R. K. Treiber. Systems programming: Coping with parallelism. Technical Report RJ 5118, IBM Almaden Research Center, April 1986.
-      Elimination back-off implementation is based on idea from
+    Elimination back-off implementation is based on idea from
         [2004] Danny Hendler, Nir Shavit, Lena Yerushalmi "A Scalable Lock-free Stack Algorithm"
         
 Queue:
