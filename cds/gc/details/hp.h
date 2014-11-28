@@ -290,12 +290,6 @@ namespace cds {
             */
             void                DeleteHPRec( hplist_node * pNode );
 
-            /// Permanently deletes retired pointer \p p
-            /**
-                Caveat: for performance reason this function is defined as inline and cannot be called directly
-            */
-            void                DeletePtr( details::retired_ptr& p );
-
             void detachAllThread();
 
         public:

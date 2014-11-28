@@ -74,7 +74,7 @@ namespace cds { namespace gc {
                 details::retired_vector::iterator itRetired = vect.begin();
                 details::retired_vector::iterator itRetiredEnd = vect.end();
                 while ( itRetired != itRetiredEnd ) {
-                    DeletePtr( *itRetired );
+                    itRetired->free();
                     ++itRetired;
                 }
                 vect.clear();
@@ -86,26 +86,20 @@ namespace cds { namespace gc {
 
         inline GarbageCollector::hplist_node * GarbageCollector::NewHPRec()
         {
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocNewHPRec );
+            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocNewHPRec )
             return new hplist_node( *this );
         }
 
         inline void GarbageCollector::DeleteHPRec( hplist_node * pNode )
         {
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeleteHPRec );
+            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeleteHPRec )
             assert( pNode->m_arrRetired.size() == 0 );
             delete pNode;
         }
 
-        inline void GarbageCollector::DeletePtr( details::retired_ptr& p )
-        {
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeletedNode );
-            p.free();
-        }
-
         details::hp_record * GarbageCollector::alloc_hp_record()
         {
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocHPRec );
+            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocHPRec )
 
             hplist_node * hprec;
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
@@ -139,10 +133,11 @@ namespace cds { namespace gc {
         void GarbageCollector::free_hp_record( details::hp_record * pRec )
         {
             assert( pRec != nullptr );
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_RetireHPRec );
+            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_RetireHPRec )
 
             pRec->clear();
             Scan( pRec );
+            HelpScan( pRec );
             hplist_node * pNode = static_cast<hplist_node *>( pRec );
             pNode->m_idOwner.store( cds::OS::c_NullThreadId, atomics::memory_order_release );
         }
@@ -161,7 +156,7 @@ namespace cds { namespace gc {
 
         void GarbageCollector::classic_scan( details::hp_record * pRec )
         {
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_ScanCallCount );
+            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_ScanCallCount )
 
             std::vector< void * >   plist;
             plist.reserve( m_nMaxThreadCount * m_nHazardPointerCount );
@@ -192,22 +187,27 @@ namespace cds { namespace gc {
             // clear() is just set up item counter to 0, the items is not destroyed
             arrRetired.clear();
 
-            std::vector< void * >::iterator itBegin = plist.begin();
-            std::vector< void * >::iterator itEnd = plist.end();
-            while ( itRetired != itRetiredEnd ) {
-                if ( std::binary_search( itBegin, itEnd, itRetired->m_p) ) {
-                    CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeferredNode );
-                    arrRetired.push( *itRetired );
+            {
+                std::vector< void * >::iterator itBegin = plist.begin();
+                std::vector< void * >::iterator itEnd = plist.end();
+                size_t nDeferredCount = 0;
+                while ( itRetired != itRetiredEnd ) {
+                    if ( std::binary_search( itBegin, itEnd, itRetired->m_p ) ) {
+                        arrRetired.push( *itRetired );
+                        ++nDeferredCount;
+                    }
+                    else
+                        itRetired->free();
+                    ++itRetired;
                 }
-                else
-                    DeletePtr( *itRetired );
-                ++itRetired;
+                CDS_HAZARDPTR_STATISTIC( m_Stat.m_DeferredNode += nDeferredCount )
+                CDS_HAZARDPTR_STATISTIC( m_Stat.m_DeletedNode += (itRetiredEnd - arrRetired.begin()) - nDeferredCount )
             }
         }
 
         void GarbageCollector::inplace_scan( details::hp_record * pRec )
         {
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_ScanCallCount );
+            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_ScanCallCount )
 
             // In-place scan algo uses LSB of retired ptr as a mark for internal purposes.
             // It is correct if all retired pointers are ar least 2-byte aligned (LSB is zero).
@@ -228,20 +228,35 @@ namespace cds { namespace gc {
             // Sort retired pointer array
             std::sort( itRetired, itRetiredEnd, cds::gc::details::retired_ptr::less );
 
+            // Check double free
+            /*
+            {
+                auto it = itRetired;
+                auto itPrev = it;
+                while ( ++it != itRetiredEnd ) {
+                    if ( it->m_p == itPrev->m_p )
+                        throw std::runtime_error( "Double free" );
+                    itPrev = it;
+                }
+            }
+            */
+
             // Search guarded pointers in retired array
             hplist_node * pNode = m_pListHead.load( atomics::memory_order_acquire );
 
             {
                 details::retired_ptr dummyRetired;
                 while ( pNode ) {
-                    for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
-                        void * hptr = pNode->m_hzp[i];
-                        if ( hptr ) {
-                            dummyRetired.m_p = hptr;
-                            details::retired_vector::iterator it = std::lower_bound( itRetired, itRetiredEnd, dummyRetired, cds::gc::details::retired_ptr::less );
-                            if ( it != itRetiredEnd && it->m_p == hptr ) {
-                                // Mark retired pointer as guarded
-                                it->m_n |= 1;
+                    if ( !pNode->m_bFree.load( atomics::memory_order_acquire ) ) {
+                        for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
+                            void * hptr = pNode->m_hzp[i];
+                            if ( hptr ) {
+                                dummyRetired.m_p = hptr;
+                                details::retired_vector::iterator it = std::lower_bound( itRetired, itRetiredEnd, dummyRetired, cds::gc::details::retired_ptr::less );
+                                if ( it != itRetiredEnd && it->m_p == hptr ) {
+                                    // Mark retired pointer as guarded
+                                    it->m_n |= 1;
+                                }
                             }
                         }
                     }
@@ -258,20 +273,22 @@ namespace cds { namespace gc {
                         if ( itInsert != it )
                             *itInsert = *it;
                         ++itInsert;
-                        CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_DeferredNode );
                     }
                     else {
                         // Retired pointer may be freed
-                        DeletePtr( *it );
+                        it->free();
                     }
                 }
-                pRec->m_arrRetired.size( itInsert - itRetired );
+                const size_t nDeferred = itInsert - itRetired;
+                pRec->m_arrRetired.size( nDeferred );
+                CDS_HAZARDPTR_STATISTIC( m_Stat.m_DeferredNode += nDeferred )
+                CDS_HAZARDPTR_STATISTIC( m_Stat.m_DeletedNode += (itRetiredEnd - itRetired) - nDeferred )
             }
         }
 
         void GarbageCollector::HelpScan( details::hp_record * pThis )
         {
-            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_HelpScanCallCount );
+            CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_HelpScanCallCount )
 
             assert( static_cast<hplist_node *>(pThis)->m_idOwner.load(atomics::memory_order_relaxed) == cds::OS::getCurrentThreadId() );
 
@@ -308,7 +325,7 @@ namespace cds { namespace gc {
                 while ( itRetired != itRetiredEnd ) {
                     dest.push( *itRetired );
                     if ( dest.isFull()) {
-                        CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_CallScanFromHelpScan );
+                        CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_CallScanFromHelpScan )
                         Scan( pThis );
                     }
                     ++itRetired;
@@ -317,6 +334,8 @@ namespace cds { namespace gc {
 
                 hprec->m_bFree.store(true, atomics::memory_order_release);
                 hprec->m_idOwner.store( nullThreadId, atomics::memory_order_release );
+
+                Scan( pThis );
             }
         }
 

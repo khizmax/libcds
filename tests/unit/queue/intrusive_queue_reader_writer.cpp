@@ -361,10 +361,12 @@ namespace queue {
         {
             value_array<typename Queue::value_type> arrValue( s_nQueueSize );
             {
-                Queue q;
-                test_with(q, arrValue, 0, 0);
+                {
+                    Queue q;
+                    test_with( q, arrValue, 0, 0 );
+                }
+                Queue::gc::force_dispose();
             }
-            Queue::gc::force_dispose();
         }
 
         template <typename Queue>

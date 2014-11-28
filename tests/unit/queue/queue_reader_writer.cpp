@@ -182,7 +182,7 @@ namespace queue {
 
     protected:
         template <class Queue>
-        void analyze( CppUnitMini::ThreadPool& pool, Queue& testQueue, size_t nLeftOffset = 0, size_t nRightOffset = 0  )
+        void analyze( CppUnitMini::ThreadPool& pool, Queue& testQueue, size_t /*nLeftOffset*/ = 0, size_t nRightOffset = 0  )
         {
             typedef ReaderThread<Queue> Reader;
             typedef WriterThread<Queue> Writer;
