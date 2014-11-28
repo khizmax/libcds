@@ -881,13 +881,11 @@
     <ClInclude Include="..\..\..\cds\os\linux\timer.h" />
     <ClInclude Include="..\..\..\cds\os\linux\topology.h" />
     <ClInclude Include="..\..\..\cds\os\posix\alloc_aligned.h" />
-    <ClInclude Include="..\..\..\cds\os\posix\syserror.h" />
     <ClInclude Include="..\..\..\cds\os\posix\thread.h" />
     <ClInclude Include="..\..\..\cds\os\sunos\alloc_aligned.h" />
     <ClInclude Include="..\..\..\cds\os\sunos\timer.h" />
     <ClInclude Include="..\..\..\cds\os\sunos\topology.h" />
     <ClInclude Include="..\..\..\cds\os\win\alloc_aligned.h" />
-    <ClInclude Include="..\..\..\cds\os\win\syserror.h" />
     <ClInclude Include="..\..\..\cds\os\win\thread.h" />
     <ClInclude Include="..\..\..\cds\os\win\timer.h" />
     <ClInclude Include="..\..\..\cds\os\win\topology.h" />

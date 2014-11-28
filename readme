@@ -93,7 +93,7 @@ Supported compilers
 ---------------------------------
 
 GCC: 4.8 and above
-MS Visual C++: 12 (2013) and above
+MS Visual C++: 12 (2013) Update 4 and above
 Clang: 3.3 and above
 
 How to build
