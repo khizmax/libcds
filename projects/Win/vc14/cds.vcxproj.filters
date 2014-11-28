@@ -386,9 +386,6 @@
     <ClInclude Include="..\..\..\cds\os\posix\alloc_aligned.h">
       <Filter>Header Files\cds\OS\posix</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\os\posix\syserror.h">
-      <Filter>Header Files\cds\OS\posix</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\os\posix\thread.h">
       <Filter>Header Files\cds\OS\posix</Filter>
     </ClInclude>
@@ -402,9 +399,6 @@
       <Filter>Header Files\cds\OS\sunos</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\os\win\alloc_aligned.h">
-      <Filter>Header Files\cds\OS\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\os\win\syserror.h">
       <Filter>Header Files\cds\OS\win</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\os\win\thread.h">

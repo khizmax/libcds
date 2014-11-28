@@ -216,7 +216,7 @@ namespace cds {
         public:
             typedef SpinBkoff  spin_backoff    ;   ///< spin back-off strategy
             typedef YieldBkoff yield_backoff   ;   ///< yield back-off strategy
-            typedef Tag         impl_tag        ;   ///< implementation separation tag
+            typedef Tag        impl_tag        ;   ///< implementation separation tag
 
             static size_t s_nExpMin ;   ///< Default minimum spinning bound (16)
             static size_t s_nExpMax ;   ///< Default maximum spinning bound (16384)
