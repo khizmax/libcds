@@ -1,6 +1,7 @@
 2.0.0
     General release
-    - switch to C++11 standard
+    - the library has been rewritten to support at least C++11. Compilers: GCC 4.8+, clang 3.3+, 
+      MS Visual C++ 12 (2013) Update 4 an above.
     - Removed: MichaelDeque, reason: the implementation is heavy-weighted, inefficient,
       and, seems, unstable.
     - Removed: cds::gc::HRC garbage collector, reason: the implementation is inefficient 
@@ -24,6 +25,8 @@
       member functions return the objects of that type.
     - Changed: improved cds::gc::HP and cds::gc::DHP internal implementation
     - Changed: map member function insert_key() has been renamed to insert_with()
+    - Changed: cds/cxx11_atomic.h has been renamed to cds/algo/atomic.h
+    - Removed: cds/refcounter.h
 
 1.6.0 23.09.2014
     General release
