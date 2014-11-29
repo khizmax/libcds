@@ -557,20 +557,12 @@ namespace cds { namespace gc {
         {
             typedef details::guard    base_class;
             friend class ThreadGC;
-
-            ThreadGC&    m_gc    ;    ///< ThreadGC object of current thread
         public:
             /// Allocates a guard from \p gc GC. \p gc must be ThreadGC object of current thread
-            Guard( ThreadGC& gc );
+            Guard(); // inline in dhp_impl.h
 
             /// Returns guard allocated back to pool of free guards
-            ~Guard();    // inline after GarbageCollector
-
-            /// Returns DHP GC object
-            ThreadGC& getGC() CDS_NOEXCEPT
-            {
-                return m_gc;
-            }
+            ~Guard();    // inline in dhp_impl.h
 
             /// Guards pointer \p p
             template <typename T>
@@ -594,7 +586,6 @@ namespace cds { namespace gc {
         class GuardArray
         {
             details::guard      m_arr[Count]    ;    ///< array of guard
-            ThreadGC&           m_gc    ;            ///< ThreadGC object of current thread
             const static size_t c_nCapacity = Count ;   ///< Array capacity (equal to \p Count template parameter)
 
         public:
@@ -606,27 +597,21 @@ namespace cds { namespace gc {
 
         public:
             /// Allocates array of guards from \p gc which must be the ThreadGC object of current thread
-            GuardArray( ThreadGC& gc );    // inline below
-
-            /// The object is not default-constructible
-            GuardArray() = delete;
+            GuardArray();    // inline in dhp_impl.h
 
             /// The object is not copy-constructible
             GuardArray( GuardArray const& ) = delete;
 
+            /// The object is not move-constructible
+            GuardArray( GuardArray&& ) = delete;
+
             /// Returns guards allocated back to pool
-            ~GuardArray();    // inline below
+            ~GuardArray();    // inline in dh_impl.h
 
             /// Returns the capacity of array
             CDS_CONSTEXPR size_t capacity() const CDS_NOEXCEPT
             {
                 return c_nCapacity;
-            }
-
-            /// Returns DHP ThreadGC object
-            ThreadGC& getGC() CDS_NOEXCEPT
-            {
-                return m_gc;
             }
 
             /// Returns reference to the guard of index \p nIndex (0 <= \p nIndex < \p Count)
@@ -983,32 +968,6 @@ namespace cds { namespace gc {
                 m_gc.scan();
             }
         };
-
-        //////////////////////////////////////////////////////////
-        // Inlines
-
-        inline Guard::Guard(ThreadGC& gc)
-            : m_gc( gc )
-        {
-            getGC().allocGuard( *this );
-        }
-        inline Guard::~Guard()
-        {
-            getGC().freeGuard( *this );
-        }
-
-        template <size_t Count>
-        inline GuardArray<Count>::GuardArray( ThreadGC& gc )
-            : m_gc( gc )
-        {
-            getGC().allocGuard( *this );
-        }
-        template <size_t Count>
-        inline GuardArray<Count>::~GuardArray()
-        {
-            getGC().freeGuard( *this );
-        }
-
     }   // namespace dhp
 }}  // namespace cds::gc
 //@endcond

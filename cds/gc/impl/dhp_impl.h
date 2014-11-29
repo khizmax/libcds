@@ -8,6 +8,32 @@
 //@cond
 namespace cds { namespace gc {
 
+    namespace dhp {
+
+        inline Guard::Guard()
+        {
+            cds::threading::getGC<DHP>().allocGuard( *this );
+        }
+
+        inline Guard::~Guard()
+        {
+            cds::threading::getGC<DHP>().freeGuard( *this );
+        }
+
+        template <size_t Count>
+        inline GuardArray<Count>::GuardArray()
+        {
+            cds::threading::getGC<DHP>().allocGuard( *this );
+        }
+
+        template <size_t Count>
+        inline GuardArray<Count>::~GuardArray()
+        {
+            cds::threading::getGC<DHP>().freeGuard( *this );
+        }
+    } // namespace dhp
+
+
     inline DHP::thread_gc::thread_gc(
         bool    bPersistent
         )
@@ -31,15 +57,6 @@ namespace cds { namespace gc {
     {
         cds::threading::getGC<DHP>().freeGuard(g);
     }
-
-    inline DHP::Guard::Guard()
-        : Guard::base_class( cds::threading::getGC<DHP>() )
-    {}
-
-    template <size_t Count>
-    inline DHP::GuardArray<Count>::GuardArray()
-        : GuardArray::base_class( cds::threading::getGC<DHP>() )
-    {}
 
     inline void DHP::scan()
     {

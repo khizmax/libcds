@@ -120,7 +120,8 @@ namespace cds { namespace gc {
 
         public:
             // Default ctor
-            Guard();   // inline in dhp_impl.h
+            Guard()
+            {}
 
             //@cond
             Guard( Guard const& ) = delete;
@@ -259,7 +260,8 @@ namespace cds { namespace gc {
 
         public:
             // Default ctor
-            GuardArray();   // inline in dhp_impl.h
+            GuardArray()
+            {}
 
             //@cond
             GuardArray( GuardArray const& ) = delete;

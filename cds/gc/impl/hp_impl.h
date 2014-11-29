@@ -9,6 +9,39 @@
 //@cond
 namespace cds { namespace gc {
 
+    namespace hp {
+        inline guard::guard()
+            : m_hp( cds::threading::getGC<HP>().allocGuard() )
+        {}
+
+        template <typename T>
+        inline guard::guard( T * p )
+            : m_hp( cds::threading::getGC<HP>().allocGuard() )
+        {
+            m_hp = p;
+        }
+
+        inline guard::~guard()
+        {
+            cds::threading::getGC<HP>().freeGuard( m_hp );
+        }
+
+        template <size_t Count>
+        inline array<Count>::array()
+        {
+            cds::threading::getGC<HP>().allocGuard( *this );
+        }
+
+        template <size_t Count>
+        inline array<Count>::~array()
+        {
+            cds::threading::getGC<HP>().freeGuard( *this );
+        }
+
+
+
+    } // namespace hp
+
     inline HP::thread_gc::thread_gc(
         bool    bPersistent
         )
@@ -33,15 +66,6 @@ namespace cds { namespace gc {
     {
         cds::threading::getGC<HP>().freeGuard( g );
     }
-
-    inline HP::Guard::Guard()
-        : Guard::base_class( cds::threading::getGC<HP>() )
-    {}
-
-    template <size_t COUNT>
-    inline HP::GuardArray<COUNT>::GuardArray()
-        : GuardArray::base_class( cds::threading::getGC<HP>() )
-    {}
 
     template <typename T>
     inline void HP::retire( T * p, void (* pFunc)(T *) )

@@ -116,7 +116,8 @@ namespace cds { namespace gc {
 
         public:
             /// Default ctor
-            Guard();   // inline in hp_impl.h
+            Guard()
+            {}
 
             //@cond
             Guard( Guard const& ) = delete;
@@ -253,7 +254,8 @@ namespace cds { namespace gc {
 
         public:
             /// Default ctor
-            GuardArray();  // inline in hp_impl.h
+            GuardArray()
+            {}
 
             //@cond
             GuardArray( GuardArray const& ) = delete;

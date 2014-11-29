@@ -608,38 +608,20 @@ namespace cds {
         class guard
         {
             details::hp_guard&  m_hp    ; ///< Hazard pointer guarded
-            ThreadGC&           m_gc    ; ///< Thread GC
 
         public:
             typedef details::hp_guard::hazard_ptr hazard_ptr ;  ///< Hazard pointer type
 
         public:
-            /// Allocates HP guard from \p gc
-            guard( ThreadGC& gc )
-                : m_hp( gc.allocGuard() )
-                , m_gc( gc )
-            {}
+            /// Allocates HP guard
+            guard(); // inline in hp_impl.h
 
             /// Allocates HP guard from \p gc and protects the pointer \p p of type \p T
             template <typename T>
-            guard( ThreadGC& gc, T * p )
-                : m_hp( gc.allocGuard() )
-                , m_gc( gc )
-            {
-                m_hp = p;
-            }
+            explicit guard( T * p ); // inline in hp_impl.h
 
             /// Frees HP guard. The pointer guarded may be deleted after this.
-            ~guard()
-            {
-                m_gc.freeGuard( m_hp );
-            }
-
-            /// Returns thread GC
-            ThreadGC&    getGC() const
-            {
-                return m_gc;
-            }
+            ~guard(); // inline in hp_impl.h
 
             /// Protects the pointer \p p against reclamation (guards the pointer).
             template <typename T>
@@ -667,8 +649,6 @@ namespace cds {
         template <size_t Count>
         class array : public details::hp_array<Count>
         {
-            ThreadGC&    m_mgr    ;    ///< Thread GC
-
         public:
             /// Rebind array for other size \p COUNT2
             template <size_t Count2>
@@ -677,21 +657,11 @@ namespace cds {
             };
 
         public:
-            /// Allocates array of HP guard from \p mgr
-            array( ThreadGC& mgr )
-                : m_mgr( mgr )
-            {
-                mgr.allocGuard( *this );
-            }
+            /// Allocates array of HP guard
+            array(); // inline in hp_impl.h
 
             /// Frees array of HP guard
-            ~array()
-            {
-                m_mgr.freeGuard( *this );
-            }
-
-            /// Returns thread GC
-            ThreadGC&    getGC() const { return m_mgr; }
+            ~array(); //inline in hp_impl.h
         };
 
     }   // namespace hp
