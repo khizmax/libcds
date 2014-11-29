@@ -4,7 +4,7 @@
 #define __CDS_GC_DETAILS_DHP_H
 
 #include <mutex>        // unique_lock
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/gc/details/retired_ptr.h>
 #include <cds/details/aligned_allocator.h>
 #include <cds/details/allocator.h>

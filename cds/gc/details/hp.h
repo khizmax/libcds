@@ -3,7 +3,7 @@
 #ifndef __CDS_GC_DETAILS_HP_H
 #define __CDS_GC_DETAILS_HP_H
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/os/thread.h>
 #include <cds/details/bounded_array.h>
 

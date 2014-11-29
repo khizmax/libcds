@@ -29,6 +29,6 @@
 #endif
 
 #include "cppunit/cppunit_mini.h"
-#include <cds/cxx11_atomic.h>   // for cds::atomicity::empty_item_counter
+#include <cds/algo/atomic.h>   // for cds::atomicity::empty_item_counter
 
 #endif

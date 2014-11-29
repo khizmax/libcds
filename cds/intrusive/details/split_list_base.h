@@ -4,7 +4,7 @@
 #define __CDS_INTRUSIVE_DETAILS_SPLIT_LIST_BASE_H
 
 #include <cds/intrusive/details/base.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/int_algo.h>
 #include <cds/algo/bitop.h>

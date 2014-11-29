@@ -3,7 +3,7 @@
 #ifndef __CDS_GC_DETAILS_HP_ALLOC_H
 #define __CDS_GC_DETAILS_HP_ALLOC_H
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/gc/details/hp_type.h>
 

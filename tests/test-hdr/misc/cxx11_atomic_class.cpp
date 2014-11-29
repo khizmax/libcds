@@ -3,7 +3,7 @@
 #include "cppunit/cppunit_proxy.h"
 
 //#define CDS_USE_BOOST_ATOMIC
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 #include "misc/cxx11_convert_memory_order.h"
 

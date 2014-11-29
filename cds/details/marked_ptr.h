@@ -3,7 +3,7 @@
 #ifndef __CDS_DETAILS_MARKED_PTR_H
 #define __CDS_DETAILS_MARKED_PTR_H
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 namespace cds {
     namespace details {

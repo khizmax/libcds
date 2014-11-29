@@ -3,7 +3,7 @@
 #ifndef __CDS_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H
 #define __CDS_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 namespace cds { namespace memory { namespace michael {
 

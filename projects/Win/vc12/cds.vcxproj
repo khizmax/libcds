@@ -631,6 +631,7 @@
     <ClCompile Include="..\..\..\src\urcu_sh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\cds\algo\atomic.h" />
     <ClInclude Include="..\..\..\cds\algo\backoff_strategy.h" />
     <ClInclude Include="..\..\..\cds\algo\base.h" />
     <ClInclude Include="..\..\..\cds\algo\bitop.h" />
@@ -728,7 +729,6 @@
     <ClInclude Include="..\..\..\cds\container\striped_set\std_list.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_set.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_vector.h" />
-    <ClInclude Include="..\..\..\cds\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\details\binary_functor_wrapper.h" />
     <ClInclude Include="..\..\..\cds\details\bit_reverse_counter.h" />
     <ClInclude Include="..\..\..\cds\details\bounded_container.h" />

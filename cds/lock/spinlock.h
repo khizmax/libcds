@@ -12,7 +12,7 @@
         2006              khizmax     Created
 */
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/os/thread.h>
 #include <cds/algo/backoff_strategy.h>
 

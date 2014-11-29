@@ -1,6 +1,6 @@
 //$$CDS-header$$
 
-// This header should be included AFTER <cds/cxx11_atomic.h> if needed
+// This header should be included AFTER <cds/algo/atomic.h> if needed
 
 namespace misc {
 

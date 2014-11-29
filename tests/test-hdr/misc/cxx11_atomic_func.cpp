@@ -2,7 +2,7 @@
 
 #include "cppunit/cppunit_proxy.h"
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 #ifndef CDS_USE_BOOST_ATOMIC
 // Skip this test for boost.atomic

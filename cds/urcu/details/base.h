@@ -3,7 +3,7 @@
 #ifndef _CDS_URCU_DETAILS_BASE_H
 #define _CDS_URCU_DETAILS_BASE_H
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/gc/details/retired_ptr.h>
 #include <cds/details/allocator.h>
 #include <cds/os/thread.h>

@@ -8,7 +8,7 @@
 #include <boost/thread.hpp>
 #include <cds/os/timer.h>
 #include <cds/threading/model.h>    // for attach/detach thread
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 namespace CppUnitMini {
     static inline unsigned int Rand( unsigned int nMax )

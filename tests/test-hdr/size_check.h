@@ -3,7 +3,7 @@
 #ifndef __CDSTEST_SIZE_CHECK_H
 #define __CDSTEST_SIZE_CHECK_H
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 namespace misc {
 

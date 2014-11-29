@@ -7,7 +7,7 @@ namespace cds {
 }
 
 // Including this header is a bad thing for header testing. How to avoid it?..
-#include <cds/cxx11_atomic.h>   // for cds::atomicity::empty_item_counter
+#include <cds/algo/atomic.h>   // for cds::atomicity::empty_item_counter
 
 namespace test_beans {
     template <typename ItemCounter>

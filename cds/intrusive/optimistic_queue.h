@@ -5,7 +5,7 @@
 
 #include <type_traits>
 #include <cds/intrusive/details/base.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/gc/default_gc.h>
 
 namespace cds { namespace intrusive {

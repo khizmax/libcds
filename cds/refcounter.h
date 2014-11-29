@@ -9,7 +9,7 @@
     Editions:
 */
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 namespace cds {
 

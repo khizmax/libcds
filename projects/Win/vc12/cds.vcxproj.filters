@@ -632,9 +632,6 @@
     <ClInclude Include="..\..\..\cds\compiler\gcc\x86\cxx11_atomic.h">
       <Filter>Header Files\cds\compiler\gcc\x86</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\cxx11_atomic.h">
-      <Filter>Header Files\cds</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\gcc\sparc\cxx11_atomic.h">
       <Filter>Header Files\cds\compiler\gcc\sparc</Filter>
     </ClInclude>
@@ -1165,6 +1162,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\impl\hp_impl.h">
       <Filter>Header Files\cds\gc\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\atomic.h">
+      <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
 #include <cds/algo/bitop.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 namespace cds { namespace intrusive {
 

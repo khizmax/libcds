@@ -4,7 +4,7 @@
 #define __CDS_ALGO_FLAT_COMBINING_H
 
 #include <mutex>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/lock/spinlock.h>

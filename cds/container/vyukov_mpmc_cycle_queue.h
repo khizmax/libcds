@@ -6,7 +6,7 @@
 #include <cds/container/details/base.h>
 #include <cds/opt/buffer.h>
 #include <cds/opt/value_cleaner.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/details/bounded_container.h>
 
 namespace cds { namespace container {

@@ -4,7 +4,7 @@
 #define __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
 
 #include <cds/intrusive/details/base.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/details/bounded_container.h>
 #include <cds/opt/buffer.h>
 

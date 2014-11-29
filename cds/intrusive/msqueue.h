@@ -5,7 +5,7 @@
 
 #include <type_traits>
 #include <cds/intrusive/details/single_link_struct.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 namespace cds { namespace intrusive {
 

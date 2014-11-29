@@ -5,7 +5,7 @@
 
 #include <cds/algo/elimination_tls.h>
 #include <cds/algo/elimination_opt.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/threading/model.h>
 
 namespace cds { namespace algo {

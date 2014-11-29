@@ -4,7 +4,7 @@
 
 #if CDS_OS_TYPE == CDS_OS_HPUX
 
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <limits>
 
 namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Hpux {

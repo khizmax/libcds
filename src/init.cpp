@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
 #include <cds/init.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
 #   if CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL

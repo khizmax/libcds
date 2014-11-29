@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
-#include <cds/cxx11_atomic.h>
+#include <cds/algo/atomic.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/urcu/options.h>
 
