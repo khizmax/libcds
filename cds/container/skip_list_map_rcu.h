@@ -221,7 +221,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key )
         {
-            return insert_key( key, [](value_type&){} );
+            return insert_with( key, [](value_type&){} );
         }
 
         /// Inserts new node
@@ -275,7 +275,7 @@ namespace cds { namespace container {
             RCU \p synchronize method can be called. RCU should not be locked.
         */
         template <typename K, typename Func>
-        bool insert_key( const K& key, Func func )
+        bool insert_with( const K& key, Func func )
         {
             scoped_node_ptr pNode( node_allocator().New( random_level(), key ));
             if ( base_class::insert( *pNode, [&func]( node_type& item ) { func( item.m_Value ); } )) {

@@ -220,7 +220,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key )
         {
-            return insert_key( key, [](value_type&){} );
+            return insert_with( key, [](value_type&){} );
         }
 
         /// Inserts new node
@@ -237,7 +237,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-            return insert_key( key, [&val](value_type& item) { item.second = val ; } );
+            return insert_with( key, [&val](value_type& item) { item.second = val ; } );
         }
 
         /// Inserts new node and initialize it by a functor
@@ -266,7 +266,7 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename K, typename Func>
-        bool insert_key( const K& key, Func func )
+        bool insert_with( const K& key, Func func )
         {
             scoped_node_ptr pNode( node_allocator().New( random_level(), key ));
             if ( base_class::insert( *pNode, [&func]( node_type& item ) { func( item.m_Value ); } )) {

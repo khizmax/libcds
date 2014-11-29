@@ -301,9 +301,9 @@ namespace map2 {
             }
 
             template <typename K, typename Func>
-            bool insert_key( K const& key, Func func )
+            bool insert_with( K const& key, Func func )
             {
-                return base_class::insert_key( key, func ) != base_class::end();
+                return base_class::insert_with( key, func ) != base_class::end();
             }
 
             template <typename K>
@@ -339,9 +339,9 @@ namespace map2 {
             }
 
             template <typename K, typename Func>
-            bool insert_key( K const& key, Func func )
+            bool insert_with( K const& key, Func func )
             {
-                return base_class::insert_key( key, func ) != base_class::end();
+                return base_class::insert_with( key, func ) != base_class::end();
             }
 
             template <typename K>
@@ -374,9 +374,9 @@ namespace map2 {
             }
 
             template <typename K, typename Func>
-            bool insert_key( K const& key, Func func )
+            bool insert_with( K const& key, Func func )
             {
-                return base_class::insert_key( key, func ) != base_class::end();
+                return base_class::insert_with( key, func ) != base_class::end();
             }
 
             template <typename K>

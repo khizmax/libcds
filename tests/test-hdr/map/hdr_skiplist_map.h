@@ -263,7 +263,7 @@ namespace map {
             CPPUNIT_ASSERT( it->second.m_val == 200 );
 
             CPPUNIT_ASSERT( m.find(55) == m.end() );
-            it = m.insert_key( 55, insert_functor<Map>() );
+            it = m.insert_with( 55, insert_functor<Map>() );
             CPPUNIT_ASSERT( it != m.end() );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
@@ -273,7 +273,7 @@ namespace map {
 
             CPPUNIT_ASSERT( m.insert( 55 ) == m.end() );
             CPPUNIT_ASSERT( m.insert( 55, 10 ) == m.end() );
-            CPPUNIT_ASSERT( m.insert_key( 55, insert_functor<Map>()) == m.end() );
+            CPPUNIT_ASSERT( m.insert_with( 55, insert_functor<Map>()) == m.end() );
 
             CPPUNIT_ASSERT( m.find(10) != m.end() );
             std::pair<iterator, bool> ensureResult = m.ensure( 10 );

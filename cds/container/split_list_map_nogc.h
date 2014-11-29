@@ -203,7 +203,7 @@ namespace cds { namespace container {
             Returns an iterator pointed to inserted value, or \p end() if inserting is failed
         */
         template <typename K, typename Func>
-        iterator insert_key( const K& key, Func func )
+        iterator insert_with( const K& key, Func func )
         {
             iterator it = insert( key );
             if ( it != end() )

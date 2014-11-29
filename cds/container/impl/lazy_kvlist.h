@@ -406,9 +406,9 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename K, typename Func>
-        bool insert_key( const K& key, Func func )
+        bool insert_with( const K& key, Func func )
         {
-            return insert_key_at( head(), key, func );
+            return insert_with_at( head(), key, func );
         }
 
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
@@ -730,7 +730,7 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Func>
-        bool insert_key_at( head_type& refHead, const K& key, Func f )
+        bool insert_with_at( head_type& refHead, const K& key, Func f )
         {
             scoped_node_ptr pNode( alloc_node( key ));
 

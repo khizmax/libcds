@@ -368,9 +368,9 @@ namespace cds { namespace container {
             Returns an iterator pointed to inserted value, or \p end() if inserting is failed
         */
         template <typename K, typename Func>
-        iterator insert_key( const K& key, Func func )
+        iterator insert_with( const K& key, Func func )
         {
-            return node_to_iterator( insert_key_at( head(), key, func ));
+            return node_to_iterator( insert_with_at( head(), key, func ));
         }
 
         /// Ensures that the key \p key exists in the list
@@ -478,7 +478,7 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Func>
-        node_type * insert_key_at( head_type& refHead, const K& key, Func f )
+        node_type * insert_with_at( head_type& refHead, const K& key, Func f )
         {
             scoped_node_ptr pNode( alloc_node( key ));
 

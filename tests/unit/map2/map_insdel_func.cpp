@@ -139,7 +139,7 @@ namespace map2 {
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
-                            if ( rMap.insert_key( *it, std::ref(func) ) )
+                            if ( rMap.insert_with( *it, std::ref(func) ) )
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -149,7 +149,7 @@ namespace map2 {
                 else {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                            if ( rMap.insert_key( *it, std::ref(func) ) )
+                            if ( rMap.insert_with( *it, std::ref(func) ) )
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;

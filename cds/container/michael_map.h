@@ -462,9 +462,9 @@ namespace cds { namespace container {
             synchronization.
         */
         template <typename K, typename Func>
-        bool insert_key( const K& key, Func func )
+        bool insert_with( const K& key, Func func )
         {
-            const bool bRet = bucket( key ).insert_key( key, func );
+            const bool bRet = bucket( key ).insert_with( key, func );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;

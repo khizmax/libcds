@@ -351,10 +351,10 @@ namespace cds { namespace container {
             synchronization.
         */
         template <typename K, typename Func>
-        iterator insert_key( const K& key, Func func )
+        iterator insert_with( const K& key, Func func )
         {
             bucket_type& refBucket = bucket( key );
-            bucket_iterator it = refBucket.insert_key( key, func );
+            bucket_iterator it = refBucket.insert_with( key, func );
 
             if ( it != refBucket.end() ) {
                 ++m_ItemCounter;

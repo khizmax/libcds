@@ -560,7 +560,7 @@ template <class Container, typename... Options>
         template <typename K>
         bool insert( K const& key )
         {
-            return insert_key( key, [](value_type&){} );
+            return insert_with( key, [](value_type&){} );
         }
 
         /// Inserts new node
@@ -577,7 +577,7 @@ template <class Container, typename... Options>
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-            return insert_key( key, [&val](value_type& item) { item.second = val ; } );
+            return insert_with( key, [&val](value_type& item) { item.second = val ; } );
         }
 
         /// Inserts new node and initialize it by a functor
@@ -606,7 +606,7 @@ template <class Container, typename... Options>
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename K, typename Func>
-        bool insert_key( const K& key, Func func )
+        bool insert_with( const K& key, Func func )
         {
             return base_class::insert( key, func );
         }

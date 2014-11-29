@@ -132,7 +132,7 @@ namespace ordlist {
             CPPUNIT_ASSERT( !l.empty() );
 
             CPPUNIT_ASSERT( !l.find( 150 ));
-            CPPUNIT_ASSERT( l.insert_key( 150, insert_functor() ));
+            CPPUNIT_ASSERT( l.insert_with( 150, insert_functor() ));
             CPPUNIT_ASSERT( l.find( 150 ));
             chk.m_nExpected = 1500;
             CPPUNIT_ASSERT( l.find_with( 150, lt<key_type>(), std::ref( chk ) ) );
@@ -175,7 +175,7 @@ namespace ordlist {
 
             // erase test
             CPPUNIT_ASSERT( !l.empty() );
-            CPPUNIT_ASSERT( l.insert_key( 200, insert_functor() ));
+            CPPUNIT_ASSERT( l.insert_with( 200, insert_functor() ));
             CPPUNIT_ASSERT( l.insert( 25 ));
             CPPUNIT_ASSERT( l.erase( 100 ));
             CPPUNIT_ASSERT( l.erase( 150 ));
@@ -492,7 +492,7 @@ namespace ordlist {
                 CPPUNIT_ASSERT( !l.empty() );
 
                 CPPUNIT_ASSERT( l.find( 150 ) == l.end() );
-                CPPUNIT_ASSERT( l.insert_key( 150, insert_functor() ) != l.end() );
+                CPPUNIT_ASSERT( l.insert_with( 150, insert_functor() ) != l.end() );
                 it = l.find( 150 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 150 );

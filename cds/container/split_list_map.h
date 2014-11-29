@@ -290,7 +290,7 @@ namespace cds { namespace container {
             synchronization.
         */
         template <typename K, typename Func>
-        bool insert_key( K const& key, Func func )
+        bool insert_with( K const& key, Func func )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
             return base_class::insert( std::make_pair( key, mapped_type() ), func );

@@ -241,14 +241,14 @@ namespace map {
             CPPUNIT_ASSERT( check_size( m, 2 ));
 
             CPPUNIT_ASSERT( !m.find(30) );
-            CPPUNIT_ASSERT( m.insert_key( 30, insert_functor<Map>() ) )    ; // value = 90
+            CPPUNIT_ASSERT( m.insert_with( 30, insert_functor<Map>() ) )    ; // value = 90
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
             CPPUNIT_ASSERT( m.find(30) );
 
-            CPPUNIT_ASSERT( !m.insert_key( 10, insert_functor<Map>() ) );
-            CPPUNIT_ASSERT( !m.insert_key( 25, insert_functor<Map>() ) );
-            CPPUNIT_ASSERT( !m.insert_key( 30, insert_functor<Map>() ) );
+            CPPUNIT_ASSERT( !m.insert_with( 10, insert_functor<Map>() ) );
+            CPPUNIT_ASSERT( !m.insert_with( 25, insert_functor<Map>() ) );
+            CPPUNIT_ASSERT( !m.insert_with( 30, insert_functor<Map>() ) );
 
             // ensure (new key)
             CPPUNIT_ASSERT( !m.find(27) );
