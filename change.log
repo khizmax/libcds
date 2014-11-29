@@ -20,6 +20,9 @@
              cds::container::VyukovMPMCCycleQueue
     - Added: new member functions push_with(Func) and pop_with(Func) to cds::container::MSPriorityQueue
     - SegmentedQueue: add padding into segmented_queue::traits to eliminate false sharing.
+    - Changed: guarded_ptr and exempt_ptr have move semantics now. The container's extract() and get()
+      member functions return the objects of that type.
+    - Changed: improved cds::gc::HP and cds::gc::DHP internal implementation
 
 1.6.0 23.09.2014
     General release
