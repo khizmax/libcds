@@ -51,7 +51,8 @@ namespace set {
             {}
 
             base_int_item(const base_int_item& v )
-                : stat()
+                : Node( v )
+                , stat()
                 , nKey( v.nKey )
                 , nVal( v.nVal )
             {}

@@ -61,6 +61,7 @@ namespace cds { namespace cxx11_atomic {
                 );
             assert( pSrc );
             assert( cds::details::is_aligned( pSrc, 8 ));
+            CDS_UNUSED( order );
 
             T CDS_DATA_ALIGNMENT(8) v;
             __asm__ __volatile__(
