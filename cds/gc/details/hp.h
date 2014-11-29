@@ -92,14 +92,14 @@ namespace cds {
                     The capacity is constant for any thread. It is defined by cds::gc::hp::GarbageCollector.
                 */
                 size_t capacity() const CDS_NOEXCEPT
-                { 
-                    return m_arr.capacity(); 
+                {
+                    return m_arr.capacity();
                 }
 
                 /// Current vector size (count of retired pointers in the vector)
                 size_t size() const CDS_NOEXCEPT
-                { 
-                    return m_nSize; 
+                {
+                    return m_nSize;
                 }
 
                 /// Set vector size. Uses internally
@@ -125,14 +125,14 @@ namespace cds {
 
                 /// Begin iterator
                 iterator    begin() CDS_NOEXCEPT
-                { 
-                    return m_arr.begin(); 
+                {
+                    return m_arr.begin();
                 }
 
                 /// End iterator
                 iterator    end() CDS_NOEXCEPT
-                { 
-                    return m_arr.begin() +  m_nSize ; 
+                {
+                    return m_arr.begin() +  m_nSize;
                 }
 
                 /// Clears the vector. After clearing, size() == 0
@@ -344,20 +344,20 @@ namespace cds {
 
             /// Returns max Hazard Pointer count defined in construction time
             size_t            getHazardPointerCount() const CDS_NOEXCEPT
-            { 
-                return m_nHazardPointerCount; 
+            {
+                return m_nHazardPointerCount;
             }
 
             /// Returns max thread count defined in construction time
             size_t            getMaxThreadCount() const CDS_NOEXCEPT
-            { 
-                return m_nMaxThreadCount; 
+            {
+                return m_nMaxThreadCount;
             }
 
             /// Returns max size of retired objects array. It is defined in construction time
             size_t            getMaxRetiredPtrCount() const CDS_NOEXCEPT
-            { 
-                return m_nMaxRetiredPtrCount; 
+            {
+                return m_nMaxRetiredPtrCount;
             }
 
             // Internal statistics
@@ -602,7 +602,7 @@ namespace cds {
         /// Auto hp_guard.
         /**
             This class encapsulates Hazard Pointer guard to protect a pointer against deletion .
-            It allocates one HP from thread's HP array in constructor and free the hazard pointer allocated 
+            It allocates one HP from thread's HP array in constructor and free the hazard pointer allocated
             in destructor.
         */
         class guard

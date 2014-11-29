@@ -180,7 +180,7 @@ namespace map {
                     CPPUNIT_CHECK( gp->first == nKey );
                     CPPUNIT_CHECK( gp->second.m_val == nKey * 2 );
                     gp.release();
-                    
+
                     gp = m.extract_with( wrapped_item( nKey ), wrapped_less());
                     CPPUNIT_ASSERT( gp );
                     CPPUNIT_ASSERT( !gp.empty());

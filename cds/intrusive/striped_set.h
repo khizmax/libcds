@@ -34,10 +34,10 @@ namespace cds { namespace intrusive {
         Template arguments:
             - \p Container - the container class that is used as bucket table entry. The \p Container class should support
                 an uniform interface described below.
-            - \p Options - options 
+            - \p Options - options
 
         The \p %StripedSet class does not exactly dictate the type of container that should be used as a \p Container bucket.
-        Instead, the class supports different intrusive container type for the bucket, for exampe, 
+        Instead, the class supports different intrusive container type for the bucket, for exampe,
         \p boost::intrusive::list, \p boost::intrusive::set and others.
 
         Remember that \p %StripedSet class algorithm ensures sequential blocking access to its bucket through the mutex type you specify
@@ -47,7 +47,7 @@ namespace cds { namespace intrusive {
         - \p opt::mutex_policy - concurrent access policy.
             Available policies: \p striped_set::striping, \p striped_set::refinable.
             Default is \p %striped_set::striping.
-        - \p cds::opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector <opt::none></tt> 
+        - \p cds::opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector <opt::none></tt>
             which selects default hash functor for your compiler.
         - \p cds::opt::compare - key comparison functor. No default functor is provided.
             If the option is not specified, the \p opt::less is used.

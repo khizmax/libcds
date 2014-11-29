@@ -36,7 +36,7 @@ namespace cds { namespace container {
         - \p K - type of a key to be stored in the list.
         - \p T - type of a value to be stored in the list.
         - \p Traits - map traits, default is \p skip_list::traits
-            It is possible to declare option-based list with \p cds::container::skip_list::make_traits metafunction 
+            It is possible to declare option-based list with \p cds::container::skip_list::make_traits metafunction
             istead of \p Traits template argument.
 
         Like STL map class, \p %SkipListMap stores the key-value pair as <tt>std:pair< K const, T></tt>.

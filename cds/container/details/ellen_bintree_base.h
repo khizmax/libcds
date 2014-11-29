@@ -192,7 +192,7 @@ namespace cds { namespace container {
             /// Key copy policy (for \p EllenBinTreeMap)
             /**
                 The key copy policy defines a functor to copy leaf node's key to internal node.
-                This policy is used only in \p EllenBinTreeMap. 
+                This policy is used only in \p EllenBinTreeMap.
                 By default, assignment operator is used.
 
                 The copy functor interface is:
@@ -238,7 +238,7 @@ namespace cds { namespace container {
             - \p opt::stat - internal statistics, by default disabled (\p ellen_bintree::empty_stat). To enable
                 it use \p ellen_bintree::stat.
             - \p opt::backoff - back-off strategy, by default no strategy is used (\p cds::backoff::empty)
-            - \p opt::rcu_check_deadlock - a deadlock checking policy, only for RCU-based tree. 
+            - \p opt::rcu_check_deadlock - a deadlock checking policy, only for RCU-based tree.
                 Default is \p opt::v::rcu_throw_deadlock.
         */
         template <typename... Options>

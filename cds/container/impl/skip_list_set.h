@@ -36,7 +36,7 @@ namespace cds { namespace container {
         - \p GC - Garbage collector used.
         - \p T - type to be stored in the list.
         - \p Traits - set traits, default is \p skip_list::traits.
-            It is possible to declare option-based list with \p cds::container::skip_list::make_traits metafunction 
+            It is possible to declare option-based list with \p cds::container::skip_list::make_traits metafunction
             istead of \p Traits template argument.
 
         @warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which

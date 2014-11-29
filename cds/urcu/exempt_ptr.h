@@ -45,7 +45,7 @@ namespace cds { namespace urcu {
         - \p NodeType - container's node type
         - \p ValueType - value type stored in container's node. For intrusive containers it is the same as \p NodeType
         - \p Disposer - a disposer functor
-        - \p Cast - a functor for casting from \p NodeType to \p ValueType. For intrusive containers 
+        - \p Cast - a functor for casting from \p NodeType to \p ValueType. For intrusive containers
             the casting is usually disabled, i.e. \p Cast is \p void.
     */
     template <

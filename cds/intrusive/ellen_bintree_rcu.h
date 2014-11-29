@@ -205,7 +205,7 @@ namespace cds { namespace intrusive {
         // ...
         \endcode
 
-        Instead of declaring \p set_traits type traits we can use option-based syntax with 
+        Instead of declaring \p set_traits type traits we can use option-based syntax with
         \p ellen_bintree::make_traits metafunction, for example:
         \code
         typedef cds::intrusive::EllenBinTree< gpb_rcu, std::string, Foo,
@@ -967,7 +967,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item with minimal key from the tree
         /**
-            The function searches an item with minimal key, unlinks it, and returns 
+            The function searches an item with minimal key, unlinks it, and returns
             \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the leftmost item.
             If the tree is empty the function returns empty \p exempt_ptr.
 
@@ -988,7 +988,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item with maximal key from the tree
         /**
-            The function searches an item with maximal key, unlinks it, and returns 
+            The function searches an item with maximal key, unlinks it, and returns
             \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the rightmost item.
             If the tree is empty the function returns empty \p exempt_ptr.
 

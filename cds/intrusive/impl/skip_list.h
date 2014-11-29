@@ -181,7 +181,7 @@ namespace cds { namespace intrusive {
             - \p T - type to be stored in the list. The type must be based on \p skip_list::node (for \p skip_list::base_hook)
                 or it must have a member of type \p skip_list::node (for \p skip_list::member_hook).
             - \p Traits - skip-list traits, default is \p skip_list::traits.
-                It is possible to declare option-based list with \p cds::intrusive::skip_list::make_traits metafunction istead of \p Traits 
+                It is possible to declare option-based list with \p cds::intrusive::skip_list::make_traits metafunction istead of \p Traits
                 template argument.
 
         @warning The skip-list requires up to 67 hazard pointers that may be critical for some GCs for which
@@ -1278,7 +1278,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item with maximal key from the list
         /**
-            The function searches an item with maximal key, unlinks it, and returns the pointer to item 
+            The function searches an item with maximal key, unlinks it, and returns the pointer to item
             as \p guarded_ptr object.
             If the skip-list is empty the function returns an empty \p guarded_ptr.
 

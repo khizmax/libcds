@@ -23,6 +23,7 @@
     - Changed: guarded_ptr and exempt_ptr have move semantics now. The container's extract() and get()
       member functions return the objects of that type.
     - Changed: improved cds::gc::HP and cds::gc::DHP internal implementation
+    - Changed: map member function insert_key() has been renamed to insert_with()
 
 1.6.0 23.09.2014
     General release

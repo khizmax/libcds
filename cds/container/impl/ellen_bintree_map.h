@@ -80,7 +80,7 @@ namespace cds { namespace container {
         typedef Key     key_type;    ///< type of a key stored in the map
         typedef T       mapped_type; ///< type of value stored in the map
         typedef std::pair< key_type const, mapped_type >    value_type  ;   ///< Key-value pair stored in leaf node of the mp
-        typedef Traits  traits;      ///< Map traits 
+        typedef Traits  traits;      ///< Map traits
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator; ///< key compare functor based on \p Traits::compare and \p Traits::less

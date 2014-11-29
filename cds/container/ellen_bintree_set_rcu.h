@@ -147,7 +147,7 @@ namespace cds { namespace container {
         /// pointer to extracted node
         using exempt_ptr = cds::urcu::exempt_ptr < gc, leaf_node, value_type, typename maker::intrusive_traits::disposer,
             cds::urcu::details::conventional_exempt_member_cast < leaf_node, value_type >
-        > ;
+        >;
 
     public:
         /// Default constructor
@@ -196,7 +196,7 @@ namespace cds { namespace container {
             \endcode
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
-            The user-defined functor is called only if the inserting is success. 
+            The user-defined functor is called only if the inserting is success.
 
             RCU \p synchronize() can be called. RCU should not be locked.
         */

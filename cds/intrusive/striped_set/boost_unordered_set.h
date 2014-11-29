@@ -178,9 +178,9 @@ namespace cds { namespace intrusive { namespace striped_set {
     } // namespace details
 
 #if CDS_COMPILER == CDS_COMPILER_INTEL && CDS_COMPILER_VERSION <= 1500
-    template <typename T, 
-        typename O1, typename O2, typename O3, typename O4, typename O5, 
-        typename O6, typename O7, typename O8, typename O9, typename O10, 
+    template <typename T,
+        typename O1, typename O2, typename O3, typename O4, typename O5,
+        typename O6, typename O7, typename O8, typename O9, typename O10,
         typename... Options
     >
     class adapt < boost::intrusive::unordered_set< T, O1, O2, O3, O4, O5, O6, O7, O8, O9, O10 >, Options... >

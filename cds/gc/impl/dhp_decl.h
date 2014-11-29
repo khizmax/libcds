@@ -591,9 +591,9 @@ namespace cds { namespace gc {
             The function always returns \p true since the guard count is unlimited for
             \p gc::DHP garbage collector.
         */
-        static CDS_CONSTEXPR bool check_available_guards( 
+        static CDS_CONSTEXPR bool check_available_guards(
 #ifdef CDS_DOXYGEN_INVOKED
-            size_t nCountNeeded, 
+            size_t nCountNeeded,
 #else
             size_t,
 #endif

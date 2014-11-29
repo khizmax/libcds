@@ -1169,7 +1169,7 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to \p CuckooSet traits
         /**
             Template argument list \p Options... are:
-            - \p intrusive::opt::hook - hook used. Possible values are: \p cuckoo::base_hook, \p cuckoo::member_hook, 
+            - \p intrusive::opt::hook - hook used. Possible values are: \p cuckoo::base_hook, \p cuckoo::member_hook,
                 \p cuckoo::traits_hook.
                 If the option is not specified, <tt>%cuckoo::base_hook<></tt> is used.
             - \p opt::hash - hash functor tuple, mandatory option. At least, two hash functors should be provided. All hash functor
@@ -1658,7 +1658,7 @@ namespace cds { namespace intrusive {
         <b>How to use</b>
 
         You should incorporate \p cuckoo::node into your struct \p T and provide
-        appropriate \p cuckoo::traits::hook in your \p Traits template parameters. 
+        appropriate \p cuckoo::traits::hook in your \p Traits template parameters.
         Usually, for \p Traits you define a struct based on \p cuckoo::traits.
 
         Example for base hook and list-based probe-set:

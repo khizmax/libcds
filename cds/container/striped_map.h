@@ -77,7 +77,7 @@ namespace cds { namespace container {
                 If the option is not specified, the \p %opt::less is used.
             - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
             - \p opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
-                without locks. Note that item counting is an essential part of the map algorithm, so dummy counter 
+                without locks. Note that item counting is an essential part of the map algorithm, so dummy counter
                 like as \p atomicity::empty_item_counter is not suitable.
             - \p opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \p opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash map.

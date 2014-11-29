@@ -1382,7 +1382,7 @@ namespace cds { namespace intrusive {
 
                         update_ptr updGP( res.updGrandParent.ptr() );
                         if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
-                                memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) 
+                                memory_model::memory_order_acquire, atomics::memory_order_relaxed ) )
                         {
                             if ( help_delete( pOp ) )
                                 break;

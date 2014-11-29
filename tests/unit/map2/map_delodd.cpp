@@ -106,7 +106,7 @@ namespace boost {
     {
         return std::hash<size_t>()( k.nKey );
     }
-	
+
     template <>
     struct hash<map2::key_thread>
     {

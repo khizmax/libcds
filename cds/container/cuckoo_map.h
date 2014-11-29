@@ -140,7 +140,7 @@ namespace cds { namespace container {
         - \p Key - key type
         - \p T - the type stored in the map.
         - \p Traits - map traits., default is \p cuckoo::traits.
-            It is possible to declare option-based set with \p cuckoo::make_traits metafunction 
+            It is possible to declare option-based set with \p cuckoo::make_traits metafunction
             result as \p Traits template argument.
 
        <b>Examples</b>

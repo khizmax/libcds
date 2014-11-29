@@ -105,7 +105,7 @@ namespace cds { namespace gc {
             A guard is the hazard pointer.
             Additionally, the \p %Guard class manages allocation and deallocation of the hazard pointer
 
-            A \p %Guard object is not copy- and move-constructible 
+            A \p %Guard object is not copy- and move-constructible
             and not copy- and move-assignable.
         */
         class Guard : public hp::guard
@@ -612,7 +612,7 @@ namespace cds { namespace gc {
 
         /// Checks if count of hazard pointer is no less than \p nCountNeeded
         /**
-            If \p bRaiseException is \p true (that is the default), the function raises 
+            If \p bRaiseException is \p true (that is the default), the function raises
             an \p std::overflow_error exception "Too few hazard pointers"
             if \p nCountNeeded is more than the count of hazard pointer per thread.
         */

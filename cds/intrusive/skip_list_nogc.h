@@ -213,7 +213,7 @@ namespace cds { namespace intrusive {
         - \p T - type to be stored in the set. The type must be based on \p skip_list::node (for \p skip_list::base_hook)
             or it must have a member of type \p skip_list::node (for \p skip_list::member_hook).
         - \p Traits - type traits, default is \p skip_list::traits.
-            It is possible to declare option-based list with \p cds::intrusive::skip_list::make_traits metafunction 
+            It is possible to declare option-based list with \p cds::intrusive::skip_list::make_traits metafunction
             istead of \p Traits template argument.
 
         <b>Iterators</b>

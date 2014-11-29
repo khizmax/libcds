@@ -25,7 +25,7 @@ namespace cds { namespace container {
 
         /// Skip list internal statistics
         template <typename EventCounter = cds::atomicity::event_counter>
-        using stat = cds::intrusive::skip_list::stat < EventCounter > ;
+        using stat = cds::intrusive::skip_list::stat < EventCounter >;
 
         /// Skip list empty internal statistics
         typedef cds::intrusive::skip_list::empty_stat empty_stat;
@@ -105,7 +105,7 @@ namespace cds { namespace container {
             - \p opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::stat - internal statistics. Available types: \p skip_list::stat, \p skip_list::empty_stat (the default)
-            - \p opt::rcu_check_deadlock - a deadlock checking policy for RCU-based skip-list. 
+            - \p opt::rcu_check_deadlock - a deadlock checking policy for RCU-based skip-list.
                 Default is \p opt::v::rcu_throw_deadlock
 
         */

@@ -25,7 +25,7 @@ namespace cds { namespace intrusive {
             - \p Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <class GC, typename Tag = opt::none>
-        class node 
+        class node
         {
         public:
             typedef GC      gc;  ///< Garbage collector
@@ -576,7 +576,7 @@ namespace cds { namespace intrusive {
                 To enable it use \p atomicity::item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift, 
+            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift,
                 \p skip_list::turbo_pascal (the default) or
                 user-provided one. See \p skip_list::random_level_generator option description for explanation.
             - \p opt::allocator - although the skip-list is an intrusive container,

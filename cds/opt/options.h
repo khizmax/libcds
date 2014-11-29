@@ -496,8 +496,8 @@ namespace opt {
             enum { padding = Padding & ~padding_flags };
 
         public:
-            static CDS_CONSTEXPR const size_t c_nPadding = 
-                static_cast<unsigned int>(padding) == static_cast<unsigned int>(cache_line_padding) ? cds::c_nCacheLineSize : 
+            static CDS_CONSTEXPR const size_t c_nPadding =
+                static_cast<unsigned int>(padding) == static_cast<unsigned int>(cache_line_padding) ? cds::c_nCacheLineSize :
                 static_cast<unsigned int>(padding) == static_cast<unsigned int>(no_special_padding) ? 0 : padding;
 
             static_assert( (c_nPadding & (c_nPadding - 1)) == 0, "Padding must be a power-of-two number" );
@@ -506,7 +506,7 @@ namespace opt {
                 c_nPadding,
                 c_nPadding == 0,
                 sizeof( T ) < c_nPadding ? padding_datasize_less : sizeof( T ) == c_nPadding ? padding_datasize_equal : padding_datasize_greater,
-                (Padding & padding_tiny_data_only) != 0 
+                (Padding & padding_tiny_data_only) != 0
             >::type type;
         };
 

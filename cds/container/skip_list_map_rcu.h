@@ -444,7 +444,7 @@ namespace cds { namespace container {
 
         /// Extracts an item with minimal key from the map
         /**
-            The function searches an item with minimal key, unlinks it, 
+            The function searches an item with minimal key, unlinks it,
             and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item.
             If the skip-list is empty the function returns an empty \p exempt_ptr.
 
@@ -461,7 +461,7 @@ namespace cds { namespace container {
 
         /// Extracts an item with maximal key from the map
         /**
-            The function searches an item with maximal key, unlinks it from the set, 
+            The function searches an item with maximal key, unlinks it from the set,
             and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item.
             If the skip-list is empty the function returns an empty \p exempt_ptr.
 
