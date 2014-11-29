@@ -679,7 +679,7 @@ namespace cds { namespace intrusive {
 
             void acquire( size_t const * arrHash, lock_array_ptr * pLockArr, lock_type ** parrLock )
             {
-                owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+                owner_t me = (owner_t) cds::OS::get_current_thread_id();
                 owner_t who;
 
                 back_off bkoff;
@@ -758,7 +758,7 @@ namespace cds { namespace intrusive {
 
             void acquire_all()
             {
-                owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+                owner_t me = (owner_t) cds::OS::get_current_thread_id();
 
                 back_off bkoff;
                 while ( true ) {
@@ -782,7 +782,7 @@ namespace cds { namespace intrusive {
 
             void acquire_resize( lock_array_ptr * pOldLocks )
             {
-                owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+                owner_t me = (owner_t) cds::OS::get_current_thread_id();
 
                 while ( true ) {
                     {

@@ -13,7 +13,7 @@ namespace cds { namespace OS {
         typedef DWORD           ThreadId;
 
         /// Get current thread id
-        static inline ThreadId getCurrentThreadId()
+        static inline ThreadId get_current_thread_id()
         {
             return ::GetCurrentThreadId();
         }
@@ -34,7 +34,7 @@ namespace cds { namespace OS {
 
 #ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
     using Win32::ThreadId;
-    using Win32::getCurrentThreadId;
+    using Win32::get_current_thread_id;
     using Win32::isThreadAlive;
 #endif
     //@endcond

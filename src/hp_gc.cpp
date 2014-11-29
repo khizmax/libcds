@@ -59,7 +59,7 @@ namespace cds { namespace gc {
         GarbageCollector::~GarbageCollector()
         {
             CDS_DEBUG_ONLY( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
-            CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::getCurrentThreadId() ;)
+            CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::get_current_thread_id() ;)
 
             hplist_node * pHead = m_pListHead.load( atomics::memory_order_relaxed );
             m_pListHead.store( nullptr, atomics::memory_order_relaxed );
@@ -103,7 +103,7 @@ namespace cds { namespace gc {
 
             hplist_node * hprec;
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
-            const cds::OS::ThreadId curThreadId  = cds::OS::getCurrentThreadId();
+            const cds::OS::ThreadId curThreadId  = cds::OS::get_current_thread_id();
 
             // First try to reuse a retired (non-active) HP record
             for ( hprec = m_pListHead.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode ) {
@@ -290,10 +290,10 @@ namespace cds { namespace gc {
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_HelpScanCallCount )
 
-            assert( static_cast<hplist_node *>(pThis)->m_idOwner.load(atomics::memory_order_relaxed) == cds::OS::getCurrentThreadId() );
+            assert( static_cast<hplist_node *>(pThis)->m_idOwner.load(atomics::memory_order_relaxed) == cds::OS::get_current_thread_id() );
 
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
-            const cds::OS::ThreadId curThreadId = cds::OS::getCurrentThreadId();
+            const cds::OS::ThreadId curThreadId = cds::OS::get_current_thread_id();
             for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_acquire); hprec; hprec = hprec->m_pNextNode ) {
 
                 // If m_bFree == true then hprec->m_arrRetired is empty - we don't need to see it

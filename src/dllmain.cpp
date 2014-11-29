@@ -191,7 +191,7 @@ BOOL WINAPI DllMain(
     switch ( fdwReason ) {
         case DLL_PROCESS_ATTACH:
             s_DllInstance = hinstDLL;
-            s_MainThreadId = cds::OS::getCurrentThreadId();
+            s_MainThreadId = cds::OS::get_current_thread_id();
 #if _WIN32_WINNT < 0x0601
             discover_topology();
 #endif

@@ -70,7 +70,7 @@ namespace cds {
             */
             Spinlock( bool bLocked ) CDS_NOEXCEPT
 #    ifdef CDS_DEBUG
-                : m_dbgOwnerId( bLocked ? OS::getCurrentThreadId() : OS::c_NullThreadId )
+                : m_dbgOwnerId( bLocked ? OS::get_current_thread_id() : OS::c_NullThreadId )
 #    endif
             {
                 m_spin.store( bLocked, atomics::memory_order_relaxed );
@@ -115,7 +115,7 @@ namespace cds {
 
                 CDS_DEBUG_ONLY(
                     if ( !bCurrent ) {
-                        m_dbgOwnerId = OS::getCurrentThreadId();
+                        m_dbgOwnerId = OS::get_current_thread_id();
                     }
                 )
                 return !bCurrent;
@@ -143,7 +143,7 @@ namespace cds {
                 backoff_strategy backoff;
 
                 // Deadlock detected
-                assert( m_dbgOwnerId != OS::getCurrentThreadId() );
+                assert( m_dbgOwnerId != OS::get_current_thread_id() );
 
                 // TATAS algorithm
                 while ( !try_lock() ) {
@@ -151,7 +151,7 @@ namespace cds {
                         backoff();
                     }
                 }
-                assert( m_dbgOwnerId == OS::getCurrentThreadId() );
+                assert( m_dbgOwnerId == OS::get_current_thread_id() );
             }
 
             /// Unlock the spin-lock. Debug version: deadlock may be detected
@@ -159,7 +159,7 @@ namespace cds {
             {
                 assert( m_spin.load( atomics::memory_order_relaxed ) );
 
-                assert( m_dbgOwnerId == OS::getCurrentThreadId() );
+                assert( m_dbgOwnerId == OS::get_current_thread_id() );
                 CDS_DEBUG_ONLY( m_dbgOwnerId = OS::c_NullThreadId; )
 
                 m_spin.store( false, atomics::memory_order_release );
@@ -279,13 +279,13 @@ namespace cds {
             */
             bool is_locked() const CDS_NOEXCEPT
             {
-                return !( m_spin.load( atomics::memory_order_relaxed ) == 0 || is_taken( cds::OS::getCurrentThreadId() ));
+                return !( m_spin.load( atomics::memory_order_relaxed ) == 0 || is_taken( cds::OS::get_current_thread_id() ));
             }
 
             /// Try to lock the spin-lock (synonym for \ref try_lock)
             bool try_lock() CDS_NOEXCEPT
             {
-                thread_id tid = OS::getCurrentThreadId();
+                thread_id tid = OS::get_current_thread_id();
                 if ( try_taken_lock( tid ) )
                     return true;
                 if ( try_acquire()) {
@@ -298,7 +298,7 @@ namespace cds {
             /// Try to lock the object
             bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( try_acquire( nTryCount ) ) )
             {
-                thread_id tid = OS::getCurrentThreadId();
+                thread_id tid = OS::get_current_thread_id();
                 if ( try_taken_lock( tid ) )
                     return true;
                 if ( try_acquire( nTryCount )) {
@@ -311,7 +311,7 @@ namespace cds {
             /// Lock the object waits if it is busy
             void lock() CDS_NOEXCEPT
             {
-                thread_id tid = OS::getCurrentThreadId();
+                thread_id tid = OS::get_current_thread_id();
                 if ( !try_taken_lock( tid ) ) {
                     acquire();
                     take( tid );
@@ -321,7 +321,7 @@ namespace cds {
             /// Unlock the spin-lock. Return @p true if the current thread is owner of spin-lock @p false otherwise
             bool unlock() CDS_NOEXCEPT
             {
-                if ( is_taken( OS::getCurrentThreadId() ) ) {
+                if ( is_taken( OS::get_current_thread_id() ) ) {
                     integral_type n = m_spin.load( atomics::memory_order_relaxed );
                     if ( n > 1 )
                         m_spin.store( n - 1, atomics::memory_order_relaxed );
@@ -337,7 +337,7 @@ namespace cds {
             /// Change the owner of locked spin-lock. May be called by thread that is owner of the spin-lock
             bool change_owner( OS::ThreadId newOwnerId ) CDS_NOEXCEPT
             {
-                if ( is_taken( OS::getCurrentThreadId() ) ) {
+                if ( is_taken( OS::get_current_thread_id() ) ) {
                     assert( newOwnerId != OS::c_NullThreadId );
                     m_OwnerId = newOwnerId;
                     return true;

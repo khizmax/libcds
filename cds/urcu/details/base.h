@@ -330,7 +330,7 @@ namespace cds {
                 {
                     thread_record * pRec;
                     cds::OS::ThreadId const nullThreadId = cds::OS::c_NullThreadId;
-                    cds::OS::ThreadId const curThreadId  = cds::OS::getCurrentThreadId();
+                    cds::OS::ThreadId const curThreadId  = cds::OS::get_current_thread_id();
 
                     // First try to reuse a retired (non-active) HP record
                     for ( pRec = m_pHead.load( atomics::memory_order_acquire ); pRec; pRec = pRec->m_list.m_pNext ) {
@@ -384,7 +384,7 @@ namespace cds {
                 {
                     allocator_type al;
                     CDS_DEBUG_ONLY( cds::OS::ThreadId const nullThreadId = cds::OS::c_NullThreadId; )
-                    CDS_DEBUG_ONLY( cds::OS::ThreadId const mainThreadId = cds::OS::getCurrentThreadId() ;)
+                    CDS_DEBUG_ONLY( cds::OS::ThreadId const mainThreadId = cds::OS::get_current_thread_id() ;)
 
                     thread_record * p = m_pHead.exchange( nullptr, atomics::memory_order_seq_cst );
                     while ( p ) {

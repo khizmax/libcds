@@ -175,7 +175,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         lock_type& acquire( size_t nHash )
         {
-            owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+            owner_t me = (owner_t) cds::OS::get_current_thread_id();
             owner_t who;
 
             back_off bkoff;
@@ -206,7 +206,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         lock_array_ptr acquire_all()
         {
-            owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+            owner_t me = (owner_t) cds::OS::get_current_thread_id();
             owner_t who;
 
             back_off bkoff;
@@ -242,7 +242,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         bool acquire_resize()
         {
-            owner_t me = (owner_t) cds::OS::getCurrentThreadId();
+            owner_t me = (owner_t) cds::OS::get_current_thread_id();
 
             back_off bkoff;
             for (unsigned int nAttempts = 0; nAttempts < 32; ++nAttempts ) {

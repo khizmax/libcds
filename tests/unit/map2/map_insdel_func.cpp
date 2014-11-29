@@ -44,7 +44,7 @@ namespace map2 {
                 , nData(0)
                 , nEnsureCall(0)
                 , bInitialized( false )
-                , threadId( cds::OS::getCurrentThreadId() )
+                , threadId( cds::OS::get_current_thread_id() )
             {}
 
             value_type( value_type const& s )
@@ -52,7 +52,7 @@ namespace map2 {
                 , nData(s.nData)
                 , nEnsureCall(s.nEnsureCall.load(atomics::memory_order_relaxed))
                 , bInitialized( s.bInitialized.load(atomics::memory_order_relaxed) )
-                , threadId( cds::OS::getCurrentThreadId() )
+                , threadId( cds::OS::get_current_thread_id() )
             {}
 
             // boost::container::flat_map requires operator =

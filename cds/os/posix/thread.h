@@ -8,13 +8,13 @@
 
 namespace cds { namespace OS {
     /// posix-related wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace posix {
+    inline namespace posix {
 
         /// Posix thread id type
         typedef std::thread::native_handle_type ThreadId;
 
         /// Get current thread id
-        static inline ThreadId getCurrentThreadId()
+        static inline ThreadId get_current_thread_id()
         {
             return pthread_self();
         }
@@ -29,14 +29,9 @@ namespace cds { namespace OS {
         }
     }    // namespace posix
 
+    //@cond
     constexpr const posix::ThreadId c_NullThreadId = 0;
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using posix::ThreadId;
-
-    using posix::getCurrentThreadId;
-    using posix::isThreadAlive;
-#endif
+    //@endcond
 
 }} // namespace cds::OS
 

@@ -240,7 +240,7 @@ namespace cds { namespace intrusive {
         */
         bool push( value_type& val )
         {
-            tag_type const curId = cds::OS::getCurrentThreadId();
+            tag_type const curId = cds::OS::get_current_thread_id();
 
             // Insert new item at bottom of the heap
             m_Lock.lock();

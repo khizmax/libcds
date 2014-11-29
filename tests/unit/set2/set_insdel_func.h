@@ -42,7 +42,7 @@ namespace set2 {
                 , nData(0)
                 , nEnsureCall(0)
                 , bInitialized( false )
-                , threadId( cds::OS::getCurrentThreadId() )
+                , threadId( cds::OS::get_current_thread_id() )
             {}
 
             value_type( value_type const& s )
@@ -50,7 +50,7 @@ namespace set2 {
                 , nData(s.nData)
                 , nEnsureCall(s.nEnsureCall.load(atomics::memory_order_relaxed))
                 , bInitialized( s.bInitialized )
-                , threadId( cds::OS::getCurrentThreadId() )
+                , threadId( cds::OS::get_current_thread_id() )
             {}
 
             // boost::container::flat_map requires operator =
