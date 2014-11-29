@@ -353,9 +353,6 @@
     <ClInclude Include="..\..\..\cds\os\alloc_aligned.h">
       <Filter>Header Files\cds\OS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\os\syserror.h">
-      <Filter>Header Files\cds\OS</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\os\thread.h">
       <Filter>Header Files\cds\OS</Filter>
     </ClInclude>

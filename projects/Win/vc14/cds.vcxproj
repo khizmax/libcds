@@ -869,7 +869,6 @@
     <ClInclude Include="..\..\..\cds\compiler\vc\amd64\backoff.h" />
     <ClInclude Include="..\..\..\cds\compiler\vc\amd64\bitop.h" />
     <ClInclude Include="..\..\..\cds\os\alloc_aligned.h" />
-    <ClInclude Include="..\..\..\cds\os\syserror.h" />
     <ClInclude Include="..\..\..\cds\os\thread.h" />
     <ClInclude Include="..\..\..\cds\os\timer.h" />
     <ClInclude Include="..\..\..\cds\os\topology.h" />
