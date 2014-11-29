@@ -106,6 +106,7 @@ namespace boost {
     {
         return std::hash<size_t>()( k.nKey );
     }
+	
     template <>
     struct hash<map2::key_thread>
     {
@@ -126,7 +127,7 @@ namespace boost {
 namespace map2 {
 
     template <typename Map>
-    static inline void check_before_clear( Map& s )
+    static inline void check_before_clear( Map& /*s*/ )
     {}
 
     template <typename GC, typename Key, typename T, typename Traits>
@@ -160,7 +161,7 @@ namespace map2 {
             struct ensure_func
             {
                 template <typename Q>
-                void operator()( bool bNew, Q const& )
+                void operator()( bool /*bNew*/, Q const& )
                 {}
             };
         public:
