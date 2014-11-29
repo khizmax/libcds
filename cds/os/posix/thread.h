@@ -20,7 +20,7 @@ namespace cds { namespace OS {
         }
 
         /// Checks if thread \p id is alive
-        static inline bool isThreadAlive( ThreadId id )
+        static inline bool is_thread_alive( ThreadId id )
         {
             // if sig is zero, error checking is performed but no signal is actually sent.
             // ESRCH - No thread could be found corresponding to that specified by the given thread ID

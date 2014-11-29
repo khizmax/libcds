@@ -68,7 +68,7 @@ namespace cds { namespace gc {
             for ( hplist_node * hprec = pHead; hprec; hprec = pNext ) {
                 assert( hprec->m_idOwner.load( atomics::memory_order_relaxed ) == nullThreadId
                     || hprec->m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId
-                    || !cds::OS::isThreadAlive( hprec->m_idOwner.load( atomics::memory_order_relaxed ) )
+                    || !cds::OS::is_thread_alive( hprec->m_idOwner.load( atomics::memory_order_relaxed ) )
                 );
                 details::retired_vector& vect = hprec->m_arrRetired;
                 details::retired_vector::iterator itRetired = vect.begin();
@@ -304,7 +304,7 @@ namespace cds { namespace gc {
                 // Several threads may work concurrently so we use atomic technique only.
                 {
                     cds::OS::ThreadId curOwner = hprec->m_idOwner.load(atomics::memory_order_acquire);
-                    if ( curOwner == nullThreadId || !cds::OS::isThreadAlive( curOwner )) {
+                    if ( curOwner == nullThreadId || !cds::OS::is_thread_alive( curOwner )) {
                         if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_release, atomics::memory_order_relaxed ))
                             continue;
                     }

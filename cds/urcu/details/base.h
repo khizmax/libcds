@@ -392,7 +392,7 @@ namespace cds {
 
                         assert( p->m_list.m_idOwner.load( atomics::memory_order_relaxed ) == nullThreadId
                             || p->m_list.m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId
-                            || !cds::OS::isThreadAlive( p->m_list.m_idOwner.load( atomics::memory_order_relaxed ) )
+                            || !cds::OS::is_thread_alive( p->m_list.m_idOwner.load( atomics::memory_order_relaxed ) )
                             );
 
                         al.Delete( p );
