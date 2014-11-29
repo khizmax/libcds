@@ -127,7 +127,7 @@ sub processFile( $ )
     (C) Copyright Maxim Khizhinsky (libcds.dev\@gmail.com) 2006-$year
     Distributed under the BSD license (see accompanying file license.txt)
 
-    Source code repo: http://github.com/khizmx/libcds/
+    Source code repo: http://github.com/khizmax/libcds/
     Download: http://libcds.sourceforge.net/files/
 */\n" ;
 			}
