@@ -422,11 +422,6 @@ namespace cds {
         }
     };
 
-//@cond
-#   define CDS_PURE_VIRTUAL_FUNCTION_CALLED    { assert(false); throw Exception("Pure virtual function called"); }
-#   define CDS_PURE_VIRTUAL_FUNCTION_CALLED_(method_name)    { assert(false); throw Exception("Pure virtual function called " method_name ); }
-//@endcond
-
     /// any_type is used as a placeholder for auto-calculated type (usually in \p rebind templates)
     struct any_type {};
 
