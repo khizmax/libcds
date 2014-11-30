@@ -72,19 +72,18 @@ namespace cds { namespace memory { namespace michael {
     typedef cds::opt::none  debug_bound_checking;
 #endif
 
-    /// %Exception of \ref strong_bound_checking bound checker
-    class bound_checker_exception: public std::exception
+    /// Exception of \ref strong_bound_checking bound checker
+    class bound_checker_exception: public std::out_of_range
     {
     //@cond
     public:
-        virtual const char * what() const throw()
-        {
-            return "Memory bound checking violation";
-        }
+        bound_checker_exception()
+            : std::out_of_range( "Memory bound checking violation" )
+        {}
     //@endcond
     };
 
-    /// %Exception throwing bound checker
+    /// Exception throwing bound checker
     /**
         This is one of value of opt::check_bounds option for Michael's \ref Heap memory allocator.
         It is intended for debug and release mode.
@@ -103,7 +102,6 @@ namespace cds { namespace memory { namespace michael {
                 throw bound_checker_exception();
             }
         }
-
     //@endcond
     };
 

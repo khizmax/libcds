@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <cstdint>
 #include <exception>
+#include <stdexcept>
 #include <string>
 #include <memory>
 
@@ -392,35 +393,6 @@ namespace cds {
 **************************************************************************/
 
 namespace cds {
-
-    /// Base of all exceptions in the library
-    class Exception: public std::exception
-    {
-    protected:
-        std::string    m_strMsg    ;    ///< Exception message
-    public:
-        /// Create empty exception
-        Exception()
-        {}
-        /// Create exception with message
-        explicit Exception( const char * pszMsg )
-            : m_strMsg( pszMsg )
-        {}
-        /// Create exception with message
-        explicit Exception( const std::string& strMsg )
-            :m_strMsg( strMsg )
-        {}
-
-        /// Destructor
-        virtual ~Exception() throw()
-        {}
-
-        /// Return exception message
-        virtual const char * what( ) const throw()
-        {
-            return m_strMsg.c_str();
-        }
-    };
 
     /// any_type is used as a placeholder for auto-calculated type (usually in \p rebind templates)
     struct any_type {};

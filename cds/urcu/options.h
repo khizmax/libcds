@@ -11,13 +11,12 @@ namespace cds { namespace urcu {
         This exception is raised when \p cds::opt::v::rcu_throw_deadlock deadlock checking policy
         is used, see \p cds::opt::rcu_check_deadlock option.
     */
-    class rcu_deadlock: public cds::Exception
+    class rcu_deadlock: public std::logic_error
     {
         //@cond
-        typedef cds::Exception base_class;
     public:
         rcu_deadlock()
-            : base_class( "RCU deadlock detected")
+            : std::logic_error( "RCU deadlock detected" )
         {}
         //@endcond
     };

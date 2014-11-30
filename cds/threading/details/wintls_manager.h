@@ -3,6 +3,7 @@
 #ifndef __CDS_THREADING_DETAILS_WINTLS_MANAGER_H
 #define __CDS_THREADING_DETAILS_WINTLS_MANAGER_H
 
+#include <system_error>
 #include <stdio.h>
 #include <cds/threading/details/_common.h>
 
@@ -22,22 +23,13 @@ namespace cds { namespace threading {
             typedef DWORD api_error_code;
 
             /// TLS API exception
-            class api_exception: public cds::Exception {
-            public:
-                const api_error_code    m_errCode   ;   ///< error code
+            class api_exception : public std::system_error
+            {
             public:
                 /// Exception constructor
                 api_exception( api_error_code nCode, const char * pszFunction )
-                    : m_errCode( nCode )
-                {
-                    char buf[256];
-#           if CDS_OS_TYPE == CDS_OS_MINGW
-                    sprintf( buf, "Win32 TLS API error %lu [function %s]", nCode, pszFunction );
-#           else
-                    sprintf_s( buf, sizeof(buf)/sizeof(buf[0]), "Win32 TLS API error %lu [function %s]", nCode, pszFunction );
-#           endif
-                    m_strMsg = buf;
-                }
+                    : std::system_error( static_cast<int>(nCode), std::system_category(), pszFunction )
+                {}
             };
 
             //@cond

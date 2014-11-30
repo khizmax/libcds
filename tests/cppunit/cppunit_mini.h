@@ -266,7 +266,7 @@ namespace CppUnitMini
           X(); \
         } \
         catch(...) { \
-          Base::error("Test Failed: An Exception was thrown.", #X, __FILE__, __LINE__); \
+          Base::error("Test Failed: An exception was thrown.", #X, __FILE__, __LINE__); \
         } \
       } \
       tearDown(); \

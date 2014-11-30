@@ -3,6 +3,7 @@
 #ifndef __CDS_THREADING_DETAILS_PTHREAD_MANAGER_H
 #define __CDS_THREADING_DETAILS_PTHREAD_MANAGER_H
 
+#include <system_error>
 #include <stdio.h>
 #include <pthread.h>
 #include <cds/threading/details/_common.h>
@@ -23,18 +24,13 @@ namespace cds { namespace threading {
             typedef int pthread_error_code;
 
             /// pthread exception
-            class pthread_exception: public cds::Exception {
-            public:
-                const pthread_error_code    m_errCode   ;   ///< pthread error code, -1 if no pthread error code
+            class pthread_exception: public std::system_error
+            {
             public:
                 /// Exception constructor
-                pthread_exception( pthread_error_code nCode, const char * pszFunction )
-                    : m_errCode( nCode )
-                {
-                    char buf[256];
-                    sprintf( buf, "Pthread error %i [function %s]", nCode, pszFunction );
-                    m_strMsg = buf;
-                }
+                pthread_exception( int nCode, const char * pszFunction )
+                    : std::system_error( nCode, std::system_category(), pszFunction )
+                {}
             };
 
             /// pthread TLS key holder
