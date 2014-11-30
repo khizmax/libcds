@@ -214,10 +214,26 @@ namespace cds {
             };
 
             /// No GarbageCollector object is created
-            CDS_DECLARE_EXCEPTION( HZPManagerEmpty, "Global Hazard Pointer GarbageCollector is NULL" );
+            class not_initialized : public std::runtime_error
+            {
+            public:
+                //@cond
+                not_initialized()
+                    : std::runtime_error( "Global Hazard Pointer GarbageCollector is not initialized" )
+                {}
+                //@endcond
+            };
 
             /// Not enough required Hazard Pointer count
-            CDS_DECLARE_EXCEPTION( HZPTooMany, "Not enough required Hazard Pointer count" );
+            class too_many_hazard_ptr : public std::length_error
+            {
+            public:
+                //@cond
+                too_many_hazard_ptr()
+                    : std::length_error( "Not enough required Hazard Pointer count" )
+                {}
+                //@endcond
+            };
 
         private:
             /// Internal GC statistics
@@ -332,7 +348,7 @@ namespace cds {
             static GarbageCollector&   instance()
             {
                 if ( !m_pHZPManager )
-                    throw HZPManagerEmpty();
+                    throw not_initialized();
                 return *m_pHZPManager;
             }
 
@@ -378,12 +394,12 @@ namespace cds {
 
             /// Checks that required hazard pointer count \p nRequiredCount is less or equal then max hazard pointer count
             /**
-                If \p nRequiredCount > getHazardPointerCount() then the exception HZPTooMany is thrown
+                If \p nRequiredCount > getHazardPointerCount() then the exception \p too_many_hazard_ptr is thrown
             */
             static void checkHPCount( unsigned int nRequiredCount )
             {
                 if ( instance().getHazardPointerCount() < nRequiredCount )
-                    throw HZPTooMany();
+                    throw too_many_hazard_ptr();
             }
 
             /// Get current scan strategy

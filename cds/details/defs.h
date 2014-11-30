@@ -430,18 +430,6 @@ namespace cds {
     /// any_type is used as a placeholder for auto-calculated type (usually in \p rebind templates)
     struct any_type {};
 
-    /** \def CDS_DECLARE_EXCEPTION( _class, _msg )
-        Simplifying declaration of specific exception (usual within classes)
-        - @p _class - the class name of exception
-        - @p _msg - exception message (const char *)
-    */
-#define CDS_DECLARE_EXCEPTION( _class, _msg )       \
-    struct _class: public std::exception {          \
-    public:                                         \
-    _class(): std::exception() {}                   \
-    virtual const char * what( ) const throw() { return _msg; } \
-    }
-
 } // namespace cds
 
 

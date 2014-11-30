@@ -671,7 +671,15 @@ namespace cds { namespace gc {
 
         public:
             /// Exception "No GarbageCollector object is created"
-            CDS_DECLARE_EXCEPTION( DHPManagerEmpty, "Global DHP GarbageCollector is NULL" );
+            class not_initialized : public std::runtime_error
+            {
+            public:
+                //@cond
+                not_initialized()
+                    : std::runtime_error( "Global DHP GarbageCollector is not initialized" )
+                {}
+                //@endcond
+            };
 
             /// Internal GC statistics
             struct InternalState
@@ -739,12 +747,12 @@ namespace cds { namespace gc {
 
             /// Returns pointer to GarbageCollector instance
             /**
-                If DHP GC is not initialized, \p DHPManagerEmpty exception is thrown
+                If DHP GC is not initialized, \p not_initialized exception is thrown
             */
             static GarbageCollector&   instance()
             {
                 if ( m_pManager == nullptr )
-                    throw DHPManagerEmpty();
+                    throw not_initialized();
                 return *m_pManager;
             }
 
