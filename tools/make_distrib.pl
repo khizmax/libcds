@@ -68,7 +68,7 @@ sub get_distrib_dir()
 
 sub get_git_repo()
 {
-	return '.';
+	return 'git@github.com:khizmax/libcds.git';
 }
 
 sub get_git_branch()
@@ -128,7 +128,7 @@ sub processFile( $ )
     Distributed under the BSD license (see accompanying file license.txt)
 
     Source code repo: http://github.com/khizmax/libcds/
-    Download: http://libcds.sourceforge.net/files/
+    Download: http://sourceforge.net/projects/libcds/files/
 */\n" ;
 			}
 			elsif ( /^\/\/\$\$CDS-\/\*\$\$/ ) {
