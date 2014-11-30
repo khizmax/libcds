@@ -347,9 +347,6 @@ namespace cds {}
 //@cond
 // typedefs for back compatibility
 namespace cds {
-    /// Atomic pointer
-    typedef void *            pointer_t;
-
     /// 64bit unaligned int
     typedef int64_t     atomic64_unaligned;
 
@@ -367,24 +364,6 @@ namespace cds {
 
     /// 64bit atomic unsigned int (aligned)
     typedef atomic64u_aligned   atomic64u_t;
-
-    /// 32bit atomic int
-    typedef int32_t     atomic32_t;
-
-    /// 32bit atomic unsigned int
-    typedef uint32_t    atomic32u_t;
-
-    /// atomic int
-    typedef atomic32_t          atomic_t;
-
-    /// atomic unsigned int
-    typedef atomic32u_t         unsigned_atomic_t;
-
-    /// atomic int sized as pointer
-    typedef intptr_t ptr_atomic_t;
-
-    /// atomic unsigned int sized as pointer
-    typedef uintptr_t uptr_atomic_t;
 } // namespace cds
 //@endcond
 

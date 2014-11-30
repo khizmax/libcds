@@ -9,7 +9,7 @@ namespace cds {
 
         // MSB - return index (1..32) of most significant bit in x. If x == 0 return 0
 #        define cds_bitop_msb32_DEFINED
-        static inline int msb32( atomic32u_t nArg )
+        static inline int msb32( uint32_t nArg )
         {
             if ( !nArg )
                 return 0;
@@ -30,7 +30,7 @@ namespace cds {
         // MSB - return index (0..31) of most significant bit in nArg.
         // !!! nArg != 0
 #        define cds_bitop_msb32nz_DEFINED
-        static inline int msb32nz( atomic32u_t nArg )
+        static inline int msb32nz( uint32_t nArg )
         {
             assert( nArg != 0 );
             long double d = nArg;

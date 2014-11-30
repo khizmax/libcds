@@ -81,7 +81,7 @@ namespace memory {
                     size_t nItem = m_rndGen( size_t(1), s_nBlocksPerThread ) - 1;
                     m_Alloc.deallocate( reinterpret_cast<value_type *>(m_arr[nItem]), 1 );
                     m_arr[nItem] = reinterpret_cast<char *>(m_Alloc.allocate( m_rndGen( s_nMinBlockSize, s_nMaxBlockSize ), nullptr ));
-                    CPPUNIT_ASSERT( (reinterpret_cast<cds::uptr_atomic_t>(m_arr[nItem]) & (ALLOC::alignment - 1)) == 0 );
+                    CPPUNIT_ASSERT( (reinterpret_cast<uintptr_t>(m_arr[nItem]) & (ALLOC::alignment - 1)) == 0 );
                 }
             }
         };
@@ -106,7 +106,7 @@ namespace memory {
                     = new char *[ s_nBlocksPerThread ];
                     for ( size_t i = 0; i < s_nBlocksPerThread; ++i ) {
                         thData[i] = reinterpret_cast<char *>(alloc.allocate( rndGen( s_nMinBlockSize, s_nMaxBlockSize ), nullptr ));
-                        CPPUNIT_ASSERT( (reinterpret_cast<cds::uptr_atomic_t>(thData[i]) & (ALLOC::alignment - 1)) == 0 );
+                        CPPUNIT_ASSERT( (reinterpret_cast<uintptr_t>(thData[i]) & (ALLOC::alignment - 1)) == 0 );
                     }
             }
             CPPUNIT_MSG("Initializatin done" );

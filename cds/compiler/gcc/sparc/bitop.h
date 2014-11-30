@@ -27,7 +27,7 @@ namespace cds {
         }
 
         // MSB - return index (1..32) of most significant bit in nArg. If nArg == 0 return 0
-        static inline int sparc_msb32( atomic32u_t nArg )
+        static inline int sparc_msb32( uint32_t nArg )
         {
             return sparc_msb64( (atomic64u_t) nArg );
         }

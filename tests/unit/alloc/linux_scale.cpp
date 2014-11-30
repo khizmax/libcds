@@ -65,7 +65,7 @@ namespace memory {
                         memset( p, 0, 16 );
                         memset( ((char *)p) + m_nSize * sizeof(*p) - 16, 0, 16 );
                     }
-                    CPPUNIT_ASSERT( (reinterpret_cast<cds::uptr_atomic_t>(p) & (ALLOC::alignment - 1)) == 0 );
+                    CPPUNIT_ASSERT( (reinterpret_cast<uintptr_t>(p) & (ALLOC::alignment - 1)) == 0 );
                     m_Alloc.deallocate( p, 1 );
                 }
             }

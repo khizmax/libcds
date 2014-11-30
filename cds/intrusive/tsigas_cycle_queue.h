@@ -226,7 +226,7 @@ namespace cds { namespace intrusive {
         bool enqueue( value_type& data )
         {
             value_type * pNewNode  = &data;
-            assert( (reinterpret_cast<ptr_atomic_t>( pNewNode ) & 1) == 0 );
+            assert( (reinterpret_cast<uintptr_t>(pNewNode) & 1) == 0 );
             back_off bkoff;
 
             const index_type nModulo = modulo();
@@ -323,7 +323,7 @@ namespace cds { namespace intrusive {
                     continue;
                 }
 
-                pNull = reinterpret_cast<value_type *>((reinterpret_cast<ptr_atomic_t>(tt) & 1) ? free0 : free1 );
+                pNull = reinterpret_cast<value_type *>((reinterpret_cast<uintptr_t>(tt) & 1) ? free0 : free1);
 
                 if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
                     continue;

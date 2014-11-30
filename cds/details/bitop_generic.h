@@ -8,7 +8,7 @@ namespace cds {
     namespace bitop { namespace platform {
         // Return true if x = 2 ** k, k >= 0
 #ifndef cds_bitop_isPow2_32_DEFINED
-        static inline bool isPow2_32( atomic32u_t x )
+        static inline bool isPow2_32( uint32_t x )
         {
             return (x & ( x - 1 )) == 0    && x;
         }
@@ -29,7 +29,7 @@ namespace cds {
         // Return number (1..32) of most significant bit
         // Return 0 if x == 0
         // Source: Linux kernel
-        static inline int msb32( atomic32u_t x )
+        static inline int msb32( uint32_t x )
         {
             int r = 32;
 
@@ -60,7 +60,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_msb32nz_DEFINED
-        static inline int msb32nz( atomic32u_t x )
+        static inline int msb32nz( uint32_t x )
         {
             return msb32( x ) - 1;
         }
@@ -69,10 +69,10 @@ namespace cds {
 #ifndef cds_bitop_msb64_DEFINED
         static inline int msb64( atomic64u_unaligned x )
         {
-            atomic32u_t h = (atomic32u_t) (x >> 32);
+            uint32_t h = (uint32_t) (x >> 32);
             if ( h )
                 return msb32( h ) + 32;
-            return msb32( (atomic32u_t) x );
+            return msb32( (uint32_t) x );
         }
 #endif
 
@@ -91,7 +91,7 @@ namespace cds {
         // Return number (1..32) of least significant bit
         // Return 0 if x == 0
         // Source: Linux kernel
-        static inline int lsb32( atomic32u_t x )
+        static inline int lsb32( uint32_t x )
         {
             int r = 1;
 
@@ -122,7 +122,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_lsb32nz_DEFINED
-        static inline int lsb32nz( atomic32u_t x )
+        static inline int lsb32nz( uint32_t x )
         {
             return lsb32( x ) - 1;
         }
@@ -134,8 +134,8 @@ namespace cds {
             if ( !x )
                 return 0;
             if ( x & 0xffffffffu )
-                return lsb32( (atomic32u_t) x );
-            return lsb32( (atomic32u_t) (x >> 32) ) + 32;
+                return lsb32( (uint32_t) x );
+            return lsb32( (uint32_t) (x >> 32) ) + 32;
         }
 #endif
 
@@ -150,7 +150,7 @@ namespace cds {
         // Reverse bit order
         //******************************************************
 #ifndef cds_bitop_rbo32_DEFINED
-        static inline atomic32u_t rbo32( atomic32u_t x )
+        static inline uint32_t rbo32( uint32_t x )
         {
             // swap odd and even bits
             x = ((x >> 1) & 0x55555555) | ((x & 0x55555555) << 1);
@@ -169,7 +169,7 @@ namespace cds {
         static inline atomic64u_t rbo64( atomic64u_unaligned x )
         {
             //                      Low 32bit                                          Hight 32bit
-            return ( ((atomic64u_t) rbo32( (atomic32u_t) x )) << 32 ) | ((atomic64u_t) rbo32( (atomic32u_t) (x >> 32) ));
+            return ( ((atomic64u_t) rbo32( (uint32_t) x )) << 32 ) | ((atomic64u_t) rbo32( (uint32_t) (x >> 32) ));
         }
 #endif
 
@@ -177,7 +177,7 @@ namespace cds {
         // Set bit count. Return count of non-zero bits in word
         //******************************************************
 #ifndef cds_bitop_sbc32_DEFINED
-        static inline int sbc32( atomic32u_t x )
+        static inline int sbc32( uint32_t x )
         {
 #        ifdef cds_beans_zbc32_DEFINED
             return 32 - zbc32( x );
@@ -196,7 +196,7 @@ namespace cds {
 #        ifdef cds_beans_zbc64_DEFINED
             return 64 - zbc64( x );
 #        else
-            return sbc32( (atomic32u_t) (x >> 32) ) + sbc32( (atomic32u_t) x );
+            return sbc32( (uint32_t) (x >> 32) ) + sbc32( (uint32_t) x );
 #        endif
         }
 #endif
@@ -205,7 +205,7 @@ namespace cds {
         // Zero bit count. Return count of zero bits in word
         //******************************************************
 #ifndef cds_bitop_zbc32_DEFINED
-        static inline int zbc32( atomic32u_t x )
+        static inline int zbc32( uint32_t x )
         {
             return 32 - sbc32( x );
         }
@@ -220,10 +220,10 @@ namespace cds {
 
         // Bit complement
 #ifndef cds_bitop_complement32_DEFINED
-        static inline bool complement32( atomic32u_t * pArg, unsigned int nBit )
+        static inline bool complement32( uint32_t * pArg, unsigned int nBit )
         {
             assert( pArg );
-            atomic32u_t nVal = *pArg & (1 << nBit);
+            uint32_t nVal = *pArg & (1 << nBit);
             *pArg ^= 1 << nBit;
             return nVal != 0;
         }
@@ -246,8 +246,8 @@ namespace cds {
         */
         static inline uint32_t RandXorShift32(uint32_t x)
         {
-            //static atomic32u_t xRandom = 2463534242UL    ;    //rand() | 0x0100    ;    // must be nonzero
-            //atomic32u_t x = xRandom;
+            //static uint32_t xRandom = 2463534242UL    ;    //rand() | 0x0100    ;    // must be nonzero
+            //uint32_t x = xRandom;
             if ( !x )
                 x = ((rand() + 1) << 16) + rand() + 1;
             x ^= x << 13;

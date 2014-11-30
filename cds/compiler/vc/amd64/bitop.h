@@ -30,7 +30,7 @@ namespace cds {
 
         // MSB - return index (1..32) of most significant bit in nArg. If nArg == 0 return 0
 #        define cds_bitop_msb32_DEFINED
-        static inline int msb32( atomic32u_t nArg )
+        static inline int msb32( uint32_t nArg )
         {
             unsigned long nIndex;
             if ( _BitScanReverse( &nIndex, nArg ))
@@ -39,7 +39,7 @@ namespace cds {
         }
 
 #        define cds_bitop_msb32nz_DEFINED
-        static inline int msb32nz( atomic32u_t nArg )
+        static inline int msb32nz( uint32_t nArg )
         {
             assert( nArg != 0 );
             unsigned long nIndex;
@@ -49,7 +49,7 @@ namespace cds {
 
         // LSB - return index (1..32) of least significant bit in nArg. If nArg == 0 return -1U
 #        define cds_bitop_lsb32_DEFINED
-        static inline int lsb32( atomic32u_t nArg )
+        static inline int lsb32( uint32_t nArg )
         {
             unsigned long nIndex;
             if ( _BitScanForward( &nIndex, nArg ))
@@ -58,7 +58,7 @@ namespace cds {
         }
 
 #        define cds_bitop_lsb32nz_DEFINED
-        static inline int lsb32nz( atomic32u_t nArg )
+        static inline int lsb32nz( uint32_t nArg )
         {
             assert( nArg != 0 );
             unsigned long nIndex;
@@ -104,7 +104,7 @@ namespace cds {
         }
 
 #       define cds_bitop_complement32_DEFINED
-        static inline bool complement32( atomic32u_t * pArg, unsigned int nBit )
+        static inline bool complement32( uint32_t * pArg, unsigned int nBit )
         {
             return _bittestandcomplement( reinterpret_cast<long *>( pArg ), nBit ) != 0;
         }

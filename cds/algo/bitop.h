@@ -27,7 +27,7 @@ namespace cds {
 
             // 32-bit bit ops
             template <> struct BitOps<4> {
-                typedef atomic32u_t        TUInt;
+                typedef uint32_t        TUInt;
 
                 static int      MSB( TUInt x )      { return bitop::platform::msb32( x );   }
                 static int      LSB( TUInt x )      { return bitop::platform::lsb32( x );   }

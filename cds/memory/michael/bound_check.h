@@ -31,7 +31,7 @@ namespace cds { namespace memory { namespace michael {
                 memcpy( pArea + nAllocSize, &trailer, sizeof(trailer) );
 
                 // the next assignment is correct because pBlock is at least sizeof(size_t)-byte aligned
-                assert( (reinterpret_cast<uptr_atomic_t>(pEndBlock) & (sizeof(size_t) - 1)) == 0 );
+                assert( (reinterpret_cast<uintptr_t>(pEndBlock) & (sizeof(size_t) - 1)) == 0 );
                 *(reinterpret_cast<size_t *>( pEndBlock ) - 1) = nAllocSize;
             }
 

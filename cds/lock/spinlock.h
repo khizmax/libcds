@@ -346,14 +346,14 @@ namespace cds {
             }
         };
 
-        /// Recursive spin-lock based on atomic32u_t
-        typedef ReentrantSpinT<uint32_t, backoff::LockDefault>   ReentrantSpin32;
+        /// Recursive 32bit spin-lock
+        typedef ReentrantSpinT<uint32_t, backoff::LockDefault> ReentrantSpin32;
 
-        /// Recursive spin-lock based on atomic64u_t type
-        typedef ReentrantSpinT<uint64_t, backoff::LockDefault>   ReentrantSpin64;
+        /// Recursive 64bit spin-lock
+        typedef ReentrantSpinT<uint64_t, backoff::LockDefault> ReentrantSpin64;
 
-        /// Recursive spin-lock based on atomic32_t type
-        typedef ReentrantSpin32                                     ReentrantSpin;
+        /// Default recursive spin-lock type
+        typedef ReentrantSpin32 ReentrantSpin;
 
     }    // namespace lock
 

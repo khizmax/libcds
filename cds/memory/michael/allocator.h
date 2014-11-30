@@ -830,12 +830,12 @@ namespace michael {
 
             union {
                 superblock_desc *   pDesc       ;   // pointer to superblock descriptor
-                atomic32u_t         nSize       ;   // block size (allocated form OS)
+                uint32_t         nSize       ;   // block size (allocated form OS)
             };
-            atomic32u_t         nFlags;
+            uint32_t         nFlags;
 
         public:
-            void  set( superblock_desc * pdesc, atomic32u_t isAligned )
+            void  set( superblock_desc * pdesc, uint32_t isAligned )
             {
                 pDesc = pdesc;
                 nFlags = isAligned ? bitAligned : 0;
@@ -889,7 +889,7 @@ namespace michael {
             // allocated from OS
             marked_desc_ptr     pDesc;
         public:
-            void  set( superblock_desc * pdesc, atomic32u_t isAligned )
+            void  set( superblock_desc * pdesc, uint32_t isAligned )
             {
                 pDesc = marked_desc_ptr( pdesc, isAligned );
             }
@@ -924,7 +924,7 @@ namespace michael {
             size_t getOSAllocSize() const
             {
                 assert( isOSAllocated() );
-                return reinterpret_cast<uptr_atomic_t>( pDesc.ptr() ) >> 2;
+                return reinterpret_cast<uintptr_t>( pDesc.ptr() ) >> 2;
             }
 
         };
@@ -957,7 +957,7 @@ namespace michael {
         class active_tag {
         //@cond
             superblock_desc *       pDesc;
-            atomic32u_t             nCredits;
+            uint32_t             nCredits;
 
         public:
             static const unsigned int c_nMaxCredits = 0 - 1;
@@ -1041,7 +1041,7 @@ namespace michael {
 
             void ptr( superblock_desc * p )
             {
-                assert( (reinterpret_cast<uptr_atomic_t>(p) & c_nMaxCredits) == 0 );
+                assert( (reinterpret_cast<uintptr_t>(p) & c_nMaxCredits) == 0 );
                 pDesc = marked_desc_ptr( p, pDesc.bits());
             }
 
@@ -1063,7 +1063,7 @@ namespace michael {
 
             void set( superblock_desc * pSB, unsigned int n )
             {
-                assert( (reinterpret_cast<uptr_atomic_t>(pSB) & c_nMaxCredits) == 0 );
+                assert( (reinterpret_cast<uintptr_t>(pSB) & c_nMaxCredits) == 0 );
                 pDesc = marked_desc_ptr( pSB, n );
             }
 
@@ -1101,7 +1101,7 @@ namespace michael {
                 , pSizeClass( nullptr )
                 , pPartial( nullptr )
             {
-                assert( (reinterpret_cast<uptr_atomic_t>(this) & (c_nAlignment - 1)) == 0 );
+                assert( (reinterpret_cast<uintptr_t>(this) & (c_nAlignment - 1)) == 0 );
             }
             //@endcond
 
@@ -1459,8 +1459,8 @@ namespace michael {
             // initialize processor heaps
             pDesc->arrProcHeap =
                 reinterpret_cast<processor_heap *>(
-                    reinterpret_cast<uptr_atomic_t>(reinterpret_cast<byte *>(pDesc + 1) + sizeof(pDesc->pageHeaps[0]) * nPageHeapCount + c_nAlignment - 1)
-                    & ~(uptr_atomic_t(c_nAlignment) - 1)
+                    reinterpret_cast<uintptr_t>(reinterpret_cast<byte *>(pDesc + 1) + sizeof(pDesc->pageHeaps[0]) * nPageHeapCount + c_nAlignment - 1)
+                    & ~(uintptr_t(c_nAlignment) - 1)
                 );
 
             processor_heap * pProcHeap = pDesc->arrProcHeap;
@@ -1552,7 +1552,7 @@ namespace michael {
             superblock_desc * pDesc = pProcHeap->pProcDesc->listSBDescFree.pop();
             if ( pDesc == nullptr ) {
                 pDesc = new( m_AlignedHeap.alloc(sizeof(superblock_desc), c_nAlignment ) ) superblock_desc;
-                assert( (uptr_atomic_t(pDesc) & (c_nAlignment - 1)) == 0 );
+                assert( (uintptr_t(pDesc) & (c_nAlignment - 1)) == 0 );
 
                 anchor = pDesc->anchor.load( atomics::memory_order_relaxed );
                 anchor.tag = 0;
@@ -1830,19 +1830,19 @@ namespace michael {
         {
             if ( nAlignment <= c_nDefaultBlockAlignment ) {
                 void * p = alloc( nSize );
-                assert( (reinterpret_cast<uptr_atomic_t>(p) & (nAlignment - 1)) == 0 );
+                assert( (reinterpret_cast<uintptr_t>(p) & (nAlignment - 1)) == 0 );
                 return p;
             }
 
             block_header * pBlock = int_alloc( nSize + nAlignment + sizeof(block_header) + bound_checker::trailer_size );
 
             block_header * pRedirect;
-            if ( (reinterpret_cast<uptr_atomic_t>( pBlock + 1) & (nAlignment - 1)) != 0 ) {
-                pRedirect = reinterpret_cast<block_header *>( (reinterpret_cast<uptr_atomic_t>( pBlock ) & ~(nAlignment - 1)) + nAlignment ) - 1;
+            if ( (reinterpret_cast<uintptr_t>( pBlock + 1) & (nAlignment - 1)) != 0 ) {
+                pRedirect = reinterpret_cast<block_header *>( (reinterpret_cast<uintptr_t>( pBlock ) & ~(nAlignment - 1)) + nAlignment ) - 1;
                 assert( pRedirect != pBlock );
                 pRedirect->set( reinterpret_cast<superblock_desc *>(pBlock), 1 );
 
-                assert( (reinterpret_cast<uptr_atomic_t>(pRedirect + 1) & (nAlignment - 1)) == 0 );
+                assert( (reinterpret_cast<uintptr_t>(pRedirect + 1) & (nAlignment - 1)) == 0 );
             }
             else
                 pRedirect = pBlock;

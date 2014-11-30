@@ -10,7 +10,7 @@ class bitop_ST : public CppUnitMini::TestCase
 protected:
     void bitop32()
     {
-        cds::atomic32u_t    n;
+        uint32_t    n;
         n = 0;
         CPPUNIT_ASSERT_EX( cds::bitop::MSB(n) == 0, "n=" << n );
         CPPUNIT_ASSERT_EX( cds::bitop::LSB(n) == 0, "n=" << n );

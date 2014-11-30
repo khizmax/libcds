@@ -86,7 +86,7 @@ namespace memory {
                             memset( ((char *)(*pCell)) + nSize * sizeof(value_type) - 16, 0, 16 );
                         }
 
-                        CPPUNIT_ASSERT( (reinterpret_cast<cds::uptr_atomic_t>(*pCell) & (ALLOC::alignment - 1)) == 0 );
+                        CPPUNIT_ASSERT( (reinterpret_cast<uintptr_t>(*pCell) & (ALLOC::alignment - 1)) == 0 );
                     }
                     pCell = m_arr;
                     for ( size_t i = 0; i < s_nBlockCount; ++i, ++pCell ) {

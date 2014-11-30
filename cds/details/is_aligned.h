@@ -16,7 +16,7 @@ namespace cds { namespace details {
     template <int ALIGN, typename T>
     static inline bool is_aligned(T const * p)
     {
-        return (((uptr_atomic_t)p) & uptr_atomic_t(ALIGN - 1)) == 0;
+        return (((uintptr_t)p) & uintptr_t(ALIGN - 1)) == 0;
     }
 
     /// Checks if the pointer \p p has \p nAlign byte alignment
@@ -28,7 +28,7 @@ namespace cds { namespace details {
     template <typename T>
     static inline bool is_aligned(T const * p, size_t nAlign)
     {
-        return (((uptr_atomic_t)p) & uptr_atomic_t(nAlign - 1)) == 0;
+        return (((uintptr_t)p) & uintptr_t(nAlign - 1)) == 0;
     }
 
 }} // namespace cds::details
