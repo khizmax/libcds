@@ -427,26 +427,4 @@ namespace cds {
 
 } // namespace cds
 
-
-//@cond
-#ifdef _DEBUG
-#   define cds_assert(X)    assert(X)
-#else
-#   include <stdio.h>   // snprintf
-    static inline void cds_assert_( bool bCond, char const * pszMsg, char const * pszFile, int nLine )
-    {
-        if ( !bCond ) {
-            char buf[4096];
-#   if CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CS_OSI_WINDOWS)
-            _snprintf_s( buf, sizeof(buf)/sizeof(buf[0]), _TRUNCATE, pszMsg, pszFile, nLine );
-#   else
-            snprintf( buf, sizeof(buf)/sizeof(buf[0]), pszMsg, pszFile, nLine );
-#   endif
-            throw cds::Exception( buf );
-        }
-    }
-#   define cds_assert(X)    cds_assert_( X, "%s (%d): Assert failed: " #X, __FILE__, __LINE__ );
-#endif
-//@endcond
-
 #endif // #ifndef __CDS_DEFS_H
