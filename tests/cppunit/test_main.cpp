@@ -81,6 +81,7 @@ namespace CppUnitMini
   bool TestCase::m_bPrintGCState = false;
   std::string TestCase::m_strTestDataDir(".");
   Config TestCase::m_Cfg;
+  bool TestCase::m_bExactMatch = false;
 
   TestCase * TestCase::m_pCurTestCase = nullptr;
 
@@ -113,6 +114,35 @@ namespace CppUnitMini
 
     return m_numErrors;
   }
+
+  bool TestCase::shouldRunThis(const char *in_desiredTest, const char *in_className, const char *in_functionName,
+                       bool invert, bool explicit_test, bool &do_progress) 
+  {
+      if ((in_desiredTest) && (in_desiredTest[0] != '\0')) {
+        do_progress = false;
+        const char *ptr = strstr(in_desiredTest, "::");
+        if (ptr) {
+            bool match;
+            if ( m_bExactMatch ) {
+                match = (strncmp( in_desiredTest, in_className, strlen( in_className )) == 0 && in_desiredTest[strlen( in_className )] == ':')
+                     && (strcmp( ptr + 2, in_functionName ) == 0);
+            }
+            else {
+                match = (strncmp( in_desiredTest, in_className, strlen( in_className )) == 0 && in_desiredTest[strlen( in_className )] == ':')
+                     && (strncmp( ptr + 2, in_functionName, strlen( ptr + 2 ) ) == 0);
+            }
+            // Invert shall not make explicit test run:
+            return invert ? (match ? !match : !explicit_test)
+                          : match;
+        }
+        bool match = (strcmp(in_desiredTest, in_className) == 0);
+        do_progress = match;
+        return !explicit_test && (match == !invert);
+      }
+      do_progress = true;
+      return !explicit_test;
+  }
+
 
   void TestCase::print_gc_state()
   {
@@ -222,11 +252,12 @@ namespace CppUnitMini
 static void usage(const char* name)
 {
   printf("Usage : %s [-t=<class>[::<test>]] [-x=<class>[::<test>]] [-f=<file>] [-m]\n", name);
-  printf("\t[-t=<class>[::<test>]] : test class or class::test to execute;\n");
-  printf("\t[-x=<class>[::<test>]] : test class or class::test to exclude from execution;\n");
-  printf("\t[-d=dir] : test data directory (default is .);\n");
-  printf("\t[-f=<file>] : output file");
+  printf("\t[-t=<class>[::<test>]] : test class or class::test to execute\n");
+  printf("\t[-x=<class>[::<test>]] : test class or class::test to exclude from execution\n");
+  printf("\t[-d=dir] : test data directory (default is .)\n");
+  printf( "\t[-f=<file>] : output file\n" );
   //printf(";\n\t[-m] : monitor test execution, display time duration for each test\n");
+  printf( "\t[-exact-match] : class::test should be exactly matched to existing test\n" );
   printf("\t[-gc_state] : print gc state after each test\n");
   printf("\t[-cfg=<file>] : config file name for tests\n");
 }
@@ -263,31 +294,35 @@ int main(int argc, char** argv)
 
   for (int i = 1; i < argc; ++i) {
     if (argv[i][0] == '-') {
-      if (!strncmp(argv[i], "-t=", 3)) {
+      if ( strncmp(argv[i], "-t=", 3) == 0 ) {
         testName = argv[i]+3;
         continue;
       }
-      else if (!strncmp(argv[i], "-f=", 3)) {
+      else if ( strncmp(argv[i], "-f=", 3) == 0 ) {
         fileName = argv[i]+3;
         continue;
       }
-      else if (!strncmp(argv[i], "-x=", 3)) {
+      else if ( strncmp(argv[i], "-x=", 3) == 0 ) {
         xtestName = argv[i]+3;
         continue;
       }
-      else if (!strncmp(argv[i], "-d=", 3)) {
+      else if ( strncmp(argv[i], "-d=", 3) == 0 ) {
           testDataDir = argv[i] + 3;
           continue;
       }
-      else if ( !strncmp(argv[i], "-m", 2)) {
-        doMonitoring = true;
-        continue;
+      else if ( strncmp( argv[i], "-m", 2 ) == 0 ) {
+          doMonitoring = true;
+          continue;
       }
-      else if (!strncmp(argv[i], "-gc_state", 9)) {
+      else if ( strncmp( argv[i], "-exact-match", 12 ) == 0 ) {
+          CppUnitMini::TestCase::m_bExactMatch = true;
+          continue;
+      }
+      else if ( strncmp(argv[i], "-gc_state", 9) == 0 ) {
           CppUnitMini::TestCase::m_bPrintGCState = true;
           continue;
       }
-      else if( !strncmp(argv[i], "-cfg=", 5)) {
+      else if( strncmp(argv[i], "-cfg=", 5) == 0 ) {
           cfgFileName = argv[i] + 5;
           continue;
       }

@@ -176,25 +176,8 @@ namespace CppUnitMini
       }
     }
 
-    bool shouldRunThis(const char *in_desiredTest, const char *in_className, const char *in_functionName,
-                       bool invert, bool explicit_test, bool &do_progress) {
-      if ((in_desiredTest) && (in_desiredTest[0] != '\0')) {
-        do_progress = false;
-        const char *ptr = strstr(in_desiredTest, "::");
-        if (ptr) {
-            bool match = (strncmp(in_desiredTest, in_className, strlen(in_className)) == 0 && in_desiredTest[strlen(in_className)] == ':' )
-                      && (strncmp(ptr + 2, in_functionName, strlen(ptr + 2)) == 0);
-          // Invert shall not make explicit test run:
-          return invert ? (match ? !match : !explicit_test)
-                        : match;
-        }
-        bool match = (strcmp(in_desiredTest, in_className) == 0);
-        do_progress = match;
-        return !explicit_test && (match == !invert);
-      }
-      do_progress = true;
-      return !explicit_test;
-    }
+    bool shouldRunThis( const char *in_desiredTest, const char *in_className, const char *in_functionName,
+                        bool invert, bool explicit_test, bool &do_progress );
 
     void tearDown() {
       print_gc_state();
@@ -213,7 +196,8 @@ namespace CppUnitMini
   public:
       static bool m_bPrintGCState   ;   // print GC state after each test
       static Config m_Cfg;
-      static std::string    m_strTestDataDir;
+      static std::string m_strTestDataDir;
+      static bool m_bExactMatch;
 
   protected:
     static int m_numErrors;
