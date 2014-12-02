@@ -14,7 +14,7 @@ The library contains the implementations of the following containers:
   - lock-free skip-list
   
 Generally, each container has an intrusive and non-intrusive (STL-like) version belonging to 
-cds::intrusive and cds::container namespace respectively.
+*cds::intrusive* and *cds::container* namespace respectively.
 
 Version 2.x of the library is written on C++11 and can be compiled by GCC 4.8+, clang 3.3+, Intel C++ 15+, 
 and MS VC++ 12 (2013) Update 4.
