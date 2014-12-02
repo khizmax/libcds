@@ -1,17 +1,18 @@
 CDS C++ library
 ===============
 
-The Concurrent Data Structures (CDS) library is a collection of concurrent data structures 
-that don't require external (manual) synchronization, and safe memory reclamation (SMR) 
-algorithms like Hazard Pointer and user-space RCU. CDS is mostly header-only template library. 
-Only SMR core implementation is segregated to .so (or .dll) file.
+The Concurrent Data Structures (CDS) library is a collection of concurrent containers
+that don't require external (manual) synchronization for shared access, and safe memory reclamation (SMR) 
+algorithms like [Hazard Pointer](http://en.wikipedia.org/wiki/Hazard_pointer) 
+and user-space [RCU](http://en.wikipedia.org/wiki/Read-copy-update). 
+CDS is mostly header-only template library. Only SMR core implementation is segregated to .so/.dll file.
 
 The library contains the implementations of the following containers:
-  - lock-free stack with optional elimination support
+  - [lock-free](http://en.wikipedia.org/wiki/Non-blocking_algorithm) stack with optional elimination support
   - several algo for lock-free queue, including classic Michael & Scott algorithm and it's derivatives,
     flat combining queue, segmented queue.
   - several implementation of unordered set/map - lock-free and fine-grained lock-based
-  - lock-free skip-list
+  - lock-free [skip-list](http://en.wikipedia.org/wiki/Skip_list)
   
 Generally, each container has an intrusive and non-intrusive (STL-like) version belonging to 
 *cds::intrusive* and *cds::container* namespace respectively.
