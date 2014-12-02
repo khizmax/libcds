@@ -23,11 +23,11 @@ Download the latest release from http://sourceforge.net/projects/libcds/files/.
 
 References
 ----------
-#### Stack
-    - TreiberStack: [1986] R. K. Treiber. Systems programming: Coping with parallelism. Technical Report RJ 5118, IBM Almaden Research Center, April 1986.
-    - Elimination back-off implementation is based on idea from [2004] Danny Hendler, Nir Shavit, Lena Yerushalmi "A Scalable Lock-free Stack Algorithm"
+Stack
+  - TreiberStack: [1986] R. K. Treiber. Systems programming: Coping with parallelism. Technical Report RJ 5118, IBM Almaden Research Center, April 1986.
+  - Elimination back-off implementation is based on idea from [2004] Danny Hendler, Nir Shavit, Lena Yerushalmi "A Scalable Lock-free Stack Algorithm"
         
-#### Queue
+Queue
     - BasketQueue: [2007] Moshe Hoffman, Ori Shalev, Nir Shavit "The Baskets Queue"
     - MSQueue:
         * [1998] Maged Michael, Michael Scott "Simple, fast, and practical non-blocking and blocking concurrent queue algorithms"
@@ -40,27 +40,27 @@ References
     - TsigasCycleQueue: [2000] Philippas Tsigas, Yi Zhang "A Simple, Fast and Scalable Non-Blocking Concurrent FIFO Queue for Shared Memory Multiprocessor Systems"
     - VyukovMPMCCycleQueue Dmitry Vyukov (see http://www.1024cores.net)
 
-#### Deque
+Deque
     - MichaelDeque: [2003] Maged Michael "CAS-based Lock-free Algorithm for Shared Deque"
 
-#### Map, set
+Map, set
     - MichaelHashMap: [2002] Maged Michael "High performance dynamic lock-free hash tables and list-based sets"
     - SplitOrderedList: [2003] Ori Shalev, Nir Shavit "Split-Ordered Lists - Lock-free Resizable Hash Tables"
     - StripedMap, StripedSet: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
     - CuckooMap, CuckooSet: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
     - SkipListMap, SkipListSet: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
         
-#### Ordered single-linked list
+Ordered single-linked list
     - LazyList: [2005] Steve Heller, Maurice Herlihy, Victor Luchangco, Mark Moir, William N. Scherer III, and Nir Shavit "A Lazy Concurrent List-Based Set Algorithm"
     - MichaelList: [2002] Maged Michael "High performance dynamic lock-free hash tables and list-based sets"
 
-#### Priority queue
+Priority queue
     - MSPriorityQueue: [1996] G.Hunt, M.Michael, S. Parthasarathy, M.Scott "An efficient algorithm for concurrent priority queue heaps"
 
-#### Tree
+Tree
     - EllenBinTree: [2010] F.Ellen, P.Fatourou, E.Ruppert, F.van Breugel "Non-blocking Binary Search Tree"
 
-#### Garbage collection
+Garbage collection
     - Hazard Pointers
         * [2002] Maged M.Michael "Safe memory reclamation for dynamic lock-freeobjects using atomic reads and writes"
         * [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects"
@@ -71,8 +71,8 @@ References
         * [2011] M.Desnoyers, P.McKenney, A.Stern, M.Dagenias, J.Walpole "User-Level
                  Implementations of Read-Copy Update"
 
-#### Memory allocation 
+Memory allocation 
     - [2004] M.Michael "Scalable Lock-free Dynamic Memory Allocation"
 
-#### Flat Combining technique
+Flat Combining technique
     - [2010] Hendler, Incze, Shavit and Tzafrir "Flat Combining and the Synchronization-Parallelism Tradeoff"
