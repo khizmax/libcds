@@ -269,6 +269,21 @@ namespace cds { namespace gc {
                     return m_nItemCount.fetch_add( 1, atomics::memory_order_relaxed ) + 1;
                 }
 
+                /// Pushes [pFirst, pLast] list linked by pNext field.
+                size_t push_list( retired_ptr_node* pFirst, retired_ptr_node* pLast, size_t nSize )
+                {
+                    assert( pFirst );
+                    assert( pLast );
+
+                    retired_ptr_node * pHead = m_pHead.load( atomics::memory_order_acquire );
+                    do {
+                        pLast->m_pNext = pHead;
+                        // pHead is changed by compare_exchange_weak
+                    } while ( !m_pHead.compare_exchange_weak( pHead, pFirst, atomics::memory_order_release, atomics::memory_order_relaxed ) );
+
+                    return m_nItemCount.fetch_add( nSize, atomics::memory_order_relaxed ) + 1;
+                }
+
                 /// Result of \ref dhp_gc_privatve "privatize" function.
                 /**
                     The \p privatize function returns retired node list as \p first and the size of that list as \p second.
@@ -311,17 +326,17 @@ namespace cds { namespace gc {
 
                 /// Pool block
                 struct block {
-                    block *     pNext   ;   ///< next block
-                    item        items[m_nItemPerBlock]  ;   ///< item array
+                    block *     pNext;  ///< next block
+                    item        items[m_nItemPerBlock];   ///< item array
                 };
 
-                atomics::atomic<block *> m_pBlockListHead    ;   ///< head of of allocated block list
+                atomics::atomic<block *> m_pBlockListHead;   ///< head of of allocated block list
 
                 // To solve ABA problem we use epoch-based approach
-                static const unsigned int c_nEpochCount = 4     ;   ///< Max epoch count
-                atomics::atomic<unsigned int>    m_nCurEpoch ;   ///< Current epoch
-                atomics::atomic<item *>  m_pEpochFree[c_nEpochCount]  ;   ///< List of free item per epoch
-                atomics::atomic<item *>  m_pGlobalFreeHead   ;   ///< Head of unallocated item list
+                static const unsigned int c_nEpochCount = 4;    ///< Max epoch count
+                atomics::atomic<unsigned int> m_nCurEpoch;      ///< Current epoch
+                atomics::atomic<item *>  m_pEpochFree[c_nEpochCount];   ///< List of free item per epoch
+                atomics::atomic<item *>  m_pGlobalFreeHead;     ///< Head of unallocated item list
 
                 cds::details::Allocator< block, Alloc > m_BlockAllocator    ;   ///< block allocator
 
@@ -338,7 +353,7 @@ namespace cds { namespace gc {
                         CDS_STRICT_DO( pItem->m_pNext = nullptr );
                     }
 
-                    // link new block to block list
+                    // links new block to the block list
                     {
                         block * pHead = m_pBlockListHead.load(atomics::memory_order_acquire);
                         do {
@@ -347,7 +362,7 @@ namespace cds { namespace gc {
                         } while ( !m_pBlockListHead.compare_exchange_weak( pHead, pNew, atomics::memory_order_release, atomics::memory_order_relaxed ));
                     }
 
-                    // link block's items to free list
+                    // links block's items to the free list
                     {
                         item * pHead = m_pGlobalFreeHead.load(atomics::memory_order_acquire);
                         do {
@@ -394,7 +409,7 @@ namespace cds { namespace gc {
                     m_nCurEpoch.fetch_add( 1, atomics::memory_order_acq_rel );
                 }
 
-                /// Allocates new retired pointer
+                /// Allocates the new retired pointer
                 retired_ptr_node&  alloc()
                 {
                     unsigned int nEpoch;
@@ -432,7 +447,7 @@ namespace cds { namespace gc {
                     return node;
                 }
 
-                /// Places the list (pHead, pTail) of retired pointers to pool (frees retired pointers)
+                /// Places the list [pHead, pTail] of retired pointers to pool (frees retired pointers)
                 /**
                     The list is linked on the m_pNextFree field
                 */
