@@ -183,6 +183,11 @@ namespace cds { namespace gc { namespace dhp {
             }
 
             // Liberate cycle
+
+            details::retired_ptr_node * pBusyFirst = nullptr;
+            details::retired_ptr_node * pBusyLast = nullptr;
+            size_t nBusyCount = 0;
+
             for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire) )
             {
                 // get guarded pointer
@@ -195,14 +200,23 @@ namespace cds { namespace gc { namespace dhp {
                         // pRetired is the head of retired pointers list for which the m_ptr.m_p field is equal
                         // List is linked on m_pNextFree field
 
-                        do {
-                            details::retired_ptr_node * pNext = pRetired->m_pNextFree;
-                            m_RetiredBuffer.push( *pRetired );
-                            pRetired = pNext;
-                        } while ( pRetired );
+                        if ( pBusyLast )
+                            pBusyLast->m_pNext = pRetired;
+                        else
+                            pBusyFirst = pRetired;
+                        pBusyLast = pRetired;
+                        ++nBusyCount;
+                        while ( pBusyLast->m_pNextFree ) {
+                            pBusyLast = pBusyLast->m_pNext = pBusyLast->m_pNextFree;
+                            ++nBusyCount;
+                        }
                     }
                 }
             }
+
+            // Place [pBusyList, pBusyLast] back to m_RetiredBuffer
+            if ( pBusyFirst )
+                m_RetiredBuffer.push_list( pBusyFirst, pBusyLast, nBusyCount );
 
             // Free all retired pointers
             details::liberate_set::list_range range = set.free_all();

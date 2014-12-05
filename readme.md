@@ -9,8 +9,8 @@ CDS is mostly header-only template library. Only SMR core implementation is segr
 
 The library contains the implementations of the following containers:
   - [lock-free](http://en.wikipedia.org/wiki/Non-blocking_algorithm) stack with optional elimination support
-  - several algo for lock-free queue, including classic Michael & Scott algorithm and it's derivatives,
-    flat combining queue, segmented queue.
+  - several algo for lock-free queue, including classic Michael & Scott algorithm and its derivatives,
+    the flat combining queue, the segmented queue.
   - several implementation of unordered set/map - lock-free and fine-grained lock-based
   - lock-free [skip-list](http://en.wikipedia.org/wiki/Skip_list)
   
