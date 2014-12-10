@@ -20,7 +20,7 @@
         <tr>
             <td>Implementation quality</td>
             <td>stable</td>
-            <td>stable</td>
+            <td>mostly stable</td>
         </tr>
         <tr>
             <td>Performance rank (1 - slowest, 5 - fastest)</td>

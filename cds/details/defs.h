@@ -17,112 +17,59 @@
 
    This library is a collection of lock-free and lock-based fine-grained algorithms of data structures
    like maps, queues, list etc. The library contains implementation of well-known data structures
-   and memory reclamation schemas for modern processor architectures.
+   and memory reclamation schemas for modern processor architectures. The library is written on C++11.
 
+   The main namespace for the library is \ref cds.
+   To see the full list of container's class go to <a href="modules.html">modules</a> tab.
+   
    Supported processor architectures and operating systems (OS) are:
       - x86 [32bit] Linux, Windows, FreeBSD, MinGW
       - amd64 (x86-64) [64bit] Linux, Windows, FreeBSD, MinGW
       - ia64 (itanium) [64bit] Linux, HP-UX 11.23, HP-UX 11.31
       - sparc [64bit] Sun Solaris
       - Mac OS X amd64
+      - ppc64 Linux
 
    Supported compilers:
-      - GCC 4.3+ - for the UNIX-like OSes
-      - Clang 3.0+ - for Linux
-      - MS Visual C++ 2008 and above - for MS Windows
+      - GCC 4.8+
+      - Clang 3.3+ 
+      - MS Visual C++ 2013 Update 4 and above
+      - Intel C++ Compiler 15
 
    For each lock-free data structure the \p CDS library presents several implementation based on published papers. For
    example, there are several implementations of queue, each of them is divided by memory reclamation
    schema used. However, any implementation supports common interface for the type of data structure.
 
-   To implement any lock-free data structure, two things are needed:
-   - atomic operation library conforming with C++11 memory model. The <b>libcds</b> has such feature, see cds::cxx11_atomic namespace for
-     details and compiler-specific information.
-   - safe memory reclamation (SMR) or garbage collecting (GC) algorithm. The <b>libcds</b> has an implementation of several
-     well-known SMR algos, see below.
-
-   The main part of lock-free data structs is garbage collecting. The garbage collector (GC) solves the problem of safe
-   memory reclamation that is one of the main problems for lock-free programming.
+   To use any lock-free data structure, the following are needed:
+   - atomic operation library conforming with C++11 memory model. 
+      The <b>libcds</b> can be built with \p std::atomic, \p boost::atomic or its own 
+      @ref cds_cxx11_atomic "atomic implementation"
+   - safe memory reclamation (SMR) or garbage collecting (GC) algorithm.  
+   
+   SMR is the main part of lock-free data structs. The SMR solves the problem of safe
+   memory reclamation that is one of the main problem for lock-free programming.
    The library contains the implementations of several light-weight \ref cds_garbage_collector "memory reclamation schemes":
-   - M.Michael's Hazard Pointer - \p see cds::gc::HP, \p cds::gc::DHP for more explanation
-   - User-space Read-Copy Update (RCU) - see cds::urcu namespace
-   - there is cds::gc::nogc "GC" for containers that do not support item reclamation.
+   - M.Michael's Hazard Pointer - see \p cds::gc::HP, \p cds::gc::DHP for more explanation
+   - User-space Read-Copy Update (RCU) - see \p cds::urcu namespace
+   - there is an empty \p cds::gc::nogc "GC" for append-only containers that do not support item reclamation.
 
    Many GC requires a support from the thread. The library does not define the threading model you must use,
-   it is developed to support various ones; about incorporating <b>cds</b> library to your threading model see cds::threading.
-
-   The main namespace for the library is \ref cds.
-   To see the full list of container's class go to <a href="modules.html">modules</a> tab.
-
-   \par How to build
-
-   The <b>cds</b> is mostly header-only library. Only small part of library related to GC core functionality
-   must be compiled. The test projects depends on the following static library from \p boost:
-   - <tt>boost_thread</tt>
-   - <tt>boost_date_time</tt>
-
-   \par Windows build
-
-   Prerequisites: for building <b>cds</b> library and test suite you need:
-    - <a href="http://www.activestate.com/activeperl/downloads">perl</a> installed; \p PATH environment variable
-        should contain full path to Perl binary. Perl is used to generate large dictionary for testing purpose;
-    - <a href="http://www.boost.org/">boost library</a> 1.51 and above. You should create environment variable
-        \p BOOST_PATH containing full path to \p boost root directory (for example, <tt>C:\\libs\\boost_1_47_0</tt>).
-
-   Open solution file <tt>cds\projects\vcX\cds.sln</tt> where vcX - version of
-   Microsoft Visual C++ you use: vc9 for MS VC 2008, vc10 for MS VC 2010 and so on. The solution
-   contains <tt>cds</tt> project and several test projects. Just build the library using solution.
-
-   <b>Warning</b>: the solution depends on \p BOOST_PATH environment variable that specifies full path
-   to \p boost library root directory. The test projects search \p boost libraries in:
-   - for 32bit: \$(BOOST_PATH)/stage/lib, \$(BOOST_PATH)/stage32/lib, and \$(BOOST_PATH)/bin.
-   - for 64bit: \$(BOOST_PATH)/stage64/lib and \$(BOOST_PATH)/bin.
-
-   \par *NIX build
-
-   For Unix-like systems GCC and Clang compilers are supported.
-   Use GCC 4.3 (or above) compiler or Clang 3.0 or above to build <b>cds</b> library. The distributive contains
-   makefile and <tt>build.sh</tt> script in <tt>build</tt> directory.
-   The <tt>build/sample</tt> directory contains sample scripts for different operating systems and
-   processor architectures.
-   The <tt>build.sh</tt> script supports the following options:
-   - <tt>-c toolset</tt> - Toolset name, possible values: <tt>gcc</tt> (default), <tt>clang</tt>
-   - <tt>-x compiler</tt> - C++ compiler name (e.g. g++, g++-4.5 and so on)
-   - <tt>-p arch</tt> - processor architecture; possible values for arch are: x86, amd64 (x86_64), sparc, ia64
-   - <tt>-o OStype</tt> - OS family; possible values for OStype are: linux, sunos (solaris), hpux
-   - <tt>-D define</tt> additional defines
-   - <tt>-b bits</tt> - bits to build, accepts '64', '32'
-   - <tt>-l "options"</tt> - extra linker options (in quotes)
-   - <tt>-z "options"</tt> - extra compiler options (in quotes)
-   - <tt>--with-boost path</tt> - path to boost include
-   - <tt>--debug-cxx-options "options"</tt> - extra compiler options for debug target
-   - <tt>--debug-ld-options "options"</tt> - extra linker options for debug target
-   - <tt>--release-cxx-options "options"</tt> - extra compiler options for release target
-   - <tt>--release-ld-options "optons"</tt> - extra linker options for release target
-   - <tt>--clean</tt> - clean all before building
-   - <tt>--debug-test</tt> - make unit test in debug mode; by defalt release unit test generated
-   - <tt>--amd64-use-128bit</tt> - compile with supporting 128bit (16byte) CAS on amd64 (for am64 only)
-
-    <b>Important for GCC compiler</b>: all your projects that use <b>libcds</b> must be compiled with <b>-fno-strict-aliasing</b>
-    compiler flag. Also, the compiler option <tt>-std=c++0x</tt> is very useful.
+   it is developed to support various ones; about incorporating <b>cds</b> library to your threading model see \p cds::threading.
 
    \anchor cds_how_to_use
    \par How to use
 
-   To use \p cds lock-free containers based on garbage collectors (GC) provided by library
-   your application must be linked with \p libcds.
-
-   The main part of lock-free programming is garbage collecting for safe memory reclamation.
-   The library provides several types of GC schemes. One of widely used and well-tested one is Hazard Pointer
-   memory reclamation schema discovered by M. Micheal and implemented in the library as cds::gc::HP class.
+   The main part of lock-free programming is SMR, so-called garbage collector,  for safe memory reclamation.
+   The library provides several types of SMR schemes. One of widely used and well-tested is Hazard Pointer
+   memory reclamation schema discovered by M. Micheal and implemented in the library as \p cds::gc::HP class.
    Usually, the application is based on only one type of GC.
 
-   In the next example we mean that your application uses Hazard Pointer (cds::gc::HP) - based containers.
+   In the next example we mean that you use Hazard Pointer \p cds::gc::HP - based containers.
 
-    First, in your code you should initialize \p cds library and a garbage collector in \p main function:
+    First, in your code you should initialize \p cds library and Hazard Pointer in \p main() function:
     \code
     #include <cds/init.h>       // for cds::Initialize and cds::Terminate
-    #include <cds/gc/hp.h>      // for cds::HP (Hazard Pointer) garbage collector
+    #include <cds/gc/hp.h>      // for cds::HP (Hazard Pointer) SMR
 
     int main(int argc, char** argv)
     {
@@ -182,6 +129,61 @@
         ...
     }
     \endcode
+
+   
+   \par How to build
+
+   The <b>cds</b> is mostly header-only library. Only small part of library related to GC core functionality
+   should be compiled. 
+   
+   The test projects depends on the following static library from \p boost:
+   - \p boost.thread
+   - \p boost.date_time
+
+   \par Windows build
+
+   Prerequisites: for building <b>cds</b> library and test suite you need:
+    - <a href="http://www.activestate.com/activeperl/downloads">perl</a> installed; \p PATH environment variable
+        should contain full path to Perl binary. Perl is used to generate large dictionary for testing purpose;
+    - <a href="http://www.boost.org/">boost library</a> 1.51 and above. You should create environment variable
+        \p BOOST_PATH containing full path to \p boost root directory (for example, <tt>C:\\libs\\boost_1_57_0</tt>).
+
+   Open solution file <tt>cds\projects\vcX\cds.sln</tt> where \p vcX is the version of
+   Microsoft Visual C++ you use: vc12 for MS VC 2013 Update 4, vc14 for MS VC 2015. The solution
+   contains \p cds project and a lot of test projects. Just build the library using solution.
+
+   <b>Warning</b>: the solution depends on \p BOOST_PATH environment variable that specifies full path
+   to \p boost library root directory. The test projects search \p boost libraries in:
+   - for 32bit: <tt>\$(BOOST_PATH)/stage/lib</tt>, <tt>\$(BOOST_PATH)/stage32/lib</tt>, and <tt>\$(BOOST_PATH)/bin</tt>.
+   - for 64bit: <tt>\$(BOOST_PATH)/stage64/lib</tt> and <tt>\$(BOOST_PATH)/bin</tt>.
+
+   \par *NIX build
+
+   For Unix-like systems GCC and Clang compilers are supported.
+   Use GCC 4.8+ compiler or Clang 3.3+ to build <b>cds</b> library. The distributive contains
+   makefile and <tt>build.sh</tt> script in <tt>build</tt> directory.
+   The <tt>build/sample</tt> directory contains sample scripts for different operating systems and
+   processor architectures.
+   The <tt>build.sh</tt> script supports the following options:
+   - <tt>-c toolset</tt> - Toolset name, possible values: <tt>gcc</tt> (default), <tt>clang</tt>, <tt>icc</tt>
+   - <tt>-x compiler</tt> - C++ compiler name (e.g. g++, g++-4.5 and so on)
+   - <tt>-p arch</tt> - processor architecture; possible values for arch are: x86, amd64 (x86_64), sparc, ia64, ppc64
+   - <tt>-o OStype</tt> - OS family; possible values for OStype are: linux, sunos (solaris), hpux, mingw
+   - <tt>-D define</tt> additional defines
+   - <tt>-b bits</tt> - bits to build, accepts 64, 32
+   - <tt>-l "options"</tt> - extra linker options (in quotes)
+   - <tt>-z "options"</tt> - extra compiler options (in quotes)
+   - <tt>--with-boost path</tt> - path to boost include
+   - <tt>--debug-cxx-options "options"</tt> - extra compiler options for debug target
+   - <tt>--debug-ld-options "options"</tt> - extra linker options for debug target
+   - <tt>--release-cxx-options "options"</tt> - extra compiler options for release target
+   - <tt>--release-ld-options "optons"</tt> - extra linker options for release target
+   - <tt>--clean</tt> - clean all before building
+   - <tt>--debug-test</tt> - make unit test in debug mode; by defalt release unit test generated
+   - <tt>--amd64-use-128bit</tt> - compile with supporting 128bit (16byte) CAS on amd64 (for am64 only)
+
+   @note Important for GCC compiler: all your projects that use \p libcds must be compiled with <b>-fno-strict-aliasing</b>
+   compiler flag.
 
 */
 

@@ -8,7 +8,7 @@
 namespace cds {
 
 /// C++11 Atomic library support
-/**
+/** @anchor cds_cxx11_atomic
     \p libcds can use the following implementations of the atomics:
     - STL \p &lt;atomic&gt;. This is used by default
     - \p boost.atomic for boost 1.54 and above. To use it you should define \p CDS_USE_BOOST_ATOMIC for
@@ -22,7 +22,7 @@ namespace cds {
       ia64 (Itanium) 64bit, 64bit Sparc. To use \p libcds atomic you should define \p CDS_USE_LIBCDS_ATOMIC
       in the compiler command line (\p -DCDS_USE_LIBCDS_ATOMIC for gcc/clang).
 
-      @note For Clang compiler \p libcds do not use compiler-provided \p &lt;atomic&gt; due some problems.
+      @note For Clang compiler \p libcds doesn't use native \p libc++ \p &lt;atomic&gt; due some problems.
       Instead, \p libcds atomic is used by default, or you can try to use \p boost.atomic.
 
       The library defines \p atomics alias for atomic namespace:
