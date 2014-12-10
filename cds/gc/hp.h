@@ -18,16 +18,6 @@
             <th>%cds::gc::DHP</th>
         </tr>
         <tr>
-            <td>Implementation quality</td>
-            <td>stable</td>
-            <td>mostly stable</td>
-        </tr>
-        <tr>
-            <td>Performance rank (1 - slowest, 5 - fastest)</td>
-            <td>5</td>
-            <td>4</td>
-        </tr>
-        <tr>
             <td>Max number of guarded (hazard) pointers per thread</td>
             <td>limited (specifies in GC object ctor)</td>
             <td>unlimited (dynamically allocated when needed)</td>
