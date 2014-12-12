@@ -12,6 +12,7 @@ The library contains the implementations of the following containers:
   - several algo for lock-free queue, including classic Michael & Scott algorithm and its derivatives,
     the flat combining queue, the segmented queue.
   - several implementation of unordered set/map - lock-free and fine-grained lock-based
+  - [flat-combining] (http://mcg.cs.tau.ac.il/projects/projects/flat-combining) technique
   - lock-free [skip-list](http://en.wikipedia.org/wiki/Skip_list)
   
 Generally, each container has an intrusive and non-intrusive (STL-like) version belonging to 
@@ -21,6 +22,8 @@ Version 2.x of the library is written on C++11 and can be compiled by GCC 4.8+, 
 and MS VC++ 12 (2013) Update 4.
 
 Download the latest release from http://sourceforge.net/projects/libcds/files/
+
+See online doxygen-generated doc here: http://libcds.sourceforge.net/doc/cds-api/index.html
 
 References
 ----------
