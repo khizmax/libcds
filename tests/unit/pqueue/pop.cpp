@@ -91,6 +91,7 @@ namespace pqueue {
         public:
             PQueue&             m_Queue;
             size_t              m_nPopError;
+            size_t              m_nPopErrorEq;
             size_t              m_nPopSuccess;
             size_t              m_nPopFailed;
 
@@ -124,6 +125,7 @@ namespace pqueue {
             virtual void test()
             {
                 m_nPopError = 0;
+                m_nPopErrorEq = 0;
                 m_nPopSuccess = 0;
                 m_nPopFailed = 0;
 
@@ -136,8 +138,10 @@ namespace pqueue {
                     while ( !m_Queue.empty() ) {
                         if ( m_Queue.pop( val )) {
                             ++m_nPopSuccess;
-                            if ( val.key >= nPrevKey )
+                            if ( val.key > nPrevKey )
                                 ++m_nPopError;
+                            else if ( val.key == nPrevKey )
+                                ++m_nPopErrorEq;
                             nPrevKey = val.key;
                         }
                         else
@@ -196,18 +200,23 @@ namespace pqueue {
                 // Analyze result
                 size_t nTotalPopped = 0;
                 size_t nTotalError = 0;
+                size_t nTotalErrorEq = 0;
                 size_t nTotalFailed = 0;
                 for ( CppUnitMini::ThreadPool::iterator it = pool.begin(); it != pool.end(); ++it ) {
                     Popper<PQueue> * pThread = static_cast<Popper<PQueue> *>(*it);
 
                     nTotalPopped += pThread->m_nPopSuccess;
                     nTotalError += pThread->m_nPopError;
+                    nTotalErrorEq += pThread->m_nPopErrorEq;
                     nTotalFailed += pThread->m_nPopFailed;
                 }
 
-                CPPUNIT_MSG( "   Total: popped=" << nTotalPopped << ", error=" << nTotalError << ", empty pop=" << nTotalFailed );
+                CPPUNIT_MSG( "   Total: popped=" << nTotalPopped << ", empty pop=" << nTotalFailed 
+                             << "\n  Errors: pop equal=" << nTotalErrorEq << ", priority violation=" << nTotalError
+                             );
                 CPPUNIT_CHECK( nTotalPopped == nThreadItemCount * s_nThreadCount );
                 CPPUNIT_CHECK( nTotalError == 0 );
+                CPPUNIT_CHECK( nTotalErrorEq == 0 );
             }
 
             CPPUNIT_MSG( testQueue.statistics() );
