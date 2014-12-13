@@ -123,17 +123,18 @@ namespace cds { namespace intrusive { namespace striped_set {
         private:
             //@cond
             container_type  m_List;
-#       ifdef __GLIBCXX__
+#       if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
             // GCC C++ lib bug:
             // In GCC (at least up to 4.7.x), the complexity of std::list::size() is O(N)
             // (see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=49561)
+            // Fixed in GCC 5
             size_t          m_nSize ;   // list size
 #       endif
             //@endcond
 
         public:
             adapted_container()
-#       ifdef __GLIBCXX__
+#       if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 : m_nSize(0)
 #       endif
             {}
@@ -147,7 +148,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     it = m_List.insert( it, value_type( key, mapped_type()) );
                     f( *it );
 
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                     ++m_nSize;
 #           endif
                     return true;
@@ -165,7 +166,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     //value_type newItem( key );
                     it = m_List.emplace( it, value_type( std::forward<K>(key), std::move( mapped_type( std::forward<Args>(args)...) )) );
 
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                     ++m_nSize;
 #           endif
                     return true;
@@ -182,7 +183,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     value_type newItem( key, mapped_type() );
                     it = m_List.insert( it, newItem );
                     func( true, *it );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                     ++m_nSize;
 #           endif
                     return std::make_pair( true, true );
@@ -204,7 +205,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // key exists
                 f( *it );
                 m_List.erase( it );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 --m_nSize;
 #           endif
 
@@ -221,7 +222,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // key exists
                 f( *it );
                 m_List.erase( it );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 --m_nSize;
 #           endif
 
@@ -268,14 +269,14 @@ namespace cds { namespace intrusive { namespace striped_set {
                 assert( it == m_List.end() || key_comparator()( itWhat->first, it->first ) != 0 );
 
                 copy_item()( m_List, it, itWhat );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 ++m_nSize;
 #           endif
             }
 
             size_t size() const
             {
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 return m_nSize;
 #           else
                 return m_List.size();

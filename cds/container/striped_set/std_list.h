@@ -117,17 +117,18 @@ namespace cds { namespace intrusive { namespace striped_set {
         private:
             //@cond
             container_type  m_List;
-#       ifdef __GLIBCXX__
+#       if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
             // GCC C++ lib bug:
-            // In GCC (at least up to 4.7.x), the complexity of std::list::size() is O(N)
+            // In GCC, the complexity of std::list::size() is O(N)
             // (see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=49561)
+            // Fixed in GCC 5
             size_t          m_nSize ;   // list size
 #       endif
             //@endcond
 
         public:
             adapted_container()
-#       ifdef __GLIBCXX__
+#       if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 : m_nSize(0)
 #       endif
             {}
@@ -141,7 +142,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     it = m_List.insert( it, newItem );
                     f( *it );
 
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                     ++m_nSize;
 #           endif
                     return true;
@@ -154,17 +155,17 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename... Args>
             bool emplace( Args&&... args )
             {
-#if CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC12
-                // MS VC++ 2013: internal compiler error
-                // Use assignment workaround, see http://connect.microsoft.com/VisualStudio/feedback/details/804941/visual-studio-2013-rc-c-internal-compiler-error-with-std-forward
-                value_type val = value_type( std::forward<Args>(args)... );
-#else
+//#if CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC12
+//                // MS VC++ 2013: internal compiler error
+//                // Use assignment workaround, see http://connect.microsoft.com/VisualStudio/feedback/details/804941/visual-studio-2013-rc-c-internal-compiler-error-with-std-forward
+//                value_type val = value_type( std::forward<Args>(args)... );
+//#else
                 value_type val(std::forward<Args>(args)...);
-#endif
+//#endif
                 iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate() );
                 if ( it == m_List.end() || key_comparator()( val, *it ) != 0 ) {
                     it = m_List.emplace( it, std::move( val ) );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                     ++m_nSize;
 #           endif
                     return true;
@@ -181,7 +182,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     value_type newItem( val );
                     it = m_List.insert( it, newItem );
                     func( true, *it, val );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                     ++m_nSize;
 #           endif
                     return std::make_pair( true, true );
@@ -203,7 +204,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // key exists
                 f( *it );
                 m_List.erase( it );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 --m_nSize;
 #           endif
 
@@ -220,7 +221,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // key exists
                 f( *it );
                 m_List.erase( it );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 --m_nSize;
 #           endif
 
@@ -268,14 +269,14 @@ namespace cds { namespace intrusive { namespace striped_set {
                 assert( it == m_List.end() || key_comparator()( *itWhat, *it ) != 0 );
 
                 copy_item()( m_List, it, itWhat );
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 ++m_nSize;
 #           endif
             }
 
             size_t size() const
             {
-#           ifdef __GLIBCXX__
+#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
                 return m_nSize;
 #           else
                 return m_List.size();
