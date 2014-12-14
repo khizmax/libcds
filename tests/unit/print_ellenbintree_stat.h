@@ -14,7 +14,7 @@ namespace std {
 
     static inline ostream& operator <<( ostream& o, cds::intrusive::ellen_bintree::stat<> const& s )
     {
-        return o << "\nEllenBinTree statistis [cds::intrusive::ellen_bintree::stat]:\n"
+        return o << "\nEllenBinTree statistics [cds::intrusive::ellen_bintree::stat]:\n"
             << "\t\t   Internal node allocated: " << ellen_bintree_pool::internal_node_counter::m_nAlloc.get() << "\n"
             << "\t\t       Internal node freed: " << ellen_bintree_pool::internal_node_counter::m_nFree.get() << "\n"
             << "\t\t    m_nInternalNodeCreated: " << s.m_nInternalNodeCreated.get()   << "\n"
