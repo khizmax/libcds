@@ -2,7 +2,6 @@
 
 #include "cppunit/cppunit_proxy.h"
 
-//#define CDS_USE_BOOST_ATOMIC
 #include <cds/algo/atomic.h>
 
 #include "misc/cxx11_convert_memory_order.h"
@@ -299,7 +298,9 @@ namespace misc {
             do_test_atomic_integral<Atomic, Integral >(a);
 
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_relaxed );
+#if !(CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION < 40900)
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_consume );
+#endif
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_acquire );
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_release );
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_acq_rel );
