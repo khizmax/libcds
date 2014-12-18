@@ -561,10 +561,20 @@ namespace cds { namespace gc {
         };
 
     public:
-        /// Initializes dhp::GarbageCollector singleton
+        /// Initializes %DHP memory manager singleton
         /**
-            The constructor calls GarbageCollector::Construct with passed parameters.
-            See dhp::GarbageCollector::Construct for explanation of parameters meaning.
+            Constructor creates and initializes %DHP global object.
+            %DHP object should be created before using CDS data structure based on \p %cds::gc::DHP GC. Usually,
+            it is created in the \p main() function.
+            After creating of global object you may use CDS data structures based on \p %cds::gc::DHP.
+
+            \par Parameters
+            - \p nLiberateThreshold - \p scan() threshold. When count of retired pointers reaches this value,
+                the \p scan() member function would be called for freeing retired pointers.
+            - \p nInitialThreadGuardCount - initial count of guard allocated for each thread. 
+                When a thread is initialized the GC allocates local guard pool for the thread from common guard pool.
+                By perforce the local thread's guard pool is grown automatically from common pool.
+                When the thread terminated its guard pool is backed to common GC's pool.
         */
         DHP(
             size_t nLiberateThreshold = 1024
@@ -577,9 +587,11 @@ namespace cds { namespace gc {
             );
         }
 
-        /// Terminates dhp::GarbageCollector singleton
+        /// Destroys %DHP memory manager
         /**
-            The destructor calls \code dhp::GarbageCollector::Destruct() \endcode
+            The destructor destroys %DHP global object. After calling of this function you may \b NOT
+            use CDS data structures based on \p %cds::gc::DHP.
+            Usually, %DHP object is destroyed at the end of your \p main().
         */
         ~DHP()
         {
@@ -589,7 +601,7 @@ namespace cds { namespace gc {
         /// Checks if count of hazard pointer is no less than \p nCountNeeded
         /**
             The function always returns \p true since the guard count is unlimited for
-            \p gc::DHP garbage collector.
+            \p %gc::DHP garbage collector.
         */
         static CDS_CONSTEXPR bool check_available_guards(
 #ifdef CDS_DOXYGEN_INVOKED
@@ -619,7 +631,7 @@ namespace cds { namespace gc {
             The function places pointer \p p to array of pointers ready for removing.
             (so called retired pointer array). The pointer can be safely removed when no guarded pointer points to it.
 
-            See gc::HP::retire for \p Disposer requirements.
+            See \p gc::HP::retire for \p Disposer requirements.
         */
         template <class Disposer, typename T>
         static void retire( T * p )

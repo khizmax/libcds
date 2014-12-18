@@ -29,13 +29,8 @@
         </tr>
         <tr>
             <td>Array of retired pointers</td>
-            <td>preallocated for each thread, limited in size</td>
+            <td>preallocated for each thread, size is limited</td>
             <td>global for the entire process, unlimited (dynamically allocated when needed)</td>
-        </tr>
-        <tr>
-            <td>Support direct pointer to item of lock-free container (useful for iterators)</td>
-            <td>not supported</td>
-            <td>not supported</td>
         </tr>
     </table>
 

@@ -572,13 +572,13 @@ namespace cds { namespace gc {
             classic = hp::classic,    ///< classic scan as described in Michael's papers
             inplace = hp::inplace     ///< inplace scan without allocation
         };
-        /// Initializes hp::GarbageCollector singleton
+        /// Initializes %HP singleton
         /**
             The constructor initializes GC singleton with passed parameters.
             If GC instance is not exist then the function creates the instance.
             Otherwise it does nothing.
 
-            The Michael's HP reclamation schema depends of three parameters:
+            The Michael's %HP reclamation schema depends of three parameters:
             - \p nHazardPtrCount - hazard pointer count per thread. Usually it is small number (up to 10) depending from
                 the data structure algorithms. By default, if \p nHazardPtrCount = 0, the function
                 uses maximum of the hazard pointer count for CDS library.
@@ -603,7 +603,9 @@ namespace cds { namespace gc {
 
         /// Terminates GC singleton
         /**
-            The destructor calls \code hp::GarbageCollector::Destruct( true ) \endcode
+            The destructor destroys %HP global object. After calling of this function you may \b NOT
+            use CDS data structures based on \p %cds::gc::HP. 
+            Usually, %HP object is destroyed at the end of your \p main().
         */
         ~HP()
         {

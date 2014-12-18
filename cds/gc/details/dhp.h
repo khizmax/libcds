@@ -702,6 +702,7 @@ namespace cds { namespace gc {
                 size_t m_nGuardCount       ;   ///< Total guard count
                 size_t m_nFreeGuardCount   ;   ///< Count of free guard
 
+                //@cond
                 InternalState()
                     : m_nGuardCount(0)
                     , m_nFreeGuardCount(0)
@@ -714,6 +715,7 @@ namespace cds { namespace gc {
 
                     return *this;
                 }
+                //@endcond
             };
 
         private:
@@ -986,6 +988,7 @@ namespace cds { namespace gc {
                 m_gc.retirePtr( p, pFunc );
             }
 
+            /// Run retiring cycle
             void scan()
             {
                 m_gc.scan();

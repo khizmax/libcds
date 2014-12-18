@@ -258,6 +258,7 @@ namespace cds {
                 atomics::atomic<OS::ThreadId>    m_idOwner;   ///< Owner thread id; 0 - the record is free (not owned)
                 atomics::atomic<bool>            m_bFree;     ///< true if record if free (not owned)
 
+                //@cond
                 hplist_node( const GarbageCollector& HzpMgr )
                     : hp_record( HzpMgr ),
                     m_pNextNode( nullptr ),
@@ -270,6 +271,7 @@ namespace cds {
                     assert( m_idOwner.load( atomics::memory_order_relaxed ) == OS::c_NullThreadId );
                     assert( m_bFree.load(atomics::memory_order_relaxed) );
                 }
+				//@endcond
             };
 
             atomics::atomic<hplist_node *>   m_pListHead  ;  ///< Head of GC list
@@ -608,6 +610,7 @@ namespace cds {
                 }
             }
 
+            /// Run retiring scan cycle
             void scan()
             {
                 m_HzpManager.Scan( m_pHzpRec );
@@ -646,11 +649,14 @@ namespace cds {
                 return m_hp = p;
             }
 
+            //@cond
             std::nullptr_t operator =(std::nullptr_t)
             {
                 return m_hp = nullptr;
             }
+            //@endcond
 
+            /// Get raw guarded pointer
             hazard_ptr get() const
             {
                 return m_hp;
