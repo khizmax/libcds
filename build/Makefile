@@ -5,7 +5,7 @@
 .SUFFIXES:.cpp .c .ro
 
 # make_distrib.pl substitutes the correct version
-VERSION=2.0.0
+VERSION=2.1.0
 
 # boost_thread lib used by test application. 
 # You may change the library name

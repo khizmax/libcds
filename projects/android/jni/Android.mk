@@ -1,5 +1,5 @@
 
-    CDS_LIBRARY_VERSION := 2.0.0
+    CDS_LIBRARY_VERSION := 2.1.0
     LOCAL_PATH := $(call my-dir)
     CDS_ROOT_DIR = $(LOCAL_PATH)/../../..
 

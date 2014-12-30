@@ -5,14 +5,14 @@
 
 // cds library version
 
-#define CDS_VERSION        0x020000
+#define CDS_VERSION        0x020100
 
 #define CDS_VERSION_MAJOR  ((CDS_VERSION & 0xFF0000)>> 16)
 #define CDS_VERSION_MINOR  ((CDS_VERSION & 0x00FF00) >> 8)
 #define CDS_VERSION_PATCH  (CDS_VERSION & 0x0000FF)
 
 // CDS_VERSION == CDS_VERSION_MAJOR '.' CDS_VERSION_MINOR '.' CDS_VERSION_PATCH
-#define CDS_VERSION_STRING        "2.0.0"
+#define CDS_VERSION_STRING        "2.1.0"
 
 #endif  // #ifndef __CDS_VERSION_H
 

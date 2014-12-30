@@ -1,3 +1,6 @@
+2.1.0
+    TODO
+
 2.0.0 30.12.2014
     General release
     - the library has been rewritten to support at least C++11. Compilers: GCC 4.8+, clang 3.3+, 
