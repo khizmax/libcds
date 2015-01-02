@@ -744,8 +744,10 @@
     <ClInclude Include="..\..\..\cds\gc\impl\hp_decl.h" />
     <ClInclude Include="..\..\..\cds\gc\impl\hp_impl.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\details\bronson_avltree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\lazy_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_list_base.h" />
