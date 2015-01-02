@@ -8,8 +8,6 @@
 #include <cds/opt/options.h>
 #include <cds/urcu/options.h>
 #include <cds/details/marked_ptr.h>
-#include <cds/details/allocator.h>
-#include <cds/algo/backoff_strategy.h>
 
 namespace cds { namespace intrusive {
 
@@ -546,7 +544,7 @@ namespace cds { namespace intrusive {
             - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
             - \p opt::disposer - the functor used for dispose removed nodes. Default is \p opt::v::empty_disposer. Due the nature
                 of GC schema the disposer may be called asynchronously. The disposer is used only for leaf nodes.
-            - \p opt::item_counter - the type of item counting feature, by defaulr it is disabled (\p atomicity::empty_item_counter)
+            - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)
                 To enable it use \p atomicity::item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
