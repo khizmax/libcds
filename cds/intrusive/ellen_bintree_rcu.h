@@ -62,7 +62,7 @@ namespace cds { namespace intrusive {
         Instead of helping, when a thread encounters a concurrent operation it just spins waiting for
         the operation done. Such solution allows greatly simplify the implementation of tree.
 
-        <b>Template arguments</b> :
+        <b>Template arguments</b>:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p Key - key type, a subset of \p T
         - \p T - type to be stored in tree's leaf nodes. The type must be based on \p ellen_bintree::node
@@ -473,7 +473,7 @@ namespace cds { namespace intrusive {
 #   endif
 
         typedef typename traits::item_counter  item_counter;   ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::memory_model  memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
         typedef typename traits::stat          stat;           ///< internal statistics type
         typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename traits::key_extractor      key_extractor;      ///< key extracting functor
@@ -852,8 +852,8 @@ namespace cds { namespace intrusive {
             The function searches the item \p val in the tree and unlink it from the tree
             if it is found and is equal to \p val.
 
-            Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
-            and deletes the item found. \p unlink finds an item by key and deletes it
+            Difference between \p erase() and \p %unlink() functions: \p %erase() finds <i>a key</i>
+            and deletes the item found. \p %unlink() finds an item by key and deletes it
             only if \p val is an item of the tree, i.e. the pointer to item found
             is equal to <tt> &val </tt>.
 
