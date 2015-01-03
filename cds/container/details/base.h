@@ -4,7 +4,6 @@
 #define __CDS_CONTAINER_DETAILS_BASE_H
 
 #include <cds/intrusive/details/base.h>
-#include <cds/details/allocator.h>
 
 namespace cds {
 

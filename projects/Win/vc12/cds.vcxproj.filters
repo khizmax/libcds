@@ -1169,5 +1169,14 @@
     <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\bronson_avltree_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\bronson_avltree_map_rcu.h">
+      <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\bronson_avltree_map_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

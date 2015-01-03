@@ -1,127 +1,106 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
-#define __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#ifndef __CDS_CONTAINER_BRONSON_AVLTREE_MAP_RCU_H
+#define __CDS_CONTAINER_BRONSON_AVLTREE_MAP_RCU_H
 
-#include <cds/container/details/ellen_bintree_base.h>
-#include <cds/intrusive/ellen_bintree_rcu.h>
+#include <cds/container/impl/bronson_avltree_map_rcu.h>
 
 namespace cds { namespace container {
 
-    /// Map based on Ellen's et al binary search tree (RCU specialization)
+    namespace bronson_avltree { 
+        //@cond
+        namespace details {
+
+            template <typename Key, typename T, typename Lock>
+            struct value_node : public bronson_avltree::node< Key, T, Lock >
+            {
+                T   m_data; // placeholder for data
+            };
+
+            template <typename Key, typename T, typename Traits>
+            struct pointer_oriented_traits: public Traits
+            {
+                struct disposer {
+                    template <typename T>
+                    void operator()( T * p )
+                    {
+                        std::allocator().destroy( p );
+                    }
+                };
+
+                typedef value_node<Key, T, typename Traits::lock_type > node_type;
+            };
+        } // namespace details
+        //@endcond
+    } // namespace bronson_avltree
+
+    /// Bronson et al AVL-tree (RCU specialization)
     /** @ingroup cds_nonintrusive_map
         @ingroup cds_nonintrusive_tree
-        @anchor cds_container_EllenBinTreeMap_rcu
+        @anchor cds_container_BronsonAVLTreeMap_rcu
 
         Source:
-            - [2010] F.Ellen, P.Fatourou, E.Ruppert, F.van Breugel "Non-blocking Binary Search Tree"
+            - [2010] N.Bronson, J.Casper, H.Chafi, K.Olukotun "A Practical Concurrent Binary Search Tree"
 
-        %EllenBinTreeMap is an unbalanced leaf-oriented binary search tree that implements the <i>map</i>
-        abstract data type. Nodes maintains child pointers but not parent pointers.
-        Every internal node has exactly two children, and all data of type <tt>std::pair<Key const, T></tt>
-        currently in the tree are stored in the leaves. Internal nodes of the tree are used to direct \p find
-        operation along the path to the correct leaf. The keys (of \p Key type) stored in internal nodes
-        may or may not be in the map.
-        Unlike \ref cds_container_EllenBinTreeSet_rcu "EllenBinTreeSet" keys are not a part of \p T type.
-        The map can be represented as a set containing <tt>std::pair< Key const, T> </tt> values.
+        bla-bla-bla
 
-        Due to \p extract_min and \p extract_max member functions the \p %EllenBinTreeMap can act as
-        a <i>priority queue</i>. In this case you should provide unique compound key, for example,
-        the priority value plus some uniformly distributed random value.
-
-        @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
-        for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
-
-        @note In the current implementation we do not use helping technique described in original paper.
-        So, the current implementation is near to fine-grained lock-based tree.
-        Helping will be implemented in future release
-
-        <b>Template arguments</b> :
+        <b>Template arguments</b>:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p Key - key type
-        - \p T - value type to be stored in tree's leaf nodes.
-        - \p Traits - map traits, default is \p ellen_bintree::traits.
-            It is possible to declare option-based tree with \p ellen_bintree::make_map_traits metafunction
+        - \p T - value type to be stored in tree's nodes.
+        - \p Traits - tree traits, default is \p bronson_avltree::traits
+            It is possible to declare option-based tree with \p bronson_avltree::make_traits metafunction
             instead of \p Traits template argument.
 
-        @note Before including <tt><cds/container/ellen_bintree_map_rcu.h></tt> you should include appropriate RCU header file,
+        @note Before including <tt><cds/container/bronson_avltree_map_rcu.h></tt> you should include appropriate RCU header file,
         see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
     */
+
     template <
-        class RCU,
+        typename RCU,
         typename Key,
         typename T,
-#ifdef CDS_DOXYGEN_INVOKED
-        class Traits = ellen_bintree::traits
+#   ifdef CDS_DOXYGEN_INVOKED
+        typename Traits = bronson_avltree::traits
 #else
-        class Traits
+        typename Traits
 #endif
     >
-    class EllenBinTreeMap< cds::urcu::gc<RCU>, Key, T, Traits >
-#ifdef CDS_DOXYGEN_INVOKED
-        : public cds::intrusive::EllenBinTree< cds::urcu::gc<RCU>, Key, T, Traits >
-#else
-        : public ellen_bintree::details::make_ellen_bintree_map< cds::urcu::gc<RCU>, Key, T, Traits >::type
-#endif
+    class BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T, Traits >
+        : private BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T*, bronson_avltree::details::pointer_oriented_traits<Key, T, Traits>>
     {
         //@cond
-        typedef ellen_bintree::details::make_ellen_bintree_map< cds::urcu::gc<RCU>, Key, T, Traits > maker;
-        typedef typename maker::type base_class;
+        typedef BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T*, bronson_avltree::details::pointer_oriented_traits<Traits>> base_class;
         //@endcond
+
     public:
         typedef cds::urcu::gc<RCU>  gc;   ///< RCU Garbage collector
         typedef Key     key_type;    ///< type of a key stored in the map
         typedef T       mapped_type; ///< type of value stored in the map
-        typedef std::pair< key_type const, mapped_type >    value_type;   ///< Key-value pair stored in leaf node of the mp
         typedef Traits  traits;      ///< Traits template parameter
 
-#   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key compare functor based on \p Traits::compare and \p Traits::less
-#   else
-        typedef typename maker::intrusive_traits::compare   key_comparator;
-#   endif
-        typedef typename base_class::item_counter           item_counter;       ///< Item counting policy
-        typedef typename base_class::memory_model           memory_model;       ///< Memory ordering, see \p cds::opt::memory_model option
-        typedef typename base_class::node_allocator         node_allocator_type; ///< allocator for maintaining internal node
-        typedef typename base_class::stat                   stat;               ///< internal statistics
-        typedef typename base_class::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
-        typedef typename traits::copy_policy                copy_policy;        ///< key copy policy
-        typedef typename traits::back_off                   back_off;           ///< Back-off strategy
-
-
-        typedef typename traits::allocator                  allocator_type;        ///< Allocator for leaf nodes
-        typedef typename base_class::node_allocator         node_allocator;        ///< Internal node allocator
-        typedef typename base_class::update_desc_allocator  update_desc_allocator; ///< Update descriptor allocator
-
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
+        typedef typename base_class::key_comparator     key_comparator;     ///< key compare functor based on \p Traits::compare and \p Traits::less
+        typedef typename traits::item_counter           item_counter;       ///< Item counting policy
+        typedef typename traits::memory_model           memory_model;       ///< Memory ordering, see \p cds::opt::memory_model option
+        typedef typename traits::allocator              allocator_type;     ///< allocator for maintaining internal node
+        typedef typename traits::stat                   stat;               ///< internal statistics
+        typedef typename traits::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
+        typedef typename traits::back_off               back_off;           ///< Back-off strategy
+        typedef typename traits::lock_type              lock_type;          ///< Node lock type
 
     protected:
         //@cond
-        typedef typename base_class::value_type         leaf_node;
-        typedef typename base_class::internal_node      internal_node;
-        typedef typename base_class::update_desc        update_desc;
-
-        typedef typename maker::cxx_leaf_node_allocator cxx_leaf_node_allocator;
-
-        typedef std::unique_ptr< leaf_node, typename maker::leaf_deallocator >    scoped_node_ptr;
+        typedef typename base_class::alloc_node_type    node_type;
+        typedef base_class::node_scoped_lock            node_scoped_lock;
         //@endcond
 
     public:
-        typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
-
-        /// pointer to extracted node
-        using exempt_ptr = cds::urcu::exempt_ptr < gc, leaf_node, value_type, typename maker::intrusive_traits::disposer,
-            cds::urcu::details::conventional_exempt_member_cast < leaf_node, value_type >
-        >;
-
-    public:
-        /// Default constructor
-        EllenBinTreeMap()
-            : base_class()
+        /// Creates empty map
+        BronsonAVLTreeMap()
         {}
 
-        /// Clears the map
-        ~EllenBinTreeMap()
+        /// Destroys the map
+        ~BronsonAVLTreeMap()
         {}
 
         /// Inserts new node with key and default value
@@ -139,7 +118,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key )
         {
-            return insert_with( key, [](value_type&){} );
+            //TODO
         }
 
         /// Inserts new node
@@ -149,7 +128,7 @@ namespace cds { namespace container {
 
             Preconditions:
             - The \p key_type should be constructible from \p key of type \p K.
-            - The \p value_type should be constructible from \p val of type \p V.
+            - The \p mapped_type should be constructible from \p val of type \p V.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
@@ -158,13 +137,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-            scoped_node_ptr pNode( cxx_leaf_node_allocator().New( key, val ));
-            if ( base_class::insert( *pNode ))
-            {
-                pNode.release();
-                return true;
-            }
-            return false;
+            //TODO
         }
 
         /// Inserts new node and initialize it by a functor
@@ -173,14 +146,9 @@ namespace cds { namespace container {
             \p func functor with signature
             \code
                 struct functor {
-                    void operator()( value_type& item );
+                    void operator()( mapped_type& item );
                 };
             \endcode
-
-            The argument \p item of user-defined functor \p func is the reference
-            to the map's item inserted:
-                - <tt>item.first</tt> is a const reference to item's key that cannot be changed.
-                - <tt>item.second</tt> is a reference to item's value that may be changed.
 
             The key_type should be constructible from value of type \p K.
 
@@ -191,21 +159,17 @@ namespace cds { namespace container {
 
             This can be useful if complete initialization of object of \p value_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
+            The functor is called under the node lock.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
         */
         template <typename K, typename Func>
         bool insert_with( K const& key, Func func )
         {
-            scoped_node_ptr pNode( cxx_leaf_node_allocator().New( key ));
-            if ( base_class::insert( *pNode, [&func]( leaf_node& item ) { func( item.m_Value ); } )) {
-                pNode.release();
-                return true;
-            }
-            return false;
+            //TODO
         }
 
-        /// For key \p key inserts data of type \p value_type created in-place from \p args
+        /// For key \p key inserts data of type \p mapped_type created in-place from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
@@ -214,12 +178,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            scoped_node_ptr pNode( cxx_leaf_node_allocator().New( std::forward<K>(key), std::forward<Args>(args)... ));
-            if ( base_class::insert( *pNode )) {
-                pNode.release();
-                return true;
-            }
-            return false;
+            //TODO
         }
 
         /// Ensures that the \p key exists in the map
@@ -230,14 +189,10 @@ namespace cds { namespace container {
             is inserted into the map (note that in this case the \ref key_type should be
             constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            The functor \p Func may be a functor:
             \code
                 struct my_functor {
-                    void operator()( bool bNew, value_type& item );
+                    void operator()( bool bNew, mapped_type& item );
                 };
             \endcode
 
@@ -245,31 +200,22 @@ namespace cds { namespace container {
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the tree
 
-            The functor may change any fields of the \p item.second that is \ref value_type.
+            The functor may change any fields of the \p item
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the tree.
-
-            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
-            scoped_node_ptr pNode( cxx_leaf_node_allocator().New( key ));
-            std::pair<bool, bool> res = base_class::ensure( *pNode,
-                [&func](bool bNew, leaf_node& item, leaf_node const& ){ func( bNew, item.m_Value ); }
-            );
-            if ( res.first && res.second )
-                pNode.release();
-            return res;
+            //TODO
         }
 
         /// Delete \p key from the map
-        /**\anchor cds_nonintrusive_EllenBinTreeMap_rcu_erase_val
-
+        /**
             RCU \p synchronize() method can be called. RCU should not be locked.
 
             Return \p true if \p key is found and deleted, \p false otherwise
@@ -277,12 +223,12 @@ namespace cds { namespace container {
         template <typename K>
         bool erase( K const& key )
         {
-            return base_class::erase(key);
+            //TODO
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_erase_val "erase(K const&)"
+            The function is an analog of \p erase(K const&)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the map.
@@ -291,11 +237,11 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >());
+            //TODO
         }
 
         /// Delete \p key from the map
-        /** \anchor cds_nonintrusive_EllenBinTreeMap_rcu_erase_func
+        /** \anchor cds_nonintrusive_BronsonAVLTreeMap_rcu_erase_func
 
             The function searches an item with key \p key, calls \p f functor
             and deletes the item. If \p key is not found, the functor is not called.
@@ -303,7 +249,7 @@ namespace cds { namespace container {
             The functor \p Func interface:
             \code
             struct extractor {
-                void operator()(value_type& item) { ... }
+                void operator()(mapped_type& item) { ... }
             };
             \endcode
 
@@ -314,12 +260,12 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            return base_class::erase( key, [&f]( leaf_node& node) { f( node.m_Value ); } );
+            //TODO
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_erase_func "erase(K const&, Func)"
+            The function is an analog of \ref cds_nonintrusive_BronsonAVLTreeMap_rcu_erase_func "erase(K const&, Func)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the map.
@@ -328,8 +274,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >(),
-                [&f]( leaf_node& node) { f( node.m_Value ); } );
+            //TODO
         }
 
         /// Extracts an item with minimal key from the map
@@ -349,7 +294,7 @@ namespace cds { namespace container {
         */
         exempt_ptr extract_min()
         {
-            return exempt_ptr( base_class::extract_min_());
+            //TODO
         }
 
         /// Extracts an item with maximal key from the map
@@ -370,11 +315,11 @@ namespace cds { namespace container {
         */
         exempt_ptr extract_max()
         {
-            return exempt_ptr( base_class::extract_max_());
+            //TODO
         }
 
         /// Extracts an item from the map
-        /** \anchor cds_nonintrusive_EllenBinTreeMap_rcu_extract
+        /**
             The function searches an item with key equal to \p key in the tree,
             unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to an item found.
             If \p key is not found the function returns an empty \p exempt_ptr.
@@ -387,12 +332,12 @@ namespace cds { namespace container {
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            return exempt_ptr( base_class::extract_( key, typename base_class::node_compare()));
+            //TODO
         }
 
         /// Extracts an item from the map using \p pred for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_extract "extract(exempt_ptr&, Q const&)"
+            The function is an analog of \p extract(exempt_ptr&, Q const&)
             but \p pred is used for key compare.
             \p Less has the interface like \p std::less and should meet \ref cds_container_EllenBinTreeSet_rcu_less
             "predicate requirements".
@@ -402,23 +347,20 @@ namespace cds { namespace container {
         exempt_ptr extract_with( Q const& val, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( base_class::extract_with_( val,
-                cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() ));
+            //TODO
         }
 
         /// Find the key \p key
-        /** \anchor cds_nonintrusive_EllenBinTreeMap_rcu_find_cfunc
-
+        /**
             The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( value_type& item );
+                void operator()( mapped_type& item );
             };
             \endcode
             where \p item is the item found.
-
-            The functor may change \p item.second.
+            The functor is called under node-level lock.
 
             The function applies RCU lock internally.
 
@@ -427,12 +369,12 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return base_class::find( key, [&f](leaf_node& item, K const& ) { f( item.m_Value );});
+            return base_class::find( key, f );
         }
 
         /// Finds the key \p val using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_find_cfunc "find(K const&, Func)"
+            The function is an analog of \p find(K const&, Func)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the map.
@@ -440,14 +382,11 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool find_with( K const& key, Less pred, Func f )
         {
-            CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >(),
-                [&f](leaf_node& item, K const& ) { f( item.m_Value );});
+            return base_class::find_with( key, pred, f );
         }
 
         /// Find the key \p key
-        /** \anchor cds_nonintrusive_EllenBinTreeMap_rcu_find_val
-
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
@@ -461,7 +400,7 @@ namespace cds { namespace container {
 
         /// Finds the key \p val using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_find_val "find(K const&)"
+            The function is an analog of \p find(K const&)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the map.
@@ -469,12 +408,11 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool find_with( K const& key, Less pred )
         {
-            CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );
+            return base_class::find_with( key, pred );
         }
 
         /// Finds \p key and return the item found
-        /** \anchor cds_nonintrusive_EllenBinTreeMap_rcu_get
+        /**
             The function searches the item with key equal to \p key and returns the pointer to item found.
             If \p key is not found it returns \p nullptr.
 
@@ -482,15 +420,14 @@ namespace cds { namespace container {
             Returned pointer is valid while RCU is locked.
         */
         template <typename Q>
-        value_type * get( Q const& key ) const
+        mapped_type * get( Q const& key ) const
         {
-            leaf_node * pNode = base_class::get( key );
-            return pNode ? &pNode->m_Value : nullptr;
+            //TODO
         }
 
         /// Finds \p key with \p pred predicate and return the item found
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_get "get(Q const&)"
+            The function is an analog of \p get(Q const&)
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type
@@ -498,12 +435,10 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& key, Less pred ) const
+        mapped_type * get_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            leaf_node * pNode = base_class::get_with( key,
-                cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >());
-            return pNode ? &pNode->m_Value : nullptr;
+            //TODO
         }
 
         /// Clears the map
@@ -547,7 +482,8 @@ namespace cds { namespace container {
         {
             return base_class::check_consistency();
         }
+
     };
 }} // namespace cds::container
 
-#endif //#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#endif // #ifndef __CDS_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
