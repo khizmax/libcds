@@ -1,16 +1,16 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_WILLIAMS_QUEUE_H
-#define __CDS_INTRUSIVE_WILLIAMS_QUEUE_H
+#ifndef __CDS_CONTAINER_WILLIAMS_QUEUE_H
+#define __CDS_CONTAINER_WILLIAMS_QUEUE_H
 
 #include <memory>
 #include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
 
-namespace cds { namespace intrusive {
+namespace cds { namespace container {
 
     /// WilliamsQueue related definitions
-    /** @ingroup cds_intrusive_helper
+    /** @ingroup cds_nonintrusive_helper
     */
     namespace williams_queue {
 
@@ -68,6 +68,14 @@ namespace cds { namespace intrusive {
             }
         }
 
+        /// Checks if the queue is empty
+        bool empty() {
+            if (head.load() == tail.load()) {
+                return true;
+            }
+            return false;
+        }
+
         value_type pop() {
             node* old_head = pop_head();
             if (!old_head) {
@@ -88,6 +96,6 @@ namespace cds { namespace intrusive {
         }
     };
 
-}} // namespace cds::intrusive
+}} // namespace cds::container
 
-#endif // #ifndef __CDS_INTRUSIVE_WILLIAMS_QUEUE_H
+#endif // #ifndef __CDS_CONTAINER_WILLIAMS_QUEUE_H
