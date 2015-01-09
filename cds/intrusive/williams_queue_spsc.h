@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <cds/algo/atomic.h>
+#include <cds/details/allocator.h>
 
 namespace cds { namespace intrusive {
 
@@ -16,7 +17,7 @@ namespace cds { namespace intrusive {
         /// WilliamsQueue default traits
         struct traits
         {
-
+            typedef CDS_DEFAULT_ALLOCATOR allocator;
         };
 
     } // namespace williams_queue
@@ -26,16 +27,20 @@ namespace cds { namespace intrusive {
     class WilliamsQueue
     {
     public:
-        typedef std::shared_ptr<T> node_data;
+        typedef std::shared_ptr<T> value_type;
 
     private:
         struct node {
-            node_data data;
+            value_type data;
             node* next;
     
             node() : next(nullptr) {
             }
         };
+
+        typedef Traits traits;
+        typedef typename traits::allocator allocator_type;
+        typedef cds::details::Allocator<node, allocator_type> allocator;
 
         atomics::atomic<node*> head;
         atomics::atomic<node*> tail;
@@ -50,7 +55,7 @@ namespace cds { namespace intrusive {
         }
     
     public:
-        WilliamsQueue() : head(new node), tail(head.load()) {
+        WilliamsQueue() : head(allocator().New()), tail(head.load()) {
         }
     
         WilliamsQueue(const WilliamsQueue& other) = delete;
@@ -59,23 +64,23 @@ namespace cds { namespace intrusive {
         ~WilliamsQueue() {
             while (node * const old_head = head.load()) {
                 head.store(old_head->next);
-                delete old_head;
+                allocator().Delete(old_head);
             }
         }
 
-        node_data pop() {
+        value_type pop() {
             node* old_head = pop_head();
             if (!old_head) {
-                return node_data();
+                return value_type();
             }
-            node_data const res(old_head->data);
-            delete old_head;
+            value_type const res(old_head->data);
+            allocator().Delete(old_head);
             return res;
         }
 
         void push(T new_value) {
-            node_data new_data(std::make_shared<T>(new_value));
-            node* p = new node;
+            value_type new_data(std::make_shared<T>(new_value));
+            node* p = allocator().New();
             node * const old_tail = tail.load();
             old_tail->data.swap(new_data);
             old_tail->next = p;
