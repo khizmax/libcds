@@ -91,7 +91,10 @@ namespace cds { namespace container {
 
     /// Williams' single-producer, single-consumer lock-free queue
     template<typename T, typename Traits = williams_queue::traits>
-    class WilliamsQueue
+    class WilliamsQueue;
+
+    template<typename T, typename Traits>
+    class WilliamsQueue<std::shared_ptr<T>, Traits>
     {
     public:
         typedef std::shared_ptr<T> value_type;
@@ -143,11 +146,10 @@ namespace cds { namespace container {
         }
 
         /// Enqueues \p val value into the queue.
-        void enqueue(T val) {
-            value_type new_data(std::make_shared<T>(val));
+        void enqueue(value_type val) {
             node* p = allocator().New();
             node * const old_tail = tail.load();
-            old_tail->data.swap(new_data);
+            old_tail->data.swap(val);
             old_tail->next = p;
             tail.store(p);
             m_Stat.onEnqueue();
