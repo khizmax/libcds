@@ -181,6 +181,40 @@ namespace cds { namespace container {
         }
     };
 
+    template<typename T, typename Traits>
+    class WilliamsQueue: private WilliamsQueue<std::shared_ptr<T>, Traits>
+    {
+    public:
+        typedef T value_type;
+        typedef Traits traits;                ///< Queue traits
+        typedef typename traits::stat  stat;  ///< Internal statistics
+
+    private:
+        typedef WilliamsQueue<std::shared_ptr<T>, Traits> parent;
+        typedef std::shared_ptr<T> parent_value_type;
+
+    public:
+        /// Enqueues \p val value into the queue.
+        void enqueue(value_type val) {
+            parent::enqueue(std::make_shared<value_type>(val));
+        }
+
+        /// Dequeues a value from the queue
+        value_type * dequeue() {
+            return parent::dequeue().get();
+        }
+
+        /// Checks if the queue is empty
+        bool empty() const {
+            parent::empty();
+        }
+
+        /// Returns reference to internal statistics
+        stat const& statistics() const {
+            return parent::statistics();
+        }
+    };
+
 }} // namespace cds::container
 
 #endif // #ifndef __CDS_CONTAINER_WILLIAMS_QUEUE_H
