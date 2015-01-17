@@ -572,29 +572,28 @@ namespace cds { namespace algo {
                 m_Stat.onCreatePubRecord();
             }
 
-            void publish( publication_record_type * pRec )
-            {
-                assert( pRec->nState.load( memory_model::memory_order_relaxed ) == inactive );
+			void publish(publication_record_type * pRec)
+			{
+				assert(pRec->nState.load(memory_model::memory_order_relaxed) == inactive);
 
-                pRec->nAge = m_nCount;
-                pRec->nState.store( active, memory_model::memory_order_release );
+				pRec->nAge = m_nCount;
+				pRec->nState.store(active, memory_model::memory_order_release);
 
-                // Insert record to publication list
-                if ( m_pHead != static_cast<publication_record *>(pRec) ) {
-                    publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
-                    if ( p != static_cast<publication_record *>( pRec )) {
-                        do {
-                            pRec->pNext = p;
-                            // Failed CAS changes p
-                        } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ));
-                        m_Stat.onActivatPubRecord();
-                    }
-                }
-
-				std::cout << "Publish record" << boost::this_thread::get_id() << "\n";
-				pRec->waitMutex_.lock();
-            }
+				// Insert record to publication list
+				if (m_pHead != static_cast<publication_record *>(pRec)) {
+					publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
+					if (p != static_cast<publication_record *>(pRec)) {
+						do {
+							pRec->pNext = p;
+							// Failed CAS changes p
+						} while (!m_pHead->pNext.compare_exchange_weak(p, static_cast<publication_record *>(pRec),
+							memory_model::memory_order_release, atomics::memory_order_relaxed));
+						m_Stat.onActivatPubRecord();
+					}
+				}
+				
+				//mutex.lock();
+			}
 
             void republish( publication_record_type * pRec )
             {
@@ -687,13 +686,15 @@ namespace cds { namespace algo {
                     switch ( p->nState.load( memory_model::memory_order_acquire )) {
                         case active:
                             if ( p->op() >= req_Operation ) {
+								//std::cout << "Try combin " << boost::this_thread::get_id() << "\n";
                                 p->nAge = nCurAge;
                                 owner.fc_apply( static_cast<publication_record_type *>(p) );
-                                //std::cout << "lalalalalalala\n";
-								std::cout << "Operation is done. Do notify" << boost::this_thread::get_id() << "\n";
-                                p->condVar_.notify_one();
                                 operation_done( *p );
                                 bOpDone = true;
+
+								p->condVar_.notify_one();
+								//p->waitMutex_.unlock();
+								std::cout << "Operation is done. Do notify " << boost::this_thread::get_id() << "\n";
                             }
                             break;
                         case inactive:
@@ -734,6 +735,9 @@ namespace cds { namespace algo {
             bool wait_for_combining( publication_record_type * pRec )
             {
                 //back_off bkoff;
+				boost::recursive_mutex::scoped_lock lock(pRec->waitMutex_);
+				std::cout << "lock guard in wait_for_combining " << boost::this_thread::get_id() << "\n";
+
                 while ( pRec->nRequest.load( memory_model::memory_order_acquire ) != req_Response ) {
 
                     // The record can be excluded from publication list. Reinsert it
@@ -741,12 +745,9 @@ namespace cds { namespace algo {
                     
                     //bkoff();
 
-					std::cout << "wait_for_combineing" << boost::this_thread::get_id() << "\n";
-					boost::recursive_mutex::scoped_lock lock(pRec->waitMutex_);
-                    std::cout << "lock guard in wait_for_combining" << boost::this_thread::get_id() << "\n";
 					pRec->condVar_.wait(lock);
-                    std::cout << "Operation is done" << boost::this_thread::get_id() << "\n";
-                    //lock.unlock();
+                    std::cout << "Operation is done " << boost::this_thread::get_id() << "\n";
+
                     if ( m_Mutex.try_lock() ) {
                         if ( pRec->nRequest.load( memory_model::memory_order_acquire ) == req_Response ) {
                             m_Mutex.unlock();
