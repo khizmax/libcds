@@ -98,6 +98,8 @@ namespace cds { namespace algo {
             unsigned int                        nAge;       ///< Age of the record
             atomics::atomic<publication_record *> pNext; ///< Next record in publication list
             void *                              pOwner;    ///< [internal data] Pointer to \ref kernel object that manages the publication list
+			//Add mutex and convar here!=))
+
 
             /// Initializes publication record
             publication_record()
