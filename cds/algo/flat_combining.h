@@ -22,6 +22,7 @@
 #include <cds/algo/int_algo.h>
 #include <boost/thread/tss.hpp>     // thread_specific_ptr
 #include <boost/thread.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 
 namespace cds { namespace algo {
@@ -110,8 +111,8 @@ namespace cds { namespace algo {
             unsigned int                          nAge;       ///< Age of the record сколько неактивная запись может быть в списке
             atomics::atomic<publication_record *> pNext;      ///< Next record in publication list
             void *                                pOwner;     ///< [internal data] Pointer to \ref kernel object that manages the publication list
-            boost::mutex waitMutex_;
-            boost::condition_variable condVar_;
+            boost::recursive_mutex				  waitMutex_;
+			boost::condition_variable_any		  condVar_;
 
             /// Initializes publication record
             publication_record()
@@ -590,6 +591,9 @@ namespace cds { namespace algo {
                         m_Stat.onActivatPubRecord();
                     }
                 }
+
+				std::cout << "Publish record" << boost::this_thread::get_id() << "\n";
+				pRec->waitMutex_.lock();
             }
 
             void republish( publication_record_type * pRec )
@@ -686,6 +690,7 @@ namespace cds { namespace algo {
                                 p->nAge = nCurAge;
                                 owner.fc_apply( static_cast<publication_record_type *>(p) );
                                 //std::cout << "lalalalalalala\n";
+								std::cout << "Operation is done. Do notify" << boost::this_thread::get_id() << "\n";
                                 p->condVar_.notify_one();
                                 operation_done( *p );
                                 bOpDone = true;
@@ -735,11 +740,13 @@ namespace cds { namespace algo {
                     republish( pRec );
                     
                     //bkoff();
-                    boost::unique_lock<boost::mutex> lock(pRec->waitMutex_);
-                    std::cout << "Hello, Marsel!" << boost::this_thread::get_id() << "\n";
-                    pRec->condVar_.wait(lock);
-                    std::cout << "Goodbue, Marsel!" << boost::this_thread::get_id() << "\n";
-                    lock.unlock();
+
+					std::cout << "wait_for_combineing" << boost::this_thread::get_id() << "\n";
+					boost::recursive_mutex::scoped_lock lock(pRec->waitMutex_);
+                    std::cout << "lock guard in wait_for_combining" << boost::this_thread::get_id() << "\n";
+					pRec->condVar_.wait(lock);
+                    std::cout << "Operation is done" << boost::this_thread::get_id() << "\n";
+                    //lock.unlock();
                     if ( m_Mutex.try_lock() ) {
                         if ( pRec->nRequest.load( memory_model::memory_order_acquire ) == req_Response ) {
                             m_Mutex.unlock();
