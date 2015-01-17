@@ -8,6 +8,30 @@
 
 namespace cds { namespace container {
 
+    /// Bronson et al AVL-tree (RCU specialization for storing pointer to values)
+    /** @ingroup cds_nonintrusive_map
+        @ingroup cds_nonintrusive_tree
+        @headerfile cds/container/bronson_avltree_map_rcu.h
+
+        This is the specialization of \ref cds_container_BronsonAVLTreeMap_rcu "RCU-based Bronson et al AVL-tree"
+        for "key -> value pointer" map. This specialization stores the pointer to user-allocated values instead of the copy 
+        of the value. When a tree node is removed, the algorithm does not free the value pointer directly, instead, it call
+        the disposer functor provided by \p Traits template parameter.
+
+        The set of available member functions is differ from classic map.
+
+        <b>Template arguments</b>:
+        - \p RCU - one of \ref cds_urcu_gc "RCU type"
+        - \p Key - key type
+        - \p T - value type to be stored in tree's nodes. Note, the specialization stores the pointer to user-allocated
+            value, not the copy.
+        - \p Traits - tree traits, default is \p bronson_avltree::traits
+            It is possible to declare option-based tree with \p bronson_avltree::make_traits metafunction
+            instead of \p Traits template argument.
+
+        @note Before including <tt><cds/container/bronson_avltree_map_rcu.h></tt> you should include appropriate RCU header file,
+        see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
+    */
     template <
         typename RCU,
         typename Key,
@@ -40,6 +64,9 @@ namespace cds { namespace container {
         typedef typename traits::disposer               disposer;           ///< Value disposer
         typedef typename traits::lock_type              lock_type;          ///< Node lock type
 
+        /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
+        static bool const c_bRelaxedInsert = traits::relaxed_insert;
+
     protected:
         //@cond
         typedef bronson_avltree::node< key_type, mapped_type, lock_type > node_type;
@@ -51,6 +78,7 @@ namespace cds { namespace container {
         >::type alloc_node_type;
 
         typedef typename allocator_type::template rebind<alloc_node_type>::other memory_allocator;
+        typedef cds::details::Allocator< alloc_node_type, memory_allocator > cxx_allocator;
 
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock >   check_deadlock_policy;
 
@@ -58,7 +86,25 @@ namespace cds { namespace container {
         {
             not_found,
             found,
-            retry,
+            retry
+        };
+
+        enum class update_flags
+        {
+            allow_insert = 1,
+            allow_update = 2,
+            retry = 4,
+
+            failed = 0,
+            result_insert = allow_insert,
+            result_update = allow_update
+        };
+
+        enum node_condition
+        {
+            nothing_required = -3,
+            rebalance_required = -2,
+            unlink_required = -1
         };
 
         class node_scoped_lock
@@ -82,17 +128,26 @@ namespace cds { namespace container {
     protected:
         //@cond
         template <typename K>
-        node_type * alloc_node( K&& key )
+        static node_type * alloc_node( K&& key, int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
         {
             alloc_node_type * pNode = memory_allocator().allocate( 1 );
-            return new (static_cast<node_type *>(pNode)) node_type( std::forward<K>( key ) );
+            return new (static_cast<node_type *>(pNode)) node_type( std::forward<K>( key ), nHeight, version, pParent, pLeft, pRight );
         }
 
-        template <typename K>
-        node_type * alloc_node( K&& key, mapped_type * pVal )
+        static void internal_free_node( node_type * pNode )
         {
-            alloc_node_type * pNode = memory_allocator().allocate( 1 );
-            return new (static_cast<node_type *>(pNode)) node_type( std::forward<K>( key ), pVal );
+            // Free node without disposer
+            cxx_allocator().Delete( static_cast<alloc_node_type *>(pNode) );
+        }
+
+        static void dispose_node( node_type * pNode )
+        {
+            mapped_type * pVal = pNode->value( memory_model::memory_order_relaxed );
+            if ( pVal ) {
+                pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
+                disposer()(pVal);
+            }
+            //TODO: deallocate pNode in safe manner
         }
 
         //@endcond
@@ -128,28 +183,43 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key, mapped_type * pVal )
         {
-            //TODO
+            return do_update( key, 
+                [pVal]( node_type * pNode ) -> mapped_type* 
+                {
+                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    return pVal;
+                }, 
+                update_flags::allow_insert 
+            ) == update_flags::result_insert;
         }
 
-        /// Ensures that the \p key exists in the map
+        /// Updates the value for \p key
         /**
-            The operation performs inserting or changing data with lock-free manner.
+            The operation performs inserting or updating the value for \p key with lock-free manner.
+            If \p bInsert is \p false, only updating of existing node is possible.
 
-            If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
-            constructible from type \p K).
+            If \p key is not found and inserting is allowed (i.e. \p bInsert is \p true),
+            then the new node created from \p key is inserted into the map; note that in this case the \ref key_type should be
+            constructible from type \p K.
             Otherwise, the value is changed to \p pVal.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
-            \p second is \p true if new item has been added or \p false if the item with \p key
+            \p second is \p true if new node has been added or \p false if the node with \p key
             already is in the tree.
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, mapped_type * pVal )
+        std::pair<bool, bool> update( K const& key, mapped_type * pVal, bool bInsert = true )
         {
-            //TODO
+            int result = do_update( key, 
+                [pVal]( node_type * ) -> mapped_type* 
+                {
+                    return pVal;
+                },
+                update_flags::allow_update | (bInsert ? update_flags::allow_insert : 0) 
+            );
+            return std::make_pair( result != 0, (result & update_flags::result_insert) != 0 );
         }
 
         /// Delete \p key from the map
@@ -308,8 +378,9 @@ namespace cds { namespace container {
         {
             return do_find( key, key_comparator(), [&f]( node_type * pNode ) -> bool {
                 node_scoped_lock l( pNode );
-                if ( pNode->m_pValue ) {
-                    f( *pNode->m_pValue );
+                mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
+                if ( pVal ) {
+                    f( *pVal );
                     return true;
                 }
                 return false;
@@ -329,14 +400,13 @@ namespace cds { namespace container {
             CDS_UNUSED( pred );
             return do_find( key, opt::details::make_comparator_from_less<Less>(), [&f]( node_type * pNode ) -> bool {
                 node_scoped_lock l( pNode );
-                if ( pNode->m_pValue ) {
-                    f( *pNode->m_pValue );
+                mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
+                if ( pVal ) {
+                    f( *pVal );
                     return true;
                 }
                 return false;
             } );
-            
-            //TODO
         }
 
         /// Find the key \p key
@@ -385,7 +455,7 @@ namespace cds { namespace container {
             The function is an analog of \p get(Q const&)
             but \p pred is used for comparing the keys.
 
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type
+            \p Less functor has the semantics like \p std::less but should take arguments of type \p key_type
             and \p Q in any order.
             \p pred must imply the same element order as the comparator used for building the map.
         */
@@ -477,6 +547,19 @@ namespace cds { namespace container {
             return result == find_result::found;
         }
 
+        template <typename K, typename Func>
+        int do_update( K const& key, Func funcUpdate, int nFlags )
+        {
+            check_deadlock_policy::check();
+
+            rcu_lock l;
+            return try_udate( key, pVal, nFlags, m_pRoot, 1, 0 );
+        }
+
+        //@endcond
+
+    private:
+        //@cond
         template <typename Q, typename Compare, typename Func>
         find_result try_find( Q const& key, Compare cmp, Func f, node_type * pNode, int nDir, typename node_type::version_type nVersion ) const
         {
@@ -486,7 +569,7 @@ namespace cds { namespace container {
             while ( true ) {
                 node_type * pChild = pNode->child( nDir ).load( memory_model::memory_order_relaxed );
                 if ( !pChild ) {
-                    if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                         m_stat.onFindRetry();
                         return find_result::retry;
                     }
@@ -509,19 +592,19 @@ namespace cds { namespace container {
                     return find_result::not_found;
                 }
 
-                typename node_type::version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
-                if ( nChildVersion & node_type::version_flags::shrinking ) {
+                typename node_type::version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
+                if ( nChildVersion & node_type::shrinking ) {
                     m_stat.onFindWaitShrinking();
                     pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
 
-                    if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                         m_stat.onFindRetry();
                         return find_result::retry;
                     }
                 }
-                else if ( nChildVersion != node_type::version_flags::unlinked ) {
+                else if ( nChildVersion != node_type::unlinked ) {
 
-                    if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                         m_stat.onFindRetry();
                         return find_result::retry;
                     }
@@ -532,8 +615,584 @@ namespace cds { namespace container {
                 }
             }
         }
-        //@endcond
 
+        template <typename K, typename Func>
+        int try_update( K const& key, Func funcUpdate, int nFlags, node_type * pNode, int nDir, typename node_type::version_type nVersion )
+        {
+            int result;
+            do {
+                node_type * pChild = pNode->child( nDir ).load( memory_model::memory_order_relaxed );
+                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
+                    return update_flags::retry;
+
+                if ( pChild == nullptr ) {
+                    // insert new node
+                    if ( nFlags & update_flags::allow_insert )
+                        result = try_insert_node( key, funcUpdate, pNode, nDir, nVersion );
+                    else
+                        result = update_flags::failed;
+                }
+                else {
+                    //TODO
+                }
+            } while ( result == update_flags::retry );
+            return result;
+        }
+
+        template <typename K, typename Func>
+        int try_insert_node( K const& key, Func funcUpdate, node_type * pNode, int nDir, typename node_type::version_type nVersion )
+        {
+            node_type * pNew;
+
+            auto fnCreateNode = [&funcUpdate]( node_type * pNew ) {
+                mapped_type * pVal = funcUpdate( pNew );
+                assert( pVal != nullptr );
+                pNew->m_pValue.store( pVal, memory_model::memory_order_relaxed );
+            };
+
+            if ( c_bRelaxedInsert ) {
+                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion
+                     || pNode->child( nDir ).load( memory_model::memory_order_relaxed ) != nullptr ) 
+                {
+                    m_stat.onInsertRetry();
+                    return update_flags::retry;
+                }
+
+                fnCreateNode( pNew = alloc_node( key, 1, 0, pNode, nullptr, nullptr ));
+            }
+
+            node_type * pDamaged;
+            {
+                node_scoped_lock l( pNode );
+
+                if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion
+                     || pNode->child( nDir ).load( memory_model::memory_order_relaxed ) != nullptr ) 
+                {
+                    if ( c_RelaxedInsert ) {
+                        internal_free_node( pNew );
+                        m_stat.onRelaxedInsertFailed();
+                    }
+
+                    m_stat.onInsertRetry();
+                    return update_flags::retry;
+                }
+
+                if ( !c_bRelaxedInsert )
+                    fnCreateNode( pNew = alloc_node( key, 1, 0, pNode, nullptr, nullptr ));
+
+                pNode->child( pNew, nDir, memory_model::memory_order_relaxed );
+                pDamaged = fix_height_locked( pNode );
+            }
+            m_stat.onInsertSuccess();
+
+            fix_height_and_rebalance( pDamaged );
+
+            return update_flags::result_insert;
+        }
+
+        bool try_unlink_locked( node_type * pParent, node_type * pNode )
+        {
+            // pParent and pNode must be locked
+            assert( !pParent->is_unlinked(memory_model::memory_order_relaxed) );
+
+            node_type * pParentLeft = pParent->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pParentRight = pParent->m_pRight.load( memory_model::memory_order_relaxed );
+            if ( pNode != pParentLeft && pNode != pParentRight ) {
+                // node is no longer a child of parent
+                return false;
+            }
+
+            assert( !pNode->is_unlinked());
+            assert( pParent == pNode->m_pParent.load(memory_model::memory_order_relaxed));
+
+            node_type * pLeft = pNode->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pRight = pNode->m_pRight.load( memory_model::memory_order_relaxed );
+            if ( pLeft != nullptr && pRight != nullptr ) {
+                // splicing is no longer possible
+                return false;
+            }
+            node_type * pSplice = pLeft ? pLeft : pRight;
+
+            if ( pParentLeft == pNode )
+                pParent->m_pLeft.store( pSplice, memory_model::memory_order_relaxed );
+            else
+                pParent->m_pRight.store( pSplice, memory_model::memory_order_relaxed );
+
+            if ( pSplice )
+                pSplice->pParent.store( pParent, memory_model::memory_order_release );
+
+            pNode->version( node_type::unlinked, memory_model::memory_order_release );
+            dispose_node( pNode );
+
+            return true;
+        }
+
+        //@endcond
+    private: // rotations
+        //@cond
+        int estimate_node_condition( node_type * pNode )
+        {
+            node_type * pLeft = pNode->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pRight = pNode->m_pRight.load( memory_model::memory_order_relaxed );
+
+            if ( (pLeft == nullptr || pRight == nullptr) && pNode->value( memory_model::memory_order_relaxed ) == nullptr )
+                return unlink_required;
+
+            int h = pNode->height( memory_model::memory_order_relaxed );
+            int hL = pLeft ? pLeft->height( memory_model::memory_order_relaxed ) : 0;
+            int hR = pRight ? pRight->height( memory_model::memory_order_relaxed ) : 0;
+
+            int hNew = 1 + std::max( hL, hR );
+            int nBalance = hL - hR;
+
+            if ( nBalance < -1 || nBalance > 1 )
+                return rebalance_required;
+
+            return h != hNew ? hNew : nothing_required;
+        }
+
+        node_type * fix_height( node_type * pNode )
+        {
+            node_scoped_lock l( pNode );
+            return fix_height_locked( pNode );
+        }
+
+        node_type * fix_height_locked( node_type * pNode )
+        {
+            // pNode must be locked!!!
+            int h = estimate_node_condition( pNode );
+            switch ( h ) {
+                case rebalance_required:
+                case unlink_required:
+                    return pNode;
+                case nothing_required:
+                    return nullptr;
+                default:
+                    pNode->height( h, memory_model::memory_order_relaxed );
+                    return pNode->m_pParent.load( memory_model::memory_order_relaxed );
+            }
+        }
+
+        void fix_height_and_rebalance( node_type * pNode )
+        {
+            while ( pNode && pNode->m_pParent.load( memory_model::memory_order_relaxed ) ) {
+                int nCond = estimate_node_condition( pNode );
+                if ( nCond == nothing_required || pNode->is_unlinked( memory_model::memory_order_relaxed ) )
+                    return;
+
+                if ( nCond != unlink_required && nCond != rebalance_required )
+                    pNode = fix_height( pNode );
+                else {
+                    node_type * pParent = pNode->m_pParent.load( memory_model::memry_order_relaxed );
+                    assert( pParent != nullptr );
+                    {
+                        node_scoped_lock lp( pParent );
+                        if ( !pParent->is_unlinked( memory_model::memory_order_relaxed )
+                             && pNode->m_pParent.load( memory_model::memory_order_relaxed ) == pParent ) 
+                        {
+                            node_scoped_lock ln( pNode );
+                            pNode = rebalance_locked( pParent, pNode );
+                        }
+                    }
+                }
+            }
+        }
+
+        node_type * rebalance_locked( node_type * pParent, node_type * pNode )
+        {
+            // pParent and pNode shlould be locked.
+            // Returns a damaged node, or nullptr if no more rebalancing is necessary
+            assert( pNode->m_pParent.load( memory_model::memry_order_relaxed ) == pNode );
+            assert( m_pParent->m_pLeft.load( memory_model::memory_order_relaxed ) == pNode
+                 || m_pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+
+            node_type * pLeft = pNode->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pRight = pNode->m_pRight.load( memory_model::memory_order_relaxed );
+
+            if ( (pLeft == nullptr || pRight == nullptr) && pNode->value( memory_model::memory_order_relaxed ) == nullptr ) {
+                if ( try_unlink_locked( pParent, pNode ))
+                    return fix_height_locked( pParent );
+                else {
+                    // retry needed for pNode
+                    return pNode;
+                }
+            }
+
+            int h = pNode->height( memory_model::memory_order_relaxed );
+            int hL = pLeft ? pLeft->height( memory_model::memory_order_relaxed ) : 0;
+            int hR = pRight ? pRight->height( memory_model::memory_order_relaxed ) : 0;
+            int hNew = 1 + std::max( hL, hR );
+            int balance = hL - hR;
+
+            if ( balance > 1 )
+                return rebalance_to_right_locked( pParent, pNode, pLeft, hR );
+            else if ( balance < -1 )
+                return rebalance_to_left_locked( pParent, pNode, pRight, hL );
+            else if ( hNew != h ) {
+                pNode->height( hNew, memory_model::memory_order_relaxed );
+
+                // pParent is already locked
+                return fix_height_locked( pParent );
+            }
+            else
+                return nullptr;
+        }
+
+        node_type * rebalance_to_right_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR )
+        {
+            assert( pNode->m_pParent.load( memory_model::memry_order_relaxed ) == pNode );
+            assert( m_pParent->m_pLeft.load( memory_model::memory_order_relaxed ) == pNode
+                 || m_pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+
+            // pParent and pNode is locked yet
+            // pNode->pLeft is too large, we will rotate-right.
+            // If pLeft->pRight is taller than pLeft->pLeft, then we will first rotate-left pLeft.
+
+            {
+                node_scoped_lock l( pLeft );
+                if ( pNode->m_pLeft.load( memory_model::memory_order_relaxed ) != pLeft )
+                    return pNode; // retry for pNode
+
+                int hL = pLeft->height( memory_model::memory_order_relaxed );
+                if ( hL - hR <= 1 )
+                    return pNode; // retry
+
+                node_type * pLRight = pLeft->m_pRight.load( memory_model::memory_order_relaxed );
+                int hLR = pLRight ? pLRight->height( memory_model::memory_order_relaxed ) : 0;
+                node_type * pLLeft = pLeft->m_pLeft.load( memory_model::memory_order_relaxed );
+                int hLL = pLLeft ? pLLeft->height( memory_model::memory_order_relaxed ) : 0;
+
+                if ( hLL > hLR ) {
+                    // rotate right
+                    return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
+                }
+                else {
+                    assert( pLRight != nullptr );
+                    {
+                        node_scoped_lock lr( pLRight );
+                        if ( pLeft->m_pRight.load( memory_model::memory_order_relaxed ) != pLRight )
+                            return pNode; // retry
+
+                        hLR = pLRight->height( memory_model::memory_order_relaxed );
+                        if ( hLL > hLR )
+                            return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
+
+                        node_type * pLRLeft = pLRight->m_pLeft.load( memory_model::memory_order_relaxed );
+                        int hLRL = pLRLeft ? pLRLeft->height( memory_model::memory_order_relaxed  ) : 0;
+                        int balance = hLL - hLRL;
+                        if ( balance >= -1 && balance <= 1 && !((hLL == 0 || hLRL == 0) && pLeft->value(memory_model::memory_order_relaxed) == nullptr) ) {
+                            // nParent.child.left won't be damaged after a double rotation
+                            return rotate_right_over_left_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLRL );
+                        }
+                    }
+
+                    // focus on pLeft, if necessary pNode will be balanced later
+                    return rebalance_to_left_locked( pNode, pLeft, pLRight, hLL );
+                }
+            }
+        }
+
+        node_type * rebalance_to_left_locked( node_type * pParent, node_type * pNode, node_type * pRight, int hL )
+        {
+            assert( pNode->m_pParent.load( memory_model::memry_order_relaxed ) == pNode );
+            assert( m_pParent->m_pLeft.load( memory_model::memory_order_relaxed ) == pNode
+                    || m_pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+
+            // pParent and pNode is locked yet
+            {
+                node_scoped_lock l( pRight );
+                if ( pNode->m_pRight.load( memory_model::memory_order_relaxed ) != pRight )
+                    return pNode; // retry for pNode
+
+                int hR = pRight->height( memory_model::memory_order_relaxed );
+                if ( hL - hR >= -1 )
+                    return pNode; // retry
+
+                node_type * pRLeft = pRight->m_pLeft.load( memory_model::memory_order_relaxed );
+                int hRL = pRLeft > pRLeft->height( memory_model::memory_order_relaxed ) : 0;
+                node_type * pRRight = pRight->m_pRight.load( memory_model::memory_order_relaxed );
+                int hRR = pRRight ? pRRight->height( memory_model::memory_order_relaxed ) : 0;
+                if ( hRR > hRL )
+                    return rotate_left_locked( pParent, pNode, hL, pRight, pRLeft, hRL, hRR );
+
+                {
+                    assert( pRLeft != nullptr );
+                    node_scoped_lock lrl( pRLeft );
+                    if ( pRight->m_pLeft.load( memory_model::memory_order_relaxed ) != pRLeft )
+                        return pNode; // retry
+
+                    hRL = pRLeft->height( memory_model::memory_order_relaxed );
+                    if ( hRR >= hRL )
+                        return rotate_left_locked( pParent, pNode, hL, pRight, pRLeft, hRL, hRR );
+
+                    node_type * pRLRight = pRLeft->m_pRight.load( memory_model::memory_order_relaxed );
+                    int hRLR = pRLRight ? pRLRight->height( memory_model::memory_order_relaxed ) : 0;
+                    int balance = hRR - hRLR;
+                    if ( b >= -1 && b <= 1 && !((hRR == 0 || hRLR == 0) && pRight->value( memory_odel::memory_order_relaxed ) == nullptr)
+                         return rotate_left_over_right_locked( pParent, pNode, hL, pRight, pRLeft, hRR, hRLR );
+                }
+                return rebalance_to_right_locked( pNode, pRight, pRLeft, hRR );
+            }
+        }
+
+        static void begin_change( node_type * pNode, typename node_type::version_type version )
+        {
+            pNode->version( version | node_type::shrinking, memory_model::memory_order_release );
+        }
+        static void end_change( node_type * pNode, tpename node_type::version_type version )
+        {
+            // Clear shrinking nd unlinked flags and increment version
+            pNode->version( (version | node_type::version_flags) + 1, memory_model::memory_order_release );
+        }
+
+        node_type * rotate_right_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR, int hLL, node_type * pLRight, int hLR )
+        {
+            node_type::version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            node_type * pParentLeft = pParent->m_pLeft.load( memory_model::memory_order_relaxed );
+
+            begin_change( pNode, nodeVersion );
+
+            pNode->m_pLeft.store( pLRight, memory_model::memory_order_relaxed );
+            if ( pLRight != nullptr )
+                pLRight->m_pParent.store( pNode, memory_model::memory_order_relaxed  );
+
+            pLeft->m_pRight.store( pNode, memory_model::memory_order_relaxed );
+            pNode->m_pParent.store( pLeft, memory_model::memory_order_relaxed );
+
+            if ( pParentLeft == pNode )
+                pParent->m_pLeft.store( pLeft, memory_model::memory_order_relaxed );
+            else {
+                assert( pParent->m_pRight.load( memory_odel::memory_order_relaxed ) == pNode );
+                pParent->m_pRight.store( pLeft, memory_mdel::memory_order_relaxed );
+            }
+            pLeft->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+
+            // fix up heights links
+            int hNode = 1 + std::max( hLR, hR );
+            pNode->height( hNode, memory_model::memory_order_relaxed );
+            pLeft->height( 1 + std::max( hLL, hNode ), memory_model::memory_order_relaxed );
+
+            end_change( pNode, nodeVersion );
+
+            // We have damaged pParent, pNode (now parent.child.right), and pLeft (now
+            // parent.child).  pNode is the deepest.  Perform as many fixes as we can
+            // with the locks we've got.
+
+            // We've already fixed the height for pNode, but it might still be outside
+            // our allowable balance range.  In that case a simple fix_height_locked()
+            // won't help.
+            int nodeBalance = hLR - hR;
+            if ( nodeBalance < -1 || nodeBalance > 1 ) {
+                // we need another rotation at pNode
+                return pNode;
+            }
+
+            // we've fixed balance and height damage for pNode, now handle
+            // extra-routing node damage
+            if ( (pLRight == nullptr || hR == 0) && pNode->value(memory_model::memory_order_relaxed) == nullptr ) {
+                // we need to remove pNode and then repair
+                return pNode;
+            }
+
+            // we've already fixed the height at pLeft, do we need a rotation here?
+            int leftBalance = hLL - hNode;
+            if ( leftBalance < -1 || leftBalance > 1 )
+                return pLeft;
+
+            // pLeft might also have routing node damage (if pLeft.left was null)
+            if ( hLL == 0 && pLeft->value( memory_model::memory_order_relaxed ) == nullptr )
+                return pLeft;
+
+            // try to fix the parent height while we've still got the lock
+            return fix_height_locked( pParent );
+        }
+
+        node_type * rotate_left_locked( node_type * pParent, node_type * pNode, int hL, node_type * pRight, node_type * pRLeft, int hRL, int hRR )
+        {
+            typename node_type::version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            node_type * pParentLeft = pParent->m_pLeft.load( memory_odel::memory_order_relaxed );
+
+            begin_change( pNode, nodeVersion );
+
+            // fix up pNode links, careful to be compatible with concurrent traversal for all but pNode
+            pNode->m_pRight.store( pRLeft, memory_nodel::memory_order_relaxed );
+            if ( pRLeft != nullptr )
+                pRLeft->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+
+            pRight->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
+            pNode->m_pParent.store( pRight, memory_model::memory_order_relaxed );
+
+            if ( pParentLeft == pNode )
+                pParent->m_pLeft.store( pRight, memory_model::memory_order_relaxed );
+            else {
+                assert( pParent->m_pRight.load( memory_odel::memory_order_relaxed ) == pNode );
+                pParent->m_pRight.store( pRight, memory_model::memory_model_relaxed );
+            }
+            pRight->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+
+            // fix up heights
+            int hNode = 1 + std::max( hL, hRL );
+            pNode->height( hNode, memory_model::memory_order_relaxed );
+            pRight->height( 1 + std::max( hNode, hRR ), memory_model::memory_order_relaxed );
+
+            end_change( pNode, nodeVersion );
+
+            int nodeBalance = hRL - hL;
+            if ( nodeBalance < -1 || nodeBalance > 1 )
+                return pNode;
+
+            if ( (pRLeft == nullptr || hL == 0) && pNode->value( memory_model::memory_order_relaxed ) == nullptr )
+                return pNode;
+
+            int rightBalance = hRR - hNode;
+            if ( rightBalance < -1 || rightBalance > 1 )
+                return pRight;
+
+            if ( hRR == 0 && pRight->value( memory_model::memory_order_relaxed ) == nullptr )
+                return pRight;
+
+            return fix_height_locked( pParent );
+        }
+
+        node_type * rotate_right_over_left_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR, int hLL, node_type * pLRight, int hLRL )
+        {
+            typename node_type::value_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            typename node_type::value_type leftVersion = pLeft->version( memory_model::memory_order_relaxed );
+
+            node_type * pPL = pParent->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pLRL = pLRight->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pLRR = pLRight->m_pRight.load( memory_model::memory_order_relaxed );
+            int hLRR = pLRR ? pLRR->hight( memory_model::memory_order_relaxed ) : 0;
+
+            begin_change( pNode, nodeVersion );
+            begin_change( pLeft, leftVersion );
+
+            // fix up pNode links, careful about the order!
+            pNode->m_pLeft.store( pLRR, memory_model::memory_order_relaxed );
+            if ( pLRR != nullptr )
+                pLRR->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+
+            pLeft->m_pRight.store( pLRL, memory_model::memory_order_relaxed );
+            if ( pLRL != nullptr )
+                pLRL->m_pParent.store( pLeft, memory_model::memory_order_relaxed );
+
+            pLRight->m_pLeft.store( pLeft, memory_model::memory_order_relaxed );
+            pLeft->m_pParent.store( pLRight, memory_model::memory_order_relaxed );
+            pLRight->m_pRight.store( pNode, memory_model::memory_order_relaxed );
+            pNode->m_pParent.store( pLRight, memory_model::memory_order_relaxed );
+
+            if ( pPL == pNode )
+                pParent->m_pLeft.store( pLRight, memory_model::memory_order_relaxed );
+            else {
+                assert( Parent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+                pParent->m_pRight.store( pLRight, memory_model::memory_order_relaxed );
+            }
+            pLRight->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+
+            // fix up heights
+            int hNode = 1 + std::max( hLRR, hR );
+            pNode->height( hNode, memory_model::memory_order_relaxed );
+            int hLeft = 1 + std::max( hLL, hLRL );
+            pLeft->height( hLeft, memory_model::memory_order_relaxed );
+            pLRight->height( 1 + std::max( hLeft, hNode ), memory_model::memory_order_relaxed );
+
+            end_change( pNode, nodeVersion );
+            end_change( pLeft, leftVersion );
+
+            // caller should have performed only a single rotation if pLeft was going
+            // to end up damaged
+            assert( hLL - hLRL <= 1 && hLRL - hLL <= 1 );
+            assert( !((hLL == 0 || pLRL == nullptr) && pLeft->value( memory_model::memory_order_relaxed ) == nullptr ));
+
+            // We have damaged pParent, pLR (now parent.child), and pNode (now
+            // parent.child.right).  pNode is the deepest.  Perform as many fixes as we
+            // can with the locks we've got.
+
+            // We've already fixed the height for pNode, but it might still be outside
+            // our allowable balance range.  In that case a simple fix_height_locked()
+            // won't help.
+            int nodeBalance = hLRR - hR;
+            if ( nodeBalance < -1 || nodeBalance > 1 ) {
+                // we need another rotation at pNode
+                return pNode;
+            }
+
+            // pNode might also be damaged by being an unnecessary routing node
+            if ( (pLRR == nullptr || hR == 0) && pNode->value( memory_model::memory_order_relaxed ) == nullptr ) {
+                // repair involves splicing out pNode and maybe more rotations
+                return pNode;
+            }
+
+            // we've already fixed the height at pLRight, do we need a rotation here?
+            final int balanceLR = hLeft - hNode;
+            if ( balanceLR < -1 || balanceLR > 1 )
+                return pLR;
+
+            // try to fix the parent height while we've still got the lock
+            return fix_height_locked( pParent );
+        }
+
+        node_type * rotate_left_over_right_locked( node_type * pParent, node_type * pNode, int hL, node_type * pRight, node_type * pRLeft, int hRR, int hRLR )
+        {
+            typename node_type::version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            typename node_type::version_type rightVersion = pRight->version( memory_model::memory_order_relaxed );
+
+            node_type * pPL = pParent->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pRLL = pRLeft->m_pLeft.load( memory_model::memory_order_relaxed );
+            node_type * pRLR = pRLeft->m_pRight.load( memory_model::memory_order_relaxed );
+            int hRLL = pRLL ? pRLL->height( memory_model::memory_order_relaxed ) : 0;
+
+            begin_change( pNode, nodeVersion );
+            begin_change( pRight, ghtVersion );
+
+            // fix up pNode links, careful about the order!
+            pNode->m_pRight.store( pRLL, memory_model::memory_order_relaxed );
+            if ( pRLL != nullptr )
+                pRLL->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+
+            pRight->m_pLeft.store( pRLR, memory_model::memory_order_relaxed );
+            if ( pRLR != nullptr )
+                pRLR->m_pParent.store( pRight, memory_model::memory_order_relaxed );
+
+            pRLeft->m_pRight.store( pRight, memory_model::memory_order_relaxed );
+            pRight->m_pParent.store( pRLeft, memory_model::memory_order_relaxed );
+            pRLeft->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
+            pNode->m_pParent.store( pRLeft, memory_model::memory_order_relaxed );
+
+            if ( pPL == pNode )
+                pParent->m_pLeft.store( pRLeft, memory_model::memory_order_relaxed );
+            else {
+                assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+                pParent->m_pRight.store( pRLeft, memory_model::memory_order_relaxed );
+            }
+            pRLeft->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+
+            // fix up heights
+            int hNode = 1 + std::max( hL, hRLL );
+            pNode->height( hNode, memory_model::memory_order_relaxed );
+            int hRight = 1 + std::max( hRLR, hRR );
+            pRight->height( hRight, memory_model::memory_order_relaxed );
+            pRLeft->height( 1 + std::max( hNode, hRight ), memory_model::memory_order_relaxed );
+
+            end_change( pNode, nodeVersion );
+            end_change( pRight, rightVersion );
+
+            assert( hRR - hRLR <= 1 && hRLR - hRR <= 1 );
+
+            int nodeBalance = hRLL - hL;
+            if ( nodeBalance < -1 || nodeBalance > 1 )
+                return pNode;
+            if ( (pRLL == nullptr || hL == 0) && pNode->value( memory_model::memory_order_relaxed ) == nullptr )
+                return pNode;
+
+            int balRL = hRight - hNode;
+            if ( balRL < -1 || balRL > 1 )
+                return pRLeft;
+
+            return fix_height_locked( pParent );
+        }
+
+        //@endcond
     };
 }} // namespace cds::container
 

@@ -55,7 +55,6 @@ namespace cds { namespace container {
         @note Before including <tt><cds/container/bronson_avltree_map_rcu.h></tt> you should include appropriate RCU header file,
         see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
     */
-
     template <
         typename RCU,
         typename Key,
@@ -88,10 +87,16 @@ namespace cds { namespace container {
         typedef typename traits::back_off               back_off;           ///< Back-off strategy
         typedef typename traits::lock_type              lock_type;          ///< Node lock type
 
+        /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
+        static bool const c_bRelaxedInsert = traits::relaxed_insert;
+
     protected:
         //@cond
         typedef typename base_class::alloc_node_type    node_type;
+        typedef typename base_class::node_type          base_node_type;
         typedef base_class::node_scoped_lock            node_scoped_lock;
+
+        using base_class::update_flags;
         //@endcond
 
     public:
@@ -103,7 +108,7 @@ namespace cds { namespace container {
         ~BronsonAVLTreeMap()
         {}
 
-        /// Inserts new node with key and default value
+        /// Inserts new node with \p key and default value
         /**
             The function creates a node with \p key and default value, and then inserts the node created into the map.
 
@@ -118,7 +123,16 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key )
         {
-            //TODO
+            return base_class::do_update( key,
+                []( base_node_type * pNode ) -> mapped_type* 
+                {
+                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    node_type * p = static_cast<node_type *>(pNode);
+                    new (&p->m_data) mapped_type;
+                    return &p->m_data;
+                },
+                update_flags::allow_insert 
+            ) == update_flags::result_insert;
         }
 
         /// Inserts new node
@@ -137,7 +151,16 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-            //TODO
+            return base_class::do_update( key,
+                [&val]( base_node_type * pNode ) 
+                {
+                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    node_type * p = static_cast<node_type *>(pNode);
+                    new (&p->m_data) mapped_type( val );
+                    return &p->m_data;
+                },
+                update_flags::allow_insert 
+            ) == update_flags::result_insert;
         }
 
         /// Inserts new node and initialize it by a functor
@@ -166,7 +189,16 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool insert_with( K const& key, Func func )
         {
-            //TODO
+            return base_class::do_update( key,
+                [&func]( base_node_type * pNode ) -> mapped_type* 
+                {
+                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    node_type * p = static_cast<node_type *>(pNode);
+                    func( p->m_data );
+                    return &p->m_data;
+                },
+                update_flags::allow_insert 
+            ) == update_flags::result_insert;
         }
 
         /// For key \p key inserts data of type \p mapped_type created in-place from \p args
@@ -178,7 +210,16 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            //TODO
+            return base_class::do_update( key,
+                [&]( base_node_type * pNode ) -> mapped_type* 
+                {
+                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    node_type * p = static_cast<node_type *>(pNode);
+                    new (&p->m_data) mapped_type( std::forward<Args>(args)... );
+                    return &p->m_data;
+                },
+                update_flags::allow_insert 
+            ) == update_flags::result_insert;
         }
 
         /// Ensures that the \p key exists in the map
@@ -198,9 +239,9 @@ namespace cds { namespace container {
 
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the tree
+            - \p item - value
 
-            The functor may change any fields of the \p item
+            The functor may change any fields of the \p item. The functor is called under the node lock.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
@@ -209,9 +250,18 @@ namespace cds { namespace container {
             already is in the tree.
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
+        std::pair<bool, bool> update( K const& key, Func func )
         {
-            //TODO
+            int result = base_class::do_update( key,
+                [&func]( base_node_type * pNode ) -> mapped_type* 
+                {
+                    node_type * p = static_cast<node_type *>(pNode);
+                    func( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr, p->m_data );
+                    return &p->m_data;
+                },
+                update_flags::allow_insert | update_flags::allow_update 
+            );
+            return std::make_pair( result != 0, (result & update_flags::result_insert) != 0 );
         }
 
         /// Delete \p key from the map
@@ -430,7 +480,7 @@ namespace cds { namespace container {
             The function is an analog of \p get(Q const&)
             but \p pred is used for comparing the keys.
 
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type
+            \p Less functor has the semantics like \p std::less but should take arguments of type \p key_type
             and \p Q in any order.
             \p pred must imply the same element order as the comparator used for building the map.
         */
