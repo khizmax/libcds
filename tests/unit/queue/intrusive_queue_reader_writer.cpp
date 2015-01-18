@@ -1,4 +1,13 @@
-//$$CDS-header$$
+/*
+    This file is a part of libcds - Concurrent Data Structures library
+    Version: 2.0.0
+
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2014
+    Distributed under the BSD license (see accompanying file license.txt)
+
+    Source code repo: http://github.com/khizmax/libcds/
+    Download: http://sourceforge.net/projects/libcds/files/
+*/
 
 #include "cppunit/thread.h"
 #include "queue/intrusive_queue_type.h"
@@ -433,27 +442,27 @@ namespace queue {
         }
 
     protected:
-        CDSUNIT_DECLARE_MSQueue
-        CDSUNIT_DECLARE_MoirQueue
-        CDSUNIT_DECLARE_OptimisticQueue
-        CDSUNIT_DECLARE_BasketQueue
+        //CDSUNIT_DECLARE_MSQueue
+        //CDSUNIT_DECLARE_MoirQueue
+        //CDSUNIT_DECLARE_OptimisticQueue
+        //CDSUNIT_DECLARE_BasketQueue
         CDSUNIT_DECLARE_FCQueue
-        CDSUNIT_DECLARE_SegmentedQueue
-        CDSUNIT_DECLARE_TsigasCycleQueue
-        CDSUNIT_DECLARE_VyukovMPMCCycleQueue
-        CDSUNIT_DECLARE_BoostSList
+        //CDSUNIT_DECLARE_SegmentedQueue
+        //CDSUNIT_DECLARE_TsigasCycleQueue
+        //CDSUNIT_DECLARE_VyukovMPMCCycleQueue
+        //CDSUNIT_DECLARE_BoostSList
 
 
         CPPUNIT_TEST_SUITE(IntrusiveQueue_ReaderWriter)
-            CDSUNIT_TEST_MSQueue
-            CDSUNIT_TEST_MoirQueue
-            CDSUNIT_TEST_OptimisticQueue
-            CDSUNIT_TEST_BasketQueue
+            //CDSUNIT_TEST_MSQueue
+            //CDSUNIT_TEST_MoirQueue
+            //CDSUNIT_TEST_OptimisticQueue
+            //CDSUNIT_TEST_BasketQueue
             CDSUNIT_TEST_FCQueue
-            CDSUNIT_TEST_SegmentedQueue
-            CDSUNIT_TEST_TsigasCycleQueue
-            CDSUNIT_TEST_VyukovMPMCCycleQueue
-            CDSUNIT_TEST_BoostSList
+            //CDSUNIT_TEST_SegmentedQueue
+            //CDSUNIT_TEST_TsigasCycleQueue
+            //CDSUNIT_TEST_VyukovMPMCCycleQueue
+            //CDSUNIT_TEST_BoostSList
         CPPUNIT_TEST_SUITE_END();
     };
 
