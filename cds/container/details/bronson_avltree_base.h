@@ -187,7 +187,7 @@ namespace cds { namespace container {
             On the other hand, constructing of the new node can be too complex to make it under the lock,
             that can lead to lock contention.
 
-            When this option is enabled, the new node created before locking the parent node.
+            When this option is enabled, the new node is created before locking the parent node.
             After that, the parent is locked and checked whether the new node can be attached to the parent.
             In this case, false node creating can be performed, but locked section can be significantly small.
         */
@@ -243,7 +243,7 @@ namespace cds { namespace container {
             typedef opt::v::delete_disposer<>       disposer;
 
             /// Node lock
-            typedef cds::SpinLock                   lock_type;
+            typedef std::mutex                      lock_type;
 
             /// Enable relaxed insertion.
             /**
@@ -306,7 +306,7 @@ namespace cds { namespace container {
                 the disposer will be called to signal that the memory for the value can be safely freed.
                 Default is \ref cds::intrusive::opt::delete_disposer "cds::container::opt::v::delete_disposer<>" which calls \p delete operator.
                 Due the nature of GC schema the disposer may be called asynchronously.
-            - \p opt::lock_type - node lock type, default is \p cds::SpinLock
+            - \p opt::lock_type - node lock type, default is \p std::mutex
             - \p bronson_avltree::relaxed_insert - enable (\p true) or disable (\p false, the default) 
                 @ref bronson_avltree::relaxed_insert "relaxed insertion"
             - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)

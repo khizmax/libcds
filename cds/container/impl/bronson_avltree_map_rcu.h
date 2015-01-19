@@ -14,11 +14,11 @@ namespace cds { namespace container {
         @headerfile cds/container/bronson_avltree_map_rcu.h
 
         This is the specialization of \ref cds_container_BronsonAVLTreeMap_rcu "RCU-based Bronson et al AVL-tree"
-        for "key -> value pointer" map. This specialization stores the pointer to user-allocated values instead of the copy 
+        for "key -> value pointer" map. This specialization stores the pointer to user-allocated values instead of the copy
         of the value. When a tree node is removed, the algorithm does not free the value pointer directly, instead, it call
         the disposer functor provided by \p Traits template parameter.
 
-        The set of available member functions is differ from classic map.
+        The set of available member functions differs from classic map.
 
         <b>Template arguments</b>:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
