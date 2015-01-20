@@ -111,8 +111,6 @@ namespace cds { namespace algo {
             unsigned int                          nAge;       ///< Age of the record сколько неактивная запись может быть в списке
             atomics::atomic<publication_record *> pNext;      ///< Next record in publication list
             void *                                pOwner;     ///< [internal data] Pointer to \ref kernel object that manages the publication list
-            boost::recursive_mutex *              _waitMutex;
-            boost::condition_variable_any *       _condVar;
 
             /// Initializes publication record
             publication_record()
@@ -121,11 +119,9 @@ namespace cds { namespace algo {
                 , nAge(0)
                 , pNext( nullptr )
                 , pOwner( nullptr )
-                //, _waitMutex( new boost::recursive_mutex() )
-                //, _condVar( new boost::condition_variable_any() )
             {
-                _waitMutex = new boost::recursive_mutex();
-                _condVar = new boost::condition_variable_any();
+               // _waitMutex = new boost::recursive_mutex();
+                //_condVar = new boost::condition_variable_any();
             }
 
             /// Returns the value of \p nRequest field
@@ -271,7 +267,8 @@ namespace cds { namespace algo {
             typedef typename traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
             typedef typename traits::stat      stat;               ///< Internal statistics
             typedef typename traits::memory_model memory_model;    ///< C++ memory model
-
+            boost::recursive_mutex *              _waitMutex;       //тестовый мьютекс
+            boost::condition_variable_any *       _condVar;         //тестовая условная переменная
         protected:
             //@cond
             typedef cds::details::Allocator< publication_record_type, allocator >   cxx11_allocator; ///< internal helper cds::details::Allocator
@@ -575,6 +572,9 @@ namespace cds { namespace algo {
                 pRec->pOwner = this;
                 m_pThreadRec.reset( pRec );
                 m_Stat.onCreatePubRecord();
+                _waitMutex = new boost::recursive_mutex();
+                _condVar = new boost::condition_variable_any();
+
             }
 
 			void publish(publication_record_type * pRec)
@@ -595,9 +595,7 @@ namespace cds { namespace algo {
 							memory_model::memory_order_release, atomics::memory_order_relaxed));
 						m_Stat.onActivatPubRecord();
 					}
-				}
-				
-				//pRec->_waitMutex->lock();
+                }
 			}
 
             void republish( publication_record_type * pRec )
@@ -692,28 +690,31 @@ namespace cds { namespace algo {
                         case active:
                             if ( p->op() >= req_Operation ) {
 
-                                boost::recursive_mutex::scoped_lock lock(*(p->_waitMutex));
+                               // boost::recursive_mutex::scoped_lock lock(*(p->_waitMutex));
 
                                 p->nAge = nCurAge;
                                 owner.fc_apply( static_cast<publication_record_type *>(p) );
+                                _condVar->notify_one();
                                 operation_done( *p );
                                 bOpDone = true;
-
-                                p->_condVar->notify_one();
-                                
+                                break;
                             }
+                            _condVar->notify_one();
                             break;
                         case inactive:
                             // Only m_pHead can be inactive in the publication list
                             assert( p == m_pHead );
+                            _condVar->notify_one();
                             break;
                         case removed:
                             // The record should be removed
+                            _condVar->notify_one();
                             p = unlink_and_delete_record( pPrev, p );
                             continue;
                         default:
                             /// ??? That is impossible
                             assert(false);
+                            _condVar->notify_one();
                     }
                     pPrev = p;
                     p = p->pNext.load( memory_model::memory_order_acquire );
@@ -742,25 +743,26 @@ namespace cds { namespace algo {
             {
                 //back_off bkoff;
 
-                boost::recursive_mutex::scoped_lock lock(*(pRec->_waitMutex));
-
                 while ( pRec->nRequest.load( memory_model::memory_order_acquire ) != req_Response ) {
 
                     // The record can be excluded from publication list. Reinsert it
                     republish( pRec );
                     
                     //bkoff();
-
-                    pRec->_condVar->wait(lock);
+                    boost::recursive_mutex::scoped_lock lock(*(_waitMutex));
+                    _condVar->wait(lock);
 
                     if ( m_Mutex.try_lock() ) {
                         if ( pRec->nRequest.load( memory_model::memory_order_acquire ) == req_Response ) {
                             m_Mutex.unlock();
+                            lock.unlock();
                             break;
                         }
                         // The thread becomes a combiner
+                        lock.unlock();
                         return false;
                     }
+                    lock.unlock();
                 }
                 return true;
             }
