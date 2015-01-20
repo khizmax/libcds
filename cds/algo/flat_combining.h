@@ -267,8 +267,8 @@ namespace cds { namespace algo {
             typedef typename traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
             typedef typename traits::stat      stat;               ///< Internal statistics
             typedef typename traits::memory_model memory_model;    ///< C++ memory model
-            boost::recursive_mutex *              _waitMutex;       //тестовый мьютекс
-            boost::condition_variable_any *       _condVar;         //тестовая условная переменная
+            boost::recursive_mutex *              _waitMutex;       //TODO: global mutex for notifying every waiting threads
+            boost::condition_variable_any *       _condVar;         //TODO: global condVar for notifying every waiting threads
         protected:
             //@cond
             typedef cds::details::Allocator< publication_record_type, allocator >   cxx11_allocator; ///< internal helper cds::details::Allocator
@@ -607,7 +607,7 @@ namespace cds { namespace algo {
             }
 
             template <class Container>
-            void try_combining( Container& owner, publication_record_type * pRec )//в призентации это apply
+            void try_combining( Container& owner, publication_record_type * pRec )
             {
                 if ( m_Mutex.try_lock() ) {
 	
@@ -694,27 +694,27 @@ namespace cds { namespace algo {
 
                                 p->nAge = nCurAge;
                                 owner.fc_apply( static_cast<publication_record_type *>(p) );
-                                _condVar->notify_one();
+                                _condVar->notify_all();
                                 operation_done( *p );
                                 bOpDone = true;
                                 break;
                             }
-                            _condVar->notify_one();
+                            _condVar->notify_all();
                             break;
                         case inactive:
                             // Only m_pHead can be inactive in the publication list
                             assert( p == m_pHead );
-                            _condVar->notify_one();
+                            _condVar->notify_all();//TODO: perhaps not need
                             break;
                         case removed:
                             // The record should be removed
-                            _condVar->notify_one();
+                            _condVar->notify_all();//TODO: perhaps not need
                             p = unlink_and_delete_record( pPrev, p );
                             continue;
                         default:
                             /// ??? That is impossible
                             assert(false);
-                            _condVar->notify_one();
+                            _condVar->notify_all();//TODO: perhaps not need
                     }
                     pPrev = p;
                     p = p->pNext.load( memory_model::memory_order_acquire );
