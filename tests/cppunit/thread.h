@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CPPUNIT_THREAD_H
-#define __CPPUNIT_THREAD_H
+#ifndef CDS_CPPUNIT_THREAD_H
+#define CDS_CPPUNIT_THREAD_H
 
 #include <cds/details/defs.h>
 #include "cppunit/cppunit_mini.h"
@@ -131,4 +131,4 @@ namespace CppUnitMini {
     };
 }
 
-#endif    // #ifndef __CPPUNIT_THREAD_H
+#endif    // #ifndef CDS_CPPUNIT_THREAD_H

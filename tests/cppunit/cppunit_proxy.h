@@ -17,8 +17,8 @@
 
 /* $Id$ */
 
-#ifndef _CPPUNITPROXYINTERFACE_H_
-#define _CPPUNITPROXYINTERFACE_H_
+#ifndef CDS_CPPUNIT_PROXYINTERFACE_H_
+#define CDS_CPPUNIT_PROXYINTERFACE_H_
 
 /*
  * STLport specific
@@ -31,4 +31,4 @@
 #include "cppunit/cppunit_mini.h"
 #include <cds/algo/atomic.h>   // for cds::atomicity::empty_item_counter
 
-#endif
+#endif // #ifndef CDS_CPPUNIT_PROXYINTERFACE_H_
