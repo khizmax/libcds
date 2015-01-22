@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_TESTHDR_MAP_PRINT_SKIPLIST_STAT_H
-#define __CDS_TESTHDR_MAP_PRINT_SKIPLIST_STAT_H
+#ifndef CDSTEST_HDR_MAP_PRINT_SKIPLIST_STAT_H
+#define CDSTEST_HDR_MAP_PRINT_SKIPLIST_STAT_H
 
 #include "unit/print_skip_list_stat.h"
 
@@ -41,4 +41,4 @@ namespace misc {
 
 }   // namespace misc
 
-#endif // #ifndef __CDS_TESTHDR_MAP_PRINT_SKIPLIST_STAT_H
+#endif // #ifndef CDSTEST_HDR_MAP_PRINT_SKIPLIST_STAT_H

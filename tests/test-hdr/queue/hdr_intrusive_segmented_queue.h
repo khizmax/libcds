@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSHDR_QUEUE_INTRUSIVE_SEGMENTED_QUEUE_H
-#define __CDSHDR_QUEUE_INTRUSIVE_SEGMENTED_QUEUE_H
+#ifndef CDSTEST_HDR_INTRUSIVE_SEGMENTED_QUEUE_H
+#define CDSTEST_HDR_INTRUSIVE_SEGMENTED_QUEUE_H
 
 #include "cppunit/cppunit_proxy.h"
 #include <cds/intrusive/details/base.h>
@@ -265,4 +265,4 @@ namespace queue {
 
 } // namespace queue
 
-#endif // __CDSHDR_QUEUE_INTRUSIVE_SEGMENTED_QUEUE_H
+#endif // CDSTEST_HDR_INTRUSIVE_SEGMENTED_QUEUE_H

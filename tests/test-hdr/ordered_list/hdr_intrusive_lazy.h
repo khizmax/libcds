@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_INTRUSIVE_LAZY_H
+#define CDSTEST_HDR_INTRUSIVE_LAZY_H
+
 #include "cppunit/cppunit_proxy.h"
 #include <cds/intrusive/details/lazy_list_base.h>
 
@@ -890,3 +893,5 @@ namespace ordlist {
         CPPUNIT_TEST_SUITE_END()
     };
 }   // namespace ordlist
+
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_LAZY_H

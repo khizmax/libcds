@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_SKIPLIST_SET_RCU_H
+#define CDSTEST_HDR_SKIPLIST_SET_RCU_H
+
 #include "set/hdr_set.h"
 
 namespace set {
@@ -507,3 +510,5 @@ namespace set {
 
     };
 }
+
+#endif // #ifndef CDSTEST_HDR_SKIPLIST_SET_RCU_H

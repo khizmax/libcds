@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSTEST_SIZE_CHECK_H
-#define __CDSTEST_SIZE_CHECK_H
+#ifndef CDSTEST_SIZE_CHECK_H
+#define CDSTEST_SIZE_CHECK_H
 
 #include <cds/algo/atomic.h>
 
@@ -33,4 +33,4 @@ namespace misc {
 
 } // namespace misc
 
-#endif // #ifndef __CDSTEST_SIZE_CHECK_H
+#endif // #ifndef CDSTEST_SIZE_CHECK_H

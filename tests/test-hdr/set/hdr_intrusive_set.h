@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_INTRUSIVE_SET_H
+#define CDSTEST_HDR_INTRUSIVE_SET_H
+
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
 
@@ -1866,3 +1869,5 @@ namespace set {
     };
 
 }   // namespace set
+
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_SET_H

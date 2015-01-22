@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSTEST_HDR_MAP_H
-#define __CDSTEST_HDR_MAP_H
+#ifndef CDSTEST_HDR_MAP_H
+#define CDSTEST_HDR_MAP_H
 #include "size_check.h"
 
 #include "cppunit/cppunit_proxy.h"
@@ -983,4 +983,4 @@ namespace map {
     };
 }   // namespace map
 
-#endif // #ifndef __CDSTEST_HDR_MAP_H
+#endif // #ifndef CDSTEST_HDR_MAP_H

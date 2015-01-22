@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_HP_H
-#define CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_HP_H
+#ifndef CDSTEST_HDR_INTRUSIVE_ELLEN_BINTREE_POOL_HP_H
+#define CDSTEST_HDR_INTRUSIVE_ELLEN_BINTREE_POOL_HP_H
 
 #include "tree/hdr_intrusive_bintree.h"
 #include <cds/intrusive/ellen_bintree_hp.h>
@@ -56,4 +56,4 @@ namespace tree {
 
 } // namespace tree
 
-#endif // #ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_HP_H
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_ELLEN_BINTREE_POOL_HP_H

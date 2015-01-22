@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_INTRUSIVE_MICHAEL_H
+#define CDSTEST_HDR_INTRUSIVE_MICHAEL_H
+
 #include "cppunit/cppunit_proxy.h"
 #include <cds/intrusive/details/michael_list_base.h>
 
@@ -904,3 +907,5 @@ namespace ordlist {
         CPPUNIT_TEST_SUITE_END()
     };
 }   // namespace ordlist
+
+#endif // CDSTEST_HDR_INTRUSIVE_MICHAEL_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSTEST_HDR_STRIPED_SET_H
-#define __CDSTEST_HDR_STRIPED_SET_H
+#ifndef CDSTEST_HDR_STRIPED_SET_H
+#define CDSTEST_HDR_STRIPED_SET_H
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
@@ -750,4 +750,4 @@ namespace set {
     };
 } // namespace set
 
-#endif // #ifndef __CDSTEST_HDR_STRIPED_SET_H
+#endif // #ifndef CDSTEST_HDR_STRIPED_SET_H

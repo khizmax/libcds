@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_RCU_H
-#define CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_RCU_H
+#ifndef CDSTEST_HDR_INTRUSIVE_ELLEN_BINTREE_POOL_RCU_H
+#define CDSTEST_HDR_INTRUSIVE_ELLEN_BINTREE_POOL_RCU_H
 
 #include "tree/hdr_intrusive_bintree.h"
 #include <cds/urcu/general_instant.h>
@@ -60,4 +60,4 @@ namespace tree {
 
 } // namespace tree
 
-#endif // #ifndef CDSHDRTEST_INTRUSIVE_ELLEN_BINTREE_POOL_RCU_H
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_ELLEN_BINTREE_POOL_RCU_H
