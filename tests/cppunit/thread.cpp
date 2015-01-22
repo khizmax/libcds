@@ -42,10 +42,8 @@ namespace CppUnitMini {
 
     ThreadPool::~ThreadPool()
     {
-        if ( m_pBarrierStart )
-            delete m_pBarrierStart;
-        if ( m_pBarrierDone )
-            delete m_pBarrierDone;
+        delete m_pBarrierStart;
+        delete m_pBarrierDone;
 
         for ( size_t i = 0; i < m_arrThreads.size(); ++i )
             delete m_arrThreads[i];
