@@ -25,6 +25,12 @@ Download the latest release from http://sourceforge.net/projects/libcds/files/
 
 See online doxygen-generated doc here: http://libcds.sourceforge.net/doc/cds-api/index.html
 
+**Pull request requirements**
+- Pull-request to *master* branch will be unconditionally rejected
+- *integration* branch is intended for pull-request. Usually, *integration* branch is the same as *master*
+- *dev* branch is intended for main developing. Usually, it contains unstable code
+
+
 References
 ----------
 *Stack*

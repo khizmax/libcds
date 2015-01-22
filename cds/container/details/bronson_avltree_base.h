@@ -21,18 +21,15 @@ namespace cds { namespace container {
         struct link
         {
             typedef node<Key, T> node_type;
-            typedef uint64_t version_type;
+            typedef uint32_t version_type;
             typedef Lock lock_type;
 
-            enum class version_flags : version_type
+            enum
             {
-                unlinked = 1,
-                growing = 2,
-                shrinking = 4,
-                grow_count_increment = 1 << 3,
-                grow_count_mask = 0xff << 3,
-                shrink_count_increment = 1 << 11,
-                ignore_grow = ~(growing | grow_count_mask)
+                shrinking = 1,
+                unlinked = 2,
+                version_flags = shrinking | unlinked
+                // the rest is version counter
             };
 
             atomics::atomic< int >          m_nHeight;  ///< Node height
@@ -42,10 +39,35 @@ namespace cds { namespace container {
             atomics::atomic<node_type *>    m_pRight;   ///< Right child
             lock_type                       m_Lock;     ///< Node-level lock
 
+            link()
+                : m_nHeight( 0 )
+                , m_nVersion( 0 )
+                , m_pParent( nullptr )
+                , m_pLeft( nullptr )
+                , m_pRight( nullptr )
+            {}
+
+            link( int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
+                : m_nHeight( nHeight )
+                , m_nVersion( version )
+                , m_pParent( pParent )
+                , m_pLeft( pLeft )
+                , m_pRight( pRight )
+            {}
+
             atomics::atomic<node_type *>& child( int nDirection ) const
             {
                 assert( nDirection != 0 );
                 return nDirection < 0 ? m_pLeft : m_pRight;
+            }
+
+            void child( node_type * pChild, int nDirection, atomics::memory_order order )
+            {
+                assert( nDirection != 0 );
+                if ( nDirection < 0 )
+                    m_pLeft.store( pChild, order );
+                else
+                    m_pRight.store( pChild, order );
             }
 
             version_type version( atomics::memory_order order ) const
@@ -53,12 +75,36 @@ namespace cds { namespace container {
                 return m_nVersion.load( order );
             }
 
+            void version( version_type ver, atomics::memory_order order )
+            {
+                m_nVersion.store( ver, order );
+            }
+
+            int height( atomics::memory_order order ) const
+            {
+                return m_nHeight.load( order );
+            }
+
+            void height( int h, atomics::memory_order order  )
+            {
+                m_nHeight.store( h, order );
+
             template <typename BackOff>
             void wait_until_shrink_completed( atomics::memory_order order ) const
             {
                 BackOff bkoff;
-                while ( version( order ) & version_flags::shrinking )
+                while ( is_shrinking( order ))
                     bkoff();
+            }
+
+            bool is_unlinked( atomics::memory_order order ) const
+            {
+                return (m_nVersion.load( order ) & unlinked) != 0;
+            }
+
+            bool is_shrinking( atomics::memory_order order ) const
+            {
+                return (m_nVersion.load( order ) & shrinking) != 0;
             }
         };
 
@@ -79,9 +125,10 @@ namespace cds { namespace container {
             {}
 
             template <typename Q>
-            node( Q&& key, mapped_type * pVal )
-                : m_key( std::forward<Q>(key) )
-                , m_pValue( pVal )
+            node( Q&& key, int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
+                : base_class( nHeight, version, pParent, pLeft, pRight )
+                , m_key( std::forward<Q>( key ) )
+                , m_pValue( nullptr )
             {}
 
             T * value( atomics::memory_order order ) const
@@ -101,11 +148,19 @@ namespace cds { namespace container {
             event_counter   m_nFindRetry;   ///< Count of retries during \p find()
             event_counter   m_nFindWaitShrinking;   ///< Count of waiting until shrinking completed duting \p find() call
 
+            event_counter   m_nInsertSuccess;       ///< Count of inserting data node
+            event_counter   m_nRelaxedInsertFailed; ///< Count of false creating of data nodes (only if @ref bronson_avltree::relaxed_insert "relaxed insertion" is enabled)
+            event_counter   m_nInsertRetry;         ///< Count of insert retries via concurrent operations
+
             //@cond
             void onFindSuccess()        { ++m_nFindSuccess      ; }
             void onFindFailed()         { ++m_nFindFailed       ; }
             void onFindRetry()          { ++m_nFindRetry        ; }
             void onFindWaitShrinking()  { ++m_nFindWaitShrinking; }
+
+            void onInsertSuccess()      { ++m_nInsertSuccess    ; }
+            void onRelaxedInsertFailed() { ++m_nRelaxedInsertFailed; }
+            void onInsertRetry()        { ++m_nInsertRetry      ; }
 
             //@endcond
         };
@@ -117,6 +172,32 @@ namespace cds { namespace container {
             void onFindFailed()         const {}
             void onFindRetry()          const {}
             void onFindWaitShrinking()  const {}
+
+            void onInsertSuccess()      const {}
+            void onRelaxedInsertFailed() const {}
+            void onInsertRetry()        const {}
+
+            //@endcond
+        };
+
+        /// Option to allow relaxed insert into Bronson et al AVL-tree
+        /**
+            By default, this opton is disabled and the new node is created under its parent lock.
+            In this case, it is guaranteed the new node will be attached to its parent.
+            On the other hand, constructing of the new node can be too complex to make it under the lock,
+            that can lead to lock contention.
+
+            When this option is enabled, the new node is created before locking the parent node.
+            After that, the parent is locked and checked whether the new node can be attached to the parent.
+            In this case, false node creating can be performed, but locked section can be significantly small.
+        */
+        template <bool Enable>
+        struct relaxed_insert {
+            //@cond
+            template <typename Base> struct pack : public Base
+            {
+                enum { relaxed_insert = Enable };
+            };
             //@endcond
         };
 
@@ -153,16 +234,23 @@ namespace cds { namespace container {
 
             /// Disposer (only for pointer-oriented tree specialization)
             /**
-                The functor used for dispose removed values. 
+                The functor used for dispose removed values.
                 The user-provided disposer is used only for pointer-oriented tree specialization
                 like \p BronsonAVLTreeMap<GC, Key, T*, Traits>. When the node becomes the rounting node without value,
                 the disposer will be called to signal that the memory for the value can be safely freed.
-                Default is \ref cds::intrusive::opt::v::delete_disposer "cds::container::opt::v::delete_disposer" which calls \p delete operator.
+                Default is \ref cds::intrusive::opt::delete_disposer "cds::container::opt::v::delete_disposer<>" which calls \p delete operator.
             */
-            typedef opt::v::delete_disposer         disposer;
+            typedef opt::v::delete_disposer<>       disposer;
 
             /// Node lock
-            typedef cds::SpinLock                   lock_type;
+            typedef std::mutex                      lock_type;
+
+            /// Enable relaxed insertion.
+            /**
+                About relaxed insertion see \p bronson_avltree::relaxed_insert option.
+                By default, this option is disabled.
+            */
+            static bool const relaxed_insert = false;
 
             /// Item counter
             /**
@@ -187,7 +275,7 @@ namespace cds { namespace container {
             /// Back-off strategy
             typedef cds::backoff::empty             back_off;
 
-            /// RCU deadlock checking policy (only for \ref cds_intrusive_BronsonAVLTree_rcu "RCU-based BronsonAVLTree")
+            /// RCU deadlock checking policy (only for \ref cds_container_BronsonAVLTreeMap_rcu "RCU-based BronsonAVLTree")
             /**
                 List of available options see \p opt::rcu_check_deadlock
             */
@@ -212,13 +300,15 @@ namespace cds { namespace container {
                 If the option is not specified, \p %opt::less is used.
             - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
             - \p opt::allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
-            - \ref cds::intusive::opt::disposer "container::opt::disposer" - the functor used for dispose removed values.
+            - \ref cds::intrusive::opt::disposer "container::opt::disposer" - the functor used for dispose removed values.
                 The user-provided disposer is used only for pointer-oriented tree specialization
                 like \p BronsonAVLTreeMap<GC, Key, T*, Traits>. When the node becomes the rounting node without value,
                 the disposer will be called to signal that the memory for the value can be safely freed.
-                Default is \ref cds::intrusive::opt::v::delete_disposer "cds::container::opt::v::delete_disposer" which calls \p delete operator.
+                Default is \ref cds::intrusive::opt::delete_disposer "cds::container::opt::v::delete_disposer<>" which calls \p delete operator.
                 Due the nature of GC schema the disposer may be called asynchronously.
-            - \p opt::lock_type - node lock type, default is \p cds::SpinLock
+            - \p opt::lock_type - node lock type, default is \p std::mutex
+            - \p bronson_avltree::relaxed_insert - enable (\p true) or disable (\p false, the default) 
+                @ref bronson_avltree::relaxed_insert "relaxed insertion"
             - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)
                 To enable it use \p atomicity::item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)

@@ -227,7 +227,7 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
+            is inserted into the map (note that in this case the \p key_type should be
             constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
             The functor \p Func may be a function with signature:
@@ -245,7 +245,7 @@ namespace cds { namespace container {
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the tree
 
-            The functor may change any fields of the \p item.second that is \ref value_type.
+            The functor may change any fields of the \p item.second that is \p value_type.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
@@ -493,7 +493,7 @@ namespace cds { namespace container {
             The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_get "get(Q const&)"
             but \p pred is used for comparing the keys.
 
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type
+            \p Less functor has the semantics like \p std::less but should take arguments of type \p key_type
             and \p Q in any order.
             \p pred must imply the same element order as the comparator used for building the map.
         */
