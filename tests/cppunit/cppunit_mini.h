@@ -21,8 +21,8 @@
 
 /* $Id$ */
 
-#ifndef _CPPUNITMPFR_H_
-#define _CPPUNITMPFR_H_
+#ifndef CDS_CPPUNIT_MPFR_H_
+#define CDS_CPPUNIT_MPFR_H_
 
 #include <string.h>
 #include <sstream>
@@ -366,4 +366,4 @@ namespace CppUnitMini
         error( "CPPUNIT_ASSERT_MSG", st.str().c_str(), __FILE__, __LINE__ )     ;   \
     }
 
-#endif
+#endif // #ifndef CDS_CPPUNIT_MPFR_H_
