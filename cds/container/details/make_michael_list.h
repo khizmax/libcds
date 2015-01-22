@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H
-#define __CDS_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H
+#ifndef CDSLIB_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H
+#define CDSLIB_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H
 
 #include <cds/details/binary_functor_wrapper.h>
 
@@ -77,4 +77,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H
+#endif  // #ifndef CDSLIB_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H

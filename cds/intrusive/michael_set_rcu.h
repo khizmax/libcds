@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_MICHAEL_SET_RCU_H
-#define __CDS_INTRUSIVE_MICHAEL_SET_RCU_H
+#ifndef CDSLIB_INTRUSIVE_MICHAEL_SET_RCU_H
+#define CDSLIB_INTRUSIVE_MICHAEL_SET_RCU_H
 
 #include <cds/intrusive/details/michael_set_base.h>
 #include <cds/details/allocator.h>
@@ -637,5 +637,5 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_MICHAEL_SET_NOGC_H
+#endif // #ifndef CDSLIB_INTRUSIVE_MICHAEL_SET_NOGC_H
 

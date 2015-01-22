@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_CLANG_DEFS_H
-#define __CDS_COMPILER_CLANG_DEFS_H
+#ifndef CDSLIB_COMPILER_CLANG_DEFS_H
+#define CDSLIB_COMPILER_CLANG_DEFS_H
 
 /*
     Known issues:
@@ -54,4 +54,4 @@
 
 #include <cds/compiler/gcc/compiler_barriers.h>
 
-#endif // #ifndef __CDS_COMPILER_GCC_DEFS_H
+#endif // #ifndef CDSLIB_COMPILER_GCC_DEFS_H

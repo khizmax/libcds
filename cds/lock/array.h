@@ -1,7 +1,7 @@
 //$$CDS-header$$-2
 
-#ifndef __CDS_LOCK_ARRAY_H
-#define __CDS_LOCK_ARRAY_H
+#ifndef CDSLIB_LOCK_ARRAY_H
+#define CDSLIB_LOCK_ARRAY_H
 
 #include <mutex>    //unique_lock
 #include <cds/details/allocator.h>
@@ -321,4 +321,4 @@ namespace std {
 } // namespace std
 //@endcond
 
-#endif // #ifndef __CDS_LOCK_ARRAY_H
+#endif // #ifndef CDSLIB_LOCK_ARRAY_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H
-#define __CDS_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H
+#ifndef CDSLIB_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H
+#define CDSLIB_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H
 
 #include <cds/container/details/split_list_base.h>
 #include <cds/details/allocator.h>
@@ -16,7 +16,7 @@ namespace cds { namespace container {
 
     namespace details {
 
-#ifdef __CDS_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
+#ifdef CDSLIB_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
         // if michael_list included
 
         template <typename GC, typename T, typename Traits>
@@ -119,9 +119,9 @@ namespace cds { namespace container {
             //typedef cds::intrusive::MichaelList< gc, node_type, ordered_list_traits > ordered_list;
             typedef cds::intrusive::SplitListSet< gc, ordered_list, traits > type;
         };
-#endif  // ifdef __CDS_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
+#endif  // ifdef CDSLIB_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
 
-#ifdef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
+#ifdef CDSLIB_CONTAINER_DETAILS_LAZY_LIST_BASE_H
         // if lazy_list included
         template <typename GC, typename T, typename Traits>
         struct make_split_list_set< GC, T, lazy_list_tag, Traits >
@@ -230,10 +230,10 @@ namespace cds { namespace container {
             //typedef cds::intrusive::LazyList< gc, node_type, ordered_list_traits >  ordered_list;
             typedef cds::intrusive::SplitListSet< gc, ordered_list, traits >   type;
         };
-#endif  // ifdef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
+#endif  // ifdef CDSLIB_CONTAINER_DETAILS_LAZY_LIST_BASE_H
 
     }   // namespace details
 }}  // namespace cds::container
 //@endcond
 
-#endif // #ifndef __CDS_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H
+#endif // #ifndef CDSLIB_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H

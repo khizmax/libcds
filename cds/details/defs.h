@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DEFS_H
-#define __CDS_DEFS_H
+#ifndef CDSLIB_DEFS_H
+#define CDSLIB_DEFS_H
 
 #include <stddef.h>
 #include <assert.h>
@@ -380,4 +380,4 @@ namespace cds {
 
 } // namespace cds
 
-#endif // #ifndef __CDS_DEFS_H
+#endif // #ifndef CDSLIB_DEFS_H

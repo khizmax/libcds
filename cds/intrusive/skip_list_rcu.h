@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_SKIP_LIST_RCU_H
-#define __CDS_INTRUSIVE_SKIP_LIST_RCU_H
+#ifndef CDSLIB_INTRUSIVE_SKIP_LIST_RCU_H
+#define CDSLIB_INTRUSIVE_SKIP_LIST_RCU_H
 
 #include <type_traits>
 #include <memory>
@@ -2017,4 +2017,4 @@ retry:
 }} // namespace cds::intrusive
 
 
-#endif // #ifndef __CDS_INTRUSIVE_SKIP_LIST_RCU_H
+#endif // #ifndef CDSLIB_INTRUSIVE_SKIP_LIST_RCU_H

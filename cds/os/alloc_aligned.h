@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_ALLOC_ALIGNED_H
-#define __CDS_OS_ALLOC_ALIGNED_H
+#ifndef CDSLIB_OS_ALLOC_ALIGNED_H
+#define CDSLIB_OS_ALLOC_ALIGNED_H
 
 #include <cds/details/defs.h>
 
@@ -185,4 +185,4 @@ namespace cds {
     }   // namespace OS
 }  // namespace cds
 
-#endif  // #ifndef __CDS_OS_ALLOC_ALIGNED_H
+#endif  // #ifndef CDSLIB_OS_ALLOC_ALIGNED_H

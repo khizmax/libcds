@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_DETAILS_NODE_TRAITS_H
-#define __CDS_INTRUSIVE_DETAILS_NODE_TRAITS_H
+#ifndef CDSLIB_INTRUSIVE_DETAILS_NODE_TRAITS_H
+#define CDSLIB_INTRUSIVE_DETAILS_NODE_TRAITS_H
 
 #include <cds/intrusive/options.h>
 
@@ -163,4 +163,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusuve
 
-#endif  // #ifndef __CDS_INTRUSIVE_DETAILS_NODE_TRAITS_H
+#endif  // #ifndef CDSLIB_INTRUSIVE_DETAILS_NODE_TRAITS_H

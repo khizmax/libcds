@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_GCC_DEFS_H
-#define __CDS_COMPILER_GCC_DEFS_H
+#ifndef CDSLIB_COMPILER_GCC_DEFS_H
+#define CDSLIB_COMPILER_GCC_DEFS_H
 
 // Compiler version
 #define CDS_COMPILER_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
@@ -52,4 +52,4 @@
 
 #include <cds/compiler/gcc/compiler_barriers.h>
 
-#endif // #ifndef __CDS_COMPILER_GCC_DEFS_H
+#endif // #ifndef CDSLIB_COMPILER_GCC_DEFS_H

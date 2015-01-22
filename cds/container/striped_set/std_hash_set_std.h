@@ -1,9 +1,9 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_STRIPED_SET_STD_HASH_SET_STD_ADAPTER_H
-#define __CDS_CONTAINER_STRIPED_SET_STD_HASH_SET_STD_ADAPTER_H
+#ifndef CDSLIB_CONTAINER_STRIPED_SET_STD_HASH_SET_STD_ADAPTER_H
+#define CDSLIB_CONTAINER_STRIPED_SET_STD_HASH_SET_STD_ADAPTER_H
 
-#ifndef __CDS_CONTAINER_STRIPED_SET_STD_HASH_SET_ADAPTER_H
+#ifndef CDSLIB_CONTAINER_STRIPED_SET_STD_HASH_SET_ADAPTER_H
 #   error <cds/container/striped_set/std_hash_set.h> must be included instead of <cds/container/striped_set/std_hash_set_std.h> header
 #endif
 
@@ -164,4 +164,4 @@ namespace cds { namespace intrusive { namespace striped_set {
 
 //@endcond
 
-#endif  // #ifndef __CDS_CONTAINER_STRIPED_SET_STD_HASH_SET_STD_ADAPTER_H
+#endif  // #ifndef CDSLIB_CONTAINER_STRIPED_SET_STD_HASH_SET_STD_ADAPTER_H

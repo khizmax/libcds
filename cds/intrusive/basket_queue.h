@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_BASKET_QUEUE_H
-#define __CDS_INTRUSIVE_BASKET_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_BASKET_QUEUE_H
+#define CDSLIB_INTRUSIVE_BASKET_QUEUE_H
 
 #include <type_traits>
 #include <cds/intrusive/details/single_link_struct.h>
@@ -800,4 +800,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_BASKET_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_BASKET_QUEUE_H

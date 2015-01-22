@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_MAP_RCU_H
-#define __CDS_CONTAINER_MICHAEL_MAP_RCU_H
+#ifndef CDSLIB_CONTAINER_MICHAEL_MAP_RCU_H
+#define CDSLIB_CONTAINER_MICHAEL_MAP_RCU_H
 
 #include <cds/container/details/michael_map_base.h>
 #include <cds/details/allocator.h>
@@ -754,4 +754,4 @@ namespace cds { namespace container {
     };
 }}  // namespace cds::container
 
-#endif // ifndef __CDS_CONTAINER_MICHAEL_MAP_RCU_H
+#endif // ifndef CDSLIB_CONTAINER_MICHAEL_MAP_RCU_H

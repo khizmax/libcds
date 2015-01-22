@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_STRIPED_MAP_H
-#define __CDS_CONTAINER_STRIPED_MAP_H
+#ifndef CDSLIB_CONTAINER_STRIPED_MAP_H
+#define CDSLIB_CONTAINER_STRIPED_MAP_H
 
 #include <type_traits>
 #include <cds/container/striped_set.h>
@@ -881,4 +881,4 @@ template <class Container, typename... Options>
 
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_STRIPED_MAP_H
+#endif // #ifndef CDSLIB_CONTAINER_STRIPED_MAP_H

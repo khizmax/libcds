@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_OPTIONS_H
-#define __CDS_INTRUSIVE_OPTIONS_H
+#ifndef CDSLIB_INTRUSIVE_OPTIONS_H
+#define CDSLIB_INTRUSIVE_OPTIONS_H
 
 #include <cds/opt/options.h>
 #include <cds/details/allocator.h>
@@ -158,4 +158,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_OPTIONS_H
+#endif // #ifndef CDSLIB_INTRUSIVE_OPTIONS_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MOIR_QUEUE_H
-#define __CDS_CONTAINER_MOIR_QUEUE_H
+#ifndef CDSLIB_CONTAINER_MOIR_QUEUE_H
+#define CDSLIB_CONTAINER_MOIR_QUEUE_H
 
 #include <memory>
 #include <cds/container/msqueue.h>
@@ -265,6 +265,6 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_MOIR_QUEUE_H
+#endif  // #ifndef CDSLIB_CONTAINER_MOIR_QUEUE_H
 
 

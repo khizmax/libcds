@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H
-#define __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H
+#ifndef CDSLIB_INTRUSIVE_STRIPED_SET_ADAPTER_H
+#define CDSLIB_INTRUSIVE_STRIPED_SET_ADAPTER_H
 
 #include <cds/opt/options.h>
 #include <cds/intrusive/striped_set/resizing_policy.h>
@@ -310,4 +310,4 @@ namespace cds { namespace intrusive {
     } // namespace striped_set
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_STRIPED_SET_ADAPTER_H
+#endif // #ifndef CDSLIB_INTRUSIVE_STRIPED_SET_ADAPTER_H

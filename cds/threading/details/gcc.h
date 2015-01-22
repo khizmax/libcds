@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_THREADING_DETAILS_GCC_H
-#define __CDS_THREADING_DETAILS_GCC_H
+#ifndef CDSLIB_THREADING_DETAILS_GCC_H
+#define CDSLIB_THREADING_DETAILS_GCC_H
 
 #include <cds/threading/details/gcc_manager.h>
 
@@ -13,4 +13,4 @@ namespace cds { namespace threading {
 }} // namespace cds::threading
 #endif
 
-#endif // #ifndef __CDS_THREADING_DETAILS_GCC_H
+#endif // #ifndef CDSLIB_THREADING_DETAILS_GCC_H

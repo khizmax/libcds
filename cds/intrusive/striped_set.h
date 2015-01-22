@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_STRIPED_SET_H
-#define __CDS_INTRUSIVE_STRIPED_SET_H
+#ifndef CDSLIB_INTRUSIVE_STRIPED_SET_H
+#define CDSLIB_INTRUSIVE_STRIPED_SET_H
 
 #include <cds/intrusive/details/base.h>
 #include <cds/intrusive/striped_set/adapter.h>
@@ -848,4 +848,4 @@ namespace cds { namespace intrusive {
     };
 }}  // namespace cds::itrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_STRIPED_SET_H
+#endif // #ifndef CDSLIB_INTRUSIVE_STRIPED_SET_H

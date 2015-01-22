@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_MAP_NOGC_H
-#define __CDS_CONTAINER_MICHAEL_MAP_NOGC_H
+#ifndef CDSLIB_CONTAINER_MICHAEL_MAP_NOGC_H
+#define CDSLIB_CONTAINER_MICHAEL_MAP_NOGC_H
 
 #include <cds/container/details/michael_map_base.h>
 #include <cds/gc/nogc.h>
@@ -484,4 +484,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif // ifndef __CDS_CONTAINER_MICHAEL_MAP_NOGC_H
+#endif // ifndef CDSLIB_CONTAINER_MICHAEL_MAP_NOGC_H

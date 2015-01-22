@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_IMPL_MICHAEL_LIST_H
-#define __CDS_INTRUSIVE_IMPL_MICHAEL_LIST_H
+#ifndef CDSLIB_INTRUSIVE_IMPL_MICHAEL_LIST_H
+#define CDSLIB_INTRUSIVE_IMPL_MICHAEL_LIST_H
 
 #include <cds/intrusive/details/michael_list_base.h>
 #include <cds/details/make_const_type.h>
@@ -1126,4 +1126,4 @@ try_again:
     };
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_IMPL_MICHAEL_LIST_H
+#endif // #ifndef CDSLIB_INTRUSIVE_IMPL_MICHAEL_LIST_H

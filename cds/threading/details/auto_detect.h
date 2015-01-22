@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_THREADING_AUTO_DETECT_H
-#define __CDS_THREADING_AUTO_DETECT_H
+#ifndef CDSLIB_THREADING_AUTO_DETECT_H
+#define CDSLIB_THREADING_AUTO_DETECT_H
 
 #if defined(CDS_THREADING_AUTODETECT)
     // Auto-detect appropriate threading model
@@ -42,4 +42,4 @@
 #   error "You must define one of CDS_THREADING_xxx macro before compiling the application"
 #endif
 
-#endif // #ifndef __CDS_THREADING_AUTO_DETECT_H
+#endif // #ifndef CDSLIB_THREADING_AUTO_DETECT_H

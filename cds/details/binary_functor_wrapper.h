@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_BINARY_FUNCTOR_WRAPPER_H
-#define __CDS_DETAILS_BINARY_FUNCTOR_WRAPPER_H
+#ifndef CDSLIB_DETAILS_BINARY_FUNCTOR_WRAPPER_H
+#define CDSLIB_DETAILS_BINARY_FUNCTOR_WRAPPER_H
 
 #include <cds/details/defs.h>
 
@@ -49,4 +49,4 @@ namespace cds { namespace details {
 
 //@endcond
 
-#endif // #ifndef __CDS_DETAILS_BINARY_FUNCTOR_WRAPPER_H
+#endif // #ifndef CDSLIB_DETAILS_BINARY_FUNCTOR_WRAPPER_H

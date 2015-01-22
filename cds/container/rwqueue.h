@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_RWQUEUE_H
-#define __CDS_CONTAINER_RWQUEUE_H
+#ifndef CDSLIB_CONTAINER_RWQUEUE_H
+#define CDSLIB_CONTAINER_RWQUEUE_H
 
 #include <mutex>        // unique_lock
 #include <cds/container/msqueue.h>
@@ -362,4 +362,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_RWQUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_RWQUEUE_H

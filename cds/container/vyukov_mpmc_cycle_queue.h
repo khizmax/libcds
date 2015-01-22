@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
-#define __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
+#ifndef CDSLIB_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
+#define CDSLIB_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
 
 #include <cds/container/details/base.h>
 #include <cds/opt/buffer.h>
@@ -406,4 +406,4 @@ namespace cds { namespace container {
     };
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H

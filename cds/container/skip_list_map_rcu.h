@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
-#define __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
+#ifndef CDSLIB_CONTAINER_SKIP_LIST_MAP_RCU_H
+#define CDSLIB_CONTAINER_SKIP_LIST_MAP_RCU_H
 
 #include <cds/container/details/skip_list_base.h>
 #include <cds/intrusive/skip_list_rcu.h>
@@ -632,4 +632,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_SKIP_LIST_MAP_RCU_H

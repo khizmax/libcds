@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MSQUEUE_H
-#define __CDS_CONTAINER_MSQUEUE_H
+#ifndef CDSLIB_CONTAINER_MSQUEUE_H
+#define CDSLIB_CONTAINER_MSQUEUE_H
 
 #include <memory>
 #include <cds/intrusive/msqueue.h>
@@ -379,4 +379,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_MSQUEUE_H
+#endif  // #ifndef CDSLIB_CONTAINER_MSQUEUE_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_KVLIST_RCU_H
-#define __CDS_CONTAINER_MICHAEL_KVLIST_RCU_H
+#ifndef CDSLIB_CONTAINER_MICHAEL_KVLIST_RCU_H
+#define CDSLIB_CONTAINER_MICHAEL_KVLIST_RCU_H
 
 #include <memory>
 #include <functional>   // ref
@@ -811,4 +811,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_MICHAEL_KVLIST_RCU_H
+#endif  // #ifndef CDSLIB_CONTAINER_MICHAEL_KVLIST_RCU_H

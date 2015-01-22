@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_IMPL_BOUNDED_ARRAY_H
-#define __CDS_IMPL_BOUNDED_ARRAY_H
+#ifndef CDSLIB_IMPL_BOUNDED_ARRAY_H
+#define CDSLIB_IMPL_BOUNDED_ARRAY_H
 
 /*
     Dynamic non-growing array
@@ -228,4 +228,4 @@ namespace cds {
 }    // namespace cds
 //@endcond
 
-#endif    // #ifndef __CDS_IMPL_BOUNDED_ARRAY_H
+#endif    // #ifndef CDSLIB_IMPL_BOUNDED_ARRAY_H

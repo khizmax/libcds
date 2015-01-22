@@ -1,7 +1,7 @@
 //$$CDS-header$$-2
 
-#ifndef __CDS_LOCK_SPINLOCK_H
-#define __CDS_LOCK_SPINLOCK_H
+#ifndef CDSLIB_LOCK_SPINLOCK_H
+#define CDSLIB_LOCK_SPINLOCK_H
 
 /*
     Defines spin-lock primitives
@@ -371,4 +371,4 @@ namespace cds {
 
 } // namespace cds
 
-#endif  // #ifndef __CDS_LOCK_SPINLOCK_H
+#endif  // #ifndef CDSLIB_LOCK_SPINLOCK_H

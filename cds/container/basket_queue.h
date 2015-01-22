@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_BASKET_QUEUE_H
-#define __CDS_CONTAINER_BASKET_QUEUE_H
+#ifndef CDSLIB_CONTAINER_BASKET_QUEUE_H
+#define CDSLIB_CONTAINER_BASKET_QUEUE_H
 
 #include <memory>
 #include <cds/intrusive/basket_queue.h>
@@ -425,4 +425,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_BASKET_QUEUE_H
+#endif  // #ifndef CDSLIB_CONTAINER_BASKET_QUEUE_H

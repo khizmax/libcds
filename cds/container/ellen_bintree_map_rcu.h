@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
-#define __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#ifndef CDSLIB_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#define CDSLIB_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
 
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/ellen_bintree_rcu.h>
@@ -550,4 +550,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif //#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#endif //#ifndef CDSLIB_CONTAINER_ELLEN_BINTREE_MAP_RCU_H

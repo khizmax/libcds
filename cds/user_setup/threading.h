@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_USER_SETUP_THREADING_MODEL_H
-#define __CDS_USER_SETUP_THREADING_MODEL_H
+#ifndef CDSLIB_USER_SETUP_THREADING_MODEL_H
+#define CDSLIB_USER_SETUP_THREADING_MODEL_H
 
 /**
     CDS threading model
@@ -21,4 +21,4 @@
 */
 #define CDS_THREADING_AUTODETECT
 
-#endif    // #ifndef __CDS_USER_SETUP_THREADING_MODEL_H
+#endif    // #ifndef CDSLIB_USER_SETUP_THREADING_MODEL_H

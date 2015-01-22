@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SEGMENTED_QUEUE_H
-#define __CDS_CONTAINER_SEGMENTED_QUEUE_H
+#ifndef CDSLIB_CONTAINER_SEGMENTED_QUEUE_H
+#define CDSLIB_CONTAINER_SEGMENTED_QUEUE_H
 
 #include <memory>
 #include <functional>   // ref
@@ -390,4 +390,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SEGMENTED_QUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_SEGMENTED_QUEUE_H

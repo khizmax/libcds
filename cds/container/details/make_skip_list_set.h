@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H
-#define __CDS_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H
+#ifndef CDSLIB_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H
+#define CDSLIB_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H
 
 #include <cds/container/details/skip_list_base.h>
 #include <cds/details/binary_functor_wrapper.h>
@@ -89,4 +89,4 @@ namespace cds { namespace container { namespace details {
 }}} // namespace cds::container::details
 //@endcond
 
-#endif //#ifndef __CDS_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H
+#endif //#ifndef CDSLIB_CONTAINER_DETAILS_MAKE_SKIP_LIST_SET_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_LAZY_KVLIST_NOGC_H
-#define __CDS_CONTAINER_LAZY_KVLIST_NOGC_H
+#ifndef CDSLIB_CONTAINER_LAZY_KVLIST_NOGC_H
+#define CDSLIB_CONTAINER_LAZY_KVLIST_NOGC_H
 
 #include <memory>
 #include <cds/container/details/lazy_list_base.h>
@@ -529,4 +529,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_LAZY_KVLIST_NOGC_H
+#endif // #ifndef CDSLIB_CONTAINER_LAZY_KVLIST_NOGC_H

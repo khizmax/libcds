@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
-#define __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_MSPRIORITY_QUEUE_H
+#define CDSLIB_INTRUSIVE_MSPRIORITY_QUEUE_H
 
 #include <mutex>  // std::unique_lock
 #include <cds/intrusive/details/base.h>
@@ -492,4 +492,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_MSPRIORITY_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_MSPRIORITY_QUEUE_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
-#define __CDS_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
+#ifndef CDSLIB_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
+#define CDSLIB_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
 
 #include <cds/details/allocator.h>
 #include <cds/intrusive/vyukov_mpmc_cycle_queue.h>
@@ -473,4 +473,4 @@ namespace cds { namespace memory {
 }}  // namespace cds::memory
 
 
-#endif // #ifndef __CDS_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
+#endif // #ifndef CDSLIB_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H

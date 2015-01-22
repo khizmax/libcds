@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_SPLIT_LIST_RCU_H
-#define __CDS_INTRUSIVE_SPLIT_LIST_RCU_H
+#ifndef CDSLIB_INTRUSIVE_SPLIT_LIST_RCU_H
+#define CDSLIB_INTRUSIVE_SPLIT_LIST_RCU_H
 
 #include <cds/intrusive/details/split_list_base.h>
 #include <cds/details/binary_functor_wrapper.h>
@@ -1010,4 +1010,4 @@ namespace cds { namespace intrusive {
 
 }}  // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_SPLIT_LIST_RCU_H
+#endif // #ifndef CDSLIB_INTRUSIVE_SPLIT_LIST_RCU_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_FCQUEUE_H
-#define __CDS_INTRUSIVE_FCQUEUE_H
+#ifndef CDSLIB_INTRUSIVE_FCQUEUE_H
+#define CDSLIB_INTRUSIVE_FCQUEUE_H
 
 #include <cds/algo/flat_combining.h>
 #include <cds/algo/elimination_opt.h>
@@ -341,4 +341,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_FCQUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_FCQUEUE_H

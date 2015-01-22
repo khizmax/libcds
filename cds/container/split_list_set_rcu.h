@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SPLIT_LIST_SET_RCU_H
-#define __CDS_CONTAINER_SPLIT_LIST_SET_RCU_H
+#ifndef CDSLIB_CONTAINER_SPLIT_LIST_SET_RCU_H
+#define CDSLIB_CONTAINER_SPLIT_LIST_SET_RCU_H
 
 #include <cds/intrusive/split_list_rcu.h>
 #include <cds/container/details/make_split_list_set.h>
@@ -811,4 +811,4 @@ namespace cds { namespace container {
     };
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SPLIT_LIST_SET_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_SPLIT_LIST_SET_RCU_H

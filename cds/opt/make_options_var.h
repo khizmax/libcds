@@ -1,9 +1,9 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_MAKE_OPTIONS_VAR_H
-#define __CDS_OPT_MAKE_OPTIONS_VAR_H
+#ifndef CDSLIB_OPT_MAKE_OPTIONS_VAR_H
+#define CDSLIB_OPT_MAKE_OPTIONS_VAR_H
 
-#ifndef __CDS_OPT_OPTIONS_H
+#ifndef CDSLIB_OPT_OPTIONS_H
 #   error <cds/opt/options.h> must be included instead of <cds/opt/make_options_var.h>
 #endif
 
@@ -298,4 +298,4 @@ namespace cds { namespace opt {
 
 }}  // namespace cds::opt
 
-#endif // #ifndef __CDS_OPT_MAKE_OPTIONS_STD_H
+#endif // #ifndef CDSLIB_OPT_MAKE_OPTIONS_STD_H

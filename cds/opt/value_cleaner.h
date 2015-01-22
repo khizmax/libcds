@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_ITEM_DISPOSER_H
-#define __CDS_OPT_ITEM_DISPOSER_H
+#ifndef CDSLIB_OPT_ITEM_DISPOSER_H
+#define CDSLIB_OPT_ITEM_DISPOSER_H
 
 #include <cds/details/defs.h>
 
@@ -72,4 +72,4 @@ namespace cds { namespace opt {
     }   // namespace v
 }}  // namespace cds::opt
 
-#endif // #ifndef __CDS_OPT_ITEM_DISPOSER_H
+#endif // #ifndef CDSLIB_OPT_ITEM_DISPOSER_H

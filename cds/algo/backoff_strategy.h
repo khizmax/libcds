@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_BACKOFF_STRATEGY_H
-#define __CDS_BACKOFF_STRATEGY_H
+#ifndef CDSLIB_BACKOFF_STRATEGY_H
+#define CDSLIB_BACKOFF_STRATEGY_H
 
 /*
     Filename: backoff_strategy.h
@@ -423,4 +423,4 @@ namespace cds {
 } // namespace cds
 
 
-#endif // #ifndef __CDS_BACKOFF_STRATEGY_H
+#endif // #ifndef CDSLIB_BACKOFF_STRATEGY_H

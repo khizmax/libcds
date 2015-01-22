@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_SEGMENTED_QUEUE_H
-#define __CDS_INTRUSIVE_SEGMENTED_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_SEGMENTED_QUEUE_H
+#define CDSLIB_INTRUSIVE_SEGMENTED_QUEUE_H
 
 #include <mutex>
 #include <cds/intrusive/details/base.h>
@@ -691,4 +691,4 @@ namespace cds { namespace intrusive {
 #   pragma warning( pop )
 #endif
 
-#endif // #ifndef __CDS_INTRUSIVE_SEGMENTED_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_SEGMENTED_QUEUE_H

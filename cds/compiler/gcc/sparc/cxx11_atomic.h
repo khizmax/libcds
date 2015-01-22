@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_GCC_SPARC_CXX11_ATOMIC_H
-#define __CDS_COMPILER_GCC_SPARC_CXX11_ATOMIC_H
+#ifndef CDSLIB_COMPILER_GCC_SPARC_CXX11_ATOMIC_H
+#define CDSLIB_COMPILER_GCC_SPARC_CXX11_ATOMIC_H
 
 #include <cstdint>
 
@@ -607,4 +607,4 @@ namespace cds { namespace cxx11_atomic {
 #undef CDS_SPARC_MB_LS_SS
 #undef CDS_SPARC_MB_LL_LS_SS
 
-#endif // #ifndef __CDS_COMPILER_GCC_AMD64_CXX11_ATOMIC_H
+#endif // #ifndef CDSLIB_COMPILER_GCC_AMD64_CXX11_ATOMIC_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
-#define __CDS_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
+#ifndef CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
+#define CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
 
 #include <cds/container/details/bronson_avltree_base.h>
 #include <cds/urcu/details/check_deadlock.h>
@@ -1196,4 +1196,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_OPTIONS_H
-#define __CDS_OPT_OPTIONS_H
+#ifndef CDSLIB_OPT_OPTIONS_H
+#define CDSLIB_OPT_OPTIONS_H
 
 /*
     Framework to define template options
@@ -821,4 +821,4 @@ namespace opt {
 
 #include <cds/opt/make_options_var.h>
 
-#endif  // #ifndef __CDS_OPT_OPTIONS_H
+#endif  // #ifndef CDSLIB_OPT_OPTIONS_H

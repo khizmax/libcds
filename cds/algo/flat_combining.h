@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_ALGO_FLAT_COMBINING_H
-#define __CDS_ALGO_FLAT_COMBINING_H
+#ifndef CDSLIB_ALGO_FLAT_COMBINING_H
+#define CDSLIB_ALGO_FLAT_COMBINING_H
 
 #include <mutex>
 #include <cds/algo/atomic.h>
@@ -804,4 +804,4 @@ namespace cds { namespace algo {
     } // namespace flat_combining
 }} // namespace cds::algo
 
-#endif // #ifndef __CDS_ALGO_FLAT_COMBINING_H
+#endif // #ifndef CDSLIB_ALGO_FLAT_COMBINING_H

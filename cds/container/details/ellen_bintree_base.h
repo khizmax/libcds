@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_ELLEN_BINTREE_BASE_H
-#define __CDS_CONTAINER_DETAILS_ELLEN_BINTREE_BASE_H
+#ifndef CDSLIB_CONTAINER_DETAILS_ELLEN_BINTREE_BASE_H
+#define CDSLIB_CONTAINER_DETAILS_ELLEN_BINTREE_BASE_H
 
 #include <cds/intrusive/details/ellen_bintree_base.h>
 #include <cds/container/details/base.h>
@@ -430,4 +430,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_DETAILS_ELLEN_BINTREE_BASE_H
+#endif // #ifndef CDSLIB_CONTAINER_DETAILS_ELLEN_BINTREE_BASE_H
