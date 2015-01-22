@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_STACK_TYPES_H
-#define __CDSUNIT_STACK_TYPES_H
+#ifndef CDSUNIT_STACK_TYPES_H
+#define CDSUNIT_STACK_TYPES_H
 
 #include <cds/container/treiber_stack.h>
 #include <cds/container/fcstack.h>
@@ -470,4 +470,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __CDSUNIT_STACK_TYPES_H
+#endif // #ifndef CDSUNIT_STACK_TYPES_H

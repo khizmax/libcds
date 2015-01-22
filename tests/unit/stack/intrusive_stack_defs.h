@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_INTRUSIVE_STACK_DEFS_H
-#define __CDSUNIT_INTRUSIVE_STACK_DEFS_H
+#ifndef CDSUNIT_INTRUSIVE_STACK_DEFS_H
+#define CDSUNIT_INTRUSIVE_STACK_DEFS_H
 
 #define CDSUNIT_DECLARE_TreiberStack \
     TEST_CASE( Treiber_HP, cds::intrusive::treiber_stack::node< cds::gc::HP >        ) \
@@ -138,4 +138,4 @@
     CPPUNIT_TEST( StdStack_List_Mutex   ) \
     CPPUNIT_TEST( StdStack_List_Spin    )
 
-#endif // #ifndef __CDSUNIT_INTRUSIVE_STACK_DEFS_H
+#endif // #ifndef CDSUNIT_INTRUSIVE_STACK_DEFS_H

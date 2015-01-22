@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_QUEUE_TYPES_H
-#define __CDSUNIT_QUEUE_TYPES_H
+#ifndef CDSUNIT_QUEUE_TYPES_H
+#define CDSUNIT_QUEUE_TYPES_H
 
 #include <cds/container/msqueue.h>
 #include <cds/container/moir_queue.h>
@@ -637,4 +637,4 @@ namespace std {
 
 }
 
-#endif // #ifndef __CDSUNIT_QUEUE_TYPES_H
+#endif // #ifndef CDSUNIT_QUEUE_TYPES_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __UNIT_PQUEUE_TYPES_H
-#define __UNIT_PQUEUE_TYPES_H
+#ifndef CDSUNIT_PQUEUE_TYPES_H
+#define CDSUNIT_PQUEUE_TYPES_H
 
 #include <cds/container/mspriority_queue.h>
 #include <cds/container/fcpriority_queue.h>
@@ -327,4 +327,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __UNIT_PQUEUE_TYPES_H
+#endif // #ifndef CDSUNIT_PQUEUE_TYPES_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDSUNIT_MAP2_MAP_TYPES_H
-#define _CDSUNIT_MAP2_MAP_TYPES_H
+#ifndef CDSUNIT_MAP_TYPES_H
+#define CDSUNIT_MAP_TYPES_H
 
 #include <cds/urcu/general_instant.h>
 #include <cds/urcu/general_buffered.h>
@@ -1808,4 +1808,4 @@ namespace map2 {
     }
 }   // namespace map2
 
-#endif // ifndef _CDSUNIT_MAP2_MAP_TYPES_H
+#endif // ifndef CDSUNIT_MAP_TYPES_H
