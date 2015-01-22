@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_MICHAEL_KV_H
+#define CDSTEST_HDR_MICHAEL_KV_H
+
 #include "cppunit/cppunit_proxy.h"
 #include <cds/container/details/michael_list_base.h>
 
@@ -736,3 +739,5 @@ namespace ordlist {
     };
 
 }   // namespace ordlist
+
+#endif // #ifndef CDSTEST_HDR_MICHAEL_KV_H

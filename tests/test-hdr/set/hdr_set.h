@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSTEST_HDR_SET_H
-#define __CDSTEST_HDR_SET_H
+#ifndef CDSTEST_HDR_SET_H
+#define CDSTEST_HDR_SET_H
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
@@ -1156,4 +1156,4 @@ namespace set {
 
 } // namespace set
 
-#endif // __CDSTEST_HDR_SET_H
+#endif // CDSTEST_HDR_SET_H

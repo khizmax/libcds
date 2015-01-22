@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_TREIBER_STACK_H
+#define CDSTEST_HDR_TREIBER_STACK_H
+
 #include "cppunit/cppunit_proxy.h"
 
 namespace stack {
@@ -130,3 +133,4 @@ namespace stack {
     };
 }   // namespace stack
 
+#endif // #ifndef CDSTEST_HDR_TREIBER_STACK_H

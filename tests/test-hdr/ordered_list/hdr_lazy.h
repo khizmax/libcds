@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_LAZY_H
+#define CDSTEST_HDR_LAZY_H
+
 #include "cppunit/cppunit_proxy.h"
 #include <cds/container/details/lazy_list_base.h>
 
@@ -811,3 +814,5 @@ namespace ordlist {
     };
 
 }   // namespace ordlist
+
+#endif // #ifndef CDSTEST_HDR_LAZY_H

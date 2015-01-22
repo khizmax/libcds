@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_QUEUE_HDR_H
-#define __CDSUNIT_QUEUE_HDR_H
+#ifndef CDSTEST_HDR_QUEUE_H
+#define CDSTEST_HDR_QUEUE_H
 
 #include "cppunit/cppunit_proxy.h"
 #include <cds/details/defs.h>
@@ -458,4 +458,4 @@ namespace queue {
     };
 } // namespace queue
 
-#endif // #ifndef __CDSUNIT_QUEUE_HDR_H
+#endif // #ifndef CDSTEST_HDR_QUEUE_H
