@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
-#define __CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
+#ifndef CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
+#define CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
 
 #include <cds/intrusive/msqueue.h>
 #include <cds/intrusive/moir_queue.h>
@@ -589,4 +589,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
+#endif // #ifndef CDSUNIT_INTRUSIVE_QUEUE_TYPES_H

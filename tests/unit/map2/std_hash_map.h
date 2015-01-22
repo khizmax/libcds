@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_STD_HASH_MAP_GCC_H
-#define __CDSUNIT_STD_HASH_MAP_GCC_H
+#ifndef CDSUNIT_STD_HASH_MAP_GCC_H
+#define CDSUNIT_STD_HASH_MAP_GCC_H
 
 #include <mutex>    //unique_lock
 #include <unordered_map>
@@ -96,4 +96,4 @@ namespace map2 {
     };
 }   // namespace map2
 
-#endif  // #ifndef __CDSUNIT_STD_HASH_MAP_GCC_H
+#endif  // #ifndef CDSUNIT_STD_HASH_MAP_GCC_H

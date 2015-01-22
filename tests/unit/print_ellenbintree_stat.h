@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __UNIT_PRINT_ELLENBINTREE_STAT_H
-#define __UNIT_PRINT_ELLENBINTREE_STAT_H
+#ifndef CDSUNIT_PRINT_ELLENBINTREE_STAT_H
+#define CDSUNIT_PRINT_ELLENBINTREE_STAT_H
 
 #include "ellen_bintree_update_desc_pool.h"
 #include <ostream>
@@ -47,4 +47,4 @@ namespace std {
     }
 }
 
-#endif // #ifndef __UNIT_PRINT_ELLENBINTREE_STAT_H
+#endif // #ifndef CDSUNIT_PRINT_ELLENBINTREE_STAT_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __UNIT_PRINT_MSPRIORITYQUEUE_STAT_H
-#define __UNIT_PRINT_MSPRIORITYQUEUE_STAT_H
+#ifndef CDSUNIT_PRINT_MSPRIORITYQUEUE_STAT_H
+#define CDSUNIT_PRINT_MSPRIORITYQUEUE_STAT_H
 
 #include <cds/container/mspriority_queue.h>
 
@@ -23,4 +23,4 @@ namespace std {
     }
 }
 
-#endif // #ifndef __UNIT_PRINT_MSPRIORITYQUEUE_STAT_H
+#endif // #ifndef CDSUNIT_PRINT_MSPRIORITYQUEUE_STAT_H

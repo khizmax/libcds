@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __UNIT_QUEUE_STD_QUEUE_H
-#define __UNIT_QUEUE_STD_QUEUE_H
+#ifndef CDSUNIT_QUEUE_STD_QUEUE_H
+#define CDSUNIT_QUEUE_STD_QUEUE_H
 
 #include <mutex>    //unique_lock
 #include <queue>
@@ -51,4 +51,4 @@ namespace queue {
     {};
 }
 
-#endif // #ifndef __UNIT_QUEUE_STD_QUEUE_H
+#endif // #ifndef CDSUNIT_QUEUE_STD_QUEUE_H

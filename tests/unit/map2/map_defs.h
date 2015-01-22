@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDSUNIT_MAP2_MAP_DEFS_H
-#define _CDSUNIT_MAP2_MAP_DEFS_H
+#ifndef CDSUNIT_MAP_DEFS_H
+#define CDSUNIT_MAP_DEFS_H
 
 #define CDSUNIT_DECLARE_StdMap \
     TEST_MAP(StdMap_Spin) \
@@ -577,4 +577,4 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
     CPPUNIT_TEST(CuckooRefinableMap_vector_ord_stat)\
     CPPUNIT_TEST(CuckooRefinableMap_vector_ord_storehash)
 
-#endif // #ifndef _CDSUNIT_MAP2_MAP_DEFS_H
+#endif // #ifndef CDSUNIT_MAP_DEFS_H

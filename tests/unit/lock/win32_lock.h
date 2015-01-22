@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __UNIT_LOCK_WIN32_LOCK_H
-#define __UNIT_LOCK_WIN32_LOCK_H
+#ifndef CDSUNIT_LOCK_WIN32_LOCK_H
+#define CDSUNIT_LOCK_WIN32_LOCK_H
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
@@ -39,4 +39,4 @@ namespace lock {
 }   // namespace lock
 
 #endif  // defined(_WIN32) || defined(_WIN64)
-#endif  // #ifndef __UNIT_LOCK_WIN32_LOCK_H
+#endif  // #ifndef CDSUNIT_LOCK_WIN32_LOCK_H

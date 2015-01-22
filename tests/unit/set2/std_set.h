@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_STD_SET_VC_H
-#define __CDSUNIT_STD_SET_VC_H
+#ifndef CDSUNIT_STD_SET_H
+#define CDSUNIT_STD_SET_H
 
 #include <set>
 #include <mutex>    //unique_lock
@@ -87,4 +87,4 @@ namespace set2 {
     };
 } // namespace set2
 
-#endif  // #ifndef __CDSUNIT_STD_MAP_VC_H
+#endif  // #ifndef CDSUNIT_STD_MAP_H

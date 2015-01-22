@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_INTRUSIVE_STACK_TYPES_H
-#define __CDSUNIT_INTRUSIVE_STACK_TYPES_H
+#ifndef CDSUNIT_INTRUSIVE_STACK_TYPES_H
+#define CDSUNIT_INTRUSIVE_STACK_TYPES_H
 
 #include <cds/intrusive/treiber_stack.h>
 #include <cds/intrusive/fcstack.h>
@@ -393,4 +393,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __CDSUNIT_INTRUSIVE_STACK_TYPES_H
+#endif // #ifndef CDSUNIT_INTRUSIVE_STACK_TYPES_H

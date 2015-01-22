@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_QUEUE_DEFS_H
-#define __CDSUNIT_QUEUE_DEFS_H
+#ifndef CDSUNIT_QUEUE_DEFS_H
+#define CDSUNIT_QUEUE_DEFS_H
 
 // MoirQueue
 #define CDSUNIT_DECLARE_MoirQueue( ITEM_TYPE ) \
@@ -243,4 +243,4 @@
     CPPUNIT_TEST(StdQueue_list_BoostMutex)
 
 
-#endif // #ifndef __CDSUNIT_QUEUE_DEFS_H
+#endif // #ifndef CDSUNIT_QUEUE_DEFS_H

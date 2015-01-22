@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_SKIPLIST_PQUEUE_H
-#define __CDSUNIT_SKIPLIST_PQUEUE_H
+#ifndef CDSUNIT_SKIPLIST_PQUEUE_H
+#define CDSUNIT_SKIPLIST_PQUEUE_H
 
 #include <cds/container/skip_list_set_hp.h>
 #include <cds/container/skip_list_set_dhp.h>
@@ -109,4 +109,4 @@ namespace pqueue {
 
 } // namespace pqueue
 
-#endif // #ifndef __CDSUNIT_SKIPLIST_PQUEUE_H
+#endif // #ifndef CDSUNIT_SKIPLIST_PQUEUE_H
