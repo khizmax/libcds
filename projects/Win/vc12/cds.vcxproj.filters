@@ -716,12 +716,6 @@
     <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set.h">
       <Filter>Header Files\cds\container\striped_set</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_std.h">
-      <Filter>Header Files\cds\container\striped_set</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_vc.h">
-      <Filter>Header Files\cds\container\striped_set</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\striped_set\std_list.h">
       <Filter>Header Files\cds\container\striped_set</Filter>
     </ClInclude>
@@ -747,12 +741,6 @@
       <Filter>Header Files\cds\container\striped_map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map.h">
-      <Filter>Header Files\cds\container\striped_map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_std.h">
-      <Filter>Header Files\cds\container\striped_map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_vc.h">
       <Filter>Header Files\cds\container\striped_map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\striped_map\std_list.h">

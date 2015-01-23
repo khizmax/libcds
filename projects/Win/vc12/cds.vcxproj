@@ -713,8 +713,6 @@
     <ClInclude Include="..\..\..\cds\container\striped_map\boost_slist.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\boost_unordered_map.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_std.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_vc.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\std_list.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\std_map.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set.h" />
@@ -727,8 +725,6 @@
     <ClInclude Include="..\..\..\cds\container\striped_set\boost_unordered_set.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\boost_vector.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_std.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_vc.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_list.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_set.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_vector.h" />

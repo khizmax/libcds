@@ -5,8 +5,6 @@
 #include <cds/container/striped_set.h>
 #include <cds/lock/spinlock.h>
 
-#if !((CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600)
-
 namespace set {
 
     namespace {
@@ -153,4 +151,3 @@ namespace set {
     }
 
 }   // namespace set
-#endif // #if !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION < 1600)
