@@ -169,12 +169,16 @@ namespace set2 {
                 nFindFailed += pThread->m_nFindFailed;
             }
 
+            size_t nTotalOps = nInsertSuccess + nInsertFailed + nDeleteSuccess + nDeleteFailed + nFindSuccess + nFindFailed;
+
             CPPUNIT_MSG( "  Totals (success/failed): \n\t"
                       << "      Insert=" << nInsertSuccess << '/' << nInsertFailed << "\n\t"
                       << "      Delete=" << nDeleteSuccess << '/' << nDeleteFailed << "\n\t"
                       << "        Find=" << nFindSuccess   << '/' << nFindFailed   << "\n\t"
                       << "       Speed=" << (nFindSuccess + nFindFailed) / c_nDuration << " find/sec\n\t"
                       << "             " << (nInsertSuccess + nDeleteSuccess) / c_nDuration << " modify/sec\n\t"
+                      << "   Total ops=" << nTotalOps << "\n\t"
+                      << "       speed=" << nTotalOps / c_nDuration << " ops/sec\n\t"
                       << "      Set size=" << testSet.size()
                 );
 
