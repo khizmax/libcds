@@ -123,7 +123,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key )
         {
-            return base_class::do_update( key,
+            return base_class::do_update(key, key_comparator(),
                 []( base_node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
@@ -151,7 +151,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-            return base_class::do_update( key,
+            return base_class::do_update( key, key_comparator(),
                 [&val]( base_node_type * pNode ) 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
@@ -189,7 +189,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool insert_with( K const& key, Func func )
         {
-            return base_class::do_update( key,
+            return base_class::do_update( key, key_comparator(),
                 [&func]( base_node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
@@ -210,7 +210,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            return base_class::do_update( key,
+            return base_class::do_update( key, key_comparator(),
                 [&]( base_node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
@@ -252,10 +252,11 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         std::pair<bool, bool> update( K const& key, Func func )
         {
-            int result = base_class::do_update( key,
+            int result = base_class::do_update( key, key_comparator(),
                 [&func]( base_node_type * pNode ) -> mapped_type* 
                 {
                     node_type * p = static_cast<node_type *>(pNode);
+                    //new (&p->m_data) mapped_type;
                     func( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr, p->m_data );
                     return &p->m_data;
                 },

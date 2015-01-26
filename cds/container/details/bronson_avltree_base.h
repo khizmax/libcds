@@ -151,6 +151,12 @@ namespace cds { namespace container {
             event_counter   m_nInsertSuccess;       ///< Count of inserting data node
             event_counter   m_nRelaxedInsertFailed; ///< Count of false creating of data nodes (only if @ref bronson_avltree::relaxed_insert "relaxed insertion" is enabled)
             event_counter   m_nInsertRetry;         ///< Count of insert retries via concurrent operations
+            event_counter   m_nUpdateWaitShrinking; ///< Count of waiting until shrinking completed duting \p update() call
+            event_counter   m_nUpdateRetry;         ///< Count of update retries via concurrent operations
+            event_counter   m_nUpdateRootWaitShinking;  ///< Count of waiting until root shrinking completed duting \p update() call
+            event_counter   m_nUpdateSuccess;       ///< Count of updating data node
+            event_counter   m_nUpdateUnlinked;      ///< Count of updating of unlinked node attempts
+            event_counter   m_nDisposedValue;       ///< Count of disposed value
 
             //@cond
             void onFindSuccess()        { ++m_nFindSuccess      ; }
@@ -158,9 +164,15 @@ namespace cds { namespace container {
             void onFindRetry()          { ++m_nFindRetry        ; }
             void onFindWaitShrinking()  { ++m_nFindWaitShrinking; }
 
-            void onInsertSuccess()      { ++m_nInsertSuccess    ; }
-            void onRelaxedInsertFailed() { ++m_nRelaxedInsertFailed; }
-            void onInsertRetry()        { ++m_nInsertRetry      ; }
+            void onInsertSuccess()          { ++m_nInsertSuccess    ; }
+            void onRelaxedInsertFailed()    { ++m_nRelaxedInsertFailed; }
+            void onInsertRetry()            { ++m_nInsertRetry      ; }
+            void onUpdateWaitShrinking()    { ++m_nUpdateWaitShrinking; }
+            void onUpdateRetry()            { ++m_nUpdateRetry; }
+            void onUpdateRootWaitShrinking() { ++m_nUpdateRootWaitShrinking; }
+            void onUpdateSuccess()          { ++m_nUpdateSuccess;  }
+            void onUpdateUnlinked()         { ++m_nUpdateUnlinked; }
+            void onDisposeValue()           { ++m_nDisposedValue; }
 
             //@endcond
         };
@@ -173,9 +185,15 @@ namespace cds { namespace container {
             void onFindRetry()          const {}
             void onFindWaitShrinking()  const {}
 
-            void onInsertSuccess()      const {}
-            void onRelaxedInsertFailed() const {}
-            void onInsertRetry()        const {}
+            void onInsertSuccess()          const {}
+            void onRelaxedInsertFailed()    const {}
+            void onInsertRetry()            const {}
+            void onUpdateWaitShrinking()    const {}
+            void onUpdateRetry()            const {}
+            void onUpdateRootWaitShrinking() const {}
+            void onUpdateSuccess()          const {}
+            void onUpdateUnlinked()         const {}
+            void onDisposeValue()           const {}
 
             //@endcond
         };

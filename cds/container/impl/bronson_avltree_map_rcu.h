@@ -70,6 +70,7 @@ namespace cds { namespace container {
     protected:
         //@cond
         typedef bronson_avltree::node< key_type, mapped_type, lock_type > node_type;
+        typedef typename node_type::version_type version_type;
 
         typedef typename std::conditional <
             std::is_same< typename traits::node_type, opt::none >::value,
@@ -140,7 +141,7 @@ namespace cds { namespace container {
             cxx_allocator().Delete( static_cast<alloc_node_type *>(pNode) );
         }
 
-        static void dispose_node( node_type * pNode )
+        void dispose_node( node_type * pNode )
         {
             mapped_type * pVal = pNode->value( memory_model::memory_order_relaxed );
             if ( pVal ) {
@@ -183,7 +184,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key, mapped_type * pVal )
         {
-            return do_update( key, 
+            return do_update(key, key_comparator(),
                 [pVal]( node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
@@ -212,7 +213,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         std::pair<bool, bool> update( K const& key, mapped_type * pVal, bool bInsert = true )
         {
-            int result = do_update( key, 
+            int result = do_update( key, key_comparator(),
                 [pVal]( node_type * ) -> mapped_type* 
                 {
                     return pVal;
@@ -521,7 +522,7 @@ namespace cds { namespace container {
         /// Returns const reference to internal statistics
         stat const& statistics() const
         {
-            return m_Stat;
+            return m_stat;
         }
 
         /// Checks internal consistency (not atomic, not thread-safe)
@@ -547,13 +548,13 @@ namespace cds { namespace container {
             return result == find_result::found;
         }
 
-        template <typename K, typename Func>
-        int do_update( K const& key, Func funcUpdate, int nFlags )
+        template <typename K, typename Compare, typename Func>
+        int do_update( K const& key, Compare cmp, Func funcUpdate, int nFlags )
         {
             check_deadlock_policy::check();
 
             rcu_lock l;
-            return try_udate( key, pVal, nFlags, m_pRoot, 1, 0 );
+            return try_udate_root( key, cmp, nFlags, funcUpdate );
         }
 
         //@endcond
@@ -561,7 +562,7 @@ namespace cds { namespace container {
     private:
         //@cond
         template <typename Q, typename Compare, typename Func>
-        find_result try_find( Q const& key, Compare cmp, Func f, node_type * pNode, int nDir, typename node_type::version_type nVersion ) const
+        find_result try_find( Q const& key, Compare cmp, Func f, node_type * pNode, int nDir, version_type nVersion ) const
         {
             assert( gc::is_locked() );
             assert( pNode );
@@ -592,7 +593,7 @@ namespace cds { namespace container {
                     return find_result::not_found;
                 }
 
-                typename node_type::version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
+                version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
                 if ( nChildVersion & node_type::shrinking ) {
                     m_stat.onFindWaitShrinking();
                     pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
@@ -616,31 +617,111 @@ namespace cds { namespace container {
             }
         }
 
-        template <typename K, typename Func>
-        int try_update( K const& key, Func funcUpdate, int nFlags, node_type * pNode, int nDir, typename node_type::version_type nVersion )
+        template <typename K, typename Compare, typename Func>
+        int try_update_root( K const* key, Compare cmp, int nFlags, Func funcUpdate )
         {
+            assert( gc::is_locked() );
+
             int result;
             do {
-                node_type * pChild = pNode->child( nDir ).load( memory_model::memory_order_relaxed );
+                node_type * pChild = m_Root.child( 1, memory_model::memory_order_acquire );
+                if ( pChild ) {
+                    version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
+                    if ( nChildVersion & node_type::shrinking ) {
+                        m_stat.onUpdateRootWaitShrinking();
+                        pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
+                        // retry
+                    }
+                    else if ( pChild == m_Root.child( 1, memory_model::memory_order_acquire ) ) {
+                        result = try_update( key, cmp, nFlags, funcUpdate, m_pRoot, pChild, nChildVersion );
+                    }
+                } 
+                else {
+                    // the tree is empty
+                    if ( nFlags & update_flags::allow_insert ) {
+                        // insert into tree as right child of the root
+                        {
+                            node_scoped_lock l( m_pRoot );
+
+                            node_type * pNew = alloc_node( key, 1, 0, m_pRoot, nullptr, nullptr );
+                            mapped_type * pVal = funcUpdate( pNew );
+                            assert( pVal != nullptr );
+                            pNew->m_pValue.store( pVal, memory_model::memory_order_release );
+
+                            m_pRoot->child( pNew, 1, memory_model::memory_order_relaxed );
+                            m_pRoot->height( 2, memory_model::memory_order_relaxed );
+                        }
+
+                        ++m_ItemCounter;
+                        m_stat.onInsertSuccess();
+                        return update_flags::result_insert;
+                    }
+
+                    return update_flags::failed;
+                }
+            } while ( result != update_flags::retry );
+            return result;
+        }
+
+        template <typename K, typename Compare, typename Func>
+        int try_update( K const& key, Compare cmp, int nFlags, Func funcUpdate, node_type * pParent, node_type * pNode, version_type nVersion )
+        {
+            assert( gc::is_locked() );
+            assert( nVersion != node_type::unlinked );
+
+            int nCmp = cmp( key, pNode->m_key );
+            if ( nCmp == 0 ) {
+                if ( nFlags & update_flags::allow_update ) {
+                    return try_update_node( funcUpdate, pNode );
+                }
+                return update_flags::failed;
+            }
+
+            int result;
+            do {
+                node_type * pChild = pNode->child( nCmp ).load( memory_model::memory_order_relaxed );
                 if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                     return update_flags::retry;
 
                 if ( pChild == nullptr ) {
                     // insert new node
                     if ( nFlags & update_flags::allow_insert )
-                        result = try_insert_node( key, funcUpdate, pNode, nDir, nVersion );
+                        result = try_insert_node( key, funcUpdate, pNode, nCmp, nVersion );
                     else
                         result = update_flags::failed;
                 }
                 else {
-                    //TODO
+                    // update child
+                    result = update_flags::retry;
+                    version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
+                    if ( nChildVersion & node_type::shrinking ) {
+                        m_stat.onUpdateWaitShrinking();
+                        pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
+                        // retry
+                    }
+                    else if ( pChild == pNode->child( nCmp ).load( memory_model::memory_order_relaxed ) ) {
+                        // this second read is important, because it is protected by nChildVersion
+
+                        // validate the read that our caller took to get to node
+                        if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                            m_stat.onUpdateRetry();
+                            return update_flags::retry;
+                        }
+
+                        // At this point we know that the traversal our parent took to get to node is still valid.
+                        // The recursive implementation will validate the traversal from node to
+                        // child, so just prior to the node nVersion validation both traversals were definitely okay.
+                        // This means that we are no longer vulnerable to node shrinks, and we don't need
+                        // to validate node version any more.
+                        result = try_update( key, cmp, nFlags, funcUpdate, pNode, pChild, nChildVersion );
+                    }
                 }
             } while ( result == update_flags::retry );
             return result;
         }
 
         template <typename K, typename Func>
-        int try_insert_node( K const& key, Func funcUpdate, node_type * pNode, int nDir, typename node_type::version_type nVersion )
+        int try_insert_node( K const& key, Func funcUpdate, node_type * pNode, int nDir, version_type nVersion )
         {
             node_type * pNew;
 
@@ -690,6 +771,35 @@ namespace cds { namespace container {
             return update_flags::result_insert;
         }
 
+        template <typename Func>
+        int try_update_node( Func funcUpdate, node_type * pNode )
+        {
+            mapped_type * pOld;
+            {
+                node_scoped_lock l( pNode );
+
+                if ( pNode->version( memory_model::memory_order_relaxed ) == node_type::unlinked ) {
+                    if ( c_RelaxedInsert )
+                        disposer()(pVal);
+                    m_stat.onUpdateUnlinked();
+                    return update_flags::retry;
+                }
+
+                pOld = pNode->value( memory_model::memory_order_relaxed );
+                mapped_type * pVal = funcUpdate( pNode );
+                assert( pVal != nullptr );
+                pNode->m_pValue.store( pVal, memory_model::memory_order_relaxed ));
+            }
+
+            if ( pOld ) {
+                disposer()(pOld);
+                m_stat.onDisposeValue();
+            }
+
+            m_stat.onUpdateSuccess();
+            return update_flags::result_update;
+        }
+
         bool try_unlink_locked( node_type * pParent, node_type * pNode )
         {
             // pParent and pNode must be locked
@@ -721,6 +831,7 @@ namespace cds { namespace container {
             if ( pSplice )
                 pSplice->pParent.store( pParent, memory_model::memory_order_release );
 
+            // Mark the node as unlinked
             pNode->version( node_type::unlinked, memory_model::memory_order_release );
             dispose_node( pNode );
 
@@ -935,19 +1046,19 @@ namespace cds { namespace container {
             }
         }
 
-        static void begin_change( node_type * pNode, typename node_type::version_type version )
+        static void begin_change( node_type * pNode, version_type version )
         {
             pNode->version( version | node_type::shrinking, memory_model::memory_order_release );
         }
-        static void end_change( node_type * pNode, tpename node_type::version_type version )
+        static void end_change( node_type * pNode, version_type version )
         {
-            // Clear shrinking nd unlinked flags and increment version
+            // Clear shrinking and unlinked flags and increment version
             pNode->version( (version | node_type::version_flags) + 1, memory_model::memory_order_release );
         }
 
         node_type * rotate_right_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR, int hLL, node_type * pLRight, int hLR )
         {
-            node_type::version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
             node_type * pParentLeft = pParent->m_pLeft.load( memory_model::memory_order_relaxed );
 
             begin_change( pNode, nodeVersion );
@@ -1009,7 +1120,7 @@ namespace cds { namespace container {
 
         node_type * rotate_left_locked( node_type * pParent, node_type * pNode, int hL, node_type * pRight, node_type * pRLeft, int hRL, int hRR )
         {
-            typename node_type::version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
             node_type * pParentLeft = pParent->m_pLeft.load( memory_odel::memory_order_relaxed );
 
             begin_change( pNode, nodeVersion );
@@ -1134,8 +1245,8 @@ namespace cds { namespace container {
 
         node_type * rotate_left_over_right_locked( node_type * pParent, node_type * pNode, int hL, node_type * pRight, node_type * pRLeft, int hRR, int hRLR )
         {
-            typename node_type::version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
-            typename node_type::version_type rightVersion = pRight->version( memory_model::memory_order_relaxed );
+            version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            version_type rightVersion = pRight->version( memory_model::memory_order_relaxed );
 
             node_type * pPL = pParent->m_pLeft.load( memory_model::memory_order_relaxed );
             node_type * pRLL = pRLeft->m_pLeft.load( memory_model::memory_order_relaxed );
