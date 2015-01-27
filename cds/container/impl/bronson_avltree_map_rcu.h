@@ -141,15 +141,55 @@ namespace cds { namespace container {
             cxx_allocator().Delete( static_cast<alloc_node_type *>(pNode) );
         }
 
-        void dispose_node( node_type * pNode )
+        // RCU safe disposer
+        class rcu_disposer
         {
-            mapped_type * pVal = pNode->value( memory_model::memory_order_relaxed );
-            if ( pVal ) {
-                pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
-                disposer()(pVal);
+            node_type *     m_pRetiredList; ///< head of retired list
+
+        public:
+            rcu_disposer()
+                : m_pRetiredList( nullptr )
+            {}
+
+            ~rcu_disposer()
+            {
+                clean();
             }
-            //TODO: deallocate pNode in safe manner
-        }
+
+            void dispose( node_type * pNode )
+            {
+                mapped_type * pVal = pNode->value( memory_model::memory_order_relaxed );
+                if ( pVal ) {
+                    pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
+                    disposer()(pVal);
+                }
+
+                pNode->m_pNextRemoved = m_pRetiredList;
+                m_pRetiredList = pNode;
+            }
+
+        private:
+            struct internal_disposer
+            {
+                void operator()( alloc_node_type * p ) const
+                {
+                    static_cast<node_type *>(p)->~node_type();
+                    memory_allocator().deallocate( p, 1 );
+                }
+            };
+
+            void clean()
+            {
+                assert( !gc::is_locked() );
+
+                for ( node_type * p = m_pRetiredList; p; ) {
+                    node_type * pNext = p->m_pNextRemoved;
+                    // Value already disposed
+                    gc::template retire_ptr<internal_disposer>( static_cast<alloc_node_type *>(p) );
+                    p = pNext;
+                }
+            }
+        };
 
         //@endcond
 
@@ -553,8 +593,11 @@ namespace cds { namespace container {
         {
             check_deadlock_policy::check();
 
-            rcu_lock l;
-            return try_udate_root( key, cmp, nFlags, funcUpdate );
+            rcu_disposer removed_list;
+            {
+                rcu_lock l;
+                return try_udate_root( key, cmp, nFlags, funcUpdate, removed_list );
+            }
         }
 
         //@endcond
@@ -618,7 +661,7 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare, typename Func>
-        int try_update_root( K const* key, Compare cmp, int nFlags, Func funcUpdate )
+        int try_update_root( K const* key, Compare cmp, int nFlags, Func funcUpdate, rcu_disposer& disp )
         {
             assert( gc::is_locked() );
 
@@ -633,7 +676,7 @@ namespace cds { namespace container {
                         // retry
                     }
                     else if ( pChild == m_Root.child( 1, memory_model::memory_order_acquire ) ) {
-                        result = try_update( key, cmp, nFlags, funcUpdate, m_pRoot, pChild, nChildVersion );
+                        result = try_update( key, cmp, nFlags, funcUpdate, m_pRoot, pChild, nChildVersion, disp );
                     }
                 } 
                 else {
@@ -664,7 +707,7 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare, typename Func>
-        int try_update( K const& key, Compare cmp, int nFlags, Func funcUpdate, node_type * pParent, node_type * pNode, version_type nVersion )
+        int try_update( K const& key, Compare cmp, int nFlags, Func funcUpdate, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
             assert( gc::is_locked() );
             assert( nVersion != node_type::unlinked );
@@ -686,7 +729,7 @@ namespace cds { namespace container {
                 if ( pChild == nullptr ) {
                     // insert new node
                     if ( nFlags & update_flags::allow_insert )
-                        result = try_insert_node( key, funcUpdate, pNode, nCmp, nVersion );
+                        result = try_insert_node( key, funcUpdate, pNode, nCmp, nVersion, disp );
                     else
                         result = update_flags::failed;
                 }
@@ -713,7 +756,7 @@ namespace cds { namespace container {
                         // child, so just prior to the node nVersion validation both traversals were definitely okay.
                         // This means that we are no longer vulnerable to node shrinks, and we don't need
                         // to validate node version any more.
-                        result = try_update( key, cmp, nFlags, funcUpdate, pNode, pChild, nChildVersion );
+                        result = try_update( key, cmp, nFlags, funcUpdate, pNode, pChild, nChildVersion, disp );
                     }
                 }
             } while ( result == update_flags::retry );
@@ -721,7 +764,7 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Func>
-        int try_insert_node( K const& key, Func funcUpdate, node_type * pNode, int nDir, version_type nVersion )
+        int try_insert_node( K const& key, Func funcUpdate, node_type * pNode, int nDir, version_type nVersion, rcu_disposer& disp )
         {
             node_type * pNew;
 
@@ -766,7 +809,7 @@ namespace cds { namespace container {
             }
             m_stat.onInsertSuccess();
 
-            fix_height_and_rebalance( pDamaged );
+            fix_height_and_rebalance( pDamaged, disp );
 
             return update_flags::result_insert;
         }
@@ -800,7 +843,7 @@ namespace cds { namespace container {
             return update_flags::result_update;
         }
 
-        bool try_unlink_locked( node_type * pParent, node_type * pNode )
+        bool try_unlink_locked( node_type * pParent, node_type * pNode, rcu_disposer& disp )
         {
             // pParent and pNode must be locked
             assert( !pParent->is_unlinked(memory_model::memory_order_relaxed) );
@@ -833,7 +876,7 @@ namespace cds { namespace container {
 
             // Mark the node as unlinked
             pNode->version( node_type::unlinked, memory_model::memory_order_release );
-            dispose_node( pNode );
+            disp.dispose( pNode );
 
             return true;
         }
@@ -884,7 +927,7 @@ namespace cds { namespace container {
             }
         }
 
-        void fix_height_and_rebalance( node_type * pNode )
+        void fix_height_and_rebalance( node_type * pNode, rcu_disposer& disp )
         {
             while ( pNode && pNode->m_pParent.load( memory_model::memory_order_relaxed ) ) {
                 int nCond = estimate_node_condition( pNode );
@@ -902,14 +945,14 @@ namespace cds { namespace container {
                              && pNode->m_pParent.load( memory_model::memory_order_relaxed ) == pParent ) 
                         {
                             node_scoped_lock ln( pNode );
-                            pNode = rebalance_locked( pParent, pNode );
+                            pNode = rebalance_locked( pParent, pNode, disp );
                         }
                     }
                 }
             }
         }
 
-        node_type * rebalance_locked( node_type * pParent, node_type * pNode )
+        node_type * rebalance_locked( node_type * pParent, node_type * pNode, rcu_disposer& disp )
         {
             // pParent and pNode shlould be locked.
             // Returns a damaged node, or nullptr if no more rebalancing is necessary
@@ -921,7 +964,7 @@ namespace cds { namespace container {
             node_type * pRight = pNode->m_pRight.load( memory_model::memory_order_relaxed );
 
             if ( (pLeft == nullptr || pRight == nullptr) && pNode->value( memory_model::memory_order_relaxed ) == nullptr ) {
-                if ( try_unlink_locked( pParent, pNode ))
+                if ( try_unlink_locked( pParent, pNode, disp ))
                     return fix_height_locked( pParent );
                 else {
                     // retry needed for pNode

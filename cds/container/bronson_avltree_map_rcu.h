@@ -24,7 +24,7 @@ namespace cds { namespace container {
                     template <typename T>
                     void operator()( T * p )
                     {
-                        std::allocator().destroy( p );
+                        std::allocator<T>().destroy( p );
                     }
                 };
 

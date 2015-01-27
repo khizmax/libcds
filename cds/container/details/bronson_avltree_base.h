@@ -39,12 +39,15 @@ namespace cds { namespace container {
             atomics::atomic<node_type *>    m_pRight;   ///< Right child
             lock_type                       m_Lock;     ///< Node-level lock
 
+            node_type *                     m_pNextRemoved; ///< thread-local list o removed node
+
             link()
                 : m_nHeight( 0 )
                 , m_nVersion( 0 )
                 , m_pParent( nullptr )
                 , m_pLeft( nullptr )
                 , m_pRight( nullptr )
+                , m_pNextRemoved( nullptr )
             {}
 
             link( int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
@@ -53,6 +56,7 @@ namespace cds { namespace container {
                 , m_pParent( pParent )
                 , m_pLeft( pLeft )
                 , m_pRight( pRight )
+                , m_pNextRemoved( nullptr )
             {}
 
             atomics::atomic<node_type *>& child( int nDirection ) const
