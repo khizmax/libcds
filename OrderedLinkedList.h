@@ -11,7 +11,8 @@ public:
     //compare and swap atomic function
     volatile bool CAS(nodeType<Type>** node1_add,nodeType<Type>* node1,nodeType<Type>* node2);
 
-   volatile bool search(const Type&) const;
+   volatile bool search(const Type&) ;
+    volatile bool find(const Type&) ;
    volatile bool insert (const Type&);
     volatile bool insertFirst(const Type&);
     volatile  bool insertLast(const Type&);
@@ -42,7 +43,7 @@ template <class Type>
 
 
 template <class Type>
- volatile bool orderedLinkedList<Type>::search (const Type& item) const
+ volatile bool orderedLinkedList<Type>::search (const Type& item)
  {bool found=false;
  nodeType<Type> *current;
      current=first;
@@ -51,25 +52,30 @@ template <class Type>
         found = true;
      else
         current = current->link;
+        do {
+
      if (found)
 {
 
 
         found = (current->info == item);
+                 if (CAS(&(current),current,current->link))
+return true;
+return found;
 
-      // if (CAS(&(first->link),first->link,current->link))
-//return true;
 }
 else
     return false;
+        } while(true);
 
  }
 
  template <class Type>
 volatile bool orderedLinkedList<Type>::insert (const Type& item)
- {
+ { if (!search(item)){
      nodeType<Type> *current,*trailCurrent, *newNode;
      bool found;
+
      newNode = new nodeType<Type>;
 
    newNode->info=item;
@@ -126,12 +132,16 @@ volatile bool orderedLinkedList<Type>::insert (const Type& item)
    }
     while (true);
 return true;
+ }
    }
 
+ template <class Type>
 
-
-
-
+ volatile bool orderedLinkedList<Type>::find (const Type& item)
+{
+  bool flag=search(item) ;
+  if (flag) return true; else return false;
+}
 
  template <class Type>
 volatile bool orderedLinkedList<Type>::insertFirst(const Type& item)
@@ -152,7 +162,7 @@ volatile bool orderedLinkedList<Type>::insertFirst(const Type& item)
  }
  template <class Type>
  volatile bool orderedLinkedList<Type>::deleteNode(const Type& item)
- {
+ {if (search(item)){
        nodeType<Type> *current,*trailCurrent;
        bool found;
 
@@ -214,6 +224,7 @@ if (CAS(&( current->link), current->link,current))
       while(true); }
 
 return true;
+ }
        }
 
 #endif // ORDEREDLINKEDLIST_H_INCLUDED
