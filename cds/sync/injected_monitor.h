@@ -1,9 +1,9 @@
 //$$CDS-header$$
 
-#ifndef CDSLIB_LOCK_INJECTED_MONITOR_H
-#define CDSLIB_LOCK_INJECTED_MONITOR_H
+#ifndef CDSLIB_SYNC_INJECTED_MONITOR_H
+#define CDSLIB_SYNC_INJECTED_MONITOR_H
 
-namespace cds { namespace lock {
+namespace cds { namespace sync {
 
     /// Monitor that injects a lock as a member into a class
     /**
@@ -63,6 +63,6 @@ namespace cds { namespace lock {
             }
         };
     };
-}} // namespace cds::lock
+}} // namespace cds::sync
 
-#endif // #ifndef CDSLIB_LOCK_INJECTED_MONITOR_H
+#endif // #ifndef CDSLIB_SYNC_INJECTED_MONITOR_H
