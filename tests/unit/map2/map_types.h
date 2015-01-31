@@ -51,7 +51,7 @@
 #include <cds/container/striped_map/boost_unordered_map.h>
 #include <cds/container/striped_map.h>
 
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 #include "cppunit/cppunit_mini.h"
 #include "lock/nolock.h"
@@ -1717,11 +1717,11 @@ namespace map2 {
         // ***************************************************************************
         // Standard implementations
 
-        typedef StdMap< Key, Value, cds::SpinLock >             StdMap_Spin;
-        typedef StdMap< Key, Value, lock::NoLock>               StdMap_NoLock;
+        typedef StdMap< Key, Value, cds::sync::spin >     StdMap_Spin;
+        typedef StdMap< Key, Value, lock::NoLock>         StdMap_NoLock;
 
-        typedef StdHashMap< Key, Value, cds::SpinLock >         StdHashMap_Spin;
-        typedef StdHashMap< Key, Value, lock::NoLock >          StdHashMap_NoLock;
+        typedef StdHashMap< Key, Value, cds::sync::spin > StdHashMap_Spin;
+        typedef StdHashMap< Key, Value, lock::NoLock >    StdHashMap_NoLock;
 
     };
 

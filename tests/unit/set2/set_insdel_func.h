@@ -7,7 +7,7 @@
 #include "set2/set_types.h"
 #include "cppunit/thread.h"
 
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace set2 {
 
@@ -34,7 +34,7 @@ namespace set2 {
             bool volatile   bInitialized;
             cds::OS::ThreadId          threadId     ;   // insert thread id
 
-            typedef cds::lock::Spinlock< cds::backoff::pause >   lock_type;
+            typedef cds::sync::spin_lock< cds::backoff::pause > lock_type;
             mutable lock_type   m_access;
 
             value_type()

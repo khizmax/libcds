@@ -7,7 +7,7 @@
 #include <cds/intrusive/details/base.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/algo/int_algo.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <cds/opt/permutation.h>
 
 #include <boost/intrusive/slist.hpp>
@@ -105,7 +105,7 @@ namespace cds { namespace intrusive {
             typedef CDS_DEFAULT_ALLOCATOR allocator;
 
             /// Lock type used to maintain an internal list of allocated segments
-            typedef cds::lock::Spin lock_type;
+            typedef cds::sync::spin lock_type;
 
             /// Random \ref cds::opt::permutation_generator "permutation generator" for sequence [0, quasi_factor)
             typedef cds::opt::v::random2_permutation<int>    permutation_generator;

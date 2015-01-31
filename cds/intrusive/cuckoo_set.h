@@ -12,7 +12,7 @@
 #include <cds/opt/hash.h>
 #include <cds/lock/array.h>
 #include <cds/os/thread.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 
 namespace cds { namespace intrusive {
@@ -648,7 +648,7 @@ namespace cds { namespace intrusive {
             typedef unsigned long long  owner_t;
             typedef cds::OS::ThreadId   threadId_t;
 
-            typedef cds::lock::Spin     spinlock_type;
+            typedef cds::sync::spin     spinlock_type;
             typedef std::unique_lock< spinlock_type > scoped_spinlock;
             //@endcond
 

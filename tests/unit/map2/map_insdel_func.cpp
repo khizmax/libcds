@@ -5,7 +5,7 @@
 #include "map2/map_types.h"
 #include "cppunit/thread.h"
 
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <vector>
 #include <algorithm>    // random_shuffle
 
@@ -36,7 +36,7 @@ namespace map2 {
             atomics::atomic<bool>   bInitialized;
             cds::OS::ThreadId          threadId     ;   // insert thread id
 
-            typedef cds::lock::Spinlock< cds::backoff::pause >   lock_type;
+            typedef cds::sync::spin_lock< cds::backoff::pause > lock_type;
             mutable lock_type   m_access;
 
             value_type()

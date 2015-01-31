@@ -5,11 +5,11 @@
 
 #include <mutex>    //unique_lock
 #include <queue>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace queue {
 
-    template <typename T, class Container, class Lock = cds::lock::Spin >
+    template <typename T, class Container, class Lock = cds::sync::spin >
     class StdQueue: public std::queue<T, Container >
     {
         typedef std::queue<T, Container >   base_class;
@@ -42,11 +42,11 @@ namespace queue {
         }
     };
 
-    template <typename T, class Lock = cds::lock::Spin >
+    template <typename T, class Lock = cds::sync::spin >
     class StdQueue_deque: public StdQueue<T, std::deque<T>, Lock >
     {};
 
-    template <typename T, class Lock = cds::lock::Spin >
+    template <typename T, class Lock = cds::sync::spin >
     class StdQueue_list: public StdQueue<T, std::list<T>, Lock >
     {};
 }

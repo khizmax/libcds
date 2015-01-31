@@ -55,7 +55,7 @@ namespace cds { namespace container {
             - \p opt::compare - priority compare functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for priority compare. Default is \p std::less<T>.
-            - \p opt::lock_type - lock type. Default is \p cds::lock::Spin.
+            - \p opt::lock_type - lock type. Default is \p cds::sync::spin.
             - \p opt::back_off - back-off strategy. Default is \p cds::backoff::yield
             - \p opt::allocator - allocator (like \p std::allocator) for the values of queue's items.
                 Default is \ref CDS_DEFAULT_ALLOCATOR

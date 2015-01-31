@@ -69,8 +69,8 @@ namespace cds { namespace container {
             /// Random engine to generate a random position in elimination array
             typedef opt::v::c_rand  random_engine;
 
-            /// Lock type used in elimination, default is cds::lock::Spin
-            typedef cds::lock::Spin lock_type;
+            /// Lock type used in elimination, default is cds::sync::spin
+            typedef cds::sync::spin lock_type;
 
             ///@}
         };
@@ -97,7 +97,7 @@ namespace cds { namespace container {
             - opt::random_engine - a random engine to generate a random position in elimination array.
                 Default is \p opt::v::c_rand.
             - opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
-            - opt::lock_type - a lock type used in elimination back-off, default is \p cds::lock::Spin.
+            - opt::lock_type - a lock type used in elimination back-off, default is \p cds::sync::spin.
 
             Example: declare %TreiberStack with item counting and internal statistics using \p %make_traits
             \code

@@ -49,7 +49,7 @@
 #endif
 #include <cds/container/striped_set.h>
 
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <boost/functional/hash/hash.hpp>
 
 #include "cppunit/cppunit_mini.h"
@@ -1709,11 +1709,11 @@ namespace set2 {
         // ***************************************************************************
         // Standard implementations
 
-        typedef StdSet< key_val, less, cds::SpinLock >                  StdSet_Spin;
-        typedef StdSet< key_val, less, lock::NoLock>                    StdSet_NoLock;
+        typedef StdSet< key_val, less, cds::sync::spin > StdSet_Spin;
+        typedef StdSet< key_val, less, lock::NoLock>     StdSet_NoLock;
 
-        typedef StdHashSet< key_val, hash, less, equal_to, cds::SpinLock >    StdHashSet_Spin;
-        typedef StdHashSet< key_val, hash, less, equal_to, lock::NoLock >     StdHashSet_NoLock;
+        typedef StdHashSet< key_val, hash, less, equal_to, cds::sync::spin > StdHashSet_Spin;
+        typedef StdHashSet< key_val, hash, less, equal_to, lock::NoLock >    StdHashSet_NoLock;
 
     };
 

@@ -12,12 +12,12 @@ namespace cds { namespace intrusive {
         /// Lazy list node for \p gc::nogc
         /**
             Template parameters:
-             - Lock - lock type. Default is \p cds::lock::Spin
+             - Lock - lock type. Default is \p cds::sync::spin
              - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <
 #ifdef CDS_DOXYGEN_INVOKED
-            typename Lock = cds::lock::Spin,
+            typename Lock = cds::sync::spin,
             typename Tag = opt::none
 #else
             typename Lock,
