@@ -1,7 +1,7 @@
 //$$CDS-header$$1
 
-#ifndef _CDS_URCU_DETAILS_SIG_THREADED_H
-#define _CDS_URCU_DETAILS_SIG_THREADED_H
+#ifndef CDSLIB_URCU_DETAILS_SIG_THREADED_H
+#define CDSLIB_URCU_DETAILS_SIG_THREADED_H
 
 #include <mutex>    //unique_lock
 #include <cds/urcu/details/sh.h>
@@ -233,4 +233,4 @@ namespace cds { namespace urcu {
 }} // namespace cds::urcu
 
 #endif // #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-#endif // #ifndef _CDS_URCU_DETAILS_SIG_THREADED_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_SIG_THREADED_H

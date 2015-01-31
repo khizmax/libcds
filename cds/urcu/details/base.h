@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_DETAILS_BASE_H
-#define _CDS_URCU_DETAILS_BASE_H
+#ifndef CDSLIB_URCU_DETAILS_BASE_H
+#define CDSLIB_URCU_DETAILS_BASE_H
 
 #include <cds/algo/atomic.h>
 #include <cds/gc/details/retired_ptr.h>
@@ -455,4 +455,4 @@ namespace cds {
     } // namespace urcu
 } // namespace cds
 
-#endif // #ifndef _CDS_URCU_DETAILS_BASE_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_BASE_H
