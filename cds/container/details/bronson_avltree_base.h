@@ -6,7 +6,7 @@
 #include <cds/container/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/urcu/options.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace cds { namespace container {
 
@@ -252,7 +252,7 @@ namespace cds { namespace container {
             typedef opt::none                       less;
 
             /// Allocator for internal node
-            typedef CDS_DEFAULT_ALLOCATOR           allocator;
+            typedef CDS_DEFAULT_ALLOCATOR           node_allocator;
 
             /// Disposer (only for pointer-oriented tree specialization)
             /**
@@ -302,11 +302,6 @@ namespace cds { namespace container {
                 List of available options see \p opt::rcu_check_deadlock
             */
             typedef cds::opt::v::rcu_throw_deadlock      rcu_check_deadlock;
-
-            //@cond
-            // Internal traits, not for direct usage
-            typedef opt::none   node_type;
-            //@endcond
         };
 
         /// Metafunction converting option list to BronsonAVLTreeMap traits
@@ -321,7 +316,7 @@ namespace cds { namespace container {
             - \p opt::compare - key compare functor. No default functor is provided.
                 If the option is not specified, \p %opt::less is used.
             - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
-            - \p opt::allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::node_allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \ref cds::intrusive::opt::disposer "container::opt::disposer" - the functor used for dispose removed values.
                 The user-provided disposer is used only for pointer-oriented tree specialization
                 like \p BronsonAVLTreeMap<GC, Key, T*, Traits>. When the node becomes the rounting node without value,

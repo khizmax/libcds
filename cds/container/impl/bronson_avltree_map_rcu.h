@@ -57,7 +57,7 @@ namespace cds { namespace container {
 #endif
         typedef typename traits::item_counter           item_counter;       ///< Item counting policy
         typedef typename traits::memory_model           memory_model;       ///< Memory ordering, see \p cds::opt::memory_model option
-        typedef typename traits::allocator              allocator_type;     ///< allocator for maintaining internal node
+        typedef typename traits::node_allocator         node_allocator_type; ///< allocator for maintaining internal nodes
         typedef typename traits::stat                   stat;               ///< internal statistics
         typedef typename traits::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename traits::back_off               back_off;           ///< Back-off strategy
@@ -72,15 +72,7 @@ namespace cds { namespace container {
         typedef bronson_avltree::node< key_type, mapped_type, lock_type > node_type;
         typedef typename node_type::version_type version_type;
 
-        typedef typename std::conditional <
-            std::is_same< typename traits::node_type, opt::none >::value,
-            bronson_avltree::node< key_type, mapped_type, lock_type >,
-            typename traits::node_type
-        >::type alloc_node_type;
-
-        typedef typename allocator_type::template rebind<alloc_node_type>::other memory_allocator;
-        typedef cds::details::Allocator< alloc_node_type, memory_allocator > cxx_allocator;
-
+        typedef cds::details::Allocator< node_type, node_allocator_type > cxx_allocator;
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock >   check_deadlock_policy;
 
         enum class find_result
@@ -131,14 +123,13 @@ namespace cds { namespace container {
         template <typename K>
         static node_type * alloc_node( K&& key, int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
         {
-            alloc_node_type * pNode = memory_allocator().allocate( 1 );
-            return new (static_cast<node_type *>(pNode)) node_type( std::forward<K>( key ), nHeight, version, pParent, pLeft, pRight );
+            return cxx_allocator().New( std::forward<K>( key ), nHeight, version, pParent, pLeft, pRight );
         }
 
-        static void internal_free_node( node_type * pNode )
+        static void free_node( node_type * pNode )
         {
             // Free node without disposer
-            cxx_allocator().Delete( static_cast<alloc_node_type *>(pNode) );
+            cxx_allocator().Delete( pNode );
         }
 
         // RCU safe disposer
@@ -171,10 +162,9 @@ namespace cds { namespace container {
         private:
             struct internal_disposer
             {
-                void operator()( alloc_node_type * p ) const
+                void operator()( node_type * p ) const
                 {
-                    static_cast<node_type *>(p)->~node_type();
-                    memory_allocator().deallocate( p, 1 );
+                    free_node( p );
                 }
             };
 
@@ -185,7 +175,7 @@ namespace cds { namespace container {
                 for ( node_type * p = m_pRetiredList; p; ) {
                     node_type * pNext = p->m_pNextRemoved;
                     // Value already disposed
-                    gc::template retire_ptr<internal_disposer>( static_cast<alloc_node_type *>(p) );
+                    gc::template retire_ptr<internal_disposer>( p );
                     p = pNext;
                 }
             }
@@ -793,7 +783,7 @@ namespace cds { namespace container {
                      || pNode->child( nDir ).load( memory_model::memory_order_relaxed ) != nullptr ) 
                 {
                     if ( c_RelaxedInsert ) {
-                        internal_free_node( pNew );
+                        free_node( pNew );
                         m_stat.onRelaxedInsertFailed();
                     }
 

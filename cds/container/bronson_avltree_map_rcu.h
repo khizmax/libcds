@@ -11,12 +11,6 @@ namespace cds { namespace container {
         //@cond
         namespace details {
 
-            template <typename Key, typename T, typename Lock>
-            struct value_node : public bronson_avltree::node< Key, T, Lock >
-            {
-                T   m_data; // placeholder for data
-            };
-
             template <typename Key, typename T, typename Traits>
             struct pointer_oriented_traits: public Traits
             {
@@ -29,6 +23,35 @@ namespace cds { namespace container {
                 };
 
                 typedef value_node<Key, T, typename Traits::lock_type > node_type;
+            };
+
+            template < typename Key, typename T, typename Traits>
+            struct make_map
+            {
+                typedef Key key_type;
+                typedef T mapped_type;
+                typedef Traits original_traits;
+
+                typedef cds::details::Allocator< mapped_type, typename original_traits::allocator > cxx_allocator;
+
+                struct traits : public original_traits
+                {
+                    struct disposer {
+                        template <typename T>
+                        void operator()( mapped_type * p )
+                        {
+                            cxx_allocator().Delete( p );
+                        }
+                    };
+                };
+
+                // Metafunction result
+                typedef BronsonAVLTreeMap <
+                    cds::urcu::gc<RCU>,
+                    Key,
+                    T *,
+                    traits
+                > type;
             };
         } // namespace details
         //@endcond
@@ -66,10 +89,15 @@ namespace cds { namespace container {
 #endif
     >
     class BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T, Traits >
-        : private BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T*, bronson_avltree::details::pointer_oriented_traits<Key, T, Traits>>
+#ifdef CDS_DOXYGEN_INVOKED
+        : private BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T*, Traits >
+#else
+        : private bronson_avltree::details::make_map< Key, T, Traits >::type;
+#endif
     {
         //@cond
-        typedef BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T*, bronson_avltree::details::pointer_oriented_traits<Traits>> base_class;
+        typedef bronson_avltree::details::make_map< Key, T, Traits > maker;
+        typedef typename maker::type base_class;
         //@endcond
 
     public:
@@ -81,7 +109,8 @@ namespace cds { namespace container {
         typedef typename base_class::key_comparator     key_comparator;     ///< key compare functor based on \p Traits::compare and \p Traits::less
         typedef typename traits::item_counter           item_counter;       ///< Item counting policy
         typedef typename traits::memory_model           memory_model;       ///< Memory ordering, see \p cds::opt::memory_model option
-        typedef typename traits::allocator              allocator_type;     ///< allocator for maintaining internal node
+        typedef typename traits::allocator              allocator_type;     ///< allocator for value
+        typedef typename traits::node_allocator         node_allocator_type;///< allocator for maintaining internal nodes
         typedef typename traits::stat                   stat;               ///< internal statistics
         typedef typename traits::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename traits::back_off               back_off;           ///< Back-off strategy
@@ -92,9 +121,9 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        typedef typename base_class::alloc_node_type    node_type;
-        typedef typename base_class::node_type          base_node_type;
-        typedef base_class::node_scoped_lock            node_scoped_lock;
+        typedef typename base_class::node_type  node_type;
+        typedef typename base_class::node_scoped_lock node_scoped_lock;
+        typedef typename maker::cxx_allocator   cxx_allocator;
 
         using base_class::update_flags;
         //@endcond
@@ -124,12 +153,10 @@ namespace cds { namespace container {
         bool insert( K const& key )
         {
             return base_class::do_update(key, key_comparator(),
-                []( base_node_type * pNode ) -> mapped_type* 
+                []( node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    node_type * p = static_cast<node_type *>(pNode);
-                    new (&p->m_data) mapped_type;
-                    return &p->m_data;
+                    return cxx_allocator().New();
                 },
                 update_flags::allow_insert 
             ) == update_flags::result_insert;
@@ -152,12 +179,10 @@ namespace cds { namespace container {
         bool insert( K const& key, V const& val )
         {
             return base_class::do_update( key, key_comparator(),
-                [&val]( base_node_type * pNode ) 
+                [&val]( node_type * pNode )
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    node_type * p = static_cast<node_type *>(pNode);
-                    new (&p->m_data) mapped_type( val );
-                    return &p->m_data;
+                    return cxx_allocator().New( val );
                 },
                 update_flags::allow_insert 
             ) == update_flags::result_insert;
@@ -190,12 +215,12 @@ namespace cds { namespace container {
         bool insert_with( K const& key, Func func )
         {
             return base_class::do_update( key, key_comparator(),
-                [&func]( base_node_type * pNode ) -> mapped_type* 
+                [&func]( node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    node_type * p = static_cast<node_type *>(pNode);
-                    func( p->m_data );
-                    return &p->m_data;
+                    mapped_type * pVal = cxx_allocator().New();
+                    func( *pVal );
+                    return pVal;
                 },
                 update_flags::allow_insert 
             ) == update_flags::result_insert;
@@ -211,12 +236,10 @@ namespace cds { namespace container {
         bool emplace( K&& key, Args&&... args )
         {
             return base_class::do_update( key, key_comparator(),
-                [&]( base_node_type * pNode ) -> mapped_type* 
+                [&]( node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    node_type * p = static_cast<node_type *>(pNode);
-                    new (&p->m_data) mapped_type( std::forward<Args>(args)... );
-                    return &p->m_data;
+                    return cxx_allocator().New( std::forward<Args>(args)...);
                 },
                 update_flags::allow_insert 
             ) == update_flags::result_insert;
@@ -253,12 +276,16 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, Func func )
         {
             int result = base_class::do_update( key, key_comparator(),
-                [&func]( base_node_type * pNode ) -> mapped_type* 
+                [&func]( node_type * pNode ) -> mapped_type* 
                 {
-                    node_type * p = static_cast<node_type *>(pNode);
-                    //new (&p->m_data) mapped_type;
-                    func( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr, p->m_data );
-                    return &p->m_data;
+                    mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed ));
+                    if ( !pVal ) {
+                        pVal = cxx_allocator().New();
+                        func( true, pVal );
+                    }
+                    else
+                        func( false, pVal );
+                    return pVal;
                 },
                 update_flags::allow_insert | update_flags::allow_update 
             );
