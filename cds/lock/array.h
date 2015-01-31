@@ -3,7 +3,11 @@
 #ifndef CDSLIB_LOCK_ARRAY_H
 #define CDSLIB_LOCK_ARRAY_H
 
-#warning "cds/lock/array.h is deprecated, use cds/sync/lock_array.h instead"
+#if CDS_COMPILER == CDS_COMPILER_MSVC
+#   pragma message("cds/lock/array.h is deprecated, use cds/sync/lock_array.h instead")
+#else
+#   warning "cds/lock/array.h is deprecated, use cds/sync/lock_array.h instead"
+#endif
 
 #include <cds/sync/lock_array.h>
 

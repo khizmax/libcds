@@ -3,7 +3,11 @@
 #ifndef CDSLIB_LOCK_SPINLOCK_H
 #define CDSLIB_LOCK_SPINLOCK_H
 
-#warning "cds/lock/spinlock.h is deprecated, use cds/sync/spinlock.h instead"
+#if CDS_COMPILER == CDS_COMPILER_MSVC
+#   pragma message("cds/lock/spinlock.h is deprecated, use cds/sync/spinlock.h instead")
+#else
+#   warning "cds/lock/spinlock.h is deprecated, use cds/sync/spinlock.h instead"
+#endif
 
 #include <cds/sync/spinlock.h>
 
