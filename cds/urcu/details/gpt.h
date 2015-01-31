@@ -1,7 +1,7 @@
 //$$CDS-header$$1
 
-#ifndef _CDS_URCU_DETAILS_GPT_H
-#define _CDS_URCU_DETAILS_GPT_H
+#ifndef CDSLIB_URCU_DETAILS_GPT_H
+#define CDSLIB_URCU_DETAILS_GPT_H
 
 #include <mutex>    //unique_lock
 #include <cds/urcu/details/gp.h>
@@ -220,4 +220,4 @@ namespace cds { namespace urcu {
     };
 }} // namespace cds::urcu
 
-#endif // #ifndef _CDS_URCU_DETAILS_GPT_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_GPT_H
