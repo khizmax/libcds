@@ -54,7 +54,7 @@ namespace opt {
         typedef typename cds::opt::select_default< cds::opt::none, cds::sync::spin >::type  default_spin;
 
         // spin_32bit is cds::sync::reentrant_spin32
-        typedef typename cds::opt::select_default< cds::lock::Spin32, cds::sync::reentrant_spin32 >::type  spin_32bit;
+        typedef typename cds::opt::select_default< cds::opt::none, cds::sync::reentrant_spin32 >::type  spin_32bit;
         \endcode
     */
     template <typename Option, typename Default, typename Value = Option>

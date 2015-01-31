@@ -1172,5 +1172,8 @@
     <ClInclude Include="..\..\..\cds\sync\spinlock.h">
       <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\lock_array.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

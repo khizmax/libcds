@@ -1,4 +1,4 @@
-//$$CDS-header$$-2
+//$$CDS-header$$
 
 #ifndef CDSLIB_SYNC_SPINLOCK_H
 #define CDSLIB_SYNC_SPINLOCK_H
