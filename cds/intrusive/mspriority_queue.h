@@ -5,7 +5,7 @@
 
 #include <mutex>  // std::unique_lock
 #include <cds/intrusive/details/base.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <cds/os/thread.h>
 #include <cds/details/bit_reverse_counter.h>
 #include <cds/intrusive/options.h>
@@ -70,16 +70,16 @@ namespace cds { namespace intrusive {
             /**
                 No default functor is provided. If the option is not specified, the \p less is used.
             */
-            typedef opt::none           compare;
+            typedef opt::none       compare;
 
             /// Specifies binary predicate used for priority comparing.
             /**
                 Default is \p std::less<T>.
             */
-            typedef opt::none           less;
+            typedef opt::none       less;
 
             /// Type of mutual-exclusion lock
-            typedef lock::Spin          lock_type;
+            typedef cds::sync::spin lock_type;
 
             /// Back-off strategy
             typedef backoff::yield      back_off;
@@ -102,7 +102,7 @@ namespace cds { namespace intrusive {
             - \p opt::compare - priority compare functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for priority compare. Default is \p std::less<T>.
-            - \p opt::lock_type - lock type. Default is \p cds::lock::Spin.
+            - \p opt::lock_type - lock type. Default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy. Default is \p cds::backoff::yield
             - \p opt::stat - internal statistics. Available types: \p mspriority_queue::stat, \p mspriority_queue::empty_stat (the default, no overhead)
         */

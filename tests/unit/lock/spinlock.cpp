@@ -93,21 +93,25 @@ namespace lock {
             }
         }
 
-        typedef cds::lock::Spinlock<cds::backoff::exponential<cds::backoff::hint, cds::backoff::yield> > Spinlock_exp;
+        typedef cds::sync::spin_lock<cds::backoff::exponential<cds::backoff::hint, cds::backoff::yield> > Spinlock_exp;
 
-        typedef cds::lock::ReentrantSpinT<unsigned int, cds::backoff::exponential<cds::backoff::hint, cds::backoff::yield> > reentrantSpin_exp;
-        typedef cds::lock::ReentrantSpinT<unsigned int, cds::backoff::yield> reentrantSpin_yield;
-        typedef cds::lock::ReentrantSpinT<unsigned int, cds::backoff::hint> reentrantSpin_hint;
-        typedef cds::lock::ReentrantSpinT<unsigned int, cds::backoff::empty> reentrantSpin_empty;
+        typedef cds::sync::reentrant_spin_lock<unsigned int, cds::backoff::exponential<cds::backoff::hint, cds::backoff::yield> > reentrantSpin_exp;
+        typedef cds::sync::reentrant_spin_lock<unsigned int, cds::backoff::yield> reentrantSpin_yield;
+        typedef cds::sync::reentrant_spin_lock<unsigned int, cds::backoff::hint> reentrantSpin_hint;
+        typedef cds::sync::reentrant_spin_lock<unsigned int, cds::backoff::empty> reentrantSpin_empty;
 
         TEST_CASE(spinLock_exp,         Spinlock_exp );
-        TEST_CASE(spinLock_yield,       cds::lock::Spinlock<cds::backoff::yield> );
-        TEST_CASE(spinLock_hint,        cds::lock::Spinlock<cds::backoff::hint> );
-        TEST_CASE(spinLock_empty,       cds::lock::Spinlock<cds::backoff::empty> );
+        TEST_CASE(spinLock_yield,       cds::sync::spin_lock<cds::backoff::yield> );
+        TEST_CASE(spinLock_hint,        cds::sync::spin_lock<cds::backoff::hint> );
+        TEST_CASE(spinLock_empty,       cds::sync::spin_lock<cds::backoff::empty> );
+        TEST_CASE( spinLock_yield_lock, cds::lock::Spinlock<cds::backoff::yield> );
+        TEST_CASE( spinLock_hint_lock, cds::lock::Spinlock<cds::backoff::hint> );
+        TEST_CASE( spinLock_empty_lock, cds::lock::Spinlock<cds::backoff::empty> );
 
-        TEST_CASE(reentrantSpinLock,    cds::lock::ReentrantSpin    );
-        TEST_CASE(reentrantSpinLock32,  cds::lock::ReentrantSpin32  );
-        TEST_CASE(reentrantSpinLock64,  cds::lock::ReentrantSpin64  );
+        TEST_CASE( reentrantSpinLock32, cds::sync::reentrant_spin32 );
+        TEST_CASE( reentrantSpinLock64, cds::sync::reentrant_spin64 );
+        TEST_CASE( reentrantSpinLock32_lock, cds::lock::ReentrantSpin32 );
+        TEST_CASE( reentrantSpinLock64_lock, cds::lock::ReentrantSpin64 );
 
         TEST_CASE(reentrantSpinlock_exp,        reentrantSpin_exp );
         TEST_CASE(reentrantSpinlock_yield,      reentrantSpin_yield );
@@ -121,7 +125,6 @@ namespace lock {
             CPPUNIT_TEST(spinLock_hint);
             CPPUNIT_TEST(spinLock_empty);
 
-            CPPUNIT_TEST(reentrantSpinLock);
             CPPUNIT_TEST(reentrantSpinLock32);
             CPPUNIT_TEST(reentrantSpinLock64);
 

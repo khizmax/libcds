@@ -463,8 +463,8 @@ namespace queue {
         typedef cds::intrusive::SegmentedQueue< cds::gc::DHP, T, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_DHP_mutex_stat;
 
         // Boost SList
-        typedef details::BoostSList< T, std::mutex >    BoostSList_mutex;
-        typedef details::BoostSList< T, cds::lock::Spin >   BoostSList_spin;
+        typedef details::BoostSList< T, std::mutex >      BoostSList_mutex;
+        typedef details::BoostSList< T, cds::sync::spin > BoostSList_spin;
     };
 }
 

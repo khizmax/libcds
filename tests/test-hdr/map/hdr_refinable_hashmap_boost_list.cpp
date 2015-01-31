@@ -16,7 +16,7 @@ namespace map {
 
 #include <cds/container/striped_map/boost_list.h>
 #include <cds/container/striped_map.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace map {
 
@@ -63,7 +63,7 @@ namespace map {
         // Spinlock as lock policy
         CPPUNIT_MESSAGE( "spinlock");
         typedef cc::StripedMap< sequence_t
-            ,co::mutex_policy< cc::striped_set::refinable<cds::lock::Spin> >
+            ,co::mutex_policy< cc::striped_set::refinable<cds::sync::spin> >
             , co::hash< hash_int >
             , co::less< less >
         >   map_spin;

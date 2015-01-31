@@ -22,7 +22,7 @@ namespace memory {
     static size_t s_nPassPerThread;
 
     struct Item {
-        cds::SpinLock   m_access;
+        cds::sync::spin m_access;
         char *          m_pszBlock;
 
         Item()

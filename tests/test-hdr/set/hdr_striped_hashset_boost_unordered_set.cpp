@@ -3,7 +3,7 @@
 #include "set/hdr_striped_set.h"
 #include <cds/container/striped_set/boost_unordered_set.h>
 #include <cds/container/striped_set.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace set {
 
@@ -61,7 +61,7 @@ namespace set {
         typedef cc::StripedSet< set_t
             , co::hash< hash_int >
             , co::less< less<item> >
-            ,co::mutex_policy< cc::striped_set::striping< cds::lock::Spin > >
+            , co::mutex_policy< cc::striped_set::striping< cds::sync::spin> >
         >   set_spin;
         test_striped< set_spin >();
 

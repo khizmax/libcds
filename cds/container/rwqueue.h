@@ -5,7 +5,7 @@
 
 #include <mutex>        // unique_lock
 #include <cds/container/msqueue.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace cds { namespace container {
     /// RWQueue related definitions
@@ -16,7 +16,7 @@ namespace cds { namespace container {
         struct traits
         {
             /// Lock policy
-            typedef cds::lock::Spin  lock_type;
+            typedef cds::sync::spin  lock_type;
 
             /// Node allocator
             typedef CDS_DEFAULT_ALLOCATOR   allocator;
@@ -31,7 +31,7 @@ namespace cds { namespace container {
         /// Metafunction converting option list to \p rwqueue::traits
         /**
             Supported \p Options are:
-            - opt::lock_type - lock policy, default is \p cds::lock::Spin. Any type satisfied \p Mutex C++ concept may be used.
+            - opt::lock_type - lock policy, default is \p cds::sync::spin. Any type satisfied \p Mutex C++ concept may be used.
             - opt::allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
             - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter.

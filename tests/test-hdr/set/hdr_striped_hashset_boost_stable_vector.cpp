@@ -17,7 +17,7 @@ namespace set {
 
 #include <cds/container/striped_set/boost_stable_vector.h>
 #include <cds/container/striped_set.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace set {
 
@@ -67,7 +67,7 @@ namespace set {
         typedef cc::StripedSet< sequence_t
             , co::hash< hash_int >
             , co::less< less<item> >
-            ,co::mutex_policy< cc::striped_set::striping< cds::lock::Spin > >
+            , co::mutex_policy< cc::striped_set::striping< cds::sync::spin> >
         >   set_spin;
         test_striped2< set_spin >();
 

@@ -3,7 +3,7 @@
 #include "set/hdr_striped_set.h"
 #include <cds/container/striped_set/boost_unordered_set.h>
 #include <cds/container/striped_set.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace set {
 
@@ -59,7 +59,7 @@ namespace set {
         // Spinlock as lock policy
         CPPUNIT_MESSAGE( "spinlock");
         typedef cc::StripedSet< set_t
-            ,co::mutex_policy< cc::striped_set::refinable<cds::lock::ReentrantSpin> >
+            , co::mutex_policy< cc::striped_set::refinable<cds::sync::reentrant_spin> >
             , co::hash< hash_int >
             , co::less< less<item> >
         >   set_spin;

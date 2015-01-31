@@ -92,7 +92,7 @@ namespace cds { namespace lock {
         can be simultaneous.
 
         Template arguments:
-        - \p Lock - lock type, for example, \p std::mutex, \p cds::lock::Spinlock
+        - \p Lock - lock type, for example, \p std::mutex, \p cds::sync::spin_lock
         - \p SelectPolicy - array cell selection policy, the default is \ref mod_select_policy
              Available policies: \ref trivial_select_policy, \ref pow2_select_policy, \ref mod_select_policy.
         - \p Alloc - memory allocator for array

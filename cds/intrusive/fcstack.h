@@ -53,7 +53,7 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
+            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::intrusive::v::empty_disposer.
                 This option is used only in \p FCStack::clear() function.

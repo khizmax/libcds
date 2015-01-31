@@ -1,5 +1,8 @@
 2.1.0
-    TODO
+    - cds::lock namespace is renamed to cds::sync. All classes defined in cds::lock namespace 
+      are moved to cds::sync with new names (for example, cds::lock::SpinLock is renamed to
+      cds::sync::spin_lock). cds::lock namespace and its contents is deprecated and it is kept 
+      for backward compatibility.
 
 2.0.0 30.12.2014
     General release

@@ -36,9 +36,9 @@ namespace cds { namespace container {
 
             /// Lock type used to lock modifying items
             /**
-                Default is cds::lock::Spin
+                Default is cds::sync::spin
             */
-            typedef cds::lock::Spin                 lock_type;
+            typedef cds::sync::spin                 lock_type;
 
             /// back-off strategy used
             typedef cds::backoff::Default           back_off;
@@ -70,7 +70,7 @@ namespace cds { namespace container {
         /// Metafunction converting option list to \p lazy_list::traits
         /**
             \p Options are:
-            - \p opt::lock_type - lock type for node-level locking. Default \p is cds::lock::Spin. Note that <b>each</b> node
+            - \p opt::lock_type - lock type for node-level locking. Default \p is cds::sync::spin. Note that <b>each</b> node
                 of the list has member of type \p lock_type, therefore, heavy-weighted locking primitive is not
                 acceptable as candidate for \p lock_type.
             - \p opt::compare - key compare functor. No default functor is provided.

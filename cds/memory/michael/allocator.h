@@ -25,7 +25,7 @@
 
 #include <cds/os/topology.h>
 #include <cds/os/alloc_aligned.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <cds/details/type_padding.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
@@ -703,8 +703,8 @@ namespace michael {
             typedef page_cached_allocator<>     page_heap;
             typedef aligned_malloc_heap         aligned_heap;
             typedef default_sizeclass_selector  sizeclass_selector;
-            typedef free_list_locked<cds::lock::Spin>  free_list;
-            typedef partial_list_locked<cds::lock::Spin>    partial_list;
+            typedef free_list_locked<cds::sync::spin>    free_list;
+            typedef partial_list_locked<cds::sync::spin> partial_list;
             typedef procheap_empty_stat         procheap_stat;
             typedef os_allocated_empty          os_allocated_stat;
             typedef cds::opt::none              check_bounds;

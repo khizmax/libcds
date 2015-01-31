@@ -8,7 +8,7 @@
 #include <cds/intrusive/details/single_link_struct.h>
 #include <cds/algo/elimination.h>
 #include <cds/opt/buffer.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <cds/details/type_padding.h>
 
 namespace cds { namespace intrusive {
@@ -199,8 +199,8 @@ namespace cds { namespace intrusive {
             /// Random engine to generate a random position in elimination array
             typedef opt::v::c_rand  random_engine;
 
-            /// Lock type used in elimination, default is cds::lock::Spin
-            typedef cds::lock::Spin lock_type;
+            /// Lock type used in elimination, default is cds::sync::spin
+            typedef cds::sync::spin lock_type;
 
             ///@}
         };
@@ -231,7 +231,7 @@ namespace cds { namespace intrusive {
             - opt::random_engine - a random engine to generate a random position in elimination array.
                 Default is \p opt::v::c_rand.
             - opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
-            - opt::lock_type - a lock type used in elimination back-off, default is \p cds::lock::Spin.
+            - opt::lock_type - a lock type used in elimination back-off, default is \p cds::sync::spin
 
             Example: declare \p %TreiberStack with elimination enabled and internal statistics
             \code
