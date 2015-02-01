@@ -57,7 +57,7 @@ namespace cds { namespace container {
             //@endcond
         };
 
-        /// Dummy queue statistics - no counting is performed, no overhead. Support interface like \p msqueue::stat
+        /// Dummy queue statistics - no counting is performed, no overhead. Support interface like \p williams_queue::stat
         struct empty_stat
         {
             //@cond
@@ -84,8 +84,8 @@ namespace cds { namespace container {
 
             /// Internal statistics (by default, disabled)
             /**
-                Possible option value are: \p msqueue::stat, \p msqueue::empty_stat (the default),
-                user-provided class that supports \p %msqueue::stat interface.
+                Possible option value are: \p williams_queue::stat, \p williams_queue::empty_stat (the default),
+                user-provided class that supports \p %williams_queue::stat interface.
             */
             typedef williams_queue::empty_stat         stat;
         };
@@ -184,7 +184,7 @@ namespace cds { namespace container {
 
         /// Returns queue's item count
         /**
-            The value returned depends on \p msqueue::traits::item_counter. For \p atomicity::empty_item_counter,
+            The value returned depends on \p williams_queue::traits::item_counter. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
             @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
@@ -230,7 +230,7 @@ namespace cds { namespace container {
 
         /// Returns queue's item count
         /**
-            The value returned depends on \p msqueue::traits::item_counter. For \p atomicity::empty_item_counter,
+            The value returned depends on \p williams_queue::traits::item_counter. For \p atomicity::empty_item_counter,
             this function always returns 0.
 
             @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
