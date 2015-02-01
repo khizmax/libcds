@@ -43,6 +43,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int.cpp" />
