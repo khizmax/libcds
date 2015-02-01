@@ -228,6 +228,19 @@ namespace cds { namespace container {
             parent::empty();
         }
 
+        /// Returns queue's item count
+        /**
+            The value returned depends on \p msqueue::traits::item_counter. For \p atomicity::empty_item_counter,
+            this function always returns 0.
+
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
+            is empty. To check queue emptyness use \p empty() method.
+        */
+        size_t size() const {
+            return parent::size();
+        }
+
+
         /// Returns reference to internal statistics
         stat const& statistics() const {
             return parent::statistics();
