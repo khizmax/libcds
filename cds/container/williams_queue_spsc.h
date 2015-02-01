@@ -79,6 +79,9 @@ namespace cds { namespace container {
             /// Item allocator. Default is \ref CDS_DEFAULT_ALLOCATOR
             typedef CDS_DEFAULT_ALLOCATOR allocator;
 
+            /// Allocator for std::shared_ptr wrapper. Default is \ref CDS_DEFAULT_ALLOCATOR
+            typedef CDS_DEFAULT_ALLOCATOR node_allocator;
+
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter   item_counter;
 
@@ -214,6 +217,8 @@ namespace cds { namespace container {
         typedef Traits traits;                ///< Queue traits
         typedef typename traits::stat  stat;  ///< Internal statistics
 
+        typedef typename traits::node_allocator      node_allocator_type;
+
     private:
         typedef WilliamsQueue<std::shared_ptr<T>, Traits> parent;
         typedef std::shared_ptr<T> parent_value_type;
@@ -221,7 +226,7 @@ namespace cds { namespace container {
     public:
         /// Enqueues \p val value into the queue.
         bool enqueue(value_type const& val) {
-            return parent::enqueue(std::make_shared<value_type>(val));
+            return parent::enqueue(std::allocate_shared<value_type>(node_allocator_type(), val));
         }
 
         /// Dequeues a value from the queue
