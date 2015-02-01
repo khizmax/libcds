@@ -151,7 +151,7 @@ namespace cds { namespace container {
         }
 
         /// Enqueues \p val value into the queue.
-        void enqueue(value_type val) {
+        bool enqueue(value_type val) {
             node* p = allocator().New();
             node * const old_tail = tail.load();
             old_tail->data.swap(val);
@@ -159,19 +159,25 @@ namespace cds { namespace container {
             tail.store(p);
             ++m_ItemCounter;
             m_Stat.onEnqueue();
+            return true;
         }
 
         /// Dequeues a value from the queue
-        value_type dequeue() {
+        /**
+            If queue is not empty, the function returns \p true, \p dest contains copy of
+            dequeued value. The assignment operator for type \ref value_type is invoked.
+            If queue is empty, the function returns \p false, \p dest is unchanged.
+        */
+        bool dequeue(value_type& dest) {
             node* old_head = pop_head();
             if (!old_head) {
-                return value_type();
+                return false;
             }
-            value_type const res(old_head->data);
+            dest = old_head->data;
             allocator().Delete(old_head);
             --m_ItemCounter;
             m_Stat.onDequeue();
-            return res;
+            return true;
         }
 
         /// Checks if the queue is empty
@@ -214,13 +220,16 @@ namespace cds { namespace container {
 
     public:
         /// Enqueues \p val value into the queue.
-        void enqueue(value_type val) {
-            parent::enqueue(std::make_shared<value_type>(val));
+        bool enqueue(value_type const& val) {
+            return parent::enqueue(std::make_shared<value_type>(val));
         }
 
         /// Dequeues a value from the queue
-        value_type * dequeue() {
-            return parent::dequeue().get();
+        bool dequeue(value_type& dest) {
+            parent_value_type val;
+            bool res = parent::dequeue(val);
+            dest = *val.get();
+            return res;
         }
 
         /// Checks if the queue is empty
