@@ -29,28 +29,28 @@ namespace cds { namespace container {
 
             counter_type m_EnqueueCount      ;  ///< Enqueue call count
             counter_type m_DequeueCount      ;  ///< Dequeue call count
-            counter_type m_BadTail           ;  ///< Count of events "Tail is not pointed to the last item in the queue"
+            counter_type m_EmptyDequeue      ;  ///< Count of dequeue from empty queue
 
             /// Register enqueue call
             void onEnqueue()                { ++m_EnqueueCount; }
             /// Register dequeue call
             void onDequeue()                { ++m_DequeueCount; }
-            /// Register event "Tail is not pointed to last item in the queue"
-            void onBadTail()                { ++m_BadTail; }
+            /// Register dequeuing from empty queue
+            void onEmptyDequeue()           { ++m_EmptyDequeue; }
 
             //@cond
             void reset()
             {
                 m_EnqueueCount.reset();
                 m_DequeueCount.reset();
-                m_BadTail.reset();
+                m_EmptyDequeue.reset();
             }
 
             stat& operator +=( stat const& s )
             {
                 m_EnqueueCount += s.m_EnqueueCount.get();
                 m_DequeueCount += s.m_DequeueCount.get();
-                m_BadTail += s.m_BadTail.get();
+                m_EmptyDequeue += s.m_EmptyDequeue.get();
 
                 return *this;
             }
@@ -63,7 +63,7 @@ namespace cds { namespace container {
             //@cond
             void onEnqueue()                {}
             void onDequeue()                {}
-            void onBadTail()                {}
+            void onEmptyDequeue()           {}
 
             void reset() {}
             empty_stat& operator +=( empty_stat const& )
@@ -78,6 +78,9 @@ namespace cds { namespace container {
         {
             /// Item allocator. Default is \ref CDS_DEFAULT_ALLOCATOR
             typedef CDS_DEFAULT_ALLOCATOR allocator;
+
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            typedef atomicity::empty_item_counter   item_counter;
 
             /// Internal statistics (by default, disabled)
             /**
@@ -100,8 +103,9 @@ namespace cds { namespace container {
         typedef std::shared_ptr<T> value_type;
         typedef Traits traits;                ///< Queue traits
 
-        typedef typename traits::allocator allocator_type;
-        typedef typename traits::stat      stat;           ///< Internal statistics
+        typedef typename traits::allocator    allocator_type;
+        typedef typename traits::item_counter item_counter;   ///< Item counter class
+        typedef typename traits::stat         stat;           ///< Internal statistics
 
     private:
         struct node {
@@ -114,7 +118,8 @@ namespace cds { namespace container {
 
         typedef cds::details::Allocator<node, allocator_type> allocator;
 
-        stat m_Stat;
+        item_counter  m_ItemCounter;  ///< Item counter
+        stat          m_Stat;         ///< Internal statistics
 
         atomics::atomic<node*> head;
         atomics::atomic<node*> tail;
@@ -122,7 +127,7 @@ namespace cds { namespace container {
         node* pop_head() {
             node * const old_head = head.load();
             if (old_head == tail.load()) {
-                m_Stat.onBadTail();
+                m_Stat.onEmptyDequeue();
                 return nullptr;
             }
             head.store(old_head->next);
@@ -152,6 +157,7 @@ namespace cds { namespace container {
             old_tail->data.swap(val);
             old_tail->next = p;
             tail.store(p);
+            ++m_ItemCounter;
             m_Stat.onEnqueue();
         }
 
@@ -163,6 +169,7 @@ namespace cds { namespace container {
             }
             value_type const res(old_head->data);
             allocator().Delete(old_head);
+            --m_ItemCounter;
             m_Stat.onDequeue();
             return res;
         }
@@ -173,6 +180,18 @@ namespace cds { namespace container {
                 return true;
             }
             return false;
+        }
+
+        /// Returns queue's item count
+        /**
+            The value returned depends on \p msqueue::traits::item_counter. For \p atomicity::empty_item_counter,
+            this function always returns 0.
+
+            @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
+            is empty. To check queue emptyness use \p empty() method.
+        */
+        size_t size() const {
+            return m_ItemCounter.value();
         }
 
         /// Returns reference to internal statistics
