@@ -5,10 +5,15 @@
 
 namespace cds { namespace sync {
 
-    /// Monitor that injects a lock as a member into a class
+    /// @ref cds_sync_monitor "Monitor" that injects the lock into each node
     /**
+        This monitor injects the lock object of type \p Lock into each node. 
+        The monitor is designed for user-space locking primitives like \ref sync::spin_lock "spin-lock".
+
         Template arguments:
         - Lock - lock type like \p std::mutex or \p cds::sync::spin
+
+
     */
     template <typename Lock>
     class injected_monitor
@@ -60,7 +65,7 @@ namespace cds { namespace sync {
         template <typename T>
         class scoped_lock
         {
-            T const& m_Locked;
+            T const& m_Locked;  ///< Our locked node
 
         public:
             /// Makes exclusive access to object \p p of type T
