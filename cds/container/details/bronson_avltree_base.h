@@ -17,12 +17,11 @@ namespace cds { namespace container {
         struct node;
 
         //@cond
-        template <typename Key, typename T, typename Lock>
+        template <typename Key, typename T>
         struct link
         {
             typedef node<Key, T> node_type;
             typedef uint32_t version_type;
-            typedef Lock lock_type;
 
             enum
             {
@@ -37,7 +36,6 @@ namespace cds { namespace container {
             atomics::atomic<node_type *>    m_pParent;  ///< Parent node
             atomics::atomic<node_type *>    m_pLeft;    ///< Left child
             atomics::atomic<node_type *>    m_pRight;   ///< Right child
-            lock_type                       m_Lock;     ///< Node-level lock
 
             node_type *                     m_pNextRemoved; ///< thread-local list o removed node
 
@@ -112,12 +110,12 @@ namespace cds { namespace container {
             }
         };
 
-        template <typename Key, typename T, typename Lock>
-        struct node : public link< Key, T, Lock >
+        template <typename Key, typename T>
+        struct node : public link< Key, T >
         {
             typedef Key key_type;
             typedef T   mapped_type;
-            typedef link< key_type, mapped_type, Lock > base_class;
+            typedef link< key_type, mapped_type > base_class;
 
             key_type const  m_key;
             atomics::atomic<mapped_type *>  m_pValue;
@@ -264,8 +262,8 @@ namespace cds { namespace container {
             */
             typedef opt::v::delete_disposer<>       disposer;
 
-            /// Node lock
-            typedef std::mutex                      lock_type;
+            /// @ref cds_sync_monitor "Synchronization monitor" type for node-level locking
+            typedef cds::sync::injecting_monitor<cds::sync::spin>  sync_monitor;
 
             /// Enable relaxed insertion.
             /**
@@ -323,7 +321,8 @@ namespace cds { namespace container {
                 the disposer will be called to signal that the memory for the value can be safely freed.
                 Default is \ref cds::intrusive::opt::delete_disposer "cds::container::opt::v::delete_disposer<>" which calls \p delete operator.
                 Due the nature of GC schema the disposer may be called asynchronously.
-            - \p opt::lock_type - node lock type, default is \p std::mutex
+            - \p opt::sync_monitor -  @ref cds_sync_monitor "synchronization monitor" type for node-level locking,
+                default is cds::sync::injecting_monitor<cds::sync::spin>
             - \p bronson_avltree::relaxed_insert - enable (\p true) or disable (\p false, the default) 
                 @ref bronson_avltree::relaxed_insert "relaxed insertion"
             - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)

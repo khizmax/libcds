@@ -86,6 +86,9 @@
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 
+// Inheriting constructors
+#define CDS_CXX11_INHERITING_CTOR
+
 // *************************************************
 // Alignment macro
 

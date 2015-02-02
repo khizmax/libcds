@@ -60,14 +60,14 @@ namespace cds { namespace container {
         typedef typename traits::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename traits::back_off               back_off;           ///< Back-off strategy
         typedef typename traits::disposer               disposer;           ///< Value disposer
-        typedef typename traits::lock_type              lock_type;          ///< Node lock type
+        typedef typename traits::sync_monitor           sync_monitor;       ///< @ref cds_sync_monitor "Synchronization monitor" type for node-level locking
 
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
 
     protected:
         //@cond
-        typedef bronson_avltree::node< key_type, mapped_type, lock_type > node_type;
+        typedef typename sync_monitor::template node_injection< bronson_avltree::node< key_type, mapped_type >> node_type;
         typedef typename node_type::version_type version_type;
 
         typedef cds::details::Allocator< node_type, node_allocator_type > cxx_allocator;
@@ -98,22 +98,7 @@ namespace cds { namespace container {
             unlink_required = -1
         };
 
-        class node_scoped_lock
-        {
-            node_type *     m_pNode;
-        public:
-            node_scoped_lock( node_type * pNode )
-                : m_pNode( pNode )
-            {
-                pNode->m_Lock.lock();
-            }
-
-            ~node_scoped_lock()
-            {
-                m_pNode->m_Lock.unlock();
-            }
-        };
-
+        typedef typename sync_monitor::template scoped_lock<node_type> node_scoped_lock;
         //@endcond
 
     protected:
@@ -186,6 +171,7 @@ namespace cds { namespace container {
         typename node_type::base_class      m_Root;
         node_type *                         m_pRoot;
         item_counter                        m_ItemCounter;
+        mutable sync_monitor                m_Monitor;
         mutable stat                        m_stat;
         //@endcond
 
@@ -405,8 +391,9 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return do_find( key, key_comparator(), [&f]( node_type * pNode ) -> bool {
-                node_scoped_lock l( pNode );
+            return do_find( key, key_comparator(), [&f]( sync_monitor& monitor, node_type * pNode ) -> bool {
+                assert( pNode != nullptr );
+                node_scoped_lock l( monitor, *pNode );
                 mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
                 if ( pVal ) {
                     f( *pVal );
@@ -427,15 +414,18 @@ namespace cds { namespace container {
         bool find_with( K const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return do_find( key, opt::details::make_comparator_from_less<Less>(), [&f]( node_type * pNode ) -> bool {
-                node_scoped_lock l( pNode );
-                mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
-                if ( pVal ) {
-                    f( *pVal );
-                    return true;
-                }
-                return false;
-            } );
+            return do_find( key, opt::details::make_comparator_from_less<Less>(), 
+                [&f]( sync_monitor& monitor, node_type * pNode ) -> bool {
+                    assert( pNode != nullptr );
+                    node_scoped_lock l( monitor, *pNode );
+                    mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
+                    if ( pVal ) {
+                        f( *pVal );
+                        return true;
+                    }
+                    return false;
+                } 
+            );
         }
 
         /// Find the key \p key
@@ -614,7 +604,7 @@ namespace cds { namespace container {
                 if ( nCmp == 0 ) {
                     if ( pChild->is_valued( memory_model::memory_order_relaxed ) ) {
                         // key found
-                        if ( f( pChild ) ) {
+                        if ( f( m_Monitor, pChild ) ) {
                             m_stat.onFindSuccess();
                             return find_result::found;
                         }
@@ -672,7 +662,7 @@ namespace cds { namespace container {
                     if ( nFlags & update_flags::allow_insert ) {
                         // insert into tree as right child of the root
                         {
-                            node_scoped_lock l( m_pRoot );
+                            node_scoped_lock l( m_Monitor, *m_pRoot );
 
                             node_type * pNew = alloc_node( key, 1, 0, m_pRoot, nullptr, nullptr );
                             mapped_type * pVal = funcUpdate( pNew );
@@ -775,7 +765,8 @@ namespace cds { namespace container {
 
             node_type * pDamaged;
             {
-                node_scoped_lock l( pNode );
+                assert( pNode != nullptr );
+                node_scoped_lock l( m_Monitor, *pNode );
 
                 if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion
                      || pNode->child( nDir ).load( memory_model::memory_order_relaxed ) != nullptr ) 
@@ -807,7 +798,8 @@ namespace cds { namespace container {
         {
             mapped_type * pOld;
             {
-                node_scoped_lock l( pNode );
+                assert( pNode != nullptr );
+                node_scoped_lock l( m_Monitor, *pNode );
 
                 if ( pNode->version( memory_model::memory_order_relaxed ) == node_type::unlinked ) {
                     if ( c_RelaxedInsert )
@@ -895,7 +887,8 @@ namespace cds { namespace container {
 
         node_type * fix_height( node_type * pNode )
         {
-            node_scoped_lock l( pNode );
+            assert( pNode != nullptr );
+            node_scoped_lock l( m_Monitor, *pNode );
             return fix_height_locked( pNode );
         }
 
@@ -928,11 +921,11 @@ namespace cds { namespace container {
                     node_type * pParent = pNode->m_pParent.load( memory_model::memry_order_relaxed );
                     assert( pParent != nullptr );
                     {
-                        node_scoped_lock lp( pParent );
+                        node_scoped_lock lp( m_Monitor, *pParent );
                         if ( !pParent->is_unlinked( memory_model::memory_order_relaxed )
                              && pNode->m_pParent.load( memory_model::memory_order_relaxed ) == pParent ) 
                         {
-                            node_scoped_lock ln( pNode );
+                            node_scoped_lock ln( m_Monitor, *pNode );
                             pNode = rebalance_locked( pParent, pNode, disp );
                         }
                     }
@@ -991,7 +984,8 @@ namespace cds { namespace container {
             // If pLeft->pRight is taller than pLeft->pLeft, then we will first rotate-left pLeft.
 
             {
-                node_scoped_lock l( pLeft );
+                assert( pLeft != nullptr );
+                node_scoped_lock l( m_Monitor, *pLeft );
                 if ( pNode->m_pLeft.load( memory_model::memory_order_relaxed ) != pLeft )
                     return pNode; // retry for pNode
 
@@ -1011,7 +1005,7 @@ namespace cds { namespace container {
                 else {
                     assert( pLRight != nullptr );
                     {
-                        node_scoped_lock lr( pLRight );
+                        node_scoped_lock lr( m_Monitor, *pLRight );
                         if ( pLeft->m_pRight.load( memory_model::memory_order_relaxed ) != pLRight )
                             return pNode; // retry
 
@@ -1042,7 +1036,8 @@ namespace cds { namespace container {
 
             // pParent and pNode is locked yet
             {
-                node_scoped_lock l( pRight );
+                assert( pRight != nullptr );
+                node_scoped_lock l( m_Monitor, *pRight );
                 if ( pNode->m_pRight.load( memory_model::memory_order_relaxed ) != pRight )
                     return pNode; // retry for pNode
 
@@ -1059,7 +1054,7 @@ namespace cds { namespace container {
 
                 {
                     assert( pRLeft != nullptr );
-                    node_scoped_lock lrl( pRLeft );
+                    node_scoped_lock lrl( m_Monitor, *pRLeft );
                     if ( pRight->m_pLeft.load( memory_model::memory_order_relaxed ) != pRLeft )
                         return pNode; // retry
 

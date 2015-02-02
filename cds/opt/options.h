@@ -177,6 +177,21 @@ namespace opt {
         //@endcond
     };
 
+    /// [type-option] @ref cds_sync_monitor "Monitor" type setter
+    /**
+        This option setter specifyes @ref cds_sync_monitor "synchronization monitor"
+        for blocking container.
+    */
+    template <typename Type>
+    struct sync_monitor {
+        //@cond
+        template <class Base> struct pack : public Base
+        {
+            typedef Type sync_monitor;
+        };
+        //@endcond
+    };
+
     /// [type-option] Back-off strategy option setter
     /**
         Back-off strategy used in some algorithm.

@@ -14,7 +14,7 @@
 #define CDS_COMPILER_MSVC14 1900    // 2015 vc14
 
 #if CDS_COMPILER_VERSION < CDS_COMPILER_MSVC12
-#   error "Only MS Visual C++ 12 (2013) and above is supported"
+#   error "Only MS Visual C++ 12 (2013) Update 4 and above is supported"
 #endif
 
 #if _MSC_VER == 1800
@@ -107,6 +107,11 @@
 // Full SFINAE support
 #if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
 #   define CDS_CXX11_SFINAE
+#endif
+
+// Inheriting constructors
+#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
+#   define CDS_CXX11_INHERITING_CTOR
 #endif
 
 // *************************************************

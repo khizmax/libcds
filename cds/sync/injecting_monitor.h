@@ -4,6 +4,9 @@
 #define CDSLIB_SYNC_INJECTING_MONITOR_H
 
 #include <cds/sync/monitor.h>
+#ifndef CDS_CXX11_INHERITING_CTOR
+#   include <utility> // std::forward
+#endif
 
 namespace cds { namespace sync {
 
@@ -22,19 +25,26 @@ namespace cds { namespace sync {
         typedef Lock lock_type; ///< Lock type
 
         /// Monitor injection into \p Node
-        template <typename Node>
-        struct node_wrapper : public Node
+        struct node_injection
         {
+#       ifdef CDS_CXX11_INHERITING_CTOR
             using Node::Node;
+#       else
+            // Inheriting ctor emulation
+            template <typename... Args>
+            node_injection( Args&&... args )
+                : Node( std::forward<Args>( args )... )
+            {}
+#       endif
             mutable lock_type m_Lock; ///< Node-level lock
 
-            /// Makes exclusive access to the object
+            /// Makes exclusive access to the node
             void lock() const
             {
                 m_Lock.lock;
             }
 
-            /// Unlocks the object
+            /// Unlocks the node
             void unlock() const
             {
                 m_Lock.unlock();

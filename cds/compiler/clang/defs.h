@@ -44,6 +44,9 @@
 // Full SFINAE support
 #define CDS_CXX11_SFINAE
 
+// Inheriting constructors
+#define CDS_CXX11_INHERITING_CTOR
+
 // *************************************************
 // Alignment macro
 

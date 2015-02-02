@@ -22,9 +22,9 @@ namespace cds { namespace sync {
         When the node should be locked, the monitor is called to allocate appropriate
         lock object for the node if it's needed, and to lock the node.
         The monitor strategy can significantly reduce the number of system objects
-        required for the data structure.
+        required for data structure.
 
-        <b>Implemetatios</b>
+        <b>Implemetations</b>
 
         \p libcds contains several monitor implementations:
         - \p sync::injecting_monitor injects the lock object into each node.
@@ -45,7 +45,11 @@ namespace cds { namespace sync {
         public:
             // Monitor's injection into the Node class
             template <typename Node>
-            struct node_wrapper;
+            struct node_injection: public Node
+            {
+                // Monitor data to inject into container's node
+                // ... 
+            };
 
             // Locks the node 
             template <typename Node>

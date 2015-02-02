@@ -20,7 +20,6 @@
 
 #include <cds/compiler/gcc/compiler_macro.h>
 
-
 #define alignof __alignof__
 
 // ***************************************
@@ -41,6 +40,9 @@
 
 // Full SFINAE support
 #define CDS_CXX11_SFINAE
+
+// Inheriting constructors
+#define CDS_CXX11_INHERITING_CTOR
 
 // *************************************************
 // Alignment macro
