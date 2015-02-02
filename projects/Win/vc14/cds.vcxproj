@@ -793,8 +793,9 @@
     <ClInclude Include="..\..\..\cds\os\osx\topology.h" />
     <ClInclude Include="..\..\..\cds\os\posix\fake_topology.h" />
     <ClInclude Include="..\..\..\cds\os\posix\timer.h" />
-    <ClInclude Include="..\..\..\cds\sync\injected_monitor.h" />
+    <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h" />
     <ClInclude Include="..\..\..\cds\sync\lock_array.h" />
+    <ClInclude Include="..\..\..\cds\sync\monitor.h" />
     <ClInclude Include="..\..\..\cds\sync\spinlock.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11_manager.h" />
