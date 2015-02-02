@@ -1169,9 +1169,6 @@
     <ClInclude Include="..\..\..\cds\container\bronson_avltree_map_rcu.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\sync\injected_monitor.h">
-      <Filter>Header Files\cds\sync</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\sync\spinlock.h">
       <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
@@ -1179,6 +1176,9 @@
       <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\sync\monitor.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h">
       <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
   </ItemGroup>

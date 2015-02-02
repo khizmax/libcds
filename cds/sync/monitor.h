@@ -3,6 +3,8 @@
 #ifndef CDSLIB_SYNC_MONITOR_H
 #define CDSLIB_SYNC_MONITOR_H
 
+#include <cds/details/defs.h>
+
 namespace cds { namespace sync {
 
     /**
@@ -25,7 +27,7 @@ namespace cds { namespace sync {
         <b>Implemetatios</b>
 
         \p libcds contains several monitor implementations:
-        - \p sync::injected_monitor injects the lock object into each node.
+        - \p sync::injecting_monitor injects the lock object into each node.
             That mock monitor is designed for user-space locking primitive like
             \ref sync::spin_lock "spin-lock".
 
@@ -43,7 +45,7 @@ namespace cds { namespace sync {
         public:
             // Monitor's injection into the Node class
             template <typename Node>
-            struct wrapper;
+            struct node_wrapper;
 
             // Locks the node 
             template <typename Node>

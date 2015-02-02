@@ -1,7 +1,9 @@
 //$$CDS-header$$
 
-#ifndef CDSLIB_SYNC_INJECTED_MONITOR_H
-#define CDSLIB_SYNC_INJECTED_MONITOR_H
+#ifndef CDSLIB_SYNC_INJECTING_MONITOR_H
+#define CDSLIB_SYNC_INJECTING_MONITOR_H
+
+#include <cds/sync/monitor.h>
 
 namespace cds { namespace sync {
 
@@ -12,20 +14,18 @@ namespace cds { namespace sync {
 
         Template arguments:
         - Lock - lock type like \p std::mutex or \p cds::sync::spin
-
-
     */
     template <typename Lock>
-    class injected_monitor
+    class injecting_monitor
     {
     public:
         typedef Lock lock_type; ///< Lock type
 
-        /// Monitor injection into \p T
-        template <typename T>
-        struct wrapper : public T
+        /// Monitor injection into \p Node
+        template <typename Node>
+        struct node_wrapper : public Node
         {
-            using T::T;
+            using Node::Node;
             mutable lock_type m_Lock; ///< Node-level lock
 
             /// Makes exclusive access to the object
@@ -41,41 +41,41 @@ namespace cds { namespace sync {
             }
         };
 
-        /// Makes exclusive access to node \p p of type \p T
+        /// Makes exclusive access to node \p p
         /**
             \p p must have method \p lock()
         */
-        template <typename T>
-        void lock( T const& p ) const
+        template <typename Node>
+        void lock( Node const& p ) const
         {
             p.lock();
         }
 
-        /// Unlocks the node \p p of type \p T
+        /// Unlocks the node \p p
         /**
             \p p must have method \p unlock()
         */
-        template <typename T>
-        void unlock( T const& p ) const
+        template <typename Node>
+        void unlock( Node const& p ) const
         {
             p.unlock();
         }
 
         /// Scoped lock
-        template <typename T>
+        template <typename Node>
         class scoped_lock
         {
-            T const& m_Locked;  ///< Our locked node
+            Node const& m_Locked;  ///< Our locked node
 
         public:
-            /// Makes exclusive access to object \p p of type T
-            scoped_lock( injected_monitor const&, T const& p )
+            /// Makes exclusive access to node \p p
+            scoped_lock( injecting_monitor const&, Node const& p )
                 : m_Locked( p )
             {
                 p.lock();
             }
 
-            /// Unlocks the object
+            /// Unlocks the node
             ~scoped_lock()
             {
                 p.unlock();
@@ -84,4 +84,4 @@ namespace cds { namespace sync {
     };
 }} // namespace cds::sync
 
-#endif // #ifndef CDSLIB_SYNC_INJECTED_MONITOR_H
+#endif // #ifndef CDSLIB_SYNC_INJECTING_MONITOR_H
