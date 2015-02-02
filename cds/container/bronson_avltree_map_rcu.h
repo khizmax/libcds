@@ -10,21 +10,6 @@ namespace cds { namespace container {
     namespace bronson_avltree { 
         //@cond
         namespace details {
-
-            template <typename Key, typename T, typename Traits>
-            struct pointer_oriented_traits: public Traits
-            {
-                struct disposer {
-                    template <typename T>
-                    void operator()( T * p )
-                    {
-                        std::allocator<T>().destroy( p );
-                    }
-                };
-
-                typedef value_node<Key, T, typename Traits::lock_type > node_type;
-            };
-
             template < typename Key, typename T, typename Traits>
             struct make_map
             {

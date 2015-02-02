@@ -18,8 +18,6 @@ namespace cds { namespace container {
         of the value. When a tree node is removed, the algorithm does not free the value pointer directly, instead, it call
         the disposer functor provided by \p Traits template parameter.
 
-        The set of available member functions differs from classic map.
-
         <b>Template arguments</b>:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p Key - key type
