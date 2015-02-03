@@ -9,7 +9,7 @@
 
 namespace cds { namespace sync {
 
-    /// Trivial lock \ref array selection policy
+    /// Trivial lock \ref lock_array selection policy
     struct trivial_select_policy
     {
         /// Returns \p nWhat
@@ -28,7 +28,7 @@ namespace cds { namespace sync {
         }
     };
 
-    /// The lock \ref array cell selection policy "division by modulo"
+    /// The lock \ref lock_array cell selection policy "division by modulo"
     struct mod_select_policy
     {
         /// Returns <tt> nWhat % nCapacity </tt>
@@ -44,7 +44,7 @@ namespace cds { namespace sync {
         }
     };
 
-    /// The lock \ref array cell selection policy "division by modulo of power of 2"
+    /// The lock \ref lock_array cell selection policy "division by modulo of power of 2"
     /**
         This policy may be used if the size of lock array is equal to power of two.
     */

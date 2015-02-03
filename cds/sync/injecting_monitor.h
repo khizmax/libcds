@@ -12,7 +12,7 @@ namespace cds { namespace sync {
 
     /// @ref cds_sync_monitor "Monitor" that injects the lock into each node
     /**
-        This monitor injects the lock object of type \p Lock into each node. 
+        This simple monitor injects the lock object of type \p Lock into each node. 
         The monitor is designed for user-space locking primitives like \ref sync::spin_lock "spin-lock".
 
         Template arguments:
@@ -25,7 +25,8 @@ namespace cds { namespace sync {
         typedef Lock lock_type; ///< Lock type
 
         /// Monitor injection into \p Node
-        struct node_injection
+        template <typename Node>
+        struct node_injection: public Node
         {
 #       ifdef CDS_CXX11_INHERITING_CTOR
             using Node::Node;
@@ -37,60 +38,25 @@ namespace cds { namespace sync {
             {}
 #       endif
             mutable lock_type m_Lock; ///< Node-level lock
-
-            /// Makes exclusive access to the node
-            void lock() const
-            {
-                m_Lock.lock;
-            }
-
-            /// Unlocks the node
-            void unlock() const
-            {
-                m_Lock.unlock();
-            }
         };
 
         /// Makes exclusive access to node \p p
-        /**
-            \p p must have method \p lock()
-        */
         template <typename Node>
         void lock( Node const& p ) const
         {
-            p.lock();
+            p.m_Lock.lock();
         }
 
         /// Unlocks the node \p p
-        /**
-            \p p must have method \p unlock()
-        */
         template <typename Node>
         void unlock( Node const& p ) const
         {
-            p.unlock();
+            p.m_Lock.unlock();
         }
 
         /// Scoped lock
         template <typename Node>
-        class scoped_lock
-        {
-            Node const& m_Locked;  ///< Our locked node
-
-        public:
-            /// Makes exclusive access to node \p p
-            scoped_lock( injecting_monitor const&, Node const& p )
-                : m_Locked( p )
-            {
-                p.lock();
-            }
-
-            /// Unlocks the node
-            ~scoped_lock()
-            {
-                p.unlock();
-            }
-        };
+        using scoped_lock = monitor_scoped_lock< injecting_monitor, Node > ;
     };
 }} // namespace cds::sync
 

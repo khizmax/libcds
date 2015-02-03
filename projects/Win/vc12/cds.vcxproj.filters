@@ -1181,5 +1181,8 @@
     <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h">
       <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\pool_monitor.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

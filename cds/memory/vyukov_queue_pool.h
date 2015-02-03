@@ -16,12 +16,13 @@ namespace cds { namespace memory {
         /// Allocator type
         typedef CDS_DEFAULT_ALLOCATOR allocator;
     };
+
     /// Free-list based on bounded lock-free queue cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
-        - \p Traits - traits for cds::intrusive::VyukovMPMCCycleQueue class plus
-            cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
+        - \p Traits - traits for \p cds::intrusive::VyukovMPMCCycleQueue class plus
+            \p cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
         \b Internals
 
@@ -120,7 +121,7 @@ namespace cds { namespace memory {
         /**
             \p nCapacity argument is the queue capacity. It should be passed
             if the queue is based on dynamically-allocated buffer.
-            See cds::intrusive::VyukovMPMCCycleQueue for explanation.
+            See \p cds::intrusive::VyukovMPMCCycleQueue for explanation.
         */
         vyukov_queue_pool( size_t nCapacity = 0 )
             : m_Queue( nCapacity )
@@ -413,7 +414,7 @@ namespace cds { namespace memory {
         /**
             \p nCapacity argument is the queue capacity. It should be passed
             if the queue is based on dynamically-allocated buffer.
-            See cds::intrusive::VyukovMPMCCycleQueue for explanation.
+            See \p cds::intrusive::VyukovMPMCCycleQueue for explanation.
         */
         bounded_vyukov_queue_pool( size_t nCapacity = 0 )
             : m_Queue( nCapacity )

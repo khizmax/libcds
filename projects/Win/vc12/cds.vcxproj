@@ -797,6 +797,7 @@
     <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h" />
     <ClInclude Include="..\..\..\cds\sync\lock_array.h" />
     <ClInclude Include="..\..\..\cds\sync\monitor.h" />
+    <ClInclude Include="..\..\..\cds\sync\pool_monitor.h" />
     <ClInclude Include="..\..\..\cds\sync\spinlock.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11_manager.h" />

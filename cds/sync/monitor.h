@@ -30,6 +30,10 @@ namespace cds { namespace sync {
         - \p sync::injecting_monitor injects the lock object into each node.
             That mock monitor is designed for user-space locking primitive like
             \ref sync::spin_lock "spin-lock".
+        - \p sync::pool_monitor is the monitor that allocates the lock object
+            for the node from the pool when needed. When the node is unlocked
+            the lock assigned to it is given back to the pool if no thread
+            references to that node.
 
         <b>How to use</b>
 
@@ -61,15 +65,7 @@ namespace cds { namespace sync {
 
             // Scoped lock applyes RAII to Monitor
             template <typename Node>
-            class scoped_lock 
-            {
-            public:
-                // Locks node by monitor mon
-                scoped_lock( Monitor& mon, Node& node );
-
-                // Unlocks the node locked by ctor
-                ~scoped_lock();
-            };
+            using scoped_lock = monitor_scoped_lock< pool_monitor, Node >;
         };
         \endcode
         The monitor should be a member of your container:
@@ -83,6 +79,41 @@ namespace cds { namespace sync {
         };
         \endcode
     */
+
+    /// Monitor scoped lock (RAII)
+    /**
+        Template arguments:
+        - \p Monitor - monitor type
+        - \p Node - node type
+    */
+    template <typename Monitor, typename Node>
+    struct monitor_scoped_lock
+    {
+    public:
+        typedef Monitor monitor_type;   ///< Monitor type
+        typedef Node    node_type;      ///< Node type
+
+    private:
+        //@cond
+        monitor_type&    m_Monitor; ///< Monitor
+        node_type const& m_Node;    ///< Our locked node
+        //@endcond
+
+    public:
+        /// Makes exclusive access to the node \p p by \p monitor
+        scoped_lock( monitor_type& monitor, node_type const& p )
+            : m_Monitor( monitor )
+            , m_Node( p )
+        {
+            monitor.lock( p );
+        }
+
+        /// Unlocks the node
+        ~scoped_lock()
+        {
+            m_Monitor.unlock( m_Node );
+        }
+    };
 
 }} // namespace cds::sync
 
