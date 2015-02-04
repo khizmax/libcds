@@ -3,9 +3,11 @@
 #ifndef CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
 #define CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
 
+#include <memory> // unique_ptr
 #include <cds/container/details/bronson_avltree_base.h>
 #include <cds/urcu/details/check_deadlock.h>
 #include <cds/details/binary_functor_wrapper.h>
+
 
 namespace cds { namespace container {
 
@@ -65,6 +67,9 @@ namespace cds { namespace container {
 
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
+
+        /// Pointer to removed value object
+        typedef std::unique_ptr< mapped_type, disposer > exempt_ptr;
 
     protected:
         //@cond
@@ -250,7 +255,12 @@ namespace cds { namespace container {
         template <typename K>
         bool erase( K const& key )
         {
-            return do_update( key, key_comparator(), []( mapped_type& ) {}, update_flags::allow_remove ) == update_flags::result_removed;
+            return do_update( 
+                key, 
+                key_comparator(), 
+                []( mapped_type * pVal ) { disposer()(pVal); },
+                update_flags::allow_remove 
+            ) == update_flags::result_removed;
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -267,7 +277,7 @@ namespace cds { namespace container {
             return do_update( 
                 key, 
                 cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
-                []( mapped_type& ) {}, 
+                []( mapped_type * pVal ) { disposer()(pVal); },
                 update_flags::allow_remove 
             ) == update_flags::result_removed;
         }
@@ -294,7 +304,7 @@ namespace cds { namespace container {
             return do_update( 
                 key, 
                 key_comparator(), 
-                [&f]( mapped_type& val ) { f( val ); },
+                [&f]( mapped_type * pVal ) { f( *pVal ); disposer()(pVal); },
                 update_flags::allow_remove
             ) == update_flags::result_removed;
         }
@@ -313,7 +323,7 @@ namespace cds { namespace container {
             return do_update( 
                 key, 
                 cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
-                [&f]( mapped_type& val ) { f( val ); },
+                [&f]( mapped_type * pVal ) { f( *pVal ); disposer()(pVal); },
                 update_flags::allow_remove
             ) == update_flags::result_removed;
         }
@@ -362,33 +372,48 @@ namespace cds { namespace container {
         /// Extracts an item from the map
         /**
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to an item found.
+            unlinks it, and returns \p exempt_ptr pointer to a value found.
             If \p key is not found the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
-            The function does not destroy the item found.
-            The dealloctor will be implicitly invoked when the returned object is destroyed or when
-            its \p release() member function is called.
+            The function does not destroy the value found.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p reset(nullptr) member function is called.
         */
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            //TODO
+            exempt_ptr pExtracted;
+
+            do_update(
+                key,
+                key_comparator(),
+                [&pExtracted]( mapped_type * pVal ) { pExtracted.reset( pVal ); },
+                update_flags::allow_remove
+                );
+            return pExtracted;
         }
 
         /// Extracts an item from the map using \p pred for searching
         /**
-            The function is an analog of \p extract(exempt_ptr&, Q const&)
+            The function is an analog of \p extract(Q const&)
             but \p pred is used for key compare.
-            \p Less has the interface like \p std::less and should meet \ref cds_container_EllenBinTreeSet_rcu_less
-            "predicate requirements".
-            \p pred must imply the same element order as the comparator used for building the map.
+            \p Less has the interface like \p std::less.
+            \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less>
-        exempt_ptr extract_with( Q const& val, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            //TODO
+            exempt_ptr pExtracted;
+
+            do_update(
+                key,
+                cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
+                [&pExtracted]( mapped_type * pVal ) { pExtracted.reset( pVal ); },
+                update_flags::allow_remove
+                );
+            return pExtracted;
         }
 
         /// Find the key \p key
@@ -856,8 +881,6 @@ namespace cds { namespace container {
             if ( !pNode->is_valued( atomics::memory_order_relaxed ) )
                 return update_flags::failed;
 
-            int result = update_flags::retry;
-
             if ( pNode->child( -1, atomics::memory_order_relaxed ) == nullptr 
               || pNode->child( 1, atomics::memory_order_relaxed ) == nullptr )
             { 
@@ -883,14 +906,14 @@ namespace cds { namespace container {
                     pDamaged = fix_height_locked( pParent );
                 }
 
-                func( *pOld );
-                disposer()(pOld);
+                func( pOld );   // calls pOld disposer inside
                 m_stat.onDisposeValue();
 
                 fix_height_and_rebalance( pDamaged, disp );
                 return upfate_flags::result_removed;
             }
             else {
+                int result = update_flags::retry;
                 {
                     node_scoped_lock ln( m_Monitor, *pNode );
                     mapped_type * pOld = pNode->value( atomics::memory_order_relaxed );
@@ -901,12 +924,12 @@ namespace cds { namespace container {
                 }
 
                 if ( result == upfate_flags::result_removed ) {
-                    func( *pOld );
-                    disposer()(pOld);
+                    func( *pOld );  // calls pOld disposer inside
                     m_stat.onDisposeValue();
                 }
+
+                return result;
             }
-            return update_flags::retry;
         }
 
         bool try_unlink_locked( node_type * pParent, node_type * pNode, rcu_disposer& disp )

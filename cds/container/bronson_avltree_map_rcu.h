@@ -104,6 +104,9 @@ namespace cds { namespace container {
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
 
+        /// Pointer to removed value object
+        typedef typename base_class::exempt_ptr exempt_ptr;
+
     protected:
         //@cond
         typedef typename base_class::node_type  node_type;
@@ -286,7 +289,7 @@ namespace cds { namespace container {
         template <typename K>
         bool erase( K const& key )
         {
-            //TODO
+            return base_class::erase( key );
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -299,8 +302,7 @@ namespace cds { namespace container {
         template <typename K, typename Less>
         bool erase_with( K const& key, Less pred )
         {
-            CDS_UNUSED( pred );
-            //TODO
+            return base_class::erase_with( key, pred );
         }
 
         /// Delete \p key from the map
@@ -323,7 +325,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            //TODO
+            return base_class::erase( key, f );
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -336,8 +338,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
-            CDS_UNUSED( pred );
-            //TODO
+            return base_class::erase_with( key, pred, f );
         }
 
         /// Extracts an item with minimal key from the map
@@ -384,33 +385,32 @@ namespace cds { namespace container {
         /// Extracts an item from the map
         /**
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to an item found.
+            unlinks it, and returns \p exempt_ptr pointer to a value found.
             If \p key is not found the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
-            The function does not destroy the item found.
+            The function does not destroy the value found.
             The dealloctor will be implicitly invoked when the returned object is destroyed or when
-            its \p release() member function is called.
+            its \p reset(nullptr) member function is called.
         */
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            //TODO
+            return base_class::extract( key );
         }
 
         /// Extracts an item from the map using \p pred for searching
         /**
-            The function is an analog of \p extract(exempt_ptr&, Q const&)
+            The function is an analog of \p extract(Q const&)
             but \p pred is used for key compare.
             \p Less has the interface like \p std::less and should meet \ref cds_container_EllenBinTreeSet_rcu_less
             "predicate requirements".
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        exempt_ptr extract_with( Q const& val, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            CDS_UNUSED( pred );
-            //TODO
+            return base_class::extract_with( key, pred );
         }
 
         /// Find the key \p key
