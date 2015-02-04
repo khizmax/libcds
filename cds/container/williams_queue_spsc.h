@@ -115,8 +115,8 @@ namespace cds { namespace container {
             value_type data;
             node* next;
     
-            node() : next(nullptr) {
-            }
+            node() : next(nullptr) 
+            {}
         };
 
         typedef cds::details::Allocator<node, allocator_type> allocator;
@@ -127,7 +127,8 @@ namespace cds { namespace container {
         atomics::atomic<node*> head;
         atomics::atomic<node*> tail;
     
-        node* pop_head() {
+        node* pop_head() 
+        {
             node * const old_head = head.load();
             if (old_head == tail.load()) {
                 m_Stat.onEmptyDequeue();
@@ -139,14 +140,15 @@ namespace cds { namespace container {
     
     public:
         /// Initializes empty queue
-        WilliamsQueue() : head(allocator().New()), tail(head.load()) {
-        }
+        WilliamsQueue() : head(allocator().New()), tail(head.load()) 
+        {}
     
         WilliamsQueue(const WilliamsQueue& other) = delete;
         WilliamsQueue& operator=(const WilliamsQueue& other) = delete;
 
         /// Destructor clears the queue
-        ~WilliamsQueue() {
+        ~WilliamsQueue() 
+        {
             while (node * const old_head = head.load()) {
                 head.store(old_head->next);
                 allocator().Delete(old_head);
@@ -154,7 +156,8 @@ namespace cds { namespace container {
         }
 
         /// Enqueues \p val value into the queue.
-        bool enqueue(value_type val) {
+        bool enqueue(value_type val) 
+        {
             node* p = allocator().New();
             node * const old_tail = tail.load();
             old_tail->data.swap(val);
@@ -165,13 +168,43 @@ namespace cds { namespace container {
             return true;
         }
 
+        /// Enqueues data to the queue using a functor
+        template <typename Func>
+        bool enqueue_with( Func f )
+        {
+            // TODO: implement
+            return false;
+        }
+
+        /// Enqueues data of type \ref value_type constructed from <tt>std::forward<Args>(args)...</tt>
+        template <typename... Args>
+        bool emplace( Args&&... args )
+        {
+            // TODO: implement
+            return false;
+        }
+
+        /// Synonym for \p enqueue() function
+        bool push( value_type const& val ) 
+        {
+            return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue_with() function
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with( f );
+        }
+
         /// Dequeues a value from the queue
         /**
             If queue is not empty, the function returns \p true, \p dest contains copy of
             dequeued value. The assignment operator for type \ref value_type is invoked.
             If queue is empty, the function returns \p false, \p dest is unchanged.
         */
-        bool dequeue(value_type& dest) {
+        bool dequeue(value_type& dest) 
+        {
             node* old_head = pop_head();
             if (!old_head) {
                 return false;
@@ -183,8 +216,30 @@ namespace cds { namespace container {
             return true;
         }
 
+        /// Dequeues a value using a functor
+        template <typename Func>
+        bool dequeue_with( Func f )
+        {
+            // TODO: implement
+            return false;
+        }
+
+        /// Synonym for \p dequeue() function
+        bool pop( value_type& dest ) 
+        {
+            return dequeue( dest );
+        }
+
+        /// Synonym for \p dequeue_with() function
+        template <typename Func>
+        bool pop_with( Func f )
+        {
+            return dequeue_with( f );
+        }
+
         /// Checks if the queue is empty
-        bool empty() const {
+        bool empty() const 
+        {
             if (head.load() == tail.load()) {
                 return true;
             }
@@ -199,12 +254,14 @@ namespace cds { namespace container {
             @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
             is empty. To check queue emptyness use \p empty() method.
         */
-        size_t size() const {
+        size_t size() const 
+        {
             return m_ItemCounter.value();
         }
 
         /// Returns reference to internal statistics
-        stat const& statistics() const {
+        stat const& statistics() const 
+        {
             return m_Stat;
         }
     };
@@ -225,20 +282,73 @@ namespace cds { namespace container {
 
     public:
         /// Enqueues \p val value into the queue.
-        bool enqueue(value_type const& val) {
+        bool enqueue(value_type const& val) 
+        {
             return parent::enqueue(std::allocate_shared<value_type>(node_allocator_type(), val));
         }
 
+        /// Enqueues data to the queue using a functor
+        template <typename Func>
+        bool enqueue_with( Func f )
+        {
+            // TODO: implement
+            return false;
+        }
+
+        /// Enqueues data of type \ref value_type constructed from <tt>std::forward<Args>(args)...</tt>
+        template <typename... Args>
+        bool emplace( Args&&... args )
+        {
+            // TODO: implement
+            return false;
+        }
+
+        /// Synonym for \p enqueue() function
+        bool push( value_type const& val ) 
+        {
+            return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue_with() function
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with( f );
+        }
+
         /// Dequeues a value from the queue
-        bool dequeue(value_type& dest) {
+        bool dequeue(value_type& dest) 
+        {
             parent_value_type val;
             bool res = parent::dequeue(val);
             dest = *val.get();
             return res;
         }
 
+        /// Dequeues a value using a functor
+        template <typename Func>
+        bool dequeue_with( Func f )
+        {
+            // TODO: implement
+            return false;
+        }
+
+        /// Synonym for \p dequeue() function
+        bool pop( value_type& dest ) 
+        {
+            return dequeue( dest );
+        }
+
+        /// Synonym for \p dequeue_with() function
+        template <typename Func>
+        bool pop_with( Func f )
+        {
+            return dequeue_with( f );
+        }
+
         /// Checks if the queue is empty
-        bool empty() const {
+        bool empty() const 
+        {
             parent::empty();
         }
 
@@ -250,13 +360,15 @@ namespace cds { namespace container {
             @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
             is empty. To check queue emptyness use \p empty() method.
         */
-        size_t size() const {
+        size_t size() const 
+        {
             return parent::size();
         }
 
 
         /// Returns reference to internal statistics
-        stat const& statistics() const {
+        stat const& statistics() const 
+        {
             return parent::statistics();
         }
     };
