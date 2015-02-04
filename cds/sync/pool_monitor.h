@@ -51,8 +51,8 @@ namespace cds { namespace sync {
         {
             //@cond
             typedef unsigned int refspin_type;
-            constexpr refspin_type const c_nSpinBit = 1;
-            constexpr refspin_type const c_nRefIncrement = 2;
+            static CDS_CONSTEXPR refspin_type const c_nSpinBit = 1;
+            static CDS_CONSTEXPR refspin_type const c_nRefIncrement = 2;
 
             struct injection
             {

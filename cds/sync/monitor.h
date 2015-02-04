@@ -101,7 +101,7 @@ namespace cds { namespace sync {
 
     public:
         /// Makes exclusive access to the node \p p by \p monitor
-        scoped_lock( monitor_type& monitor, node_type const& p )
+        monitor_scoped_lock( monitor_type& monitor, node_type const& p )
             : m_Monitor( monitor )
             , m_Node( p )
         {
@@ -109,7 +109,7 @@ namespace cds { namespace sync {
         }
 
         /// Unlocks the node
-        ~scoped_lock()
+        ~monitor_scoped_lock()
         {
             m_Monitor.unlock( m_Node );
         }

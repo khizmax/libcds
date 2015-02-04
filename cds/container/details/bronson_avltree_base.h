@@ -7,6 +7,7 @@
 #include <cds/opt/compare.h>
 #include <cds/urcu/options.h>
 #include <cds/sync/spinlock.h>
+#include <cds/sync/injecting_monitor.h>
 
 namespace cds { namespace container {
 
@@ -87,9 +88,10 @@ namespace cds { namespace container {
                 return m_nHeight.load( order );
             }
 
-            void height( int h, atomics::memory_order order  )
+            void height( int h, atomics::memory_order order )
             {
                 m_nHeight.store( h, order );
+            }
 
             template <typename BackOff>
             void wait_until_shrink_completed( atomics::memory_order order ) const
@@ -160,7 +162,7 @@ namespace cds { namespace container {
             event_counter   m_nInsertRetry;         ///< Count of insert retries via concurrent operations
             event_counter   m_nUpdateWaitShrinking; ///< Count of waiting until shrinking completed duting \p update() call
             event_counter   m_nUpdateRetry;         ///< Count of update retries via concurrent operations
-            event_counter   m_nUpdateRootWaitShinking;  ///< Count of waiting until root shrinking completed duting \p update() call
+            event_counter   m_nUpdateRootWaitShrinking;  ///< Count of waiting until root shrinking completed duting \p update() call
             event_counter   m_nUpdateSuccess;       ///< Count of updating data node
             event_counter   m_nUpdateUnlinked;      ///< Count of updating of unlinked node attempts
             event_counter   m_nDisposedValue;       ///< Count of disposed value
@@ -350,8 +352,6 @@ namespace cds { namespace container {
             >::type   type;
 #   endif
         };
-
-
     } // namespace bronson_avltree
 
     // Forwards

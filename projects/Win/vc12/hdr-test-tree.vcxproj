@@ -535,6 +535,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_bintree.h" />
@@ -543,6 +544,7 @@
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_rcu.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpb.cpp" />

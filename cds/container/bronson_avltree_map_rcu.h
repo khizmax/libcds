@@ -7,7 +7,7 @@
 
 namespace cds { namespace container {
 
-    namespace bronson_avltree { 
+    namespace bronson_avltree {
         //@cond
         namespace details {
             template < typename Key, typename T, typename Traits>
@@ -77,7 +77,7 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGEN_INVOKED
         : private BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T*, Traits >
 #else
-        : private bronson_avltree::details::make_map< Key, T, Traits >::type;
+        : private bronson_avltree::details::make_map< Key, T, Traits >::type
 #endif
     {
         //@cond
@@ -105,7 +105,7 @@ namespace cds { namespace container {
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
 
         /// Returned pointer to value of extracted node
-        typedef base_class::unique_ptr unique_ptr;
+        typedef typename base_class::unique_ptr unique_ptr;
 
     protected:
         //@cond
@@ -515,7 +515,6 @@ namespace cds { namespace container {
         {
             return base_class::check_consistency();
         }
-
     };
 }} // namespace cds::container
 

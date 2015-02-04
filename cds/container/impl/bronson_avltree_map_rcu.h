@@ -66,14 +66,14 @@ namespace cds { namespace container {
         typedef typename traits::sync_monitor           sync_monitor;       ///< @ref cds_sync_monitor "Synchronization monitor" type for node-level locking
 
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
-        static bool const c_bRelaxedInsert = traits::relaxed_insert;
+        static CDS_CONSTEXPR bool const c_bRelaxedInsert = traits::relaxed_insert;
 
         /// Returned pointer to \p mapped_type of extracted node
         typedef std::unique_ptr< mapped_type, disposer > unique_ptr;
 
     protected:
         //@cond
-        typedef typename sync_monitor::template node_injection< bronson_avltree::node< key_type, mapped_type >> node_type;
+        typedef typename sync_monitor::node_injection< bronson_avltree::node< key_type, mapped_type >> node_type;
         typedef typename node_type::version_type version_type;
 
         typedef cds::details::Allocator< node_type, node_allocator_type > cxx_allocator;
@@ -834,7 +834,7 @@ namespace cds { namespace container {
                 pOld = pNode->value( memory_model::memory_order_relaxed );
                 mapped_type * pVal = funcUpdate( *pNode );
                 assert( pVal != nullptr );
-                pNode->m_pValue.store( pVal, memory_model::memory_order_relaxed ));
+                pNode->m_pValue.store( pVal, memory_model::memory_order_relaxed );
             }
 
             if ( pOld ) {
