@@ -266,10 +266,10 @@ namespace cds { namespace container {
                     mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed ));
                     if ( !pVal ) {
                         pVal = cxx_allocator().New();
-                        func( true, pVal );
+                        func( true, *pVal );
                     }
                     else
-                        func( false, pVal );
+                        func( false, *pVal );
                     return pVal;
                 },
                 update_flags::allow_insert | update_flags::allow_update 

@@ -101,7 +101,7 @@ namespace cds { namespace container {
 
             bool is_unlinked( atomics::memory_order order ) const
             {
-                return (m_nVersion.load( order ) & unlinked) != 0;
+                return m_nVersion.load( order ) == unlinked;
             }
 
             bool is_shrinking( atomics::memory_order order ) const
@@ -136,6 +136,11 @@ namespace cds { namespace container {
             T * value( atomics::memory_order order ) const
             {
                 return m_pValue.load( order );
+            }
+
+            bool is_valued( atomics::memory_order order ) const
+            {
+                return value( order ) != nullptr;
             }
         };
         //@endcond

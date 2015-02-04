@@ -5,6 +5,7 @@
 
 #include <cds/container/details/bronson_avltree_base.h>
 #include <cds/urcu/details/check_deadlock.h>
+#include <cds/details/binary_functor_wrapper.h>
 
 namespace cds { namespace container {
 
@@ -84,11 +85,14 @@ namespace cds { namespace container {
         {
             allow_insert = 1,
             allow_update = 2,
-            retry = 4,
+            allow_remove = 4,
+
+            retry = 1024,
 
             failed = 0,
-            result_insert = allow_insert,
-            result_update = allow_update
+            result_inserted = allow_insert,
+            result_updated  = allow_update,
+            result_removed  = allow_remove
         };
 
         enum node_condition
@@ -205,7 +209,7 @@ namespace cds { namespace container {
                     return pVal;
                 }, 
                 update_flags::allow_insert 
-            ) == update_flags::result_insert;
+            ) == update_flags::result_inserted;
         }
 
         /// Updates the value for \p key
@@ -234,7 +238,7 @@ namespace cds { namespace container {
                 },
                 update_flags::allow_update | (bInsert ? update_flags::allow_insert : 0) 
             );
-            return std::make_pair( result != 0, (result & update_flags::result_insert) != 0 );
+            return std::make_pair( result != 0, (result & update_flags::result_inserted) != 0 );
         }
 
         /// Delete \p key from the map
@@ -246,7 +250,7 @@ namespace cds { namespace container {
         template <typename K>
         bool erase( K const& key )
         {
-            //TODO
+            return do_update( key, key_comparator(), []( mapped_type& ) {}, update_flags::allow_remove ) == update_flags::result_removed;
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -260,7 +264,12 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            //TODO
+            return do_update( 
+                key, 
+                cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
+                []( mapped_type& ) {}, 
+                update_flags::allow_remove 
+            ) == update_flags::result_removed;
         }
 
         /// Delete \p key from the map
@@ -282,7 +291,12 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            //TODO
+            return do_update( 
+                key, 
+                key_comparator(), 
+                [&f]( mapped_type& val ) { f( val ); },
+                update_flags::allow_remove
+            ) == update_flags::result_removed;
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -296,7 +310,12 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            //TODO
+            return do_update( 
+                key, 
+                cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
+                [&f]( mapped_type& val ) { f( val ); },
+                update_flags::allow_remove
+            ) == update_flags::result_removed;
         }
 
         /// Extracts an item with minimal key from the map
@@ -604,9 +623,12 @@ namespace cds { namespace container {
                 if ( nCmp == 0 ) {
                     if ( pChild->is_valued( memory_model::memory_order_relaxed ) ) {
                         // key found
-                        if ( f( m_Monitor, pChild ) ) {
-                            m_stat.onFindSuccess();
-                            return find_result::found;
+                        node_scoped_lock l( m_Monitor, pChild );
+                        if ( pChild->is_valued( memory_model::memory_order_relaxed )) {
+                            if ( f( *pChild ) ) {
+                                m_stat.onFindSuccess();
+                                return find_result::found;
+                            }
                         }
                     }
 
@@ -645,13 +667,14 @@ namespace cds { namespace container {
 
             int result;
             do {
+                // get right child of root
                 node_type * pChild = m_Root.child( 1, memory_model::memory_order_acquire );
                 if ( pChild ) {
                     version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
                     if ( nChildVersion & node_type::shrinking ) {
                         m_stat.onUpdateRootWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
-                        // retry
+                        result = update_flags::retry;
                     }
                     else if ( pChild == m_Root.child( 1, memory_model::memory_order_acquire ) ) {
                         result = try_update( key, cmp, nFlags, funcUpdate, m_pRoot, pChild, nChildVersion, disp );
@@ -675,12 +698,12 @@ namespace cds { namespace container {
 
                         ++m_ItemCounter;
                         m_stat.onInsertSuccess();
-                        return update_flags::result_insert;
+                        return update_flags::result_inserted;
                     }
 
                     return update_flags::failed;
                 }
-            } while ( result != update_flags::retry );
+            } while ( result == update_flags::retry );
             return result;
         }
 
@@ -694,6 +717,9 @@ namespace cds { namespace container {
             if ( nCmp == 0 ) {
                 if ( nFlags & update_flags::allow_update ) {
                     return try_update_node( funcUpdate, pNode );
+                }
+                if ( nFlags & update_flags::allow_remove ) {
+                    return try_remove_node( pParent, pNode, nVersion, funcUpdate, disp );
                 }
                 return update_flags::failed;
             }
@@ -790,7 +816,7 @@ namespace cds { namespace container {
 
             fix_height_and_rebalance( pDamaged, disp );
 
-            return update_flags::result_insert;
+            return update_flags::result_inserted;
         }
 
         template <typename Func>
@@ -801,15 +827,13 @@ namespace cds { namespace container {
                 assert( pNode != nullptr );
                 node_scoped_lock l( m_Monitor, *pNode );
 
-                if ( pNode->version( memory_model::memory_order_relaxed ) == node_type::unlinked ) {
-                    if ( c_RelaxedInsert )
-                        disposer()(pVal);
+                if ( pNode->is_unlinked( memory_model::memory_order_relaxed )) {
                     m_stat.onUpdateUnlinked();
                     return update_flags::retry;
                 }
 
                 pOld = pNode->value( memory_model::memory_order_relaxed );
-                mapped_type * pVal = funcUpdate( pNode );
+                mapped_type * pVal = funcUpdate( *pNode );
                 assert( pVal != nullptr );
                 pNode->m_pValue.store( pVal, memory_model::memory_order_relaxed ));
             }
@@ -820,7 +844,69 @@ namespace cds { namespace container {
             }
 
             m_stat.onUpdateSuccess();
-            return update_flags::result_update;
+            return update_flags::result_updated;
+        }
+
+        template <typename Func>
+        int try_remove_node( node_type * pParent, node_type * pNode, version_type nVersion, Func func, rcu_disposer& disp )
+        {
+            assert( pParent != nullptr );
+            assert( pNode != nullptr );
+
+            if ( !pNode->is_valued( atomics::memory_order_relaxed ) )
+                return update_flags::failed;
+
+            int result = update_flags::retry;
+
+            if ( pNode->child( -1, atomics::memory_order_relaxed ) == nullptr 
+              || pNode->child( 1, atomics::memory_order_relaxed ) == nullptr )
+            { 
+                node_type * pDamaged;
+                mapped_type * pOld;
+                {
+                    node_scoped_lock lp( m_Monitor, *pParent );
+                    if ( pParent->is_unlinked( atomics::memory_order_relaxed ) || pNode->m_pParent.load( atomics::memory_order_relaxed ) != pParent )
+                        return update_flags::retry;
+
+                    {
+                        node_scoped_lock ln( m_Monitor, *pNode );
+                        pOld = pNode->value( atomics::memory_order_relaxed );
+                        if ( pNode->version( atomics::memory_order_relaxed ) == nVersion
+                          && pOld 
+                          && try_unlink_locked( pParent, pNode, disp ) ) 
+                        {
+                            pNode->m_pValue.store( nullptr, atomics::memory_order_relaxed );
+                        }
+                        else
+                            return update_flags::retry;
+                    }
+                    pDamaged = fix_height_locked( pParent );
+                }
+
+                func( *pOld );
+                disposer()(pOld);
+                m_stat.onDisposeValue();
+
+                fix_height_and_rebalance( pDamaged, disp );
+                return upfate_flags::result_removed;
+            }
+            else {
+                {
+                    node_scoped_lock ln( m_Monitor, *pNode );
+                    mapped_type * pOld = pNode->value( atomics::memory_order_relaxed );
+                    if ( pNode->version( atomics::memory_order_relaxed ) == nVersion && pOld ) {
+                        pNode->m_pValue.store( nullptr, atomics::memory_order_relaxed );
+                        result = upfate_flags::result_removed;
+                    }
+                }
+
+                if ( result == upfate_flags::result_removed ) {
+                    func( *pOld );
+                    disposer()(pOld);
+                    m_stat.onDisposeValue();
+                }
+            }
+            return update_flags::retry;
         }
 
         bool try_unlink_locked( node_type * pParent, node_type * pNode, rcu_disposer& disp )
