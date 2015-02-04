@@ -1648,8 +1648,7 @@ retry:
 
         /// Extracts the item from the set with comparing functor \p pred
         /**
-            The function is an analog of \ref cds_intrusive_SkipListSet_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred predicate is used for key comparing.
+            The function is an analog of \p extract(Q const&) but \p pred predicate is used for key comparing.
             \p Less has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the set.
         */

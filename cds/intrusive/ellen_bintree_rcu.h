@@ -1026,8 +1026,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item from the set using \p pred for searching
         /**
-            The function is an analog of \ref cds_intrusive_EllenBinTree_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred is used for key compare.
+            The function is an analog of \p extract(Q const&) but \p pred is used for key compare.
             \p Less has the interface like \p std::less and should meet \ref cds_intrusive_EllenBinTree_rcu_less
             "predicate requirements".
             \p pred must imply the same element order as the comparator used for building the tree.

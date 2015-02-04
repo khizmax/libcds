@@ -446,8 +446,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item from the set using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelHashSet_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p extract(Q const&) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the set.
         */

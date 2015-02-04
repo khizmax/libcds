@@ -392,17 +392,17 @@ namespace cds { namespace container {
 
         /// Extracts an item from the map using \p pred for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_extract "extract(exempt_ptr&, Q const&)"
+            The function is an analog of \p extract(Q const&)
             but \p pred is used for key compare.
             \p Less has the interface like \p std::less and should meet \ref cds_container_EllenBinTreeSet_rcu_less
             "predicate requirements".
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        exempt_ptr extract_with( Q const& val, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( base_class::extract_with_( val,
+            return exempt_ptr( base_class::extract_with_( key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() ));
         }
 

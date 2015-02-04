@@ -536,7 +536,7 @@ namespace cds { namespace container {
 
         /// Extracts an item from the list using \p pred predicate for searching
         /**
-            This function is the analog for \ref cds_nonintrusive_LazyList_rcu_extract "extract(exempt_ptr&, Q const&)".
+            This function is the analog for \p extract(Q const&).
 
             The \p pred is a predicate used for key comparing.
             \p Less has the interface like \p std::less.
