@@ -68,8 +68,8 @@ namespace cds { namespace container {
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
 
-        /// Pointer to removed value object
-        typedef std::unique_ptr< mapped_type, disposer > exempt_ptr;
+        /// Returned pointer to \p mapped_type of extracted node
+        typedef std::unique_ptr< mapped_type, disposer > unique_ptr;
 
     protected:
         //@cond
@@ -330,8 +330,8 @@ namespace cds { namespace container {
 
         /// Extracts an item with minimal key from the map
         /**
-            Returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the leftmost item.
-            If the set is empty, returns empty \p exempt_ptr.
+            Returns \p std::unique_ptr to the leftmost item.
+            If the set is empty, returns empty \p std::unique_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
@@ -341,17 +341,17 @@ namespace cds { namespace container {
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
             The deallocator will be implicitly invoked when the returned object is destroyed or when
-            its \p release() member function is called.
+            its \p reset(nullptr) member function is called.
         */
-        exempt_ptr extract_min()
+        unique_ptr extract_min()
         {
             //TODO
         }
 
         /// Extracts an item with maximal key from the map
         /**
-            Returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the rightmost item.
-            If the set is empty, returns empty \p exempt_ptr.
+            Returns \p std::unique_ptr pointer to the rightmost item.
+            If the set is empty, returns empty \p std::unique_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -361,10 +361,10 @@ namespace cds { namespace container {
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
             The deallocator will be implicitly invoked when the returned object is destroyed or when
-            its \p release() is called.
+            its \p reset(nullptr) is called.
             @note Before reusing \p result object you should call its \p release() method.
         */
-        exempt_ptr extract_max()
+        unique_ptr extract_max()
         {
             //TODO
         }
@@ -372,8 +372,8 @@ namespace cds { namespace container {
         /// Extracts an item from the map
         /**
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns \p exempt_ptr pointer to a value found.
-            If \p key is not found the function returns an empty \p exempt_ptr.
+            unlinks it, and returns \p std::unique_ptr pointer to a value found.
+            If \p key is not found the function returns an empty \p std::unique_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not destroy the value found.
@@ -381,9 +381,9 @@ namespace cds { namespace container {
             its \p reset(nullptr) member function is called.
         */
         template <typename Q>
-        exempt_ptr extract( Q const& key )
+        unique_ptr extract( Q const& key )
         {
-            exempt_ptr pExtracted;
+            unique_ptr pExtracted;
 
             do_update(
                 key,
@@ -402,10 +402,10 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less>
-        exempt_ptr extract_with( Q const& key, Less pred )
+        unique_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            exempt_ptr pExtracted;
+            unique_ptr pExtracted;
 
             do_update(
                 key,
@@ -499,36 +499,6 @@ namespace cds { namespace container {
             return do_find( key, opt::details::make_comparator_from_less<Less>(), []( node_type * ) -> bool { return true; } );
         }
 
-        /// Finds \p key and return the item found
-        /**
-            The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p nullptr.
-
-            RCU should be locked before call the function.
-            Returned pointer is valid while RCU is locked.
-        */
-        template <typename Q>
-        mapped_type * get( Q const& key ) const
-        {
-            //TODO
-        }
-
-        /// Finds \p key with \p pred predicate and return the item found
-        /**
-            The function is an analog of \p get(Q const&)
-            but \p pred is used for comparing the keys.
-
-            \p Less functor has the semantics like \p std::less but should take arguments of type \p key_type
-            and \p Q in any order.
-            \p pred must imply the same element order as the comparator used for building the map.
-        */
-        template <typename Q, typename Less>
-        mapped_type * get_with( Q const& key, Less pred ) const
-        {
-            CDS_UNUSED( pred );
-            //TODO
-        }
-
         /// Clears the tree (thread safe, not atomic)
         /**
             The function unlink all items from the tree.
@@ -546,8 +516,11 @@ namespace cds { namespace container {
         */
         void clear()
         {
-            for ( exempt_ptr ep = extract_min(); !ep.empty(); ep = extract_min() )
-                ep.release();
+            for ( ;; ) {
+                unique_ptr ep( extract_min() );
+                if ( !ep )
+                    return;
+            }
         }
 
         /// Clears the tree (not thread safe)
@@ -594,6 +567,7 @@ namespace cds { namespace container {
         bool check_consistency() const
         {
             //TODO
+            return true;
         }
 
     protected:
@@ -971,6 +945,7 @@ namespace cds { namespace container {
         }
 
         //@endcond
+
     private: // rotations
         //@cond
         int estimate_node_condition( node_type * pNode )
@@ -1044,7 +1019,7 @@ namespace cds { namespace container {
 
         node_type * rebalance_locked( node_type * pParent, node_type * pNode, rcu_disposer& disp )
         {
-            // pParent and pNode shlould be locked.
+            // pParent and pNode should be locked.
             // Returns a damaged node, or nullptr if no more rebalancing is necessary
             assert( pNode->m_pParent.load( memory_model::memry_order_relaxed ) == pNode );
             assert( m_pParent->m_pLeft.load( memory_model::memory_order_relaxed ) == pNode
