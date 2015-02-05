@@ -14,11 +14,11 @@ namespace cds { namespace container {
     /// BronsonAVLTree related declarations
     namespace bronson_avltree {
 
-        template <typename Key, typename T>
+        template <typename Key, typename T, typename SyncMonitor >
         struct node;
 
         //@cond
-        template <typename Node>
+        template <typename Node, typename SyncMonitor>
         struct link_node
         {
             typedef Node node_type;
@@ -37,6 +37,7 @@ namespace cds { namespace container {
             atomics::atomic<node_type *>    m_pParent;  ///< Parent node
             atomics::atomic<node_type *>    m_pLeft;    ///< Left child
             atomics::atomic<node_type *>    m_pRight;   ///< Right child
+            typename SyncMonitor::node_injection m_SyncMonitorInjection;    ///< @ref cds_sync_monitor "synchronization monitor" injected data
 
         public:
             //@cond
@@ -113,10 +114,10 @@ namespace cds { namespace container {
         //@endcond
 
         // BronsonAVLTree internal node
-        template <typename Key, typename T>
-        struct node<Key, T*>: public link_node< node<Key, T*>>
+        template <typename Key, typename T, typename SyncMonitor >
+        struct node<Key, T*, SyncMonitor>: public link_node< node<Key, T*, SyncMonitor>, SyncMonitor >
         {
-            typedef link_node< node<Key, T*>> base_class;
+            typedef link_node< node<Key, T*, SyncMonitor>, SyncMonitor > base_class;
 
             typedef Key key_type;       ///< key type
             typedef T   mapped_type;    ///< value type

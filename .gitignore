@@ -16,3 +16,5 @@ obj
 /projects/Win/vc14/cds.vcxproj.user
 /projects/Win/vc14/*.opensdf
 /projects/Win/vc14/.vs/cds/v14
+/build/build-mingw-amd64.bat
+/build/build-mingw-amd64.log

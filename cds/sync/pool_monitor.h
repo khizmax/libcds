@@ -45,45 +45,23 @@ namespace cds { namespace sync {
         //@endcond
 
     public:
-        /// Monitor injection into \p Node
-        template <typename Node>
-        class node_injection : public Node
+
+        /// Node injection
+        struct node_injection
         {
-            //@cond
-            typedef unsigned int refspin_type;
-            static CDS_CONSTEXPR refspin_type const c_nSpinBit = 1;
-            static CDS_CONSTEXPR refspin_type const c_nRefIncrement = 2;
+            mutable atomics::atomic<refspin_type>   m_RefSpin;  ///< Spin-lock for \p m_pLock (bit 0) + reference counter
+            mutable lock_type *                     m_pLock;    ///< Node-level lock
 
-            struct injection
-            {
-                atomics::atomic<refspin_type>   m_RefSpin;  ///< Spin-lock for \p m_pLock (bit 0) + reference counter
-                lock_type *                     m_pLock;    ///< Node-level lock
-
-                injection()
-                    : m_Access( 0 )
-                    , m_pLock( nullptr )
-                {}
-
-                ~injection()
-                {
-                    assert( m_pLock == nullptr );
-                    assert( m_RefSpin.load( atomics::memory_order_relaxed ) == 0 );
-                }
-            };
-            //@endcond
-
-        public:
-            mutable injection   m_Access;   ///< injected data
-
-#       ifdef CDS_CXX11_INHERITING_CTOR
-            using Node::Node;
-#       else
-            // Inheriting ctor emulation
-            template <typename... Args>
-            node_injection( Args&&... args )
-                : Node( std::forward<Args>( args )... )
+            node_injection()
+                : m_Access( 0 )
+                , m_pLock( nullptr )
             {}
-#       endif
+
+            ~node_injection()
+            {
+                assert( m_pLock == nullptr );
+                assert( m_RefSpin.load( atomics::memory_order_relaxed ) == 0 );
+            }
         };
 
         /// Initializes the pool of 256 preallocated mutexes
@@ -103,26 +81,26 @@ namespace cds { namespace sync {
             lock_type * pLock;
 
             // try lock spin and increment reference counter
-            refspin_type cur = p.m_Access.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
-            if ( !p.m_Access.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit, 
+            refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
+            if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
                 atomics::memory_order_acquire, atomics::memory_order_relaxed ) ) 
             {
                 back_off bkoff;
                 do {
                     bkoff();
                     cur &= ~c_nSpinBit;
-                } while ( !p.m_Access.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit, 
+                } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
                     atomics::memory_order_acquire, atomics::memory_order_relaxed );
             }
 
             // spin locked
             // If the node has no lock, allocate it from pool
-            pLock = p.m_Access.m_pLock;
+            pLock = p.m_SyncMonitorInjection.m_pLock;
             if ( !pLock )
-                pLock = p.m_Access.m_pLock = m_Pool.allocate( 1 );
+                pLock = p.m_SyncMonitorInjection.m_pLock = m_Pool.allocate( 1 );
 
             // unlock spin
-            p.m_Access.m_RefSpin.store( cur + c_nRefIncrement, atomics::memory_order_release );
+            p.m_SyncMonitorInjection.m_RefSpin.store( cur + c_nRefIncrement, atomics::memory_order_release );
 
             // lock the node
             pLock->lock();
@@ -134,19 +112,19 @@ namespace cds { namespace sync {
         {
             lock_type * pLock = nullptr;
 
-            assert( p.m_Access.m_pLock != nullptr );
-            p.m_Access.m_pLock->unlock();
+            assert( p.m_SyncMonitorInjection.m_pLock != nullptr );
+            p.m_SyncMonitorInjection.m_pLock->unlock();
 
             // try lock spin
-            refspin_type cur = p.m_Access.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
-            if ( !p.m_Access.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit, 
+            refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
+            if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit,
                 atomics::memory_order_acquire, atomics::memory_order_relaxed ) ) 
             {
                 back_off bkoff;
                 do {
                     bkoff();
                     cur &= ~c_nSpinBit;
-                } while ( !p.m_Access.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit, 
+                } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit,
                     atomics::memory_order_acquire, atomics::memory_order_relaxed );
             }
 
@@ -154,12 +132,12 @@ namespace cds { namespace sync {
 
             // If we are the unique owner - deallocate lock
             if ( cur == c_nRefIncrement ) {
-                pLock = p.m_Access.m_pLock;
-                p.m_Access.m_pLock = nullptr;
+                pLock = p.m_SyncMonitorInjection.m_pLock;
+                p.m_SyncMonitorInjection.m_pLock = nullptr;
             }
 
             // unlock spin
-            p.m_Access.m_RefSpin.store( cur - c_nRefIncrement, atomics::memory_order_release );
+            p.m_SyncMonitorInjection.m_RefSpin.store( cur - c_nRefIncrement, atomics::memory_order_release );
 
             // free pLock
             if ( pLock )

@@ -75,7 +75,7 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        typedef typename sync_monitor::template node_injection< bronson_avltree::node< key_type, mapped_type >> node_type;
+        typedef bronson_avltree::node< key_type, mapped_type, sync_monitor > node_type;
         typedef typename node_type::version_type version_type;
 
         typedef cds::details::Allocator< node_type, node_allocator_type > cxx_allocator;
@@ -130,12 +130,12 @@ namespace cds { namespace container {
 
         static node_type * child( node_type * pNode, int nDir, atomics::memory_order order )
         {
-            return static_cast<node_type *>(pNode->child( nDir ).load( order ));
+            return pNode->child( nDir ).load( order );
         }
 
         static node_type * parent( node_type * pNode, atomics::memory_order order )
         {
-            return static_cast<node_type *>(pNode->m_pParent.load( order ));
+            return pNode->m_pParent.load( order );
         }
 
         // RCU safe disposer

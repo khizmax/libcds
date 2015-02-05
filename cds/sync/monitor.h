@@ -17,10 +17,9 @@ namespace cds { namespace sync {
         For huge trees containing millions of nodes it can be very inefficient to inject
         the lock object into each node. Moreover, some operating systems may not support
         the millions of system objects like mutexes per user process.
-
         The monitor strategy is intended to solve that problem.
         When the node should be locked, the monitor is called to allocate appropriate
-        lock object for the node if it's needed, and to lock the node.
+        lock object for the node if needed, and to lock the node.
         The monitor strategy can significantly reduce the number of system objects
         required for data structure.
 
@@ -68,16 +67,28 @@ namespace cds { namespace sync {
             using scoped_lock = monitor_scoped_lock< pool_monitor, Node >;
         };
         \endcode
+
+        Monitor's data should be inject into container's node as \p m_SyncMonitorInjection data member:
+        \code
+        template <typename SyncMonitor>
+        struct my_node
+        {
+            typename SyncMonitor::node_injection m_SyncMonitorInjection;
+        };
+        \endcode
+
         The monitor should be a member of your container:
         \code
         template <typename GC, typename T, typename Traits>
         class my_container {
             // ...
             typedef typename Traits::sync_monitor   sync_monitor;
+            typedef my_node<sync_monitor> node_type;
             sync_monitor m_Monitor;
             //...
         };
         \endcode
+
     */
 
     /// Monitor scoped lock (RAII)

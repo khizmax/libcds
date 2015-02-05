@@ -24,34 +24,23 @@ namespace cds { namespace sync {
     public:
         typedef Lock lock_type; ///< Lock type
 
-        /// Monitor injection into \p Node
-        template <typename Node>
-        struct node_injection: public Node
-        {
-#       ifdef CDS_CXX11_INHERITING_CTOR
-            using Node::Node;
-#       else
-            // Inheriting ctor emulation
-            template <typename... Args>
-            node_injection( Args&&... args )
-                : Node( std::forward<Args>( args )... )
-            {}
-#       endif
-            mutable lock_type m_Lock; ///< Node-level lock
+        /// Node injection
+        struct node_injection {
+            mutable lock_type m_Lock;   ///< Node spin-lock
         };
 
         /// Makes exclusive access to node \p p
         template <typename Node>
         void lock( Node const& p ) const
         {
-            p.m_Lock.lock();
+            p.m_SyncMonitorInjection.m_Lock.lock();
         }
 
         /// Unlocks the node \p p
         template <typename Node>
         void unlock( Node const& p ) const
         {
-            p.m_Lock.unlock();
+            p.m_SyncMonitorInjection.m_Lock.unlock();
         }
 
         /// Scoped lock

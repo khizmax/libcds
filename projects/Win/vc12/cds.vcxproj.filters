@@ -644,9 +644,6 @@
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h">
       <Filter>Header Files\cds\compiler\clang</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\mapper.h">
-      <Filter>Header Files\cds\memory</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
