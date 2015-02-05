@@ -3,7 +3,7 @@
 #include <cds/init.h>
 #include <cds/algo/atomic.h>
 
-#if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
+#if CDS_OS_INTERFACE == CDS_OSI_WINDOWS && CDS_OS_TYPE != CDS_OS_MINGW
 #   if CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL
 #       include <cds/threading/details/msvc_manager.h>
 #   endif
@@ -24,7 +24,7 @@ namespace cds {
     CDS_EXPORT_API atomics::atomic<size_t> threading::ThreadData::s_nLastUsedProcNo(0);
     CDS_EXPORT_API size_t threading::ThreadData::s_nProcCount = 1;
 
-#if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
+#if CDS_OS_INTERFACE == CDS_OSI_WINDOWS && CDS_OS_TYPE != CDS_OS_MINGW
     CDS_EXPORT_API DWORD cds::threading::wintls::Manager::Holder::m_key = TLS_OUT_OF_INDEXES;
 
     __declspec( thread ) threading::msvc_internal::ThreadDataPlaceholder threading::msvc_internal::s_threadData;
