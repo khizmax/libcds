@@ -10,7 +10,7 @@ namespace cds { namespace container {
     namespace bronson_avltree {
         //@cond
         namespace details {
-            template < typename Key, typename T, typename Traits>
+            template < class RCU, typename Key, typename T, typename Traits>
             struct make_map
             {
                 typedef Key key_type;
@@ -22,8 +22,7 @@ namespace cds { namespace container {
                 struct traits : public original_traits
                 {
                     struct disposer {
-                        template <typename T>
-                        void operator()( mapped_type * p )
+                        void operator()( mapped_type * p ) const
                         {
                             cxx_allocator().Delete( p );
                         }
@@ -31,12 +30,7 @@ namespace cds { namespace container {
                 };
 
                 // Metafunction result
-                typedef BronsonAVLTreeMap <
-                    cds::urcu::gc<RCU>,
-                    Key,
-                    T *,
-                    traits
-                > type;
+                typedef BronsonAVLTreeMap< RCU, Key, T *, traits > type;
             };
         } // namespace details
         //@endcond
@@ -77,11 +71,11 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGEN_INVOKED
         : private BronsonAVLTreeMap< cds::urcu::gc<RCU>, Key, T*, Traits >
 #else
-        : private bronson_avltree::details::make_map< Key, T, Traits >::type
+        : private bronson_avltree::details::make_map< cds::urcu::gc<RCU>, Key, T, Traits >::type
 #endif
     {
         //@cond
-        typedef bronson_avltree::details::make_map< Key, T, Traits > maker;
+        typedef bronson_avltree::details::make_map< cds::urcu::gc<RCU>, Key, T, Traits > maker;
         typedef typename maker::type base_class;
         //@endcond
 
@@ -99,7 +93,7 @@ namespace cds { namespace container {
         typedef typename traits::stat                   stat;               ///< internal statistics
         typedef typename traits::rcu_check_deadlock     rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename traits::back_off               back_off;           ///< Back-off strategy
-        typedef typename traits::lock_type              lock_type;          ///< Node lock type
+        typedef typename traits::sync_monitor           sync_monitor;       ///< @ref cds_sync_monitor "Synchronization monitor" type for node-level locking
 
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
@@ -107,13 +101,15 @@ namespace cds { namespace container {
         /// Returned pointer to value of extracted node
         typedef typename base_class::unique_ptr unique_ptr;
 
+        typedef typename base_class::rcu_lock   rcu_lock;  ///< RCU scoped lock
+
     protected:
         //@cond
         typedef typename base_class::node_type  node_type;
         typedef typename base_class::node_scoped_lock node_scoped_lock;
         typedef typename maker::cxx_allocator   cxx_allocator;
 
-        using base_class::update_flags;
+        typedef typename base_class::update_flags update_flags;
         //@endcond
 
     public:
@@ -144,10 +140,11 @@ namespace cds { namespace container {
                 []( node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    CDS_UNUSED( pNode );
                     return cxx_allocator().New();
                 },
-                update_flags::allow_insert 
-            ) == update_flags::result_insert;
+                    static_cast<int>(update_flags::allow_insert)
+            ) == static_cast<int>(update_flags::result_inserted);
         }
 
         /// Inserts new node
@@ -170,10 +167,11 @@ namespace cds { namespace container {
                 [&val]( node_type * pNode )
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    CDS_UNUSED( pNode );
                     return cxx_allocator().New( val );
                 },
-                update_flags::allow_insert 
-            ) == update_flags::result_insert;
+                static_cast<int>(update_flags::allow_insert)
+            ) == static_cast<int>(update_flags::result_inserted);
         }
 
         /// Inserts new node and initialize it by a functor
@@ -182,7 +180,7 @@ namespace cds { namespace container {
             \p func functor with signature
             \code
                 struct functor {
-                    void operator()( mapped_type& item );
+                    void operator()( key_type const& key, mapped_type& item );
                 };
             \endcode
 
@@ -207,11 +205,11 @@ namespace cds { namespace container {
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     mapped_type * pVal = cxx_allocator().New();
-                    func( *pVal );
+                    func( pNode->m_key, *pVal );
                     return pVal;
                 },
-                update_flags::allow_insert 
-            ) == update_flags::result_insert;
+                static_cast<int>(update_flags::allow_insert)
+            ) == static_cast<int>(update_flags::result_inserted);
         }
 
         /// For key \p key inserts data of type \p mapped_type created in-place from \p args
@@ -227,10 +225,11 @@ namespace cds { namespace container {
                 [&]( node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    CDS_UNUSED( pNode );
                     return cxx_allocator().New( std::forward<Args>(args)...);
                 },
-                update_flags::allow_insert 
-            ) == update_flags::result_insert;
+                static_cast<int>(update_flags::allow_insert)
+            ) == static_cast<int>(update_flags::result_inserted);
         }
 
         /// Ensures that the \p key exists in the map
@@ -244,7 +243,7 @@ namespace cds { namespace container {
             The functor \p Func may be a functor:
             \code
                 struct my_functor {
-                    void operator()( bool bNew, mapped_type& item );
+                    void operator()( bool bNew, key_type const& key, mapped_type& item );
                 };
             \endcode
 
@@ -266,18 +265,18 @@ namespace cds { namespace container {
             int result = base_class::do_update( key, key_comparator(),
                 [&func]( node_type * pNode ) -> mapped_type* 
                 {
-                    mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed ));
+                    mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
                     if ( !pVal ) {
                         pVal = cxx_allocator().New();
-                        func( true, *pVal );
+                        func( true, pNode->m_key, *pVal );
                     }
                     else
-                        func( false, *pVal );
+                        func( false, pNode->m_key, *pVal );
                     return pVal;
                 },
                 update_flags::allow_insert | update_flags::allow_update 
             );
-            return std::make_pair( result != 0, (result & update_flags::result_insert) != 0 );
+            return std::make_pair( result != 0, (result & update_flags::result_inserted) != 0 );
         }
 
         /// Delete \p key from the map
@@ -363,7 +362,7 @@ namespace cds { namespace container {
 
         /// Extracts an item with maximal key from the map
         /**
-            Returns \std::unique_ptr pointer to the rightmost item.
+            Returns \p std::unique_ptr pointer to the rightmost item.
             If the set is empty, returns empty \p std::unique_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.

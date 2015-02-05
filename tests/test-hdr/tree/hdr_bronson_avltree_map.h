@@ -22,7 +22,6 @@ namespace tree {
             size_t  nEnsureNewFuncCall;
             size_t  nEraseFuncCall;
             size_t  nFindFuncCall;
-            size_t  nFindConstFuncCall;
 
             stat_data()
                 : nInsertFuncCall( 0 )
@@ -30,7 +29,6 @@ namespace tree {
                 , nEnsureNewFuncCall( 0 )
                 , nEraseFuncCall( 0 )
                 , nFindFuncCall( 0 )
-                , nFindConstFuncCall( 0 )
             {}
         };
 
@@ -110,15 +108,9 @@ namespace tree {
 
         struct find_functor
         {
-            template <typename T>
-            void operator()( value_type& i, T& /*val*/ )
+            void operator()( key_type, value_type& v ) const
             {
-                ++i.stat.nFindFuncCall;
-            }
-            template <typename T>
-            void operator()( value_type& i, T const& /*val*/ )
-            {
-                ++i.stat.nFindConstFuncCall;
+                ++v.stat.nFindFuncCall;
             }
         };
 
@@ -127,30 +119,29 @@ namespace tree {
         {
             Item    m_found;
 
-            template <typename T>
-            void operator()( Item& i, T& /*val*/ )
+            void operator()( key_type const&, Item& v )
             {
-                m_found = i;
+                m_found = v;
             }
 
-            void operator()( Item const& i )
+            void operator()( Item& v )
             {
-                m_found = i;
+                m_found = v;
             }
         };
 
         struct insert_functor
         {
             template <typename Item>
-            void operator()( Item& i )
+            void operator()( key_type key, Item& i )
             {
-                i.nVal = i.nKey * 100;
+                i.nVal = key * 100;
                 ++i.stat.nInsertFuncCall;
             }
         };
 
         template <typename Q>
-        static void ensure_func( bool bNew, value_type& i, Q& /*val*/ )
+        static void ensure_func( bool bNew, Q /*key*/, value_type& i )
         {
             if ( bNew )
                 ++i.stat.nEnsureNewFuncCall;
@@ -161,9 +152,9 @@ namespace tree {
         struct ensure_functor
         {
             template <typename Q>
-            void operator()( bool bNew, value_type& i, Q& val )
+            void operator()( bool bNew, Q key, value_type& i )
             {
-                ensure_func( bNew, i, val );
+                ensure_func( bNew, key, i );
             }
         };
 
@@ -171,10 +162,9 @@ namespace tree {
         {
             int nKey;
 
-            template <typename Q>
-            void operator()( Q&, value_type& v )
+            void operator()( value_type& v )
             {
-                nKey = v.nKey;
+                nKey = v.nVal;
             }
         };
 
@@ -196,58 +186,47 @@ namespace tree {
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 1 ) );
 
-            CPPUNIT_ASSERT( !s.find_with( 20, less() ) );
-            CPPUNIT_ASSERT( s.insert( std::make_pair( 20, 25 ) ) );
+            CPPUNIT_ASSERT( !s.find_with( 20, std::less<key_type>() ) );
+            CPPUNIT_ASSERT( s.insert( 20, 25 ) );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ) );
-            CPPUNIT_ASSERT( s.find_with( 10, less() ) );
+            CPPUNIT_ASSERT( s.find_with( 10, std::less<key_type>() ) );
             CPPUNIT_ASSERT( s.find( key = 20 ) );
-            CPPUNIT_ASSERT( s.find_with( key, less(), find_functor() ) );
+            CPPUNIT_ASSERT( s.find_with( key, std::less<key_type>(), find_functor() ) );
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 key = 20;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.stat.nFindFuncCall == 1 );
-                CPPUNIT_ASSERT( f.m_found.stat.nFindConstFuncCall == 0 );
             }
             CPPUNIT_ASSERT( s.find( key, find_functor() ) );
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 key = 20;
-                CPPUNIT_ASSERT( s.find_with( key, less(), std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 20 );
+                CPPUNIT_ASSERT( s.find_with( key, std::less<key_type>(), std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
                 CPPUNIT_ASSERT( f.m_found.stat.nFindFuncCall == 2 );
-                CPPUNIT_ASSERT( f.m_found.stat.nFindConstFuncCall == 0 );
             }
             CPPUNIT_ASSERT( s.find( 20, find_functor() ) );
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
-                CPPUNIT_ASSERT( s.find_with( 20, less(), std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 20 );
+                CPPUNIT_ASSERT( s.find_with( 20, std::less<key_type>(), std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
-                CPPUNIT_ASSERT( f.m_found.stat.nFindFuncCall == 2 );
-                CPPUNIT_ASSERT( f.m_found.stat.nFindConstFuncCall == 1 );
+                CPPUNIT_ASSERT( f.m_found.stat.nFindFuncCall == 3 );
             }
 
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ) );
 
             CPPUNIT_ASSERT( !s.find( 25 ) );
-            CPPUNIT_ASSERT( s.insert( std::make_pair( 25, -1 ), insert_functor() ) );
+            CPPUNIT_ASSERT( s.insert_with( 25, insert_functor() ) );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ) );
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 key = 25;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 25 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 2500 );
                 CPPUNIT_ASSERT( f.m_found.stat.nInsertFuncCall == 1 );
             }
@@ -256,9 +235,7 @@ namespace tree {
             key = 10;
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 100 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureExistFuncCall == 0 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureNewFuncCall == 0 );
@@ -269,24 +246,24 @@ namespace tree {
             CPPUNIT_ASSERT( check_size( s, 3 ) );
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 100 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureExistFuncCall == 1 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureNewFuncCall == 0 );
             }
 
-            ensureResult = s.update( std::make_pair( 13, 1300 ), ensure_functor() );
+            ensureResult = s.update( 13, []( bool /*bNew*/, key_type key, value_type& v ) 
+                { 
+                    v.nVal = key * 100; 
+                    ++v.stat.nEnsureExistFuncCall; 
+                });
             CPPUNIT_ASSERT( ensureResult.first && ensureResult.second );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 4 ) );
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 key = 13;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 13 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 1300 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureExistFuncCall == 0 );
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureNewFuncCall == 1 );
@@ -302,25 +279,22 @@ namespace tree {
             CPPUNIT_ASSERT( check_size( s, 3 ) );
 
             CPPUNIT_ASSERT( s.find( 10 ) );
-            CPPUNIT_ASSERT( s.erase_with( 10, less() ) );
+            CPPUNIT_ASSERT( s.erase_with( 10, std::less<key_type>() ) );
             CPPUNIT_ASSERT( !s.find( 10 ) );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ) );
-            CPPUNIT_ASSERT( !s.erase_with( 10, less() ) );
+            CPPUNIT_ASSERT( !s.erase_with( 10, std::less<key_type>() ) );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ) );
 
             CPPUNIT_ASSERT( s.find( 20 ) );
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 CPPUNIT_ASSERT( s.erase( 20, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 20 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 25 );
 
-                CPPUNIT_ASSERT( s.insert( 235 ) )
-                    CPPUNIT_ASSERT( s.erase_with( 235, less(), std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 235 );
+                CPPUNIT_ASSERT( s.insert( 235, 2350 ) );
+                CPPUNIT_ASSERT( s.erase_with( 235, std::less<key_type>(), std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nVal == 2350 );
             }
             CPPUNIT_ASSERT( !s.find( 20 ) );
@@ -332,33 +306,24 @@ namespace tree {
             CPPUNIT_ASSERT( check_size( s, 0 ) );
 
             // emplace test
-            CPPUNIT_ASSERT( s.emplace( 151 ) );  // key = 151,  val = 1510
+            CPPUNIT_ASSERT( s.emplace( 151 ) );  // key = 151, val=0
             CPPUNIT_ASSERT( s.emplace( 174, 471 ) );    // key = 174, val = 471
-            CPPUNIT_ASSERT( s.emplace( std::make_pair( 190, 91 ) ) ); // key == 190, val = 91
             CPPUNIT_ASSERT( !s.empty() );
-            CPPUNIT_ASSERT( check_size( s, 3 ) );
+            CPPUNIT_ASSERT( check_size( s, 2 ) );
 
             CPPUNIT_ASSERT( s.find( 151 ) );
-            CPPUNIT_ASSERT( s.find_with( 174, less() ) );
-            CPPUNIT_ASSERT( s.find( 190 ) );
+            CPPUNIT_ASSERT( s.find_with( 174, std::less<key_type>() ) );
+            CPPUNIT_ASSERT( !s.find( 190 ) );
 
             {
                 copy_found<value_type> f;
-                f.m_found.nKey = 0;
                 key = 151;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 151 );
-                CPPUNIT_ASSERT( f.m_found.nVal == 1510 );
+                CPPUNIT_ASSERT( f.m_found.nVal == 0 );
 
                 key = 174;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 174 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 471 );
-
-                key = 190;
-                CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
-                CPPUNIT_ASSERT( f.m_found.nKey == 190 );
-                CPPUNIT_ASSERT( f.m_found.nVal == 91 );
             }
 
             s.clear();

@@ -6,6 +6,7 @@
 #include <ostream>
 
 namespace std {
+
     static inline ostream& operator <<( ostream& o, cds::container::bronson_avltree::empty_stat const& /*s*/ )
     {
         return o;
@@ -23,11 +24,11 @@ namespace std {
             << "\t\t            m_nInsertRetry: " << s.m_nInsertRetry.get()         << "\n"
             << "\t\t    m_nUpdateWaitShrinking: " << s.m_nUpdateWaitShrinking.get() << "\n"
             << "\t\t            m_nUpdateRetry: " << s.m_nUpdateRetry.get()         << "\n"
-            << "\t\t m_nUpdateRootWaitShinking: " << s.m_nUpdateRootWaitShinking.get() << "\n"
+            << "\t\tm_nUpdateRootWaitShrinking: " << s.m_nUpdateRootWaitShrinking.get() << "\n"
             << "\t\t          m_nUpdateSuccess: " << s.m_nUpdateSuccess.get()       << "\n"
             << "\t\t         m_nUpdateUnlinked: " << s.m_nUpdateUnlinked.get()      << "\n"
-            << "\t\t          m_nDisposedValue: " << s.m_nDisposedValue.get()       << "\n";
+            << "\t\t           m_nDisposedNode: " << s.m_nDisposedNode.get()        << "\n";
     }
-}
+} //namespace std
 
 #endif // #ifndef CDSUNIT_PRINT_ELLENBINTREE_STAT_H

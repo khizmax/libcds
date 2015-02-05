@@ -63,6 +63,12 @@ namespace cds { namespace sync {
                     : m_Access( 0 )
                     , m_pLock( nullptr )
                 {}
+
+                ~injection()
+                {
+                    assert( m_pLock == nullptr );
+                    assert( m_RefSpin.load( atomics::memory_order_relaxed ) == 0 );
+                }
             };
             //@endcond
 

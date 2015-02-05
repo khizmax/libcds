@@ -18,11 +18,11 @@ namespace cds { namespace container {
         struct node;
 
         //@cond
-        template <typename Key, typename T>
-        struct link
+        template <typename Node>
+        struct link_node
         {
-            typedef node<Key, T> node_type;
-            typedef uint32_t version_type;
+            typedef Node node_type;
+            typedef uint32_t version_type;  ///< version type (internal)
 
             enum
             {
@@ -38,27 +38,25 @@ namespace cds { namespace container {
             atomics::atomic<node_type *>    m_pLeft;    ///< Left child
             atomics::atomic<node_type *>    m_pRight;   ///< Right child
 
-            node_type *                     m_pNextRemoved; ///< thread-local list o removed node
-
-            link()
+        public:
+            //@cond
+            link_node()
                 : m_nHeight( 0 )
                 , m_nVersion( 0 )
                 , m_pParent( nullptr )
                 , m_pLeft( nullptr )
                 , m_pRight( nullptr )
-                , m_pNextRemoved( nullptr )
             {}
 
-            link( int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
+            link_node( int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
                 : m_nHeight( nHeight )
                 , m_nVersion( version )
                 , m_pParent( pParent )
                 , m_pLeft( pLeft )
                 , m_pRight( pRight )
-                , m_pNextRemoved( nullptr )
             {}
 
-            atomics::atomic<node_type *>& child( int nDirection ) const
+            atomics::atomic<node_type *>& child( int nDirection )
             {
                 assert( nDirection != 0 );
                 return nDirection < 0 ? m_pLeft : m_pRight;
@@ -97,7 +95,7 @@ namespace cds { namespace container {
             void wait_until_shrink_completed( atomics::memory_order order ) const
             {
                 BackOff bkoff;
-                while ( is_shrinking( order ))
+                while ( is_shrinking( order ) )
                     bkoff();
             }
 
@@ -110,31 +108,41 @@ namespace cds { namespace container {
             {
                 return (m_nVersion.load( order ) & shrinking) != 0;
             }
+            //@endcond
         };
+        //@endcond
 
+        // BronsonAVLTree internal node
         template <typename Key, typename T>
-        struct node : public link< Key, T >
+        struct node<Key, T*>: public link_node< node<Key, T*>>
         {
-            typedef Key key_type;
-            typedef T   mapped_type;
-            typedef link< key_type, mapped_type > base_class;
+            typedef link_node< node<Key, T*>> base_class;
 
-            key_type const  m_key;
-            atomics::atomic<mapped_type *>  m_pValue;
+            typedef Key key_type;       ///< key type
+            typedef T   mapped_type;    ///< value type
+            typedef typename base_class::version_type version_type;
 
+            key_type const                  m_key;      ///< Key
+            atomics::atomic<mapped_type *>  m_pValue;   ///< Value
+            node *                          m_pNextRemoved; ///< thread-local list of removed node
+
+        public:
+            //@cond
             template <typename Q>
             node( Q&& key )
-                : m_key( std::forward<Q>(key) )
+                : base_class()
+                , m_key( std::forward<Q>( key ) )
                 , m_pValue( nullptr )
+                , m_pNextRemoved( nullptr )
             {}
 
             template <typename Q>
-            node( Q&& key, int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
+            node( Q&& key, int nHeight, version_type version, node * pParent, node * pLeft, node * pRight )
                 : base_class( nHeight, version, pParent, pLeft, pRight )
                 , m_key( std::forward<Q>( key ) )
                 , m_pValue( nullptr )
+                , m_pNextRemoved( nullptr )
             {}
-
             T * value( atomics::memory_order order ) const
             {
                 return m_pValue.load( order );
@@ -144,8 +152,8 @@ namespace cds { namespace container {
             {
                 return value( order ) != nullptr;
             }
+            //@endcond
         };
-        //@endcond
 
         /// BronsonAVLTreeMap internal statistics
         template <typename Counter = cds::atomicity::event_counter>
@@ -165,7 +173,7 @@ namespace cds { namespace container {
             event_counter   m_nUpdateRootWaitShrinking;  ///< Count of waiting until root shrinking completed duting \p update() call
             event_counter   m_nUpdateSuccess;       ///< Count of updating data node
             event_counter   m_nUpdateUnlinked;      ///< Count of updating of unlinked node attempts
-            event_counter   m_nDisposedValue;       ///< Count of disposed value
+            event_counter   m_nDisposedNode;        ///< Count of disposed node
 
             //@cond
             void onFindSuccess()        { ++m_nFindSuccess      ; }
@@ -181,7 +189,7 @@ namespace cds { namespace container {
             void onUpdateRootWaitShrinking() { ++m_nUpdateRootWaitShrinking; }
             void onUpdateSuccess()          { ++m_nUpdateSuccess;  }
             void onUpdateUnlinked()         { ++m_nUpdateUnlinked; }
-            void onDisposeValue()           { ++m_nDisposedValue; }
+            void onDisposeNode()            { ++m_nDisposedNode; }
 
             //@endcond
         };
@@ -202,7 +210,7 @@ namespace cds { namespace container {
             void onUpdateRootWaitShrinking() const {}
             void onUpdateSuccess()          const {}
             void onUpdateUnlinked()         const {}
-            void onDisposeValue()           const {}
+            void onDisposeNode()            const {}
 
             //@endcond
         };
@@ -258,6 +266,9 @@ namespace cds { namespace container {
 
             /// Allocator for internal node
             typedef CDS_DEFAULT_ALLOCATOR           node_allocator;
+
+            /// Allocator for node's value (not used in \p BronsonAVLTreeMap<RCU, Key, T*, Traits> specialisation)
+            typedef CDS_DEFAULT_ALLOCATOR           allocator;
 
             /// Disposer (only for pointer-oriented tree specialization)
             /**
@@ -322,6 +333,8 @@ namespace cds { namespace container {
                 If the option is not specified, \p %opt::less is used.
             - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
             - \p opt::node_allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p opt::allocator - the allocator for node's value. Default is \ref CDS_DEFAULT_ALLOCATOR.
+                This option is not used in \p BronsonAVLTreeMap<RCU, Key, T*, Traits> specialisation
             - \ref cds::intrusive::opt::disposer "container::opt::disposer" - the functor used for dispose removed values.
                 The user-provided disposer is used only for pointer-oriented tree specialization
                 like \p BronsonAVLTreeMap<GC, Key, T*, Traits>. When the node becomes the rounting node without value,
@@ -329,7 +342,7 @@ namespace cds { namespace container {
                 Default is \ref cds::intrusive::opt::delete_disposer "cds::container::opt::v::delete_disposer<>" which calls \p delete operator.
                 Due the nature of GC schema the disposer may be called asynchronously.
             - \p opt::sync_monitor -  @ref cds_sync_monitor "synchronization monitor" type for node-level locking,
-                default is cds::sync::injecting_monitor<cds::sync::spin>
+                default is \p cds::sync::injecting_monitor<cds::sync::spin>
             - \p bronson_avltree::relaxed_insert - enable (\p true) or disable (\p false, the default) 
                 @ref bronson_avltree::relaxed_insert "relaxed insertion"
             - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)
