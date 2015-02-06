@@ -68,16 +68,17 @@ namespace cds { namespace sync {
         };
         \endcode
 
-        Monitor's data should be inject into container's node as \p m_SyncMonitorInjection data member:
+        Monitor's data must be inject into container's node as \p m_SyncMonitorInjection data member:
         \code
         template <typename SyncMonitor>
         struct my_node
         {
+            // ...
             typename SyncMonitor::node_injection m_SyncMonitorInjection;
         };
         \endcode
 
-        The monitor should be a member of your container:
+        The monitor must be a member of your container:
         \code
         template <typename GC, typename T, typename Traits>
         class my_container {
@@ -88,7 +89,6 @@ namespace cds { namespace sync {
             //...
         };
         \endcode
-
     */
 
     /// Monitor scoped lock (RAII)
