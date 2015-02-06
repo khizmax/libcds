@@ -175,6 +175,13 @@ namespace cds { namespace container {
             event_counter   m_nUpdateSuccess;       ///< Count of updating data node
             event_counter   m_nUpdateUnlinked;      ///< Count of updating of unlinked node attempts
             event_counter   m_nDisposedNode;        ///< Count of disposed node
+            event_counter   m_nDisposedValue;       ///< Count of disposed value
+            event_counter   m_nExtractedValue;      ///< Count of extracted value
+
+            event_counter   m_nRightRotation;       ///< Count of single right rotation
+            event_counter   m_nLeftRotation;        ///< Count of single left rotation
+            event_counter   m_nLeftRightRotation;   ///< Count of double left-over-right rotation
+            event_counter   m_nRightLeftRotation;   ///< Count of double right-over-left rotation
 
             //@cond
             void onFindSuccess()        { ++m_nFindSuccess      ; }
@@ -191,7 +198,13 @@ namespace cds { namespace container {
             void onUpdateSuccess()          { ++m_nUpdateSuccess;  }
             void onUpdateUnlinked()         { ++m_nUpdateUnlinked; }
             void onDisposeNode()            { ++m_nDisposedNode; }
+            void onDisposeValue()           { ++m_nDisposedValue; }
+            void onExtractValue()           { ++m_nExtractedValue; }
 
+            void onRotateRight()            { ++m_nRightRotation; }
+            void onRotateLeft()             { ++m_nLeftRotation; }
+            void onRotateRightOverLeft()    { ++m_nRightLeftRotation; }
+            void onRotateLeftOverRight()    { ++m_nLeftRghtRotation; }
             //@endcond
         };
 
@@ -212,7 +225,13 @@ namespace cds { namespace container {
             void onUpdateSuccess()          const {}
             void onUpdateUnlinked()         const {}
             void onDisposeNode()            const {}
+            void onDisposeValue()           const {}
+            void onExtractValue()           const {}
 
+            void onRotateRight()            const {}
+            void onRotateLeft()             const {}
+            void onRotateRightOverLeft()    const {}
+            void onRotateLeftOverRight()    const {}
             //@endcond
         };
 

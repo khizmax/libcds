@@ -128,6 +128,11 @@ namespace cds { namespace container {
             cxx_allocator().Delete( pNode );
         }
 
+        static void free_value( mapped_type pVal )
+        {
+            disposer()(pVal);
+        }
+
         static node_type * child( node_type * pNode, int nDir, atomics::memory_order order )
         {
             return pNode->child( nDir ).load( order );
@@ -138,7 +143,7 @@ namespace cds { namespace container {
             return pNode->m_pParent.load( order );
         }
 
-        // RCU safe disposer
+        // RCU safe disposer for node
         class rcu_disposer
         {
             node_type *     m_pRetiredList; ///< head of retired list
@@ -155,12 +160,7 @@ namespace cds { namespace container {
 
             void dispose( node_type * pNode )
             {
-                mapped_type pVal = pNode->value( memory_model::memory_order_relaxed );
-                if ( pVal ) {
-                    pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
-                    disposer()(pVal);
-                }
-
+                assert( !pNode->is_valued( memory_model::memory_order_relaxed ));
                 pNode->m_pNextRemoved = m_pRetiredList;
                 m_pRetiredList = pNode;
             }
@@ -272,7 +272,7 @@ namespace cds { namespace container {
             return do_remove(
                 key,
                 key_comparator(),
-                []( mapped_type pVal ) { disposer()(pVal); }
+                []( mapped_type pVal ) -> bool { free_value( pVal ); return true; }
             );
         }
 
@@ -290,7 +290,7 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
-                []( mapped_type pVal ) { disposer()(pVal); }
+                []( mapped_type pVal ) -> bool { free_value( pVal ); return true;  }
             );
         }
 
@@ -316,10 +316,11 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 key_comparator(), 
-                [&f]( mapped_type pVal ) { 
+                [&f]( mapped_type pVal ) -> bool { 
                     assert( pVal );
                     f( *pVal ); 
-                    disposer()(pVal); 
+                    free_value(pVal); 
+                    return true;
                 }
             );
         }
@@ -338,10 +339,11 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
-                [&f]( mapped_type pVal ) { 
+                [&f]( mapped_type pVal ) -> bool { 
                     assert( pVal );
                     f( *pVal ); 
-                    disposer()(pVal); 
+                    free_value(pVal); 
+                    return true;
                 }
             );
         }
@@ -408,7 +410,7 @@ namespace cds { namespace container {
             do_remove(
                 key,
                 key_comparator(),
-                [&pExtracted]( mapped_type pVal ) { pExtracted.reset( pVal ); }
+                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
             );
             return pExtracted;
         }
@@ -429,7 +431,7 @@ namespace cds { namespace container {
             do_remove(
                 key,
                 cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
-                [&pExtracted]( mapped_type pVal ) { pExtracted.reset( pVal ); }
+                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
             );
             return pExtracted;
         }
@@ -615,6 +617,9 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         bool do_remove( K const& key, Compare cmp, Func func )
         {
+            // Func must return true if the value was disposed
+            //              or false if the value was extracted
+
             check_deadlock_policy::check();
 
             rcu_disposer removed_list;
@@ -940,8 +945,8 @@ namespace cds { namespace container {
             }
 
             if ( pOld ) {
-                disposer()(pOld);
-                m_stat.onDisposeNode();
+                free_value(pOld);
+                m_stat.onDisposeValue();
             }
 
             m_stat.onUpdateSuccess();
@@ -970,20 +975,20 @@ namespace cds { namespace container {
                     {
                         node_scoped_lock ln( m_Monitor, *pNode );
                         pOld = pNode->value( memory_model::memory_order_relaxed );
-                        if ( pNode->version( memory_model::memory_order_relaxed ) == nVersion
+                        if ( !( pNode->version( memory_model::memory_order_relaxed ) == nVersion
                           && pOld 
-                          && try_unlink_locked( pParent, pNode, disp ) ) 
+                          && try_unlink_locked( pParent, pNode, disp )))
                         {
-                            pNode->m_pValue.store( nullptr, atomics::memory_order_relaxed );
-                        }
-                        else
                             return update_flags::retry;
+                        }
                     }
                     pDamaged = fix_height_locked( pParent );
                 }
 
-                func( pOld );   // calls pOld disposer inside
-                m_stat.onDisposeNode();
+                if ( func( pOld ) )   // calls pOld disposer inside
+                    m_stat.onDisposeValue();
+                else
+                    m_stat.onExtractValue();
 
                 fix_height_and_rebalance( pDamaged, disp );
                 return update_flags::result_removed;
@@ -1002,7 +1007,7 @@ namespace cds { namespace container {
 
                 if ( result == update_flags::result_removed ) {
                     func( pOld );  // calls pOld disposer inside
-                    m_stat.onDisposeNode();
+                    m_stat.onDisposeValue();
                 }
 
                 return result;
@@ -1042,7 +1047,14 @@ namespace cds { namespace container {
 
             // Mark the node as unlinked
             pNode->version( node_type::unlinked, memory_model::memory_order_release );
+            mapped_type pVal = pNode->value( memory_model::memory_order_relaxed );
+            if ( pVal ) {
+                free_value( pVal );
+                m_stat.onDisposeValue();
+                pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
+            }
             disp.dispose( pNode );
+            m_stat.onDisposeNode();
 
             return true;
         }
@@ -1056,7 +1068,7 @@ namespace cds { namespace container {
             node_type * pLeft = child( pNode, -1, memory_model::memory_order_relaxed );
             node_type * pRight = child( pNode, 1, memory_model::memory_order_relaxed );
 
-            if ( (pLeft == nullptr || pRight == nullptr) && pNode->value( memory_model::memory_order_relaxed ) == nullptr )
+            if ( (pLeft == nullptr || pRight == nullptr) && !pNode->is_valued( memory_model::memory_order_relaxed ))
                 return unlink_required;
 
             int h = pNode->height( memory_model::memory_order_relaxed );
@@ -1131,7 +1143,7 @@ namespace cds { namespace container {
             node_type * pLeft = child( pNode, -1, memory_model::memory_order_relaxed );
             node_type * pRight = child( pNode, 1, memory_model::memory_order_relaxed );
 
-            if ( (pLeft == nullptr || pRight == nullptr) && pNode->value( memory_model::memory_order_relaxed ) == nullptr ) {
+            if ( (pLeft == nullptr || pRight == nullptr) && !pNode->is_valued( memory_model::memory_order_relaxed )) {
                 if ( try_unlink_locked( pParent, pNode, disp ))
                     return fix_height_locked( pParent );
                 else {
@@ -1203,7 +1215,7 @@ namespace cds { namespace container {
                         node_type * pLRLeft = child( pLRight, -1, memory_model::memory_order_relaxed );
                         int hLRL = pLRLeft ? pLRLeft->height( memory_model::memory_order_relaxed  ) : 0;
                         int balance = hLL - hLRL;
-                        if ( balance >= -1 && balance <= 1 && !((hLL == 0 || hLRL == 0) && pLeft->value(memory_model::memory_order_relaxed) == nullptr) ) {
+                        if ( balance >= -1 && balance <= 1 && !((hLL == 0 || hLRL == 0) && !pLeft->is_valued(memory_model::memory_order_relaxed))) {
                             // nParent.child.left won't be damaged after a double rotation
                             return rotate_right_over_left_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLRL );
                         }
@@ -1252,7 +1264,7 @@ namespace cds { namespace container {
                     node_type * pRLRight = child( pRLeft, 1, memory_model::memory_order_relaxed );
                     int hRLR = pRLRight ? pRLRight->height( memory_model::memory_order_relaxed ) : 0;
                     int balance = hRR - hRLR;
-                    if ( balance >= -1 && balance <= 1 && !((hRR == 0 || hRLR == 0) && pRight->value( memory_model::memory_order_relaxed ) == nullptr))
+                    if ( balance >= -1 && balance <= 1 && !((hRR == 0 || hRLR == 0) && !pRight->is_valued( memory_model::memory_order_relaxed )))
                          return rotate_left_over_right_locked( pParent, pNode, hL, pRight, pRLeft, hRR, hRLR );
                 }
                 return rebalance_to_right_locked( pNode, pRight, pRLeft, hRR );
@@ -1297,6 +1309,7 @@ namespace cds { namespace container {
             pLeft->height( 1 + std::max( hLL, hNode ), memory_model::memory_order_relaxed );
 
             end_change( pNode, nodeVersion );
+            m_stat.onRotateRight();
 
             // We have damaged pParent, pNode (now parent.child.right), and pLeft (now
             // parent.child).  pNode is the deepest.  Perform as many fixes as we can
@@ -1313,7 +1326,7 @@ namespace cds { namespace container {
 
             // we've fixed balance and height damage for pNode, now handle
             // extra-routing node damage
-            if ( (pLRight == nullptr || hR == 0) && pNode->value(memory_model::memory_order_relaxed) == nullptr ) {
+            if ( (pLRight == nullptr || hR == 0) && !pNode->is_valued(memory_model::memory_order_relaxed)) {
                 // we need to remove pNode and then repair
                 return pNode;
             }
@@ -1324,7 +1337,7 @@ namespace cds { namespace container {
                 return pLeft;
 
             // pLeft might also have routing node damage (if pLeft.left was null)
-            if ( hLL == 0 && pLeft->value( memory_model::memory_order_relaxed ) == nullptr )
+            if ( hLL == 0 && !pLeft->is_valued( memory_model::memory_order_relaxed ))
                 return pLeft;
 
             // try to fix the parent height while we've still got the lock
@@ -1360,19 +1373,20 @@ namespace cds { namespace container {
             pRight->height( 1 + std::max( hNode, hRR ), memory_model::memory_order_relaxed );
 
             end_change( pNode, nodeVersion );
+            m_stat.onRotateLeft();
 
             int nodeBalance = hRL - hL;
             if ( nodeBalance < -1 || nodeBalance > 1 )
                 return pNode;
 
-            if ( (pRLeft == nullptr || hL == 0) && pNode->value( memory_model::memory_order_relaxed ) == nullptr )
+            if ( (pRLeft == nullptr || hL == 0) && !pNode->is_valued( memory_model::memory_order_relaxed ))
                 return pNode;
 
             int rightBalance = hRR - hNode;
             if ( rightBalance < -1 || rightBalance > 1 )
                 return pRight;
 
-            if ( hRR == 0 && pRight->value( memory_model::memory_order_relaxed ) == nullptr )
+            if ( hRR == 0 && !pRight->is_valued( memory_model::memory_order_relaxed ))
                 return pRight;
 
             return fix_height_locked( pParent );
@@ -1422,11 +1436,12 @@ namespace cds { namespace container {
 
             end_change( pNode, nodeVersion );
             end_change( pLeft, leftVersion );
+            m_stat.onRotateRightOverLeft();
 
             // caller should have performed only a single rotation if pLeft was going
             // to end up damaged
             assert( hLL - hLRL <= 1 && hLRL - hLL <= 1 );
-            assert( !((hLL == 0 || pLRL == nullptr) && pLeft->value( memory_model::memory_order_relaxed ) == nullptr ));
+            assert( !((hLL == 0 || pLRL == nullptr) && !pLeft->is_valued( memory_model::memory_order_relaxed )));
 
             // We have damaged pParent, pLR (now parent.child), and pNode (now
             // parent.child.right).  pNode is the deepest.  Perform as many fixes as we
@@ -1442,7 +1457,7 @@ namespace cds { namespace container {
             }
 
             // pNode might also be damaged by being an unnecessary routing node
-            if ( (pLRR == nullptr || hR == 0) && pNode->value( memory_model::memory_order_relaxed ) == nullptr ) {
+            if ( (pLRR == nullptr || hR == 0) && !pNode->is_valued( memory_model::memory_order_relaxed )) {
                 // repair involves splicing out pNode and maybe more rotations
                 return pNode;
             }
@@ -1500,13 +1515,14 @@ namespace cds { namespace container {
 
             end_change( pNode, nodeVersion );
             end_change( pRight, rightVersion );
+            m_stat.onRotateLeftOverRight();
 
             assert( hRR - hRLR <= 1 && hRLR - hRR <= 1 );
 
             int nodeBalance = hRLL - hL;
             if ( nodeBalance < -1 || nodeBalance > 1 )
                 return pNode;
-            if ( (pRLL == nullptr || hL == 0) && pNode->value( memory_model::memory_order_relaxed ) == nullptr )
+            if ( (pRLL == nullptr || hL == 0) && !pNode->is_valued( memory_model::memory_order_relaxed ))
                 return pNode;
 
             int balRL = hRight - hNode;

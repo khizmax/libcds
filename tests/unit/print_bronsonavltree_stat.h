@@ -27,6 +27,7 @@ namespace std {
             << "\t\tm_nUpdateRootWaitShrinking: " << s.m_nUpdateRootWaitShrinking.get() << "\n"
             << "\t\t          m_nUpdateSuccess: " << s.m_nUpdateSuccess.get()       << "\n"
             << "\t\t         m_nUpdateUnlinked: " << s.m_nUpdateUnlinked.get()      << "\n"
+            << "\t\t          m_nDisposedValue: " << s.m_nDisposedValue.get()       << "\n"
             << "\t\t           m_nDisposedNode: " << s.m_nDisposedNode.get()        << "\n";
     }
 } //namespace std
