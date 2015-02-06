@@ -895,7 +895,7 @@ namespace cds { namespace container {
 
             if ( c_bRelaxedInsert ) {
                 if ( pNode->version( memory_model::memory_order_acquire ) != nVersion
-                     || pNode->child( nDir ).load( memory_model::memory_order_relaxed ) != nullptr ) 
+                     || child( pNode, nDir, memory_model::memory_order_relaxed ) != nullptr ) 
                 {
                     m_stat.onInsertRetry();
                     return update_flags::retry;
@@ -910,7 +910,7 @@ namespace cds { namespace container {
                 node_scoped_lock l( m_Monitor, *pNode );
 
                 if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion
-                     || pNode->child( nDir ).load( memory_model::memory_order_relaxed ) != nullptr ) 
+                     || child( pNode, nDir, memory_model::memory_order_relaxed ) != nullptr ) 
                 {
                     if ( c_bRelaxedInsert ) {
                         free_node( pNew );
@@ -973,8 +973,8 @@ namespace cds { namespace container {
             if ( !pNode->is_valued( atomics::memory_order_relaxed ) )
                 return update_flags::failed;
 
-            if ( pNode->child( left_child ).load( atomics::memory_order_relaxed ) == nullptr 
-              || pNode->child( right_child ).load( atomics::memory_order_relaxed ) == nullptr )
+            if ( child( pNode, left_child, memory_model::memory_order_relaxed ) == nullptr 
+              || child( pNode, right_child, memory_model::memory_order_relaxed ) == nullptr )
             { 
                 node_type * pDamaged;
                 mapped_type pOld;
@@ -1124,7 +1124,7 @@ namespace cds { namespace container {
 
         void fix_height_and_rebalance( node_type * pNode, rcu_disposer& disp )
         {
-            while ( pNode && pNode->m_pParent.load( memory_model::memory_order_relaxed )) {
+            while ( pNode && parent( pNode, memory_model::memory_order_relaxed )) {
                 int nCond = estimate_node_condition( pNode );
                 if ( nCond == nothing_required || pNode->is_unlinked( memory_model::memory_order_relaxed ) )
                     return;
