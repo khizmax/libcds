@@ -28,7 +28,13 @@ namespace std {
             << "\t\t          m_nUpdateSuccess: " << s.m_nUpdateSuccess.get()       << "\n"
             << "\t\t         m_nUpdateUnlinked: " << s.m_nUpdateUnlinked.get()      << "\n"
             << "\t\t          m_nDisposedValue: " << s.m_nDisposedValue.get()       << "\n"
-            << "\t\t           m_nDisposedNode: " << s.m_nDisposedNode.get()        << "\n";
+            << "\t\t           m_nDisposedNode: " << s.m_nDisposedNode.get()        << "\n"
+            << "\t\t         m_nExtractedValue: " << s.m_nExtractedValue.get()      << "\n"
+            << "\t\t          m_nRightRotation: " << s.m_nRightRotation.get()       << "\n"
+            << "\t\t           m_nLeftRotation: " << s.m_nLeftRotation.get()        << "\n"
+            << "\t\t      m_nLeftRightRotation: " << s.m_nLeftRightRotation.get()   << "\n"
+            << "\t\t      m_nRightLeftRotation: " << s.m_nRightLeftRotation.get()   << "\n";
+
     }
 } //namespace std
 
