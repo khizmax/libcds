@@ -18,10 +18,11 @@ namespace cds { namespace container {
         struct node;
 
         //@cond
-        template <typename Node, typename SyncMonitor>
+        template <typename Node, typename T, typename SyncMonitor>
         struct link_node
         {
-            typedef Node node_type;
+            typedef Node     node_type;
+            typedef T        mapped_type;
             typedef uint32_t version_type;  ///< version type (internal)
 
             enum
@@ -38,6 +39,7 @@ namespace cds { namespace container {
             atomics::atomic<node_type *>    m_pLeft;    ///< Left child
             atomics::atomic<node_type *>    m_pRight;   ///< Right child
             typename SyncMonitor::node_injection m_SyncMonitorInjection;    ///< @ref cds_sync_monitor "synchronization monitor" injected data
+            atomics::atomic<mapped_type *>  m_pValue;   ///< Value
 
         public:
             //@cond
@@ -47,6 +49,7 @@ namespace cds { namespace container {
                 , m_pParent( nullptr )
                 , m_pLeft( nullptr )
                 , m_pRight( nullptr )
+                , m_pValue( nullptr )
             {}
 
             link_node( int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
@@ -55,6 +58,7 @@ namespace cds { namespace container {
                 , m_pParent( pParent )
                 , m_pLeft( pLeft )
                 , m_pRight( pRight )
+                , m_pValue( nullptr )
             {}
 
             atomics::atomic<node_type *>& child( int nDirection )
@@ -109,42 +113,8 @@ namespace cds { namespace container {
             {
                 return (m_nVersion.load( order ) & shrinking) != 0;
             }
-            //@endcond
-        };
-        //@endcond
 
-        // BronsonAVLTree internal node
-        template <typename Key, typename T, typename SyncMonitor >
-        struct node<Key, T*, SyncMonitor>: public link_node< node<Key, T*, SyncMonitor>, SyncMonitor >
-        {
-            typedef link_node< node<Key, T*, SyncMonitor>, SyncMonitor > base_class;
-
-            typedef Key key_type;       ///< key type
-            typedef T   mapped_type;    ///< value type
-            typedef typename base_class::version_type version_type;
-
-            key_type const                  m_key;      ///< Key
-            atomics::atomic<mapped_type *>  m_pValue;   ///< Value
-            node *                          m_pNextRemoved; ///< thread-local list of removed node
-
-        public:
-            //@cond
-            template <typename Q>
-            node( Q&& key )
-                : base_class()
-                , m_key( std::forward<Q>( key ) )
-                , m_pValue( nullptr )
-                , m_pNextRemoved( nullptr )
-            {}
-
-            template <typename Q>
-            node( Q&& key, int nHeight, version_type version, node * pParent, node * pLeft, node * pRight )
-                : base_class( nHeight, version, pParent, pLeft, pRight )
-                , m_key( std::forward<Q>( key ) )
-                , m_pValue( nullptr )
-                , m_pNextRemoved( nullptr )
-            {}
-            T * value( atomics::memory_order order ) const
+            mapped_type * value( atomics::memory_order order ) const
             {
                 return m_pValue.load( order );
             }
@@ -153,6 +123,39 @@ namespace cds { namespace container {
             {
                 return value( order ) != nullptr;
             }
+
+            //@endcond
+        };
+        //@endcond
+
+        // BronsonAVLTree internal node
+        template <typename Key, typename T, typename SyncMonitor >
+        struct node<Key, T*, SyncMonitor>: public link_node< node<Key, T*, SyncMonitor>, T, SyncMonitor >
+        {
+            typedef link_node< node<Key, T*, SyncMonitor>, T, SyncMonitor > base_class;
+
+            typedef Key key_type;       ///< key type
+            typedef T   mapped_type;    ///< value type
+            typedef typename base_class::version_type version_type;
+
+            key_type const                  m_key;      ///< Key
+            node *                          m_pNextRemoved; ///< thread-local list of removed node
+
+        public:
+            //@cond
+            template <typename Q>
+            node( Q&& key )
+                : base_class()
+                , m_key( std::forward<Q>( key ) )
+                , m_pNextRemoved( nullptr )
+            {}
+
+            template <typename Q>
+            node( Q&& key, int nHeight, version_type version, node * pParent, node * pLeft, node * pRight )
+                : base_class( nHeight, version, pParent, pLeft, pRight )
+                , m_key( std::forward<Q>( key ) )
+                , m_pNextRemoved( nullptr )
+            {}
             //@endcond
         };
 

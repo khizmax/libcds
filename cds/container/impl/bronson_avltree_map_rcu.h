@@ -6,8 +6,6 @@
 #include <memory> // unique_ptr
 #include <cds/container/details/bronson_avltree_base.h>
 #include <cds/urcu/details/check_deadlock.h>
-#include <cds/details/binary_functor_wrapper.h>
-
 
 namespace cds { namespace container {
 
@@ -294,7 +292,7 @@ namespace cds { namespace container {
             CDS_UNUSED( pred );
             return do_remove( 
                 key, 
-                cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
+                cds::opt::details::make_comparator_from_less<Less>(),
                 []( mapped_type pVal ) -> bool { free_value( pVal ); return true;  }
             );
         }
@@ -343,7 +341,7 @@ namespace cds { namespace container {
             CDS_UNUSED( pred );
             return do_remove( 
                 key, 
-                cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
+                cds::opt::details::make_comparator_from_less<Less>(),
                 [&f]( mapped_type pVal ) -> bool { 
                     assert( pVal );
                     f( *pVal ); 
@@ -435,7 +433,7 @@ namespace cds { namespace container {
 
             do_remove(
                 key,
-                cds::details::predicate_wrapper<key_type, Less, cds::details::trivial_accessor >(),
+                cds::opt::details::make_comparator_from_less<Less>(),
                 [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
             );
             return pExtracted;
@@ -461,9 +459,8 @@ namespace cds { namespace container {
         bool find( K const& key, Func f )
         {
             return do_find( key, key_comparator(), 
-                [&f]( sync_monitor& monitor, node_type * pNode ) -> bool {
+                [&f]( node_type * pNode ) -> bool {
                     assert( pNode != nullptr );
-                    node_scoped_lock l( monitor, *pNode );
                     mapped_type pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
                     if ( pVal ) {
                         f( pNode->m_key, *pVal );
@@ -485,10 +482,9 @@ namespace cds { namespace container {
         bool find_with( K const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return do_find( key, opt::details::make_comparator_from_less<Less>(), 
-                [&f]( sync_monitor& monitor, node_type * pNode ) -> bool {
+            return do_find( key, cds::opt::details::make_comparator_from_less<Less>(), 
+                [&f]( node_type * pNode ) -> bool {
                     assert( pNode != nullptr );
-                    node_scoped_lock l( monitor, *pNode );
                     mapped_type pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
                     if ( pVal ) {
                         f( pNode->m_key, *pVal );
@@ -509,7 +505,7 @@ namespace cds { namespace container {
         template <typename K>
         bool find( K const& key )
         {
-            return do_find( key, key_comparator(), []( sync_monitor&, node_type * ) -> bool { return true; });
+            return do_find( key, key_comparator(), []( node_type * ) -> bool { return true; });
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -523,7 +519,7 @@ namespace cds { namespace container {
         bool find_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return do_find( key, opt::details::make_comparator_from_less<Less>(), []( sync_monitor&, node_type * ) -> bool { return true; } );
+            return do_find( key, cds::opt::details::make_comparator_from_less<Less>(), []( node_type * ) -> bool { return true; } );
         }
 
         /// Clears the tree (thread safe, not atomic)
@@ -662,7 +658,7 @@ namespace cds { namespace container {
                         // key found
                         node_scoped_lock l( m_Monitor, *pChild );
                         if ( pChild->is_valued( memory_model::memory_order_relaxed )) {
-                            if ( f( m_Monitor, pChild ) ) {
+                            if ( f( pChild ) ) {
                                 m_stat.onFindSuccess();
                                 return find_result::found;
                             }
@@ -940,8 +936,8 @@ namespace cds { namespace container {
         int try_update_node( Func funcUpdate, node_type * pNode )
         {
             mapped_type pOld;
+            assert( pNode != nullptr );
             {
-                assert( pNode != nullptr );
                 node_scoped_lock l( m_Monitor, *pNode );
 
                 if ( pNode->is_unlinked( memory_model::memory_order_relaxed )) {
@@ -951,8 +947,12 @@ namespace cds { namespace container {
 
                 pOld = pNode->value( memory_model::memory_order_relaxed );
                 mapped_type pVal = funcUpdate( pNode );
-                assert( pVal != nullptr );
-                pNode->m_pValue.store( pVal, memory_model::memory_order_relaxed );
+                if ( pVal == pOld )
+                    pOld = nullptr;
+                else {
+                    assert( pVal != nullptr );
+                    pNode->m_pValue.store( pVal, memory_model::memory_order_relaxed );
+                }
             }
 
             if ( pOld ) {
@@ -1062,12 +1062,10 @@ namespace cds { namespace container {
 
             // Mark the node as unlinked
             pNode->version( node_type::unlinked, memory_model::memory_order_release );
-            mapped_type pVal = pNode->value( memory_model::memory_order_relaxed );
-            if ( pVal ) {
-                free_value( pVal );
-                m_stat.onDisposeValue();
-                pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
-            }
+
+            // The value will be disposed by calling function
+            pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
+
             disp.dispose( pNode );
             m_stat.onDisposeNode();
 

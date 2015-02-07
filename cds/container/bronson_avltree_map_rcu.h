@@ -143,8 +143,8 @@ namespace cds { namespace container {
                     CDS_UNUSED( pNode );
                     return cxx_allocator().New();
                 },
-                    static_cast<int>(update_flags::allow_insert)
-            ) == static_cast<int>(update_flags::result_inserted);
+                update_flags::allow_insert
+            ) == update_flags::result_inserted;
         }
 
         /// Inserts new node
@@ -170,8 +170,8 @@ namespace cds { namespace container {
                     CDS_UNUSED( pNode );
                     return cxx_allocator().New( val );
                 },
-                static_cast<int>(update_flags::allow_insert)
-            ) == static_cast<int>(update_flags::result_inserted);
+                update_flags::allow_insert
+            ) == update_flags::result_inserted;
         }
 
         /// Inserts new node and initialize it by a functor
@@ -208,8 +208,8 @@ namespace cds { namespace container {
                     func( pNode->m_key, *pVal );
                     return pVal;
                 },
-                static_cast<int>(update_flags::allow_insert)
-            ) == static_cast<int>(update_flags::result_inserted);
+                update_flags::allow_insert
+            ) == update_flags::result_inserted;
         }
 
         /// For key \p key inserts data of type \p mapped_type created in-place from \p args
@@ -228,8 +228,8 @@ namespace cds { namespace container {
                     CDS_UNUSED( pNode );
                     return cxx_allocator().New( std::forward<Args>(args)...);
                 },
-                static_cast<int>(update_flags::allow_insert)
-            ) == static_cast<int>(update_flags::result_inserted);
+                update_flags::allow_insert
+            ) == update_flags::result_inserted;
         }
 
         /// Ensures that the \p key exists in the map

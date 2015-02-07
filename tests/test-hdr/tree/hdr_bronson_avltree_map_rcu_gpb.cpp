@@ -23,14 +23,13 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_less()
     {
-        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type,
+        struct traits: public 
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
             >::type
-        > map_type;
-
+        {};
+        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
         test<map_type, print_stat>();
-
     }
 
 } // namespace tree
