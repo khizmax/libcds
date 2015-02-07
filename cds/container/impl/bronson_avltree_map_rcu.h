@@ -368,8 +368,13 @@ namespace cds { namespace container {
         */
         unique_ptr extract_min()
         {
-            //TODO
-            return unique_ptr();
+            unique_ptr pExtracted;
+
+            do_extract_minmax(
+                left_child,
+                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
+            );
+            return pExtracted;
         }
 
         /// Extracts an item with maximal key from the map
@@ -390,8 +395,13 @@ namespace cds { namespace container {
         */
         unique_ptr extract_max()
         {
-            //TODO
-            return unique_ptr();
+            unique_ptr pExtracted;
+
+            do_extract_minmax(
+                right_child,
+                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
+            );
+            return pExtracted;
         }
 
         /// Extracts an item from the map
@@ -630,6 +640,34 @@ namespace cds { namespace container {
             }
         }
 
+        template <typename Func>
+        void do_extract_minmax( int nDir, Func func )
+        {
+            check_deadlock_policy::check();
+
+            rcu_disposer removed_list;
+            {
+                rcu_lock l;
+
+                int result;
+                do {
+                    // get right child of root
+                    node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
+                    if ( pChild ) {
+                        version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
+                        if ( nChildVersion & node_type::shrinking ) {
+                            m_stat.onRemoveRootWaitShrinking();
+                            pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
+                            result = update_flags::retry;
+                        }
+                        else if ( pChild == child( m_pRoot, right_child, memory_model::memory_order_acquire )) {
+                            result = try_extract_minmax( nDir, func, m_pRoot, pChild, nChildVersion, removed_list );
+                        }
+                    }
+                } while ( result == update_flags::retry );
+            }
+        }
+
         //@endcond
 
     private:
@@ -756,7 +794,7 @@ namespace cds { namespace container {
                 if ( pChild ) {
                     version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
                     if ( nChildVersion & node_type::shrinking ) {
-                        m_stat.onUpdateRootWaitShrinking();
+                        m_stat.onRemoveRootWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
                         result = update_flags::retry;
                     }
@@ -789,8 +827,10 @@ namespace cds { namespace container {
             int result;
             do {
                 node_type * pChild = child( pNode, nCmp, memory_model::memory_order_relaxed );
-                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
+                if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
+                    m_stat.onUpdateRetry();
                     return update_flags::retry;
+                }
 
                 if ( pChild == nullptr ) {
                     // insert new node
@@ -842,8 +882,10 @@ namespace cds { namespace container {
             int result;
             do {
                 node_type * pChild = child( pNode, nCmp, memory_model::memory_order_relaxed );
-                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
+                if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
+                    m_stat.onRemoveRetry();
                     return update_flags::retry;
+                }
 
                 if ( pChild == nullptr ) {
                     return update_flags::failed;
@@ -853,7 +895,7 @@ namespace cds { namespace container {
                     result = update_flags::retry;
                     version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
                     if ( nChildVersion & node_type::shrinking ) {
-                        m_stat.onUpdateWaitShrinking();
+                        m_stat.onRemoveWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
                         // retry
                     }
@@ -862,7 +904,7 @@ namespace cds { namespace container {
 
                         // validate the read that our caller took to get to node
                         if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
-                            m_stat.onUpdateRetry();
+                            m_stat.onRemoveRetry();
                             return update_flags::retry;
                         }
 
@@ -872,6 +914,53 @@ namespace cds { namespace container {
                         // This means that we are no longer vulnerable to node shrinks, and we don't need
                         // to validate node version any more.
                         result = try_remove( key, cmp, func, pNode, pChild, nChildVersion, disp );
+                    }
+                }
+            } while ( result == update_flags::retry );
+            return result;
+        }
+
+        template <typename Func>
+        int try_extract_minmax( int nDir, Func func, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
+        {
+            assert( gc::is_locked() );
+            assert( nVersion != node_type::unlinked );
+
+            int result;
+            do {
+                node_type * pChild = child( pNode, nDir, memory_model::memory_order_relaxed );
+                if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
+                    m_stat.onRemoveRetry();
+                    return update_flags::retry;
+                }
+
+                if ( pChild == nullptr ) {
+                    // Found min/max
+                    return try_remove_node( pParent, pNode, nVersion, func, disp );
+                }
+                else {
+                    result = update_flags::retry;
+                    version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
+                    if ( nChildVersion & node_type::shrinking ) {
+                        m_stat.onRemoveWaitShrinking();
+                        pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
+                        // retry
+                    }
+                    else if ( pChild == child( pNode, nDir, memory_model::memory_order_relaxed )) {
+                        // this second read is important, because it is protected by nChildVersion
+
+                        // validate the read that our caller took to get to node
+                        if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                            m_stat.onRemoveRetry();
+                            return update_flags::retry;
+                        }
+
+                        // At this point we know that the traversal our parent took to get to node is still valid.
+                        // The recursive implementation will validate the traversal from node to
+                        // child, so just prior to the node nVersion validation both traversals were definitely okay.
+                        // This means that we are no longer vulnerable to node shrinks, and we don't need
+                        // to validate node version any more.
+                        result = try_extract_minmax( nDir, func, pNode, pChild, nChildVersion, disp );
                     }
                 }
             } while ( result == update_flags::retry );

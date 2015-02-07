@@ -172,7 +172,7 @@ namespace cds { namespace container {
             event_counter   m_nInsertSuccess;       ///< Count of inserting data node
             event_counter   m_nRelaxedInsertFailed; ///< Count of false creating of data nodes (only if @ref bronson_avltree::relaxed_insert "relaxed insertion" is enabled)
             event_counter   m_nInsertRetry;         ///< Count of insert retries via concurrent operations
-            event_counter   m_nUpdateWaitShrinking; ///< Count of waiting until shrinking completed duting \p update() call
+            event_counter   m_nUpdateWaitShrinking; ///< Count of waiting until shrinking completed during \p update() call
             event_counter   m_nUpdateRetry;         ///< Count of update retries via concurrent operations
             event_counter   m_nUpdateRootWaitShrinking;  ///< Count of waiting until root shrinking completed duting \p update() call
             event_counter   m_nUpdateSuccess;       ///< Count of updating data node
@@ -180,6 +180,9 @@ namespace cds { namespace container {
             event_counter   m_nDisposedNode;        ///< Count of disposed node
             event_counter   m_nDisposedValue;       ///< Count of disposed value
             event_counter   m_nExtractedValue;      ///< Count of extracted value
+            event_counter   m_nRemoveRetry;         ///< Count o erase/extract retries
+            event_counter   m_nRemoveWaitShrinking; ///< ount of waiting until shrinking completed during \p erase() or \p extract() call
+            event_counter   m_nRemoveRootWaitShrinking;  ///< Count of waiting until root shrinking completed duting \p erase() or \p extract() call
 
             event_counter   m_nRightRotation;       ///< Count of single right rotation
             event_counter   m_nLeftRotation;        ///< Count of single left rotation
@@ -203,6 +206,8 @@ namespace cds { namespace container {
             void onDisposeNode()            { ++m_nDisposedNode; }
             void onDisposeValue()           { ++m_nDisposedValue; }
             void onExtractValue()           { ++m_nExtractedValue; }
+            void onRemoveRetry()            { ++m_nRemoveRetry; }
+            void onRemoveWaitShrinking()    { ++m_nRemoveWaitShrinking; }
 
             void onRotateRight()            { ++m_nRightRotation; }
             void onRotateLeft()             { ++m_nLeftRotation; }
@@ -230,6 +235,9 @@ namespace cds { namespace container {
             void onDisposeNode()            const {}
             void onDisposeValue()           const {}
             void onExtractValue()           const {}
+            void onRemoveRetry()            const {}
+            void onRemoveWaitShrinking()    const {}
+            void onRemoveRootWaitShrinking() const {}
 
             void onRotateRight()            const {}
             void onRotateLeft()             const {}
