@@ -128,11 +128,13 @@ namespace cds { namespace container {
         };
         //@endcond
 
-        // BronsonAVLTree internal node
+        /// BronsonAVLTree internal node
         template <typename Key, typename T, typename SyncMonitor >
         struct node<Key, T*, SyncMonitor>: public link_node< node<Key, T*, SyncMonitor>, T, SyncMonitor >
         {
+            //@cond
             typedef link_node< node<Key, T*, SyncMonitor>, T, SyncMonitor > base_class;
+            //@endcond
 
             typedef Key key_type;       ///< key type
             typedef T   mapped_type;    ///< value type
@@ -157,6 +159,29 @@ namespace cds { namespace container {
                 , m_pNextRemoved( nullptr )
             {}
             //@endcond
+        };
+
+        /// Base value type for BronsonAVLTreeMap
+        /**
+            If value type for \p BronsonAVLTreeMap is based on this struct,
+            the map will support some additional methods like \p BronsonAVLTreeMap::get().
+            Moreover, the disposer behaviour is different for ordinal values and
+            values based on \p %bronson_avltree::value:
+            - for ordinal value, its disposer is called immediately after removing
+              the node from the tree. It this case it is not possible to support
+              map's methods that return raw pointer to the tree's value.
+            - if the value type is based on \p %bronson_avltree::value, 
+              i.e. \p std::is_base_of( bronson_avltree::value, value_type )::value is \p true,
+              the disposer is called via full RCU cycle. It means that under 
+              RCU lock the methods returning raw pointer can be implemented.
+        */
+        struct value
+        {
+            value *     m_pNextRetired;
+            
+            value()
+                : m_pNextRetired(nullptr)
+            {}
         };
 
         /// BronsonAVLTreeMap internal statistics

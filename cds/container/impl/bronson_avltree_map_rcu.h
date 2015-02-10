@@ -4,6 +4,7 @@
 #define CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
 
 #include <memory> // unique_ptr
+#include <type_traits> // is_base_of
 #include <cds/container/details/bronson_avltree_base.h>
 #include <cds/urcu/details/check_deadlock.h>
 
@@ -78,6 +79,8 @@ namespace cds { namespace container {
 
         typedef cds::details::Allocator< node_type, node_allocator_type > cxx_allocator;
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock >   check_deadlock_policy;
+        
+        static CDS_CONSTEXPR bool const c_bRetiringValue = std::is_base_of< bronson_avltree::value, typename std::remove_pointer<mapped_type>::type>::value;
 
         enum class find_result
         {
@@ -146,10 +149,66 @@ namespace cds { namespace container {
             return pNode->m_pParent.load( order );
         }
 
-        // RCU safe disposer for node
+        
+        template <bool Enabled>
+        class rcu_value_disposer;
+        
+        template <>
+        class rcu_value_disposer<true>
+        {
+            bronson_avltree::value *    m_pValueRetiredList; ///< head of retired value list
+        public:
+            rcu_value_disposer()
+                : m_pValueRetiredList(nullptr)
+            {}
+            
+            ~rcu_value_disposer()
+            {
+                clean();
+            }
+            
+            void dispose( mapped_type pVal )
+            {
+                assert( pVal );
+                static_cast< bronson_avltree::value *>(pVal)->m_pNextRetired = m_pValueRetiredList;
+                m_pValueRetiredList = static_cast< bronson_avltree::value *>(pVal);
+            }
+            
+        private:
+            struct internal_disposer
+            {
+                void operator()( bronson_avltree::value * p ) const
+                {
+                    free_value( static_cast<mapped_type>( p ));
+                }
+            };
+            
+            void clean()
+            {
+                // TODO: use RCU::batch_retire
+                for ( auto p = m_pValueRetiredList; p; ) {
+                    auto pNext = p->m_pNextRetired;
+                    gc::template retire_ptr<internal_disposer>( p );
+                    p = pNext;
+                }
+            }
+        };
+        
+        template <>
+        class rcu_value_disposer<false>
+        {
+        public:
+            void dispose( mapped_type pVal )
+            {
+                free_value( pVal );
+            }
+        };
+        
+        // RCU safe disposer 
         class rcu_disposer
         {
-            node_type *     m_pRetiredList; ///< head of retired list
+            node_type *     m_pRetiredList; ///< head of retired node list
+            rcu_value_disposer< c_bRetiringValue > m_RetiredValueList;
 
         public:
             rcu_disposer()
@@ -167,7 +226,12 @@ namespace cds { namespace container {
                 pNode->m_pNextRemoved = m_pRetiredList;
                 m_pRetiredList = pNode;
             }
-
+            
+            void dispose_value( mapped_type pVal )
+            {
+                m_RetiredValueList.dispose( pVal );
+            }
+            
         private:
             struct internal_disposer
             {
@@ -180,7 +244,10 @@ namespace cds { namespace container {
             void clean()
             {
                 assert( !gc::is_locked() );
+                
+                // TODO: use RCU::batch_retire
 
+                // Dispose nodes
                 for ( node_type * p = m_pRetiredList; p; ) {
                     node_type * pNext = static_cast<node_type *>( p->m_pNextRemoved );
                     // Value already disposed
@@ -559,6 +626,7 @@ namespace cds { namespace container {
         */
         void unsafe_clear()
         {
+            clear(); // temp solution
             //TODO
         }
 
