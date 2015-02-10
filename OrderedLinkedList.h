@@ -1,230 +1,209 @@
 #ifndef ORDEREDLINKEDLIST_H_INCLUDED
 #define ORDEREDLINKEDLIST_H_INCLUDED
 #include "LinkedListType.h"
-//классс для отсортированного Lock Free списка. В нем объявляем и описываем методы, для неблокирующих операций
-//вставки, поиска и удаления элемента из списка.
+#include <type_traits>
+#include <windows.h>
+
 using namespace std;
+using namespace boost;
 template <class Type>
 class orderedLinkedList:public LinkedListType<Type>
 {
 public:
-    //compare and swap atomic function
-    volatile bool CAS(nodeType<Type>** node1_add,nodeType<Type>* node1,nodeType<Type>* node2);
 
-   volatile bool search(const Type&) ;
-    volatile bool find(const Type&) ;
-   volatile bool insert (const Type&);
-    volatile bool insertFirst(const Type&);
-    volatile  bool insertLast(const Type&);
-     volatile bool deleteNode(const Type&);
-    bool is_marked_reference(nodeType<Type>* node);
+  int compare (int one, int two);
+
+bool try_insert(nodeType<Type>* prev, nodeType<Type>* next, nodeType<Type>* node);
+
+bool try_delete(nodeType<Type>* prev, nodeType<Type>* next,nodeType<Type>* node, const Type& item);
+ nodeType<Type>* search(nodeType<Type>**left_node,const Type&) ;
+     bool find(const Type&) ;
+  bool insert (const Type&);
+
+      bool deleteNode(const Type&);
+
 };
-template <class Type>
- bool   orderedLinkedList<Type>::is_marked_reference(nodeType<Type>* node)
- {
-     if (node==NULL)
-        return true;
-        else
-        return false;
- }
- template <class Type>
- volatile bool orderedLinkedList<Type>::CAS (nodeType<Type>** node1_add,nodeType<Type>* node1,nodeType<Type>* node2)
- {if (*node1_add==node1)
-
- {*node1_add=node2;
- return true;
- }
- else
- {
-
-     return false;
- }
- }
-
 
 template <class Type>
- volatile bool orderedLinkedList<Type>::search (const Type& item)
- {bool found=false;
- nodeType<Type> *current;
-     current=first;
-     while(current !=NULL &&!found)
-        if (current -> info>=item)
-        found = true;
-     else
-        current = current->link;
-        do {
+   int orderedLinkedList<Type>::compare (int one, int two) {
 
-     if (found)
+            if (one>two) return +1;
+            if (one==two) return 0;
+            if (two>one) return -1;
+return 0;
+        }
+//help метод для метода insert
+template <class Type>
+bool orderedLinkedList<Type>::try_insert(nodeType<Type>* prev, nodeType<Type>* next, nodeType<Type>* node)
 {
 
 
-        found = (current->info == item);
-                 if (CAS(&(current),current,current->link))
-return true;
-return found;
-
-}
-else
-    return false;
-        } while(true);
-
- }
-
- template <class Type>
-volatile bool orderedLinkedList<Type>::insert (const Type& item)
- { if (!search(item)){
-     nodeType<Type> *current,*trailCurrent, *newNode;
-     bool found;
-
-     newNode = new nodeType<Type>;
-
-   newNode->info=item;
-   newNode->link =NULL;
-   do {
-   if (first ==NULL)
-   {
-       first=newNode;
-       last=newNode;
-       count++;
-       if (CAS(&(first->link),last,newNode))
-        return true;
-   }
-   else{
-    current=first;
-    if (first->info==item)
-        return false;
-    found=false;
-    while(current !=NULL && !found)
-        if (current->info>=item)
-
-
-        found=true;
-
-    else{
-        trailCurrent = current;
-        current = current->link;
-
-    }
-    if (current==first)
+    for (;;)
     {
-        newNode->link=first;
-        first=newNode;
+
+
+
+
+
+        // пытаемся вставить узел cas перацией
+        node->link.store(next, memory_order_relaxed);
+
+
+
+
+        if (prev->link.compare_exchange_strong(next, node, memory_order_release))
+            // если cas успешна, запись вставлена
+             {
         count++;
-          if (CAS(&(first->link),first->link,newNode->link))
-        return true;
-    }
-    else
+
+
+            return true;
+        }
+        // в другом случае, что - то поменялось,
+        // и мы должны найти новое место для вставки
+        // обновляем предыдущий и следующий указатели
+        for (;;)
         {
-            trailCurrent->link=newNode;
-    newNode->link=current;
-    if (current==NULL)
-        last=newNode;
-    count++;
-    //here we go with our CAS atomic func
-           if (CAS(&( last), last,newNode))
-        return true;
+            // сравниваем значения
+            int cmp = compare(node->info,next->info);
+            if (cmp > 0)
+            {
 
+                // new 'next' ключ узла меньше вставляемого ключа
+                // запоминаем как предыдущий узел и пересравниваем значения
+             prev = next;
+         next = prev->link.load(memory_order_consume);
+                if (next == 0)
+                    break;
+                continue;
+            }
+            else if (cmp == 0)
+            {
+                // такой ключ уже есть в списке
+                return false;
+            }
+            else /* (cmp < 0) */
+            {
+                // new 'next' ключ узла больше чем ключ вставляемого элемента
+                // делаем cas еще раз
+                break;
+         }   }
 
-    }
-   }
-
-
-   }
-    while (true);
-return true;
- }
-   }
-
- template <class Type>
-
- volatile bool orderedLinkedList<Type>::find (const Type& item)
-{
-  bool flag=search(item) ;
-  if (flag) return true; else return false;
 }
 
- template <class Type>
-volatile bool orderedLinkedList<Type>::insertFirst(const Type& item)
- {
 
-     if (insert(item))
-      return true;
-     else
-        return false;
- }
- template <class Type>
- volatile bool orderedLinkedList<Type>::insertLast(const Type& item)
- {
-     if (insert(item))
-      return true;
-     else
-        return false;
- }
- template <class Type>
- volatile bool orderedLinkedList<Type>::deleteNode(const Type& item)
- {if (search(item)){
-       nodeType<Type> *current,*trailCurrent;
+
+}
+//help функция для delete метода
+template <class Type>
+bool orderedLinkedList<Type>::try_delete(nodeType<Type>* prev, nodeType<Type>* next,nodeType<Type>* node,const Type& item)
+{      nodeType<Type> *current,*trailCurrent;
        bool found;
-
-
-       if (first==NULL)
-        cout<<"List is empty."<<endl;
-       else
-       {
-            do {
+for (;;)
+{
+//проходим по списку
            current=first;
+
            found=false;
            while(current !=NULL && !found)
             if (current->info>=item)
+
+
+
             found=true;
+
+
            else
            {
+
                trailCurrent = current;
-               current=current->link;
+                 current =  current->link.load(memory_order_consume);
+
+
            }
+           //если прошли все узлы списка и не нашли нужный нам ,то выводим сообщение о том что узел с тайим ключом не найден
            if (current ==NULL)
-            cout<< "The item isn't in List."<<endl;
-           else if (current->info==item)
            {
 
+
+            cout<< "The item isn't in List."<<endl;
+                        return false;
+break;
+           }
+           //если все таки нащли элемент по ключу
+           else if (current->info==item)
+           {
+//удаляем первый элемент списка
                if (first==current)
                {
 
-                   first=first->link;
-                   if (first==NULL)
-                    last=NULL;
-//                     current->mark=true;
-                   delete current;
+
+                // first= first->link.load(memory_order_consume);
+
+
+first->link.compare_exchange_strong(first, nullptr, memory_order_release);
+count--;
+
 
 
                }
+               //удаляем другие элементы
                else
                {
-                   trailCurrent->link=current->link;
+
+                    trailCurrent->link= current->link.load(memory_order_consume);
+
                    if (current==last)
                     last=trailCurrent;
-                    //if ellement isn't deleted
-                    if (!is_marked_reference(current))
-                         //here we go with our CAS atomic func
-                    if (CAS (&(current),
-current, current->link))
-break;
 
-                   delete current;
+                  trailCurrent->link.compare_exchange_strong(current, nullptr, memory_order_release);
+                   count--;
+
+
                }
 
-if (CAS(&( current->link), current->link,current))
-        return true;
-               count--;
 
+               return true;
+break;
            }
-           else
-            cout<<"The item isn't in the list"<<endl;
-           }
-      while(true); }
 
+
+
+}
+}
+
+
+
+
+
+//lock free вставка нового элемента в список
+ template <class Type>
+bool orderedLinkedList<Type>::insert (const Type& item)
+ {
+     nodeType<Type>  *newNode;
+
+
+ newNode=new nodeType<Type>;
+
+   newNode->info=item;
+   newNode->link =NULL;
+
+  if(  try_insert( first, last, newNode))
 return true;
- }
+else return false;
+
+   }
+
+
+//lock free удаление  элемента из списка
+ template <class Type>
+ bool orderedLinkedList<Type>::deleteNode(const Type& item)
+ {
+ nodeType<Type>  *node;
+if(  try_delete( first, last,node, item))
+return true;
+else return false;
+
        }
 
 #endif // ORDEREDLINKEDLIST_H_INCLUDED

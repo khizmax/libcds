@@ -4,8 +4,7 @@
 #include <iostream>
 
 #include <cassert>
-//абстрактный класс для списка как сортированного так и не сортированного, так как сортированный список делался
-//из не сортированного. Так же в классе описываются конструктор и деструктор списка, а отсортированный список просто наследует этот класс.
+
 using namespace std;
 template <class Type>
 class LinkedListType
@@ -20,10 +19,10 @@ public:
     Type front() const;
     Type back() const;
 
-    virtual volatile bool search (const Type&) const=0;
-    virtual volatile bool insertFirst (const Type&)=0;
-    virtual volatile bool insertLast (const Type&) =0;
-    virtual volatile bool deleteNode (const Type&)=0;
+ virtual bool insert (const Type&)=0;
+
+  virtual   bool deleteNode(const Type&)=0;
+
     LinkedListIterator<Type> begin();
      LinkedListIterator<Type> end();
      LinkedListType();
@@ -31,8 +30,8 @@ public:
     ~LinkedListType();
 protected:
     int count;
-    nodeType<Type> *first;
-     nodeType<Type> *last;
+    nodeType<Type>* first;
+      nodeType<Type>* last;
 private:
     void copyList(const LinkedListType<Type>&);
       void copyNode(const nodeType<Type>&);
@@ -47,9 +46,15 @@ bool LinkedListType<Type>::isEmptyList() const
 template <class Type>
 LinkedListType<Type>::LinkedListType()
 {
-    first=NULL;
-    last=NULL;
-    count=0;
+    first=new nodeType<Type>;
+    first->info=-1000000000;
+//first->marked=false;
+    last=new nodeType<Type>;
+    last->info=1000000000;
+  // last->marked=false;
+    last->link=NULL;
+    first->link=last;
+    count=2;
 }
 template <class Type>
 void LinkedListType<Type>::destroyList()

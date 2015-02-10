@@ -1,14 +1,19 @@
 #ifndef LINKEDLISTITERATOR_H_INCLUDED
 #define LINKEDLISTITERATOR_H_INCLUDED
-
+#include "atomic.h"
 #include <iostream>
-//класс итератор для списка, здесь мы объявляем  основные операции, которые можно делать со списком
+
 template <class Type>
-struct nodeType
+
+ struct nodeType
 {
-    Type info;
-    nodeType<Type> *link;
+   Type    info;
+   volatile   boost::atomic<nodeType*> link;
+
+ // bool  marked;
+
 };
+
 template <class Type>
 class LinkedListIterator
 {
