@@ -342,7 +342,7 @@ namespace cds { namespace container {
             return do_remove(
                 key,
                 key_comparator(),
-                []( mapped_type pVal ) -> bool { free_value( pVal ); return true; }
+                []( mapped_type pVal, rcu_disposer& disp ) -> bool { disp.dispose_value( pVal ); return true; }
             );
         }
 
@@ -360,7 +360,7 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 cds::opt::details::make_comparator_from_less<Less>(),
-                []( mapped_type pVal ) -> bool { free_value( pVal ); return true;  }
+                []( mapped_type pVal, rcu_disposer& disp ) -> bool { disp.dispose_value( pVal ); return true;  }
             );
         }
 
@@ -386,10 +386,10 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 key_comparator(), 
-                [&f]( mapped_type pVal ) -> bool { 
+                [&f]( mapped_type pVal, rcu_disposer& disp ) -> bool { 
                     assert( pVal );
                     f( *pVal ); 
-                    free_value(pVal); 
+                    disp.dispose_value(pVal); 
                     return true;
                 }
             );
@@ -409,10 +409,10 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 cds::opt::details::make_comparator_from_less<Less>(),
-                [&f]( mapped_type pVal ) -> bool { 
+                [&f]( mapped_type pVal, rcu_disposer& disp ) -> bool { 
                     assert( pVal );
                     f( *pVal ); 
-                    free_value(pVal); 
+                    disp.dispose_value(pVal); 
                     return true;
                 }
             );
@@ -439,7 +439,7 @@ namespace cds { namespace container {
 
             do_extract_minmax(
                 left_child,
-                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
             );
             return pExtracted;
         }
@@ -466,7 +466,7 @@ namespace cds { namespace container {
 
             do_extract_minmax(
                 right_child,
-                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
             );
             return pExtracted;
         }
@@ -490,7 +490,7 @@ namespace cds { namespace container {
             do_remove(
                 key,
                 key_comparator(),
-                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
             );
             return pExtracted;
         }
@@ -511,7 +511,7 @@ namespace cds { namespace container {
             do_remove(
                 key,
                 cds::opt::details::make_comparator_from_less<Less>(),
-                [&pExtracted]( mapped_type pVal ) -> bool { pExtracted.reset( pVal ); return false; }
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
             );
             return pExtracted;
         }
@@ -887,7 +887,7 @@ namespace cds { namespace container {
             int nCmp = cmp( key, pNode->m_key );
             if ( nCmp == 0 ) {
                 if ( nFlags & update_flags::allow_update ) {
-                    return try_update_node( funcUpdate, pNode );
+                    return try_update_node( funcUpdate, pNode, disp );
                 }
                 return update_flags::failed;
             }
@@ -1090,7 +1090,7 @@ namespace cds { namespace container {
         }
 
         template <typename Func>
-        int try_update_node( Func funcUpdate, node_type * pNode )
+        int try_update_node( Func funcUpdate, node_type * pNode, rcu_disposer& disp )
         {
             mapped_type pOld;
             assert( pNode != nullptr );
@@ -1113,7 +1113,7 @@ namespace cds { namespace container {
             }
 
             if ( pOld ) {
-                free_value(pOld);
+                disp.dispose_value(pOld);
                 m_stat.onDisposeValue();
             }
 
@@ -1154,7 +1154,7 @@ namespace cds { namespace container {
                 }
 
                 --m_ItemCounter;
-                if ( func( pOld ) )   // calls pOld disposer inside
+                if ( func( pOld, disp ))   // calls pOld disposer inside
                     m_stat.onDisposeValue();
                 else
                     m_stat.onExtractValue();
@@ -1176,7 +1176,7 @@ namespace cds { namespace container {
 
                 if ( result == update_flags::result_removed ) {
                     --m_ItemCounter;
-                    if ( func( pOld ))  // calls pOld disposer inside
+                    if ( func( pOld, disp ))  // calls pOld disposer inside
                         m_stat.onDisposeValue();
                     else
                         m_stat.onExtractValue();
