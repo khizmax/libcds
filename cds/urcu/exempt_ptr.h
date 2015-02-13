@@ -108,7 +108,7 @@ namespace cds { namespace urcu {
         /// The exempt pointer is not copy-constructible
         exempt_ptr( exempt_ptr const& ) = delete;
 
-        /// Releases the pointer
+        /// Releases the pointer, see \p release()
         ~exempt_ptr()
         {
             release();

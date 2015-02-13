@@ -17,12 +17,30 @@ namespace cds { namespace container {
                 typedef T mapped_type;
                 typedef Traits original_traits;
 
-                typedef cds::details::Allocator< mapped_type, typename original_traits::allocator > cxx_allocator;
+                struct internal_mapped_type : public bronson_avltree::value
+                {
+                    mapped_type     m_val;
+
+                    template <typename... Args>
+                    internal_mapped_type( Args&&... args )
+                        : m_val( std::forward<Args>(args)...)
+                    {}
+                };
+
+                typedef cds::details::Allocator< internal_mapped_type, typename original_traits::allocator > cxx_allocator;
+
+                struct cast_mapped_type
+                {
+                    mapped_type * operator()( internal_mapped_type * p ) const
+                    {
+                        return &(p->m_val);
+                    }
+                };
 
                 struct traits : public original_traits
                 {
                     struct disposer {
-                        void operator()( mapped_type * p ) const
+                        void operator()( internal_mapped_type * p ) const
                         {
                             cxx_allocator().Delete( p );
                         }
@@ -30,7 +48,7 @@ namespace cds { namespace container {
                 };
 
                 // Metafunction result
-                typedef BronsonAVLTreeMap< RCU, Key, T *, traits > type;
+                typedef BronsonAVLTreeMap< RCU, Key, internal_mapped_type *, traits > type;
             };
         } // namespace details
         //@endcond
@@ -97,20 +115,31 @@ namespace cds { namespace container {
 
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
-
-        /// Returned pointer to value of extracted node
-        typedef typename base_class::unique_ptr unique_ptr;
-
         typedef typename base_class::rcu_lock   rcu_lock;  ///< RCU scoped lock
 
     protected:
         //@cond
-        typedef typename base_class::node_type  node_type;
+        typedef typename base_class::node_type        node_type;
+        typedef typename maker::internal_mapped_type  internal_mapped_type;
         typedef typename base_class::node_scoped_lock node_scoped_lock;
-        typedef typename maker::cxx_allocator   cxx_allocator;
+        typedef typename maker::cxx_allocator         cxx_allocator;
 
         typedef typename base_class::update_flags update_flags;
         //@endcond
+
+    public:
+#   ifdef CDSDOXYGEN_INVOKED
+        /// Returned pointer to \p mapped_type of extracted node
+        typedef cds::urcu::exempt_ptr< gc, implementation_defined, mapped_type, implementation_defined, implementation_defined > exempt_ptr;
+#   else
+        typedef cds::urcu::exempt_ptr< gc,
+            internal_mapped_type,
+            mapped_type,
+            typename maker::traits::disposer,
+            typename maker::cast_mapped_type
+        > exempt_ptr;
+#   endif
+
 
     public:
         /// Creates empty map
@@ -137,7 +166,7 @@ namespace cds { namespace container {
         bool insert( K const& key )
         {
             return base_class::do_update(key, key_comparator(),
-                []( node_type * pNode ) -> mapped_type* 
+                []( node_type * pNode ) -> internal_mapped_type*
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -164,7 +193,7 @@ namespace cds { namespace container {
         bool insert( K const& key, V const& val )
         {
             return base_class::do_update( key, key_comparator(),
-                [&val]( node_type * pNode )
+                [&val]( node_type * pNode ) -> internal_mapped_type*
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -201,11 +230,11 @@ namespace cds { namespace container {
         bool insert_with( K const& key, Func func )
         {
             return base_class::do_update( key, key_comparator(),
-                [&func]( node_type * pNode ) -> mapped_type* 
+                [&func]( node_type * pNode ) -> internal_mapped_type*
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    mapped_type * pVal = cxx_allocator().New();
-                    func( pNode->m_key, *pVal );
+                    internal_mapped_type * pVal = cxx_allocator().New();
+                    func( pNode->m_key, pVal->m_val );
                     return pVal;
                 },
                 update_flags::allow_insert
@@ -222,7 +251,7 @@ namespace cds { namespace container {
         bool emplace( K&& key, Args&&... args )
         {
             return base_class::do_update( key, key_comparator(),
-                [&]( node_type * pNode ) -> mapped_type* 
+                [&]( node_type * pNode ) -> internal_mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -263,15 +292,15 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, Func func )
         {
             int result = base_class::do_update( key, key_comparator(),
-                [&func]( node_type * pNode ) -> mapped_type* 
+                [&func]( node_type * pNode ) -> internal_mapped_type* 
                 {
-                    mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
+                    internal_mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
                     if ( !pVal ) {
                         pVal = cxx_allocator().New();
-                        func( true, pNode->m_key, *pVal );
+                        func( true, pNode->m_key, pVal->m_val );
                     }
                     else
-                        func( false, pNode->m_key, *pVal );
+                        func( false, pNode->m_key, pVal->m_val );
                     return pVal;
                 },
                 update_flags::allow_insert | update_flags::allow_update 
@@ -324,7 +353,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            return base_class::erase( key, f );
+            return base_class::erase( key, [&f]( internal_mapped_type& v) { f( v.m_val ); });
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -337,13 +366,13 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
-            return base_class::erase_with( key, pred, f );
+            return base_class::erase_with( key, pred, [&f]( internal_mapped_type& v) { f( v.m_val ); } );
         }
 
         /// Extracts an item with minimal key from the map
         /**
-            Returns \p std::unique_ptr pointer to the leftmost item.
-            If the set is empty, returns empty \p std::unique_ptr.
+            Returns \p exempt_ptr pointer to the leftmost item.
+            If the set is empty, returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
@@ -353,17 +382,17 @@ namespace cds { namespace container {
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
             The deallocator will be implicitly invoked when the returned object is destroyed or when
-            its \p reset(nullptr) member function is called.
+            its \p release() member function is called.
         */
-        unique_ptr extract_min()
+        exempt_ptr extract_min()
         {
-            return base_class::extract_min();
+            return exempt_ptr( base_class::do_extract_min());
         }
 
         /// Extracts an item with maximal key from the map
         /**
-            Returns \p std::unique_ptr pointer to the rightmost item.
-            If the set is empty, returns empty \p std::unique_ptr.
+            Returns \p exempt_ptr pointer to the rightmost item.
+            If the set is empty, returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -373,43 +402,41 @@ namespace cds { namespace container {
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
             The deallocator will be implicitly invoked when the returned object is destroyed or when
-            its \p reset(nullptr) is called.
-            @note Before reusing \p result object you should call its \p release() method.
+            its \p release() is called.
         */
-        unique_ptr extract_max()
+        exempt_ptr extract_max()
         {
-            return base_class::extract_min();
+            return exempt_ptr( base_class::do_extract_min());
         }
 
         /// Extracts an item from the map
         /**
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns \p std::unique_ptr pointer to a value found.
-            If \p key is not found the function returns an empty \p std::unique_ptr.
+            unlinks it, and returns \p exempt_ptr pointer to a value found.
+            If \p key is not found the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not destroy the value found.
             The dealloctor will be implicitly invoked when the returned object is destroyed or when
-            its \p reset(nullptr) member function is called.
+            its \p release() member function is called.
         */
         template <typename Q>
-        unique_ptr extract( Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            return base_class::extract( key );
+            return exempt_ptr( base_class::do_extract( key ));
         }
 
         /// Extracts an item from the map using \p pred for searching
         /**
             The function is an analog of \p extract(Q const&)
             but \p pred is used for key compare.
-            \p Less has the interface like \p std::less and should meet \ref cds_container_EllenBinTreeSet_rcu_less
-            "predicate requirements".
+            \p Less has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        unique_ptr extract_with( Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            return base_class::extract_with( key, pred );
+            return exempt_ptr( base_class::do_extract_with( key, pred ));
         }
 
         /// Find the key \p key
@@ -418,10 +445,10 @@ namespace cds { namespace container {
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( mapped_type& item );
+                void operator()( key_type const& key, mapped_type& val );
             };
             \endcode
-            where \p item is the item found.
+            where \p val is the item found for \p key
             The functor is called under node-level lock.
 
             The function applies RCU lock internally.
@@ -431,7 +458,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return base_class::find( key, f );
+            return base_class::find( key, [&f]( key_type const& key, internal_mapped_type& v) { f( key, v.m_val ); });
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -444,7 +471,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool find_with( K const& key, Less pred, Func f )
         {
-            return base_class::find_with( key, pred, f );
+            return base_class::find_with( key, pred, [&f]( key_type const& key, internal_mapped_type& v) { f( key, v.m_val ); } );
         }
 
         /// Find the key \p key

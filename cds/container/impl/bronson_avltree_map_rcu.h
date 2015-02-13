@@ -3,10 +3,10 @@
 #ifndef CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
 #define CDSLIB_CONTAINER_IMPL_BRONSON_AVLTREE_MAP_RCU_H
 
-#include <memory> // unique_ptr
 #include <type_traits> // is_base_of
 #include <cds/container/details/bronson_avltree_base.h>
 #include <cds/urcu/details/check_deadlock.h>
+#include <cds/urcu/exempt_ptr.h>
 
 namespace cds { namespace container {
 
@@ -67,8 +67,17 @@ namespace cds { namespace container {
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static CDS_CONSTEXPR bool const c_bRelaxedInsert = traits::relaxed_insert;
 
+#   ifdef CDSDOXYGEN_INVOKED
         /// Returned pointer to \p mapped_type of extracted node
-        typedef std::unique_ptr< T, disposer > unique_ptr;
+        typedef cds::urcu::exempt_ptr< gc, T, T, disposer, void > exempt_ptr;
+#   else
+        typedef cds::urcu::exempt_ptr< gc,
+            typename std::remove_pointer<mapped_type>::type,
+            typename std::remove_pointer<mapped_type>::type,
+            disposer,
+            void
+        > exempt_ptr;
+#   endif
 
         typedef typename gc::scoped_lock    rcu_lock;  ///< RCU scoped lock
 
@@ -420,8 +429,8 @@ namespace cds { namespace container {
 
         /// Extracts an item with minimal key from the map
         /**
-            Returns \p std::unique_ptr to the leftmost item.
-            If the set is empty, returns empty \p std::unique_ptr.
+            Returns \p exempt_ptr to the leftmost item.
+            If the set is empty, returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
@@ -431,23 +440,17 @@ namespace cds { namespace container {
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
             The deallocator will be implicitly invoked when the returned object is destroyed or when
-            its \p reset(nullptr) member function is called.
+            its \p release() member function is called.
         */
-        unique_ptr extract_min()
+        exempt_ptr extract_min()
         {
-            unique_ptr pExtracted;
-
-            do_extract_minmax(
-                left_child,
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
-            );
-            return pExtracted;
+            return exempt_ptr(do_extract_min());
         }
 
         /// Extracts an item with maximal key from the map
         /**
-            Returns \p std::unique_ptr pointer to the rightmost item.
-            If the set is empty, returns empty \p std::unique_ptr.
+            Returns \p exempt_ptr pointer to the rightmost item.
+            If the set is empty, returns empty \p exempt_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -457,42 +460,28 @@ namespace cds { namespace container {
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not free the item.
             The deallocator will be implicitly invoked when the returned object is destroyed or when
-            its \p reset(nullptr) is called.
-            @note Before reusing \p result object you should call its \p release() method.
+            its \p release() is called.
         */
-        unique_ptr extract_max()
+        exempt_ptr extract_max()
         {
-            unique_ptr pExtracted;
-
-            do_extract_minmax(
-                right_child,
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
-            );
-            return pExtracted;
+            return exempt_ptr(do_extract_max());
         }
 
         /// Extracts an item from the map
         /**
             The function searches an item with key equal to \p key in the tree,
-            unlinks it, and returns \p std::unique_ptr pointer to a value found.
-            If \p key is not found the function returns an empty \p std::unique_ptr.
+            unlinks it, and returns \p exempt_ptr pointer to a value found.
+            If \p key is not found the function returns an empty \p exempt_ptr.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
             The function does not destroy the value found.
             The disposer will be implicitly invoked when the returned object is destroyed or when
-            its \p reset(nullptr) member function is called.
+            its \p release() member function is called.
         */
         template <typename Q>
-        unique_ptr extract( Q const& key )
+        exempt_ptr extract( Q const& key )
         {
-            unique_ptr pExtracted;
-
-            do_remove(
-                key,
-                key_comparator(),
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
-            );
-            return pExtracted;
+            return exempt_ptr(do_extract( key ));
         }
 
         /// Extracts an item from the map using \p pred for searching
@@ -503,17 +492,9 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the tree.
         */
         template <typename Q, typename Less>
-        unique_ptr extract_with( Q const& key, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
-            CDS_UNUSED( pred );
-            unique_ptr pExtracted;
-
-            do_remove(
-                key,
-                cds::opt::details::make_comparator_from_less<Less>(),
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted.reset( pVal ); return false; }
-            );
-            return pExtracted;
+            return exempt_ptr(do_extract_with( key, pred ));
         }
 
         /// Find the key \p key
@@ -708,6 +689,26 @@ namespace cds { namespace container {
             }
         }
 
+        mapped_type do_extract_min()
+        {
+            mapped_type pExtracted = nullptr;
+            do_extract_minmax(
+                left_child,
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+            );
+            return pExtracted;
+        }
+
+        mapped_type do_extract_max()
+        {
+            mapped_type pExtracted = nullptr;
+            do_extract_minmax(
+                right_child,
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+            );
+            return pExtracted;
+        }
+
         template <typename Func>
         void do_extract_minmax( int nDir, Func func )
         {
@@ -717,7 +718,7 @@ namespace cds { namespace container {
             {
                 rcu_lock l;
 
-                int result;
+                int result = update_flags::failed;
                 do {
                     // get right child of root
                     node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
@@ -734,6 +735,31 @@ namespace cds { namespace container {
                     }
                 } while ( result == update_flags::retry );
             }
+        }
+
+        template <typename Q>
+        mapped_type do_extract( Q const& key )
+        {
+            mapped_type pExtracted = nullptr;
+            do_remove(
+                key,
+                key_comparator(),
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+            );
+            return pExtracted;
+        }
+
+        template <typename Q, typename Less>
+        mapped_type do_extract_with( Q const& key, Less pred )
+        {
+            CDS_UNUSED( pred );
+            mapped_type pExtracted = nullptr;
+            do_remove(
+                key,
+                cds::opt::details::make_comparator_from_less<Less>(),
+                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+            );
+            return pExtracted;
         }
 
         //@endcond
