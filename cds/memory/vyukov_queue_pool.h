@@ -17,7 +17,7 @@ namespace cds { namespace memory {
         typedef CDS_DEFAULT_ALLOCATOR allocator;
     };
 
-    /// Free-list based on bounded lock-free queue cds::intrusive::VyukovMPMCCycleQueue
+    /// Free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
@@ -94,6 +94,8 @@ namespace cds { namespace memory {
 
     protected:
         //@cond
+        typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+
         queue_type      m_Queue;
         value_type *    m_pFirst;
         value_type *    m_pLast;
@@ -103,11 +105,12 @@ namespace cds { namespace memory {
         //@cond
         void preallocate_pool()
         {
-            m_pFirst = allocator_type().allocate( m_Queue.capacity() );
+            m_pFirst = cxx_allocator().NewArray( m_Queue.capacity() );
             m_pLast = m_pFirst + m_Queue.capacity();
 
-            for ( value_type * p = m_pFirst; p < m_pLast; ++p )
+            for ( value_type * p = m_pFirst; p < m_pLast; ++p ) {
                 CDS_VERIFY( m_Queue.push( *p )) ;   // must be true
+            }
         }
 
         bool from_pool( value_type * p ) const
@@ -133,7 +136,7 @@ namespace cds { namespace memory {
         ~vyukov_queue_pool()
         {
             m_Queue.clear();
-            allocator_type().deallocate( m_pFirst, m_Queue.capacity() );
+            cxx_allocator().Delete( m_pFirst, m_Queue.capacity());
         }
 
         /// Allocates an object from pool
@@ -147,6 +150,7 @@ namespace cds { namespace memory {
         value_type * allocate( size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             value_type * p = m_Queue.pop();
             if ( p ) {
@@ -154,7 +158,7 @@ namespace cds { namespace memory {
                 return p;
             }
 
-            return allocator_type().allocate( n );
+            return cxx_allocator().New();
         }
 
         /// Deallocated the object \p p
@@ -168,12 +172,13 @@ namespace cds { namespace memory {
         void deallocate( value_type * p, size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             if ( p ) {
                 if ( from_pool( p ) )
                     m_Queue.push( *p );
                 else
-                    allocator_type().deallocate( p, n );
+                    cxx_allocator().Delete( p );
             }
         }
     };
@@ -252,6 +257,8 @@ namespace cds { namespace memory {
 
     protected:
         //@cond
+        typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+
         queue_type      m_Queue;
         //@endcond
 
@@ -264,11 +271,9 @@ namespace cds { namespace memory {
         /// Deallocates all objects from the pool
         ~lazy_vyukov_queue_pool()
         {
-            allocator_type a;
-            while ( !m_Queue.empty() ) {
-                value_type * p = m_Queue.pop();
-                a.deallocate( p, 1 );
-            }
+            cxx_allocator a;
+            while ( !m_Queue.empty() )
+                a.Delete( m_Queue.pop());
         }
 
         /// Allocates an object from pool
@@ -282,12 +287,13 @@ namespace cds { namespace memory {
         value_type * allocate( size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             value_type * p = m_Queue.pop();
             if ( p )
                 return p;
 
-            return allocator_type().allocate( n );
+            return cxx_allocator().New();
         }
 
         /// Deallocated the object \p p
@@ -301,10 +307,11 @@ namespace cds { namespace memory {
         void deallocate( value_type * p, size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             if ( p ) {
                 if ( !m_Queue.push( *p ))
-                    allocator_type().deallocate( p, n );
+                    cxx_allocator().Delete( p );
             }
         }
 
@@ -387,6 +394,8 @@ namespace cds { namespace memory {
 
     protected:
         //@cond
+        typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+
         queue_type      m_Queue;
         value_type *    m_pFirst;
         value_type *    m_pLast;
@@ -396,7 +405,7 @@ namespace cds { namespace memory {
         //@cond
         void preallocate_pool()
         {
-            m_pFirst = allocator_type().allocate( m_Queue.capacity() );
+            m_pFirst = cxx_allocator().NewArray( m_Queue.capacity() );
             m_pLast = m_pFirst + m_Queue.capacity();
 
             for ( value_type * p = m_pFirst; p < m_pLast; ++p )
@@ -426,7 +435,7 @@ namespace cds { namespace memory {
         ~bounded_vyukov_queue_pool()
         {
             m_Queue.clear();
-            allocator_type().deallocate( m_pFirst, m_Queue.capacity() );
+            cxx_allocator().Delete( m_pFirst, m_Queue.capacity() );
         }
 
         /// Allocates an object from pool
