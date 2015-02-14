@@ -38,10 +38,13 @@ namespace cds { namespace sync {
         typedef LockPool pool_type; ///< Pool type
         typedef typename pool_type::value_type lock_type; ///< node lock type
         typedef BackOff  back_off;  ///< back-off strategy for spinning
+        typedef uint32_t refspin_type;  ///< Reference counter + spin-lock bit
 
     private:
         //@cond
-        pool_type   m_Pool;
+        static CDS_CONSTEXPR refspin_type const c_nSpinBit = 1;
+        static CDS_CONSTEXPR refspin_type const c_nRefIncrement = 2;
+        mutable pool_type   m_Pool;
         //@endcond
 
     public:
@@ -53,7 +56,7 @@ namespace cds { namespace sync {
             mutable lock_type *                     m_pLock;    ///< Node-level lock
 
             node_injection()
-                : m_Access( 0 )
+                : m_RefSpin( 0 )
                 , m_pLock( nullptr )
             {}
 
@@ -90,7 +93,7 @@ namespace cds { namespace sync {
                     bkoff();
                     cur &= ~c_nSpinBit;
                 } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
-                    atomics::memory_order_acquire, atomics::memory_order_relaxed );
+                    atomics::memory_order_acquire, atomics::memory_order_relaxed ));
             }
 
             // spin locked
@@ -125,7 +128,7 @@ namespace cds { namespace sync {
                     bkoff();
                     cur &= ~c_nSpinBit;
                 } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit,
-                    atomics::memory_order_acquire, atomics::memory_order_relaxed );
+                    atomics::memory_order_acquire, atomics::memory_order_relaxed ));
             }
 
             // spin locked now
