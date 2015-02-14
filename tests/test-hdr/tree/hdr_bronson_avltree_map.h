@@ -45,6 +45,13 @@ namespace tree {
             {}
         };
 
+        struct compare {
+            int operator()( key_type k1, key_type k2 )
+            {
+                return k1 < k2 ? -1 : k1 > k2 ? 1 : 0;
+            }
+        };
+
         struct wrapped_int {
             int  nKey;
 
@@ -160,22 +167,13 @@ namespace tree {
             }
         };
 
-        struct extract_functor
-        {
-            int nKey;
-
-            void operator()( value_type& v )
-            {
-                nKey = v.nVal;
-            }
-        };
-
     protected:
         template <class Set>
         void test_with( Set& s )
         {
             value_type itm;
             int key;
+            typedef typename Set::exempt_ptr exempt_ptr;
 
             // insert/find test
             CPPUNIT_ASSERT( !s.find( 10 ) );
@@ -331,17 +329,162 @@ namespace tree {
             s.clear();
             CPPUNIT_ASSERT( s.empty() );
             CPPUNIT_ASSERT( check_size( s, 0 ) );
-        }
 
-        template <typename Set>
-        void fill_set( Set& s, data_array& a )
-        {
-            CPPUNIT_ASSERT( s.empty() );
-            for ( size_t i = 0; i < c_nItemCount; ++i ) {
-                CPPUNIT_ASSERT( s.insert( a[i] ) );
+            const int c_nStep = 10;
+            int keys[1000];
+            for ( key_type i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                keys[i] = i;
+            std::random_shuffle( keys, keys + sizeof(keys) / sizeof(keys[0]));
+
+            size_t nCount = 1;
+            int nPrev;
+            key_type keyPrev;
+            exempt_ptr xp;
+
+            // extract_min
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+
+            xp = s.extract_min();
+            CPPUNIT_ASSERT( xp );
+            nPrev = xp->nVal;
+            CPPUNIT_CHECK_EX( nPrev == 0, "Expected=0 real=" << nPrev );
+            while ( !s.empty() ) {
+                xp = s.extract_min();
+                CPPUNIT_ASSERT( xp );
+                CPPUNIT_CHECK_EX( nPrev + c_nStep == xp->nVal, "Expected=" << nPrev + c_nStep << " real=" << xp->nVal );
+                nPrev = xp->nVal;
+                ++nCount;
             }
-            CPPUNIT_ASSERT( !s.empty() );
-            CPPUNIT_ASSERT( check_size( s, c_nItemCount ) );
+            CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
+
+            // extract_min<Func>
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.insert( keys[i], keys[i] * c_nStep ));
+
+            nCount = 1;
+            xp = s.extract_min( [&keyPrev]( key_type k ){ keyPrev = k; });
+            CPPUNIT_ASSERT( xp );
+            nPrev = xp->nVal;
+            CPPUNIT_CHECK_EX( keyPrev == 0, "Expected=0 real=" << keyPrev );
+            CPPUNIT_CHECK_EX( nPrev == 0, "Expected=0 real=" << nPrev );
+            while ( !s.empty() ) {
+                xp = s.extract_min( [&key](key_type k){ key = k; } );
+                CPPUNIT_ASSERT( xp );
+                CPPUNIT_CHECK_EX( key == keyPrev + 1, "Expected=" << keyPrev + 1 << " real=" << key );
+                CPPUNIT_CHECK_EX( nPrev + c_nStep == xp->nVal, "Expected=" << nPrev + c_nStep << " real=" << xp->nVal );
+                nPrev = xp->nVal;
+                ++keyPrev;
+                ++nCount;
+            }
+            CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
+
+            // extract_min_key
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.insert( keys[i], keys[i] * c_nStep ));
+
+            nCount = 1;
+            xp = s.extract_min_key( keyPrev );
+            CPPUNIT_ASSERT( xp );
+            nPrev = xp->nVal;
+            CPPUNIT_CHECK_EX( keyPrev == 0, "Expected=0 real=" << keyPrev );
+            CPPUNIT_CHECK_EX( nPrev == 0, "Expected=0 real=" << nPrev );
+            while ( !s.empty() ) {
+                xp = s.extract_min_key( key );
+                CPPUNIT_ASSERT( xp );
+                CPPUNIT_CHECK_EX( key == keyPrev + 1, "Expected=" << keyPrev + 1 << " real=" << key );
+                CPPUNIT_CHECK_EX( nPrev + c_nStep == xp->nVal, "Expected=" << nPrev + c_nStep << " real=" << xp->nVal );
+                nPrev = xp->nVal;
+                ++keyPrev;
+                ++nCount;
+            }
+            CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
+
+            // extract_max
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+
+            nCount = 1;
+            xp = s.extract_max();
+            CPPUNIT_ASSERT( xp );
+            nPrev = xp->nVal;
+            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1), 
+                "Expected=" << c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1) << " real=" << nPrev );
+            while ( !s.empty() ) {
+                xp = s.extract_max();
+                CPPUNIT_ASSERT( xp );
+                CPPUNIT_CHECK_EX( nPrev - c_nStep == xp->nVal, "Expected=" << nPrev - c_nStep << " real=" << xp->nVal );
+                nPrev = xp->nVal;
+                ++nCount;
+            }
+            CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
+
+            // extract_max<Func>
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+
+            nCount = 1;
+            xp = s.extract_max( [&keyPrev]( key_type k ){ keyPrev = k; });
+            CPPUNIT_ASSERT( xp );
+            nPrev = xp->nVal;
+            CPPUNIT_CHECK_EX( keyPrev == sizeof(keys) / sizeof(keys[0]) - 1, 
+                "Expected=" << sizeof(keys) / sizeof(keys[0]) - 1 << " real=" << keyPrev );
+            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1), 
+                "Expected=" << c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1) << " real=" << nPrev );
+            while ( !s.empty() ) {
+                xp = s.extract_max( [&key](key_type k){ key = k; });
+                CPPUNIT_ASSERT( xp );
+                CPPUNIT_CHECK_EX( key == keyPrev - 1, "Expected=" << keyPrev - 1 << " real=" << key );
+                CPPUNIT_CHECK_EX( nPrev - c_nStep == xp->nVal, "Expected=" << nPrev - c_nStep << " real=" << xp->nVal );
+                nPrev = xp->nVal;
+                --keyPrev;
+                ++nCount;
+            }
+            CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
+
+            // extract_max_key
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+
+            nCount = 1;
+            xp = s.extract_max_key( keyPrev );
+            CPPUNIT_ASSERT( xp );
+            nPrev = xp->nVal;
+            CPPUNIT_CHECK_EX( keyPrev == sizeof(keys) / sizeof(keys[0]) - 1, 
+                "Expected=" << sizeof(keys) / sizeof(keys[0]) - 1 << " real=" << keyPrev );
+            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1), 
+                "Expected=" << c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1) << " real=" << nPrev );
+            while ( !s.empty() ) {
+                xp = s.extract_max_key( key );
+                CPPUNIT_ASSERT( xp );
+                CPPUNIT_CHECK_EX( key == keyPrev - 1, "Expected=" << keyPrev - 1 << " real=" << key );
+                CPPUNIT_CHECK_EX( nPrev - c_nStep == xp->nVal, "Expected=" << nPrev - c_nStep << " real=" << xp->nVal );
+                nPrev = xp->nVal;
+                --keyPrev;
+                ++nCount;
+            }
+            CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
+
+            // extract
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+
+            for ( int i = 0; i < sizeof( keys ) / sizeof( keys[0] ); ++i ) {
+                xp = s.extract(keys[i]);
+                CPPUNIT_CHECK_EX( xp->nVal == keys[i] * c_nStep, "Expected value=" << keys[i] * c_nStep << " real=" << xp->nVal );
+            }
+            CPPUNIT_ASSERT(s.empty());
+
+
+            // extract_with
+            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+                CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+
+            for ( int i = 0; i < sizeof( keys ) / sizeof( keys[0] ); ++i ) {
+                xp = s.extract_with( wrapped_int(keys[i]), wrapped_less());
+                CPPUNIT_CHECK_EX( xp->nVal == keys[i] * c_nStep, "Expected value=" << keys[i] * c_nStep << " real=" << xp->nVal );
+            }
+            CPPUNIT_ASSERT(s.empty());
         }
 
         template <class Set, class PrintStat>
@@ -364,23 +507,41 @@ namespace tree {
 
 
         void BronsonAVLTree_rcu_gpb_less();
+        void BronsonAVLTree_rcu_gpb_less_stat();
         void BronsonAVLTree_rcu_gpb_cmp();
+        void BronsonAVLTree_rcu_gpb_cmp_stat();
         void BronsonAVLTree_rcu_gpb_cmpless();
         void BronsonAVLTree_rcu_gpb_less_ic();
         void BronsonAVLTree_rcu_gpb_cmp_ic();
-        void BronsonAVLTree_rcu_gpb_less_stat();
         void BronsonAVLTree_rcu_gpb_cmp_ic_stat();
         void BronsonAVLTree_rcu_gpb_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_gpb_less_relaxed_insert();
+        void BronsonAVLTree_rcu_gpb_less_relaxed_insert_stat();
+        void BronsonAVLTree_rcu_gpb_pool_monitor_less();
+        void BronsonAVLTree_rcu_gpb_pool_monitor_less_stat();
+        void BronsonAVLTree_rcu_gpb_pool_monitor_cmp_ic_stat();
+        void BronsonAVLTree_rcu_gpb_pool_monitor_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert();
+        void BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert_stat();
 
         CPPUNIT_TEST_SUITE( BronsonAVLTreeHdrTest )
             CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less )
-            //CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp )
-            //CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmpless )
-            //CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less_ic )
-            //CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp_ic )
-            //CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less_stat )
-            //CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp_ic_stat )
-            //CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmpless )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less_relaxed_insert_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert_stat )
         CPPUNIT_TEST_SUITE_END()
     };
 } // namespace tree

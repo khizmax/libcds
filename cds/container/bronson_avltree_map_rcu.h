@@ -17,30 +17,12 @@ namespace cds { namespace container {
                 typedef T mapped_type;
                 typedef Traits original_traits;
 
-                struct internal_mapped_type : public bronson_avltree::value
-                {
-                    mapped_type     m_val;
-
-                    template <typename... Args>
-                    internal_mapped_type( Args&&... args )
-                        : m_val( std::forward<Args>(args)...)
-                    {}
-                };
-
-                typedef cds::details::Allocator< internal_mapped_type, typename original_traits::allocator > cxx_allocator;
-
-                struct cast_mapped_type
-                {
-                    mapped_type * operator()( internal_mapped_type * p ) const
-                    {
-                        return &(p->m_val);
-                    }
-                };
+                typedef cds::details::Allocator< mapped_type, typename original_traits::allocator > cxx_allocator;
 
                 struct traits : public original_traits
                 {
                     struct disposer {
-                        void operator()( internal_mapped_type * p ) const
+                        void operator()( mapped_type * p ) const
                         {
                             cxx_allocator().Delete( p );
                         }
@@ -48,7 +30,7 @@ namespace cds { namespace container {
                 };
 
                 // Metafunction result
-                typedef BronsonAVLTreeMap< RCU, Key, internal_mapped_type *, traits > type;
+                typedef BronsonAVLTreeMap< RCU, Key, mapped_type *, traits > type;
             };
         } // namespace details
         //@endcond
@@ -117,29 +99,17 @@ namespace cds { namespace container {
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
         typedef typename base_class::rcu_lock   rcu_lock;  ///< RCU scoped lock
 
+        /// Returned pointer to \p mapped_type of extracted node
+        typedef typename base_class::exempt_ptr exempt_ptr;
+
     protected:
         //@cond
         typedef typename base_class::node_type        node_type;
-        typedef typename maker::internal_mapped_type  internal_mapped_type;
         typedef typename base_class::node_scoped_lock node_scoped_lock;
         typedef typename maker::cxx_allocator         cxx_allocator;
 
         typedef typename base_class::update_flags update_flags;
         //@endcond
-
-    public:
-#   ifdef CDSDOXYGEN_INVOKED
-        /// Returned pointer to \p mapped_type of extracted node
-        typedef cds::urcu::exempt_ptr< gc, implementation_defined, mapped_type, implementation_defined, implementation_defined > exempt_ptr;
-#   else
-        typedef cds::urcu::exempt_ptr< gc,
-            internal_mapped_type,
-            mapped_type,
-            typename maker::traits::disposer,
-            typename maker::cast_mapped_type
-        > exempt_ptr;
-#   endif
-
 
     public:
         /// Creates empty map
@@ -166,7 +136,7 @@ namespace cds { namespace container {
         bool insert( K const& key )
         {
             return base_class::do_update(key, key_comparator(),
-                []( node_type * pNode ) -> internal_mapped_type*
+                []( node_type * pNode ) -> mapped_type*
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -193,7 +163,7 @@ namespace cds { namespace container {
         bool insert( K const& key, V const& val )
         {
             return base_class::do_update( key, key_comparator(),
-                [&val]( node_type * pNode ) -> internal_mapped_type*
+                [&val]( node_type * pNode ) -> mapped_type*
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -230,11 +200,11 @@ namespace cds { namespace container {
         bool insert_with( K const& key, Func func )
         {
             return base_class::do_update( key, key_comparator(),
-                [&func]( node_type * pNode ) -> internal_mapped_type*
+                [&func]( node_type * pNode ) -> mapped_type*
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    internal_mapped_type * pVal = cxx_allocator().New();
-                    func( pNode->m_key, pVal->m_val );
+                    mapped_type * pVal = cxx_allocator().New();
+                    func( pNode->m_key, *pVal );
                     return pVal;
                 },
                 update_flags::allow_insert
@@ -251,7 +221,7 @@ namespace cds { namespace container {
         bool emplace( K&& key, Args&&... args )
         {
             return base_class::do_update( key, key_comparator(),
-                [&]( node_type * pNode ) -> internal_mapped_type* 
+                [&]( node_type * pNode ) -> mapped_type* 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -292,15 +262,15 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, Func func )
         {
             int result = base_class::do_update( key, key_comparator(),
-                [&func]( node_type * pNode ) -> internal_mapped_type* 
+                [&func]( node_type * pNode ) -> mapped_type* 
                 {
-                    internal_mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
+                    mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
                     if ( !pVal ) {
                         pVal = cxx_allocator().New();
-                        func( true, pNode->m_key, pVal->m_val );
+                        func( true, pNode->m_key, *pVal );
                     }
                     else
-                        func( false, pNode->m_key, pVal->m_val );
+                        func( false, pNode->m_key, *pVal );
                     return pVal;
                 },
                 update_flags::allow_insert | update_flags::allow_update 
@@ -353,7 +323,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            return base_class::erase( key, [&f]( internal_mapped_type& v) { f( v.m_val ); });
+            return base_class::erase( key, f );
         }
 
         /// Deletes the item from the map using \p pred predicate for searching
@@ -366,13 +336,16 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool erase_with( K const& key, Less pred, Func f )
         {
-            return base_class::erase_with( key, pred, [&f]( internal_mapped_type& v) { f( v.m_val ); } );
+            return base_class::erase_with( key, pred, f );
         }
 
-        /// Extracts an item with minimal key from the map
+        /// Extracts a value with minimal key from the map
         /**
             Returns \p exempt_ptr pointer to the leftmost item.
             If the set is empty, returns empty \p exempt_ptr.
+
+            Note that the function returns only the value for minimal key.
+            To retrieve its key use \p extract_min( Func ) member function.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
@@ -386,13 +359,64 @@ namespace cds { namespace container {
         */
         exempt_ptr extract_min()
         {
-            return exempt_ptr( base_class::do_extract_min());
+            return base_class::extract_min();
+        }
+
+        /// Extracts minimal key key and corresponding value
+        /**
+            Returns \p exempt_ptr to the leftmost item.
+            If the tree is empty, returns empty \p exempt_ptr.
+
+            \p Func functor is used to store minimal key.
+            \p Func has the following signature:
+            \code
+                struct functor {
+                    void operator()( key_type const& key );
+                };
+            \endcode
+            If the tree is empty, \p f is not called.
+            Otherwise, is it called with minimal key, the pointer to corresponding value is returned
+            as \p exempt_ptr.
+
+            @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
+            It means that the function gets leftmost leaf of the tree and tries to unlink it.
+            During unlinking, a concurrent thread may insert an item with key less than leftmost item's key.
+            So, the function returns the item with minimum key at the moment of tree traversing.
+
+            RCU \p synchronize method can be called. RCU should NOT be locked.
+            The function does not free the item.
+            The deallocator will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
+        */
+        template <typename Func>
+        exempt_ptr extract_min( Func f )
+        {
+            return base_class::extract_min( f );
+        }
+
+        /// Extracts minimal key key and corresponding value
+        /**
+            This function is a shortcut for the following call:
+            \code
+                key_type key;
+                exempt_ptr xp = theTree.extract_min( [&key]( key_type const& k ) { key = k; } );
+            \endode
+            \p key_type should be copy-assignable. The copy of minimal key
+            is returned in \p min_key argument.
+        */
+        typename std::enable_if< std::is_copy_assignable<key_type>::value, exempt_ptr >::type
+        extract_min_key( key_type& min_key )
+        {
+            return base_class::extract_min_key( min_key );
         }
 
         /// Extracts an item with maximal key from the map
         /**
             Returns \p exempt_ptr pointer to the rightmost item.
             If the set is empty, returns empty \p exempt_ptr.
+
+            Note that the function returns only the value for maximal key.
+            To retrieve its key use \p extract_max( Func ) member function.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -406,7 +430,55 @@ namespace cds { namespace container {
         */
         exempt_ptr extract_max()
         {
-            return exempt_ptr( base_class::do_extract_min());
+            return base_class::extract_max();
+        }
+
+        /// Extracts the maximal key and corresponding value
+        /**
+            Returns \p exempt_ptr pointer to the rightmost item.
+            If the set is empty, returns empty \p exempt_ptr.
+
+            \p Func functor is used to store maximal key.
+            \p Func has the following signature:
+            \code
+                struct functor {
+                    void operator()( key_type const& key );
+                };
+            \endcode
+            If the tree is empty, \p f is not called.
+            Otherwise, is it called with maximal key, the pointer to corresponding value is returned
+            as \p exempt_ptr.
+
+            @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
+            It means that the function gets rightmost leaf of the tree and tries to unlink it.
+            During unlinking, a concurrent thread may insert an item with key great than leftmost item's key.
+            So, the function returns the item with maximum key at the moment of tree traversing.
+
+            RCU \p synchronize method can be called. RCU should NOT be locked.
+            The function does not free the item.
+            The deallocator will be implicitly invoked when the returned object is destroyed or when
+            its \p release() is called.
+        */
+        template <typename Func>
+        exempt_ptr extract_max( Func f )
+        {
+            return base_class::extract_max( f );
+        }
+
+        /// Extracts the maximal key and corresponding value
+        /**
+            This function is a shortcut for the following call:
+            \code
+                key_type key;
+                exempt_ptr xp = theTree.extract_max( [&key]( key_type const& k ) { key = k; } );
+            \endode
+            \p key_type should be copy-assignable. The copy of maximal key
+            is returned in \p max_key argument.
+        */
+        typename std::enable_if< std::is_copy_assignable<key_type>::value, exempt_ptr >::type
+        extract_max_key( key_type& max_key )
+        {
+            return base_class::extract_max_key( max_key );
         }
 
         /// Extracts an item from the map
@@ -423,7 +495,7 @@ namespace cds { namespace container {
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            return exempt_ptr( base_class::do_extract( key ));
+            return base_class::extract( key );
         }
 
         /// Extracts an item from the map using \p pred for searching
@@ -436,7 +508,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         exempt_ptr extract_with( Q const& key, Less pred )
         {
-            return exempt_ptr( base_class::do_extract_with( key, pred ));
+            return base_class::extract_with( key, pred );
         }
 
         /// Find the key \p key
@@ -458,7 +530,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return base_class::find( key, [&f]( key_type const& key, internal_mapped_type& v) { f( key, v.m_val ); });
+            return base_class::find( key, f );
         }
 
         /// Finds the key \p val using \p pred predicate for searching
@@ -471,7 +543,7 @@ namespace cds { namespace container {
         template <typename K, typename Less, typename Func>
         bool find_with( K const& key, Less pred, Func f )
         {
-            return base_class::find_with( key, pred, [&f]( key_type const& key, internal_mapped_type& v) { f( key, v.m_val ); } );
+            return base_class::find_with( key, pred, f );
         }
 
         /// Find the key \p key

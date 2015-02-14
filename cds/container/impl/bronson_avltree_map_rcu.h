@@ -88,8 +88,6 @@ namespace cds { namespace container {
 
         typedef cds::details::Allocator< node_type, node_allocator_type > cxx_allocator;
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock >   check_deadlock_policy;
-        
-        static CDS_CONSTEXPR bool const c_bRetiringValue = std::is_base_of< bronson_avltree::value, typename std::remove_pointer<mapped_type>::type>::value;
 
         enum class find_result
         {
@@ -158,70 +156,16 @@ namespace cds { namespace container {
             return pNode->m_pParent.load( order );
         }
 
-        
-        template <bool Enabled>
-        class rcu_value_disposer;
-        
-        template <>
-        class rcu_value_disposer<true>
-        {
-            bronson_avltree::value *    m_pValueRetiredList; ///< head of retired value list
-        public:
-            rcu_value_disposer()
-                : m_pValueRetiredList(nullptr)
-            {}
-            
-            ~rcu_value_disposer()
-            {
-                clean();
-            }
-            
-            void dispose( mapped_type pVal )
-            {
-                assert( pVal );
-                static_cast< bronson_avltree::value *>(pVal)->m_pNextRetired = m_pValueRetiredList;
-                m_pValueRetiredList = static_cast< bronson_avltree::value *>(pVal);
-            }
-            
-        private:
-            struct internal_disposer
-            {
-                void operator()( bronson_avltree::value * p ) const
-                {
-                    free_value( static_cast<mapped_type>( p ));
-                }
-            };
-            
-            void clean()
-            {
-                // TODO: use RCU::batch_retire
-                for ( auto p = m_pValueRetiredList; p; ) {
-                    auto pNext = p->m_pNextRetired;
-                    gc::template retire_ptr<internal_disposer>( p );
-                    p = pNext;
-                }
-            }
-        };
-        
-        template <>
-        class rcu_value_disposer<false>
-        {
-        public:
-            void dispose( mapped_type pVal )
-            {
-                free_value( pVal );
-            }
-        };
-        
         // RCU safe disposer 
         class rcu_disposer
         {
-            node_type *     m_pRetiredList; ///< head of retired node list
-            rcu_value_disposer< c_bRetiringValue > m_RetiredValueList;
+            node_type *     m_pRetiredList;     ///< head of retired node list
+            mapped_type     m_pRetiredValue;    ///< value retired
 
         public:
             rcu_disposer()
                 : m_pRetiredList( nullptr )
+                , m_pRetiredValue( nullptr )
             {}
 
             ~rcu_disposer()
@@ -238,7 +182,8 @@ namespace cds { namespace container {
             
             void dispose_value( mapped_type pVal )
             {
-                m_RetiredValueList.dispose( pVal );
+                assert( m_pRetiredValue == nullptr );
+                m_pRetiredValue = pVal;
             }
             
         private:
@@ -263,6 +208,10 @@ namespace cds { namespace container {
                     gc::template retire_ptr<internal_disposer>( p );
                     p = pNext;
                 }
+
+                // Dispose value
+                if ( m_pRetiredValue  )
+                    gc::template retire_ptr<disposer>( m_pRetiredValue );
             }
         };
 
@@ -351,7 +300,7 @@ namespace cds { namespace container {
             return do_remove(
                 key,
                 key_comparator(),
-                []( mapped_type pVal, rcu_disposer& disp ) -> bool { disp.dispose_value( pVal ); return true; }
+                []( key_type const&, mapped_type pVal, rcu_disposer& disp ) -> bool { disp.dispose_value( pVal ); return true; }
             );
         }
 
@@ -369,7 +318,7 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 cds::opt::details::make_comparator_from_less<Less>(),
-                []( mapped_type pVal, rcu_disposer& disp ) -> bool { disp.dispose_value( pVal ); return true;  }
+                []( key_type const&, mapped_type pVal, rcu_disposer& disp ) -> bool { disp.dispose_value( pVal ); return true;  }
             );
         }
 
@@ -395,7 +344,7 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 key_comparator(), 
-                [&f]( mapped_type pVal, rcu_disposer& disp ) -> bool { 
+                [&f]( key_type const&, mapped_type pVal, rcu_disposer& disp ) -> bool { 
                     assert( pVal );
                     f( *pVal ); 
                     disp.dispose_value(pVal); 
@@ -418,7 +367,7 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 cds::opt::details::make_comparator_from_less<Less>(),
-                [&f]( mapped_type pVal, rcu_disposer& disp ) -> bool { 
+                [&f]( key_type const&, mapped_type pVal, rcu_disposer& disp ) -> bool { 
                     assert( pVal );
                     f( *pVal ); 
                     disp.dispose_value(pVal); 
@@ -427,10 +376,13 @@ namespace cds { namespace container {
             );
         }
 
-        /// Extracts an item with minimal key from the map
+        /// Extracts a value with minimal key from the map
         /**
             Returns \p exempt_ptr to the leftmost item.
-            If the set is empty, returns empty \p exempt_ptr.
+            If the tree is empty, returns empty \p exempt_ptr.
+
+            Note that the function returns only the value for minimal key.
+            To retrieve its key use \p extract_min( Func ) member function.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
             It means that the function gets leftmost leaf of the tree and tries to unlink it.
@@ -444,13 +396,64 @@ namespace cds { namespace container {
         */
         exempt_ptr extract_min()
         {
-            return exempt_ptr(do_extract_min());
+            return exempt_ptr(do_extract_min( []( key_type const& ) {}));
         }
 
-        /// Extracts an item with maximal key from the map
+        /// Extracts minimal key key and corresponding value
+        /**
+            Returns \p exempt_ptr to the leftmost item.
+            If the tree is empty, returns empty \p exempt_ptr.
+
+            \p Func functor is used to store minimal key.
+            \p Func has the following signature:
+            \code
+            struct functor {
+                void operator()( key_type const& key );
+            };
+            \endcode
+            If the tree is empty, \p f is not called.
+            Otherwise, is it called with minimal key, the pointer to corresponding value is returned
+            as \p exempt_ptr.
+
+            @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
+            It means that the function gets leftmost leaf of the tree and tries to unlink it.
+            During unlinking, a concurrent thread may insert an item with key less than leftmost item's key.
+            So, the function returns the item with minimum key at the moment of tree traversing.
+
+            RCU \p synchronize method can be called. RCU should NOT be locked.
+            The function does not free the item.
+            The deallocator will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
+        */
+        template <typename Func>
+        exempt_ptr extract_min( Func f )
+        {
+            return exempt_ptr(do_extract_min( [&f]( key_type const& key ) { f(key); }));
+        }
+
+        /// Extracts minimal key key and corresponding value
+        /**
+            This function is a shortcut for the following call:
+            \code
+            key_type key;
+            exempt_ptr xp = theTree.extract_min( [&key]( key_type const& k ) { key = k; } );
+            \endode
+            \p key_type should be copy-assignable. The copy of minimal key
+            is returned in \p min_key argument.
+        */
+        typename std::enable_if< std::is_copy_assignable<key_type>::value, exempt_ptr >::type
+        extract_min_key( key_type& min_key )
+        {
+            return exempt_ptr(do_extract_min( [&min_key]( key_type const& key ) { min_key = key; }));
+        }
+
+        /// Extracts a value with maximal key from the tree
         /**
             Returns \p exempt_ptr pointer to the rightmost item.
             If the set is empty, returns empty \p exempt_ptr.
+
+            Note that the function returns only the value for maximal key.
+            To retrieve its key use \p extract_max( Func ) member function.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -464,7 +467,55 @@ namespace cds { namespace container {
         */
         exempt_ptr extract_max()
         {
-            return exempt_ptr(do_extract_max());
+            return exempt_ptr(do_extract_max( []( key_type const& ) {}));
+        }
+
+        /// Extracts the maximal key and corresponding value
+        /**
+            Returns \p exempt_ptr pointer to the rightmost item.
+            If the set is empty, returns empty \p exempt_ptr.
+
+            \p Func functor is used to store maximal key.
+            \p Func has the following signature:
+            \code
+                struct functor {
+                    void operator()( key_type const& key );
+                };
+            \endcode
+            If the tree is empty, \p f is not called.
+            Otherwise, is it called with maximal key, the pointer to corresponding value is returned
+            as \p exempt_ptr.
+
+            @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
+            It means that the function gets rightmost leaf of the tree and tries to unlink it.
+            During unlinking, a concurrent thread may insert an item with key great than leftmost item's key.
+            So, the function returns the item with maximum key at the moment of tree traversing.
+
+            RCU \p synchronize method can be called. RCU should NOT be locked.
+            The function does not free the item.
+            The deallocator will be implicitly invoked when the returned object is destroyed or when
+            its \p release() is called.
+        */
+        template <typename Func>
+        exempt_ptr extract_max( Func f )
+        {
+            return exempt_ptr(do_extract_max( [&f]( key_type const& key ) { f(key); }));
+        }
+
+        /// Extracts the maximal key and corresponding value
+        /**
+            This function is a shortcut for the following call:
+            \code
+                key_type key;
+                exempt_ptr xp = theTree.extract_max( [&key]( key_type const& k ) { key = k; } );
+            \endode
+            \p key_type should be copy-assignable. The copy of maximal key
+            is returned in \p max_key argument.
+        */
+        typename std::enable_if< std::is_copy_assignable<key_type>::value, exempt_ptr >::type
+        extract_max_key( key_type& max_key )
+        {
+            return exempt_ptr(do_extract_max( [&max_key]( key_type const& key ) { max_key = key; }));
         }
 
         /// Extracts an item from the map
@@ -483,6 +534,7 @@ namespace cds { namespace container {
         {
             return exempt_ptr(do_extract( key ));
         }
+
 
         /// Extracts an item from the map using \p pred for searching
         /**
@@ -689,22 +741,24 @@ namespace cds { namespace container {
             }
         }
 
-        mapped_type do_extract_min()
+        template <typename Func>
+        mapped_type do_extract_min( Func f )
         {
             mapped_type pExtracted = nullptr;
             do_extract_minmax(
                 left_child,
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+                [&pExtracted, &f]( key_type const& key, mapped_type pVal, rcu_disposer& ) -> bool { f( key ); pExtracted = pVal; return false; }
             );
             return pExtracted;
         }
 
-        mapped_type do_extract_max()
+        template <typename Func>
+        mapped_type do_extract_max( Func f )
         {
             mapped_type pExtracted = nullptr;
             do_extract_minmax(
                 right_child,
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+                [&pExtracted, &f]( key_type const& key, mapped_type pVal, rcu_disposer& ) -> bool { f( key ); pExtracted = pVal; return false; }
             );
             return pExtracted;
         }
@@ -744,7 +798,7 @@ namespace cds { namespace container {
             do_remove(
                 key,
                 key_comparator(),
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+                [&pExtracted]( key_type const&, mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
             );
             return pExtracted;
         }
@@ -757,7 +811,7 @@ namespace cds { namespace container {
             do_remove(
                 key,
                 cds::opt::details::make_comparator_from_less<Less>(),
-                [&pExtracted]( mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
+                [&pExtracted]( key_type const&, mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
             );
             return pExtracted;
         }
@@ -1180,7 +1234,7 @@ namespace cds { namespace container {
                 }
 
                 --m_ItemCounter;
-                if ( func( pOld, disp ))   // calls pOld disposer inside
+                if ( func( pNode->m_key, pOld, disp ))   // calls pOld disposer inside
                     m_stat.onDisposeValue();
                 else
                     m_stat.onExtractValue();
@@ -1202,7 +1256,7 @@ namespace cds { namespace container {
 
                 if ( result == update_flags::result_removed ) {
                     --m_ItemCounter;
-                    if ( func( pOld, disp ))  // calls pOld disposer inside
+                    if ( func( pNode->m_key, pOld, disp ))  // calls pOld disposer inside
                         m_stat.onDisposeValue();
                     else
                         m_stat.onExtractValue();

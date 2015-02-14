@@ -161,31 +161,6 @@ namespace cds { namespace container {
             //@endcond
         };
 
-        /// Base value type for BronsonAVLTreeMap
-        /**
-            If value type for \p BronsonAVLTreeMap is based on this struct,
-            the map will support some additional methods like \p BronsonAVLTreeMap::get().
-            Moreover, the disposer behaviour is different for ordinal values and
-            values based on \p %bronson_avltree::value:
-            - for ordinal value, its disposer is called immediately after removing
-              the node from the tree. It this case it is not possible to support
-              map's methods that return raw pointer to the tree's value.
-            - if the value type is based on \p %bronson_avltree::value, 
-              i.e. <tt>std::is_base_of( bronson_avltree::value, value_type )::value</tt> is \p true,
-              the disposer is called via full RCU cycle. It means that under 
-              RCU lock the methods returning raw pointer can be implemented.
-        */
-        struct value
-        {
-            //@cond
-            value *     m_pNextRetired;
-            
-            value()
-                : m_pNextRetired(nullptr)
-            {}
-            //@endcond
-        };
-
         /// BronsonAVLTreeMap internal statistics
         template <typename Counter = cds::atomicity::event_counter>
         struct stat {
@@ -203,7 +178,7 @@ namespace cds { namespace container {
             event_counter   m_nUpdateRetry;         ///< Count of update retries via concurrent operations
             event_counter   m_nUpdateRootWaitShrinking;  ///< Count of waiting until root shrinking completed duting \p update() call
             event_counter   m_nUpdateSuccess;       ///< Count of updating data node
-            event_counter   m_nUpdateUnlinked;      ///< Count of updating of unlinked node attempts
+            event_counter   m_nUpdateUnlinked;      ///< Count of attempts to update unlinked node
             event_counter   m_nDisposedNode;        ///< Count of disposed node
             event_counter   m_nDisposedValue;       ///< Count of disposed value
             event_counter   m_nExtractedValue;      ///< Count of extracted value
@@ -235,11 +210,12 @@ namespace cds { namespace container {
             void onExtractValue()           { ++m_nExtractedValue; }
             void onRemoveRetry()            { ++m_nRemoveRetry; }
             void onRemoveWaitShrinking()    { ++m_nRemoveWaitShrinking; }
+            void onRemoveRootWaitShrinking() { ++m_nRemoveRootWaitShrinking; }
 
             void onRotateRight()            { ++m_nRightRotation; }
             void onRotateLeft()             { ++m_nLeftRotation; }
             void onRotateRightOverLeft()    { ++m_nRightLeftRotation; }
-            void onRotateLeftOverRight()    { ++m_nLeftRghtRotation; }
+            void onRotateLeftOverRight()    { ++m_nLeftRightRotation; }
             //@endcond
         };
 

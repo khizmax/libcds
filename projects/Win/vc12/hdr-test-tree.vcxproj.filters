@@ -120,5 +120,8 @@
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb.cpp">
       <Filter>container</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb_pool_monitor.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

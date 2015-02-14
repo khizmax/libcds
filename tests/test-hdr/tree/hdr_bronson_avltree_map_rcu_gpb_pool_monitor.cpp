@@ -3,6 +3,8 @@
 #include "tree/hdr_bronson_avltree_map.h"
 #include <cds/urcu/general_buffered.h>
 #include <cds/container/bronson_avltree_map_rcu.h>
+#include <cds/sync/pool_monitor.h>
+#include <cds/memory/vyukov_queue_pool.h>
 
 #include "unit/print_bronsonavltree_stat.h"
 
@@ -19,13 +21,31 @@ namespace tree {
                 std::cout << t.statistics();
             }
         };
+
+        typedef cds::memory::vyukov_queue_pool< std::mutex > simple_pool;
+        typedef cds::memory::lazy_vyukov_queue_pool< std::mutex > lazy_pool;
+        typedef cds::memory::bounded_vyukov_queue_pool< std::mutex > bounded_pool;
     } // namespace
 
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_less()
+    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_pool_monitor_less()
     {
         struct traits: public 
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
+                ,co::sync_monitor< cds::sync::pool_monitor<simple_pool> >
+            >::type
+        {};
+        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
+        test<map_type, print_stat>();
+    }
+
+    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_pool_monitor_less_stat()
+    {
+        struct traits: public 
+            cc::bronson_avltree::make_traits<
+                co::less< std::less<key_type> >
+                ,co::stat< cc::bronson_avltree::stat<> >
+                ,co::sync_monitor< cds::sync::pool_monitor<lazy_pool> >
                 ,cc::bronson_avltree::relaxed_insert< false >
             >::type
         {};
@@ -33,92 +53,21 @@ namespace tree {
         test<map_type, print_stat>();
     }
 
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_less_stat()
-    {
-        struct traits: public 
-            cc::bronson_avltree::make_traits<
-                co::less< std::less<key_type> >
-                ,co::stat< cc::bronson_avltree::stat<> >
-                ,cc::bronson_avltree::relaxed_insert< false >
-            >::type
-        {};
-        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
-        test<map_type, print_stat>();
-    }
-
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_cmp()
-    {
-        struct traits: public 
-            cc::bronson_avltree::make_traits<
-                co::compare< compare >
-            >::type
-        {};
-        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
-        test<map_type, print_stat>();
-    }
-
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_cmp_stat()
-    {
-        struct traits: public 
-            cc::bronson_avltree::make_traits<
-                co::compare< compare >
-                ,co::stat< cc::bronson_avltree::stat<> >
-            >::type
-        {};
-        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
-        test<map_type, print_stat>();
-    }
-
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_cmpless()
-    {
-        struct traits: public 
-            cc::bronson_avltree::make_traits<
-                co::compare< compare >
-                ,co::less< std::less<key_type> >
-            >::type
-        {};
-        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
-        test<map_type, print_stat>();
-    }
-
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_less_ic()
-    {
-        struct traits: public 
-            cc::bronson_avltree::make_traits<
-                co::less< std::less<key_type> >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
-        test<map_type, print_stat>();
-    }
-
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_cmp_ic()
-    {
-        struct traits: public 
-            cc::bronson_avltree::make_traits<
-                co::compare< compare >
-                ,co::item_counter< cds::atomicity::item_counter >
-            >::type
-        {};
-        typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
-        test<map_type, print_stat>();
-    }
-
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_cmp_ic_stat()
+        void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_pool_monitor_cmp_ic_stat()
     {
         struct traits: public 
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< cc::bronson_avltree::stat<> >
+                ,co::sync_monitor< cds::sync::pool_monitor<bounded_pool> >
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
         test<map_type, print_stat>();
     }
 
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_cmp_ic_stat_yield()
+    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_pool_monitor_cmp_ic_stat_yield()
     {
         struct traits: public 
             cc::bronson_avltree::make_traits<
@@ -126,31 +75,34 @@ namespace tree {
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< cc::bronson_avltree::stat<> >
                 ,co::back_off< cds::backoff::yield >
+                ,co::sync_monitor< cds::sync::pool_monitor<lazy_pool> >
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
         test<map_type, print_stat>();
     }
 
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_less_relaxed_insert()
+    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert()
     {
         struct traits: public 
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,cc::bronson_avltree::relaxed_insert< true >
+                ,co::sync_monitor< cds::sync::pool_monitor<lazy_pool> >
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
         test<map_type, print_stat>();
     }
 
-    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_less_relaxed_insert_stat()
+    void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert_stat()
     {
         struct traits: public 
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::stat< cc::bronson_avltree::stat<> >
                 ,cc::bronson_avltree::relaxed_insert< true >
+                ,co::sync_monitor< cds::sync::pool_monitor<simple_pool> >
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
