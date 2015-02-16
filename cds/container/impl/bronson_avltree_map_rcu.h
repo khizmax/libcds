@@ -67,7 +67,7 @@ namespace cds { namespace container {
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static CDS_CONSTEXPR bool const c_bRelaxedInsert = traits::relaxed_insert;
 
-#   ifdef CDSDOXYGEN_INVOKED
+#   ifdef CDS_DOXYGEN_INVOKED
         /// Returned pointer to \p mapped_type of extracted node
         typedef cds::urcu::exempt_ptr< gc, T, T, disposer, void > exempt_ptr;
 #   else
