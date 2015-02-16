@@ -123,5 +123,29 @@
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb_pool_monitor.cpp">
       <Filter>container</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi_pool_monitor.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt_pool_monitor.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb_pool_monitor.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht_pool_monitor.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

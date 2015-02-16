@@ -546,6 +546,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht_pool_monitor.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpb.cpp" />

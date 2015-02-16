@@ -505,6 +505,23 @@ namespace tree {
             PrintStat()(s);
         }
 
+        void BronsonAVLTree_rcu_gpi_less();
+        void BronsonAVLTree_rcu_gpi_less_stat();
+        void BronsonAVLTree_rcu_gpi_cmp();
+        void BronsonAVLTree_rcu_gpi_cmp_stat();
+        void BronsonAVLTree_rcu_gpi_cmpless();
+        void BronsonAVLTree_rcu_gpi_less_ic();
+        void BronsonAVLTree_rcu_gpi_cmp_ic();
+        void BronsonAVLTree_rcu_gpi_cmp_ic_stat();
+        void BronsonAVLTree_rcu_gpi_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_gpi_less_relaxed_insert();
+        void BronsonAVLTree_rcu_gpi_less_relaxed_insert_stat();
+        void BronsonAVLTree_rcu_gpi_pool_monitor_less();
+        void BronsonAVLTree_rcu_gpi_pool_monitor_less_stat();
+        void BronsonAVLTree_rcu_gpi_pool_monitor_cmp_ic_stat();
+        void BronsonAVLTree_rcu_gpi_pool_monitor_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_gpi_pool_monitor_less_relaxed_insert();
+        void BronsonAVLTree_rcu_gpi_pool_monitor_less_relaxed_insert_stat();
 
         void BronsonAVLTree_rcu_gpb_less();
         void BronsonAVLTree_rcu_gpb_less_stat();
@@ -524,7 +541,79 @@ namespace tree {
         void BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert();
         void BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert_stat();
 
+        void BronsonAVLTree_rcu_gpt_less();
+        void BronsonAVLTree_rcu_gpt_less_stat();
+        void BronsonAVLTree_rcu_gpt_cmp();
+        void BronsonAVLTree_rcu_gpt_cmp_stat();
+        void BronsonAVLTree_rcu_gpt_cmpless();
+        void BronsonAVLTree_rcu_gpt_less_ic();
+        void BronsonAVLTree_rcu_gpt_cmp_ic();
+        void BronsonAVLTree_rcu_gpt_cmp_ic_stat();
+        void BronsonAVLTree_rcu_gpt_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_gpt_less_relaxed_insert();
+        void BronsonAVLTree_rcu_gpt_less_relaxed_insert_stat();
+        void BronsonAVLTree_rcu_gpt_pool_monitor_less();
+        void BronsonAVLTree_rcu_gpt_pool_monitor_less_stat();
+        void BronsonAVLTree_rcu_gpt_pool_monitor_cmp_ic_stat();
+        void BronsonAVLTree_rcu_gpt_pool_monitor_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_gpt_pool_monitor_less_relaxed_insert();
+        void BronsonAVLTree_rcu_gpt_pool_monitor_less_relaxed_insert_stat();
+
+        void BronsonAVLTree_rcu_shb_less();
+        void BronsonAVLTree_rcu_shb_less_stat();
+        void BronsonAVLTree_rcu_shb_cmp();
+        void BronsonAVLTree_rcu_shb_cmp_stat();
+        void BronsonAVLTree_rcu_shb_cmpless();
+        void BronsonAVLTree_rcu_shb_less_ic();
+        void BronsonAVLTree_rcu_shb_cmp_ic();
+        void BronsonAVLTree_rcu_shb_cmp_ic_stat();
+        void BronsonAVLTree_rcu_shb_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_shb_less_relaxed_insert();
+        void BronsonAVLTree_rcu_shb_less_relaxed_insert_stat();
+        void BronsonAVLTree_rcu_shb_pool_monitor_less();
+        void BronsonAVLTree_rcu_shb_pool_monitor_less_stat();
+        void BronsonAVLTree_rcu_shb_pool_monitor_cmp_ic_stat();
+        void BronsonAVLTree_rcu_shb_pool_monitor_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_shb_pool_monitor_less_relaxed_insert();
+        void BronsonAVLTree_rcu_shb_pool_monitor_less_relaxed_insert_stat();
+
+        void BronsonAVLTree_rcu_sht_less();
+        void BronsonAVLTree_rcu_sht_less_stat();
+        void BronsonAVLTree_rcu_sht_cmp();
+        void BronsonAVLTree_rcu_sht_cmp_stat();
+        void BronsonAVLTree_rcu_sht_cmpless();
+        void BronsonAVLTree_rcu_sht_less_ic();
+        void BronsonAVLTree_rcu_sht_cmp_ic();
+        void BronsonAVLTree_rcu_sht_cmp_ic_stat();
+        void BronsonAVLTree_rcu_sht_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_sht_less_relaxed_insert();
+        void BronsonAVLTree_rcu_sht_less_relaxed_insert_stat();
+        void BronsonAVLTree_rcu_sht_pool_monitor_less();
+        void BronsonAVLTree_rcu_sht_pool_monitor_less_stat();
+        void BronsonAVLTree_rcu_sht_pool_monitor_cmp_ic_stat();
+        void BronsonAVLTree_rcu_sht_pool_monitor_cmp_ic_stat_yield();
+        void BronsonAVLTree_rcu_sht_pool_monitor_less_relaxed_insert();
+        void BronsonAVLTree_rcu_sht_pool_monitor_less_relaxed_insert_stat();
+
         CPPUNIT_TEST_SUITE( BronsonAVLTreeHdrTest )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_cmp )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_cmp_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_cmpless )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_less_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_cmp_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_less_relaxed_insert_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_pool_monitor_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_pool_monitor_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_pool_monitor_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_pool_monitor_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_pool_monitor_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpi_pool_monitor_less_relaxed_insert_stat )
+
             CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less )
             CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_less_stat )
             CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_cmp )
@@ -542,6 +631,61 @@ namespace tree {
             CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_cmp_ic_stat_yield )
             CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert )
             CPPUNIT_TEST( BronsonAVLTree_rcu_gpb_pool_monitor_less_relaxed_insert_stat )
+
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_cmp )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_cmp_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_cmpless )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_less_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_cmp_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_less_relaxed_insert_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_pool_monitor_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_pool_monitor_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_pool_monitor_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_pool_monitor_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_pool_monitor_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_gpt_pool_monitor_less_relaxed_insert_stat )
+
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_cmp )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_cmp_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_cmpless )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_less_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_cmp_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_less_relaxed_insert_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_pool_monitor_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_pool_monitor_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_pool_monitor_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_pool_monitor_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_pool_monitor_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_shb_pool_monitor_less_relaxed_insert_stat )
+
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_cmp )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_cmp_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_cmpless )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_less_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_cmp_ic )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_less_relaxed_insert_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_pool_monitor_less )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_pool_monitor_less_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_pool_monitor_cmp_ic_stat )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_pool_monitor_cmp_ic_stat_yield )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_pool_monitor_less_relaxed_insert )
+            CPPUNIT_TEST( BronsonAVLTree_rcu_sht_pool_monitor_less_relaxed_insert_stat )
+
         CPPUNIT_TEST_SUITE_END()
     };
 } // namespace tree
