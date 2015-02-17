@@ -164,7 +164,7 @@ namespace cds { namespace container {
     >
     class SplitListSet< cds::urcu::gc< RCU >, T, Traits >:
 #ifdef CDS_DOXYGEN_INVOKED
-        protected intrusive::SplitListSet< cds::urcu::gc< RCU >, typename Traits::ordered_list, Traits >
+        protected intrusive::SplitListSet< cds::urcu::gc< RCU >, T, typename Traits::ordered_list, Traits >
 #else
         protected details::make_split_list_set< cds::urcu::gc< RCU >, T, typename Traits::ordered_list, split_list::details::wrap_set_traits<T, Traits> >::type
 #endif
