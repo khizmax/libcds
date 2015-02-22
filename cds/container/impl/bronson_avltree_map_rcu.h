@@ -265,15 +265,15 @@ namespace cds { namespace container {
             If \p bInsert is \p false, only updating of existing node is possible.
 
             If \p key is not found and inserting is allowed (i.e. \p bInsert is \p true),
-            then the new node created from \p key is inserted into the map; note that in this case the \ref key_type should be
+            then the new node created from \p key will be inserted into the map; note that in this case the \ref key_type should be
             constructible from type \p K.
-            Otherwise, the value is changed to \p pVal.
+            Otherwise, the value for \p key will be changed to \p pVal.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
             \p second is \p true if new node has been added or \p false if the node with \p key
-            already is in the tree.
+            already exists.
         */
         template <typename K, typename Func>
         std::pair<bool, bool> update( K const& key, mapped_type pVal, bool bInsert = true )

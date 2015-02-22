@@ -236,7 +236,7 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
+            will be inserted into the map (note that in this case the \ref key_type should be
             constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
             The functor \p Func may be a functor:
@@ -256,7 +256,7 @@ namespace cds { namespace container {
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
-            already is in the tree.
+            already exists.
         */
         template <typename K, typename Func>
         std::pair<bool, bool> update( K const& key, Func func )
