@@ -85,6 +85,7 @@ namespace tree {
     protected:
         static const size_t c_nItemCount = 10000;
 
+        /*
         class data_array
         {
             int *     pFirst;
@@ -113,6 +114,7 @@ namespace tree {
                 return pFirst[i];
             }
         };
+        */
 
         struct find_functor
         {
@@ -164,6 +166,14 @@ namespace tree {
             void operator()( bool bNew, Q key, value_type& i )
             {
                 ensure_func( bNew, key, i );
+            }
+        };
+
+        struct check_functor
+        {
+            void operator()( size_t nLevel, size_t hLeft, size_t hRight )
+            {
+                CPPUNIT_MSG("Consistency violation: level=" << nLevel << ", hLeft=" << hLeft << ", hRight=" << hRight );
             }
         };
 
@@ -344,6 +354,7 @@ namespace tree {
             // extract_min
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             xp = s.extract_min();
             CPPUNIT_ASSERT( xp );
@@ -361,6 +372,7 @@ namespace tree {
             // extract_min<Func>
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.insert( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             nCount = 1;
             xp = s.extract_min( [&keyPrev]( key_type k ){ keyPrev = k; });
@@ -382,6 +394,7 @@ namespace tree {
             // extract_min_key
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.insert( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             nCount = 1;
             xp = s.extract_min_key( keyPrev );
@@ -403,6 +416,7 @@ namespace tree {
             // extract_max
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             nCount = 1;
             xp = s.extract_max();
@@ -422,6 +436,7 @@ namespace tree {
             // extract_max<Func>
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             nCount = 1;
             xp = s.extract_max( [&keyPrev]( key_type k ){ keyPrev = k; });
@@ -445,6 +460,7 @@ namespace tree {
             // extract_max_key
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             nCount = 1;
             xp = s.extract_max_key( keyPrev );
@@ -468,6 +484,7 @@ namespace tree {
             // extract
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             for ( int i = 0; i < sizeof( keys ) / sizeof( keys[0] ); ++i ) {
                 xp = s.extract(keys[i]);
@@ -479,6 +496,7 @@ namespace tree {
             // extract_with
             for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
+            CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
             for ( int i = 0; i < sizeof( keys ) / sizeof( keys[0] ); ++i ) {
                 xp = s.extract_with( wrapped_int(keys[i]), wrapped_less());

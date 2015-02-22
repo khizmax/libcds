@@ -613,6 +613,29 @@ namespace cds { namespace container {
         {
             return base_class::check_consistency();
         }
+
+        /// Checks internal consistency (not atomic, not thread-safe)
+        /**
+            The debugging function to check internal consistency of the tree.
+            The functor \p Func is called if a violation of internal tree structure
+            is found:
+            \code
+            struct functor {
+                void operator()( size_t nLevel, size_t hLeft, size_t hRight );
+            };
+            \endcode
+            where 
+            - \p nLevel - the level where the violation is found
+            - \p hLeft - the height of left subtree
+            - \p hRight - the height of right subtree
+
+            The functor is called for each violation found.
+        */
+        template <typename Func>
+        bool check_consistency( Func f ) const
+        {
+            return base_class::check_consistency( f );
+        }
     };
 }} // namespace cds::container
 

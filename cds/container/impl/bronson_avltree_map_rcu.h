@@ -696,12 +696,65 @@ namespace cds { namespace container {
         */
         bool check_consistency() const
         {
-            //TODO
+            return check_consistency([]( size_t /*nLevel*/, size_t /*hLeft*/, size_t /*hRight*/ ){} );
+        }
+
+        /// Checks internal consistency (not atomic, not thread-safe)
+        /**
+            The debugging function to check internal consistency of the tree.
+            The functor \p Func is called if a violation of internal tree structure
+            is found:
+            \code
+            struct functor {
+                void operator()( size_t nLevel, size_t hLeft, size_t hRight );
+            };
+            \endcode
+            where 
+            - \p nLevel - the level where the violation is found
+            - \p hLeft - the height of left subtree
+            - \p hRight - the height of right subtree
+
+            The functor is called for each violation found.
+        */
+        template <typename Func>
+        bool check_consistency( Func f ) const
+        {
+            node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_relaxed );
+            if ( pChild ) {
+                size_t nErrors = 0;
+                do_check_consistency( pChild, 1, f, nErrors );
+                return nErrors == 0;
+            }
             return true;
         }
 
     protected:
         //@cond
+        template <typename Func>
+        size_t do_check_consistency( node_type * pNode, size_t nLevel, Func f, size_t& nErrors ) const
+        {
+            if ( pNode ) {
+                size_t hLeft = do_check_consistency( child( pNode, left_child, memory_model::memory_order_relaxed ), nLevel + 1, f, nErrors );
+                size_t hRight = do_check_consistency( child( pNode, right_child, memory_model::memory_order_relaxed ), nLevel + 1, f, nErrors );
+
+                if ( hLeft >= hRight ) {
+                    if ( hLeft - hRight > 1 ) {
+                        f( nLevel, hLeft, hRight );
+                        ++nErrors;
+                    }
+                    return hLeft;
+                }
+                else {
+                    if ( hRight - hLeft > 1 ) {
+                        f( nLevel, hLeft, hRight );
+                        ++nErrors;
+                    }
+                    return hRight;
+                }
+            }
+            return 0;
+        }
+
         template <typename Q, typename Compare, typename Func>
         bool do_find( Q& key, Compare cmp, Func f ) const
         {
