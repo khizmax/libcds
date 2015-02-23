@@ -342,7 +342,7 @@ namespace tree {
 
             const int c_nStep = 10;
             int keys[1000];
-            for ( key_type i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( key_type i = 0; i < static_cast<key_type>(sizeof(keys) / sizeof(keys[0])); ++i )
                 keys[i] = i;
             std::random_shuffle( keys, keys + sizeof(keys) / sizeof(keys[0]));
 
@@ -352,7 +352,7 @@ namespace tree {
             exempt_ptr xp;
 
             // extract_min
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
@@ -370,7 +370,7 @@ namespace tree {
             CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
 
             // extract_min<Func>
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.insert( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
@@ -392,7 +392,7 @@ namespace tree {
             CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
 
             // extract_min_key
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.insert( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
@@ -414,7 +414,7 @@ namespace tree {
             CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
 
             // extract_max
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
@@ -434,7 +434,7 @@ namespace tree {
             CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
 
             // extract_max<Func>
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
@@ -458,7 +458,7 @@ namespace tree {
             CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
 
             // extract_max_key
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
@@ -482,11 +482,11 @@ namespace tree {
             CPPUNIT_CHECK( nCount == sizeof(keys) / sizeof(keys[0]));
 
             // extract
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
-            for ( int i = 0; i < sizeof( keys ) / sizeof( keys[0] ); ++i ) {
+            for ( int i = 0; i < static_cast<int>(sizeof( keys ) / sizeof( keys[0] )); ++i ) {
                 xp = s.extract(keys[i]);
                 CPPUNIT_CHECK_EX( xp->nVal == keys[i] * c_nStep, "Expected value=" << keys[i] * c_nStep << " real=" << xp->nVal );
             }
@@ -494,11 +494,11 @@ namespace tree {
 
 
             // extract_with
-            for ( int i = 0; i < sizeof(keys) / sizeof(keys[0]); ++i )
+            for ( int i = 0; i < static_cast<int>(sizeof(keys) / sizeof(keys[0])); ++i )
                 CPPUNIT_ASSERT( s.emplace( keys[i], keys[i] * c_nStep ));
             CPPUNIT_CHECK( s.check_consistency( check_functor() ));
 
-            for ( int i = 0; i < sizeof( keys ) / sizeof( keys[0] ); ++i ) {
+            for ( int i = 0; i < static_cast<int>(sizeof( keys ) / sizeof( keys[0] )); ++i ) {
                 xp = s.extract_with( wrapped_int(keys[i]), wrapped_less());
                 CPPUNIT_CHECK_EX( xp->nVal == keys[i] * c_nStep, "Expected value=" << keys[i] * c_nStep << " real=" << xp->nVal );
             }

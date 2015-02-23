@@ -65,9 +65,8 @@ namespace ordlist {
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_cmp()
     {
         typedef member_int_item< RCU > item;
-        typedef ci::MichaelList< RCU
-            ,item
-            ,ci::michael_list::make_traits<
+        struct traits: public 
+            ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),
                     co::gc<RCU>
@@ -75,15 +74,15 @@ namespace ordlist {
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
             >::type
-        >    list;
+        {};
+        typedef ci::MichaelList< RCU, item, traits > list;
         test_rcu_int<list>();
     }
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_less()
     {
         typedef member_int_item< RCU > item;
-        typedef ci::MichaelList< RCU
-            ,item
-            ,ci::michael_list::make_traits<
+        struct traits: public 
+            ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),
                     co::gc<RCU>
@@ -91,15 +90,15 @@ namespace ordlist {
                 ,co::less< less<item> >
                 ,ci::opt::disposer< faked_disposer >
             >::type
-        >    list;
+        {};
+        typedef ci::MichaelList< RCU, item, traits > list;
         test_rcu_int<list>();
     }
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_cmpmix()
     {
         typedef member_int_item< RCU > item;
-        typedef ci::MichaelList< RCU
-            ,item
-            ,ci::michael_list::make_traits<
+        struct traits: public 
+            ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),
                     co::gc<RCU>
@@ -108,15 +107,15 @@ namespace ordlist {
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
             >::type
-        >    list;
+        {};
+        typedef ci::MichaelList< RCU, item, traits > list;
         test_rcu_int<list>();
     }
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_ic()
     {
         typedef member_int_item< RCU > item;
-        typedef ci::MichaelList< RCU
-            ,item
-            ,ci::michael_list::make_traits<
+        struct traits: public 
+            ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),
                     co::gc<RCU>
@@ -125,8 +124,8 @@ namespace ordlist {
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
-        >    list;
+        {};
+        typedef ci::MichaelList< RCU, item, traits > list;
         test_rcu_int<list>();
     }
-
-}
+} // namespace ordlist

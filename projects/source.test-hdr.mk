@@ -225,7 +225,6 @@ CDS_TESTHDR_STACK := \
 
 CDS_TESTHDR_TREE := \
     tests/test-hdr/tree/hdr_tree_reg.cpp \
-    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_gpb.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_hp.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_dhp.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_gpb.cpp \
