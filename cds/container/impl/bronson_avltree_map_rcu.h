@@ -14,6 +14,7 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_map
         @ingroup cds_nonintrusive_tree
         @headerfile cds/container/bronson_avltree_map_rcu.h
+        @anchor cds_container_BronsonAVLTreeMap_rcu_ptr
 
         This is the specialization of \ref cds_container_BronsonAVLTreeMap_rcu "RCU-based Bronson et al AVL-tree"
         for "key -> value pointer" map. This specialization stores the pointer to user-allocated values instead of the copy

@@ -42,7 +42,6 @@ namespace cds { namespace container {
             atomics::atomic<mapped_type *>  m_pValue;   ///< Value
 
         public:
-            //@cond
             link_node()
                 : m_nHeight( 0 )
                 , m_nVersion( 0 )
@@ -123,8 +122,6 @@ namespace cds { namespace container {
             {
                 return value( order ) != nullptr;
             }
-
-            //@endcond
         };
         //@endcond
 
@@ -138,7 +135,9 @@ namespace cds { namespace container {
 
             typedef Key key_type;       ///< key type
             typedef T   mapped_type;    ///< value type
+            //@cond
             typedef typename base_class::version_type version_type;
+            //@endcond
 
             key_type const                  m_key;      ///< Key
             node *                          m_pNextRemoved; ///< thread-local list of removed node
@@ -249,9 +248,9 @@ namespace cds { namespace container {
             //@endcond
         };
 
-        /// Option to allow relaxed insert into Bronson et al AVL-tree
+        /// Option to allow relaxed insert into \ref cds_container_BronsonAVLTreeMap_rcu "Bronson et al AVL-tree"
         /**
-            By default, this opton is disabled and the new node is created under its parent lock.
+            By default, this option is disabled and the new node is created under its parent lock.
             In this case, it is guaranteed the new node will be attached to its parent.
             On the other hand, constructing of the new node can be too complex to make it under the lock,
             that can lead to lock contention.
@@ -270,11 +269,11 @@ namespace cds { namespace container {
             //@endcond
         };
 
-        /// BronsnAVLTreeMap traits
+        /// \p BronsonAVLTreeMap traits
         /**
             Note that there are two main specialization of Bronson et al AVL-tree:
-            - pointer-oriented - the tree node stores an user-provided pointer to value: <tt>BronsonAVLTreeMap<GC, Key, T *, Traits> </tt>
-            - data-oriented - the tree node contains a copy of values: <tt>BronsonAVLTreeMap<GC, Key, T, Traits> </tt> where \p T is not a pointer type.
+            - \ref cds_container_BronsonAVLTreeMap_rcu_ptr "pointer-oriented" - the tree node stores an user-provided pointer to value
+            - \ref cds_container_BronsonAVLTreeMap_rcu "data-oriented" - the tree node contains a copy of values
 
             Depends on tree specialization, different traits member can be used.
         */
@@ -308,7 +307,7 @@ namespace cds { namespace container {
             /**
                 The functor used for dispose removed values.
                 The user-provided disposer is used only for pointer-oriented tree specialization
-                like \p BronsonAVLTreeMap<GC, Key, T*, Traits>. When the node becomes the rounting node without value,
+                like \p BronsonAVLTreeMap<GC, Key, T*, Traits>. When the node becomes the routing node without value,
                 the disposer will be called to signal that the memory for the value can be safely freed.
                 Default is \ref cds::intrusive::opt::delete_disposer "cds::container::opt::v::delete_disposer<>" which calls \p delete operator.
             */
@@ -357,8 +356,8 @@ namespace cds { namespace container {
         /// Metafunction converting option list to BronsonAVLTreeMap traits
         /**
             Note that there are two main specialization of Bronson et al AVL-tree:
-            - pointer-oriented - the tree node stores an user-provided pointer to value: <tt>BronsonAVLTreeMap<GC, Key, T *, Traits> </tt>
-            - data-oriented - the tree node contains a copy of values: <tt>BronsonAVLTreeMap<GC, Key, T, Traits> </tt> where \p T is not a pointer type.
+            - \ref cds_container_BronsonAVLTreeMap_rcu_ptr "pointer-oriented" - the tree node stores an user-provided pointer to value
+            - \ref cds_container_BronsonAVLTreeMap_rcu "data-oriented" - the tree node contains a copy of values
 
             Depends on tree specialization, different options can be specified.
 

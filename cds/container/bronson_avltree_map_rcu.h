@@ -43,8 +43,18 @@ namespace cds { namespace container {
 
         Source:
             - [2010] N.Bronson, J.Casper, H.Chafi, K.Olukotun "A Practical Concurrent Binary Search Tree"
+            - <a href="http://github.com/nbronson/snaptree">Java implementation</a>
 
-        bla-bla-bla
+        This is a concurrent AVL tree algorithm that uses hand-over-hand optimistic validation, 
+        a concurrency control mechanism for searching and navigating a binary search tree. 
+        This mechanism minimizes spurious retries when concurrent structural changes cannot 
+        affect the correctness of the search or navigation result. The algorithm is based on
+        partially external trees, a simple scheme that simplifies deletions by leaving a routing 
+        node in the tree when deleting a node that has two children, then opportunistically unlinking 
+        routing nodes during rebalancing. As in external trees, which store values only in leaf nodes, 
+        deletions can be performed locally while holding a fixed number of locks. Partially
+        external trees, however, require far fewer routing nodes than an external tree for most sequences 
+        of insertions and deletions.
 
         <b>Template arguments</b>:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
@@ -53,6 +63,8 @@ namespace cds { namespace container {
         - \p Traits - tree traits, default is \p bronson_avltree::traits
             It is possible to declare option-based tree with \p bronson_avltree::make_traits metafunction
             instead of \p Traits template argument.
+            
+        There is \ref cds_container_BronsonAVLTreeMap_rcu_ptr "a specialization" for "key -> value pointer" map.
 
         @note Before including <tt><cds/container/bronson_avltree_map_rcu.h></tt> you should include appropriate RCU header file,
         see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
@@ -400,7 +412,7 @@ namespace cds { namespace container {
             \code
                 key_type key;
                 exempt_ptr xp = theTree.extract_min( [&key]( key_type const& k ) { key = k; } );
-            \endode
+            \endcode
             \p key_type should be copy-assignable. The copy of minimal key
             is returned in \p min_key argument.
         */
@@ -416,7 +428,7 @@ namespace cds { namespace container {
             If the set is empty, returns empty \p exempt_ptr.
 
             Note that the function returns only the value for maximal key.
-            To retrieve its key use \p extract_max( Func ) member function.
+            To retrieve its key use \p extract_max( Func ) or \p extract_max_key(key_type&) member function.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
@@ -471,7 +483,7 @@ namespace cds { namespace container {
             \code
                 key_type key;
                 exempt_ptr xp = theTree.extract_max( [&key]( key_type const& k ) { key = k; } );
-            \endode
+            \endcode
             \p key_type should be copy-assignable. The copy of maximal key
             is returned in \p max_key argument.
         */
