@@ -4,60 +4,92 @@
 #include <iostream>
 
 template <class Type>
+  struct nodeType
 
- struct nodeType
-{
-   Type    info;
-   volatile   boost::atomic<nodeType*> link;
+    {
 
- // bool  marked;
+        Type    info;
+        volatile   boost::atomic<nodeType*> link;
+        bool   marked;
+        volatile boost::atomic<bool>  markedAtomic;
 
-};
+    };
 
-template <class Type>
-class LinkedListIterator
-{
-public:
-  LinkedListIterator();
-  LinkedListIterator(nodeType<Type>*) ;
-  Type operator*() ;
-  LinkedListIterator<Type> operator++();
-  bool operator == (const LinkedListIterator<Type>&) const;
-   bool operator != (const LinkedListIterator<Type>&) const;
-private:
-    nodeType<Type> *current;
-};
+
+ template <class Type>
+ class LinkedListIterator
+
+     {
+
+          public:
+          LinkedListIterator();
+          LinkedListIterator(nodeType<Type>*) ;
+          Type operator*() ;
+          LinkedListIterator<Type> operator++();
+          bool operator == (const LinkedListIterator<Type>&) const;
+          bool operator != (const LinkedListIterator<Type>&) const;
+          private:
+          nodeType<Type> *current;
+
+    };
+
 template <class Type>
 LinkedListIterator<Type>::LinkedListIterator()
-{
-    current=NULL;
-}
+
+    {
+
+
+         current=NULL;
+
+
+    }
+
 template <class Type>
 LinkedListIterator<Type>::LinkedListIterator(nodeType<Type> *ptr)
-{
-    current=ptr;
-}
+
+    {
+
+        current=ptr;
+
+    }
+
 template <class Type>
 Type LinkedListIterator<Type>::operator *()
-{
-    return current->info;
-}
+
+    {
+
+        return current->info;
+
+    }
 
 template <class Type>
 LinkedListIterator<Type> LinkedListIterator<Type>::operator++()
-{current=current->link;
-    return *this;
-}
+
+    {
+
+        current=current->link;
+        return *this;
+
+    }
+
 template <class Type>
 bool LinkedListIterator<Type>::operator ==(const LinkedListIterator<Type>& other) const
-{
-    return (current==other.current);
-}
+
+    {
+
+        return (current==other.current);
+
+    }
+
 template <class Type>
 bool LinkedListIterator<Type>::operator !=(const LinkedListIterator<Type>& other) const
-{
-    return (current!=other.current);
-}
+
+    {
+
+        return (current!=other.current);
+
+    }
+
 #endif // LINKEDLISTITERATOR_H_INCLUDED
 
 
