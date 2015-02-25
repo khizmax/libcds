@@ -68,6 +68,9 @@ namespace cds { namespace container {
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
         static CDS_CONSTEXPR bool const c_bRelaxedInsert = traits::relaxed_insert;
 
+        /// Group of \p extract_xxx functions does not require external locking
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false;
+
 #   ifdef CDS_DOXYGEN_INVOKED
         /// Returned pointer to \p mapped_type of extracted node
         typedef cds::urcu::exempt_ptr< gc, T, T, disposer, void > exempt_ptr;
@@ -276,7 +279,7 @@ namespace cds { namespace container {
             \p second is \p true if new node has been added or \p false if the node with \p key
             already exists.
         */
-        template <typename K, typename Func>
+        template <typename K>
         std::pair<bool, bool> update( K const& key, mapped_type pVal, bool bInsert = true )
         {
             int result = do_update( key, key_comparator(),
@@ -288,6 +291,15 @@ namespace cds { namespace container {
             );
             return std::make_pair( result != 0, (result & update_flags::result_inserted) != 0 );
         }
+
+        //@cond
+        template <typename K>
+        std::pair<bool, bool> ensure( K const& key, mapped_type pVal )
+        {
+            return update( key, pVal, true );
+        }
+
+        //@endcond
 
         /// Delete \p key from the map
         /**
