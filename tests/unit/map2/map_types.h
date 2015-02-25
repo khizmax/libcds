@@ -41,6 +41,9 @@
 #include <cds/container/ellen_bintree_map_hp.h>
 #include <cds/container/ellen_bintree_map_dhp.h>
 
+#include <cds/sync/pool_monitor.h>
+#include <cds/container/bronson_avltree_map_rcu.h>
+
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 104800
 #   include <cds/container/striped_map/boost_list.h>
@@ -62,6 +65,7 @@
 #include "print_split_list_stat.h"
 #include "print_skip_list_stat.h"
 #include "print_ellenbintree_stat.h"
+#include "print_bronsonavltree_stat.h"
 #include "ellen_bintree_update_desc_pool.h"
 
 namespace map2 {
@@ -1715,6 +1719,131 @@ namespace map2 {
 #endif
 
         // ***************************************************************************
+        // BronsonAVLTreeMap
+        typedef cds::memory::vyukov_queue_pool< std::mutex > BronsonAVLTreeMap_simple_pool;
+        typedef cds::memory::lazy_vyukov_queue_pool< std::mutex > BronsonAVLTreeMap_lazy_pool;
+        typedef cds::memory::bounded_vyukov_queue_pool< std::mutex > BronsonAVLTreeMap_bounded_pool;
+
+        struct BronsonAVLTreeMap_less: public 
+            cc::bronson_avltree::make_traits<
+                co::less< less >
+                ,cc::bronson_avltree::relaxed_insert< false >
+            >::type
+        {};
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_gpi_less;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_gpb_less;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_gpt_less;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_shb_less;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_sht_less;
+#endif
+        struct BronsonAVLTreeMap_less_stat : public BronsonAVLTreeMap_less
+        {
+            typedef cc::bronson_avltree::stat<> stat;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_gpi_less_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_gpb_less_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_gpt_less_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_shb_less_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_sht_less_stat;
+#endif
+        struct BronsonAVLTreeMap_cmp_ic: public 
+            cc::bronson_avltree::make_traits<
+                co::less< compare >
+                ,cc::bronson_avltree::relaxed_insert< true >
+                ,co::item_counter< cds::atomicity::item_counter >
+            >::type
+        {};
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_gpi_cmp_ic;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_gpb_cmp_ic;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_gpt_cmp_ic;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_shb_cmp_ic;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_sht_cmp_ic;
+#endif
+        struct BronsonAVLTreeMap_cmp_ic_stat : public BronsonAVLTreeMap_cmp_ic
+        {
+            typedef cc::bronson_avltree::stat<> stat;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_gpi_cmp_ic_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_gpb_cmp_ic_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_gpt_cmp_ic_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_shb_cmp_ic_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_sht_cmp_ic_stat;
+#endif
+
+        struct BronsonAVLTreeMap_less_pool_simple: public BronsonAVLTreeMap_less
+        {
+            typedef cds::sync::pool_monitor<BronsonAVLTreeMap_simple_pool> sync_monitor;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_gpi_less_pool_simple;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_gpb_less_pool_simple;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_gpt_less_pool_simple;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_shb_less_pool_simple;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_sht_less_pool_simple;
+#endif
+        struct BronsonAVLTreeMap_less_pool_simple_stat : public BronsonAVLTreeMap_less_pool_simple
+        {
+            typedef cc::bronson_avltree::stat<> stat;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_simple_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_simple_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_gpt_less_pool_simple_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_shb_less_pool_simple_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_sht_less_pool_simple_stat;
+#endif
+        struct BronsonAVLTreeMap_less_pool_lazy: public BronsonAVLTreeMap_less
+        {
+            typedef cds::sync::pool_monitor<BronsonAVLTreeMap_lazy_pool> sync_monitor;
+            static CDS_CONSTEXPR bool const relaxed_insert = true;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_gpi_less_pool_lazy;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_gpb_less_pool_lazy;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_gpt_less_pool_lazy;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_shb_less_pool_lazy;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_sht_less_pool_lazy;
+#endif
+        struct BronsonAVLTreeMap_less_pool_lazy_stat : public BronsonAVLTreeMap_less_pool_lazy
+        {
+            typedef cc::bronson_avltree::stat<> stat;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_lazy_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_lazy_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpt_less_pool_lazy_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_shb_less_pool_lazy_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_sht_less_pool_lazy_stat;
+#endif
+        struct BronsonAVLTreeMap_less_pool_bounded: public BronsonAVLTreeMap_less
+        {
+            typedef cds::sync::pool_monitor<BronsonAVLTreeMap_bounded_pool> sync_monitor;
+            static CDS_CONSTEXPR bool const relaxed_insert = true;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_gpi_less_pool_bounded;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_gpb_less_pool_bounded;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_gpt_less_pool_bounded;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_shb_less_pool_bounded;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_sht_less_pool_bounded;
+#endif
+        struct BronsonAVLTreeMap_less_pool_bounded_stat : public BronsonAVLTreeMap_less_pool_bounded
+        {
+            typedef cc::bronson_avltree::stat<> stat;
+        };
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_bounded_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_bounded_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpt_less_pool_bounded_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_shb_less_pool_bounded_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_sht_less_pool_bounded_stat;
+#endif
+
+        // ***************************************************************************
         // Standard implementations
 
         typedef StdMap< Key, Value, cds::sync::spin >     StdMap_Spin;
@@ -1799,6 +1928,21 @@ namespace map2 {
         ellen_bintree_check::check_stat( s.statistics() );
     }
 
+    // BronsonAVLTreeMap
+    template <typename GC, typename Key, typename T, typename Traits>
+    static inline void print_stat( cc::BronsonAVLTreeMap<GC, Key, T, Traits> const& s )
+    {
+        CPPUNIT_MSG( s.statistics() );
+    }
+
+    template <typename GC, typename Key, typename T, typename Traits>
+    static inline void additional_check( cc::BronsonAVLTreeMap<GC, Key, T, Traits>& m )
+    {
+        m.check_consistency([]( size_t nLevel, size_t hLeft, size_t hRight )
+            { 
+                CPPUNIT_MSG( "Tree violation on level=" << nLevel << ": hLeft=" << hLeft << ", hRight=" << hRight ) 
+            });
+    }
 
     template <typename K, typename V, typename Traits>
     static inline void print_stat( CuckooMap< K, V, Traits > const& m )

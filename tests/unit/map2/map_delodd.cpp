@@ -163,6 +163,9 @@ namespace map2 {
                 template <typename Q>
                 void operator()( bool /*bNew*/, Q const& )
                 {}
+                template <typename Q, typename V>
+                void operator()( bool /*bNew*/, Q const&, V& )
+                {}
             };
         public:
             size_t  m_nInsertSuccess;
@@ -731,6 +734,7 @@ namespace map2 {
         CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
+        CDSUNIT_DECLARE_BronsonAVLTreeMap
         //CDSUNIT_DECLARE_StdMap
 
         CPPUNIT_TEST_SUITE( Map_DelOdd )
@@ -738,6 +742,7 @@ namespace map2 {
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
             //CDSUNIT_TEST_StripedMap
             //CDSUNIT_TEST_RefinableMap
             CDSUNIT_TEST_CuckooMap
