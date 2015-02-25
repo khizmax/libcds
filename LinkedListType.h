@@ -2,182 +2,252 @@
 #define LINKEDLISTTYPE_H_INCLUDED
 #include "LinkedListIterator.h"
 #include <iostream>
-
 #include <cassert>
-
 using namespace std;
+
 template <class Type>
 class LinkedListType
-{
-public:
-    const LinkedListType<Type>& operator=(const LinkedListType<Type>&);
-    void initializeList();
-    bool isEmptyList() const;
-    void print() const;
-    int length() const;
-    void destroyList();
-    Type front() const;
-    Type back() const;
 
- virtual bool insert (const Type&)=0;
+    {
 
-  virtual   bool deleteNode(const Type&)=0;
+        public:
+        const LinkedListType<Type>& operator=(const LinkedListType<Type>&);
+        void initializeList();
+        bool isEmptyList() const;
+        void print() const;
+        int length() const;
+        void destroyList();
+        Type front() const;
+        Type back() const;
+        LinkedListIterator<Type> begin();
+        LinkedListIterator<Type> end();
+        LinkedListType();
+        LinkedListType(const LinkedListType<Type>&);
+        ~LinkedListType();
+        protected:
+        int count;
+        nodeType<Type>* first;
+        nodeType<Type>* last;
+        private:
+        void copyList(const LinkedListType<Type>&);
+        void copyNode(const nodeType<Type>&);
 
-    LinkedListIterator<Type> begin();
-     LinkedListIterator<Type> end();
-     LinkedListType();
-      LinkedListType(const LinkedListType<Type>&);
-    ~LinkedListType();
-protected:
-    int count;
-    nodeType<Type>* first;
-      nodeType<Type>* last;
-private:
-    void copyList(const LinkedListType<Type>&);
-      void copyNode(const nodeType<Type>&);
-};
+    };
 
 
 template <class Type>
 bool LinkedListType<Type>::isEmptyList() const
-{
-    return(first==NULL);
-}
+
+    {
+
+        return(first==NULL);
+
+    }
+
 template <class Type>
 LinkedListType<Type>::LinkedListType()
-{
-    first=new nodeType<Type>;
-    first->info=-1000000000;
-//first->marked=false;
-    last=new nodeType<Type>;
-    last->info=1000000000;
-  // last->marked=false;
-    last->link=NULL;
-    first->link=last;
-    count=2;
-}
+
+    {
+
+        first=new nodeType<Type>;
+        first->info=-1000000000;
+        first->marked=0;
+        last=new nodeType<Type>;
+        last->info=1000000000;
+        last->marked=0;
+        last->link=NULL;
+        first->link=last;
+        count=2;
+
+    }
+
 template <class Type>
 void LinkedListType<Type>::destroyList()
-{
-    nodeType<Type> *temp;
-    while(first!=NULL)
+
     {
-        temp=first;
-        first=first->link;
-        delete temp;
+
+        nodeType<Type> *temp;
+        while(first!=NULL)
+
+         {
+
+             temp=first;
+             first=first->link;
+             delete temp;
+
+         }
+
+        last=NULL;
+        count=0;
+
     }
-    last=NULL;
-    count=0;
-}
+
 template<class Type>
 void LinkedListType<Type>::initializeList()
-{
-    destroyList();
-}
+
+    {
+
+        destroyList();
+
+    }
+
 template<class Type>
 void LinkedListType<Type>::print() const
-{
-    nodeType<Type> *current;
-    current=first;
-    while(current!=NULL)
+
     {
-        cout<<current->info<<" ";
-        current = current->link;
+
+        nodeType<Type> *current;
+        cout<<"Current list: "<<endl;
+        current=first;
+        while(current!=NULL)
+
+         {
+
+             cout<<current->info<<" ";
+             current = current->link;
+
+         }
     }
-}
+
 template <class Type>
 int LinkedListType<Type>::length() const
-{
-   return count;
-}
+
+    {
+
+        return count;
+
+    }
+
 template <class Type>
 Type LinkedListType<Type>::front() const
-{assert(first !=NULL);
 
-return first->info;
-}
+    {
+
+       assert(first !=NULL);
+       return first->info;
+
+    }
+
 template <class Type>
 Type LinkedListType<Type>::back() const
-{assert(last !=NULL);
 
-return last->info;
-}
+    {
+
+       assert(last !=NULL);
+       return last->info;
+
+    }
+
 template <class Type>
 LinkedListIterator<Type> LinkedListType<Type>::begin()
-{
-    LinkedListIterator<Type> temp(first);
-    return temp;
-}
+
+    {
+
+        LinkedListIterator<Type> temp(first);
+        return temp;
+
+    }
+
 template <class Type>
 LinkedListIterator<Type> LinkedListType<Type>::end()
-{
-    LinkedListIterator<Type> temp(NULL)
-    return temp;
-}
+
+    {
+
+        LinkedListIterator<Type> temp(NULL)
+        return temp;
+
+    }
+
 template <class Type>
 void LinkedListType<Type>::copyList(const LinkedListType<Type>&other)
-{
-    nodeType<Type> *newNode,*current;
-    if (first !=NULL)
+
+    {
+
+        nodeType<Type> *newNode,*current;
+        if (first !=NULL)
         destroyList();
-     if (other.first ==NULL)
-       {
-          first = NULL;
-          last= NULL;
-          count = 0;
-       }
-    else {
-        current=other.first;
-        count = other.count;
-        first = new nodeType<Type>;
-        first->info = current->info;
-        first->link = NULL;
-        current = current->link;
-        while(current !=NULL)
+         if (other.first ==NULL)
+
+          {
+
+              first = NULL;
+              last= NULL;
+              count = 0;
+
+          }
+        else
+
         {
-            newNode = new nodeType<Type>;
-            newNode->info = current->info;
-            newNode->link = NULL;
-            last->link = newNode;
-            last=newNode;
+
+            current=other.first;
+            count = other.count;
+            first = new nodeType<Type>;
+            first->info = current->info;
+            first->link = NULL;
             current = current->link;
+            while(current !=NULL)
+
+             {
+
+                 newNode = new nodeType<Type>;
+                 newNode->info = current->info;
+                 newNode->link = NULL;
+                 last->link = newNode;
+                 last=newNode;
+                 current = current->link;
+
+             }
+
         }
+
     }
-}
+
 template <class Type>
 void LinkedListType<Type>::copyNode(const nodeType<Type>&other)
-{
-   nodeType<Type> *current;
-    current->info = other->link;
-    current = other->link;
-}
-template <class Type>
 
-LinkedListType<Type>::~LinkedListType()
-{
-    destroyList();
-
-}
-
-template <class Type>
-
-LinkedListType<Type>::LinkedListType(const LinkedListType<Type>& other)
-{
-   first = NULL;
-   copyList(other);
-
-}
-template <class Type>
-
-const LinkedListType<Type>& LinkedListType<Type>::operator =(const LinkedListType<Type>&other)
-{
-    if (this !=&other)
     {
-        copyList(other);
-    }
-    return *this;
 
-}
+       nodeType<Type> *current;
+       current->info = other->link;
+       current = other->link;
+
+    }
+
+template <class Type>
+LinkedListType<Type>::~LinkedListType()
+
+    {
+
+        destroyList();
+
+    }
+
+template <class Type>
+LinkedListType<Type>::LinkedListType(const LinkedListType<Type>& other)
+
+    {
+
+       first = NULL;
+       copyList(other);
+
+    }
+
+template <class Type>
+const LinkedListType<Type>& LinkedListType<Type>::operator =(const LinkedListType<Type>&other)
+
+    {
+
+    if (this !=&other)
+
+       {
+
+            copyList(other);
+
+       }
+
+        return *this;
+
+    }
 
 #endif // LINKEDLISTTYPE_H_INCLUDED
 

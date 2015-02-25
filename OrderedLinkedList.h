@@ -60,11 +60,12 @@ using namespace boost;
                      if (first->link.compare_exchange_strong(next, tmp, memory_order_release))// если cas успешна, запись вставлена
                          {
                               count++;
+ node=node++;
+                                     cout<<"Current inserted node's value: "<<node->info<<endl;
 
                               return true;
                          }
-                          first=first++;
-                              cout<<"Current inserted node's value: "<<first->info<<endl;
+
 
               } else {
                         // пытаемся вставить узел cas перацией
@@ -78,8 +79,7 @@ using namespace boost;
                               {
 
                                      count++;
-                                     next=(prev)++;
-                                     cout<<"Current inserted node's value: "<<next->info<<endl;
+                                     cout<<"Current inserted node's value: "<<node->info<<endl;
                                      return true;
 
 
