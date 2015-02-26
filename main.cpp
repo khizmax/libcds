@@ -6,9 +6,10 @@
 //#include "unistd.h"
 #include "boost/thread.hpp"
 using namespace std;
-
- orderedLinkedList<int> list1;
-// nodeType<int> *fst=list1.first;
+//задаем кол-во потоков для тестирования контейнера
+static const int num_threads = 20;
+orderedLinkedList<int> list1;
+nodeType<int>* node;
 
 
 //таск для вывода списка на консоль
@@ -17,7 +18,8 @@ using namespace std;
      {
 
 
-         list1.print();
+        list1.print();
+
 
 
      }
@@ -26,14 +28,9 @@ using namespace std;
   void insert_node_test(int i)
 
     {
+              // std::cout<<"Inserting node with key:"<<i<<std::endl;
 
-
-        std::cout << "Worker: running insert task" << std::endl;
-        list1.insert(i);
-
-
-        std::cout << "Worker: finished insert task" << std::endl;
-
+              list1.insert(i);
 
 
     }
@@ -43,9 +40,7 @@ using namespace std;
     {
 
 
-         std::cout << "Worker: running insert node" << std::endl;
          list1.insert(i);
-         std::cout << "Worker: finished insert node" << std::endl;
          list1.print();
 
 
@@ -55,82 +50,47 @@ using namespace std;
  void delete_node_test(int i)
 
        {
-          std::cout << "Worker: running delete node task" << std::endl;
 
+         // std::cout<<"Deleting node with key:"<<i<<std::endl;
           list1.deleteNode(i);
-          std::cout << "Worker: finished delete node task" << std::endl;
+
 
        }
 
  int main()
 
     {
+        std::cout << "Launching multi-threaded tests\n";
+        //массив потоков для тестирования операции вставки
+        boost::thread t_ins[num_threads];
+        //массив потоков для тестирования операции удаления
+        boost::thread t_del[num_threads];
+        //запускаем 2 группу parallel потоков: 1 - вставка элемента, 2 - удаление
+
+        for (int i = 0; i < num_threads; ++i)
+        {
+            t_ins[i] = boost::thread(insert_node_test,i);
+
+        }
+          for (int i = 0; i < num_threads/2; ++i)
+        {
+
+            t_del[i] = boost::thread(delete_node_test,i);
+        }
+
+        //джоиним созданные потоки с главным
+        for (int i = 0; i < num_threads; ++i)
+        {
+            t_ins[i].join();
+
+        }
+         for (int i = 0; i < num_threads/2; ++i)
+        {
+            t_del[i].join();
+        }
          //проверяем операцию вставки (если элемент со вставляемым ключом уже есть в списке, то мы его не вставляем)
-         std::cout << "main:Testing List startup" << std::endl;
 
-
-
- for (int i=7000;i>6000;i--)
-
-               {
-
-                   boost::thread workerThread(insert_node_test,i);
-                   std::cout << "main: waiting for thread" <<workerThread.get_id()<< std::endl;
-                   workerThread.join();
-                   std::cout << "\n main: thread done "<< std::endl;
-
-
-               }
-
-          for (int i=1;i<1000;i++)
-
-              {
-
-                  boost::thread workerThread(insert_node_test,i);
-
-                 std::cout << "main: waiting for thread" <<workerThread.get_id()<< std::endl;
-                  workerThread.join();
-
-                  std::cout << "\n main: thread done  " <<std::endl;
-
-
-              }
-
-           for (int i=5000;i<6000;i++)
-
-               {
-
-                   boost::thread workerThread(insert_node_test,i);
-                   std::cout << "main: waiting for thread" <<workerThread.get_id()<< std::endl;
-                   workerThread.join();
-                   std::cout << "\n main: thread done "<< std::endl;
-
-
-               }
-                 //проверяем операцию удаления узлов
-                 for (int i=5000;i<5200;i++)
-
-               {
-
-                   boost::thread workerThread(delete_node_test,i);
-                   std::cout << "main: waiting for thread" <<workerThread.get_id()<< std::endl;
-                   workerThread.join();
-                   std::cout << "\n main: thread done "<< std::endl;
-
-
-               }
-                 for (int i=1;i<1000;i++)
-
-               {
-
-                   boost::thread workerThread(delete_node_test,i);
-                   std::cout << "main: waiting for thread" <<workerThread.get_id()<< std::endl;
-                   workerThread.join();
-                   std::cout << "\n main: thread done "<< std::endl;
-
-
-               }
-
+         //поток для вывода состояния списка
          boost::thread workerThread_sec(print_list);
          workerThread_sec.join();
          return 0;

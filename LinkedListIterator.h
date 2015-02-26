@@ -25,10 +25,10 @@ template <class Type>
           LinkedListIterator();
           LinkedListIterator(nodeType<Type>*) ;
           Type operator*() ;
-          LinkedListIterator<Type> operator++();
+          LinkedListIterator<Type>& operator++();
           bool operator == (const LinkedListIterator<Type>&) const;
           bool operator != (const LinkedListIterator<Type>&) const;
-          private:
+
           nodeType<Type> *current;
 
     };
@@ -63,11 +63,11 @@ Type LinkedListIterator<Type>::operator *()
     }
 
 template <class Type>
-LinkedListIterator<Type> LinkedListIterator<Type>::operator++()
+LinkedListIterator<Type>& LinkedListIterator<Type>::operator++()
 
     {
 
-        current=current->link;
+        if(current=current->link.load(memory_order_consume))
         return *this;
 
     }

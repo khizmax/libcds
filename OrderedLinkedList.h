@@ -20,7 +20,7 @@ using namespace boost;
          private:
          int compare (int one, int two);
          bool try_insert(nodeType<Type>* prev, nodeType<Type>* next, nodeType<Type>* node);
-         bool try_delete(nodeType<Type>* prev, nodeType<Type>* next,nodeType<Type>* node, const Type& item);
+         bool try_delete(nodeType<Type>* prev, nodeType<Type>* next, const Type& item);
 
      };
 
@@ -55,13 +55,11 @@ using namespace boost;
                   first=node;
                   first->link.store(next, memory_order_relaxed);
 
-                   if (first->markedAtomic.compare_exchange_strong(first->marked, false, memory_order_release))
+                   if (first->markedAtomic.compare_exchange_strong(first->marked, 0, memory_order_release))
 
                      if (first->link.compare_exchange_strong(next, tmp, memory_order_release))// если cas успешна, запись вставлена
                          {
                               count++;
- node=node++;
-                                     cout<<"Current inserted node's value: "<<node->info<<endl;
 
                               return true;
                          }
@@ -72,14 +70,14 @@ using namespace boost;
                         node->link.store(next, memory_order_relaxed);
                         //подмена marked поля
 
-                         if (node->markedAtomic.compare_exchange_strong(node->marked, false, memory_order_release))
+                         if (node->markedAtomic.compare_exchange_strong(node->marked, 0, memory_order_release))
 
                           if (prev->link.compare_exchange_strong(next, node, memory_order_release))// если cas успешна, запись вставлена
 
                               {
 
                                      count++;
-                                     cout<<"Current inserted node's value: "<<node->info<<endl;
+
                                      return true;
 
 
@@ -145,13 +143,14 @@ using namespace boost;
          tmp=last;
          last=node;
          last->link.store(next, memory_order_relaxed);
-         if (last->markedAtomic.compare_exchange_strong(last->marked, false, memory_order_release))
+         if (last->markedAtomic.compare_exchange_strong(last->marked, 0, memory_order_release))
           if (last->link.compare_exchange_strong(next, tmp, memory_order_release))
             // если cas успешна, запись вставлена
              {
 
-                 //last++;
+
                  count++;
+
                  return true;
 
              }
@@ -161,7 +160,7 @@ using namespace boost;
   }
 //help функция для delete метода
 template <class Type>
-bool orderedLinkedList<Type>::try_delete(nodeType<Type>* prev, nodeType<Type>* next,nodeType<Type>* node,const Type& item)
+bool orderedLinkedList<Type>::try_delete(nodeType<Type>* prev, nodeType<Type>* next,const Type& item)
 
  {
      nodeType<Type> *current,*trailCurrent;
@@ -170,7 +169,8 @@ bool orderedLinkedList<Type>::try_delete(nodeType<Type>* prev, nodeType<Type>* n
 
         {
                    //проходим по списку
-            current=first;
+            LinkedListIterator<int> it=begin();
+            current=it.current;
             found=false;
             while(current !=NULL && !found)
                 if (current->info>=item)
@@ -180,8 +180,10 @@ bool orderedLinkedList<Type>::try_delete(nodeType<Type>* prev, nodeType<Type>* n
                        {
 
                            trailCurrent = current;
-                           current =  current->link.load(memory_order_consume);
-                           current->markedAtomic.compare_exchange_strong(current->marked, true, memory_order_release);
+                           ++it;
+                           current=it.current;
+                           current->markedAtomic.compare_exchange_strong(current->marked, 1, memory_order_release);
+
 
                        }
                        //если прошли все узлы списка и не нашли нужный нам ,то выводим сообщение о том что узел с тайим ключом не найден
@@ -205,23 +207,31 @@ bool orderedLinkedList<Type>::try_delete(nodeType<Type>* prev, nodeType<Type>* n
 
                              {
 
-                              current->markedAtomic.compare_exchange_strong(current->marked, true, memory_order_release);
+                              current->markedAtomic.compare_exchange_strong(current->marked, 1, memory_order_release);
 
 
                              }
-               //удаляем другие элементы
-             else
+               //удаляем элемент из другого места
+                 else
 
                   {
 
-                       trailCurrent->link= current->link.load(memory_order_consume);
+                       trailCurrent->link= it.current->link;
                        if (current==last)
                        last=trailCurrent;
-                       current->markedAtomic.compare_exchange_strong(current->marked, true, memory_order_release);
+                       current->markedAtomic.compare_exchange_strong(current->marked, 1, memory_order_release);
 
 
                  }
+                 //physical deletion of node
+                 if (current->marked==1)
 
+                               {
+
+                                     current->link.compare_exchange_strong(current, nullptr, memory_order_release);
+                                     count--;
+
+                               }
                 return true;
                 break;
 
@@ -247,8 +257,9 @@ Type orderedLinkedList<Type>::insert (const Type& item)
      newNode=new nodeType<Type>;
      newNode->info=item;
      newNode->link =NULL;
-     try_insert( first, last, newNode);
+     if(try_insert( first, last, newNode))
      return 1;
+     else return 0;
 
  }
 
@@ -259,23 +270,9 @@ Type orderedLinkedList<Type>::insert (const Type& item)
 
      {
 
-         nodeType<Type>  *node;
-         try_delete( first, last,node, item);
-
-               if (node->marked==true)
-
-                               {
-                                     cout<<"Current deleted node's value: "<<node->info<<endl;
-                                     first->link.compare_exchange_strong(node, nullptr, memory_order_release);
-                                     count--;
-
-                               }
-
-
-
-
-
-     return 1;
+         if(try_delete( first, last, item))
+         return 1;
+         else return 0;
 
      }
 
