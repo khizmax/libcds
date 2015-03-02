@@ -1728,6 +1728,7 @@ namespace map2 {
             cc::bronson_avltree::make_traits<
                 co::less< less >
                 ,cc::bronson_avltree::relaxed_insert< false >
+                ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_gpi_less;
@@ -1737,41 +1738,20 @@ namespace map2 {
         typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_shb_less;
         typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_sht_less;
 #endif
-        struct BronsonAVLTreeMap_less_stat : public BronsonAVLTreeMap_less
-        {
-            typedef cc::bronson_avltree::stat<> stat;
-        };
-        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_gpi_less_stat;
-        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_gpb_less_stat;
-        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_gpt_less_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_shb_less_stat;
-        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_stat > BronsonAVLTreeMap_rcu_sht_less_stat;
-#endif
-        struct BronsonAVLTreeMap_cmp_ic: public 
+        struct BronsonAVLTreeMap_cmp_stat: public 
             cc::bronson_avltree::make_traits<
-                co::less< compare >
-                ,cc::bronson_avltree::relaxed_insert< true >
+                co::compare< compare >
+                ,cc::bronson_avltree::relaxed_insert< false >
                 ,co::item_counter< cds::atomicity::item_counter >
+                ,co::stat< cc::bronson_avltree::stat<>>
             >::type
         {};
-        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_gpi_cmp_ic;
-        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_gpb_cmp_ic;
-        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_gpt_cmp_ic;
+        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_gpi_cmp_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_gpb_cmp_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_gpt_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_shb_cmp_ic;
-        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_cmp_ic > BronsonAVLTreeMap_rcu_sht_cmp_ic;
-#endif
-        struct BronsonAVLTreeMap_cmp_ic_stat : public BronsonAVLTreeMap_cmp_ic
-        {
-            typedef cc::bronson_avltree::stat<> stat;
-        };
-        typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_gpi_cmp_ic_stat;
-        typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_gpb_cmp_ic_stat;
-        typedef cc::BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_gpt_cmp_ic_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_shb_cmp_ic_stat;
-        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_cmp_ic_stat > BronsonAVLTreeMap_rcu_sht_cmp_ic_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_shb_cmp_stat;
+        typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_sht_cmp_stat;
 #endif
 
         struct BronsonAVLTreeMap_less_pool_simple: public BronsonAVLTreeMap_less
