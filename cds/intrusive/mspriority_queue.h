@@ -233,10 +233,10 @@ namespace cds { namespace intrusive {
         /**
             If the priority queue is full, the function returns \p false,
             no item has been added.
-            Otherwise, the function inserts the copy of \p val into the heap
+            Otherwise, the function inserts the pointer to \p val into the heap
             and returns \p true.
-
-            The function use copy constructor to create new heap item from \p val.
+            
+            The function does not make a copy of \p val.
         */
         bool push( value_type& val )
         {
@@ -272,8 +272,6 @@ namespace cds { namespace intrusive {
         /**
             If the priority queue is empty, the function returns \p nullptr.
             Otherwise, it returns the item extracted.
-
-            The item returned may be disposed immediately.
         */
         value_type * pop()
         {
