@@ -337,7 +337,7 @@ namespace cds { namespace container {
             The functor \p Func interface:
             \code
             struct extractor {
-                void operator()(mapped_type& item) { ... }
+                void operator()(key_type const& key, mapped_type& item) { ... }
             };
             \endcode
 

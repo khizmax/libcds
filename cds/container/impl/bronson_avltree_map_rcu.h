@@ -343,7 +343,7 @@ namespace cds { namespace container {
             The functor \p Func interface:
             \code
             struct extractor {
-                void operator()(mapped_type& item) { ... }
+                void operator()( key_type const& key, std::remove_pointer<mapped_type>::type& val) { ... }
             };
             \endcode
 
@@ -357,9 +357,9 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 key_comparator(), 
-                [&f]( key_type const&, mapped_type pVal, rcu_disposer& disp ) -> bool { 
+                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool { 
                     assert( pVal );
-                    f( *pVal ); 
+                    f( key, *pVal ); 
                     disp.dispose_value(pVal); 
                     return true;
                 }
@@ -380,9 +380,9 @@ namespace cds { namespace container {
             return do_remove( 
                 key, 
                 cds::opt::details::make_comparator_from_less<Less>(),
-                [&f]( key_type const&, mapped_type pVal, rcu_disposer& disp ) -> bool { 
+                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool { 
                     assert( pVal );
-                    f( *pVal ); 
+                    f( key, *pVal ); 
                     disp.dispose_value(pVal); 
                     return true;
                 }
