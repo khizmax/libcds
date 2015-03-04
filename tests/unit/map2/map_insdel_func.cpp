@@ -74,7 +74,6 @@ namespace map2 {
         class Inserter: public CppUnitMini::TestThread
         {
             Map&     m_Map;
-            typedef typename Map::value_type pair_type;
 
             virtual Inserter *    clone()
             {
@@ -88,15 +87,22 @@ namespace map2 {
                     : nTestFunctorRef(0)
                 {}
 
-                void operator()( pair_type& val )
+                template <typename Pair>
+                void operator()( Pair& val )
                 {
-                    std::unique_lock< typename value_type::lock_type>    ac( val.second.m_access );
+                    operator()( val.first, val.second );
+                }
 
-                    val.second.nKey  = val.first;
-                    val.second.nData = val.first * 8;
+                template <typename Key, typename Val >
+                void operator()( Key const& key, Val& v )
+                {
+                    std::unique_lock< typename value_type::lock_type>    ac( v.m_access );
+
+                    v.nKey  = key;
+                    v.nData = key * 8;
 
                     ++nTestFunctorRef;
-                    val.second.bInitialized.store( true, atomics::memory_order_relaxed);
+                    v.bInitialized.store( true, atomics::memory_order_relaxed);
                 }
             };
 
@@ -165,7 +171,6 @@ namespace map2 {
         class Ensurer: public CppUnitMini::TestThread
         {
             Map&     m_Map;
-            typedef typename Map::value_type pair_type;
 
             virtual Ensurer *    clone()
             {
@@ -181,19 +186,26 @@ namespace map2 {
                     , nModified(0)
                 {}
 
-                void operator()( bool bNew, pair_type& val )
+                template <typename Key, typename Val>
+                void operator()( bool bNew, Key const& key, Val& v )
                 {
-                    std::unique_lock<typename value_type::lock_type>    ac( val.second.m_access );
+                    std::unique_lock<typename value_type::lock_type>    ac( v.m_access );
                     if ( bNew ) {
                         ++nCreated;
-                        val.second.nKey = val.first;
-                        val.second.nData = val.first * 8;
-                        val.second.bInitialized.store( true, atomics::memory_order_relaxed);
+                        v.nKey = key;
+                        v.nData = key * 8;
+                        v.bInitialized.store( true, atomics::memory_order_relaxed);
                     }
                     else {
-                        val.second.nEnsureCall.fetch_add( 1, atomics::memory_order_relaxed );
+                        v.nEnsureCall.fetch_add( 1, atomics::memory_order_relaxed );
                         ++nModified;
                     }
+                }
+
+                template <typename Pair>
+                void operator()( bool bNew, Pair& val )
+                {
+                    operator()( bNew, val.first, val.second );
                 }
             private:
                 ensure_functor(const ensure_functor& );
@@ -255,7 +267,6 @@ namespace map2 {
                 else {
                     for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                        //for ( size_t nItem = c_nMapSize; nItem > 0; --nItem ) {
                             std::pair<bool, bool> ret = rMap.ensure( *it, std::ref( func ) );
                             if ( ret.first  ) {
                                 if ( ret.second )
@@ -279,7 +290,6 @@ namespace map2 {
         {
             Map&     m_Map;
             typedef typename Map::mapped_type value_type;
-            typedef typename Map::value_type pair_type;
 
             virtual Deleter *    clone()
             {
@@ -302,23 +312,30 @@ namespace map2 {
             struct erase_functor {
                 value_container     m_cnt;
 
-                void operator ()( pair_type& item )
+                template <typename Key, typename Val>
+                void operator()( Key const& /*key*/, Val& v )
                 {
                     while ( true ) {
-                        if ( item.second.bInitialized.load( atomics::memory_order_relaxed )) {
-                            std::unique_lock< typename value_type::lock_type>    ac( item.second.m_access );
+                        if ( v.bInitialized.load( atomics::memory_order_relaxed )) {
+                            std::unique_lock< typename value_type::lock_type>    ac( v.m_access );
 
-                            if ( m_cnt.nKeyExpected == item.second.nKey && m_cnt.nKeyExpected * 8 == item.second.nData )
+                            if ( m_cnt.nKeyExpected == v.nKey && m_cnt.nKeyExpected * 8 == v.nData )
                                 ++m_cnt.nSuccessItem;
                             else
                                 ++m_cnt.nFailedItem;
-                            item.second.nData++;
-                            item.second.nKey = 0;
+                            v.nData++;
+                            v.nKey = 0;
                             break;
                         }
                         else
                             cds::backoff::yield()();
                     }
+                }
+
+                template <typename Pair>
+                void operator ()( Pair& item )
+                {
+                    operator()( item.first, item.second );
                 }
             };
 
