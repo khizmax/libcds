@@ -145,6 +145,8 @@ namespace map2 {
             CPPUNIT_ASSERT( nInsertFailed == 0 );
             CPPUNIT_ASSERT( nFindFailed == 0 );
 
+            check_before_cleanup( testMap );
+
             testMap.clear();
             additional_check( testMap );
             print_stat( testMap );

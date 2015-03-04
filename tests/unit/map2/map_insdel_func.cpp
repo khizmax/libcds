@@ -484,6 +484,8 @@ namespace map2 {
             // nTestFunctorRef is call count of insert functor
             CPPUNIT_CHECK_EX( nTestFunctorRef == nInsertSuccess, "nInsertSuccess=" << nInsertSuccess << " functor nTestFunctorRef=" << nTestFunctorRef );
 
+            check_before_cleanup( testMap );
+
             CPPUNIT_MSG( "  Clear map (single-threaded)..." );
             timer.reset();
             for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {

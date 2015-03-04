@@ -175,6 +175,8 @@ namespace map2 {
                 );
 
 
+            check_before_cleanup( testMap );
+
             CPPUNIT_MSG( "  Clear map (single-threaded)..." );
             timer.reset();
             testMap.clear();

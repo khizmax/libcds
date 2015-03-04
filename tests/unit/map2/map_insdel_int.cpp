@@ -197,6 +197,7 @@ namespace map2 {
                 << " Map size=" << testMap.size()
                 );
 
+            check_before_cleanup( testMap );
 
             CPPUNIT_MSG( "  Clear map (single-threaded)..." );
             timer.reset();

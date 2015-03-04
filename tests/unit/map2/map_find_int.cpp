@@ -198,6 +198,8 @@ namespace map2 {
                 CPPUNIT_ASSERT( pThread->m_KeyNotExists.nSuccess == (m_Arr.size() - m_nRealMapSize) * c_nPassCount );
             }
 
+            check_before_cleanup( testMap );
+
             testMap.clear();
             additional_check( testMap );
             print_stat( testMap );

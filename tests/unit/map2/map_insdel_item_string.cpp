@@ -202,6 +202,8 @@ namespace map2 {
             }
             CPPUNIT_MSG( "    Duration=" << timer.duration() );
 
+            check_before_cleanup( testMap );
+
             testMap.clear();
             additional_check( testMap );
             print_stat( testMap );

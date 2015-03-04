@@ -199,6 +199,8 @@ namespace map2 {
                 CPPUNIT_ASSERT( pThread->m_KeyNotExists.nFailed == 0 );
             }
 
+            check_before_cleanup( testMap );
+
             testMap.clear();
             additional_check( testMap );
             print_stat( testMap );

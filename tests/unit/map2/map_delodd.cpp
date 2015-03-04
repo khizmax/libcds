@@ -126,16 +126,6 @@ namespace boost {
 
 namespace map2 {
 
-    template <typename Map>
-    static inline void check_before_clear( Map& /*s*/ )
-    {}
-
-    template <typename GC, typename Key, typename T, typename Traits>
-    static inline void check_before_clear( cds::container::EllenBinTreeMap<GC, Key, T, Traits>& s )
-    {
-        CPPUNIT_CHECK_CURRENT( s.check_consistency() );
-    }
-
     class Map_DelOdd: public CppUnitMini::TestCase
     {
         std::vector<size_t>     m_arrData;
@@ -628,7 +618,7 @@ namespace map2 {
                 CPPUNIT_CHECK_EX( nErrorCount == 0, "Totals: " << nErrorCount << " keys is not found");
             }
 
-            check_before_clear( testMap );
+            check_before_cleanup( testMap );
 
             CPPUNIT_MSG( "  Clear map (single-threaded)..." );
             timer.reset();

@@ -1839,6 +1839,10 @@ namespace map2 {
     {}
 
     template <typename Map>
+    static inline void check_before_cleanup( Map& /*m*/ )
+    {}
+
+    template <typename Map>
     static inline void additional_cleanup( Map& /*m*/ )
     {}
 
@@ -1908,16 +1912,25 @@ namespace map2 {
         ellen_bintree_check::check_stat( s.statistics() );
     }
 
+    template <typename GC, typename Key, typename T, typename Traits>
+    static inline void check_before_cleanup( cc::EllenBinTreeMap<GC, Key, T, Traits>& m )
+    {
+        CPPUNIT_MSG( "  Check internal consistency (single-threaded)..." );
+        CPPUNIT_CHECK_CURRENT( m.check_consistency() );
+    }
+
+
     // BronsonAVLTreeMap
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void print_stat( cc::BronsonAVLTreeMap<GC, Key, T, Traits> const& s )
+    static inline void print_stat( cc::BronsonAVLTreeMap<GC, Key, T, Traits> const& m )
     {
-        CPPUNIT_MSG( s.statistics() );
+        CPPUNIT_MSG( m.statistics() );
     }
 
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void additional_check( cc::BronsonAVLTreeMap<GC, Key, T, Traits>& m )
+    static inline void check_before_cleanup( cc::BronsonAVLTreeMap<GC, Key, T, Traits>& m )
     {
+        CPPUNIT_MSG( "  Check internal consistency (single-threaded)..." );
         m.check_consistency([]( size_t nLevel, size_t hLeft, size_t hRight )
             { 
                 CPPUNIT_MSG( "Tree violation on level=" << nLevel << ": hLeft=" << hLeft << ", hRight=" << hRight ) 
