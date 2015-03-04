@@ -96,7 +96,7 @@ namespace map2 {
                     val.second = 0;
                 }
                 // for BronsonAVLTreeMap
-                void operator()( typename Map::mapped_type& val )
+                void operator()( typename Map::key_type const& /*key*/, typename Map::mapped_type& val )
                 {
                     val = 0;
                 }
