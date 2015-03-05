@@ -1,7 +1,6 @@
 CDS C++ library
 ===============
 [![GitHub version](https://badge.fury.io/gh/khizmax%2Flibcds.svg)](http://badge.fury.io/gh/khizmax%2Flibcds)
-[![Code Health](https://landscape.io/github/khizmax/libcds/dev/landscape.svg?style=plastic)](https://landscape.io/github/khizmax/libcds/dev)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/4445/badge.svg)](https://scan.coverity.com/projects/4445)
 
 The Concurrent Data Structures (CDS) library is a collection of concurrent containers
