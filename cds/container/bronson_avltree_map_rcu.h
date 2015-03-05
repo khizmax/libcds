@@ -236,19 +236,24 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            auto helper = []( Args&&... args ) -> mapped_type *
+#       if CDS_COMPILER != CDS_COMPILER_MSVC
+            auto helper = []( typename std::decay<Args>::type&&... args ) -> mapped_type *
                             {
-                                return cxx_allocator().New( std::forward<Args>(args)...);
+                                return cxx_allocator().New( std::move(args)...);
                             };
+#       endif
             
             return base_class::do_update( key, key_comparator(),
-                [=]( node_type * pNode ) -> mapped_type * 
+                [&]( node_type * pNode ) -> mapped_type * 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
-                    return helper( args... );
+#       if CDS_COMPILER == CDS_COMPILER_MSVC
+                    return cxx_allocator().New( std::forward<Args>(args)...);
+#       else
                     // gcc/clang error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
-                    //return cxx_allocator().New( std::forward<Args>(args)...);
+                    return helper( args... );
+#       endif
                 },
                 update_flags::allow_insert
             ) == update_flags::result_inserted;
