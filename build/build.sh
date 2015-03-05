@@ -535,7 +535,7 @@ $MAKE -f Makefile \
      BIN_PATH=$BIN_PATH \
      OBJ_PATH=$OBJ_PATH/debug \
      debug \
-  && exit $?
+  || exit $?
 
 echo ---------------------------------
 echo Make release library
@@ -558,7 +558,7 @@ $MAKE -f Makefile \
      BIN_PATH=$BIN_PATH \
      OBJ_PATH=$OBJ_PATH/release \
      release \
-  && exit $?
+  || exit $?
 
 
 echo ---------------------------------
