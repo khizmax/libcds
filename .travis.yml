@@ -8,16 +8,17 @@ before_install:
     - export LIBCDS_BUILD_DIR=`pwd`
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     - sudo apt-get update -qq
+    - export GCC_VERSION=4.8
+    - export BOOST_VERSION=57
 
 install:
-    - sudo apt-get install -qq g++-4.8
-    - export CXX="g++-4.8"
-    - export BOOST_VERSION="57"
+    - sudo apt-get install -qq g++-${GCC_VERSION}
+    - export CXX="g++-${GCC_VERSION}"
     - wget -O boost_1_${BOOST_VERSION}_0.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.0/boost_1_${BOOST_VERSION}_0.tar.bz2/download
     - tar xjf boost_1_${BOOST_VERSION}_0.tar.bz2
     - cd boost_1_${BOOST_VERSION}_0
-    - ./bootstrap.sh
-    - ./b2 --with-thread --with-atomic --with-date_time --with-system --with-timer --stagedir=stage64 --toolset=gcc address-model=64
+    - ./bootstrap.sh --with-toolset=gcc-${GCC_VERSION}
+    - ./b2 --with-thread --with-atomic --with-date_time --with-system --with-timer --stagedir=stage64 --toolset=gcc-${GCC_VERSION} address-model=64
     - cd ..
 
 before_script: cd ./build
@@ -31,12 +32,13 @@ script: ./build.sh -b 64 -j 4 -x ${CXX} -z '-Wall -Wextra -pedantic' --with-boos
 after_script: cd ..
 
 # blacklist
-branches:
-  except:
-    - integration
+#branches:
+#  except:
+#    - integration
 
 # whitelist
 branches:
   only:
     - master
     - dev
+    - integration
