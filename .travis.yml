@@ -8,7 +8,7 @@ before_install:
     - export LIBCDS_BUILD_DIR=`pwd`
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     - sudo apt-get update -qq
-    - export GCC_VERSION=4.8
+    - export GCC_VERSION=4.9
     - export BOOST_VERSION=57
 
 install:
@@ -17,7 +17,7 @@ install:
     - wget -O boost_1_${BOOST_VERSION}_0.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.0/boost_1_${BOOST_VERSION}_0.tar.bz2/download
     - tar xjf boost_1_${BOOST_VERSION}_0.tar.bz2
     - cd boost_1_${BOOST_VERSION}_0
-    - ./bootstrap.sh --with-toolset=gcc-${GCC_VERSION}
+    - ./bootstrap.sh
     - ./b2 --with-thread --with-atomic --with-date_time --with-system --with-timer --stagedir=stage64 --toolset=gcc-${GCC_VERSION} address-model=64
     - cd ..
 
