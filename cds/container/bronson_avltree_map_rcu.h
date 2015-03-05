@@ -236,12 +236,19 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
+            auto helper = []( Args&&... args ) -> mapped_type *
+                            {
+                                return cxx_allocator().New( std::forward<Args>(args)...);
+                            };
+            
             return base_class::do_update( key, key_comparator(),
-                [&]( node_type * pNode ) -> mapped_type* 
+                [=]( node_type * pNode ) -> mapped_type * 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
-                    return cxx_allocator().New( std::forward<Args>(args)...);
+                    return helper( args... );
+                    // gcc/clang error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
+                    //return cxx_allocator().New( std::forward<Args>(args)...);
                 },
                 update_flags::allow_insert
             ) == update_flags::result_inserted;
