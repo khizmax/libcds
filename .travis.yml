@@ -8,7 +8,7 @@ before_install:
     - export LIBCDS_BUILD_DIR=`pwd`
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     - sudo apt-get update -qq
-    - export GCC_VERSION=4.8
+    - export GCC_VERSION=4.9
     - export BOOST_VERSION=57
 
 install:
