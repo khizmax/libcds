@@ -1,6 +1,6 @@
 
 language: cpp
-compiler: gcc
+compiler: clang
 #  - gcc
 #  - clang
 #before_install:
