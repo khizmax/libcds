@@ -536,7 +536,7 @@ $MAKE -f Makefile \
      OBJ_PATH=$OBJ_PATH/debug \
      debug
 
-if test $? -gt 0; then
+if [ $? -ne 0 ]; then
    exit $?
 fi
 
@@ -562,7 +562,7 @@ $MAKE -f Makefile \
      OBJ_PATH=$OBJ_PATH/release \
      release
      
-if test $? -gt 0; then
+if [ $? -ne 0 ]; then
    exit $?
 fi
 
@@ -584,7 +584,7 @@ if test $MAKE_DEBUG_TEST = '0'; then
         OBJ_PATH=$OBJ_PATH/test \
         $target
         
-    if test $? -gt 0; then
+    if [ $? -ne 0 ]; then
         exit $?
     fi
 fi    
@@ -606,7 +606,7 @@ if test $MAKE_DEBUG_TEST = '1'; then
         OBJ_PATH=$OBJ_PATH/test-debug \
         $target
         
-    if test $? -gt 0; then
+    if [ $? -ne 0 ]; then
         exit $?
     fi
 fi   

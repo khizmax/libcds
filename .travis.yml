@@ -14,7 +14,7 @@ install:
 
 before_script: cd ./build
 
-script: ./build.sh -b 64 -j 4 -x ${CXX} -z '-std=c++0x -Wall -Wextra -pedantic' -t test_hdr
+script: ./build.sh -b 64 -j 4 -x ${CXX} -z '-Wall -Wextra -pedantic' -t test_hdr
 
 #after_success:
 
