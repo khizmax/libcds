@@ -1,0 +1,23 @@
+
+language: cpp
+compiler: gcc
+#  - gcc
+#  - clang
+#before_install:
+#install:
+before_script: cd ./build
+script: ./build.sh -b 64 -j 4 -x ${CXX} -z '-std=c++0x -Wall -Wextra -pedantic' -t test_hdr
+#after_success:
+#after_failure:
+after_script: cd ..
+
+# blacklist
+branches:
+  except:
+    - integration
+
+# whitelist
+branches:
+  only:
+    - master
+    - dev
