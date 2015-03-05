@@ -23,7 +23,7 @@ install:
 
 before_script: cd ./build
 
-script: ./build.sh -b 64 -j 4 -x ${CXX} -z '-Wall -Wextra -pedantic -Wno-unused-local-typedefs' --with-boost ../boost_1_${BOOST_VERSION}_0 -t test_hdr
+script: ./build.sh -b 64 -j 2 -x ${CXX} -z '-Wall -Wextra -pedantic -Wno-unused-local-typedefs' --with-boost ../boost_1_${BOOST_VERSION}_0 -t test_hdr
 
 #after_success:
 
