@@ -236,27 +236,37 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-#       if CDS_COMPILER != CDS_COMPILER_MSVC
-            auto helper = []( typename std::decay<Args>::type&&... args ) -> mapped_type *
-                            {
-                                return cxx_allocator().New( std::move(args)...);
-                            };
-#       endif
-            
+            // gcc/clang error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
+            // see http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#904 - this is what we need
+            // Probably, the following code is not so efficient, since we pass lvalues instead rvalues to lambda
+            //TODO: study how to pass a parameter pack to a lambda efficiently using perfect forwarding
             return base_class::do_update( key, key_comparator(),
-                [&]( node_type * pNode ) -> mapped_type * 
+                [&args...]( node_type * pNode ) -> mapped_type * 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
-#       if CDS_COMPILER == CDS_COMPILER_MSVC
                     return cxx_allocator().New( std::forward<Args>(args)...);
-#       else
-                    // gcc/clang error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
-                    return helper( args... );
-#       endif
                 },
                 update_flags::allow_insert
             ) == update_flags::result_inserted;
+#       if 0
+            // another implementation (from http://stackoverflow.com/questions/14191989/how-do-i-use-variadic-perfect-forwarding-into-a-lambda)
+            // Does not work on vc12
+            auto lambda = []( Args&&... args) -> mapped_type* { return cxx_allocator().New( std::forward<Args>(args)...); };
+            auto helper = std::bind( 
+                lambda,
+                std::forward<Args>(args)...
+            );
+            return base_class::do_update( key, key_comparator(),
+                [&helper]( node_type * pNode ) -> mapped_type * 
+                {
+                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    CDS_UNUSED( pNode );
+                    return helper();
+                },
+                update_flags::allow_insert
+            ) == update_flags::result_inserted;
+#       endif
         }
 
         /// Ensures that the \p key exists in the map
