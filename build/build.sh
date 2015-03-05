@@ -453,7 +453,7 @@ cxx_debug_options="-D_DEBUG -O0 -g $cxx_debug_options"
 cxx_release_options="-DNDEBUG $cxx_release_optimization $cxx_release_options"
 
 
-if test $BOOST_INCLUDE_PATH != ''; then
+if test '$BOOST_INCLUDE_PATH' != ''; then
 	buildCXXflags="$buildCXXflags -I$BOOST_INCLUDE_PATH"
 fi
 
