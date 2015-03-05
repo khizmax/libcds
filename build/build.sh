@@ -576,11 +576,8 @@ if test $MAKE_DEBUG_TEST = '0'; then
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
         OBJ_PATH=$OBJ_PATH/test \
-        $target
-        
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+        $target \
+     || exit $?
 fi    
 
 echo ---------------------------------
@@ -598,10 +595,7 @@ if test $MAKE_DEBUG_TEST = '1'; then
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
         OBJ_PATH=$OBJ_PATH/test-debug \
-        $target
-        
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+        $target \
+     || exit $?
 fi   
  
