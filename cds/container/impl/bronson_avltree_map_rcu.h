@@ -257,6 +257,7 @@ namespace cds { namespace container {
                 [pVal]( node_type * pNode ) -> mapped_type
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
+                    CDS_UNUSED( pNode );
                     return pVal;
                 }, 
                 update_flags::allow_insert
