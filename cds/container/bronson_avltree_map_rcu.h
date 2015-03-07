@@ -3,6 +3,7 @@
 #ifndef CDSLIB_CONTAINER_BRONSON_AVLTREE_MAP_RCU_H
 #define CDSLIB_CONTAINER_BRONSON_AVLTREE_MAP_RCU_H
 
+#include <functional>
 #include <cds/container/impl/bronson_avltree_map_rcu.h>
 
 namespace cds { namespace container {
@@ -236,10 +237,10 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            // gcc/clang error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
-            // see http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#904 - this is what we need
+#       if !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 40800 && CDS_COMPILER_VERSION < 40900 )
             // Probably, the following code is not so efficient, since we pass lvalues instead rvalues to lambda
             //TODO: study how to pass a parameter pack to a lambda efficiently using perfect forwarding
+            // see http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#904 - this is what we need
             return base_class::do_update( key, key_comparator(),
                 [&args...]( node_type * pNode ) -> mapped_type * 
                 {
@@ -249,20 +250,19 @@ namespace cds { namespace container {
                 },
                 update_flags::allow_insert
             ) == update_flags::result_inserted;
-#       if 0
-            // another implementation (from http://stackoverflow.com/questions/14191989/how-do-i-use-variadic-perfect-forwarding-into-a-lambda)
-            // Does not work on vc12
-            auto lambda = []( Args&&... args) -> mapped_type* { return cxx_allocator().New( std::forward<Args>(args)...); };
-            auto helper = std::bind( 
-                lambda,
-                std::forward<Args>(args)...
-            );
+#       else 
+            // gcc 4.8 error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
+            // workaround (from http://stackoverflow.com/questions/14191989/how-do-i-use-variadic-perfect-forwarding-into-a-lambda)
+            auto f = std::bind<mapped_type *>( 
+                        []( Args... args) -> mapped_type* { return cxx_allocator().New( std::move(args)...); },
+                        std::forward<Args>(args)...
+                        );
             return base_class::do_update( key, key_comparator(),
-                [&helper]( node_type * pNode ) -> mapped_type * 
+                [&f]( node_type * pNode ) -> mapped_type * 
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
-                    return helper();
+                    return f();
                 },
                 update_flags::allow_insert
             ) == update_flags::result_inserted;
