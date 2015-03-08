@@ -66,6 +66,7 @@
 #include "print_skip_list_stat.h"
 #include "print_ellenbintree_stat.h"
 #include "print_bronsonavltree_stat.h"
+#include "print_sync_monitor_stat.h"
 #include "ellen_bintree_update_desc_pool.h"
 
 namespace map2 {
@@ -1765,9 +1766,10 @@ namespace map2 {
         typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_shb_less_pool_simple;
         typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_sht_less_pool_simple;
 #endif
-        struct BronsonAVLTreeMap_less_pool_simple_stat : public BronsonAVLTreeMap_less_pool_simple
+        struct BronsonAVLTreeMap_less_pool_simple_stat : public BronsonAVLTreeMap_less
         {
             typedef cc::bronson_avltree::stat<> stat;
+            typedef cds::sync::pool_monitor<BronsonAVLTreeMap_simple_pool, cds::opt::none, true > sync_monitor;
         };
         typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_simple_stat;
         typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_simple_stat;
@@ -1788,9 +1790,11 @@ namespace map2 {
         typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_shb_less_pool_lazy;
         typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_sht_less_pool_lazy;
 #endif
-        struct BronsonAVLTreeMap_less_pool_lazy_stat : public BronsonAVLTreeMap_less_pool_lazy
+        struct BronsonAVLTreeMap_less_pool_lazy_stat : public BronsonAVLTreeMap_less
         {
             typedef cc::bronson_avltree::stat<> stat;
+            typedef cds::sync::pool_monitor<BronsonAVLTreeMap_lazy_pool, cds::opt::none, true > sync_monitor;
+            static CDS_CONSTEXPR bool const relaxed_insert = true;
         };
         typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_lazy_stat;
         typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_lazy_stat;
@@ -1811,9 +1815,11 @@ namespace map2 {
         typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_shb_less_pool_bounded;
         typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_sht_less_pool_bounded;
 #endif
-        struct BronsonAVLTreeMap_less_pool_bounded_stat : public BronsonAVLTreeMap_less_pool_bounded
+        struct BronsonAVLTreeMap_less_pool_bounded_stat : public BronsonAVLTreeMap_less
         {
             typedef cc::bronson_avltree::stat<> stat;
+            typedef cds::sync::pool_monitor<BronsonAVLTreeMap_bounded_pool, cds::opt::none, true > sync_monitor;
+            static CDS_CONSTEXPR bool const relaxed_insert = true;
         };
         typedef cc::BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_bounded_stat;
         typedef cc::BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_bounded_stat;
@@ -1925,6 +1931,7 @@ namespace map2 {
     static inline void print_stat( cc::BronsonAVLTreeMap<GC, Key, T, Traits> const& m )
     {
         CPPUNIT_MSG( m.statistics() );
+        CPPUNIT_MSG( m.monitor().statistics() );
     }
 
     template <typename GC, typename Key, typename T, typename Traits>

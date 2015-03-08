@@ -652,6 +652,18 @@ namespace cds { namespace container {
             return base_class::statistics();
         }
 
+        /// Returns reference to \p sync_monitor object
+        sync_monitor& monitor()
+        {
+            return base_class::monitor();
+        }
+        //@cond
+        sync_monitor const& monitor() const
+        {
+            return base_class::monitor();
+        }
+        //@endcond
+
         /// Checks internal consistency (not atomic, not thread-safe)
         /**
             The debugging function to check internal consistency of the tree.

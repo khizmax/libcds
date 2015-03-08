@@ -7,6 +7,7 @@
 #include <cds/memory/vyukov_queue_pool.h>
 
 #include "unit/print_bronsonavltree_stat.h"
+#include "unit/print_sync_monitor_stat.h"
 
 namespace tree {
     namespace cc = cds::container;
@@ -19,6 +20,7 @@ namespace tree {
             void operator()( Tree const& t )
             {
                 std::cout << t.statistics();
+                std::cout << t.monitor().statistics();
             }
         };
 

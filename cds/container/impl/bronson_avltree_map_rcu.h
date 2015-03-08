@@ -704,6 +704,18 @@ namespace cds { namespace container {
             return m_stat;
         }
 
+        /// Returns reference to \p sync_monitor object
+        sync_monitor& monitor()
+        {
+            return m_Monitor;
+        }
+        //@cond
+        sync_monitor const& monitor() const
+        {
+            return m_Monitor;
+        }
+        //@endcond
+
         /// Checks internal consistency (not atomic, not thread-safe)
         /**
             The debugging function to check internal consistency of the tree.

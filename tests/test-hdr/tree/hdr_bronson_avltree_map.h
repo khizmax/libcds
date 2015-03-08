@@ -85,37 +85,6 @@ namespace tree {
     protected:
         static const size_t c_nItemCount = 10000;
 
-        /*
-        class data_array
-        {
-            int *     pFirst;
-            int *     pLast;
-
-        public:
-            data_array()
-                : pFirst( new int[c_nItemCount] )
-                , pLast( pFirst + c_nItemCount )
-            {
-                int i = 0;
-                for ( int * p = pFirst; p != pLast; ++p, ++i )
-                    *p = i;
-
-                std::random_shuffle( pFirst, pLast );
-            }
-
-            ~data_array()
-            {
-                delete[] pFirst;
-            }
-
-            int operator[]( size_t i ) const
-            {
-                assert( i < size_t( pLast - pFirst ) );
-                return pFirst[i];
-            }
-        };
-        */
-
         struct find_functor
         {
             void operator()( key_type, value_type& v ) const
@@ -517,8 +486,6 @@ namespace tree {
             s.clear();
             CPPUNIT_ASSERT( s.empty() );
             CPPUNIT_ASSERT( check_size( s, 0 ) );
-
-
 
             PrintStat()(s);
         }

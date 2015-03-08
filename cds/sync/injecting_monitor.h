@@ -10,6 +10,13 @@
 
 namespace cds { namespace sync {
 
+    //@cond
+    struct injecting_monitor_traits {
+        struct empty_stat
+        {};
+    };
+    //@endcond
+
     /// @ref cds_sync_monitor "Monitor" that injects the lock into each node
     /**
         This simple monitor injects the lock object of type \p Lock into each node. 
@@ -42,6 +49,13 @@ namespace cds { namespace sync {
         {
             p.m_SyncMonitorInjection.m_Lock.unlock();
         }
+
+        //@cond
+        injecting_monitor_traits::empty_stat statistics() const
+        {
+            return injecting_monitor_traits::empty_stat();
+        }
+        //@endcond
 
         /// Scoped lock
         template <typename Node>

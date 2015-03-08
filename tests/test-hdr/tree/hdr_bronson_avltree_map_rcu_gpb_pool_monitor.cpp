@@ -7,6 +7,7 @@
 #include <cds/memory/vyukov_queue_pool.h>
 
 #include "unit/print_bronsonavltree_stat.h"
+#include "unit/print_sync_monitor_stat.h"
 
 namespace tree {
     namespace cc = cds::container;
@@ -16,9 +17,10 @@ namespace tree {
 
         struct print_stat {
             template <typename Tree>
-            void operator()( Tree const& t )
+            void operator()( Tree const& t ) const
             {
                 std::cout << t.statistics();
+                std::cout << t.monitor().statistics();
             }
         };
 
@@ -45,7 +47,7 @@ namespace tree {
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::stat< cc::bronson_avltree::stat<> >
-                ,co::sync_monitor< cds::sync::pool_monitor<lazy_pool> >
+                ,co::sync_monitor< cds::sync::pool_monitor<lazy_pool, cds::opt::none, true >>
                 ,cc::bronson_avltree::relaxed_insert< false >
             >::type
         {};
@@ -60,7 +62,7 @@ namespace tree {
                 co::compare< compare >
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< cc::bronson_avltree::stat<> >
-                ,co::sync_monitor< cds::sync::pool_monitor<bounded_pool> >
+                ,co::sync_monitor< cds::sync::pool_monitor<bounded_pool, cds::opt::none, true >>
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
@@ -75,7 +77,7 @@ namespace tree {
                 ,co::item_counter< cds::atomicity::item_counter >
                 ,co::stat< cc::bronson_avltree::stat<> >
                 ,co::back_off< cds::backoff::yield >
-                ,co::sync_monitor< cds::sync::pool_monitor<lazy_pool> >
+                ,co::sync_monitor< cds::sync::pool_monitor<lazy_pool, cds::opt::none, true >>
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;
@@ -102,7 +104,7 @@ namespace tree {
                 co::less< std::less<key_type> >
                 ,co::stat< cc::bronson_avltree::stat<> >
                 ,cc::bronson_avltree::relaxed_insert< true >
-                ,co::sync_monitor< cds::sync::pool_monitor<simple_pool> >
+                ,co::sync_monitor< cds::sync::pool_monitor<simple_pool, cds::opt::none, true >>
             >::type
         {};
         typedef cc::BronsonAVLTreeMap< rcu_type, key_type, value_type, traits > map_type;

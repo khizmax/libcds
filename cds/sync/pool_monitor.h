@@ -6,8 +6,50 @@
 #include <cds/sync/monitor.h>
 #include <cds/algo/atomic.h>
 #include <cds/algo/backoff_strategy.h>
+#include <cds/opt/options.h> // opt::none
 
 namespace cds { namespace sync {
+
+    /// \p pool_monitor traits
+    struct pool_monitor_traits {
+
+        /// Dummy internal statistics if \p Stat template parameter is \p false
+        struct empty_stat
+        {
+            //@cond
+            void onLock()              const {}
+            void onUnlock()            const {}
+            void onLockContention()    const {}
+            void onUnlockContention()  const {}
+            void onLockAllocation()    const {}
+            void onLockDeallocation()  const {}
+            //@endcond
+        };
+
+        /// Monitor's internal statistics, used if \p Stat template parameter is \p true
+        template <typename Counter = cds::atomicity::event_counter >
+        struct stat
+        {
+            typedef Counter event_counter; ///< measure type
+
+            event_counter m_nLockCount;         ///< Number of monitor \p lock() call
+            event_counter m_nUnlockCount;       ///< Number of monitor \p unlock call
+            event_counter m_nLockContention;    ///< Number of \p lock() contenton
+            event_counter m_nUnlockContention;  ///< Number of \p unlock() contention
+            event_counter m_nLockAllocation;    ///< Number of the lock allocation from the pool
+            event_counter m_nLockDeallocation;  ///< Number of the lock deallocation
+
+            //@cond
+            void onLock()               { ++m_nLockCount;       }
+            void onUnlock()             { ++m_nUnlockCount;     }
+            void onLockContention()     { ++m_nLockContention;  }
+            void onUnlockContention()   { ++m_nUnlockContention;}
+            void onLockAllocation()     { ++m_nLockAllocation;  }
+            void onLockDeallocation()   { ++m_nLockDeallocation;}
+            //@endcond
+        };
+    };
+
 
     /// @ref cds_sync_monitor "Monitor" that allocates node's lock when needed
     /**
@@ -24,6 +66,7 @@ namespace cds { namespace sync {
         - \p LockPool - the @ref cds_memory_pool "pool type". The pool must maintain
             the objects of type \p std::mutex or similar. The access to the pool is not synchronized.
         - \p BackOff - back-off strategy for spinning, default is \p cds::backoff::LockDefault
+        - \p Stat - enable (\p true) or disable (\p false, the default) monitor's internal statistics.
 
         <b>How to use</b>
         \code
@@ -31,20 +74,32 @@ namespace cds { namespace sync {
         typedef cds::sync::pool_monitor< pool_type > sync_monitor;
         \endcode
     */
-    template <class LockPool, typename BackOff = cds::backoff::LockDefault >
+    template <class LockPool, typename BackOff = cds::backoff::LockDefault, bool Stat = false >
     class pool_monitor
     {
     public:
         typedef LockPool pool_type; ///< Pool type
         typedef typename pool_type::value_type lock_type; ///< node lock type
-        typedef BackOff  back_off;  ///< back-off strategy for spinning
+        typedef typename std::conditional< 
+            std::is_same< BackOff, cds::opt::none >::value, 
+            cds::backoff::LockDefault, 
+            BackOff
+        >::type  back_off;  ///< back-off strategy for spinning
         typedef uint32_t refspin_type;  ///< Reference counter + spin-lock bit
+
+        /// Internal statistics
+        typedef typename std::conditional< 
+            Stat, 
+            typename pool_monitor_traits::stat<>, 
+            typename pool_monitor_traits::empty_stat 
+        >::type internal_stat;
 
     private:
         //@cond
         static CDS_CONSTEXPR refspin_type const c_nSpinBit = 1;
         static CDS_CONSTEXPR refspin_type const c_nRefIncrement = 2;
-        mutable pool_type   m_Pool;
+        mutable pool_type      m_Pool;
+        mutable internal_stat  m_Stat;
         //@endcond
 
     public:
@@ -83,6 +138,8 @@ namespace cds { namespace sync {
         {
             lock_type * pLock;
 
+            m_Stat.onLock();
+
             // try lock spin and increment reference counter
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
@@ -90,6 +147,7 @@ namespace cds { namespace sync {
             {
                 back_off bkoff;
                 do {
+                    m_Stat.onLockContention();
                     bkoff();
                     cur &= ~c_nSpinBit;
                 } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
@@ -99,8 +157,10 @@ namespace cds { namespace sync {
             // spin locked
             // If the node has no lock, allocate it from pool
             pLock = p.m_SyncMonitorInjection.m_pLock;
-            if ( !pLock )
+            if ( !pLock ) {
                 pLock = p.m_SyncMonitorInjection.m_pLock = m_Pool.allocate( 1 );
+                m_Stat.onLockAllocation();
+            }
 
             // unlock spin
             p.m_SyncMonitorInjection.m_RefSpin.store( cur + c_nRefIncrement, atomics::memory_order_release );
@@ -115,6 +175,8 @@ namespace cds { namespace sync {
         {
             lock_type * pLock = nullptr;
 
+            m_Stat.onUnlock();
+
             assert( p.m_SyncMonitorInjection.m_pLock != nullptr );
             p.m_SyncMonitorInjection.m_pLock->unlock();
 
@@ -125,6 +187,7 @@ namespace cds { namespace sync {
             {
                 back_off bkoff;
                 do {
+                    m_Stat.onUnlockContention();
                     bkoff();
                     cur &= ~c_nSpinBit;
                 } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit,
@@ -143,13 +206,27 @@ namespace cds { namespace sync {
             p.m_SyncMonitorInjection.m_RefSpin.store( cur - c_nRefIncrement, atomics::memory_order_release );
 
             // free pLock
-            if ( pLock )
+            if ( pLock ) {
                 m_Pool.deallocate( pLock, 1 );
+                m_Stat.onLockDeallocation();
+            }
         }
 
         /// Scoped lock
         template <typename Node>
         using scoped_lock = monitor_scoped_lock< pool_monitor, Node >;
+
+        /// Returns the reference to internal statistics
+        /**
+            If class' template argument \p Stat is \p false,
+            the function returns \ref empty_stat "dummy statistics".
+            Otherwise, it returns the reference to monitor's internal statistics 
+            of type \ref stat.
+        */
+        internal_stat const& statistics() const
+        {
+            return m_Stat;
+        }
     };
 
 }} // namespace cds::sync

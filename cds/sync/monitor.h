@@ -29,8 +29,8 @@ namespace cds { namespace sync {
         - \p sync::injecting_monitor injects the lock object into each node.
             That mock monitor is designed for user-space locking primitive like
             \ref sync::spin_lock "spin-lock".
-        - \p sync::pool_monitor is the monitor that allocates the lock object
-            for the node from the pool when needed. When the node is unlocked
+        - \p sync::pool_monitor is the monitor that allocates a lock object
+            for a node from the pool when needed. When the node is unlocked
             the lock assigned to it is given back to the pool if no thread
             references to that node.
 
