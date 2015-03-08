@@ -25,10 +25,12 @@ namespace std {
         return o << "cds::sync::pool_monitor statistics:\n"
             << "\t\t        m_nLockCount: " << s.m_nLockCount.get()        << "\n"
             << "\t\t      m_nUnlockCount: " << s.m_nUnlockCount.get()      << "\n"
+            << "\t\t        m_nMaxLocked: " << s.m_nMaxLocked.get()        << "\n"
             << "\t\t   m_nLockContention: " << s.m_nLockContention.get()   << "\n"
             << "\t\t m_nUnlockContention: " << s.m_nUnlockContention.get() << "\n"
             << "\t\t   m_nLockAllocation: " << s.m_nLockAllocation.get()   << "\n"
-            << "\t\t m_nLockDeallocation: " << s.m_nLockDeallocation.get() << "\n";
+            << "\t\t m_nLockDeallocation: " << s.m_nLockDeallocation.get() << "\n"
+            << "\t\t     m_nMaxAllocated: " << s.m_nMaxAllocated.get()     << "\n";
     }
 }
 #endif

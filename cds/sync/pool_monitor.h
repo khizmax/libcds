@@ -34,17 +34,31 @@ namespace cds { namespace sync {
 
             event_counter m_nLockCount;         ///< Number of monitor \p lock() call
             event_counter m_nUnlockCount;       ///< Number of monitor \p unlock call
+            event_counter m_nMaxLocked;         ///< Max number of simuntaneously locked mutexes
             event_counter m_nLockContention;    ///< Number of \p lock() contenton
             event_counter m_nUnlockContention;  ///< Number of \p unlock() contention
             event_counter m_nLockAllocation;    ///< Number of the lock allocation from the pool
             event_counter m_nLockDeallocation;  ///< Number of the lock deallocation
+            event_counter m_nMaxAllocated;      ///< Max number of sumultanouusly allocated mutexes
 
             //@cond
-            void onLock()               { ++m_nLockCount;       }
+            void onLock()
+            { 
+                ++m_nLockCount;
+                int nDiff = static_cast<int>( m_nLockCount.get() - m_nUnlockCount.get());
+                if ( nDiff > 0 && m_nMaxLocked.get() < static_cast<typename event_counter::value_type>( nDiff ))
+                    m_nMaxLocked = static_cast<typename event_counter::value_type>( nDiff );
+            }
             void onUnlock()             { ++m_nUnlockCount;     }
             void onLockContention()     { ++m_nLockContention;  }
             void onUnlockContention()   { ++m_nUnlockContention;}
-            void onLockAllocation()     { ++m_nLockAllocation;  }
+            void onLockAllocation()
+            { 
+                ++m_nLockAllocation;  
+                int nDiff = static_cast<int>( m_nLockAllocation.get() - m_nLockDeallocation.get());
+                if ( nDiff > 0 && m_nMaxAllocated.get() < static_cast<typename event_counter::value_type>( nDiff ) )
+                    m_nMaxAllocated = static_cast<typename event_counter::value_type>( nDiff );
+            }
             void onLockDeallocation()   { ++m_nLockDeallocation;}
             //@endcond
         };
@@ -65,7 +79,7 @@ namespace cds { namespace sync {
         Template arguments:
         - \p LockPool - the @ref cds_memory_pool "pool type". The pool must maintain
             the objects of type \p std::mutex or similar. The access to the pool is not synchronized.
-        - \p BackOff - back-off strategy for spinning, default is \p cds::backoff::LockDefault
+        - \p BackOff - back-off strategy for spinning, default is \p cds::backoff::yield
         - \p Stat - enable (\p true) or disable (\p false, the default) monitor's internal statistics.
 
         <b>How to use</b>
@@ -74,7 +88,7 @@ namespace cds { namespace sync {
         typedef cds::sync::pool_monitor< pool_type > sync_monitor;
         \endcode
     */
-    template <class LockPool, typename BackOff = cds::backoff::LockDefault, bool Stat = false >
+    template <class LockPool, typename BackOff = cds::backoff::yield, bool Stat = false >
     class pool_monitor
     {
     public:
@@ -82,7 +96,7 @@ namespace cds { namespace sync {
         typedef typename pool_type::value_type lock_type; ///< node lock type
         typedef typename std::conditional< 
             std::is_same< BackOff, cds::opt::none >::value, 
-            cds::backoff::LockDefault,
+            cds::backoff::yield,
             BackOff
         >::type  back_off;  ///< back-off strategy for spinning
         typedef uint32_t refspin_type;  ///< Reference counter + spin-lock bit

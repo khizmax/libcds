@@ -458,16 +458,16 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_shb_cmp_stat) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_cmp_stat) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_shb_less_pool_simple) \
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_simple) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_shb_less_pool_simple_stat) \
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_simple) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_simple_stat) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_shb_less_pool_lazy) \
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_lazy) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_shb_less_pool_lazy_stat) \
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_lazy) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_lazy_stat) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_shb_less_pool_bounded) \
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_bounded) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_shb_less_pool_bounded_stat) \
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_bounded) \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_sht_less_pool_bounded_stat) \
 
 #else
@@ -507,25 +507,23 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_cmp_stat)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_cmp_stat)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_cmp_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_simple)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_cmp_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_simple)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_cmp_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_simple)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_simple_stat)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_simple_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_simple_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_lazy)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_lazy)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_lazy)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_lazy_stat)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_lazy)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_lazy_stat)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_lazy)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_lazy_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_bounded)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_bounded)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_bounded)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_bounded_stat)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_bounded)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_bounded_stat)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_bounded)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_bounded_stat)\
     CDSUNIT_TEST_BronsonAVLTreeMap_RCU_signal
 
