@@ -82,7 +82,7 @@ namespace cds { namespace sync {
         typedef typename pool_type::value_type lock_type; ///< node lock type
         typedef typename std::conditional< 
             std::is_same< BackOff, cds::opt::none >::value, 
-            cds::backoff::LockDefault, 
+            cds::backoff::LockDefault,
             BackOff
         >::type  back_off;  ///< back-off strategy for spinning
         typedef uint32_t refspin_type;  ///< Reference counter + spin-lock bit
