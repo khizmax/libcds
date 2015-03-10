@@ -1,7 +1,10 @@
 //$$CDS-header$$
+
 #ifndef CDSLIB_SYNC_MONITOR_H
 #define CDSLIB_SYNC_MONITOR_H
+
 #include <cds/details/defs.h>
+
 namespace cds { namespace sync {
     /**
         @page cds_sync_monitor Synchronization monitor
@@ -16,7 +19,9 @@ namespace cds { namespace sync {
         lock object for the node if needed, and to lock the node.
         The monitor strategy can significantly reduce the number of system objects
         required for data structure.
+
         <b>Implemetations</b>
+
         \p libcds contains several monitor implementations:
         - \p sync::injecting_monitor injects the lock object into each node.
             That mock monitor is designed for user-space locking primitive like
@@ -25,11 +30,14 @@ namespace cds { namespace sync {
             for a node from the pool when needed. When the node is unlocked
             the lock assigned to it is given back to the pool if no thread
             references to that node.
+
         <b>How to use</b>
+
         If you use a container from \p libcds that requires a monitor, you should just
         specify required monitor type in container's traits. Usually, the monitor
         is specified by \p traits::sync_monitor typedef, or by \p cds::opt::sync_monitor
         option for container's \p make_traits metafunction.
+
         If you're developing a new container algorithm, you should know internal monitor
         interface:
         \code
