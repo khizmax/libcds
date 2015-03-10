@@ -143,7 +143,7 @@ namespace cds { namespace sync {
 
         /// Initializes the pool of \p nPoolCapacity preallocated mutexes
         pool_monitor( size_t nPoolCapacity )
-            : m_Pool( nPoolCapacity)
+            : m_Pool( nPoolCapacity ? nPoolCapacity : 256 )
         {}
 
         /// Makes exclusive access to node \p p
