@@ -108,6 +108,9 @@ namespace cds { namespace sync {
             typename pool_monitor_traits::empty_stat 
         >::type internal_stat;
 
+        /// Pool's default capacity
+        static CDS_CONSTEXPR size_t const c_nDefaultCapacity = 256;
+
     private:
         //@cond
         static CDS_CONSTEXPR refspin_type const c_nSpinBit = 1;
@@ -138,12 +141,12 @@ namespace cds { namespace sync {
 
         /// Initializes the pool of 256 preallocated mutexes
         pool_monitor()
-            : m_Pool( 256 )
+            : m_Pool( c_nDefaultCapacity )
         {}
 
         /// Initializes the pool of \p nPoolCapacity preallocated mutexes
         pool_monitor( size_t nPoolCapacity )
-            : m_Pool( nPoolCapacity ? nPoolCapacity : 256 )
+            : m_Pool( nPoolCapacity ? nPoolCapacity : c_nDefaultCapacity )
         {}
 
         /// Makes exclusive access to node \p p
