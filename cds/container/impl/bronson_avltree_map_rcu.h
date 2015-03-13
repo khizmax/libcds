@@ -142,6 +142,7 @@ namespace cds { namespace container {
         static void free_node( node_type * pNode )
         {
             // Free node without disposer
+            assert( !pNode->is_valued( memory_model::memory_order_relaxed ));
             cxx_allocator().Delete( pNode );
         }
 
@@ -1229,6 +1230,9 @@ namespace cds { namespace container {
                      || child( pNode, nDir, memory_model::memory_order_relaxed ) != nullptr ) 
                 {
                     if ( c_bRelaxedInsert ) {
+                        mapped_type pVal = pNew->m_pValue.load( memory_model::memory_order_relaxed );
+                        pNew->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
+                        free_value( pVal );
                         free_node( pNew );
                         m_stat.onRelaxedInsertFailed();
                     }
