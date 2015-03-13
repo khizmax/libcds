@@ -175,6 +175,7 @@ namespace cds { namespace sync {
             // If the node has no lock, allocate it from pool
             pLock = p.m_SyncMonitorInjection.m_pLock;
             if ( !pLock ) {
+                assert( cur == 0 );
                 pLock = p.m_SyncMonitorInjection.m_pLock = m_Pool.allocate( 1 );
                 m_Stat.onLockAllocation();
             }
@@ -199,7 +200,7 @@ namespace cds { namespace sync {
 
             // try lock spin
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
-            if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit,
+            if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur | c_nSpinBit,
                 atomics::memory_order_acquire, atomics::memory_order_relaxed ) ) 
             {
                 back_off bkoff;
@@ -207,7 +208,7 @@ namespace cds { namespace sync {
                     m_Stat.onUnlockContention();
                     bkoff();
                     cur &= ~c_nSpinBit;
-                } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nSpinBit,
+                } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur | c_nSpinBit,
                     atomics::memory_order_acquire, atomics::memory_order_relaxed ));
             }
 
