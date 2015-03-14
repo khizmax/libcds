@@ -15,6 +15,9 @@ namespace cds { namespace memory {
     {
         /// Allocator type
         typedef CDS_DEFAULT_ALLOCATOR allocator;
+
+        /// Back-off stratey
+        typedef cds::backoff::yield   back_off;
     };
 
     /// Free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
@@ -91,6 +94,7 @@ namespace cds { namespace memory {
         typedef T  value_type ; ///< Value type
         typedef Traits traits;  ///< Traits type
         typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef typename traits::back_off back_off; ///< back-off strategy
 
     protected:
         //@cond
@@ -175,8 +179,13 @@ namespace cds { namespace memory {
             CDS_UNUSED(n);
 
             if ( p ) {
-                if ( from_pool( p ) )
-                    m_Queue.push( *p );
+                if ( from_pool(p) ) {
+                    // The queue can notify about false fullness state
+                    // so we push in loop 
+                    back_off bkoff;
+                    while ( !m_Queue.push( *p ))
+                        bkoff();
+                }
                 else
                     cxx_allocator().Delete( p );
             }
@@ -310,6 +319,7 @@ namespace cds { namespace memory {
             CDS_UNUSED(n);
 
             if ( p ) {
+                // Here we ignore false fullness state of the queue
                 if ( !m_Queue.push( *p ))
                     cxx_allocator().Delete( p );
             }
@@ -391,6 +401,7 @@ namespace cds { namespace memory {
         typedef T  value_type;  ///< Value type
         typedef Traits traits;  ///< Pool traits
         typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef typename traits::back_off back_off; ///< back-off strategy
 
     protected:
         //@cond
@@ -475,7 +486,11 @@ namespace cds { namespace memory {
 
             if ( p ) {
                 assert( from_pool( p ));
-                CDS_VERIFY( m_Queue.push( *p ));
+                back_off bkoff;
+                // The queue can notify it is full but that is false fullness state
+                // So, we push in loop
+                while ( !m_Queue.push(*p) )
+                    bkoff();
             }
         }
     };
