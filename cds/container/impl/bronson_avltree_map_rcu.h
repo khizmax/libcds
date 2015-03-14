@@ -143,6 +143,7 @@ namespace cds { namespace container {
         {
             // Free node without disposer
             assert( !pNode->is_valued( memory_model::memory_order_relaxed ));
+            assert( pNode->m_SyncMonitorInjection.check_free());
             cxx_allocator().Delete( pNode );
         }
 
