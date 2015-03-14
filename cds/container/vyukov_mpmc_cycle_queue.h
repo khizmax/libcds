@@ -218,11 +218,11 @@ namespace cds { namespace container {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
 
-                intptr_t dif = (intptr_t)seq - (intptr_t)pos;
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos);
 
                 if (dif == 0)
                 {
-                    if ( m_posEnqueue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed) )
+                    if ( m_posEnqueue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed))
                         break;
                 }
                 else if (dif < 0)
@@ -274,7 +274,7 @@ namespace cds { namespace container {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
 
-                intptr_t dif = (intptr_t)seq - (intptr_t)pos;
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos);
 
                 if (dif == 0)
                 {
@@ -316,7 +316,7 @@ namespace cds { namespace container {
             {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
-                intptr_t dif = (intptr_t)seq - (intptr_t)(pos + 1);
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos + 1);
 
                 if (dif == 0) {
                     if ( m_posDequeue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed))
@@ -370,7 +370,7 @@ namespace cds { namespace container {
             {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
-                intptr_t dif = (intptr_t)seq - (intptr_t)(pos + 1);
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos + 1);
 
                 if (dif == 0)
                     return false;
