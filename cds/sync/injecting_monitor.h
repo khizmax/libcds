@@ -34,6 +34,13 @@ namespace cds { namespace sync {
         /// Node injection
         struct node_injection {
             mutable lock_type m_Lock;   ///< Node spin-lock
+
+            //@cond
+            CDS_CONSTEXPR bool check_free() const
+            {
+                return true;
+            }
+            //@endcond
         };
 
         /// Makes exclusive access to node \p p

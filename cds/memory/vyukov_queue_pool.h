@@ -405,8 +405,9 @@ namespace cds { namespace memory {
         //@cond
         void preallocate_pool()
         {
-            m_pFirst = cxx_allocator().NewArray( m_Queue.capacity() );
-            m_pLast = m_pFirst + m_Queue.capacity();
+            size_t const nCount = m_Queue.capacity();
+            m_pFirst = cxx_allocator().NewArray( nCount );
+            m_pLast = m_pFirst + nCount;
 
             for ( value_type * p = m_pFirst; p < m_pLast; ++p )
                 CDS_VERIFY( m_Queue.push( *p )) ;   // must be true
@@ -474,7 +475,7 @@ namespace cds { namespace memory {
 
             if ( p ) {
                 assert( from_pool( p ));
-                m_Queue.push( *p );
+                CDS_VERIFY( m_Queue.push( *p ));
             }
         }
     };

@@ -33,13 +33,13 @@ namespace cds { namespace sync {
             typedef Counter event_counter; ///< measure type
 
             event_counter m_nLockCount;         ///< Number of monitor \p lock() call
-            event_counter m_nUnlockCount;       ///< Number of monitor \p unlock call
+            event_counter m_nUnlockCount;       ///< Number of monitor \p unlock() call
             event_counter m_nMaxLocked;         ///< Max number of simuntaneously locked mutexes
             event_counter m_nLockContention;    ///< Number of \p lock() contenton
             event_counter m_nUnlockContention;  ///< Number of \p unlock() contention
             event_counter m_nLockAllocation;    ///< Number of the lock allocation from the pool
             event_counter m_nLockDeallocation;  ///< Number of the lock deallocation
-            event_counter m_nMaxAllocated;      ///< Max number of sumultanouusly allocated mutexes
+            event_counter m_nMaxAllocated;      ///< Max number of sumultaneously allocated mutexes
 
             //@cond
             void onLock()
@@ -127,6 +127,7 @@ namespace cds { namespace sync {
             mutable atomics::atomic<refspin_type>   m_RefSpin;  ///< Spin-lock for \p m_pLock (bit 0) + reference counter
             mutable lock_type *                     m_pLock;    ///< Node-level lock
 
+            //@cond
             node_injection()
                 : m_RefSpin( 0 )
                 , m_pLock( nullptr )
@@ -137,6 +138,12 @@ namespace cds { namespace sync {
                 assert( m_pLock == nullptr );
                 assert( m_RefSpin.load( atomics::memory_order_relaxed ) == 0 );
             }
+
+            bool check_free() const
+            {
+                return m_pLock == nullptr && m_RefSpin.load( atomics::memory_order_acquire ) == 0;
+            }
+            //@endcond
         };
 
         /// Initializes the pool of 256 preallocated mutexes
