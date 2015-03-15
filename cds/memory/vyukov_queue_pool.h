@@ -161,7 +161,7 @@ namespace cds { namespace memory {
                 assert( from_pool(p) );
                 return p;
             }
-
+            // The pool is empty - allocate new from the heap
             return cxx_allocator().New();
         }
 
@@ -394,8 +394,13 @@ namespace cds { namespace memory {
     template <typename T, typename Traits = vyukov_queue_pool_traits >
     class bounded_vyukov_queue_pool
     {
+        //@cond
+        struct internal_traits : public Traits {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        //@endcond
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Traits > queue_type  ;   ///< Queue type
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, internal_traits > queue_type  ;   ///< Queue type
 
     public:
         typedef T  value_type;  ///< Value type
@@ -464,12 +469,23 @@ namespace cds { namespace memory {
             CDS_UNUSED( n );
 
             value_type * p = m_Queue.pop();
-            if ( p ) {
-                assert( from_pool(p) );
-                return p;
+
+            if ( !p ) {
+                back_off bkoff;
+                while ( m_Queue.size() ) {
+                    p = m_Queue.pop();
+                    if ( p )
+                        goto ok;
+                    bkoff();
+                }
+
+                // The pool is empty
+                throw std::bad_alloc();
             }
 
-            throw std::bad_alloc();
+        ok:
+            assert( from_pool(p) );
+            return p;
         }
 
         /// Deallocated the object \p p
