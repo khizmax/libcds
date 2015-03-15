@@ -504,13 +504,15 @@ TEST_MAP_EXTRACT(SplitList_Lazy_RCU_SHT_st_less_stat)
 
 #define CDSUNIT_TEST_BronsonAVLTreeMap \
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_cmp_stat)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_simple)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_cmp_stat)\
-    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_simple)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_cmp_stat)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_simple)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_simple_stat)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_simple)\
+    CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpb_less_pool_simple_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_simple)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_simple_stat)\
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpi_less_pool_lazy)\
