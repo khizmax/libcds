@@ -826,7 +826,6 @@
     <ClInclude Include="..\..\..\cds\details\allocator.h" />
     <ClInclude Include="..\..\..\cds\details\bitop_generic.h" />
     <ClInclude Include="..\..\..\cds\details\bounded_array.h" />
-    <ClInclude Include="..\..\..\cds\details\comparator.h" />
     <ClInclude Include="..\..\..\cds\details\defs.h" />
     <ClInclude Include="..\..\..\cds\details\is_aligned.h" />
     <ClInclude Include="..\..\..\cds\details\make_const_type.h" />
