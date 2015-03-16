@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_IMPL_ELLEN_BINTREE_H
-#define __CDS_INTRUSIVE_IMPL_ELLEN_BINTREE_H
+#ifndef CDSLIB_INTRUSIVE_IMPL_ELLEN_BINTREE_H
+#define CDSLIB_INTRUSIVE_IMPL_ELLEN_BINTREE_H
 
 #include <memory>
 #include <cds/intrusive/details/ellen_bintree_base.h>
@@ -1507,4 +1507,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_IMPL_ELLEN_BINTREE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_IMPL_ELLEN_BINTREE_H

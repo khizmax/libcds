@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_USER_SETUP_ALLOCATOR_H
-#define __CDS_USER_SETUP_ALLOCATOR_H
+#ifndef CDSLIB_USER_SETUP_ALLOCATOR_H
+#define CDSLIB_USER_SETUP_ALLOCATOR_H
 
 /** \file
     \brief Default implementation of allocator classes.
@@ -39,4 +39,4 @@
 #   include <cds/os/alloc_aligned.h>
 #endif
 
-#endif // #ifndef __CDS_USER_SETUP_ALLOCATOR_H
+#endif // #ifndef CDSLIB_USER_SETUP_ALLOCATOR_H

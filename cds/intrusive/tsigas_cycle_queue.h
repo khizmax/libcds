@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
-#define __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
+#define CDSLIB_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
 
 #include <cds/intrusive/details/base.h>
 #include <cds/algo/atomic.h>
@@ -423,4 +423,4 @@ namespace cds { namespace intrusive {
 
 }}  // namespace cds::intrusive
 
-#endif  // #ifndef __CDS_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H
+#endif  // #ifndef CDSLIB_INTRUSIVE_TSIGAS_CYCLE_QUEUE_H

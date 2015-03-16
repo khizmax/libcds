@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
-#define __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_OPTIMISTIC_QUEUE_H
+#define CDSLIB_INTRUSIVE_OPTIMISTIC_QUEUE_H
 
 #include <type_traits>
 #include <cds/intrusive/details/base.h>
@@ -680,4 +680,4 @@ namespace cds { namespace intrusive {
 
 }}  // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_OPTIMISTIC_QUEUE_H

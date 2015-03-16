@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_BACKOFF_IMPL_H
-#define __CDS_COMPILER_BACKOFF_IMPL_H
+#ifndef CDSLIB_COMPILER_BACKOFF_IMPL_H
+#define CDSLIB_COMPILER_BACKOFF_IMPL_H
 
 #include <cds/details/defs.h>
 
@@ -31,4 +31,4 @@
 #   error "Undefined compiler"
 #endif
 
-#endif  // #ifndef __CDS_COMPILER_BACKOFF_IMPL_H
+#endif  // #ifndef CDSLIB_COMPILER_BACKOFF_IMPL_H

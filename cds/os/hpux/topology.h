@@ -1,9 +1,9 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_HPUX_TOPOLOGY_H
-#define __CDS_OS_HPUX_TOPOLOGY_H
+#ifndef CDSLIB_OS_HPUX_TOPOLOGY_H
+#define CDSLIB_OS_HPUX_TOPOLOGY_H
 
-#ifndef __CDS_OS_TOPOLOGY_H
+#ifndef CDSLIB_OS_TOPOLOGY_H
 #   error "<cds/os/topology.h> must be included instead"
 #endif
 
@@ -77,4 +77,4 @@ namespace cds { namespace OS {
 #endif
 }}  // namespace cds::OS
 
-#endif  // #ifndef __CDS_OS_HPUX_TOPOLOGY_H
+#endif  // #ifndef CDSLIB_OS_HPUX_TOPOLOGY_H

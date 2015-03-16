@@ -1,11 +1,11 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_AIX_TIMER_H
-#define __CDS_OS_AIX_TIMER_H
+#ifndef CDSLIB_OS_AIX_TIMER_H
+#define CDSLIB_OS_AIX_TIMER_H
 
 // Source: http://publib16.boulder.ibm.com/doc_link/en_US/a_doc_lib/libs/basetrf2/read_real_time.htm
 
-#ifndef __CDS_OS_TIMER_H
+#ifndef CDSLIB_OS_TIMER_H
 #   error "<cds/os/timer.h> must be included"
 #endif
 
@@ -89,4 +89,4 @@ namespace cds { namespace OS {
 }}   // namespace cds::OS
 //@endcond
 
-#endif // #ifndef __CDS_OS_AIX_TIMER_H
+#endif // #ifndef CDSLIB_OS_AIX_TIMER_H

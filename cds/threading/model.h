@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_THREADING_MODEL_H
-#define __CDS_THREADING_MODEL_H
+#ifndef CDSLIB_THREADING_MODEL_H
+#define CDSLIB_THREADING_MODEL_H
 
 #include <cds/threading/details/_common.h>
 #include <cds/user_setup/threading.h>
@@ -83,4 +83,4 @@ namespace cds { namespace threading {
 
 }} // namespace cds::threading
 
-#endif // #ifndef __CDS_THREADING_MODEL_H
+#endif // #ifndef CDSLIB_THREADING_MODEL_H

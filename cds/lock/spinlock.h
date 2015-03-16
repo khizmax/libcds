@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_LOCK_SPINLOCK_H
-#define __CDS_LOCK_SPINLOCK_H
+#ifndef CDSLIB_LOCK_SPINLOCK_H
+#define CDSLIB_LOCK_SPINLOCK_H
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma message("cds/lock/spinlock.h is deprecated, use cds/sync/spinlock.h instead")
@@ -53,4 +53,4 @@ namespace cds {
 } // namespace cds
 //@endcond
 
-#endif  // #ifndef __CDS_LOCK_SPINLOCK_H
+#endif  // #ifndef CDSLIB_LOCK_SPINLOCK_H

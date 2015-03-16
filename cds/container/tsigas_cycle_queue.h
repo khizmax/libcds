@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_TSIGAS_CYCLE_QUEUE_H
-#define __CDS_CONTAINER_TSIGAS_CYCLE_QUEUE_H
+#ifndef CDSLIB_CONTAINER_TSIGAS_CYCLE_QUEUE_H
+#define CDSLIB_CONTAINER_TSIGAS_CYCLE_QUEUE_H
 
 #include <memory>
 #include <cds/intrusive/tsigas_cycle_queue.h>
@@ -382,4 +382,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_CONTAINER_TSIGAS_CYCLE_QUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_TSIGAS_CYCLE_QUEUE_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_BITOP_GENERIC_H
-#define __CDS_DETAILS_BITOP_GENERIC_H
+#ifndef CDSLIB_DETAILS_BITOP_GENERIC_H
+#define CDSLIB_DETAILS_BITOP_GENERIC_H
 
 #include <stdlib.h>     // rand()
 namespace cds {
@@ -268,4 +268,4 @@ namespace cds {
     }}    // namespace bitop::platform
 } // namespace cds
 
-#endif    // __CDS_DETAILS_BITOP_GENERIC_H
+#endif    // CDSLIB_DETAILS_BITOP_GENERIC_H

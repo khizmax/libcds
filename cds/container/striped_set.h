@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_STRIPED_SET_H
-#define __CDS_CONTAINER_STRIPED_SET_H
+#ifndef CDSLIB_CONTAINER_STRIPED_SET_H
+#define CDSLIB_CONTAINER_STRIPED_SET_H
 
 #include <cds/intrusive/striped_set.h>
 #include <cds/container/striped_set/adapter.h>
@@ -920,4 +920,4 @@ namespace cds { namespace container {
 }} // namespace cds::container
 
 
-#endif // #ifndef __CDS_CONTAINER_STRIPED_SET_H
+#endif // #ifndef CDSLIB_CONTAINER_STRIPED_SET_H

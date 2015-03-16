@@ -102,9 +102,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_hashset_std.cpp">
       <Filter>container\striped</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_hashset_vc.cpp">
-      <Filter>container\striped</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_list.cpp">
       <Filter>container\striped</Filter>
     </ClCompile>
@@ -136,9 +133,6 @@
       <Filter>container\striped</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_hashset_std.cpp">
-      <Filter>container\striped</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_hashset_vc.cpp">
       <Filter>container\striped</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_list.cpp">

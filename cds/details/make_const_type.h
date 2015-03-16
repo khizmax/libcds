@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_MAKE_CONST_TYPE_H
-#define __CDS_DETAILS_MAKE_CONST_TYPE_H
+#ifndef CDSLIB_DETAILS_MAKE_CONST_TYPE_H
+#define CDSLIB_DETAILS_MAKE_CONST_TYPE_H
 
 #include <cds/details/defs.h>
 
@@ -27,4 +27,4 @@ namespace cds { namespace details {
 
 }}  // namespace cds::details
 
-#endif  // #ifndef __CDS_DETAILS_MAKE_CONST_TYPE_H
+#endif  // #ifndef CDSLIB_DETAILS_MAKE_CONST_TYPE_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_MEMORY_POOL_ALLOCATOR_H
-#define __CDS_MEMORY_POOL_ALLOCATOR_H
+#ifndef CDSLIB_MEMORY_POOL_ALLOCATOR_H
+#define CDSLIB_MEMORY_POOL_ALLOCATOR_H
 
 #include <cds/details/defs.h>
 #include <utility>
@@ -119,4 +119,4 @@ namespace cds { namespace memory {
 }} // namespace cds::memory
 
 
-#endif // #ifndef __CDS_MEMORY_POOL_ALLOCATOR_H
+#endif // #ifndef CDSLIB_MEMORY_POOL_ALLOCATOR_H

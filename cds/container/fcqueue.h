@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_FCQUEUE_H
-#define __CDS_CONTAINER_FCQUEUE_H
+#ifndef CDSLIB_CONTAINER_FCQUEUE_H
+#define CDSLIB_CONTAINER_FCQUEUE_H
 
 #include <cds/algo/flat_combining.h>
 #include <cds/algo/elimination_opt.h>
@@ -381,4 +381,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_FCQUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_FCQUEUE_H

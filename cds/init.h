@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INIT_H
-#define __CDS_INIT_H
+#ifndef CDSLIB_INIT_H
+#define CDSLIB_INIT_H
 
 #include <cds/details/defs.h>
 #include <cds/os/topology.h>
@@ -66,4 +66,4 @@ namespace cds {
 
 }   // namespace cds
 
-#endif // __CDS_INIT_H
+#endif // CDSLIB_INIT_H

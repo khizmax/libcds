@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_COMPARATOR_H
-#define __CDS_DETAILS_COMPARATOR_H
+#ifndef CDSLIB_DETAILS_COMPARATOR_H
+#define CDSLIB_DETAILS_COMPARATOR_H
 
 #include <functional>
 #include <string>
@@ -58,4 +58,4 @@ namespace cds {
     }    // namespace details
 }    // namespace cds
 
-#endif // #ifndef __CDS_DETAILS_COMPARATOR_H
+#endif // #ifndef CDSLIB_DETAILS_COMPARATOR_H

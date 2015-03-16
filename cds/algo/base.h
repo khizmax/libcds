@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_ALGO_BASE_H
-#define __CDS_ALGO_BASE_H
+#ifndef CDSLIB_ALGO_BASE_H
+#define CDSLIB_ALGO_BASE_H
 
 #include <cds/details/defs.h>
 
@@ -12,4 +12,4 @@ namespace cds {
 
 } // namespace cds
 
-#endif // #ifndef __CDS_ALGO_BASE_H
+#endif // #ifndef CDSLIB_ALGO_BASE_H

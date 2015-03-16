@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_OPTIONS_H
-#define __CDS_OPT_OPTIONS_H
+#ifndef CDSLIB_OPT_OPTIONS_H
+#define CDSLIB_OPT_OPTIONS_H
 
 /*
     Framework to define template options
@@ -173,6 +173,21 @@ namespace opt {
         template<class Base> struct pack: public Base
         {
             typedef Type lock_type;
+        };
+        //@endcond
+    };
+
+    /// [type-option] @ref cds_sync_monitor "Monitor" type setter
+    /**
+        This option setter specifyes @ref cds_sync_monitor "synchronization monitor"
+        for blocking container.
+    */
+    template <typename Type>
+    struct sync_monitor {
+        //@cond
+        template <class Base> struct pack : public Base
+        {
+            typedef Type sync_monitor;
         };
         //@endcond
     };
@@ -821,4 +836,4 @@ namespace opt {
 
 #include <cds/opt/make_options_var.h>
 
-#endif  // #ifndef __CDS_OPT_OPTIONS_H
+#endif  // #ifndef CDSLIB_OPT_OPTIONS_H

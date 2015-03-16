@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_ALGO_ELIMINATION_OPT_H
-#define __CDS_ALGO_ELIMINATION_OPT_H
+#ifndef CDSLIB_ALGO_ELIMINATION_OPT_H
+#define CDSLIB_ALGO_ELIMINATION_OPT_H
 
 #include <cds/details/defs.h>
 
@@ -34,4 +34,4 @@ namespace cds { namespace opt {
     };
 }} // namespace cds::opt
 
-#endif // #ifndef __CDS_ALGO_ELIMINATION_OPT_H
+#endif // #ifndef CDSLIB_ALGO_ELIMINATION_OPT_H

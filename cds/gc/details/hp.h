@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_DETAILS_HP_H
-#define __CDS_GC_DETAILS_HP_H
+#ifndef CDSLIB_GC_DETAILS_HP_H
+#define CDSLIB_GC_DETAILS_HP_H
 
 #include <cds/algo/atomic.h>
 #include <cds/os/thread.h>
@@ -714,4 +714,4 @@ namespace cds {
 #   pragma warning(pop)
 #endif
 
-#endif  // #ifndef __CDS_GC_DETAILS_HP_H
+#endif  // #ifndef CDSLIB_GC_DETAILS_HP_H

@@ -1,10 +1,9 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_BASE_H
-#define __CDS_CONTAINER_DETAILS_BASE_H
+#ifndef CDSLIB_CONTAINER_DETAILS_BASE_H
+#define CDSLIB_CONTAINER_DETAILS_BASE_H
 
 #include <cds/intrusive/details/base.h>
-#include <cds/details/allocator.h>
 
 namespace cds {
 
@@ -57,4 +56,4 @@ namespace container {
 }   // namespace container
 }   // namespace cds
 
-#endif // #ifndef __CDS_CONTAINER_DETAILS_BASE_H
+#endif // #ifndef CDSLIB_CONTAINER_DETAILS_BASE_H

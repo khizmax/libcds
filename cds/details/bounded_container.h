@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_BOUNDED_CONTAINER_H
-#define __CDS_BOUNDED_CONTAINER_H
+#ifndef CDSLIB_BOUNDED_CONTAINER_H
+#define CDSLIB_BOUNDED_CONTAINER_H
 
 namespace cds {
     /// Bounded container
@@ -12,4 +12,4 @@ namespace cds {
     struct bounded_container {};
 }    // namespace cds
 
-#endif    // __CDS_BOUNDED_CONTAINER_H
+#endif    // CDSLIB_BOUNDED_CONTAINER_H

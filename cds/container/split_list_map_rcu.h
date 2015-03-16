@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SPLIT_LIST_MAP_RCU_H
-#define __CDS_CONTAINER_SPLIT_LIST_MAP_RCU_H
+#ifndef CDSLIB_CONTAINER_SPLIT_LIST_MAP_RCU_H
+#define CDSLIB_CONTAINER_SPLIT_LIST_MAP_RCU_H
 
 #include <cds/container/split_list_set_rcu.h>
 #include <cds/details/binary_functor_wrapper.h>
@@ -498,8 +498,7 @@ namespace cds { namespace container {
 
         /// Extracts an item from the map using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListMap_rcu_extract "extract(exempt_ptr&, K const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p extract(K const&) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the map.
         */
@@ -662,4 +661,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SPLIT_LIST_MAP_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_SPLIT_LIST_MAP_RCU_H

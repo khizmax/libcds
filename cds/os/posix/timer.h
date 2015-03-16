@@ -1,9 +1,9 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_POSIX_TIMER_H
-#define __CDS_OS_POSIX_TIMER_H
+#ifndef CDSLIB_OS_POSIX_TIMER_H
+#define CDSLIB_OS_POSIX_TIMER_H
 
-#ifndef __CDS_OS_TIMER_H
+#ifndef CDSLIB_OS_TIMER_H
 #   error "<cds/os/timer.h> must be included"
 #endif
 
@@ -86,4 +86,4 @@ namespace cds { namespace OS {
 }}    // namespace cds::OS
 //@endcond
 
-#endif // #ifndef __CDS_OS_POSIX_TIMER_H
+#endif // #ifndef CDSLIB_OS_POSIX_TIMER_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_MEMORY_MICHAEL_OPTIONS_H
-#define __CDS_MEMORY_MICHAEL_OPTIONS_H
+#ifndef CDSLIB_MEMORY_MICHAEL_OPTIONS_H
+#define CDSLIB_MEMORY_MICHAEL_OPTIONS_H
 
 /*
     Options for Michael allocator
@@ -251,4 +251,4 @@ namespace cds { namespace memory { namespace michael {
 
 }}} // namespace cds::memory::michael
 
-#endif // #ifndef __CDS_MEMORY_MICHAEL_OPTIONS_H
+#endif // #ifndef CDSLIB_MEMORY_MICHAEL_OPTIONS_H

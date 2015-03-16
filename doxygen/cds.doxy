@@ -1398,7 +1398,8 @@ PREDEFINED             = CDS_BUILD_BITS=64 \
                          CDS_CXX11_INLINE_NAMESPACE_SUPPORT \
                          CDS_CXX11_INLINE_NAMESPACE=inline \
                          CDS_NOEXCEPT=noexcept() \
-                         CDS_CONSTEXPR=constexpr
+                         CDS_CONSTEXPR=constexpr \
+                         CDS_CXX11_INHERITING_CTOR
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded.

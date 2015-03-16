@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_COMPARE_H
-#define __CDS_OPT_COMPARE_H
+#ifndef CDSLIB_OPT_COMPARE_H
+#define CDSLIB_OPT_COMPARE_H
 
 /*
     Editions:
@@ -260,4 +260,4 @@ namespace cds { namespace opt {
 
 }}  // namespace cds::opt
 
-#endif // #ifndef __CDS_OPT_COMPARE_H
+#endif // #ifndef CDSLIB_OPT_COMPARE_H

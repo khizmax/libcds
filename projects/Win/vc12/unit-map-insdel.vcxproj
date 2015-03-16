@@ -43,6 +43,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int.cpp" />
@@ -218,7 +219,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -242,7 +243,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -266,7 +267,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CDS_USE_VLD;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -293,7 +294,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -320,7 +321,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -347,7 +348,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CDS_USE_VLD;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -374,7 +375,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -402,7 +403,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -434,7 +435,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -465,7 +466,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>

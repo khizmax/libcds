@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H
-#define __CDS_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H
+#ifndef CDSLIB_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H
+#define CDSLIB_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H
 
 #include <cds/container/striped_set/adapter.h>
 #include <boost/unordered_map.hpp>
@@ -45,4 +45,4 @@ namespace cds { namespace intrusive { namespace striped_set {
 
 //@endcond
 
-#endif  // #ifndef __CDS_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H
+#endif  // #ifndef CDSLIB_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_PERMUTATION_H
-#define __CDS_OPT_PERMUTATION_H
+#ifndef CDSLIB_OPT_PERMUTATION_H
+#define CDSLIB_OPT_PERMUTATION_H
 
 #include <cds/opt/options.h>
 #include <stdlib.h> // rand, srand
@@ -290,4 +290,4 @@ namespace cds { namespace opt {
 
 }} // namespace cds::opt
 
-#endif // #ifndef __CDS_OPT_PERMUTATION_H
+#endif // #ifndef CDSLIB_OPT_PERMUTATION_H

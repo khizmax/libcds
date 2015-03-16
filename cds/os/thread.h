@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_THREAD_H
-#define __CDS_OS_THREAD_H
+#ifndef CDSLIB_OS_THREAD_H
+#define CDSLIB_OS_THREAD_H
 
 #include <thread>
 #include <cds/details/defs.h>
@@ -21,4 +21,4 @@ namespace cds { namespace OS {
     }
 }} // namespace cds::OS
 
-#endif    // #ifndef __CDS_OS_THREAD_H
+#endif    // #ifndef CDSLIB_OS_THREAD_H

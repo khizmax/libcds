@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_SET_NOGC_H
-#define __CDS_CONTAINER_MICHAEL_SET_NOGC_H
+#ifndef CDSLIB_CONTAINER_MICHAEL_SET_NOGC_H
+#define CDSLIB_CONTAINER_MICHAEL_SET_NOGC_H
 
 #include <cds/container/details/michael_set_base.h>
 #include <cds/gc/nogc.h>
@@ -315,4 +315,4 @@ namespace cds { namespace container {
 
 }} // cds::container
 
-#endif // ifndef __CDS_CONTAINER_MICHAEL_SET_NOGC_H
+#endif // ifndef CDSLIB_CONTAINER_MICHAEL_SET_NOGC_H

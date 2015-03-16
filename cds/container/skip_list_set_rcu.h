@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SKIP_LIST_SET_RCU_H
-#define __CDS_CONTAINER_SKIP_LIST_SET_RCU_H
+#ifndef CDSLIB_CONTAINER_SKIP_LIST_SET_RCU_H
+#define CDSLIB_CONTAINER_SKIP_LIST_SET_RCU_H
 
 #include <cds/intrusive/skip_list_rcu.h>
 #include <cds/container/details/make_skip_list_set.h>
@@ -463,8 +463,7 @@ namespace cds { namespace container {
 
         /// Extracts the item from the set with comparing functor \p pred
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListSet_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred predicate is used for key comparing.
+            The function is an analog of \p extract(Q const&) but \p pred predicate is used for key comparing.
             \p Less has the semantics like \p std::less.
             \p pred must imply the same element order as the comparator used for building the set.
         */
@@ -711,4 +710,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SKIP_LIST_SET_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_SKIP_LIST_SET_RCU_H

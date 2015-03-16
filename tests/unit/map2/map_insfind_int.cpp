@@ -145,6 +145,8 @@ namespace map2 {
             CPPUNIT_ASSERT( nInsertFailed == 0 );
             CPPUNIT_ASSERT( nFindFailed == 0 );
 
+            check_before_cleanup( testMap );
+
             testMap.clear();
             additional_check( testMap );
             print_stat( testMap );
@@ -203,6 +205,7 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_SkipListMap_nogc
         CDSUNIT_DECLARE_EllenBinTreeMap
+        CDSUNIT_DECLARE_BronsonAVLTreeMap
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
@@ -216,6 +219,7 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_SkipListMap_nogc
             CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
             CDSUNIT_TEST_StripedMap
             CDSUNIT_TEST_RefinableMap
             CDSUNIT_TEST_CuckooMap

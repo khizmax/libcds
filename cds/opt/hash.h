@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_HASH_H
-#define __CDS_OPT_HASH_H
+#ifndef CDSLIB_OPT_HASH_H
+#define CDSLIB_OPT_HASH_H
 
 #include <tuple>
 #include <functional>
@@ -164,4 +164,4 @@ namespace cds { namespace opt {
 
 }} // namespace cds::opt
 
-#endif // #ifndef __CDS_OPT_HASH_H
+#endif // #ifndef CDSLIB_OPT_HASH_H

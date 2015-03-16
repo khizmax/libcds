@@ -534,11 +534,8 @@ $MAKE -f Makefile \
      platform=$OS_FAMILY \
      BIN_PATH=$BIN_PATH \
      OBJ_PATH=$OBJ_PATH/debug \
-     debug
-
-if test $? -gt 0; then
-   exit $?
-fi
+     debug \
+  || exit $?
 
 echo ---------------------------------
 echo Make release library
@@ -560,11 +557,8 @@ $MAKE -f Makefile \
      platform=$OS_FAMILY \
      BIN_PATH=$BIN_PATH \
      OBJ_PATH=$OBJ_PATH/release \
-     release
-     
-if test $? -gt 0; then
-   exit $?
-fi
+     release \
+  || exit $?
 
 
 echo ---------------------------------
@@ -582,11 +576,8 @@ if test $MAKE_DEBUG_TEST = '0'; then
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
         OBJ_PATH=$OBJ_PATH/test \
-        $target
-        
-    if test $? -gt 0; then
-        exit $?
-    fi
+        $target \
+     || exit $?
 fi    
 
 echo ---------------------------------
@@ -604,10 +595,7 @@ if test $MAKE_DEBUG_TEST = '1'; then
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
         OBJ_PATH=$OBJ_PATH/test-debug \
-        $target
-        
-    if test $? -gt 0; then
-        exit $?
-    fi
+        $target \
+     || exit $?
 fi   
  

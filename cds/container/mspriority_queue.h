@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MSPRIORITY_QUEUE_H
-#define __CDS_CONTAINER_MSPRIORITY_QUEUE_H
+#ifndef CDSLIB_CONTAINER_MSPRIORITY_QUEUE_H
+#define CDSLIB_CONTAINER_MSPRIORITY_QUEUE_H
 
 #include <memory>
 #include <cds/container/details/base.h>
@@ -313,4 +313,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_MSPRIORITY_QUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_MSPRIORITY_QUEUE_H

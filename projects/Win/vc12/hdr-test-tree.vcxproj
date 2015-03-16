@@ -211,7 +211,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\test-hdr;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -270,7 +270,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\test-hdr;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -333,7 +333,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\test-hdr;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;_WIN32_WINNT=0x0500;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -408,7 +408,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\test-hdr;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -480,7 +480,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\test-hdr;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CDS_USE_VLD;WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CDS_USE_VLD;WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -511,7 +511,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\test-hdr;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CDS_USE_VLD;WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CDS_USE_VLD;WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;_SCL_SECURE=0;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -535,6 +535,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_bintree.h" />
@@ -543,6 +544,16 @@
     <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_rcu.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb_pool_monitor.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht_pool_monitor.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpb.cpp" />

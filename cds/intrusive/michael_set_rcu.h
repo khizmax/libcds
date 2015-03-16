@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_MICHAEL_SET_RCU_H
-#define __CDS_INTRUSIVE_MICHAEL_SET_RCU_H
+#ifndef CDSLIB_INTRUSIVE_MICHAEL_SET_RCU_H
+#define CDSLIB_INTRUSIVE_MICHAEL_SET_RCU_H
 
 #include <cds/intrusive/details/michael_set_base.h>
 #include <cds/details/allocator.h>
@@ -446,8 +446,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item from the set using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelHashSet_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p extract(Q const&) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the set.
         */
@@ -637,5 +636,5 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_MICHAEL_SET_NOGC_H
+#endif // #ifndef CDSLIB_INTRUSIVE_MICHAEL_SET_NOGC_H
 

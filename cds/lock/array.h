@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_LOCK_ARRAY_H
-#define __CDS_LOCK_ARRAY_H
+#ifndef CDSLIB_LOCK_ARRAY_H
+#define CDSLIB_LOCK_ARRAY_H
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   pragma message("cds/lock/array.h is deprecated, use cds/sync/lock_array.h instead")
@@ -27,4 +27,4 @@ namespace cds { namespace lock {
 }} // namespace cds::lock
 //@endcond
 
-#endif // #ifndef __CDS_LOCK_ARRAY_H
+#endif // #ifndef CDSLIB_LOCK_ARRAY_H

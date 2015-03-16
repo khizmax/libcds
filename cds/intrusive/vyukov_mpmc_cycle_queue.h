@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_VYUKOV_MPMC_CYCLE_QUEUE_H
-#define __CDS_INTRUSIVE_VYUKOV_MPMC_CYCLE_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_VYUKOV_MPMC_CYCLE_QUEUE_H
+#define CDSLIB_INTRUSIVE_VYUKOV_MPMC_CYCLE_QUEUE_H
 
 #include <cds/intrusive/details/base.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
@@ -225,4 +225,4 @@ namespace cds { namespace intrusive {
     };
 }}  // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_VYUKOV_MPMC_CYCLE_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_VYUKOV_MPMC_CYCLE_QUEUE_H

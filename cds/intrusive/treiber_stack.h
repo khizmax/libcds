@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_TREIBER_STACK_H
-#define __CDS_INTRUSIVE_TREIBER_STACK_H
+#ifndef CDSLIB_INTRUSIVE_TREIBER_STACK_H
+#define CDSLIB_INTRUSIVE_TREIBER_STACK_H
 
 #include <type_traits>
 #include <mutex>        // unique_lock
@@ -794,4 +794,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif  // #ifndef __CDS_INTRUSIVE_TREIBER_STACK_H
+#endif  // #ifndef CDSLIB_INTRUSIVE_TREIBER_STACK_H

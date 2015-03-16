@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_DETAILS_DHP_H
-#define __CDS_GC_DETAILS_DHP_H
+#ifndef CDSLIB_GC_DETAILS_DHP_H
+#define CDSLIB_GC_DETAILS_DHP_H
 
 #include <mutex>        // unique_lock
 #include <cds/algo/atomic.h>
@@ -1002,4 +1002,4 @@ namespace cds { namespace gc {
 #   pragma warning(pop)
 #endif
 
-#endif // #ifndef __CDS_GC_DETAILS_DHP_H
+#endif // #ifndef CDSLIB_GC_DETAILS_DHP_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_BIT_REVERSE_COUNTER_H
-#define __CDS_DETAILS_BIT_REVERSE_COUNTER_H
+#ifndef CDSLIB_DETAILS_BIT_REVERSE_COUNTER_H
+#define CDSLIB_DETAILS_BIT_REVERSE_COUNTER_H
 
 #include <cds/algo/bitop.h>
 
@@ -70,4 +70,4 @@ namespace cds { namespace bitop {
 }}   // namespace cds::bitop
 //@endcond
 
-#endif // #ifndef __CDS_DETAILS_BIT_REVERSE_COUNTER_H
+#endif // #ifndef CDSLIB_DETAILS_BIT_REVERSE_COUNTER_H

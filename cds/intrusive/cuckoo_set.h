@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_CUCKOO_SET_H
-#define __CDS_INTRUSIVE_CUCKOO_SET_H
+#ifndef CDSLIB_INTRUSIVE_CUCKOO_SET_H
+#define CDSLIB_INTRUSIVE_CUCKOO_SET_H
 
 #include <memory>
 #include <type_traits>
@@ -2809,4 +2809,4 @@ namespace cds { namespace intrusive {
     };
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_CUCKOO_SET_H
+#endif // #ifndef CDSLIB_INTRUSIVE_CUCKOO_SET_H

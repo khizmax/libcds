@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_BITOP_H
-#define __CDS_COMPILER_BITOP_H
+#ifndef CDSLIB_COMPILER_BITOP_H
+#define CDSLIB_COMPILER_BITOP_H
 
 // Choose appropriate header for current architecture and compiler
 
@@ -37,4 +37,4 @@
 // Generic (C) implementation
 #include <cds/details/bitop_generic.h>
 
-#endif    // #ifndef __CDS_COMPILER_BITOP_H
+#endif    // #ifndef CDSLIB_COMPILER_BITOP_H

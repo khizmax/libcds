@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_TREIBER_STACK_H
-#define __CDS_CONTAINER_TREIBER_STACK_H
+#ifndef CDSLIB_CONTAINER_TREIBER_STACK_H
+#define CDSLIB_CONTAINER_TREIBER_STACK_H
 
 #include <memory>   // unique_ptr
 #include <cds/intrusive/treiber_stack.h>
@@ -386,4 +386,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_TREIBER_STACK_H
+#endif // #ifndef CDSLIB_CONTAINER_TREIBER_STACK_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_STRIPED_SET_STD_VECTOR_ADAPTER_H
-#define __CDS_CONTAINER_STRIPED_SET_STD_VECTOR_ADAPTER_H
+#ifndef CDSLIB_CONTAINER_STRIPED_SET_STD_VECTOR_ADAPTER_H
+#define CDSLIB_CONTAINER_STRIPED_SET_STD_VECTOR_ADAPTER_H
 
 #include <functional>   // ref
 #include <vector>
@@ -254,4 +254,4 @@ namespace cds { namespace intrusive { namespace striped_set {
 
 //@endcond
 
-#endif // #ifndef __CDS_CONTAINER_STRIPED_SET_STD_VECTOR_ADAPTER_H
+#endif // #ifndef CDSLIB_CONTAINER_STRIPED_SET_STD_VECTOR_ADAPTER_H

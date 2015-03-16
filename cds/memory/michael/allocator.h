@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_MEMORY_MICHAEL_ALLOCATOR_TMPL_H
-#define __CDS_MEMORY_MICHAEL_ALLOCATOR_TMPL_H
+#ifndef CDSLIB_MEMORY_MICHAEL_ALLOCATOR_TMPL_H
+#define CDSLIB_MEMORY_MICHAEL_ALLOCATOR_TMPL_H
 
 /*
     Michael allocator implementation
@@ -1893,4 +1893,4 @@ namespace michael {
 
 }}} // namespace cds::memory::michael
 
-#endif // __CDS_MEMORY_MICHAEL_ALLOCATOR_TMPL_H
+#endif // CDSLIB_MEMORY_MICHAEL_ALLOCATOR_TMPL_H

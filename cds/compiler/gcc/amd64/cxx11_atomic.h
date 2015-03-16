@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_GCC_AMD64_CXX11_ATOMIC_H
-#define __CDS_COMPILER_GCC_AMD64_CXX11_ATOMIC_H
+#ifndef CDSLIB_COMPILER_GCC_AMD64_CXX11_ATOMIC_H
+#define CDSLIB_COMPILER_GCC_AMD64_CXX11_ATOMIC_H
 
 #include <cstdint>
 #include <cds/compiler/gcc/x86/cxx11_atomic32.h>
@@ -204,4 +204,4 @@ namespace cds { namespace cxx11_atomic {
 }}  // namespace cds::cxx11_atomic
 //@endcond
 
-#endif // #ifndef __CDS_COMPILER_GCC_AMD64_CXX11_ATOMIC_H
+#endif // #ifndef CDSLIB_COMPILER_GCC_AMD64_CXX11_ATOMIC_H
