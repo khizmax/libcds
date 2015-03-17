@@ -142,8 +142,8 @@ namespace map2 {
                       << "           Find succ=" << nFindSuccess << " fail=" << nFindFailed
             );
 
-            CPPUNIT_ASSERT( nInsertFailed == 0 );
-            CPPUNIT_ASSERT( nFindFailed == 0 );
+            CPPUNIT_CHECK( nInsertFailed == 0 );
+            CPPUNIT_CHECK( nFindFailed == 0 );
 
             check_before_cleanup( testMap );
 

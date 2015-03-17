@@ -202,7 +202,7 @@ namespace map2 {
             for ( size_t i = 0; i < m_parrString->size(); ++i )
                 testMap.erase( (*m_parrString)[i] );
             CPPUNIT_MSG( "   Duration=" << timer.duration() );
-            CPPUNIT_ASSERT( testMap.empty() );
+            CPPUNIT_CHECK( testMap.empty() );
 
             additional_check( testMap );
             print_stat( testMap );

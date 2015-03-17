@@ -192,10 +192,10 @@ namespace map2 {
 
             for ( CppUnitMini::ThreadPool::iterator it = pool.begin(); it != pool.end(); ++it ) {
                 Thread * pThread = static_cast<Thread *>( *it );
-                CPPUNIT_ASSERT( pThread->m_KeyExists.nFailed == 0 );
-                CPPUNIT_ASSERT( pThread->m_KeyExists.nSuccess == m_nRealMapSize * c_nPassCount );
-                CPPUNIT_ASSERT( pThread->m_KeyNotExists.nFailed == 0 );
-                CPPUNIT_ASSERT( pThread->m_KeyNotExists.nSuccess == (m_Arr.size() - m_nRealMapSize) * c_nPassCount );
+                CPPUNIT_CHECK( pThread->m_KeyExists.nFailed == 0 );
+                CPPUNIT_CHECK( pThread->m_KeyExists.nSuccess == m_nRealMapSize * c_nPassCount );
+                CPPUNIT_CHECK( pThread->m_KeyNotExists.nFailed == 0 );
+                CPPUNIT_CHECK( pThread->m_KeyNotExists.nSuccess == (m_Arr.size() - m_nRealMapSize) * c_nPassCount );
             }
 
             check_before_cleanup( testMap );

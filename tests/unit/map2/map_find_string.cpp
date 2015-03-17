@@ -1,13 +1,10 @@
 //$$CDS-header$$
 
-// defines concurrent access to map::nonconcurrent_iterator::Sequence::TValue::nAccess field
-
 #include "map2/map_types.h"
 #include "cppunit/thread.h"
 
 #include <vector>
 
-// find int test in map<int> in mutithreaded mode
 namespace map2 {
 
 #   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >()    ; }
@@ -178,7 +175,7 @@ namespace map2 {
             CPPUNIT_MSG( "  Fill map...");
             timer.reset();
             for ( size_t i = 0; i < m_Arr.size(); ++i ) {
-                // Все ключи в arrData - уникальные, поэтому ошибок при вставке быть не должно
+                // All keys in arrData are unique, insert() must be successful
                 if ( m_Arr[i].bExists )
                     CPPUNIT_ASSERT( check_result( testMap.insert( *(m_Arr[i].pKey), m_Arr[i] ), testMap ));
             }
@@ -190,13 +187,13 @@ namespace map2 {
             pool.run();
             CPPUNIT_MSG( "   Duration=" << pool.avgDuration() );
 
-            // Проверяем, что у всех threads число успешных поисков = числу элементов в map
+            // Postcondition: the number of success searching == the number of map item
             for ( CppUnitMini::ThreadPool::iterator it = pool.begin(); it != pool.end(); ++it ) {
                 Thread * pThread = static_cast<Thread *>( *it );
-                CPPUNIT_ASSERT( pThread->m_KeyExists.nSuccess == m_nRealMapSize * c_nPassCount );
-                CPPUNIT_ASSERT( pThread->m_KeyExists.nFailed == 0 );
-                CPPUNIT_ASSERT( pThread->m_KeyNotExists.nSuccess == (m_Arr.size() - m_nRealMapSize) * c_nPassCount );
-                CPPUNIT_ASSERT( pThread->m_KeyNotExists.nFailed == 0 );
+                CPPUNIT_CHECK( pThread->m_KeyExists.nSuccess == m_nRealMapSize * c_nPassCount );
+                CPPUNIT_CHECK( pThread->m_KeyExists.nFailed == 0 );
+                CPPUNIT_CHECK( pThread->m_KeyNotExists.nSuccess == (m_Arr.size() - m_nRealMapSize) * c_nPassCount );
+                CPPUNIT_CHECK( pThread->m_KeyNotExists.nFailed == 0 );
             }
 
             check_before_cleanup( testMap );
