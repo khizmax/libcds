@@ -17,7 +17,7 @@ usage()
     echo "Build helper script for one of the supported platforms"
     echo "Usage: build.sh \"options\""
     echo "       where options may be any of the following:"
-    echo "       -t make target"
+    echo "       -t <target> make target"
     echo "       -c <C compiler name> Possible values are: gcc,clang,icc"
     echo "       -x <C++ compiler name> (e.g. g++, CC)"
     echo "       -p <Processor architecture> Possible values are:"
