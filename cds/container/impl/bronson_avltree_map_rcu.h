@@ -1252,7 +1252,10 @@ namespace cds { namespace container {
             ++m_ItemCounter;
             m_stat.onInsertSuccess();
 
-            fix_height_and_rebalance( pDamaged, disp );
+            if ( pDamaged ) {
+                fix_height_and_rebalance( pDamaged, disp );
+                m_stat.onInsertRebalanceRequired();
+            }
 
             return update_flags::result_inserted;
         }
@@ -1327,7 +1330,10 @@ namespace cds { namespace container {
                 else
                     m_stat.onExtractValue();
 
-                fix_height_and_rebalance( pDamaged, disp );
+                if ( pDamaged ) {
+                    fix_height_and_rebalance( pDamaged, disp );
+                    m_stat.onRemoveRebalanceRequired();
+                }
                 return update_flags::result_removed;
             }
             else {

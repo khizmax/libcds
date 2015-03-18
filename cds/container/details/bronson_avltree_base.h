@@ -190,6 +190,9 @@ namespace cds { namespace container {
             event_counter   m_nLeftRightRotation;   ///< Count of double left-over-right rotation
             event_counter   m_nRightLeftRotation;   ///< Count of double right-over-left rotation
 
+            event_counter   m_nInsertRebalanceReq;  ///< Count of rebalance required after inserting
+            event_counter   m_nRemoveRebalanceReq;  ///< Count of rebalance required after removing
+
             //@cond
             void onFindSuccess()        { ++m_nFindSuccess      ; }
             void onFindFailed()         { ++m_nFindFailed       ; }
@@ -215,6 +218,9 @@ namespace cds { namespace container {
             void onRotateLeft()             { ++m_nLeftRotation; }
             void onRotateRightOverLeft()    { ++m_nRightLeftRotation; }
             void onRotateLeftOverRight()    { ++m_nLeftRightRotation; }
+
+            void onInsertRebalanceRequired() { ++m_nInsertRebalanceReq; }
+            void onRemoveRebalanceRequired() { ++m_nRemoveRebalanceReq; }
             //@endcond
         };
 
@@ -245,6 +251,9 @@ namespace cds { namespace container {
             void onRotateLeft()             const {}
             void onRotateRightOverLeft()    const {}
             void onRotateLeftOverRight()    const {}
+
+            void onInsertRebalanceRequired() const {}
+            void onRemoveRebalanceRequired() const {}
             //@endcond
         };
 

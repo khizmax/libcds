@@ -36,7 +36,10 @@ namespace std {
             << "\t\t          m_nRightRotation: " << s.m_nRightRotation.get()       << "\n"
             << "\t\t           m_nLeftRotation: " << s.m_nLeftRotation.get()        << "\n"
             << "\t\t      m_nLeftRightRotation: " << s.m_nLeftRightRotation.get()   << "\n"
-            << "\t\t      m_nRightLeftRotation: " << s.m_nRightLeftRotation.get()   << "\n";
+            << "\t\t      m_nRightLeftRotation: " << s.m_nRightLeftRotation.get()   << "\n"
+            << "\t\t     m_nInsertRebalanceReq: " << s.m_nInsertRebalanceReq.get()  << "\n"
+            << "\t\t     m_nRemoveRebalanceReq: " << s.m_nRemoveRebalanceReq.get()  << "\n"
+            ;
     }
 } //namespace std
 
