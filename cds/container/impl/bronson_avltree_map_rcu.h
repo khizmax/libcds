@@ -947,7 +947,6 @@ namespace cds { namespace container {
                     }
                 }
                 else if ( nChildVersion != node_type::unlinked ) {
-
                     if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                         m_stat.onFindRetry();
                         return find_result::retry;
@@ -956,6 +955,11 @@ namespace cds { namespace container {
                     find_result found = try_find( key, cmp, f, pChild, nCmp, nChildVersion );
                     if ( found != find_result::retry )
                         return found;
+                }
+
+                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
+                    m_stat.onFindRetry();
+                    return find_result::retry;
                 }
             }
         }
@@ -1098,6 +1102,11 @@ namespace cds { namespace container {
                         result = try_update( key, cmp, nFlags, funcUpdate, pNode, pChild, nChildVersion, disp );
                     }
                 }
+
+                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                    m_stat.onUpdateRetry();
+                    return update_flags::retry;
+                }
             } while ( result == update_flags::retry );
             return result;
         }
@@ -1149,6 +1158,11 @@ namespace cds { namespace container {
                         result = try_remove( key, cmp, func, pNode, pChild, nChildVersion, disp );
                     }
                 }
+
+                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                    m_stat.onRemoveRetry();
+                    return update_flags::retry;
+                }
             } while ( result == update_flags::retry );
             return result;
         }
@@ -1195,6 +1209,11 @@ namespace cds { namespace container {
                         // to validate node version any more.
                         result = try_extract_minmax( nDir, func, pNode, pChild, nChildVersion, disp );
                     }
+                }
+
+                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                    m_stat.onRemoveRetry();
+                    return update_flags::retry;
                 }
             } while ( result == update_flags::retry );
             return result;
