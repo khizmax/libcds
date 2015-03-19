@@ -1938,10 +1938,11 @@ namespace map2 {
     static inline void check_before_cleanup( cc::BronsonAVLTreeMap<GC, Key, T, Traits>& m )
     {
         CPPUNIT_MSG( "  Check internal consistency (single-threaded)..." );
-        m.check_consistency([]( size_t nLevel, size_t hLeft, size_t hRight )
+        bool bOk = m.check_consistency([]( size_t nLevel, size_t hLeft, size_t hRight )
             { 
                 CPPUNIT_MSG( "Tree violation on level=" << nLevel << ": hLeft=" << hLeft << ", hRight=" << hRight ) 
             });
+        CPPUNIT_CHECK_CURRENT_EX( bOk, "check_consistency failed");
     }
 
     template <typename K, typename V, typename Traits>

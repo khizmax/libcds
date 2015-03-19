@@ -762,8 +762,16 @@ namespace cds { namespace container {
         size_t do_check_consistency( node_type * pNode, size_t nLevel, Func f, size_t& nErrors ) const
         {
             if ( pNode ) {
-                size_t hLeft = do_check_consistency( child( pNode, left_child, memory_model::memory_order_relaxed ), nLevel + 1, f, nErrors );
-                size_t hRight = do_check_consistency( child( pNode, right_child, memory_model::memory_order_relaxed ), nLevel + 1, f, nErrors );
+                key_comparator cmp;
+                node_type * pLeft = child( pNode, left_child, memory_model::memory_order_relaxed );
+                node_type * pRight = child( pNode, right_child, memory_model::memory_order_relaxed );
+                if ( pLeft && cmp( pLeft->m_key, pNode->m_key ) > 0 )
+                    ++nErrors;
+                if (  pRight && cmp( pNode->m_key, pRight->m_key ) > 0 )
+                    ++nErrors;
+
+                size_t hLeft = do_check_consistency( pLeft, nLevel + 1, f, nErrors );
+                size_t hRight = do_check_consistency( pRight, nLevel + 1, f, nErrors );
 
                 if ( hLeft >= hRight ) {
                     if ( hLeft - hRight > 1 ) {
