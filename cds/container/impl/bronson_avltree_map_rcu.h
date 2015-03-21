@@ -866,7 +866,7 @@ namespace cds { namespace container {
                     // get right child of root
                     node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
                     if ( pChild ) {
-                        version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
+                        version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
                         if ( nChildVersion & node_type::shrinking ) {
                             m_stat.onRemoveRootWaitShrinking();
                             pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
@@ -1002,7 +1002,7 @@ namespace cds { namespace container {
                 // get right child of root
                 node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
                 if ( pChild ) {
-                    version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
+                    version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
                     if ( nChildVersion & node_type::shrinking ) {
                         m_stat.onUpdateRootWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
@@ -1055,7 +1055,7 @@ namespace cds { namespace container {
                 // get right child of root
                 node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
                 if ( pChild ) {
-                    version_type nChildVersion = pChild->version( memory_model::memory_order_relaxed );
+                    version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
                     if ( nChildVersion & node_type::shrinking ) {
                         m_stat.onRemoveRootWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
@@ -1117,7 +1117,7 @@ namespace cds { namespace container {
                         // this second read is important, because it is protected by nChildVersion
 
                         // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                             m_stat.onUpdateRetry();
                             return update_flags::retry;
                         }
@@ -1131,7 +1131,7 @@ namespace cds { namespace container {
                     }
                 }
 
-                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                     m_stat.onUpdateRetry();
                     return update_flags::retry;
                 }
@@ -1173,7 +1173,7 @@ namespace cds { namespace container {
                         // this second read is important, because it is protected by nChildVersion
 
                         // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                             m_stat.onRemoveRetry();
                             return update_flags::retry;
                         }
@@ -1187,7 +1187,7 @@ namespace cds { namespace container {
                     }
                 }
 
-                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                     m_stat.onRemoveRetry();
                     return update_flags::retry;
                 }
@@ -1225,7 +1225,7 @@ namespace cds { namespace container {
                         // this second read is important, because it is protected by nChildVersion
 
                         // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                             m_stat.onRemoveRetry();
                             return update_flags::retry;
                         }
@@ -1239,7 +1239,7 @@ namespace cds { namespace container {
                     }
                 }
 
-                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_relaxed ) != nVersion ) {
+                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
                     m_stat.onRemoveRetry();
                     return update_flags::retry;
                 }
@@ -1274,7 +1274,7 @@ namespace cds { namespace container {
                 assert( pNode != nullptr );
                 node_scoped_lock l( m_Monitor, *pNode );
 
-                if ( pNode->version( memory_model::memory_order_relaxed ) != nVersion
+                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion
                      || child( pNode, nDir ) != nullptr ) 
                 {
                     if ( c_bRelaxedInsert ) {
@@ -1359,7 +1359,7 @@ namespace cds { namespace container {
                     {
                         node_scoped_lock ln( m_Monitor, *pNode );
                         pOld = pNode->value( memory_model::memory_order_relaxed );
-                        if ( !( pNode->version( memory_model::memory_order_relaxed ) == nVersion
+                        if ( !( pNode->version( memory_model::memory_order_acquire ) == nVersion
                           && pOld 
                           && try_unlink_locked( pParent, pNode, disp )))
                         {
@@ -1387,7 +1387,7 @@ namespace cds { namespace container {
                 {
                     node_scoped_lock ln( m_Monitor, *pNode );
                     pOld = pNode->value( atomics::memory_order_relaxed );
-                    if ( pNode->version( atomics::memory_order_relaxed ) == nVersion && pOld ) {
+                    if ( pNode->version( atomics::memory_order_acquire ) == nVersion && pOld ) {
                         pNode->m_pValue.store( nullptr, atomics::memory_order_relaxed );
                         result = update_flags::result_removed;
                     }
@@ -1667,7 +1667,7 @@ namespace cds { namespace container {
 
         node_type * rotate_right_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR, int hLL, node_type * pLRight, int hLR )
         {
-            version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            version_type nodeVersion = pNode->version( memory_model::memory_order_acquire );
             node_type * pParentLeft = child( pParent, left_child );
 
             begin_change( pNode, nodeVersion );
@@ -1730,7 +1730,7 @@ namespace cds { namespace container {
 
         node_type * rotate_left_locked( node_type * pParent, node_type * pNode, int hL, node_type * pRight, node_type * pRLeft, int hRL, int hRR )
         {
-            version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
+            version_type nodeVersion = pNode->version( memory_model::memory_order_acquire );
             node_type * pParentLeft = child( pParent, left_child );
 
             begin_change( pNode, nodeVersion );
@@ -1778,8 +1778,8 @@ namespace cds { namespace container {
 
         node_type * rotate_right_over_left_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR, int hLL, node_type * pLRight, int hLRL )
         {
-            version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
-            version_type leftVersion = pLeft->version( memory_model::memory_order_relaxed );
+            version_type nodeVersion = pNode->version( memory_model::memory_order_acquire );
+            version_type leftVersion = pLeft->version( memory_model::memory_order_acquire );
 
             node_type * pPL = child( pParent, left_child );
             node_type * pLRL = child( pLRight, left_child );
@@ -1857,8 +1857,8 @@ namespace cds { namespace container {
 
         node_type * rotate_left_over_right_locked( node_type * pParent, node_type * pNode, int hL, node_type * pRight, node_type * pRLeft, int hRR, int hRLR )
         {
-            version_type nodeVersion = pNode->version( memory_model::memory_order_relaxed );
-            version_type rightVersion = pRight->version( memory_model::memory_order_relaxed );
+            version_type nodeVersion = pNode->version( memory_model::memory_order_acquire );
+            version_type rightVersion = pRight->version( memory_model::memory_order_acquire );
 
             node_type * pPL = child( pParent, left_child );
             node_type * pRLL = child( pRLeft, left_child );
