@@ -611,9 +611,7 @@ namespace cds { namespace intrusive {
             search( pHead, val, pos, cmp );
             if ( pos.pCur != &m_Tail ) {
                 if ( cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
-                {
                     return iterator( pos.pCur );
-                }
             }
             return end();
         }

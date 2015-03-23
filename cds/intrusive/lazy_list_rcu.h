@@ -1105,11 +1105,8 @@ namespace cds { namespace intrusive {
 
             search( pHead, val, pos, cmp );
             if ( pos.pCur != &m_Tail ) {
-                std::unique_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
                 if ( cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
-                {
                     return const_iterator( pos.pCur );
-                }
             }
             return end();
         }
