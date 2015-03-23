@@ -44,6 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_bronsonavltree.cpp" />
@@ -57,6 +66,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_striped.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_find_int.h" />
     <ClInclude Include="..\..\..\tests\unit\map2\map_insfind_int.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

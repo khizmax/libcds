@@ -13,8 +13,8 @@ namespace map2 {
     void Map_InsFind_int::setUpParams( const CppUnitMini::TestCfg& cfg )
     {
         c_nThreadCount = cfg.getULong("ThreadCount", 0 );
-        c_nMapSize = cfg.getULong("MapSize", c_nMapSize );
-        c_nMaxLoadFactor = cfg.getULong("MaxLoadFactor", c_nMaxLoadFactor );
+        c_nMapSize = cfg.getULong("MapSize", static_cast<unsigned long>(c_nMapSize));
+        c_nMaxLoadFactor = cfg.getULong("MaxLoadFactor", static_cast<unsigned long>(c_nMaxLoadFactor));
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", true );
         if ( c_nThreadCount == 0 )
             c_nThreadCount = cds::OS::topology::processor_count();

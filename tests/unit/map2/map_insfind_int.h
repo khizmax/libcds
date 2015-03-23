@@ -214,22 +214,5 @@ namespace map2 {
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_StdMap
-
-        /*
-        CPPUNIT_TEST_SUITE( Map_InsFind_int )
-            CDSUNIT_TEST_MichaelMap
-            CDSUNIT_TEST_MichaelMap_nogc
-            CDSUNIT_TEST_SplitList
-            CDSUNIT_TEST_SplitList_nogc
-            CDSUNIT_TEST_SkipListMap
-            CDSUNIT_TEST_SkipListMap_nogc
-            CDSUNIT_TEST_EllenBinTreeMap
-            CDSUNIT_TEST_BronsonAVLTreeMap
-            CDSUNIT_TEST_StripedMap
-            CDSUNIT_TEST_RefinableMap
-            CDSUNIT_TEST_CuckooMap
-            CDSUNIT_TEST_StdMap
-        CPPUNIT_TEST_SUITE_END()
-        */
     };
 } // namespace map2
