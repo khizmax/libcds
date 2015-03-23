@@ -46,6 +46,18 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_striped.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insfind_int.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BA2A9239-0299-4069-BB0E-16DACE87ADE0}</ProjectGuid>

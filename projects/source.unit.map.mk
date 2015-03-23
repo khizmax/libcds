@@ -1,7 +1,18 @@
 
 CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_find_int.cpp \
-    tests/unit/map2/map_find_string.cpp \
+    tests/unit/map2/map_find_string.cpp \    
+    tests/unit/map2/map_insfind_int.cpp \
+    tests/unit/map2/map_insfind_int_bronsonavltree.cpp \
+    tests/unit/map2/map_insfind_int_cuckoo.cpp \
+    tests/unit/map2/map_insfind_int_ellentree.cpp \
+    tests/unit/map2/map_insfind_int_michael.cpp \
+    tests/unit/map2/map_insfind_int_skip.cpp \
+    tests/unit/map2/map_insfind_int_split.cpp \
+    tests/unit/map2/map_insfind_int_striped.cpp \
+    tests/unit/map2/map_insfind_int_refinable.cpp \
+    tests/unit/map2/map_insfind_int_std.cpp \
+    tests/unit/map2/map_insfind_string.cpp \
     tests/unit/map2/map_insdel_func.cpp \
     tests/unit/map2/map_insdel_func_michael.cpp \
     tests/unit/map2/map_insdel_func_split.cpp \
@@ -15,7 +26,6 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_item_int.cpp \
     tests/unit/map2/map_insdel_string.cpp \
     tests/unit/map2/map_insdel_item_string.cpp \
-    tests/unit/map2/map_insfind_int.cpp \
     tests/unit/map2/map_insdelfind.cpp \
     tests/unit/map2/map_delodd.cpp \
     tests/unit/map2/map_delodd_michael.cpp \
