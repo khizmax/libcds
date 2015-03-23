@@ -168,7 +168,6 @@ namespace cds { namespace container {
             event_counter   m_nFindSuccess; ///< Count of success \p find() call
             event_counter   m_nFindFailed;  ///< Count of failed \p find() call
             event_counter   m_nFindRetry;   ///< Count of retries during \p find()
-            event_counter   m_nFindNotFoundRetry; ///< Count of ???
             event_counter   m_nFindWaitShrinking;   ///< Count of waiting until shrinking completed duting \p find() call
 
             event_counter   m_nInsertSuccess;       ///< Count of inserting data node
@@ -198,7 +197,6 @@ namespace cds { namespace container {
             void onFindSuccess()        { ++m_nFindSuccess      ; }
             void onFindFailed()         { ++m_nFindFailed       ; }
             void onFindRetry()          { ++m_nFindRetry        ; }
-            void onFindNotFoundRetry()  { ++m_nFindNotFoundRetry; }
             void onFindWaitShrinking()  { ++m_nFindWaitShrinking; }
 
             void onInsertSuccess()          { ++m_nInsertSuccess    ; }
@@ -232,7 +230,6 @@ namespace cds { namespace container {
             void onFindSuccess()        const {}
             void onFindFailed()         const {}
             void onFindRetry()          const {}
-            void onFindNotFoundRetry()  const {}
             void onFindWaitShrinking()  const {}
 
             void onInsertSuccess()          const {}

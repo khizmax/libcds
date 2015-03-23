@@ -975,14 +975,8 @@ namespace cds { namespace container {
                     }
 
                     find_result found = try_find( key, cmp, f, pChild, nCmp, nChildVersion );
-                    if ( found != find_result::retry ) {
-                        if ( found == find_result::not_found && child(pNode, nDir) != pChild ) {
-                            // Oops! That is a bug!!!
-                            m_stat.onFindNotFoundRetry();
-                        }
-                        else
-                            return found;
-                    }
+                    if ( found != find_result::retry )
+                        return found;
                 }
 
                 if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
@@ -1657,6 +1651,8 @@ namespace cds { namespace container {
 
         static void begin_change( node_type * pNode, version_type version )
         {
+            assert(pNode->version(memory_model::memory_order_acquire) == version );
+            assert( (version & node_type::shrinking) == 0 );
             pNode->version( version | node_type::shrinking, memory_model::memory_order_release );
         }
         static void end_change( node_type * pNode, version_type version )
