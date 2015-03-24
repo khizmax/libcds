@@ -50,11 +50,11 @@ namespace map2 {
 
     void Map_find_int::setUpParams( const CppUnitMini::TestCfg& cfg )
     {
-        c_nThreadCount = cfg.getULong("ThreadCount", static_cast<unsigned long>(c_nThreadCount)); // thread count
-        c_nMapSize = cfg.getULong("MapSize", static_cast<unsigned long>(c_nMapSize));  // map size (count of searching item)
-        c_nPercentExists = cfg.getULong("PercentExists", static_cast<unsigned long>(c_nPercentExists));  // percent of existing keys in searching sequence
-        c_nPassCount = cfg.getULong("PassCount", static_cast<unsigned long>(c_nPassCount));
-        c_nMaxLoadFactor = cfg.getULong("MaxLoadFactor", static_cast<unsigned long>(c_nMaxLoadFactor));
+        c_nThreadCount = cfg.getSizeT("ThreadCount", c_nThreadCount );
+        c_nMapSize = cfg.getSizeT("MapSize", c_nMapSize);
+        c_nPercentExists = cfg.getSizeT("PercentExists", c_nPercentExists);
+        c_nPassCount = cfg.getSizeT("PassCount", c_nPassCount);
+        c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor);
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );
     }
 
