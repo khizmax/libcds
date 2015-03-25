@@ -54,12 +54,21 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_func.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_int.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}</ProjectGuid>
