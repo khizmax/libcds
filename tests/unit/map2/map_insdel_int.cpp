@@ -37,19 +37,4 @@ namespace map2 {
 
         endTestCase();
     }
-
-
-    /*
-        CPPUNIT_TEST_SUITE( Map_InsDel_int )
-            CDSUNIT_TEST_MichaelMap
-            CDSUNIT_TEST_SplitList
-            CDSUNIT_TEST_SkipListMap
-            CDSUNIT_TEST_EllenBinTreeMap
-            CDSUNIT_TEST_BronsonAVLTreeMap
-            CDSUNIT_TEST_StripedMap
-            CDSUNIT_TEST_RefinableMap
-            CDSUNIT_TEST_CuckooMap
-            CDSUNIT_TEST_StdMap
-        CPPUNIT_TEST_SUITE_END()
-    */
 } // namespace map2
