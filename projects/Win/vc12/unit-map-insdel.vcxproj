@@ -44,6 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_bronsonavltree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_cuckoo.cpp" />
@@ -76,6 +85,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_striped.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdelfind.h" />
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_func.h" />
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_int.h" />
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_string.h" />

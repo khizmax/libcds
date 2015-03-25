@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func2.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func3.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func4.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func5.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func6.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func7.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="set_insdel_func">
+      <UniqueIdentifier>{cbe5ede5-77ea-49bb-be6a-16d30d8416f7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\set2\set_insdel_func.h">
+      <Filter>set_insdel_func</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
