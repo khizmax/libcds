@@ -30,7 +30,6 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insfind_int_striped.cpp \
     tests/unit/map2/map_insfind_int_refinable.cpp \
     tests/unit/map2/map_insfind_int_std.cpp \
-    tests/unit/map2/map_insfind_string.cpp \
     tests/unit/map2/map_insdel_func.cpp \
     tests/unit/map2/map_insdel_func_michael.cpp \
     tests/unit/map2/map_insdel_func_split.cpp \
