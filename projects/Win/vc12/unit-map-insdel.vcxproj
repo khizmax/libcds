@@ -81,6 +81,14 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_bronsonavltree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_cuckoo.cpp" />
@@ -97,6 +105,7 @@
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_func.h" />
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_int.h" />
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_item_int.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_item_string.h" />
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_string.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -145,6 +145,30 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_striped.cpp">
       <Filter>map_insdel_item_int</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_bronsonavltree.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_cuckoo.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_ellentree.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_michael.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_refinable.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_skip.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_split.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_striped.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="map_insdel_func">
@@ -181,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_item_int.h">
       <Filter>map_insdel_item_int</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_item_string.h">
+      <Filter>map_insdel_item_string</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
