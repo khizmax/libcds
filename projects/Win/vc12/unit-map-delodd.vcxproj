@@ -44,6 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\unit\map2\map_delodd.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_split.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_delodd.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3C598F96-FB84-4d42-9B43-F697F53B0221}</ProjectGuid>

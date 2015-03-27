@@ -44,8 +44,40 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_striped.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_find_int.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_find_string.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insfind_int.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BA2A9239-0299-4069-BB0E-16DACE87ADE0}</ProjectGuid>
