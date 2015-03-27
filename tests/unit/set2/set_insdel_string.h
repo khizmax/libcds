@@ -538,7 +538,6 @@ namespace set2 {
 
         virtual void myRun(const char *in_name, bool invert = false);
 
-
 #   include "set2/set_defs.h"
         CDSUNIT_DECLARE_MichaelSet
         CDSUNIT_DECLARE_SplitList
