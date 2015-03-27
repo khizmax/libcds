@@ -10,7 +10,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_find_int_striped.cpp \
     tests/unit/map2/map_find_int_refinable.cpp \
     tests/unit/map2/map_find_int_std.cpp \
-    tests/unit/map2/map_find_string.cpp \    
+    tests/unit/map2/map_find_string.cpp \
     tests/unit/map2/map_find_string_bronsonavltree.cpp \
     tests/unit/map2/map_find_string_cuckoo.cpp \
     tests/unit/map2/map_find_string_ellentree.cpp \
