@@ -1806,6 +1806,20 @@ namespace set2 {
         ellen_bintree_pool::internal_node_counter::reset();
     }
 
+    //*******************************************************
+    // check_before_clear
+    //*******************************************************
+
+    template <typename Set>
+    static inline void check_before_clear( Set& /*s*/ )
+    {}
+
+    template <typename GC, typename Key, typename T, typename Traits>
+    static inline void check_before_clear( cds::container::EllenBinTreeSet<GC, Key, T, Traits>& s )
+    {
+        CPPUNIT_CHECK_CURRENT( s.check_consistency() );
+    }
+
 }   // namespace set2
 
 #endif // ifndef CDSUNIT_SET_TYPES_H

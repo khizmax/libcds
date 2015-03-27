@@ -6,22 +6,22 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func2.cpp">
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_cuckoo.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func3.cpp">
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_ellentree.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func4.cpp">
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_refinable.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func5.cpp">
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_skip.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func6.cpp">
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_split.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func7.cpp">
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_striped.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
   </ItemGroup>

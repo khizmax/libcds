@@ -35,7 +35,7 @@ namespace map2 {
 
     void Map_DelOdd::myRun(const char *in_name, bool invert /*= false*/)
     {
-        setUpParams( m_Cfg.get( "Map_InsDel_func" ));
+        setUpParams( m_Cfg.get( "Map_DelOdd" ));
 
         run_MichaelMap(in_name, invert);
         run_SplitList(in_name, invert);
