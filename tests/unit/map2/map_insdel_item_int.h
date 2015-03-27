@@ -4,29 +4,27 @@
 #include "cppunit/thread.h"
 
 #include <vector>
+#include <algorithm>    // random_shuffle
 
 namespace map2 {
 
-#   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >(); }
-#   define TEST_MAP_EXTRACT(X) TEST_MAP(X)
-#   define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >(); }
+#   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >()    ; }
+#   define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >()    ; }
+#   define TEST_MAP_EXTRACT(X)  TEST_MAP(X)
 #   define TEST_MAP_NOLF_EXTRACT(X) TEST_MAP_NOLF(X)
 
-    class Map_InsDel_int: public CppUnitMini::TestCase
+    class Map_InsDel_Item_int: public CppUnitMini::TestCase
     {
-        static size_t  c_nMapSize;            // map size
-        static size_t  c_nInsertThreadCount;  // count of insertion thread
-        static size_t  c_nDeleteThreadCount;  // count of deletion thread
-        static size_t  c_nThreadPassCount;    // pass count for each thread
-        static size_t  c_nMaxLoadFactor;      // maximum load factor
+        static size_t  c_nMapSize;        // map size
+        static size_t  c_nThreadCount;    // thread count
+        static size_t  c_nGoalItem;
+        static size_t  c_nAttemptCount;   // count of SUCCESS insert/delete for each thread
+        static size_t  c_nMaxLoadFactor;  // maximum load factor
         static bool    c_bPrintGCState;
 
         typedef CppUnitMini::TestCase Base;
         typedef size_t  key_type;
         typedef size_t  value_type;
-
-        typedef std::vector<key_type>   key_array;
-        key_array                       m_arrValues;
 
         template <class MAP>
         class Inserter: public CppUnitMini::TestThread
@@ -37,6 +35,29 @@ namespace map2 {
             {
                 return new Inserter( *this );
             }
+
+            struct ensure_func
+            {
+                void operator()( bool bNew, std::pair<key_type const, value_type>& item )
+                {
+                    if ( bNew )
+                        item.second = item.first;
+                }
+                // for boost::container::flat_map
+                void operator()( bool bNew, std::pair<key_type, value_type>& item )
+                {
+                    if ( bNew )
+                        item.second = item.first;
+                }
+
+                // for BronsonAVLTreeMap
+                void operator()( bool bNew, key_type key, value_type& val )
+                {
+                    if ( bNew )
+                        val = key;
+                }
+            };
+
         public:
             size_t  m_nInsertSuccess;
             size_t  m_nInsertFailed;
@@ -51,9 +72,9 @@ namespace map2 {
                 , m_Map( src.m_Map )
             {}
 
-            Map_InsDel_int&  getTest()
+            Map_InsDel_Item_int&  getTest()
             {
-                return reinterpret_cast<Map_InsDel_int&>( m_Pool.m_Test );
+                return reinterpret_cast<Map_InsDel_Item_int&>( m_Pool.m_Test );
             }
 
             virtual void init() { cds::threading::Manager::attachThread()   ; }
@@ -65,26 +86,25 @@ namespace map2 {
 
                 m_nInsertSuccess =
                     m_nInsertFailed = 0;
-                key_array const& arr = getTest().m_arrValues;
 
-                if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
-                            if ( rMap.insert( *it, *it * 8 ) )
-                                ++m_nInsertSuccess;
-                            else
-                                ++m_nInsertFailed;
+                size_t nGoalItem = c_nGoalItem;
+                for ( size_t nAttempt = 0; nAttempt < c_nAttemptCount; ) {
+                    if ( nAttempt % 2  == 0 ) {
+                        if ( rMap.insert( nGoalItem, nGoalItem )) {
+                            ++m_nInsertSuccess;
+                            ++nAttempt;
                         }
+                        else
+                            ++m_nInsertFailed;
                     }
-                }
-                else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                            if ( rMap.insert( *it, *it * 8 ) )
-                                ++m_nInsertSuccess;
-                            else
-                                ++m_nInsertFailed;
+                    else {
+                        std::pair<bool, bool> ensureResult = rMap.ensure( nGoalItem, ensure_func() );
+                        if ( ensureResult.second ) {
+                            ++m_nInsertSuccess;
+                            ++nAttempt;
                         }
+                        else
+                            ++m_nInsertFailed;
                     }
                 }
             }
@@ -113,9 +133,9 @@ namespace map2 {
                 , m_Map( src.m_Map )
             {}
 
-            Map_InsDel_int&  getTest()
+            Map_InsDel_Item_int&  getTest()
             {
-                return reinterpret_cast<Map_InsDel_int&>( m_Pool.m_Test );
+                return reinterpret_cast<Map_InsDel_Item_int&>( m_Pool.m_Test );
             }
 
             virtual void init() { cds::threading::Manager::attachThread()   ; }
@@ -127,32 +147,21 @@ namespace map2 {
 
                 m_nDeleteSuccess =
                     m_nDeleteFailed = 0;
-                key_array const& arr = getTest().m_arrValues;
 
-                if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
-                            if ( rMap.erase( *it ) )
-                                ++m_nDeleteSuccess;
-                            else
-                                ++m_nDeleteFailed;
-                        }
+                size_t nGoalItem = c_nGoalItem;
+                for ( size_t nAttempt = 0; nAttempt < c_nAttemptCount; ) {
+                    if ( rMap.erase( nGoalItem )) {
+                        ++m_nDeleteSuccess;
+                        ++nAttempt;
                     }
-                }
-                else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                            if ( rMap.erase( *it ) )
-                                ++m_nDeleteSuccess;
-                            else
-                                ++m_nDeleteFailed;
-                        }
-                    }
+                    else
+                        ++m_nDeleteFailed;
                 }
             }
         };
 
     protected:
+
         template <class MAP>
         void do_test( MAP& testMap )
         {
@@ -160,15 +169,25 @@ namespace map2 {
             typedef Deleter<MAP>        DeleterThread;
             cds::OS::Timer    timer;
 
-            m_arrValues.clear();
-            m_arrValues.reserve( c_nMapSize );
-            for ( size_t i = 0; i < c_nMapSize; ++i )
-                m_arrValues.push_back( i );
-            std::random_shuffle( m_arrValues.begin(), m_arrValues.end() );
+            // Fill the map
+            CPPUNIT_MSG( "  Fill map (" << c_nMapSize << " items)...");
+            timer.reset();
+            {
+                std::vector<key_type>   v;
+                v.reserve( c_nMapSize );
+                for ( size_t i = 0; i < c_nMapSize; ++i )
+                    v.push_back( i );
+                std::random_shuffle( v.begin(), v.end() );
+                for ( size_t i = 0; i < v.size(); ++i ) {
+                    CPPUNIT_ASSERT( testMap.insert( v[i], v[i] ));
+                }
+            }
+            CPPUNIT_MSG( "   Duration=" << timer.duration() );
 
+            CPPUNIT_MSG( "  Insert/delete the key " << c_nGoalItem << " (" << c_nAttemptCount << " successful times)...");
             CppUnitMini::ThreadPool pool( *this );
-            pool.add( new InserterThread( pool, testMap ), c_nInsertThreadCount );
-            pool.add( new DeleterThread( pool, testMap ), c_nDeleteThreadCount );
+            pool.add( new InserterThread( pool, testMap ), (c_nThreadCount + 1) / 2 );
+            pool.add( new DeleterThread( pool, testMap ), (c_nThreadCount + 1) / 2 );
             pool.run();
             CPPUNIT_MSG( "   Duration=" << pool.avgDuration() );
 
@@ -179,33 +198,35 @@ namespace map2 {
             for ( CppUnitMini::ThreadPool::iterator it = pool.begin(); it != pool.end(); ++it ) {
                 InserterThread * pThread = dynamic_cast<InserterThread *>( *it );
                 if ( pThread ) {
+                    CPPUNIT_CHECK( pThread->m_nInsertSuccess == c_nAttemptCount );
                     nInsertSuccess += pThread->m_nInsertSuccess;
                     nInsertFailed += pThread->m_nInsertFailed;
                 }
                 else {
                     DeleterThread * p = static_cast<DeleterThread *>( *it );
+                    CPPUNIT_CHECK( p->m_nDeleteSuccess == c_nAttemptCount );
                     nDeleteSuccess += p->m_nDeleteSuccess;
                     nDeleteFailed += p->m_nDeleteFailed;
                 }
             }
+            CPPUNIT_CHECK( nInsertSuccess == nDeleteSuccess );
+            size_t nGoalItem = c_nGoalItem;
+            CPPUNIT_CHECK( testMap.find( nGoalItem ));
 
-            CPPUNIT_MSG( "    Totals: Ins succ=" << nInsertSuccess
-                << " Del succ=" << nDeleteSuccess << "\n"
-                << "          : Ins fail=" << nInsertFailed
-                << " Del fail=" << nDeleteFailed
-                << " Map size=" << testMap.size()
-                );
+
+            CPPUNIT_MSG( "    Totals: Ins fail=" << nInsertFailed << " Del fail=" << nDeleteFailed );
+
+            // Check if the map contains all items
+            CPPUNIT_MSG( "    Check if the map contains all items" );
+            timer.reset();
+            for ( size_t i = 0; i < c_nMapSize; ++i ) {
+                CPPUNIT_CHECK_EX( testMap.find( i ), "key " << i );
+            }
+            CPPUNIT_MSG( "    Duration=" << timer.duration() );
 
             check_before_cleanup( testMap );
 
-            CPPUNIT_MSG( "  Clear map (single-threaded)..." );
-            timer.reset();
-            for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
-                testMap.erase( nItem );
-            }
-            CPPUNIT_MSG( "   Duration=" << timer.duration() );
-            CPPUNIT_ASSERT_EX( testMap.empty(), ((long long) testMap.size()) );
-
+            testMap.clear();
             additional_check( testMap );
             print_stat( testMap );
             additional_cleanup( testMap );
@@ -214,15 +235,9 @@ namespace map2 {
         template <class MAP>
         void test()
         {
-            CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
-                << " delete=" << c_nDeleteThreadCount
-                << " pass count=" << c_nThreadPassCount
-                << " map size=" << c_nMapSize
-                );
-
             for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
                 CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                MAP  testMap( c_nMapSize, nLoadFactor );
+                MAP testMap( c_nMapSize, nLoadFactor );
                 do_test( testMap );
                 if ( c_bPrintGCState )
                     print_gc_state();
@@ -232,14 +247,8 @@ namespace map2 {
         template <class MAP>
         void test_nolf()
         {
-            CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
-                << " delete=" << c_nDeleteThreadCount
-                << " pass count=" << c_nThreadPassCount
-                << " map size=" << c_nMapSize
-                );
-
             MAP testMap;
-            do_test( testMap );
+            do_test<MAP>( testMap );
             if ( c_bPrintGCState )
                 print_gc_state();
         }
@@ -248,10 +257,10 @@ namespace map2 {
 
         void run_MichaelMap(const char *in_name, bool invert = false);
         void run_SplitList(const char *in_name, bool invert = false);
+        void run_SkipListMap(const char *in_name, bool invert = false);
         void run_StripedMap(const char *in_name, bool invert = false);
         void run_RefinableMap(const char *in_name, bool invert = false);
         void run_CuckooMap(const char *in_name, bool invert = false);
-        void run_SkipListMap(const char *in_name, bool invert = false);
         void run_EllenBinTreeMap(const char *in_name, bool invert = false);
         void run_BronsonAVLTreeMap(const char *in_name, bool invert = false);
 
@@ -267,6 +276,6 @@ namespace map2 {
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
-        //CDSUNIT_DECLARE_StdMap
+        //CDSUNIT_DECLARE_StdMap    // very slow!
     };
 } // namespace map2
