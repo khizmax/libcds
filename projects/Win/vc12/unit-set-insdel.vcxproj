@@ -52,9 +52,18 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_striped.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\unit\set2\set_insdel_func.h" />
+    <ClInclude Include="..\..\..\tests\unit\set2\set_insdel_string.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BA23811C-D4CB-4836-B2F3-6791BD6FFCD1}</ProjectGuid>
