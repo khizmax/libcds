@@ -333,6 +333,19 @@ namespace cds { namespace container {
             return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ));
         }
 
+        /// Finds the key \p val using \p equal predicate for searching
+        /**
+            The function is an analog of \ref cds_nonintrusive_LazyList_nogc_find "find(Q const&)"
+            but \p pred is used for key comparing.
+            \p Equal functor has the interface like \p std::equal_to.
+        */
+        template <typename Q, typename Equal, bool Sort = traits::sort>
+        typename std::enable_if<!Sort, iterator>::type find_with( Q const& key, Equal equal )
+        {
+            CDS_UNUSED( equal );
+            return node_to_iterator( find_at( head(), key, typename maker::template equal_to_wrapper<Equal>::type() ));
+        }
+
         /// Check if the list is empty
         bool empty() const
         {

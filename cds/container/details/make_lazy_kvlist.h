@@ -71,6 +71,11 @@ namespace cds { namespace container {
                 typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, key_field_accessor >    type;
             };
 
+            template <typename Equal>
+            struct equal_to_wrapper {
+                typedef cds::details::predicate_wrapper< node_type, Equal, key_field_accessor >    type;
+            };
+
             struct intrusive_traits: public original_type_traits
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
