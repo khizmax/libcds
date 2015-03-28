@@ -244,16 +244,52 @@ namespace cds { namespace opt {
 
     //@cond
     namespace details {
+        template <typename Compare>
+        struct make_equal_to_from_compare
+        {
+            typedef Compare compare_functor;
+
+            template <typename T, typename Q>
+            bool operator()( T const& t, Q const& q ) const
+            {
+                compare_functor cmp;
+                return cmp(t, q) == 0;
+            }
+        };
+
+        template <typename Less>
+        struct make_equal_to_from_less
+        {
+            typedef Less less_functor;
+
+            template <typename T, typename Q>
+            bool operator()( T const& t, Q const& q ) const
+            {
+                less_functor less;
+                return !less(t, q) && !less(q, t);
+            }
+        };
+
         template <typename T, typename Traits, bool Forced = true>
         struct make_equal_to
         {
             typedef typename Traits::equal_to equal_to;
+            typedef typename Traits::compare  compare;
+            typedef typename Traits::less     less;
 
             typedef typename std::conditional<
                 std::is_same< equal_to, opt::none >::value,
-                typename std::conditional< Forced, std::equal_to<T>, opt::none >::type,
-                equal_to
-            >::type type;
+                typename std::conditional<
+                    std::is_same< compare, opt::none >::value,
+                    typename std::conditional<
+                        std::is_same< less, opt::none >::value,
+                        typename std::conditional<
+                            Forced,
+                            std::equal_to<T>,
+                            opt::none >::type,
+                        make_equal_to_from_less< less > >::type,
+                    make_equal_to_from_compare< compare > >::type,
+                equal_to >::type type;
         };
     }
     //@endcond
