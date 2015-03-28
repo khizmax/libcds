@@ -83,6 +83,7 @@ namespace unordlist {
                 CPPUNIT_ASSERT( it.key() == 100 );
                 CPPUNIT_ASSERT( it.val().m_val == 0 );
 
+                CPPUNIT_ASSERT( l.find_with( 50, eq<key_type>() ) == l.end() );
                 CPPUNIT_ASSERT( l.insert( 50, 500 ) != l.end());
                 it = l.find( 50 );
                 CPPUNIT_ASSERT( it != l.end() );

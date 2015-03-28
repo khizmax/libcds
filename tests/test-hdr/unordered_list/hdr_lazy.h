@@ -161,6 +161,11 @@ namespace unordlist {
             CPPUNIT_ASSERT( it->nKey == 100 );
             CPPUNIT_ASSERT( it->nVal == 33 );
 
+            it = l.find_with( 150, equal_to<value_type>() );
+            CPPUNIT_ASSERT( it != l.end() );
+            CPPUNIT_ASSERT( it->nKey == 150 );
+            CPPUNIT_ASSERT( it->nVal == it->nKey * 2 );
+
             CPPUNIT_ASSERT( !l.empty() );
             l.clear();
             CPPUNIT_ASSERT( l.empty() );
