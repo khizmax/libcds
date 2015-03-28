@@ -222,6 +222,7 @@ namespace unordlist {
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
 
+                    CPPUNIT_ASSERT( l.find_with( v2.key(), equal_to<value_type>() ) == nullptr );
                     CPPUNIT_ASSERT( l.find( v3.key() ) == nullptr );
                     CPPUNIT_ASSERT( !l.empty() );
 
@@ -245,6 +246,12 @@ namespace unordlist {
                     CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 2 );
+
+                    CPPUNIT_ASSERT( l.find_with( v2.key(), equal_to<value_type>() ) == &v2 );
+
+                    CPPUNIT_ASSERT( v2.s.nFindCall == 0 );
+                    CPPUNIT_ASSERT( l.find_with( v2.key(), equal_to<value_type>(), find_functor() ));
+                    CPPUNIT_ASSERT( v2.s.nFindCall == 1 );
 
                     CPPUNIT_ASSERT( !l.find( v3.key() ));
 
