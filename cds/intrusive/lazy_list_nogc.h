@@ -396,7 +396,7 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching.
+        /// Finds the key \p key using \p less predicate for searching. Disabled for unordered lists.
         /**
             The function is an analog of \ref cds_intrusive_LazyList_nogc_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
@@ -404,10 +404,23 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func, bool Sort = traits::sort>
-        typename std::enable_if<Sort, bool>::type find_with( Q& key, Less pred, Func f )
+        typename std::enable_if<Sort, bool>::type find_with( Q& key, Less less, Func f )
         {
-            CDS_UNUSED( pred );
+            CDS_UNUSED( less );
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+
+        /// Finds the key \p key using \p equal predicate for searching. Disabled for ordered lists.
+        /**
+            The function is an analog of \ref cds_intrusive_LazyList_nogc_find_func "find(Q&, Func)"
+            but \p equal is used for key comparing.
+            \p Equal functor has the interface like \p std::equal_to.
+        */
+        template <typename Q, typename Equal, typename Func, bool Sort = traits::sort>
+        typename std::enable_if<!Sort, bool>::type find_with( Q& key, Equal equal, Func f )
+        {
+            CDS_UNUSED( equal );
+            return find_at( &m_Head, key, Equal(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func, bool Sort = traits::sort>
@@ -415,6 +428,13 @@ namespace cds { namespace intrusive {
         {
             CDS_UNUSED( pred );
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+
+        template <typename Q, typename Equal, typename Func, bool Sort = traits::sort>
+        typename std::enable_if<!Sort, bool>::type find_with( Q const& key, Equal equal, Func f )
+        {
+            CDS_UNUSED( equal );
+            return find_at( &m_Head, key, Equal(), f );
         }
         //@endcond
 
@@ -441,6 +461,19 @@ namespace cds { namespace intrusive {
         {
             CDS_UNUSED( pred );
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
+        }
+
+        /// Finds the key \p key using \p equal predicate for searching. Disabled for ordered lists.
+        /**
+            The function is an analog of \ref cds_intrusive_LazyList_nogc_find_val "find(Q const&)"
+            but \p equal is used for key comparing.
+            \p Equal functor has the interface like \p std::equal_to.
+        */
+        template <typename Q, typename Equal, bool Sort = traits::sort>
+        typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal equal )
+        {
+            CDS_UNUSED( equal );
+            return find_at( &m_Head, key, equal );
         }
 
         /// Clears the list
