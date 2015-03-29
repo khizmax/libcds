@@ -190,6 +190,19 @@ namespace cds { namespace container {
             event_counter   m_nLeftRightRotation;   ///< Count of double left-over-right rotation
             event_counter   m_nRightLeftRotation;   ///< Count of double right-over-left rotation
 
+            event_counter   m_nRotateAfterRightRotation; ///< Count of rotation required after single right rotation
+            event_counter   m_nRemoveAfterRightRotation; ///< Count of removal required after single right rotation
+            event_counter   m_nDamageAfterRightRotation; ///< Count of damaged node after single right rotation
+
+            event_counter   m_nRotateAfterLeftRotation;  ///< Count of rotation required after signle left rotation
+            event_counter   m_nRemoveAfterLeftRotation;  ///< Count of removal required after single left rotation
+            event_counter   m_nDamageAfterLeftRotation;  ///< Count of damaged node after single left rotation
+
+            event_counter   m_nRotateAfterRLRotation;    ///< Count of rotation required after right-over-left rotation
+            event_counter   m_nRemoveAfterRLRotation;    ///< Count of removal required after right-over-left rotation
+            event_counter   m_nRotateAfterLRRotation;    ///< Count of rotation required after left-over-right rotation
+            event_counter   m_nRemoveAfterLRRotation;    ///< Count of removal required after left-over-right rotation
+
             event_counter   m_nInsertRebalanceReq;  ///< Count of rebalance required after inserting
             event_counter   m_nRemoveRebalanceReq;  ///< Count of rebalance required after removing
 
@@ -218,6 +231,19 @@ namespace cds { namespace container {
             void onRotateLeft()             { ++m_nLeftRotation; }
             void onRotateRightOverLeft()    { ++m_nRightLeftRotation; }
             void onRotateLeftOverRight()    { ++m_nLeftRightRotation; }
+
+            void onRotateAfterRightRotation() { ++m_nRotateAfterRightRotation; }
+            void onRemoveAfterRightRotation() { ++m_nRemoveAfterRightRotation; }
+            void onDamageAfterRightRotation() { ++m_nDamageAfterRightRotation; }
+
+            void onRotateAfterLeftRotation()  { ++m_nRotateAfterLeftRotation; }
+            void onRemoveAfterLeftRotation()  { ++m_nRemoveAfterLeftRotation; }
+            void onDamageAfterLeftRotation()  { ++m_nDamageAfterLeftRotation; }
+
+            void onRotateAfterRLRotation()    { ++m_nRotateAfterRLRotation; }
+            void onRemoveAfterRLRotation()    { ++m_nRemoveAfterRLRotation; }
+            void onRotateAfterLRRotation()    { ++m_nRotateAfterLRRotation; }
+            void onRemoveAfterLRRotation()    { ++m_nRemoveAfterLRRotation; }
 
             void onInsertRebalanceRequired() { ++m_nInsertRebalanceReq; }
             void onRemoveRebalanceRequired() { ++m_nRemoveRebalanceReq; }
@@ -251,6 +277,19 @@ namespace cds { namespace container {
             void onRotateLeft()             const {}
             void onRotateRightOverLeft()    const {}
             void onRotateLeftOverRight()    const {}
+
+            void onRotateAfterRightRotation() const {}
+            void onRemoveAfterRightRotation() const {}
+            void onDamageAfterRightRotation() const {}
+
+            void onRotateAfterLeftRotation()  const {}
+            void onRemoveAfterLeftRotation()  const {}
+            void onDamageAfterLeftRotation()  const {}
+
+            void onRotateAfterRLRotation()    const {}
+            void onRemoveAfterRLRotation()    const {}
+            void onRotateAfterLRRotation()    const {}
+            void onRemoveAfterLRRotation()    const {}
 
             void onInsertRebalanceRequired() const {}
             void onRemoveRebalanceRequired() const {}

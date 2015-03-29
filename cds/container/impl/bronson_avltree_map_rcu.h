@@ -969,7 +969,7 @@ namespace cds { namespace container {
                     }
                 }
                 else if ( nChildVersion != node_type::unlinked ) {
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
+                    if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
                         m_stat.onFindRetry();
                         return find_result::retry;
                     }
@@ -1672,8 +1672,12 @@ namespace cds { namespace container {
             if ( pLRight != nullptr )
                 pLRight->m_pParent.store( pNode, memory_model::memory_order_relaxed  );
 
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+
             pLeft->m_pRight.store( pNode, memory_model::memory_order_relaxed );
             pNode->m_pParent.store( pLeft, memory_model::memory_order_relaxed );
+
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             if ( pParentLeft == pNode )
                 pParent->m_pLeft.store( pLeft, memory_model::memory_order_relaxed );
@@ -1682,6 +1686,8 @@ namespace cds { namespace container {
                 pParent->m_pRight.store( pLeft, memory_model::memory_order_relaxed );
             }
             pLeft->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             // fix up heights links
             int hNode = 1 + std::max( hLR, hR );
@@ -1701,6 +1707,7 @@ namespace cds { namespace container {
             int nodeBalance = hLR - hR;
             if ( nodeBalance < -1 || nodeBalance > 1 ) {
                 // we need another rotation at pNode
+                m_stat.onRotateAfterRightRotation();
                 return pNode;
             }
 
@@ -1708,17 +1715,22 @@ namespace cds { namespace container {
             // extra-routing node damage
             if ( (pLRight == nullptr || hR == 0) && !pNode->is_valued(memory_model::memory_order_relaxed)) {
                 // we need to remove pNode and then repair
+                m_stat.onRemoveAfterRightRotation();
                 return pNode;
             }
 
             // we've already fixed the height at pLeft, do we need a rotation here?
             int leftBalance = hLL - hNode;
-            if ( leftBalance < -1 || leftBalance > 1 )
+            if ( leftBalance < -1 || leftBalance > 1 ) {
+                m_stat.onRotateAfterRightRotation();
                 return pLeft;
+            }
 
             // pLeft might also have routing node damage (if pLeft.left was null)
-            if ( hLL == 0 && !pLeft->is_valued( memory_model::memory_order_relaxed ))
+            if ( hLL == 0 && !pLeft->is_valued(memory_model::memory_order_relaxed) ) {
+                m_stat.onDamageAfterRightRotation();
                 return pLeft;
+            }
 
             // try to fix the parent height while we've still got the lock
             return fix_height_locked( pParent );
@@ -1736,8 +1748,12 @@ namespace cds { namespace container {
             if ( pRLeft != nullptr )
                 pRLeft->m_pParent.store( pNode, memory_model::memory_order_relaxed );
 
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+
             pRight->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
             pNode->m_pParent.store( pRight, memory_model::memory_order_relaxed );
+
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             if ( pParentLeft == pNode )
                 pParent->m_pLeft.store( pRight, memory_model::memory_order_relaxed );
@@ -1746,6 +1762,8 @@ namespace cds { namespace container {
                 pParent->m_pRight.store( pRight, memory_model::memory_order_relaxed );
             }
             pRight->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             // fix up heights
             int hNode = 1 + std::max( hL, hRL );
@@ -1756,18 +1774,26 @@ namespace cds { namespace container {
             m_stat.onRotateLeft();
 
             int nodeBalance = hRL - hL;
-            if ( nodeBalance < -1 || nodeBalance > 1 )
+            if ( nodeBalance < -1 || nodeBalance > 1 ) {
+                m_stat.onRotateAfterLeftRotation();
                 return pNode;
+            }
 
-            if ( (pRLeft == nullptr || hL == 0) && !pNode->is_valued( memory_model::memory_order_relaxed ))
+            if ( (pRLeft == nullptr || hL == 0) && !pNode->is_valued(memory_model::memory_order_relaxed) ) {
+                m_stat.onRemoveAfterLeftRotation();
                 return pNode;
+            }
 
             int rightBalance = hRR - hNode;
-            if ( rightBalance < -1 || rightBalance > 1 )
+            if ( rightBalance < -1 || rightBalance > 1 ) {
+                m_stat.onRotateAfterLeftRotation();
                 return pRight;
+            }
 
-            if ( hRR == 0 && !pRight->is_valued( memory_model::memory_order_relaxed ))
+            if ( hRR == 0 && !pRight->is_valued(memory_model::memory_order_relaxed) ) {
+                m_stat.onDamageAfterLeftRotation();
                 return pRight;
+            }
 
             return fix_height_locked( pParent );
         }
@@ -1789,15 +1815,20 @@ namespace cds { namespace container {
             pNode->m_pLeft.store( pLRR, memory_model::memory_order_relaxed );
             if ( pLRR != nullptr )
                 pLRR->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             pLeft->m_pRight.store( pLRL, memory_model::memory_order_relaxed );
             if ( pLRL != nullptr )
                 pLRL->m_pParent.store( pLeft, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             pLRight->m_pLeft.store( pLeft, memory_model::memory_order_relaxed );
             pLeft->m_pParent.store( pLRight, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+
             pLRight->m_pRight.store( pNode, memory_model::memory_order_relaxed );
             pNode->m_pParent.store( pLRight, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             if ( pPL == pNode )
                 pParent->m_pLeft.store( pLRight, memory_model::memory_order_relaxed );
@@ -1806,6 +1837,7 @@ namespace cds { namespace container {
                 pParent->m_pRight.store( pLRight, memory_model::memory_order_relaxed );
             }
             pLRight->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             // fix up heights
             int hNode = 1 + std::max( hLRR, hR );
@@ -1833,19 +1865,23 @@ namespace cds { namespace container {
             int nodeBalance = hLRR - hR;
             if ( nodeBalance < -1 || nodeBalance > 1 ) {
                 // we need another rotation at pNode
+                m_stat.onRotateAfterRLRotation();
                 return pNode;
             }
 
             // pNode might also be damaged by being an unnecessary routing node
             if ( (pLRR == nullptr || hR == 0) && !pNode->is_valued( memory_model::memory_order_relaxed )) {
                 // repair involves splicing out pNode and maybe more rotations
+                m_stat.onRemoveAfterRLRotation();
                 return pNode;
             }
 
             // we've already fixed the height at pLRight, do we need a rotation here?
             int balanceLR = hLeft - hNode;
-            if ( balanceLR < -1 || balanceLR > 1 )
+            if ( balanceLR < -1 || balanceLR > 1 ) {
+                m_stat.onRotateAfterRLRotation();
                 return pLRight;
+            }
 
             // try to fix the parent height while we've still got the lock
             return fix_height_locked( pParent );
@@ -1868,15 +1904,20 @@ namespace cds { namespace container {
             pNode->m_pRight.store( pRLL, memory_model::memory_order_relaxed );
             if ( pRLL != nullptr )
                 pRLL->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             pRight->m_pLeft.store( pRLR, memory_model::memory_order_relaxed );
             if ( pRLR != nullptr )
                 pRLR->m_pParent.store( pRight, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             pRLeft->m_pRight.store( pRight, memory_model::memory_order_relaxed );
             pRight->m_pParent.store( pRLeft, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+
             pRLeft->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
             pNode->m_pParent.store( pRLeft, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             if ( pPL == pNode )
                 pParent->m_pLeft.store( pRLeft, memory_model::memory_order_relaxed );
@@ -1885,6 +1926,7 @@ namespace cds { namespace container {
                 pParent->m_pRight.store( pRLeft, memory_model::memory_order_relaxed );
             }
             pRLeft->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+            atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
 
             // fix up heights
             int hNode = 1 + std::max( hL, hRLL );
@@ -1900,14 +1942,21 @@ namespace cds { namespace container {
             assert( hRR - hRLR <= 1 && hRLR - hRR <= 1 );
 
             int nodeBalance = hRLL - hL;
-            if ( nodeBalance < -1 || nodeBalance > 1 )
+            if ( nodeBalance < -1 || nodeBalance > 1 ) {
+                m_stat.onRotateAfterLRRotation();
                 return pNode;
-            if ( (pRLL == nullptr || hL == 0) && !pNode->is_valued( memory_model::memory_order_relaxed ))
+            }
+
+            if ( (pRLL == nullptr || hL == 0) && !pNode->is_valued(memory_model::memory_order_relaxed) ) {
+                m_stat.onRemoveAfterLRRotation();
                 return pNode;
+            }
 
             int balRL = hRight - hNode;
-            if ( balRL < -1 || balRL > 1 )
+            if ( balRL < -1 || balRL > 1 ) {
+                m_stat.onRotateAfterLRRotation();
                 return pRLeft;
+            }
 
             return fix_height_locked( pParent );
         }
