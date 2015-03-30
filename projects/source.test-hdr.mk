@@ -73,6 +73,7 @@ CDS_TESTHDR_LIST := \
     tests/test-hdr/list/hdr_lazy_kv_dhp.cpp \
     tests/test-hdr/list/hdr_lazy_kv_hp.cpp \
     tests/test-hdr/list/hdr_lazy_kv_nogc.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_nogc_unord.cpp \
     tests/test-hdr/list/hdr_lazy_kv_rcu_gpb.cpp \
     tests/test-hdr/list/hdr_lazy_kv_rcu_gpi.cpp \
     tests/test-hdr/list/hdr_lazy_kv_rcu_gpt.cpp \
@@ -94,9 +95,6 @@ CDS_TESTHDR_LIST := \
     tests/test-hdr/list/hdr_michael_kv_rcu_gpt.cpp \
     tests/test-hdr/list/hdr_michael_kv_rcu_shb.cpp \
     tests/test-hdr/list/hdr_michael_kv_rcu_sht.cpp
-
-CDS_TESTHDR_UNORDLIST := \
-    tests/test-hdr/unordered_list/hdr_lazy_kv_nogc.cpp
 
 CDS_TESTHDR_PQUEUE := \
     tests/test-hdr/priority_queue/hdr_intrusive_mspqueue_dyn.cpp \
