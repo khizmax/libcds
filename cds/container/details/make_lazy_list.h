@@ -46,6 +46,7 @@ namespace cds { namespace container {
             };
 
             typedef typename opt::details::make_comparator< value_type, original_type_traits >::type key_comparator;
+            typedef typename opt::details::make_equal_to< value_type, original_type_traits >::type equal_to_comparator;
 
             struct value_accessor {
                 value_type const & operator()( node_type const & node ) const
@@ -59,6 +60,11 @@ namespace cds { namespace container {
                 typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor > type;
             };
 
+            template <typename Equal>
+            struct equal_to_wrapper {
+                typedef cds::details::predicate_wrapper< node_type, Equal, value_accessor > type;
+            };
+
             struct intrusive_traits: public original_type_traits
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
@@ -66,6 +72,7 @@ namespace cds { namespace container {
                 static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
 
                 typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
+                typedef cds::details::predicate_wrapper< node_type, equal_to_comparator, value_accessor > equal_to;
             };
 
             typedef intrusive::LazyList<gc, node_type, intrusive_traits>  type;

@@ -94,6 +94,10 @@ CDS_TESTHDR_ORDLIST := \
     tests/test-hdr/ordered_list/hdr_michael_kv_rcu_shb.cpp \
     tests/test-hdr/ordered_list/hdr_michael_kv_rcu_sht.cpp
 
+CDS_TESTHDR_UNORDLIST := \
+    tests/test-hdr/unordered_list/hdr_lazy_nogc.cpp \
+    tests/test-hdr/unordered_list/hdr_lazy_kv_nogc.cpp
+
 CDS_TESTHDR_PQUEUE := \
     tests/test-hdr/priority_queue/hdr_intrusive_mspqueue_dyn.cpp \
     tests/test-hdr/priority_queue/hdr_intrusive_mspqueue_static.cpp \
@@ -276,6 +280,7 @@ CDS_TESTHDR_SOURCES := \
     $(CDS_TESTHDR_MAP) \
     $(CDS_TESTHDR_DEQUE) \
     $(CDS_TESTHDR_ORDLIST) \
+    $(CDS_TESTHDR_UNORDLIST) \
     $(CDS_TESTHDR_SET) \
     $(CDS_TESTHDR_TREE) \
     $(CDS_TESTHDR_MISC)

@@ -208,6 +208,20 @@ namespace cds { namespace intrusive {
             */
             typedef opt::none                       less;
 
+            /// Specifies binary functor used for comparing keys for equality
+            /**
+                If \p equal_to option is not specified, \p compare is used, if \p compare is not specified, \p less is used,
+                if \p less is not specified, then \p std::equal_to<T> is used.
+            */
+            typedef opt::none                       equal_to;
+
+            /// Specifies list ordering policy
+            /**
+                If \p sort is \p true, than list maintains items in sorted order, otherwise items are unordered. Default is \p true.
+                Note that if \p sort is \p false, than lookup operations scan entire list.
+            */
+            static const bool sort = true;
+
             /// Back-off strategy
             typedef cds::backoff::Default           back_off;
 
@@ -245,6 +259,9 @@ namespace cds { namespace intrusive {
             - \p opt::compare - key comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::equal_to - specifies binary functor for comparing keys for equality. If \p equal_to is not specified, \p compare is
+                used, \p compare is not specified, \p less is used.
+            - \p opt::sort - specifies ordering policy. Default value is \p true.
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. Due the nature
                 of GC schema the disposer may be called asynchronously.

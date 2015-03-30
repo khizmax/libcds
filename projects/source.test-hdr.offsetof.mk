@@ -66,6 +66,9 @@ CDS_TESTHDR_OFFSETOF_ORDLIST := \
     tests/test-hdr/ordered_list/hdr_intrusive_michael_list_rcu_shb.cpp \
     tests/test-hdr/ordered_list/hdr_intrusive_michael_list_rcu_sht.cpp
 
+CDS_TESTHDR_OFFSETOF_UNORDLIST := \
+    tests/test-hdr/unordered_list/hdr_intrusive_lazy_nogc.cpp
+
 CDS_TESTHDR_OFFSETOF_QUEUE := \
     tests/test-hdr/queue/hdr_intrusive_basketqueue_hp.cpp \
     tests/test-hdr/queue/hdr_intrusive_basketqueue_dhp.cpp \
@@ -98,4 +101,5 @@ CDS_TESTHDR_OFFSETOF_SOURCES := \
 	$(CDS_TESTHDR_OFFSETOF_MAP) \
 	$(CDS_TESTHDR_OFFSETOF_SET) \
 	$(CDS_TESTHDR_OFFSETOF_ORDLIST) \
+	$(CDS_TESTHDR_OFFSETOF_UNORDLIST) \
 	$(CDS_TESTHDR_OFFSETOF_TREE)
