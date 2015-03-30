@@ -40,12 +40,17 @@ namespace cds { namespace intrusive {
     }   // namespace lazy_list
 
 
-    /// Lazy ordered single-linked list (template specialization for \p gc::nogc)
+    /// Lazy single-linked list (template specialization for \p gc::nogc)
     /** @ingroup cds_intrusive_list
         \anchor cds_intrusive_LazyList_nogc
 
         This specialization is append-only list when no item
         reclamation may be performed. The class does not support deleting of list item.
+
+        The list can be ordered if \p Traits::sort is \p true that is default
+        or unordered otherwise. Unordered list can be maintained by \p equal_to
+        relationship (\p Traits::equal_to), but for the ordered list \p less
+        or \p compare relations should be specified in \p Traits.
 
         See \ref cds_intrusive_LazyList_hp "LazyList" for description of template parameters.
     */
@@ -66,15 +71,20 @@ namespace cds { namespace intrusive {
 
         typedef typename traits::hook    hook;      ///< hook type
         typedef typename hook::node_type node_type; ///< node type
+        static CDS_CONSTEXPR bool const c_bSort = traits::sort; ///< List type: ordered (\p true) or unordered (\p false)
 
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
-        typedef implementation_defined equal_to_comparator;
-        typedef implementation_defined predicate_type;
+        /// Key comparing functor
+        /**
+            - for ordered list, the functor is based on \p traits::compare or \p traits::less
+            - for unordered list, the functor is based on \p traits::equal_to, \p traits::compare or \p traits::less
+        */
+        typedef implementation_defined key_comparator;
 #   else
-        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
-        typedef typename opt::details::make_equal_to< value_type, traits >::type equal_to_comparator;
-        typedef typename std::conditional< traits::sort, key_comparator, equal_to_comparator >::type predicate_type;
+        typedef typename std::conditional< c_bSort,
+            typename opt::details::make_comparator< value_type, traits >::type,
+            typename opt::details::make_equal_to< value_type, traits >::type
+        >::type key_comparator;
 #   endif
         typedef typename traits::back_off  back_off;   ///< Back-off strategy
         typedef typename traits::disposer  disposer;   ///< disposer
@@ -82,7 +92,7 @@ namespace cds { namespace intrusive {
         typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
         typedef typename traits::item_counter item_counter;  ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model; ///< C++ memory ordering (see lazy_list::traits::memory_model)
+        typedef typename traits::memory_model memory_model; ///< C++ memory ordering (see lazy_list::traits::memory_model)
 
         //@cond
         // Rebind traits (split-list support)
@@ -386,13 +396,13 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Func>
         bool find( Q& key, Func f )
         {
-            return find_at( &m_Head, key, predicate_type(), f );
+            return find_at( &m_Head, key, key_comparator(), f );
         }
         //@cond
         template <typename Q, typename Func>
         bool find( Q const& key, Func f )
         {
-            return find_at( &m_Head, key, predicate_type(), f );
+            return find_at( &m_Head, key, key_comparator(), f );
         }
         //@endcond
 
@@ -403,7 +413,7 @@ namespace cds { namespace intrusive {
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
         */
-        template <typename Q, typename Less, typename Func, bool Sort = traits::sort>
+        template <typename Q, typename Less, typename Func, bool Sort = c_bSort>
         typename std::enable_if<Sort, bool>::type find_with( Q& key, Less less, Func f )
         {
             CDS_UNUSED( less );
@@ -416,25 +426,25 @@ namespace cds { namespace intrusive {
             but \p equal is used for key comparing.
             \p Equal functor has the interface like \p std::equal_to.
         */
-        template <typename Q, typename Equal, typename Func, bool Sort = traits::sort>
+        template <typename Q, typename Equal, typename Func, bool Sort = c_bSort>
         typename std::enable_if<!Sort, bool>::type find_with( Q& key, Equal equal, Func f )
         {
             CDS_UNUSED( equal );
-            return find_at( &m_Head, key, Equal(), f );
+            return find_at( &m_Head, key, equal, f );
         }
         //@cond
-        template <typename Q, typename Less, typename Func, bool Sort = traits::sort>
+        template <typename Q, typename Less, typename Func, bool Sort = c_bSort>
         typename std::enable_if<Sort, bool>::type find_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
-        template <typename Q, typename Equal, typename Func, bool Sort = traits::sort>
+        template <typename Q, typename Equal, typename Func, bool Sort = c_bSort>
         typename std::enable_if<!Sort, bool>::type find_with( Q const& key, Equal equal, Func f )
         {
             CDS_UNUSED( equal );
-            return find_at( &m_Head, key, Equal(), f );
+            return find_at( &m_Head, key, equal, f );
         }
         //@endcond
 
@@ -446,7 +456,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * find( Q const& key )
         {
-            return find_at( &m_Head, key, predicate_type() );
+            return find_at( &m_Head, key, key_comparator() );
         }
 
         /// Finds the key \p key using \p pred predicate for searching. Disabled for unordered lists.
@@ -456,7 +466,7 @@ namespace cds { namespace intrusive {
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
         */
-        template <typename Q, typename Less, bool Sort = traits::sort>
+        template <typename Q, typename Less, bool Sort = c_bSort>
         typename std::enable_if<Sort, value_type *>::type find_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
@@ -469,10 +479,9 @@ namespace cds { namespace intrusive {
             but \p equal is used for key comparing.
             \p Equal functor has the interface like \p std::equal_to.
         */
-        template <typename Q, typename Equal, bool Sort = traits::sort>
+        template <typename Q, typename Equal, bool Sort = c_bSort>
         typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal equal )
         {
-            CDS_UNUSED( equal );
             return find_at( &m_Head, key, equal );
         }
 
@@ -547,7 +556,7 @@ namespace cds { namespace intrusive {
         {
             link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos;
-            predicate_type pred;
+            key_comparator pred;
 
             while ( true ) {
                 search( pHead, val, pos, pred );
@@ -580,14 +589,14 @@ namespace cds { namespace intrusive {
         std::pair<iterator, bool> ensure_at_( node_type * pHead, value_type& val, Func func )
         {
             position pos;
-            predicate_type pred;
+            key_comparator pred;
 
             while ( true ) {
                 search( pHead, val, pos, pred );
                 {
                     auto_lock_position alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
-                        if ( pos.pCur != &m_Tail && equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) ) {
+                        if ( pos.pCur != &m_Tail && equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred )) {
                             // key already in the list
 
                             func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
@@ -647,7 +656,7 @@ namespace cds { namespace intrusive {
 
             search( pHead, val, pos, pred );
             if ( pos.pCur != &m_Tail ) {
-                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) )
+                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ))
                     return iterator( pos.pCur );
             }
             return end();
@@ -657,7 +666,7 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        template <typename Q, typename Equal, bool Sort = traits::sort>
+        template <typename Q, typename Equal, bool Sort = c_bSort>
         typename std::enable_if<!Sort, void>::type search( node_type * pHead, const Q& key, position& pos, Equal eq )
         {
             const node_type * pTail = &m_Tail;
@@ -674,7 +683,7 @@ namespace cds { namespace intrusive {
             pos.pPred = pPrev;
         }
 
-        template <typename Q, typename Compare, bool Sort = traits::sort>
+        template <typename Q, typename Compare, bool Sort = c_bSort>
         typename std::enable_if<Sort, void>::type search( node_type * pHead, const Q& key, position& pos, Compare cmp )
         {
             const node_type * pTail = &m_Tail;
@@ -691,13 +700,13 @@ namespace cds { namespace intrusive {
             pos.pPred = pPrev;
         }
 
-        template <typename L, typename R, typename Equal, bool Sort = traits::sort>
+        template <typename L, typename R, typename Equal, bool Sort = c_bSort>
         static typename std::enable_if<!Sort, bool>::type equal( L const& l, R const& r, Equal eq )
         {
             return eq(l, r);
         }
 
-        template <typename L, typename R, typename Compare, bool Sort = traits::sort>
+        template <typename L, typename R, typename Compare, bool Sort = c_bSort>
         static typename std::enable_if<Sort, bool>::type equal( L const& l, R const& r, Compare cmp )
         {
             return cmp(l, r) == 0;

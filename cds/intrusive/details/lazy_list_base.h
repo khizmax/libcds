@@ -208,7 +208,7 @@ namespace cds { namespace intrusive {
             */
             typedef opt::none                       less;
 
-            /// Specifies binary functor used for comparing keys for equality
+            /// Specifies binary functor used for comparing keys for equality (for unordered list only)
             /**
                 If \p equal_to option is not specified, \p compare is used, if \p compare is not specified, \p less is used,
                 if \p less is not specified, then \p std::equal_to<T> is used.
@@ -217,7 +217,8 @@ namespace cds { namespace intrusive {
 
             /// Specifies list ordering policy
             /**
-                If \p sort is \p true, than list maintains items in sorted order, otherwise items are unordered. Default is \p true.
+                If \p sort is \p true, than list maintains items in sorted order, otherwise the list is unordered. 
+                Default is \p true.
                 Note that if \p sort is \p false, than lookup operations scan entire list.
             */
             static const bool sort = true;

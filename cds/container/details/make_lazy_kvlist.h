@@ -63,8 +63,11 @@ namespace cds { namespace container {
                 }
             };
 
-            typedef typename opt::details::make_comparator< key_type, original_type_traits >::type key_comparator;
-            typedef typename opt::details::make_equal_to< key_type, original_type_traits >::type equal_to_comparator;
+            typedef typename std::conditional< original_type_traits::sort,
+                typename opt::details::make_comparator< value_type, original_type_traits >::type,
+                typename opt::details::make_equal_to< value_type, original_type_traits >::type
+            >::type key_comparator;
+
 
             template <typename Less>
             struct less_wrapper {
@@ -80,8 +83,17 @@ namespace cds { namespace container {
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
                 typedef node_deallocator disposer;
-                typedef cds::details::compare_wrapper< node_type, key_comparator, key_field_accessor > compare;
-                typedef cds::details::predicate_wrapper< node_type, equal_to_comparator, key_field_accessor > equal_to;
+
+                typedef typename std::conditional< std::is_same< typename original_type_traits::equal_to, cds::opt::none >::value,
+                    cds::opt::none,
+                    typename equal_to_wrapper< typename original_type_traits::equal_to >::type
+                >::type equal_to;
+
+                typedef typename std::conditional< original_type_traits::sort,
+                    cds::details::compare_wrapper< node_type, key_comparator, key_field_accessor >,
+                    cds::opt::none
+                >::type compare;
+
                 static const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
             };
 

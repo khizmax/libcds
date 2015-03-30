@@ -148,6 +148,26 @@ namespace ordlist {
             }
         };
 
+        template <typename T>
+        struct equal {
+            bool operator ()(const T& v1, const T& v2 ) const
+            {
+                return v1.key() == v2.key();
+            }
+
+            template <typename Q>
+            bool operator ()(const T& v1, const Q& v2 ) const
+            {
+                return v1.key() == v2;
+            }
+
+            template <typename Q>
+            bool operator ()(const Q& v1, const T& v2 ) const
+            {
+                return v1 == v2.key();
+            }
+        };
+
         struct other_item {
             int nKey;
 
@@ -161,6 +181,14 @@ namespace ordlist {
             bool operator()( T const& i1, Q const& i2) const
             {
                 return i1.nKey < i2.nKey;
+            }
+        };
+
+        struct other_equal {
+            template <typename T, typename Q>
+            bool operator()( T const& i1, Q const& i2) const
+            {
+                return i1.nKey == i2.nKey;
             }
         };
 
@@ -632,6 +660,8 @@ namespace ordlist {
         void test_nogc_int()
         {
             typedef typename OrdList::value_type    value_type;
+            typedef typename std::conditional< OrdList::c_bSort, less<value_type>, equal<value_type>>::type find_predicate;
+
             {
                 value_type v1( 10, 50 );
                 value_type v2( 5, 25  );
@@ -647,7 +677,7 @@ namespace ordlist {
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
 
-                    CPPUNIT_ASSERT( l.find_with( v2.key(), less<value_type>() ) == nullptr );
+                    CPPUNIT_ASSERT( l.find_with( v2.key(), find_predicate() ) == nullptr );
                     CPPUNIT_ASSERT( l.find( v3.key() ) == nullptr );
                     CPPUNIT_ASSERT( !l.empty() );
 
@@ -672,10 +702,10 @@ namespace ordlist {
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 2 );
 
-                    CPPUNIT_ASSERT( l.find_with( v2.key(), less<value_type>() ) == &v2 );
+                    CPPUNIT_ASSERT( l.find_with( v2.key(), find_predicate() ) == &v2 );
 
                     CPPUNIT_ASSERT( v2.s.nFindCall == 0 );
-                    CPPUNIT_ASSERT( l.find_with( v2.key(), less<value_type>(), find_functor() ));
+                    CPPUNIT_ASSERT( l.find_with( v2.key(), find_predicate(), find_functor() ));
                     CPPUNIT_ASSERT( v2.s.nFindCall == 1 );
 
                     CPPUNIT_ASSERT( !l.find( v3.key() ));
@@ -815,6 +845,12 @@ namespace ordlist {
         void nogc_member_less();
         void nogc_member_cmpmix();
         void nogc_member_ic();
+        void nogc_base_unord_equal();
+        void nogc_base_unord_cmp();
+        void nogc_base_unord_less();
+        void nogc_member_unord_equal();
+        void nogc_member_unord_cmp();
+        void nogc_member_unord_less();
 
 
         CPPUNIT_TEST_SUITE(IntrusiveLazyListHeaderTest)
@@ -885,10 +921,16 @@ namespace ordlist {
             CPPUNIT_TEST(nogc_base_less)
             CPPUNIT_TEST(nogc_base_cmpmix)
             CPPUNIT_TEST(nogc_base_ic)
+            CPPUNIT_TEST(nogc_base_unord_equal)
+            CPPUNIT_TEST(nogc_base_unord_cmp)
+            CPPUNIT_TEST(nogc_base_unord_less)
             CPPUNIT_TEST(nogc_member_cmp)
             CPPUNIT_TEST(nogc_member_less)
             CPPUNIT_TEST(nogc_member_cmpmix)
             CPPUNIT_TEST(nogc_member_ic)
+            CPPUNIT_TEST(nogc_member_unord_equal)
+            CPPUNIT_TEST(nogc_member_unord_cmp)
+            CPPUNIT_TEST(nogc_member_unord_less)
 
         CPPUNIT_TEST_SUITE_END()
     };

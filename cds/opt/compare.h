@@ -252,8 +252,7 @@ namespace cds { namespace opt {
             template <typename T, typename Q>
             bool operator()( T const& t, Q const& q ) const
             {
-                compare_functor cmp;
-                return cmp(t, q) == 0;
+                return compare_functor()(t, q) == 0;
             }
         };
 
@@ -289,7 +288,8 @@ namespace cds { namespace opt {
                             opt::none >::type,
                         make_equal_to_from_less< less > >::type,
                     make_equal_to_from_compare< compare > >::type,
-                equal_to >::type type;
+                equal_to 
+            >::type type;
         };
     }
     //@endcond

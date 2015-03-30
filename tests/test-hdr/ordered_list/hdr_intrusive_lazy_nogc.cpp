@@ -15,6 +15,7 @@ namespace ordlist {
         typedef ci::LazyList< cds::gc::nogc, item, traits > list;
         test_nogc_int<list>();
     }
+
     void IntrusiveLazyListHeaderTest::nogc_base_less()
     {
         typedef base_int_item< cds::gc::nogc > item;
@@ -28,6 +29,7 @@ namespace ordlist {
         typedef ci::LazyList< cds::gc::nogc, item, traits > list;
         test_nogc_int<list>();
     }
+
     void IntrusiveLazyListHeaderTest::nogc_base_cmpmix()
     {
         typedef base_int_item< cds::gc::nogc > item;
@@ -42,6 +44,7 @@ namespace ordlist {
         >    list;
         test_nogc_int<list>();
     }
+
     void IntrusiveLazyListHeaderTest::nogc_base_ic()
     {
         typedef base_int_item< cds::gc::nogc > item;
@@ -57,6 +60,52 @@ namespace ordlist {
         >    list;
         test_nogc_int<list>();
     }
+
+    void IntrusiveLazyListHeaderTest::nogc_base_unord_equal()
+    {
+        typedef base_int_item< cds::gc::nogc > item;
+        struct traits: public
+            ci::lazy_list::make_traits<
+                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::nogc> > >
+                ,co::sort< false >
+                ,co::equal_to< equal<item> >
+                ,ci::opt::disposer< faked_disposer >
+            >::type
+        {};
+        typedef ci::LazyList< cds::gc::nogc, item, traits > list;
+        test_nogc_int<list>();
+    }
+
+    void IntrusiveLazyListHeaderTest::nogc_base_unord_cmp()
+    {
+        typedef base_int_item< cds::gc::nogc > item;
+        struct traits: public
+            ci::lazy_list::make_traits<
+                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::nogc> > >
+                ,co::sort< false >
+                ,co::compare< cmp<item> >
+                ,ci::opt::disposer< faked_disposer >
+            >::type
+        {};
+        typedef ci::LazyList< cds::gc::nogc, item, traits > list;
+        test_nogc_int<list>();
+    }
+
+    void IntrusiveLazyListHeaderTest::nogc_base_unord_less()
+    {
+        typedef base_int_item< cds::gc::nogc > item;
+        struct traits: public
+            ci::lazy_list::make_traits<
+                ci::opt::hook< ci::lazy_list::base_hook< co::gc<cds::gc::nogc> > >
+                ,co::sort< false >
+                ,co::less< less<item> >
+                ,ci::opt::disposer< faked_disposer >
+            >::type
+        {};
+        typedef ci::LazyList< cds::gc::nogc, item, traits > list;
+        test_nogc_int<list>();
+    }
+
     void IntrusiveLazyListHeaderTest::nogc_member_cmp()
     {
         typedef member_int_item< cds::gc::nogc > item;
@@ -73,6 +122,7 @@ namespace ordlist {
         >    list;
         test_nogc_int<list>();
     }
+
     void IntrusiveLazyListHeaderTest::nogc_member_less()
     {
         typedef member_int_item< cds::gc::nogc > item;
@@ -89,6 +139,7 @@ namespace ordlist {
         >    list;
         test_nogc_int<list>();
     }
+
     void IntrusiveLazyListHeaderTest::nogc_member_cmpmix()
     {
         typedef member_int_item< cds::gc::nogc > item;
@@ -106,6 +157,7 @@ namespace ordlist {
         >    list;
         test_nogc_int<list>();
     }
+
     void IntrusiveLazyListHeaderTest::nogc_member_ic()
     {
         typedef member_int_item< cds::gc::nogc > item;
@@ -119,6 +171,60 @@ namespace ordlist {
                 ,co::compare< cmp<item> >
                 ,ci::opt::disposer< faked_disposer >
                 ,co::item_counter< cds::atomicity::item_counter >
+            >::type
+        >    list;
+        test_nogc_int<list>();
+    }
+
+    void IntrusiveLazyListHeaderTest::nogc_member_unord_equal()
+    {
+        typedef member_int_item< cds::gc::nogc > item;
+        typedef ci::LazyList< cds::gc::nogc
+            ,item
+            ,ci::lazy_list::make_traits<
+                ci::opt::hook< ci::lazy_list::member_hook<
+                    offsetof( item, hMember ),
+                    co::gc<cds::gc::nogc>
+                > >
+                ,co::sort< false >
+                ,co::equal_to< equal<item> >
+                ,ci::opt::disposer< faked_disposer >
+            >::type
+        >    list;
+        test_nogc_int<list>();
+    }
+
+    void IntrusiveLazyListHeaderTest::nogc_member_unord_cmp()
+    {
+        typedef member_int_item< cds::gc::nogc > item;
+        typedef ci::LazyList< cds::gc::nogc
+            ,item
+            ,ci::lazy_list::make_traits<
+                ci::opt::hook< ci::lazy_list::member_hook<
+                    offsetof( item, hMember ),
+                    co::gc<cds::gc::nogc>
+                > >
+                ,co::sort< false >
+                ,co::compare< cmp<item> >
+                ,ci::opt::disposer< faked_disposer >
+            >::type
+        >    list;
+        test_nogc_int<list>();
+    }
+
+    void IntrusiveLazyListHeaderTest::nogc_member_unord_less()
+    {
+        typedef member_int_item< cds::gc::nogc > item;
+        typedef ci::LazyList< cds::gc::nogc
+            ,item
+            ,ci::lazy_list::make_traits<
+                ci::opt::hook< ci::lazy_list::member_hook<
+                    offsetof( item, hMember ),
+                    co::gc<cds::gc::nogc>
+                > >
+                ,co::sort< false >
+                ,co::less< less<item> >
+                ,ci::opt::disposer< faked_disposer >
             >::type
         >    list;
         test_nogc_int<list>();

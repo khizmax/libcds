@@ -44,7 +44,7 @@ namespace cds { namespace container {
             /// Specifies list ordering policy.
             /**
                 If \p sort is \p true, than list maintains items in sorted order, otherwise items are unordered. Default is \p true.
-                Note that if \p sort is \p falsem than lookup operations scan entire list.
+                Note that if \p sort is \p false then lookup operations scan entire list.
             */
             static const bool sort = true;
 
