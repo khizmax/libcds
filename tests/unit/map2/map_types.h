@@ -492,6 +492,14 @@ namespace map2 {
         typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHT_cmp_stdAlloc;
 #endif
 
+        struct traits_LazyList_unord_stdAlloc :
+            public cc::lazy_list::make_traits<
+                co::equal_to< equal_to >
+                ,co::sort< false >
+            >::type
+        {};
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_unord_stdAlloc > LazyList_NOGC_unord_stdAlloc;
+
         struct traits_LazyList_cmp_stdAlloc_seqcst :
             public cc::lazy_list::make_traits<
                 co::compare< compare >
@@ -587,6 +595,8 @@ namespace map2 {
         typedef cc::MichaelHashMap< rcu_shb, LazyList_RCU_SHB_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc;
         typedef cc::MichaelHashMap< rcu_sht, LazyList_RCU_SHT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc;
 #endif
+
+        typedef cc::MichaelHashMap< cds::gc::nogc, LazyList_NOGC_unord_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_unord_stdAlloc;
 
         typedef cc::MichaelHashMap< cds::gc::HP, LazyList_HP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_HP_less_stdAlloc;
         typedef cc::MichaelHashMap< cds::gc::DHP, LazyList_DHP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_DHP_less_stdAlloc;

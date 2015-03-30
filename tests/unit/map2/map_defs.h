@@ -87,12 +87,14 @@
     TEST_MAP(MichaelMap_NOGC_cmp_stdAlloc) \
     TEST_MAP(MichaelMap_NOGC_less_michaelAlloc) \
     TEST_MAP(MichaelMap_Lazy_NOGC_cmp_stdAlloc) \
+    TEST_MAP(MichaelMap_Lazy_NOGC_unord_stdAlloc) \
     TEST_MAP(MichaelMap_Lazy_NOGC_less_michaelAlloc)
 
 #define CDSUNIT_TEST_MichaelMap_nogc  \
     CPPUNIT_TEST(MichaelMap_NOGC_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_NOGC_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_NOGC_cmp_stdAlloc) \
+    CPPUNIT_TEST(MichaelMap_Lazy_NOGC_unord_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_NOGC_less_michaelAlloc) \
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
