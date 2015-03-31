@@ -797,7 +797,7 @@ namespace cds { namespace container {
             find_result result;
             {
                 rcu_lock l;
-                result = try_find( key, cmp, f, m_pRoot, 1, 0 );
+                result = try_find( key, cmp, f, m_pRoot, right_child, 0 );
             }
             assert( result != find_result::retry );
             return result == find_result::found;
@@ -861,8 +861,9 @@ namespace cds { namespace container {
             {
                 rcu_lock l;
 
-                int result = update_flags::failed;
-                do {
+                while ( true ) {
+                    int result;
+
                     // get right child of root
                     node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
                     if ( pChild ) {
@@ -875,8 +876,15 @@ namespace cds { namespace container {
                         else if ( pChild == child( m_pRoot, right_child, memory_model::memory_order_acquire )) {
                             result = try_extract_minmax( nDir, func, m_pRoot, pChild, nChildVersion, removed_list );
                         }
+                        else
+                            result = update_flags::retry;
                     }
-                } while ( result == update_flags::retry );
+                    else
+                        return;
+
+                    if ( result == update_flags::retry )
+                        m_stat.onRemoveRetry();
+                }
             }
         }
 
@@ -932,10 +940,8 @@ namespace cds { namespace container {
             while ( true ) {
                 node_type * pChild = child( pNode, nDir );
                 if ( !pChild ) {
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
-                        m_stat.onFindRetry();
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                         return find_result::retry;
-                    }
 
                     m_stat.onFindFailed();
                     return find_result::not_found;
@@ -963,26 +969,23 @@ namespace cds { namespace container {
                     m_stat.onFindWaitShrinking();
                     pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
 
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
-                        m_stat.onFindRetry();
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                         return find_result::retry;
-                    }
                 }
-                else if ( nChildVersion != node_type::unlinked ) {
-                    if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
-                        m_stat.onFindRetry();
+                else if ( nChildVersion != node_type::unlinked && child( pNode, nDir ) == pChild )
+                {
+                    if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
                         return find_result::retry;
-                    }
 
                     find_result found = try_find( key, cmp, f, pChild, nCmp, nChildVersion );
                     if ( found != find_result::retry )
                         return found;
                 }
 
-                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
-                    m_stat.onFindRetry();
+                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                     return find_result::retry;
-                }
+
+                m_stat.onFindRetry();
             }
         }
 
@@ -991,8 +994,9 @@ namespace cds { namespace container {
         {
             assert( gc::is_locked() );
 
-            int result;
-            do {
+            while ( true ) {
+                int result;
+
                 // get right child of root
                 node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
                 if ( pChild ) {
@@ -1002,9 +1006,8 @@ namespace cds { namespace container {
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
                         result = update_flags::retry;
                     }
-                    else if ( pChild == child( m_pRoot, right_child, memory_model::memory_order_acquire )) {
+                    else if ( pChild == child( m_pRoot, right_child, memory_model::memory_order_acquire ))
                         result = try_update( key, cmp, nFlags, funcUpdate, pChild, nChildVersion, disp );
-                    }
                     else
                         result = update_flags::retry;
                 } 
@@ -1035,8 +1038,12 @@ namespace cds { namespace container {
 
                     return update_flags::failed;
                 }
-            } while ( result == update_flags::retry );
-            return result;
+
+                if ( result == update_flags::retry )
+                    m_stat.onUpdateRetry();
+                else
+                    return result;
+            }
         }
 
         template <typename K, typename Compare, typename Func>
@@ -1044,8 +1051,9 @@ namespace cds { namespace container {
         {
             assert( gc::is_locked() );
 
-            int result;
-            do {
+            while ( true ) {
+                int result;
+
                 // get right child of root
                 node_type * pChild = child( m_pRoot, right_child, memory_model::memory_order_acquire );
                 if ( pChild ) {
@@ -1063,9 +1071,12 @@ namespace cds { namespace container {
                 }
                 else
                     return false;
-            } while ( result == update_flags::retry );
 
-            return result == update_flags::result_removed;
+                if ( result == update_flags::retry )
+                    m_stat.onRemoveRetry();
+                else
+                    return result == update_flags::result_removed;
+            }
         }
 
         template <typename K, typename Compare, typename Func>
@@ -1076,19 +1087,16 @@ namespace cds { namespace container {
 
             int nCmp = cmp( key, pNode->m_key );
             if ( nCmp == 0 ) {
-                if ( nFlags & update_flags::allow_update ) {
+                if ( nFlags & update_flags::allow_update )
                     return try_update_node( funcUpdate, pNode, nVersion, disp );
-                }
                 return update_flags::failed;
             }
 
-            int result;
-            do {
+            while ( true ) {
+                int result;
                 node_type * pChild = child( pNode, nCmp );
-                if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
-                    m_stat.onUpdateRetry();
+                if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
                     return update_flags::retry;
-                }
 
                 if ( pChild == nullptr ) {
                     // insert new node
@@ -1099,21 +1107,19 @@ namespace cds { namespace container {
                 }
                 else {
                     // update child
-                    result = update_flags::retry;
                     version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
                     if ( nChildVersion & node_type::shrinking ) {
                         m_stat.onUpdateWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
                         // retry
+                        result = update_flags::retry;
                     }
                     else if ( pChild == child( pNode, nCmp )) {
                         // this second read is important, because it is protected by nChildVersion
 
                         // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
-                            m_stat.onUpdateRetry();
+                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                             return update_flags::retry;
-                        }
 
                         // At this point we know that the traversal our parent took to get to node is still valid.
                         // The recursive implementation will validate the traversal from node to
@@ -1122,14 +1128,18 @@ namespace cds { namespace container {
                         // to validate node version any more.
                         result = try_update( key, cmp, nFlags, funcUpdate, pChild, nChildVersion, disp );
                     }
+                    else
+                        result = update_flags::retry;
                 }
 
-                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
+                if ( result == update_flags::retry ) {
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
+                        return update_flags::retry;
                     m_stat.onUpdateRetry();
-                    return update_flags::retry;
                 }
-            } while ( result == update_flags::retry );
-            return result;
+                else
+                    return result;
+            }
         }
 
         template <typename K, typename Compare, typename Func>
@@ -1142,17 +1152,15 @@ namespace cds { namespace container {
             if ( nCmp == 0 )
                 return try_remove_node( pParent, pNode, nVersion, func, disp );
 
-            int result;
-            do {
-                node_type * pChild = child( pNode, nCmp );
-                if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
-                    m_stat.onRemoveRetry();
-                    return update_flags::retry;
-                }
+            while ( true ) {
+                int result;
 
-                if ( pChild == nullptr ) {
+                node_type * pChild = child( pNode, nCmp );
+                if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
+                    return update_flags::retry;
+
+                if ( pChild == nullptr )
                     return update_flags::failed;
-                }
                 else {
                     // update child
                     result = update_flags::retry;
@@ -1161,15 +1169,14 @@ namespace cds { namespace container {
                         m_stat.onRemoveWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
                         // retry
+                        result = update_flags::retry;
                     }
                     else if ( pChild == child( pNode, nCmp )) {
                         // this second read is important, because it is protected by nChildVersion
 
                         // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
-                            m_stat.onRemoveRetry();
+                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                             return update_flags::retry;
-                        }
 
                         // At this point we know that the traversal our parent took to get to node is still valid.
                         // The recursive implementation will validate the traversal from node to
@@ -1178,14 +1185,18 @@ namespace cds { namespace container {
                         // to validate node version any more.
                         result = try_remove( key, cmp, func, pNode, pChild, nChildVersion, disp );
                     }
+                    else
+                        result = update_flags::retry;
                 }
 
-                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
+                if ( result == update_flags::retry ) {
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
+                        return update_flags::retry;
                     m_stat.onRemoveRetry();
-                    return update_flags::retry;
                 }
-            } while ( result == update_flags::retry );
-            return result;
+                else
+                    return result;
+            }
         }
 
         template <typename Func>
@@ -1194,34 +1205,31 @@ namespace cds { namespace container {
             assert( gc::is_locked() );
             assert( nVersion != node_type::unlinked );
 
-            int result;
-            do {
+            while ( true ) {
+                int result;
                 node_type * pChild = child( pNode, nDir );
-                if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
-                    m_stat.onRemoveRetry();
+                if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
                     return update_flags::retry;
-                }
 
                 if ( pChild == nullptr ) {
                     // Found min/max
                     return try_remove_node( pParent, pNode, nVersion, func, disp );
                 }
                 else {
-                    result = update_flags::retry;
+                    //result = update_flags::retry;
                     version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
                     if ( nChildVersion & node_type::shrinking ) {
                         m_stat.onRemoveWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
                         // retry
+                        result = update_flags::retry;
                     }
                     else if ( pChild == child( pNode, nDir )) {
                         // this second read is important, because it is protected by nChildVersion
 
                         // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
-                            m_stat.onRemoveRetry();
+                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                             return update_flags::retry;
-                        }
 
                         // At this point we know that the traversal our parent took to get to node is still valid.
                         // The recursive implementation will validate the traversal from node to
@@ -1230,14 +1238,18 @@ namespace cds { namespace container {
                         // to validate node version any more.
                         result = try_extract_minmax( nDir, func, pNode, pChild, nChildVersion, disp );
                     }
+                    else
+                        result = update_flags::retry;
                 }
 
-                if ( result == update_flags::retry && pNode->version( memory_model::memory_order_acquire ) != nVersion ) {
+                if ( result == update_flags::retry ) {
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
+                        return update_flags::retry;
                     m_stat.onRemoveRetry();
-                    return update_flags::retry;
                 }
-            } while ( result == update_flags::retry );
-            return result;
+                else
+                    return result;
+            }
         }
 
         template <typename K, typename Func>
@@ -1308,10 +1320,8 @@ namespace cds { namespace container {
             {
                 node_scoped_lock l( m_Monitor, *pNode );
 
-                if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
-                    m_stat.onUpdateRetry();
+                if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
                     return update_flags::retry;
-                }
 
                 if ( pNode->is_unlinked( memory_model::memory_order_relaxed )) {
                     m_stat.onUpdateUnlinked();
