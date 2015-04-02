@@ -46,16 +46,23 @@ namespace cds { namespace container {
             - [2010] N.Bronson, J.Casper, H.Chafi, K.Olukotun "A Practical Concurrent Binary Search Tree"
             - <a href="http://github.com/nbronson/snaptree">Java implementation</a>
 
-        This is a concurrent AVL tree algorithm that uses hand-over-hand optimistic validation, 
-        a concurrency control mechanism for searching and navigating a binary search tree. 
-        This mechanism minimizes spurious retries when concurrent structural changes cannot 
-        affect the correctness of the search or navigation result. The algorithm is based on
-        partially external trees, a simple scheme that simplifies deletions by leaving a routing 
-        node in the tree when deleting a node that has two children, then opportunistically unlinking 
-        routing nodes during rebalancing. As in external trees, which store values only in leaf nodes, 
-        deletions can be performed locally while holding a fixed number of locks. Partially
-        external trees, however, require far fewer routing nodes than an external tree for most sequences 
-        of insertions and deletions.
+        This is a concurrent AVL tree algorithm that uses hand-over-hand optimistic validation,
+        a concurrency control mechanism for searching and navigating a binary search tree.
+        This mechanism minimizes spurious retries when concurrent structural changes cannot
+        affect the correctness of the search or navigation result.
+        The algorithm is based on partially external trees, a simple scheme that simplifies deletions
+        by leaving a routing node in the tree when deleting a node that has two children,
+        then opportunistically unlinking routing nodes during rebalancing. As in external trees,
+        which store values only in leaf nodes, deletions can be performed locally while holding
+        a fixed number of locks. Partially external trees, however, require far fewer routing nodes
+        than an external tree for most sequences of insertions and deletions.
+        The algorithm uses optimistic concurrency control, but carefully manage the
+        tree in such a way that all atomic regions have fixed read and write sets
+        that are known ahead of time. This allows to reduce practical overheads by embedding
+        the concurrency control directly. To perform tree operations using only fixed sized
+        atomic regions the algo uses the following mechanisms: search operations overlap atomic blocks as
+        in the hand-over-hand locking technique; mutations perform rebalancing separately;
+        and deletions occasionally leave a routing node in the tree.
 
         <b>Template arguments</b>:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
