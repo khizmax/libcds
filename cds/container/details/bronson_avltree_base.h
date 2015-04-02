@@ -60,7 +60,17 @@ namespace cds { namespace container {
                 , m_pValue( nullptr )
             {}
 
-            atomics::atomic<node_type *>& child( int nDirection )
+            node_type * parent( atomics::memory_order order ) const
+            {
+                return m_pParent.load( order );
+            }
+
+            void parent( node_type * p, atomics::memory_order order )
+            {
+                m_pParent.store( p );
+            }
+
+            atomics::atomic<node_type *> const& child( int nDirection ) const
             {
                 assert( nDirection != 0 );
                 return nDirection < 0 ? m_pLeft : m_pRight;

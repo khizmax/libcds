@@ -159,7 +159,7 @@ namespace cds { namespace container {
 
         static node_type * parent( node_type * pNode, atomics::memory_order order = memory_model::memory_order_relaxed )
         {
-            return pNode->m_pParent.load( order );
+            return pNode->parent( order );
         }
 
         // RCU safe disposer 
@@ -1442,7 +1442,7 @@ namespace cds { namespace container {
                 pParent->m_pRight.store( pSplice, memory_model::memory_order_relaxed );
 
             if ( pSplice )
-                pSplice->m_pParent.store( pParent, memory_model::memory_order_release );
+                pSplice->parent( pParent, memory_model::memory_order_relaxed );
 
             // Mark the node as unlinked
             pNode->version( node_type::unlinked, memory_model::memory_order_release );
@@ -1684,12 +1684,12 @@ namespace cds { namespace container {
 
             pNode->m_pLeft.store( pLRight, memory_model::memory_order_relaxed );
             if ( pLRight != nullptr )
-                pLRight->m_pParent.store( pNode, memory_model::memory_order_relaxed  );
+                pLRight->parent( pNode, memory_model::memory_order_relaxed  );
 
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pLeft->m_pRight.store( pNode, memory_model::memory_order_relaxed );
-            pNode->m_pParent.store( pLeft, memory_model::memory_order_relaxed );
+            pNode->parent( pLeft, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
@@ -1699,7 +1699,7 @@ namespace cds { namespace container {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
                 pParent->m_pRight.store( pLeft, memory_model::memory_order_relaxed );
             }
-            pLeft->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+            pLeft->parent( pParent, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
@@ -1760,12 +1760,12 @@ namespace cds { namespace container {
             // fix up pNode links, careful to be compatible with concurrent traversal for all but pNode
             pNode->m_pRight.store( pRLeft, memory_model::memory_order_relaxed );
             if ( pRLeft != nullptr )
-                pRLeft->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+                pRLeft->parent( pNode, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pRight->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
-            pNode->m_pParent.store( pRight, memory_model::memory_order_relaxed );
+            pNode->parent( pRight, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
@@ -1775,7 +1775,7 @@ namespace cds { namespace container {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
                 pParent->m_pRight.store( pRight, memory_model::memory_order_relaxed );
             }
-            pRight->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+            pRight->parent( pParent, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
@@ -1828,20 +1828,20 @@ namespace cds { namespace container {
             // fix up pNode links, careful about the order!
             pNode->m_pLeft.store( pLRR, memory_model::memory_order_relaxed );
             if ( pLRR != nullptr )
-                pLRR->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+                pLRR->parent( pNode, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pLeft->m_pRight.store( pLRL, memory_model::memory_order_relaxed );
             if ( pLRL != nullptr )
-                pLRL->m_pParent.store( pLeft, memory_model::memory_order_relaxed );
+                pLRL->parent( pLeft, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pLRight->m_pLeft.store( pLeft, memory_model::memory_order_relaxed );
-            pLeft->m_pParent.store( pLRight, memory_model::memory_order_relaxed );
+            pLeft->parent( pLRight, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pLRight->m_pRight.store( pNode, memory_model::memory_order_relaxed );
-            pNode->m_pParent.store( pLRight, memory_model::memory_order_relaxed );
+            pNode->parent( pLRight, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             if ( pPL == pNode )
@@ -1850,7 +1850,7 @@ namespace cds { namespace container {
                 assert( child( pParent, right_child ) == pNode );
                 pParent->m_pRight.store( pLRight, memory_model::memory_order_relaxed );
             }
-            pLRight->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+            pLRight->parent( pParent, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             // fix up heights
@@ -1917,20 +1917,20 @@ namespace cds { namespace container {
             // fix up pNode links, careful about the order!
             pNode->m_pRight.store( pRLL, memory_model::memory_order_relaxed );
             if ( pRLL != nullptr )
-                pRLL->m_pParent.store( pNode, memory_model::memory_order_relaxed );
+                pRLL->parent( pNode, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pRight->m_pLeft.store( pRLR, memory_model::memory_order_relaxed );
             if ( pRLR != nullptr )
-                pRLR->m_pParent.store( pRight, memory_model::memory_order_relaxed );
+                pRLR->parent( pRight, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pRLeft->m_pRight.store( pRight, memory_model::memory_order_relaxed );
-            pRight->m_pParent.store( pRLeft, memory_model::memory_order_relaxed );
+            pRight->parent( pRLeft, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             pRLeft->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
-            pNode->m_pParent.store( pRLeft, memory_model::memory_order_relaxed );
+            pNode->parent( pRLeft, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             if ( pPL == pNode )
@@ -1939,7 +1939,7 @@ namespace cds { namespace container {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
                 pParent->m_pRight.store( pRLeft, memory_model::memory_order_relaxed );
             }
-            pRLeft->m_pParent.store( pParent, memory_model::memory_order_relaxed );
+            pRLeft->parent( pParent, memory_model::memory_order_relaxed );
             atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             // fix up heights
