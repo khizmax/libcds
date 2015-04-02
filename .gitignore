@@ -5,6 +5,7 @@
 /projects/Win/vc12/cds.v12.suo
 /tests/cppunit/*.o
 *.o
+*.d
 /todo-2.0.txt
 /tests/data/dictionary.txt
 /bin

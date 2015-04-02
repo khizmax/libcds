@@ -30,7 +30,7 @@ endif
 endif
 
 COMP_OPT = -c $(CFLAGS) $(BASE_OPT)
-CPP_COMP_OPT = -std=c++11 -c $(CXXFLAGS) $(BASE_OPT)
+CPP_COMP_OPT = -MMD -std=c++11 -c $(CXXFLAGS) $(BASE_OPT)
 
 COMPILER_ROOT = $(shell dirname `dirname \`which 	$(CXX)\``)
 
@@ -43,7 +43,8 @@ LD_OPTS = $(LDFLAGS)
 
 include ../projects/source.libcds.mk
 CDS_OBJS := $(addprefix $(OBJ_PATH)/,$(notdir $(CDS_SOURCES)))
-CDS_OBJS :=$(CDS_OBJS:%.cpp=%.o)
+CDS_OBJS := $(CDS_OBJS:%.cpp=%.o)
+CDS_OBJS_DEPS := $(CDS_OBJS:%.o=%.d)
 CDS_SOURCES := $(CDS_SOURCES:%.cpp=../%.cpp)
 
 ifeq ($(platform),mingw)
@@ -59,6 +60,7 @@ else
 endif
 endif
 
+-include $(CDS_OBJS_DEPS)
 $(CDS_OBJS): $(OBJ_PATH)/%.o: ../src/%.cpp
 	$(CXX) $(CPP_COMP_OPT) $(CPP_BUILD_CDS_OPT) -o $@ $<
 
@@ -101,8 +103,10 @@ OBJ_TEST_PATH=$(OBJ_PATH)
 include ../projects/source.test-common.mk
 CDS_TESTCOMMON_SOURCES := $(CDS_TESTCOMMON_SOURCES:%.cpp=../%.cpp)
 TEST_COMMON_OBJS := $(CDS_TESTCOMMON_SOURCES:%.cpp=%.o)
+TEST_COMMON_OBJS_DEPS := $(TEST_COMMON_OBJS:%.o=%.d)
 
 TEST_COMMONHDR_SRC_DIR=../tests
+-include $(TEST_COMMON_OBJS_DEPS)
 $(TEST_COMMON_OBJS) : %.o : %.cpp
 	$(CXX) $(CPP_COMP_OPT) -I$(TEST_COMMONHDR_SRC_DIR) $< -o $@
 
@@ -110,15 +114,19 @@ $(TEST_COMMON_OBJS) : %.o : %.cpp
 include ../projects/source.test-hdr.mk
 CDS_TESTHDR_SOURCES := $(CDS_TESTHDR_SOURCES:%.cpp=../%.cpp)
 TESTHDR_OBJS := $(CDS_TESTHDR_SOURCES:%.cpp=%.o)
+TESTHDR_OBJS_DEPS := $(TESTHDR_OBJS:%.o=%.d)
 
 TESTHDR_SRC_DIR=../tests/test-hdr
+-include $(TESTHDR_OBJS_DEPS)
 $(TESTHDR_OBJS): %.o: %.cpp
 	$(CXX) $(CPP_COMP_OPT) -I$(TESTHDR_SRC_DIR) -I$(TEST_COMMONHDR_SRC_DIR) $< -o $@
 
 include ../projects/source.test-hdr.offsetof.mk
 CDS_TESTHDR_OFFSETOF_SOURCES := $(CDS_TESTHDR_OFFSETOF_SOURCES:%.cpp=../%.cpp)
 TESTHDR_OBJS_NO_OFFSETOF_WARN := $(CDS_TESTHDR_OFFSETOF_SOURCES:%.cpp=%.o)
+TESTHDR_OBJS_NO_OFFSETOF_WARN_DEPS := $(TESTHDR_OBJS_NO_OFFSETOF_WARN:%.o=%.d)
 
+-include $(TESTHDR_OBJS_NO_OFFSETOF_WARN_DEPS)
 $(TESTHDR_OBJS_NO_OFFSETOF_WARN): %.o: %.cpp
 	$(CXX) $(CPP_COMP_OPT) -I$(TESTHDR_SRC_DIR) -I$(TEST_COMMONHDR_SRC_DIR) -Wno-invalid-offsetof $< -o $@
 
@@ -152,9 +160,11 @@ include ../projects/source.unit.misc.mk
 CDSUNIT_MISC_SOURCES := $(CDSUNIT_MISC_SOURCES:%.cpp=../%.cpp)
 CDSUNIT_MISC_FILE := $(CDSUNIT_MISC_SOURCES:%.cpp=%.o)
 
-TEST_OBJ_FILE= $(CDSUNIT_COMMON_FILE) $(CDSUNIT_MAP_FILE) $(CDSUNIT_SET_FILE) $(CDSUNIT_QUEUE_FILE) $(CDSUNIT_PQUEUE_FILE) \
+TEST_OBJ_FILE := $(CDSUNIT_COMMON_FILE) $(CDSUNIT_MAP_FILE) $(CDSUNIT_SET_FILE) $(CDSUNIT_QUEUE_FILE) $(CDSUNIT_PQUEUE_FILE) \
 	$(CDSUNIT_STACK_FILE) $(CDSUNIT_MISC_FILE)
+TEST_OBJ_FILE_DEPS := $(TEST_OBJ_FILE:%.o=%.d)
 
+-include $(TEST_OBJ_FILE_DEPS)
 $(TEST_OBJ_FILE): %.o: %.cpp
 	$(CXX) $(CPP_COMP_OPT) -I$(TEST_SRC_DIR) -I$(TEST_COMMONHDR_SRC_DIR) $< -o $@
 
@@ -266,6 +276,7 @@ clean:
 	rm -f $(OBJ_PATH)/debug/*
 	rm -f $(OBJ_PATH)/release/*
 	rm -f $(TEST_COMMON_OBJS) $(TESTHDR_OBJS) $(TESTHDR_OBJS_NO_OFFSETOF_WARN) $(TEST_OBJ_FILE)
+	rm -f $(TEST_COMMON_OBJS_DEPS) $(TESTHDR_OBJS_DEPS) $(TESTHDR_OBJS_NO_OFFSETOF_WARN_DEPS) $(TEST_OBJ_FILE_DEPS)
 	rm -f $(BIN_PATH)/libcds*
 	rm -f $(BIN_PATH)/cdsu-*
 	rm -f $(BIN_PATH)/test-hdr
