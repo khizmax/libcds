@@ -162,7 +162,7 @@ namespace cds { namespace container {
             return pNode->parent( order );
         }
 
-        // RCU safe disposer 
+        // RCU safe disposer
         class rcu_disposer
         {
             node_type *     m_pRetiredList;     ///< head of retired node list
@@ -185,13 +185,13 @@ namespace cds { namespace container {
                 pNode->m_pNextRemoved = m_pRetiredList;
                 m_pRetiredList = pNode;
             }
-            
+
             void dispose_value( mapped_type pVal )
             {
                 assert( m_pRetiredValue == nullptr );
                 m_pRetiredValue = pVal;
             }
-            
+
         private:
             struct internal_disposer
             {
@@ -204,7 +204,7 @@ namespace cds { namespace container {
             void clean()
             {
                 assert( !gc::is_locked() );
-                
+
                 // TODO: use RCU::batch_retire
 
                 // Dispose nodes
@@ -261,7 +261,7 @@ namespace cds { namespace container {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
                     return pVal;
-                }, 
+                },
                 update_flags::allow_insert
             ) == update_flags::result_inserted;
         }
@@ -286,11 +286,11 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, mapped_type pVal, bool bInsert = true )
         {
             int result = do_update( key, key_comparator(),
-                [pVal]( node_type * ) -> mapped_type 
+                [pVal]( node_type * ) -> mapped_type
                 {
                     return pVal;
                 },
-                update_flags::allow_update | (bInsert ? update_flags::allow_insert : 0) 
+                update_flags::allow_update | (bInsert ? update_flags::allow_insert : 0)
             );
             return std::make_pair( result != 0, (result & update_flags::result_inserted) != 0 );
         }
@@ -331,8 +331,8 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return do_remove( 
-                key, 
+            return do_remove(
+                key,
                 cds::opt::details::make_comparator_from_less<Less>(),
                 []( key_type const&, mapped_type pVal, rcu_disposer& disp ) -> bool { disp.dispose_value( pVal ); return true;  }
             );
@@ -357,13 +357,13 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            return do_remove( 
-                key, 
-                key_comparator(), 
-                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool { 
+            return do_remove(
+                key,
+                key_comparator(),
+                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool {
                     assert( pVal );
-                    f( key, *pVal ); 
-                    disp.dispose_value(pVal); 
+                    f( key, *pVal );
+                    disp.dispose_value(pVal);
                     return true;
                 }
             );
@@ -380,13 +380,13 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return do_remove( 
-                key, 
+            return do_remove(
+                key,
                 cds::opt::details::make_comparator_from_less<Less>(),
-                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool { 
+                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool {
                     assert( pVal );
-                    f( key, *pVal ); 
-                    disp.dispose_value(pVal); 
+                    f( key, *pVal );
+                    disp.dispose_value(pVal);
                     return true;
                 }
             );
@@ -584,7 +584,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return do_find( key, key_comparator(), 
+            return do_find( key, key_comparator(),
                 [&f]( node_type * pNode ) -> bool {
                     assert( pNode != nullptr );
                     mapped_type pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
@@ -608,7 +608,7 @@ namespace cds { namespace container {
         bool find_with( K const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return do_find( key, cds::opt::details::make_comparator_from_less<Less>(), 
+            return do_find( key, cds::opt::details::make_comparator_from_less<Less>(),
                 [&f]( node_type * pNode ) -> bool {
                     assert( pNode != nullptr );
                     mapped_type pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
@@ -617,7 +617,7 @@ namespace cds { namespace container {
                         return true;
                     }
                     return false;
-                } 
+                }
             );
         }
 
@@ -737,7 +737,7 @@ namespace cds { namespace container {
                 void operator()( size_t nLevel, size_t hLeft, size_t hRight );
             };
             \endcode
-            where 
+            where
             - \p nLevel - the level where the violation is found
             - \p hLeft - the height of left subtree
             - \p hRight - the height of right subtree
@@ -1010,7 +1010,7 @@ namespace cds { namespace container {
                         result = try_update( key, cmp, nFlags, funcUpdate, pChild, nChildVersion, disp );
                     else
                         result = update_flags::retry;
-                } 
+                }
                 else {
                     // the tree is empty
                     if ( nFlags & update_flags::allow_insert ) {
@@ -1265,7 +1265,7 @@ namespace cds { namespace container {
 
             if ( c_bRelaxedInsert ) {
                 if ( pNode->version( memory_model::memory_order_acquire ) != nVersion
-                     || child( pNode, nDir ) != nullptr ) 
+                     || child( pNode, nDir ) != nullptr )
                 {
                     m_stat.onInsertRetry();
                     return update_flags::retry;
@@ -1280,7 +1280,7 @@ namespace cds { namespace container {
                 node_scoped_lock l( m_Monitor, *pNode );
 
                 if ( pNode->version( memory_model::memory_order_acquire ) != nVersion
-                     || child( pNode, nDir ) != nullptr ) 
+                     || child( pNode, nDir ) != nullptr )
                 {
                     if ( c_bRelaxedInsert ) {
                         mapped_type pVal = pNew->m_pValue.load( memory_model::memory_order_relaxed );
@@ -1356,7 +1356,7 @@ namespace cds { namespace container {
             if ( !pNode->is_valued( atomics::memory_order_relaxed ) )
                 return update_flags::failed;
 
-            if ( child( pNode, left_child ) == nullptr || child( pNode, right_child ) == nullptr ) { 
+            if ( child( pNode, left_child ) == nullptr || child( pNode, right_child ) == nullptr ) {
                 node_type * pDamaged;
                 mapped_type pOld;
                 {
@@ -1368,7 +1368,7 @@ namespace cds { namespace container {
                         node_scoped_lock ln( m_Monitor, *pNode );
                         pOld = pNode->value( memory_model::memory_order_relaxed );
                         if ( !( pNode->version( memory_model::memory_order_acquire ) == nVersion
-                          && pOld 
+                          && pOld
                           && try_unlink_locked( pParent, pNode, disp )))
                         {
                             return update_flags::retry;

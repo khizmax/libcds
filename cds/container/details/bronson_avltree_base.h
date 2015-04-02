@@ -434,7 +434,7 @@ namespace cds { namespace container {
                 Due the nature of GC schema the disposer may be called asynchronously.
             - \p opt::sync_monitor -  @ref cds_sync_monitor "synchronization monitor" type for node-level locking,
                 default is \p cds::sync::injecting_monitor<cds::sync::spin>
-            - \p bronson_avltree::relaxed_insert - enable (\p true) or disable (\p false, the default) 
+            - \p bronson_avltree::relaxed_insert - enable (\p true) or disable (\p false, the default)
                 @ref bronson_avltree::relaxed_insert "relaxed insertion"
             - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)
                 To enable it use \p atomicity::item_counter
@@ -463,6 +463,5 @@ namespace cds { namespace container {
     class BronsonAVLTreeMap;
 
 }} // namespace cds::container
-
 
 #endif // #ifndef CDSLIB_CONTAINER_DETAILS_BRONSON_AVLTREE_BASE_H

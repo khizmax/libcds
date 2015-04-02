@@ -71,7 +71,7 @@ namespace cds { namespace container {
         - \p Traits - tree traits, default is \p bronson_avltree::traits
             It is possible to declare option-based tree with \p bronson_avltree::make_traits metafunction
             instead of \p Traits template argument.
-            
+
         There is \ref cds_container_BronsonAVLTreeMap_rcu_ptr "a specialization" for "key -> value pointer" map.
 
         @note Before including <tt><cds/container/bronson_avltree_map_rcu.h></tt> you should include appropriate RCU header file,
@@ -249,7 +249,7 @@ namespace cds { namespace container {
             //TODO: study how to pass a parameter pack to a lambda efficiently using perfect forwarding
             // see http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#904 - this is what we need
             return base_class::do_update( key, key_comparator(),
-                [&args...]( node_type * pNode ) -> mapped_type * 
+                [&args...]( node_type * pNode ) -> mapped_type *
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -257,15 +257,15 @@ namespace cds { namespace container {
                 },
                 update_flags::allow_insert
             ) == update_flags::result_inserted;
-#       else 
+#       else
             // gcc 4.8 error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
             // workaround (from http://stackoverflow.com/questions/14191989/how-do-i-use-variadic-perfect-forwarding-into-a-lambda)
-            auto f = std::bind<mapped_type *>( 
+            auto f = std::bind<mapped_type *>(
                         []( Args... args) -> mapped_type* { return cxx_allocator().New( std::move(args)...); },
                         std::forward<Args>(args)...
                         );
             return base_class::do_update( key, key_comparator(),
-                [&f]( node_type * pNode ) -> mapped_type * 
+                [&f]( node_type * pNode ) -> mapped_type *
                 {
                     assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
                     CDS_UNUSED( pNode );
@@ -307,7 +307,7 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, Func func )
         {
             int result = base_class::do_update( key, key_comparator(),
-                [&func]( node_type * pNode ) -> mapped_type* 
+                [&func]( node_type * pNode ) -> mapped_type*
                 {
                     mapped_type * pVal = pNode->m_pValue.load( memory_model::memory_order_relaxed );
                     if ( !pVal ) {
@@ -318,7 +318,7 @@ namespace cds { namespace container {
                         func( false, pNode->m_key, *pVal );
                     return pVal;
                 },
-                update_flags::allow_insert | update_flags::allow_update 
+                update_flags::allow_insert | update_flags::allow_update
             );
             return std::make_pair( result != 0, (result & update_flags::result_inserted) != 0 );
         }
@@ -690,7 +690,7 @@ namespace cds { namespace container {
                 void operator()( size_t nLevel, size_t hLeft, size_t hRight );
             };
             \endcode
-            where 
+            where
             - \p nLevel - the level where the violation is found
             - \p hLeft - the height of left subtree
             - \p hRight - the height of right subtree
