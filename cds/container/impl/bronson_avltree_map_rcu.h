@@ -1086,11 +1086,8 @@ namespace cds { namespace container {
             assert( nVersion != node_type::unlinked );
 
             int nCmp = cmp( key, pNode->m_key );
-            if ( nCmp == 0 ) {
-                if ( nFlags & update_flags::allow_update )
-                    return try_update_node( funcUpdate, pNode, nVersion, disp );
-                return update_flags::failed;
-            }
+            if ( nCmp == 0 )
+                return try_update_node( nFlags, funcUpdate, pNode, nVersion, disp );
 
             while ( true ) {
                 int result;
@@ -1313,7 +1310,7 @@ namespace cds { namespace container {
         }
 
         template <typename Func>
-        int try_update_node( Func funcUpdate, node_type * pNode, version_type nVersion, rcu_disposer& disp )
+        int try_update_node( int nFlags, Func funcUpdate, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
             mapped_type pOld;
             assert( pNode != nullptr );
@@ -1327,6 +1324,12 @@ namespace cds { namespace container {
                     m_stat.onUpdateUnlinked();
                     return update_flags::retry;
                 }
+
+                if ( pNode->is_valued( memory_model::memory_order_relaxed ) && !(nFlags & update_flags::allow_update) ) {
+                    m_stat.onInsertFailed();
+                    return update_flags::failed;
+                }
+
 
                 pOld = pNode->value( memory_model::memory_order_relaxed );
                 mapped_type pVal = funcUpdate( pNode );

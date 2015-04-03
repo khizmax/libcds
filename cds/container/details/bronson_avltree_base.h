@@ -181,6 +181,7 @@ namespace cds { namespace container {
             event_counter   m_nFindWaitShrinking;   ///< Count of waiting until shrinking completed duting \p find() call
 
             event_counter   m_nInsertSuccess;       ///< Count of inserting data node
+            event_counter   m_nInsertFailed;        ///< Count of insert failures
             event_counter   m_nRelaxedInsertFailed; ///< Count of false creating of data nodes (only if @ref bronson_avltree::relaxed_insert "relaxed insertion" is enabled)
             event_counter   m_nInsertRetry;         ///< Count of insert retries via concurrent operations
             event_counter   m_nUpdateWaitShrinking; ///< Count of waiting until shrinking completed during \p update() call
@@ -222,7 +223,8 @@ namespace cds { namespace container {
             void onFindRetry()          { ++m_nFindRetry        ; }
             void onFindWaitShrinking()  { ++m_nFindWaitShrinking; }
 
-            void onInsertSuccess()          { ++m_nInsertSuccess    ; }
+            void onInsertSuccess()          { ++m_nInsertSuccess; }
+            void onInsertFailed()           { ++m_nInsertFailed; }
             void onRelaxedInsertFailed()    { ++m_nRelaxedInsertFailed; }
             void onInsertRetry()            { ++m_nInsertRetry      ; }
             void onUpdateWaitShrinking()    { ++m_nUpdateWaitShrinking; }
@@ -269,6 +271,7 @@ namespace cds { namespace container {
             void onFindWaitShrinking()  const {}
 
             void onInsertSuccess()          const {}
+            void onInsertFailed()           const {}
             void onRelaxedInsertFailed()    const {}
             void onInsertRetry()            const {}
             void onUpdateWaitShrinking()    const {}

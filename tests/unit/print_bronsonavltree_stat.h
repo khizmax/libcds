@@ -20,6 +20,7 @@ namespace std {
             << "\t\t               m_nFindRetry: " << s.m_nFindRetry.get()           << "\n"
             << "\t\t       m_nFindWaitShrinking: " << s.m_nFindWaitShrinking.get()   << "\n"
             << "\t\t           m_nInsertSuccess: " << s.m_nInsertSuccess.get()       << "\n"
+            << "\t\t            m_nInsertFailed: " << s.m_nInsertFailed.get()        << "\n"
             << "\t\t     m_nRelaxedInsertFailed: " << s.m_nRelaxedInsertFailed.get() << "\n"
             << "\t\t             m_nInsertRetry: " << s.m_nInsertRetry.get()         << "\n"
             << "\t\t     m_nUpdateWaitShrinking: " << s.m_nUpdateWaitShrinking.get() << "\n"
