@@ -1312,6 +1312,7 @@ namespace cds { namespace container {
         int try_update_node( int nFlags, Func funcUpdate, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
             mapped_type pOld;
+            bool bInserted;
             assert( pNode != nullptr );
             {
                 node_scoped_lock l( m_Monitor, *pNode );
@@ -1330,6 +1331,7 @@ namespace cds { namespace container {
                 }
 
                 pOld = pNode->value( memory_model::memory_order_relaxed );
+                bInserted = pOld == nullptr;
                 mapped_type pVal = funcUpdate( pNode );
                 if ( pVal == pOld )
                     pOld = nullptr;
@@ -1342,6 +1344,11 @@ namespace cds { namespace container {
             if ( pOld ) {
                 disp.dispose_value(pOld);
                 m_stat.onDisposeValue();
+            }
+
+            if ( bInserted ) {
+                m_stat.onInsertSuccess();
+                return update_flags::result_inserted;
             }
 
             m_stat.onUpdateSuccess();
