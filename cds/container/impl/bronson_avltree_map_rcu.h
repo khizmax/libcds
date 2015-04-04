@@ -1166,7 +1166,6 @@ namespace cds { namespace container {
                         m_stat.onRemoveWaitShrinking();
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
                         // retry
-                        result = update_flags::retry;
                     }
                     else if ( pChild == child( pNode, nCmp )) {
                         // this second read is important, because it is protected by nChildVersion
@@ -1330,7 +1329,6 @@ namespace cds { namespace container {
                     return update_flags::failed;
                 }
 
-
                 pOld = pNode->value( memory_model::memory_order_relaxed );
                 mapped_type pVal = funcUpdate( pNode );
                 if ( pVal == pOld )
@@ -1356,7 +1354,7 @@ namespace cds { namespace container {
             assert( pParent != nullptr );
             assert( pNode != nullptr );
 
-            if ( !pNode->is_valued( atomics::memory_order_relaxed ) )
+            if ( !pNode->is_valued( memory_model::memory_order_relaxed ) )
                 return update_flags::failed;
 
             if ( child( pNode, left_child ) == nullptr || child( pNode, right_child ) == nullptr ) {
@@ -1364,7 +1362,7 @@ namespace cds { namespace container {
                 mapped_type pOld;
                 {
                     node_scoped_lock lp( m_Monitor, *pParent );
-                    if ( pParent->is_unlinked( atomics::memory_order_relaxed ) || parent( pNode ) != pParent )
+                    if ( pParent->is_unlinked( memory_model::memory_order_relaxed ) || parent( pNode ) != pParent )
                         return update_flags::retry;
 
                     {
@@ -1397,9 +1395,9 @@ namespace cds { namespace container {
                 mapped_type pOld;
                 {
                     node_scoped_lock ln( m_Monitor, *pNode );
-                    pOld = pNode->value( atomics::memory_order_relaxed );
-                    if ( pNode->version( atomics::memory_order_acquire ) == nVersion && pOld ) {
-                        pNode->m_pValue.store( nullptr, atomics::memory_order_relaxed );
+                    pOld = pNode->value( memory_model::memory_order_relaxed );
+                    if ( pNode->version( memory_model::memory_order_acquire ) == nVersion && pOld ) {
+                        pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
                         result = update_flags::result_removed;
                     }
                 }
