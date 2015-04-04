@@ -1358,6 +1358,8 @@ namespace cds { namespace container {
                 return update_flags::failed;
 
             if ( child( pNode, left_child ) == nullptr || child( pNode, right_child ) == nullptr ) {
+                // pNode can be replaced with its child
+
                 node_type * pDamaged;
                 mapped_type pOld;
                 {
@@ -1367,13 +1369,15 @@ namespace cds { namespace container {
 
                     {
                         node_scoped_lock ln( m_Monitor, *pNode );
-                        pOld = pNode->value( memory_model::memory_order_relaxed );
-                        if ( !( pNode->version( memory_model::memory_order_acquire ) == nVersion
-                          && pOld
-                          && try_unlink_locked( pParent, pNode, disp )))
-                        {
+                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
                             return update_flags::retry;
-                        }
+
+                        pOld = pNode->value( memory_model::memory_order_relaxed );
+                        if ( !pOld )
+                            return update_flags::failed;
+
+                        if ( !try_unlink_locked( pParent, pNode, disp ))
+                            return update_flags::retry;
                     }
                     pDamaged = fix_height_locked( pParent );
                 }
@@ -1388,30 +1392,29 @@ namespace cds { namespace container {
                     fix_height_and_rebalance( pDamaged, disp );
                     m_stat.onRemoveRebalanceRequired();
                 }
-                return update_flags::result_removed;
             }
             else {
-                int result = update_flags::retry;
+                // pNode is an internal with two children
+
                 mapped_type pOld;
                 {
                     node_scoped_lock ln( m_Monitor, *pNode );
                     pOld = pNode->value( memory_model::memory_order_relaxed );
-                    if ( pNode->version( memory_model::memory_order_acquire ) == nVersion && pOld ) {
-                        pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
-                        result = update_flags::result_removed;
-                    }
+                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
+                        return update_flags::retry;
+                    if ( !pOld )
+                        return update_flags::failed;
+
+                    pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
                 }
 
-                if ( result == update_flags::result_removed ) {
-                    --m_ItemCounter;
-                    if ( func( pNode->m_key, pOld, disp ))  // calls pOld disposer inside
-                        m_stat.onDisposeValue();
-                    else
-                        m_stat.onExtractValue();
-                }
-
-                return result;
+                --m_ItemCounter;
+                if ( func( pNode->m_key, pOld, disp ))  // calls pOld disposer inside
+                    m_stat.onDisposeValue();
+                else
+                    m_stat.onExtractValue();
             }
+            return update_flags::result_removed;
         }
 
         bool try_unlink_locked( node_type * pParent, node_type * pNode, rcu_disposer& disp )
