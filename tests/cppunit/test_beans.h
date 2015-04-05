@@ -9,6 +9,10 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
+#ifndef CDS_CPPUNIT_TEST_BEANS_H
+#define CDS_CPPUNIT_TEST_BEANS_H
+
+
 // Forward declarations
 namespace cds {
     namespace intrusive {}
@@ -36,3 +40,5 @@ namespace test_beans {
         }
     };
 } // namespace beans
+
+#endif // #ifndef CDS_CPPUNIT_TEST_BEANS_H

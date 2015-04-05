@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_DETAILS_SKIP_LIST_BASE_H
-#define __CDS_INTRUSIVE_DETAILS_SKIP_LIST_BASE_H
+#ifndef CDSLIB_INTRUSIVE_DETAILS_SKIP_LIST_BASE_H
+#define CDSLIB_INTRUSIVE_DETAILS_SKIP_LIST_BASE_H
 
 #include <cds/intrusive/details/base.h>
 #include <cds/details/marked_ptr.h>
@@ -674,4 +674,4 @@ namespace cds { namespace intrusive {
 
 }}   // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_DETAILS_SKIP_LIST_BASE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_DETAILS_SKIP_LIST_BASE_H

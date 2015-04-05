@@ -32,6 +32,12 @@ namespace set {
             typedef HashSetHdrTest::less<HashSetHdrTest::item>   less;
         };
 
+        struct nogc_equal_traits: public cc::lazy_list::traits
+        {
+            typedef HashSetHdrTest::equal<HashSetHdrTest::item>   equal_to;
+            static const bool sort = false;
+        };
+
         struct nogc_cmpmix_traits: public cc::lazy_list::traits
         {
             typedef HashSetHdrTest::cmp<HashSetHdrTest::item>   compare;
@@ -73,6 +79,24 @@ namespace set {
             >::type
         > opt_set;
         test_int_nogc< opt_set >();
+    }
+
+    void HashSetHdrTest::Lazy_nogc_equal()
+    {
+        typedef cc::LazyList< cds::gc::nogc, item, nogc_equal_traits > list;
+
+        // traits-based version
+        typedef cc::MichaelHashSet< cds::gc::nogc, list, set_traits > set;
+        test_int_nogc_unordered< set >();
+
+        // option-based version
+        typedef cc::MichaelHashSet< cds::gc::nogc, list,
+            cc::michael_set::make_traits<
+                cc::opt::hash< hash_int >
+                ,cc::opt::item_counter< simple_item_counter >
+            >::type
+        > opt_set;
+        test_int_nogc_unordered< opt_set >();
     }
 
     void HashSetHdrTest::Lazy_nogc_cmpmix()

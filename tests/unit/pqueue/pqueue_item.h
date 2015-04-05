@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDSUNIT_PQUEUE_ITEM_H
-#define __CDSUNIT_PQUEUE_ITEM_H
+#ifndef CDSUNIT_PQUEUE_ITEM_H
+#define CDSUNIT_PQUEUE_ITEM_H
 
 namespace pqueue {
     struct SimpleValue {
@@ -81,4 +81,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __CDSUNIT_PQUEUE_ITEM_H
+#endif // #ifndef CDSUNIT_PQUEUE_ITEM_H

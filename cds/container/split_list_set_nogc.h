@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SPLIT_LIST_SET_NOGC_H
-#define __CDS_CONTAINER_SPLIT_LIST_SET_NOGC_H
+#ifndef CDSLIB_CONTAINER_SPLIT_LIST_SET_NOGC_H
+#define CDSLIB_CONTAINER_SPLIT_LIST_SET_NOGC_H
 
 #include <cds/intrusive/split_list_nogc.h>
 #include <cds/container/details/split_list_base.h>
@@ -356,4 +356,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SPLIT_LIST_SET_NOGC_H
+#endif // #ifndef CDSLIB_CONTAINER_SPLIT_LIST_SET_NOGC_H

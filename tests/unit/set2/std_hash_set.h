@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDSUNIT_STD_HASH_SET_STD_H
-#define __CDSUNIT_STD_HASH_SET_STD_H
+#ifndef CDSUNIT_STD_HASH_SET_H
+#define CDSUNIT_STD_HASH_SET_H
 
 #include <unordered_set>
 #include <mutex>    //unique_lock
@@ -108,4 +108,4 @@ namespace set2 {
     };
 }   // namespace set2
 
-#endif  // #ifndef __CDSUNIT_STD_HASH_SET_STD_H
+#endif  // #ifndef CDSUNIT_STD_HASH_SET_H

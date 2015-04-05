@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __UNIT_PRINT_CUCKOO_STAT_H
-#define __UNIT_PRINT_CUCKOO_STAT_H
+#ifndef CDSUNIT_PRINT_CUCKOO_STAT_H
+#define CDSUNIT_PRINT_CUCKOO_STAT_H
 
 #include <cds/intrusive/cuckoo_set.h>
 #include <ostream>
@@ -95,4 +95,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __UNIT_PRINT_CUCKOO_STAT_H
+#endif // #ifndef CDSUNIT_PRINT_CUCKOO_STAT_H

@@ -9,15 +9,15 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDS_ALGO_FLAT_COMBINING_H
-#define __CDS_ALGO_FLAT_COMBINING_H
+#ifndef CDSLIB_ALGO_FLAT_COMBINING_H
+#define CDSLIB_ALGO_FLAT_COMBINING_H
 
 #include <iostream>
 #include <mutex>
 #include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/backoff_strategy.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <cds/opt/options.h>
 #include <cds/algo/int_algo.h>
 #include <boost/thread/tss.hpp>     // thread_specific_ptr
@@ -200,7 +200,7 @@ namespace cds { namespace algo {
         */
         struct traits
         {
-            typedef cds::lock::Spin             lock_type;  ///< Lock type
+            typedef cds::sync::spin             lock_type;  ///< Lock type
             typedef cds::backoff::delay_of<2>   back_off;   ///< Back-off strategy
             typedef CDS_DEFAULT_ALLOCATOR       allocator;  ///< Allocator used for TLS data (allocating publication_record derivatives)
             typedef empty_stat                  stat;       ///< Internal statistics
@@ -210,7 +210,7 @@ namespace cds { namespace algo {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
+            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::delay_of<2>
             - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::stat - internal statistics, possible type: \ref stat, \ref empty_stat (the default)
@@ -835,4 +835,4 @@ namespace cds { namespace algo {
     } // namespace flat_combining
 }} // namespace cds::algo
 
-#endif // #ifndef __CDS_ALGO_FLAT_COMBINING_H
+#endif // #ifndef CDSLIB_ALGO_FLAT_COMBINING_H

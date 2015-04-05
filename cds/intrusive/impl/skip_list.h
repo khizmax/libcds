@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_IMPL_SKIP_LIST_H
-#define __CDS_INTRUSIVE_IMPL_SKIP_LIST_H
+#ifndef CDSLIB_INTRUSIVE_IMPL_SKIP_LIST_H
+#define CDSLIB_INTRUSIVE_IMPL_SKIP_LIST_H
 
 #include <type_traits>
 #include <memory>
@@ -1579,4 +1579,4 @@ namespace cds { namespace intrusive {
 }} // namespace cds::intrusive
 
 
-#endif // #ifndef __CDS_INTRUSIVE_IMPL_SKIP_LIST_H
+#endif // #ifndef CDSLIB_INTRUSIVE_IMPL_SKIP_LIST_H

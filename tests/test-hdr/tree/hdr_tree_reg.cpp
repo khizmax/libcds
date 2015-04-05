@@ -16,6 +16,7 @@
 
 #include "tree/hdr_ellenbintree_set.h"
 #include "tree/hdr_ellenbintree_map.h"
+#include "tree/hdr_bronson_avltree_map.h"
 
 namespace tree {
     namespace ellen_bintree_rcu {
@@ -36,3 +37,4 @@ namespace tree {
 CPPUNIT_TEST_SUITE_REGISTRATION_(tree::IntrusiveBinTreeHdrTest, s_IntrusiveBinTreeHdrTest);
 CPPUNIT_TEST_SUITE_REGISTRATION_(tree::EllenBinTreeSetHdrTest, s_EllenBinTreeSetHdrTest);
 CPPUNIT_TEST_SUITE_REGISTRATION_(tree::EllenBinTreeMapHdrTest, s_EllenBinTreeMapHdrTest);
+CPPUNIT_TEST_SUITE_REGISTRATION_( tree::BronsonAVLTreeHdrTest, s_BronsonAVLTreeHdrTest );

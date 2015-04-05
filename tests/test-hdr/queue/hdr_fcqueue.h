@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDSUNIT_HDR_FCQUEUE_H
-#define __CDSUNIT_HDR_FCQUEUE_H
+#ifndef CDSTEST_HDR_FCQUEUE_H
+#define CDSTEST_HDR_FCQUEUE_H
 
 #include "cppunit/cppunit_proxy.h"
 #include <cds/details/defs.h>
@@ -171,4 +171,4 @@ namespace queue {
     };
 } // namespace queue
 
-#endif // #ifndef __CDSUNIT_HDR_FCQUEUE_H
+#endif // #ifndef CDSTEST_HDR_FCQUEUE_H

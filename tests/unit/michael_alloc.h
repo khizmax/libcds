@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDS_UNIT_MICHAEL_ALLOC_H
-#define __CDS_UNIT_MICHAEL_ALLOC_H
+#ifndef CDSUNIT_MICHAEL_ALLOC_H
+#define CDSUNIT_MICHAEL_ALLOC_H
 
 #include <cds/memory/michael/allocator.h>
 #include <memory>
@@ -73,4 +73,4 @@ namespace memory {
     };
 }   // namespace memory
 
-#endif
+#endif // #ifndef CDSUNIT_MICHAEL_ALLOC_H

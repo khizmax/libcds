@@ -1,5 +1,14 @@
 CDS C++ library
 ===============
+[![GitHub version](https://badge.fury.io/gh/khizmax%2Flibcds.svg)](http://badge.fury.io/gh/khizmax%2Flibcds)
+<!---
+The build time for lib and hdr-test is exceed the limit of 50 minutes
+[![Build Status](https://travis-ci.org/khizmax/libcds.svg?branch=dev)](https://travis-ci.org/khizmax/libcds)
+-->
+<!---
+The coverity dataset is about 4G of size and about 1G in compressed state so it is a problem to upload it to the coverity server
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/4445/badge.svg)](https://scan.coverity.com/projects/4445)
+-->
 
 The Concurrent Data Structures (CDS) library is a collection of concurrent containers
 that don't require external (manual) synchronization for shared access, and safe memory reclamation (SMR) 
@@ -24,6 +33,12 @@ and MS VC++ 12 (2013) Update 4.
 Download the latest release from http://sourceforge.net/projects/libcds/files/
 
 See online doxygen-generated doc here: http://libcds.sourceforge.net/doc/cds-api/index.html
+
+**Pull request requirements**
+- Pull-request to *master* branch will be unconditionally rejected
+- *integration* branch is intended for pull-request. Usually, *integration* branch is the same as *master*
+- *dev* branch is intended for main developing. Usually, it contains unstable code
+
 
 References
 ----------

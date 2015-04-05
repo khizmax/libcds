@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_BUFFER_H
-#define __CDS_OPT_BUFFER_H
+#ifndef CDSLIB_OPT_BUFFER_H
+#define CDSLIB_OPT_BUFFER_H
 
 #include <cds/details/defs.h>
 #include <cds/user_setup/allocator.h>
@@ -241,4 +241,4 @@ namespace cds { namespace opt {
 
 }}  // namespace cds::opt
 
-#endif // #ifndef __CDS_OPT_BUFFER_H
+#endif // #ifndef CDSLIB_OPT_BUFFER_H

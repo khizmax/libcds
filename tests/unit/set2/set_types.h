@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef _CDSUNIT_SET2_SET_TYPES_H
-#define _CDSUNIT_SET2_SET_TYPES_H
+#ifndef CDSUNIT_SET_TYPES_H
+#define CDSUNIT_SET_TYPES_H
 
 #include <cds/urcu/general_instant.h>
 #include <cds/urcu/general_buffered.h>
@@ -58,7 +58,7 @@
 #endif
 #include <cds/container/striped_set.h>
 
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <boost/functional/hash/hash.hpp>
 
 #include "cppunit/cppunit_mini.h"
@@ -1718,11 +1718,11 @@ namespace set2 {
         // ***************************************************************************
         // Standard implementations
 
-        typedef StdSet< key_val, less, cds::SpinLock >                  StdSet_Spin;
-        typedef StdSet< key_val, less, lock::NoLock>                    StdSet_NoLock;
+        typedef StdSet< key_val, less, cds::sync::spin > StdSet_Spin;
+        typedef StdSet< key_val, less, lock::NoLock>     StdSet_NoLock;
 
-        typedef StdHashSet< key_val, hash, less, equal_to, cds::SpinLock >    StdHashSet_Spin;
-        typedef StdHashSet< key_val, hash, less, equal_to, lock::NoLock >     StdHashSet_NoLock;
+        typedef StdHashSet< key_val, hash, less, equal_to, cds::sync::spin > StdHashSet_Spin;
+        typedef StdHashSet< key_val, hash, less, equal_to, lock::NoLock >    StdHashSet_NoLock;
 
     };
 
@@ -1815,6 +1815,20 @@ namespace set2 {
         ellen_bintree_pool::internal_node_counter::reset();
     }
 
+    //*******************************************************
+    // check_before_clear
+    //*******************************************************
+
+    template <typename Set>
+    static inline void check_before_clear( Set& /*s*/ )
+    {}
+
+    template <typename GC, typename Key, typename T, typename Traits>
+    static inline void check_before_clear( cds::container::EllenBinTreeSet<GC, Key, T, Traits>& s )
+    {
+        CPPUNIT_CHECK_CURRENT( s.check_consistency() );
+    }
+
 }   // namespace set2
 
-#endif // ifndef _CDSUNIT_SET2_SET_TYPES_H
+#endif // ifndef CDSUNIT_SET_TYPES_H

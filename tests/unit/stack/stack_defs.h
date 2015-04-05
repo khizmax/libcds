@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDSUNIT_STACK_DEFS_H
-#define __CDSUNIT_STACK_DEFS_H
+#ifndef CDSUNIT_STACK_DEFS_H
+#define CDSUNIT_STACK_DEFS_H
 
 #define CDSUNIT_DECLARE_TreiberStack \
     TEST_CASE( Treiber_HP        ) \
@@ -173,4 +173,4 @@
     CPPUNIT_TEST( StdStack_List_Mutex   ) \
     CPPUNIT_TEST( StdStack_List_Spin    )
 
-#endif // #ifndef __CDSUNIT_STACK_DEFS_H
+#endif // #ifndef CDSUNIT_STACK_DEFS_H

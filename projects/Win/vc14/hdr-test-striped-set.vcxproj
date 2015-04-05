@@ -70,7 +70,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_unordered_set.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_boost_vector.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_hashset_std.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_hashset_vc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_list.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_set.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_refinable_hashset_slist.cpp" />
@@ -82,7 +81,6 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_unordered_set.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_boost_vector.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_hashset_std.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_hashset_vc.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_list.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_set.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_striped_hashset_slist.cpp" />

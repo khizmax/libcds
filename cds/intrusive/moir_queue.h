@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_MOIR_QUEUE_H
-#define __CDS_INTRUSIVE_MOIR_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_MOIR_QUEUE_H
+#define CDSLIB_INTRUSIVE_MOIR_QUEUE_H
 
 #include <cds/intrusive/msqueue.h>
 
@@ -117,8 +117,10 @@ namespace cds { namespace intrusive {
                 h = res.guards.protect( 0, base_class::m_pHead, node_to_value() );
                 pNext = res.guards.protect( 1, h->m_pNext, node_to_value() );
 
-                if ( pNext == nullptr )
-                    return false    ;    // queue is empty
+                if ( pNext == nullptr ) {
+                    base_class::m_Stat.onEmptyDequeue();
+                    return false;    // queue is empty
+                }
 
                 if ( base_class::m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                     node_type * t = base_class::m_pTail.load(memory_model::memory_order_acquire);
@@ -164,4 +166,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_MOIR_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_MOIR_QUEUE_H

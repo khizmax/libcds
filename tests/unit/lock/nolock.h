@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __UNIT_LOCK_NOLOCK_H
-#define __UNIT_LOCK_NOLOCK_H
+#ifndef CDSUNIT_LOCK_NOLOCK_H
+#define CDSUNIT_LOCK_NOLOCK_H
 
 namespace lock {
     // Win32 critical section
@@ -22,4 +22,4 @@ namespace lock {
     };
 }
 
-#endif // #ifndef __UNIT_LOCK_NOLOCK_H
+#endif // #ifndef CDSUNIT_LOCK_NOLOCK_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_DETAILS_GPB_H
-#define _CDS_URCU_DETAILS_GPB_H
+#ifndef CDSLIB_URCU_DETAILS_GPB_H
+#define CDSLIB_URCU_DETAILS_GPB_H
 
 #include <mutex>
 #include <cds/urcu/details/gp.h>
@@ -215,4 +215,4 @@ namespace cds { namespace urcu {
 
 }} // namespace cds::urcu
 
-#endif // #ifndef _CDS_URCU_DETAILS_GPB_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_GPB_H

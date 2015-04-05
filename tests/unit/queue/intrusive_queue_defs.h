@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDSUNIT_INTRUSIVE_QUEUE_DEFS_H
-#define __CDSUNIT_INTRUSIVE_QUEUE_DEFS_H
+#ifndef CDSUNIT_INTRUSIVE_QUEUE_DEFS_H
+#define CDSUNIT_INTRUSIVE_QUEUE_DEFS_H
 
 // MSQueue
 #define CDSUNIT_DECLARE_MSQueue \
@@ -172,4 +172,4 @@
     CPPUNIT_TEST( BoostSList_mutex ) \
     CPPUNIT_TEST( BoostSList_spin )
 
-#endif // #ifndef __CDSUNIT_INTRUSIVE_QUEUE_DEFS_H
+#endif // #ifndef CDSUNIT_INTRUSIVE_QUEUE_DEFS_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_CXX11_ATOMIC_H
-#define __CDS_COMPILER_CXX11_ATOMIC_H
+#ifndef CDSLIB_COMPILER_CXX11_ATOMIC_H
+#define CDSLIB_COMPILER_CXX11_ATOMIC_H
 //@cond
 
 #include <type_traits>  // make_unsigned
@@ -2194,4 +2194,4 @@ namespace cds { namespace cxx11_atomic {
 }}  // namespace cds::cxx11_atomic
 
 //@endcond
-#endif // #ifndef __CDS_COMPILER_CXX11_ATOMIC_H
+#endif // #ifndef CDSLIB_COMPILER_CXX11_ATOMIC_H

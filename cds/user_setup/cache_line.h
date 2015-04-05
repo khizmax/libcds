@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_USER_SETUP_CACHE_LINE_H
-#define __CDS_USER_SETUP_CACHE_LINE_H
+#ifndef CDSLIB_USER_SETUP_CACHE_LINE_H
+#define CDSLIB_USER_SETUP_CACHE_LINE_H
 
 /** \file
     \brief Cache-line size definition
@@ -27,4 +27,4 @@ namespace cds {
 }   // namespace cds
 //@endcond
 
-#endif // #ifndef __CDS_USER_SETUP_CACHE_LINE_H
+#endif // #ifndef CDSLIB_USER_SETUP_CACHE_LINE_H

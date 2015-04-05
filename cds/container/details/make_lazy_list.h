@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_MAKE_LAZY_LIST_H
-#define __CDS_CONTAINER_DETAILS_MAKE_LAZY_LIST_H
+#ifndef CDSLIB_CONTAINER_DETAILS_MAKE_LAZY_LIST_H
+#define CDSLIB_CONTAINER_DETAILS_MAKE_LAZY_LIST_H
 
 #include <cds/details/binary_functor_wrapper.h>
 
@@ -45,7 +45,10 @@ namespace cds { namespace container {
                 }
             };
 
-            typedef typename opt::details::make_comparator< value_type, original_type_traits >::type key_comparator;
+            typedef typename std::conditional< original_type_traits::sort,
+                typename opt::details::make_comparator< value_type, original_type_traits >::type,
+                typename opt::details::make_equal_to< value_type, original_type_traits >::type
+            >::type key_comparator;
 
             struct value_accessor {
                 value_type const & operator()( node_type const & node ) const
@@ -59,13 +62,33 @@ namespace cds { namespace container {
                 typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor > type;
             };
 
+            template <typename Equal>
+            struct equal_to_wrapper {
+                typedef cds::details::predicate_wrapper< node_type, Equal, value_accessor > type;
+            };
+
             struct intrusive_traits: public original_type_traits
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
                 typedef node_deallocator               disposer;
                 static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
 
-                typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
+                typedef typename std::conditional< std::is_same< typename original_type_traits::equal_to, cds::opt::none >::value,
+                    cds::opt::none,
+                    typename equal_to_wrapper< typename original_type_traits::equal_to >::type
+                >::type equal_to;
+
+                typedef typename std::conditional< 
+                    original_type_traits::sort 
+                       || !std::is_same<typename original_type_traits::compare, cds::opt::none>::value
+                       || !std::is_same<typename original_type_traits::less, cds::opt::none>::value,
+                    cds::details::compare_wrapper<
+                        node_type,
+                        typename opt::details::make_comparator< value_type, original_type_traits >::type,
+                        value_accessor
+                    >,
+                    cds::opt::none
+                >::type compare;
             };
 
             typedef intrusive::LazyList<gc, node_type, intrusive_traits>  type;
@@ -75,4 +98,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H
+#endif  // #ifndef CDSLIB_CONTAINER_DETAILS_MAKE_MICHAEL_LIST_H

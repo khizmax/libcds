@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_VC_X86_BITOP_H
-#define __CDS_COMPILER_VC_X86_BITOP_H
+#ifndef CDSLIB_COMPILER_VC_X86_BITOP_H
+#define CDSLIB_COMPILER_VC_X86_BITOP_H
 
 #include <intrin.h>
 #pragma intrinsic(_BitScanReverse)
@@ -80,4 +80,4 @@ namespace cds {
 }}}    // namespace cds::bitop::platform
 //@endcond
 
-#endif    // #ifndef __CDS_COMPILER_VC_X86_BITOP_H
+#endif    // #ifndef CDSLIB_COMPILER_VC_X86_BITOP_H

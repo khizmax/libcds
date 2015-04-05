@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_LAZY_LIST_NOGC_H
-#define __CDS_CONTAINER_LAZY_LIST_NOGC_H
+#ifndef CDSLIB_CONTAINER_LAZY_LIST_NOGC_H
+#define CDSLIB_CONTAINER_LAZY_LIST_NOGC_H
 
 #include <memory>
 #include <cds/container/details/lazy_list_base.h>
@@ -16,6 +16,11 @@ namespace cds { namespace container {
 
         This specialization is so-called append-only when no item
         reclamation may be performed. The class does not support deleting of list item.
+
+        The list can be ordered if \p Traits::sort is \p true that is default
+        or unordered otherwise. Unordered list can be maintained by \p equal_to
+        relationship (\p Traits::equal_to), but for the ordered list \p less
+        or \p compare relations should be specified in \p Traits.
 
         @copydetails cds_nonintrusive_LazyList_gc
     */
@@ -44,18 +49,19 @@ namespace cds { namespace container {
         typedef T      value_type; ///< Type of value stored in the list
         typedef Traits traits;     ///< List traits
 
-        typedef typename base_class::back_off     back_off;       ///< Back-off strategy used
-        typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter item_counter;   ///< Item counting policy used
-        typedef typename maker::key_comparator    key_comparator; ///< key comparison functor
-        typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::back_off       back_off;            ///< Back-off strategy used
+        typedef typename maker::allocator_type      allocator_type;      ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter   item_counter;        ///< Item counting policy used
+        typedef typename maker::key_comparator      key_comparator;      ///< key comparing functor
+        typedef typename base_class::memory_model   memory_model;        ///< Memory ordering. See cds::opt::memory_model option
+        static CDS_CONSTEXPR bool const c_bSort = base_class::c_bSort; ///< List type: ordered (\p true) or unordered (\p false)
 
     protected:
         //@cond
-        typedef typename base_class::value_type   node_type;
-        typedef typename maker::cxx_allocator     cxx_allocator;
-        typedef typename maker::node_deallocator  node_deallocator;
-        typedef typename maker::intrusive_traits::compare intrusive_key_comparator;
+        typedef typename base_class::value_type     node_type;
+        typedef typename maker::cxx_allocator       cxx_allocator;
+        typedef typename maker::node_deallocator    node_deallocator;
+        typedef typename base_class::key_comparator intrusive_key_comparator;
 
         typedef typename base_class::node_type      head_type;
         //@endcond
@@ -318,18 +324,31 @@ namespace cds { namespace container {
             return node_to_iterator( find_at( head(), key, intrusive_key_comparator() ));
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Finds the key \p val using \p pred predicate for searching (only for ordered list)
         /**
             The function is an analog of \ref cds_nonintrusive_LazyList_nogc_find "find(Q const&)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
         */
-        template <typename Q, typename Less>
-        iterator find_with( Q const& key, Less pred )
+        template <typename Q, typename Less, bool Sort = c_bSort>
+        typename std::enable_if<Sort, iterator>::type find_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ));
+        }
+
+        /// Finds the key \p val using \p equal predicate for searching (only for unordered list)
+        /**
+            The function is an analog of \ref cds_nonintrusive_LazyList_nogc_find "find(Q const&)"
+            but \p pred is used for key comparing.
+            \p Equal functor has the interface like \p std::equal_to.
+        */
+        template <typename Q, typename Equal, bool Sort = c_bSort>
+        typename std::enable_if<!Sort, iterator>::type find_with( Q const& key, Equal equal )
+        {
+            CDS_UNUSED( equal );
+            return node_to_iterator( find_at( head(), key, typename maker::template equal_to_wrapper<Equal>::type() ));
         }
 
         /// Check if the list is empty
@@ -407,4 +426,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_LAZY_LIST_NOGC_H
+#endif // #ifndef CDSLIB_CONTAINER_LAZY_LIST_NOGC_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
-#define __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
+#ifndef CDSLIB_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
+#define CDSLIB_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
 
 #include <cds/container/details/base.h>
 #include <cds/opt/buffer.h>
@@ -60,7 +60,7 @@ namespace cds { namespace container {
             - \p opt::value_cleaner - a functor to clean item dequeued.
                 The functor calls the destructor for queue item.
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
-                If \p T is a complex type, \p value_cleaner may be the useful feature.
+                If \p T is a complex type, \p value_cleaner can be an useful feature.
                 Default value is \ref opt::v::destruct_cleaner
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
@@ -173,6 +173,8 @@ namespace cds { namespace container {
         /// Constructs the queue of capacity \p nCapacity
         /**
             For \p cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+
+            The buffer capacity must be the power of two.
         */
         VyukovMPMCCycleQueue(
             size_t nCapacity = 0
@@ -185,7 +187,7 @@ namespace cds { namespace container {
             // Buffer capacity must be power of 2
             assert( nCapacity >= 2 && (nCapacity & (nCapacity - 1)) == 0 );
 
-            for (size_t i = 0; i != nCapacity; i += 1)
+            for (size_t i = 0; i != nCapacity; ++i )
                 m_buffer[i].sequence.store(i, memory_model::memory_order_relaxed);
 
             m_posEnqueue.store(0, memory_model::memory_order_relaxed);
@@ -218,11 +220,10 @@ namespace cds { namespace container {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
 
-                intptr_t dif = (intptr_t)seq - (intptr_t)pos;
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos);
 
-                if (dif == 0)
-                {
-                    if ( m_posEnqueue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed) )
+                if (dif == 0) {
+                    if ( m_posEnqueue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed ))
                         break;
                 }
                 else if (dif < 0)
@@ -274,11 +275,10 @@ namespace cds { namespace container {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
 
-                intptr_t dif = (intptr_t)seq - (intptr_t)pos;
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos);
 
-                if (dif == 0)
-                {
-                    if ( m_posEnqueue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed) )
+                if (dif == 0) {
+                    if ( m_posEnqueue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed))
                         break;
                 }
                 else if (dif < 0)
@@ -316,10 +316,10 @@ namespace cds { namespace container {
             {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
-                intptr_t dif = (intptr_t)seq - (intptr_t)(pos + 1);
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos + 1);
 
                 if (dif == 0) {
-                    if ( m_posDequeue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed))
+                    if ( m_posDequeue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed))
                         break;
                 }
                 else if (dif < 0)
@@ -330,8 +330,8 @@ namespace cds { namespace container {
 
             f( cell->data );
             value_cleaner()( cell->data );
-            --m_ItemCounter;
             cell->sequence.store( pos + m_nBufferMask + 1, memory_model::memory_order_release );
+            --m_ItemCounter;
 
             return true;
         }
@@ -370,7 +370,7 @@ namespace cds { namespace container {
             {
                 cell = &m_buffer[pos & m_nBufferMask];
                 size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
-                intptr_t dif = (intptr_t)seq - (intptr_t)(pos + 1);
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos + 1);
 
                 if (dif == 0)
                     return false;
@@ -391,7 +391,7 @@ namespace cds { namespace container {
         /// Returns queue's item count
         /**
             The value returned depends on \p vyukov_queue::traits::item_counter option.
-            For \p atomicity::empty_item_counter, this function always returns 0.
+            For \p atomicity::empty_item_counter, the function always returns 0.
         */
         size_t size() const
         {
@@ -406,4 +406,4 @@ namespace cds { namespace container {
     };
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H

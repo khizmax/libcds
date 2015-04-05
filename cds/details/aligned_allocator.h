@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_ALIGNED_ALLOCATOR_H
-#define __CDS_DETAILS_ALIGNED_ALLOCATOR_H
+#ifndef CDSLIB_DETAILS_ALIGNED_ALLOCATOR_H
+#define CDSLIB_DETAILS_ALIGNED_ALLOCATOR_H
 
 #include <cds/details/defs.h>
 #include <cds/user_setup/allocator.h>
@@ -95,4 +95,4 @@ namespace cds { namespace details {
 
 }} // namespace cds::details
 
-#endif // #ifndef __CDS_DETAILS_ALIGNED_ALLOCATOR_H
+#endif // #ifndef CDSLIB_DETAILS_ALIGNED_ALLOCATOR_H

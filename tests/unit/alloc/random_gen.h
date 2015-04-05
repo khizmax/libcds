@@ -11,8 +11,8 @@
 
 // Random number geerator
 
-#ifndef __CPPUNIT_MEMORY_RANDOM_GEN_H
-#define __CPPUNIT_MEMORY_RANDOM_GEN_H
+#ifndef CPPUNIT_MEMORY_RANDOM_GEN_H
+#define CPPUNIT_MEMORY_RANDOM_GEN_H
 
 
 #include <boost/random/mersenne_twister.hpp>
@@ -50,4 +50,4 @@ namespace memory {
     };
 }   // namespace memory
 
-#endif // __CPPUNIT_MEMORY_RANDOM_GEN_H
+#endif // CPPUNIT_MEMORY_RANDOM_GEN_H

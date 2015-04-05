@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_THREADING_DETAILS_PTHREAD_MANAGER_H
-#define __CDS_THREADING_DETAILS_PTHREAD_MANAGER_H
+#ifndef CDSLIB_THREADING_DETAILS_PTHREAD_MANAGER_H
+#define CDSLIB_THREADING_DETAILS_PTHREAD_MANAGER_H
 
 #include <system_error>
 #include <stdio.h>
@@ -224,4 +224,4 @@ namespace cds { namespace threading {
 }} // namespace cds::threading
 //@endcond
 
-#endif // #ifndef __CDS_THREADING_DETAILS_PTHREAD_MANAGER_H
+#endif // #ifndef CDSLIB_THREADING_DETAILS_PTHREAD_MANAGER_H

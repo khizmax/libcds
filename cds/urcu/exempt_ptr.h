@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_URCU_EXEMPT_PTR_H
-#define __CDS_URCU_EXEMPT_PTR_H
+#ifndef CDSLIB_URCU_EXEMPT_PTR_H
+#define CDSLIB_URCU_EXEMPT_PTR_H
 
 #include <type_traits>
 #include <cds/details/defs.h>
@@ -108,7 +108,7 @@ namespace cds { namespace urcu {
         /// The exempt pointer is not copy-constructible
         exempt_ptr( exempt_ptr const& ) = delete;
 
-        /// Releases the pointer
+        /// Releases the pointer, see \p release()
         ~exempt_ptr()
         {
             release();
@@ -163,4 +163,4 @@ namespace cds { namespace urcu {
     };
 }} // namespace cds::urcu
 
-#endif //#ifndef __CDS_URCU_EXEMPT_PTR_H
+#endif //#ifndef CDSLIB_URCU_EXEMPT_PTR_H

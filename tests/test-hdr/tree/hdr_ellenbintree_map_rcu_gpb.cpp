@@ -33,7 +33,6 @@ namespace tree {
                 std::cout << t.statistics();
             }
         };
-
     }
 
     void EllenBinTreeMapHdrTest::EllenBinTree_rcu_gpb_less()

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_FCPRIORITY_QUEUE_H
-#define __CDS_CONTAINER_FCPRIORITY_QUEUE_H
+#ifndef CDSLIB_CONTAINER_FCPRIORITY_QUEUE_H
+#define CDSLIB_CONTAINER_FCPRIORITY_QUEUE_H
 
 #include <cds/algo/flat_combining.h>
 #include <cds/algo/elimination_opt.h>
@@ -52,7 +52,7 @@ namespace cds { namespace container {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
+            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::delay_of<2>
             - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::stat - internal statistics, possible type: \p fcpqueue::stat, \p fcpqueue::empty_stat (the default)
@@ -285,4 +285,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_FCPRIORITY_QUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_FCPRIORITY_QUEUE_H

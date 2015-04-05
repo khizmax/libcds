@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __UNIT_NONCONCURRENT_ITERATOR_SEQUENCE_H
-#define __UNIT_NONCONCURRENT_ITERATOR_SEQUENCE_H
+#ifndef CDSUNIT_NONCONCURRENT_ITERATOR_SEQUENCE_H
+#define CDSUNIT_NONCONCURRENT_ITERATOR_SEQUENCE_H
 
 #include <cds/details/bounded_array.h>
 #include <cds/atomic.h>
@@ -144,4 +144,4 @@ namespace map { namespace nonconcurrent_iterator {
 
 } } // namespace map::nonconcurrent_iterator
 
-#endif    // #ifndef __UNIT_NONCONCURRENT_ITERATOR_SEQUENCE_H
+#endif    // #ifndef CDSUNIT_NONCONCURRENT_ITERATOR_SEQUENCE_H

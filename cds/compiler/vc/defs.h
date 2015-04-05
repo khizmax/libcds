@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_VC_DEFS_H
-#define __CDS_COMPILER_VC_DEFS_H
+#ifndef CDSLIB_COMPILER_VC_DEFS_H
+#define CDSLIB_COMPILER_VC_DEFS_H
 //@cond
 
 // Compiler version
@@ -14,7 +14,7 @@
 #define CDS_COMPILER_MSVC14 1900    // 2015 vc14
 
 #if CDS_COMPILER_VERSION < CDS_COMPILER_MSVC12
-#   error "Only MS Visual C++ 12 (2013) and above is supported"
+#   error "Only MS Visual C++ 12 (2013) Update 4 and above is supported"
 #endif
 
 #if _MSC_VER == 1800
@@ -109,6 +109,11 @@
 #   define CDS_CXX11_SFINAE
 #endif
 
+// Inheriting constructors
+#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
+#   define CDS_CXX11_INHERITING_CTOR
+#endif
+
 // *************************************************
 // Alignment macro
 
@@ -119,4 +124,4 @@
 #include <cds/compiler/vc/compiler_barriers.h>
 
 //@endcond
-#endif // #ifndef __CDS_COMPILER_VC_DEFS_H
+#endif // #ifndef CDSLIB_COMPILER_VC_DEFS_H

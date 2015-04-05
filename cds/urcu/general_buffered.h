@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_GENERAL_BUFFERED_H
-#define _CDS_URCU_GENERAL_BUFFERED_H
+#ifndef CDSLIB_URCU_GENERAL_BUFFERED_H
+#define CDSLIB_URCU_GENERAL_BUFFERED_H
 
 #include <cds/urcu/details/gpb.h>
 
@@ -147,4 +147,4 @@ namespace cds { namespace urcu {
 
 }} // namespace cds::urcu
 
-#endif // #ifndef _CDS_URCU_GENERAL_BUFFERED_H
+#endif // #ifndef CDSLIB_URCU_GENERAL_BUFFERED_H

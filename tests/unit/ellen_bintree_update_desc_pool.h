@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDS_UNIT_ELLEN_BINTREE_UPDATE_DESC_POOL_H
-#define __CDS_UNIT_ELLEN_BINTREE_UPDATE_DESC_POOL_H
+#ifndef CDSUNIT_ELLEN_BINTREE_UPDATE_DESC_POOL_H
+#define CDSUNIT_ELLEN_BINTREE_UPDATE_DESC_POOL_H
 
 #include <cds/urcu/general_instant.h>
 #include <cds/container/details/ellen_bintree_base.h>
@@ -108,4 +108,4 @@ namespace ellen_bintree_pool {
 
 } // namespace ellen_bintree_pool
 
-#endif // #ifndef __CDS_UNIT_ELLEN_BINTREE_UPDATE_DESC_POOL_H
+#endif // #ifndef CDSUNIT_ELLEN_BINTREE_UPDATE_DESC_POOL_H

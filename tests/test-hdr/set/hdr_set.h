@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDSTEST_HDR_SET_H
-#define __CDSTEST_HDR_SET_H
+#ifndef CDSTEST_HDR_SET_H
+#define CDSTEST_HDR_SET_H
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
@@ -813,6 +813,145 @@ namespace set {
         }
 
         template <class Set>
+        void test_int_nogc_unordered()
+        {
+            typedef typename Set::value_type        value_type;
+            typedef typename Set::iterator          iterator;
+            typedef typename Set::const_iterator    const_iterator;
+
+            {
+                Set s( 52, 4 );
+                iterator it;
+
+                CPPUNIT_ASSERT( s.empty() );
+                CPPUNIT_ASSERT( check_size( s, 0 ));
+
+                // insert
+                it = s.insert( 10 );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 10 );
+                CPPUNIT_ASSERT( it->val() == 10 );
+                CPPUNIT_ASSERT( !s.empty() );
+                CPPUNIT_ASSERT( check_size( s, 1 ));
+                CPPUNIT_ASSERT( s.insert( 10 ) == s.end() );
+
+                it = s.insert( std::make_pair( 50, 25 ));
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 50 );
+                CPPUNIT_ASSERT( it->val() == 25 );
+                CPPUNIT_ASSERT( !s.empty() );
+                CPPUNIT_ASSERT( check_size( s, 2 ));
+                CPPUNIT_ASSERT( s.insert( 50 ) == s.end() );
+
+                // ensure
+                std::pair< iterator, bool>  ensureResult;
+                ensureResult = s.ensure( 20 );
+                CPPUNIT_ASSERT( ensureResult.first != s.end() );
+                CPPUNIT_ASSERT( ensureResult.second  );
+                CPPUNIT_ASSERT( ensureResult.first->key() == 20 );
+                CPPUNIT_ASSERT( ensureResult.first->val() == 20 );
+                CPPUNIT_ASSERT( !s.empty() );
+                CPPUNIT_ASSERT( check_size( s, 3 ));
+
+                ensureResult = s.ensure( std::make_pair( 20, 200 ));
+                CPPUNIT_ASSERT( ensureResult.first != s.end() );
+                CPPUNIT_ASSERT( !ensureResult.second  );
+                CPPUNIT_ASSERT( ensureResult.first->key() == 20 );
+                CPPUNIT_ASSERT( ensureResult.first->val() == 20 );
+                CPPUNIT_ASSERT( !s.empty() );
+                CPPUNIT_ASSERT( check_size( s, 3 ));
+                ensureResult.first->nVal = 22;
+
+                ensureResult = s.ensure( std::make_pair( 30, 33 ));
+                CPPUNIT_ASSERT( ensureResult.first != s.end() );
+                CPPUNIT_ASSERT( ensureResult.second  );
+                CPPUNIT_ASSERT( ensureResult.first->key() == 30 );
+                CPPUNIT_ASSERT( ensureResult.first->val() == 33 );
+                CPPUNIT_ASSERT( !s.empty() );
+                CPPUNIT_ASSERT( check_size( s, 4 ));
+
+                // find
+                it = s.find( 10 );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 10 );
+                CPPUNIT_ASSERT( it->val() == 10 );
+
+                it = s.find_with( 20, equal<value_type>() );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 20 );
+                CPPUNIT_ASSERT( it->val() == 22 );
+
+                it = s.find( 30 );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 30 );
+                CPPUNIT_ASSERT( it->val() == 33 );
+
+                it = s.find( 40 );
+                CPPUNIT_ASSERT( it == s.end() );
+
+                it = s.find( 50 );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 50 );
+                CPPUNIT_ASSERT( it->val() == 25 );
+
+                // emplace test
+                it = s.emplace( 151 ) ;  // key = 151,  val = 151
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 151 );
+                CPPUNIT_ASSERT( it->val() == 151 );
+
+                it = s.emplace( 174, 471 ) ; // key == 174, val = 471
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 174 );
+                CPPUNIT_ASSERT( it->val() == 471 );
+
+                it = s.emplace( std::make_pair( 190, 91 )) ; // key == 190, val = 91
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 190 );
+                CPPUNIT_ASSERT( it->val() == 91 );
+
+                it = s.find( 174 );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 174 );
+                CPPUNIT_ASSERT( it->val() == 471 );
+
+                it = s.find_with( 190, equal<value_type>() );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 190 );
+                CPPUNIT_ASSERT( it->val() == 91 );
+
+                it = s.find( 151 );
+                CPPUNIT_ASSERT( it != s.end() );
+                CPPUNIT_ASSERT( it->key() == 151 );
+                CPPUNIT_ASSERT( it->val() == 151 );
+
+                //s.clear();
+                //CPPUNIT_ASSERT( s.empty() );
+                //CPPUNIT_ASSERT( check_size( s, 0 ));
+            }
+
+            {
+                Set s( 52, 4 );
+
+                // iterator test
+                for ( int i = 0; i < 500; ++i ) {
+                    CPPUNIT_ASSERT( s.insert( std::make_pair( i, i * 2) ) != s.end() );
+                }
+                for ( iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
+                    iterator it2 = it;
+                    CPPUNIT_CHECK( it2 == it );
+                    CPPUNIT_CHECK( it2 != itEnd );
+                    CPPUNIT_ASSERT( (*it).nKey * 2 == it->nVal );
+                    it->nVal = (*it).nKey;
+                }
+
+                Set const& refSet = s;
+                for ( const_iterator it = refSet.begin(), itEnd = refSet.end(); it != itEnd; ++it ) {
+                    CPPUNIT_ASSERT( (*it).nKey == it->nVal );
+                }
+            }
+        }
+        template <class Set>
         void test_iter()
         {
             typedef typename Set::value_type        value_type;
@@ -931,6 +1070,7 @@ namespace set {
 
         void Lazy_nogc_cmp();
         void Lazy_nogc_less();
+        void Lazy_nogc_equal();
         void Lazy_nogc_cmpmix();
 
         void Split_HP_cmp();
@@ -1077,6 +1217,7 @@ namespace set {
 
             CPPUNIT_TEST(Lazy_nogc_cmp)
             CPPUNIT_TEST(Lazy_nogc_less)
+            CPPUNIT_TEST(Lazy_nogc_equal)
             CPPUNIT_TEST(Lazy_nogc_cmpmix)
 
             CPPUNIT_TEST(Split_HP_cmp)
@@ -1165,4 +1306,4 @@ namespace set {
 
 } // namespace set
 
-#endif // __CDSTEST_HDR_SET_H
+#endif // CDSTEST_HDR_SET_H

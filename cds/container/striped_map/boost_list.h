@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_STRIPED_MAP_BOOST_LIST_ADAPTER_H
-#define __CDS_CONTAINER_STRIPED_MAP_BOOST_LIST_ADAPTER_H
+#ifndef CDSLIB_CONTAINER_STRIPED_MAP_BOOST_LIST_ADAPTER_H
+#define CDSLIB_CONTAINER_STRIPED_MAP_BOOST_LIST_ADAPTER_H
 
 #include <boost/version.hpp>
 #if BOOST_VERSION < 104800
@@ -264,4 +264,4 @@ namespace cds { namespace intrusive { namespace striped_set {
 }}} // namespace cds::intrusive::striped_set
 //@endcond
 
-#endif // #ifndef __CDS_CONTAINER_STRIPED_MAP_BOOST_LIST_ADAPTER_H
+#endif // #ifndef CDSLIB_CONTAINER_STRIPED_MAP_BOOST_LIST_ADAPTER_H

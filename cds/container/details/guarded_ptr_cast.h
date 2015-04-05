@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_GUARDED_PTR_CAST_H
-#define __CDS_CONTAINER_DETAILS_GUARDED_PTR_CAST_H
+#ifndef CDSLIB_CONTAINER_DETAILS_GUARDED_PTR_CAST_H
+#define CDSLIB_CONTAINER_DETAILS_GUARDED_PTR_CAST_H
 //@cond
 
 #include <cds/details/defs.h>
@@ -27,4 +27,4 @@ namespace cds { namespace container { namespace details {
 }}} // namespace cds::container::details
 
 //@endcond
-#endif // #ifndef __CDS_CONTAINER_DETAILS_GUARDED_PTR_CAST_H
+#endif // #ifndef CDSLIB_CONTAINER_DETAILS_GUARDED_PTR_CAST_H

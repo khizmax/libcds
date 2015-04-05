@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_POSIX_ALLOC_ALIGNED_H
-#define __CDS_OS_POSIX_ALLOC_ALIGNED_H
+#ifndef CDSLIB_OS_POSIX_ALLOC_ALIGNED_H
+#define CDSLIB_OS_POSIX_ALLOC_ALIGNED_H
 
 #ifndef _GNU_SOURCE
 #   define _GNU_SOURCE
@@ -43,5 +43,5 @@ namespace cds { namespace OS {
 //@endcond
 
 
-#endif // #ifndef __CDS_OS_POSIX_ALLOC_ALIGNED_H
+#endif // #ifndef CDSLIB_OS_POSIX_ALLOC_ALIGNED_H
 

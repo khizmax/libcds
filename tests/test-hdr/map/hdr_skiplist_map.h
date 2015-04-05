@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CDSTEST_HDR_SKIPLIST_MAP_H
-#define __CDSTEST_HDR_SKIPLIST_MAP_H
+#ifndef CDSTEST_HDR_SKIPLIST_MAP_H
+#define CDSTEST_HDR_SKIPLIST_MAP_H
 
 #include "map/hdr_map.h"
 
@@ -545,4 +545,4 @@ namespace map {
 
 } // namespace map
 
-#endif // #ifndef __CDSTEST_HDR_SKIPLIST_MAP_H
+#endif // #ifndef CDSTEST_HDR_SKIPLIST_MAP_H

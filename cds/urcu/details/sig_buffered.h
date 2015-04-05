@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_DETAILS_SIG_BUFFERED_H
-#define _CDS_URCU_DETAILS_SIG_BUFFERED_H
+#ifndef CDSLIB_URCU_DETAILS_SIG_BUFFERED_H
+#define CDSLIB_URCU_DETAILS_SIG_BUFFERED_H
 
 #include <cds/urcu/details/sh.h>
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
@@ -228,4 +228,4 @@ namespace cds { namespace urcu {
 }} // namespace cds::urcu
 
 #endif // #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-#endif // #ifndef _CDS_URCU_DETAILS_SIG_BUFFERED_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_SIG_BUFFERED_H

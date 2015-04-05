@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_LAZY_LIST_NOGC_H
-#define __CDS_INTRUSIVE_LAZY_LIST_NOGC_H
+#ifndef CDSLIB_INTRUSIVE_LAZY_LIST_NOGC_H
+#define CDSLIB_INTRUSIVE_LAZY_LIST_NOGC_H
 
 #include <mutex>        // unique_lock
 #include <cds/intrusive/details/lazy_list_base.h>
@@ -12,12 +12,12 @@ namespace cds { namespace intrusive {
         /// Lazy list node for \p gc::nogc
         /**
             Template parameters:
-             - Lock - lock type. Default is \p cds::lock::Spin
+             - Lock - lock type. Default is \p cds::sync::spin
              - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <
 #ifdef CDS_DOXYGEN_INVOKED
-            typename Lock = cds::lock::Spin,
+            typename Lock = cds::sync::spin,
             typename Tag = opt::none
 #else
             typename Lock,
@@ -40,12 +40,17 @@ namespace cds { namespace intrusive {
     }   // namespace lazy_list
 
 
-    /// Lazy ordered single-linked list (template specialization for \p gc::nogc)
+    /// Lazy single-linked list (template specialization for \p gc::nogc)
     /** @ingroup cds_intrusive_list
         \anchor cds_intrusive_LazyList_nogc
 
         This specialization is append-only list when no item
         reclamation may be performed. The class does not support deleting of list item.
+
+        The list can be ordered if \p Traits::sort is \p true that is default
+        or unordered otherwise. Unordered list can be maintained by \p equal_to
+        relationship (\p Traits::equal_to), but for the ordered list \p less
+        or \p compare relations should be specified in \p Traits.
 
         See \ref cds_intrusive_LazyList_hp "LazyList" for description of template parameters.
     */
@@ -66,11 +71,20 @@ namespace cds { namespace intrusive {
 
         typedef typename traits::hook    hook;      ///< hook type
         typedef typename hook::node_type node_type; ///< node type
+        static CDS_CONSTEXPR bool const c_bSort = traits::sort; ///< List type: ordered (\p true) or unordered (\p false)
 
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
+        /// Key comparing functor
+        /**
+            - for ordered list, the functor is based on \p traits::compare or \p traits::less
+            - for unordered list, the functor is based on \p traits::equal_to, \p traits::compare or \p traits::less
+        */
+        typedef implementation_defined key_comparator;
 #   else
-        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
+        typedef typename std::conditional< c_bSort,
+            typename opt::details::make_comparator< value_type, traits >::type,
+            typename opt::details::make_equal_to< value_type, traits >::type
+        >::type key_comparator;
 #   endif
         typedef typename traits::back_off  back_off;   ///< Back-off strategy
         typedef typename traits::disposer  disposer;   ///< disposer
@@ -78,7 +92,7 @@ namespace cds { namespace intrusive {
         typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
         typedef typename traits::item_counter item_counter;  ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model; ///< C++ memory ordering (see lazy_list::traits::memory_model)
+        typedef typename traits::memory_model memory_model; ///< C++ memory ordering (see lazy_list::traits::memory_model)
 
         //@cond
         // Rebind traits (split-list support)
@@ -392,25 +406,45 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Finds the key \p key using \p less predicate for searching. Disabled for unordered lists.
         /**
             The function is an analog of \ref cds_intrusive_LazyList_nogc_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
         */
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q& key, Less pred, Func f )
+        template <typename Q, typename Less, typename Func, bool Sort = c_bSort>
+        typename std::enable_if<Sort, bool>::type find_with( Q& key, Less less, Func f )
+        {
+            CDS_UNUSED( less );
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+
+        /// Finds the key \p key using \p equal predicate for searching. Disabled for ordered lists.
+        /**
+            The function is an analog of \ref cds_intrusive_LazyList_nogc_find_func "find(Q&, Func)"
+            but \p equal is used for key comparing.
+            \p Equal functor has the interface like \p std::equal_to.
+        */
+        template <typename Q, typename Equal, typename Func, bool Sort = c_bSort>
+        typename std::enable_if<!Sort, bool>::type find_with( Q& key, Equal equal, Func f )
+        {
+            CDS_UNUSED( equal );
+            return find_at( &m_Head, key, equal, f );
+        }
+        //@cond
+        template <typename Q, typename Less, typename Func, bool Sort = c_bSort>
+        typename std::enable_if<Sort, bool>::type find_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
-        //@cond
-        template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& key, Less pred, Func f )
+
+        template <typename Q, typename Equal, typename Func, bool Sort = c_bSort>
+        typename std::enable_if<!Sort, bool>::type find_with( Q const& key, Equal equal, Func f )
         {
-            CDS_UNUSED( pred );
-            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+            CDS_UNUSED( equal );
+            return find_at( &m_Head, key, equal, f );
         }
         //@endcond
 
@@ -425,18 +459,30 @@ namespace cds { namespace intrusive {
             return find_at( &m_Head, key, key_comparator() );
         }
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Finds the key \p key using \p pred predicate for searching. Disabled for unordered lists.
         /**
             The function is an analog of \ref cds_intrusive_LazyList_nogc_find_val "find(Q const&)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
         */
-        template <typename Q, typename Less>
-        value_type * find_with( Q const& key, Less pred )
+        template <typename Q, typename Less, bool Sort = c_bSort>
+        typename std::enable_if<Sort, value_type *>::type find_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
+        }
+
+        /// Finds the key \p key using \p equal predicate for searching. Disabled for ordered lists.
+        /**
+            The function is an analog of \ref cds_intrusive_LazyList_nogc_find_val "find(Q const&)"
+            but \p equal is used for key comparing.
+            \p Equal functor has the interface like \p std::equal_to.
+        */
+        template <typename Q, typename Equal, bool Sort = c_bSort>
+        typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal equal )
+        {
+            return find_at( &m_Head, key, equal );
         }
 
         /// Clears the list
@@ -510,14 +556,14 @@ namespace cds { namespace intrusive {
         {
             link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos;
-            key_comparator  cmp;
+            key_comparator pred;
 
             while ( true ) {
-                search( pHead, val, pos, key_comparator() );
+                search( pHead, val, pos, pred );
                 {
                     auto_lock_position alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
-                        if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
+                        if ( pos.pCur != &m_Tail && equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) ) {
                             // failed: key already in list
                             return false;
                         }
@@ -543,14 +589,14 @@ namespace cds { namespace intrusive {
         std::pair<iterator, bool> ensure_at_( node_type * pHead, value_type& val, Func func )
         {
             position pos;
-            key_comparator  cmp;
+            key_comparator pred;
 
             while ( true ) {
-                search( pHead, val, pos, key_comparator() );
+                search( pHead, val, pos, pred );
                 {
                     auto_lock_position alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
-                        if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
+                        if ( pos.pCur != &m_Tail && equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred )) {
                             // key already in the list
 
                             func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
@@ -577,15 +623,15 @@ namespace cds { namespace intrusive {
             return std::make_pair( ret.first != end(), ret.second );
         }
 
-        template <typename Q, typename Compare, typename Func>
-        bool find_at( node_type * pHead, Q& val, Compare cmp, Func f )
+        template <typename Q, typename Pred, typename Func>
+        bool find_at( node_type * pHead, Q& val, Pred pred, Func f )
         {
             position pos;
 
-            search( pHead, val, pos, cmp );
+            search( pHead, val, pos, pred );
             if ( pos.pCur != &m_Tail ) {
                 std::unique_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
-                if ( cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
+                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) )
                 {
                     f( *node_traits::to_value_ptr( *pos.pCur ), val );
                     return true;
@@ -594,27 +640,24 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        template <typename Q, typename Compare>
-        value_type * find_at( node_type * pHead, Q& val, Compare cmp)
+        template <typename Q, typename Pred>
+        value_type * find_at( node_type * pHead, Q& val, Pred pred)
         {
-            iterator it = find_at_( pHead, val, cmp );
+            iterator it = find_at_( pHead, val, pred );
             if ( it != end() )
                 return &*it;
             return nullptr;
         }
 
-        template <typename Q, typename Compare>
-        iterator find_at_( node_type * pHead, Q& val, Compare cmp)
+        template <typename Q, typename Pred>
+        iterator find_at_( node_type * pHead, Q& val, Pred pred)
         {
             position pos;
 
-            search( pHead, val, pos, cmp );
+            search( pHead, val, pos, pred );
             if ( pos.pCur != &m_Tail ) {
-                std::unique_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
-                if ( cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
-                {
+                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ))
                     return iterator( pos.pCur );
-                }
             }
             return end();
         }
@@ -623,8 +666,25 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        template <typename Q, typename Compare>
-        void search( node_type * pHead, const Q& key, position& pos, Compare cmp )
+        template <typename Q, typename Equal, bool Sort = c_bSort>
+        typename std::enable_if<!Sort, void>::type search( node_type * pHead, const Q& key, position& pos, Equal eq )
+        {
+            const node_type * pTail = &m_Tail;
+
+            node_type * pCur = pHead;
+            node_type * pPrev = pHead;
+
+            while ( pCur != pTail && ( pCur == pHead || !equal( *node_traits::to_value_ptr( *pCur ), key, eq ) )) {
+                pPrev = pCur;
+                pCur = pCur->m_pNext.load(memory_model::memory_order_acquire);
+            }
+
+            pos.pCur = pCur;
+            pos.pPred = pPrev;
+        }
+
+        template <typename Q, typename Compare, bool Sort = c_bSort>
+        typename std::enable_if<Sort, void>::type search( node_type * pHead, const Q& key, position& pos, Compare cmp )
         {
             const node_type * pTail = &m_Tail;
 
@@ -640,6 +700,18 @@ namespace cds { namespace intrusive {
             pos.pPred = pPrev;
         }
 
+        template <typename L, typename R, typename Equal, bool Sort = c_bSort>
+        static typename std::enable_if<!Sort, bool>::type equal( L const& l, R const& r, Equal eq )
+        {
+            return eq(l, r);
+        }
+
+        template <typename L, typename R, typename Compare, bool Sort = c_bSort>
+        static typename std::enable_if<Sort, bool>::type equal( L const& l, R const& r, Compare cmp )
+        {
+            return cmp(l, r) == 0;
+        }
+
         static bool validate( node_type * pPred, node_type * pCur )
         {
             return pPred->m_pNext.load(memory_model::memory_order_acquire) == pCur;
@@ -650,4 +722,4 @@ namespace cds { namespace intrusive {
 
 }}  // namespace cds::intrusive
 
-#endif  // #ifndef __CDS_INTRUSIVE_LAZY_LIST_NOGC_H
+#endif  // #ifndef CDSLIB_INTRUSIVE_LAZY_LIST_NOGC_H

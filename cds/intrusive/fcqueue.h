@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_FCQUEUE_H
-#define __CDS_INTRUSIVE_FCQUEUE_H
+#ifndef CDSLIB_INTRUSIVE_FCQUEUE_H
+#define CDSLIB_INTRUSIVE_FCQUEUE_H
 
 #include <cds/algo/flat_combining.h>
 #include <cds/algo/elimination_opt.h>
@@ -53,7 +53,7 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::lock::Spin
+            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::intrusive::v::empty_disposer.
                 This option is used only in \p FCQueue::clear() function.
@@ -341,4 +341,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_FCQUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_FCQUEUE_H

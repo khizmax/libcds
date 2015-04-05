@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_GENERAL_THREADED_H
-#define _CDS_URCU_GENERAL_THREADED_H
+#ifndef CDSLIB_URCU_GENERAL_THREADED_H
+#define CDSLIB_URCU_GENERAL_THREADED_H
 
 #include <cds/urcu/details/gpt.h>
 
@@ -154,4 +154,4 @@ namespace cds { namespace urcu {
 
 }} // namespace cds::urcu
 
-#endif // #ifndef _CDS_URCU_GENERAL_THREADED_H
+#endif // #ifndef CDSLIB_URCU_GENERAL_THREADED_H

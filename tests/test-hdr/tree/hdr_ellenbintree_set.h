@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef CDSHDRTEST_ELLENBINTREE_SET_H
-#define CDSHDRTEST_ELLENBINTREE_SET_H
+#ifndef CDSTEST_HDR_ELLENBINTREE_SET_H
+#define CDSTEST_HDR_ELLENBINTREE_SET_H
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
@@ -831,4 +831,4 @@ namespace tree {
     };
 } // namespace tree
 
-#endif // #ifndef CDSHDRTEST_ELLENBINTREE_SET_H
+#endif // #ifndef CDSTEST_HDR_ELLENBINTREE_SET_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
-#define __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_OPTIMISTIC_QUEUE_H
+#define CDSLIB_INTRUSIVE_OPTIMISTIC_QUEUE_H
 
 #include <type_traits>
 #include <cds/intrusive/details/base.h>
@@ -159,13 +159,14 @@ namespace cds { namespace intrusive {
         {
             typedef Counter     counter_type;   ///< Counter type
 
-            counter_type m_EnqueueCount;  ///< Enqueue call count
-            counter_type m_DequeueCount;  ///< Dequeue call count
-            counter_type m_EnqueueRace;  ///< Count of enqueue race conditions encountered
-            counter_type m_DequeueRace;  ///< Count of dequeue race conditions encountered
-            counter_type m_AdvanceTailError;  ///< Count of "advance tail failed" events
-            counter_type m_BadTail;  ///< Count of events "Tail is not pointed to the last item in the queue"
-            counter_type    m_FixListCount;   ///< Count of fix list event
+            counter_type m_EnqueueCount;    ///< Enqueue call count
+            counter_type m_DequeueCount;    ///< Dequeue call count
+            counter_type m_EnqueueRace;     ///< Count of enqueue race conditions encountered
+            counter_type m_DequeueRace;     ///< Count of dequeue race conditions encountered
+            counter_type m_AdvanceTailError; ///< Count of "advance tail failed" events
+            counter_type m_BadTail;         ///< Count of events "Tail is not pointed to the last item in the queue"
+            counter_type m_FixListCount;    ///< Count of fix list event
+            counter_type m_EmptyDequeue;    ///< Count of dequeue from empty queue
 
             /// Register enqueue call
             void onEnqueue() { ++m_EnqueueCount; }
@@ -181,6 +182,8 @@ namespace cds { namespace intrusive {
             void onBadTail() { ++m_BadTail; }
             /// Register fix list event
             void onFixList()    { ++m_FixListCount; }
+            /// Register dequeuing from empty queue
+            void onEmptyDequeue() { ++m_EmptyDequeue; }
 
             //@cond
             void reset()
@@ -192,6 +195,7 @@ namespace cds { namespace intrusive {
                 m_AdvanceTailError.reset();
                 m_BadTail.reset();
                 m_FixListCount.reset();
+                m_EmptyDequeue.reset();
             }
 
             stat& operator +=( stat const& s )
@@ -203,6 +207,8 @@ namespace cds { namespace intrusive {
                 m_AdvanceTailError += s.m_AdvanceTailError.get();
                 m_BadTail += s.m_BadTail.get();
                 m_FixListCount += s.m_FixListCount.get();
+                m_EmptyDequeue += s.m_EmptyDequeue.get();
+
                 return *this;
             }
             //@endcond
@@ -212,13 +218,14 @@ namespace cds { namespace intrusive {
         struct empty_stat
         {
             //@cond
-            void onEnqueue() {}
-            void onDequeue() {}
-            void onEnqueueRace() {}
-            void onDequeueRace() {}
-            void onAdvanceTailFailed() {}
-            void onBadTail() {}
-            void onFixList() {}
+            void onEnqueue()            const {}
+            void onDequeue()            const {}
+            void onEnqueueRace()        const {}
+            void onDequeueRace()        const {}
+            void onAdvanceTailFailed()  const {}
+            void onBadTail()            const {}
+            void onFixList()            const {}
+            void onEmptyDequeue()       const {}
 
             void reset() {}
             empty_stat& operator +=( empty_stat const& )
@@ -473,6 +480,7 @@ namespace cds { namespace intrusive {
                     }
                     else {
                         // the queue is empty
+                        m_Stat.onEmptyDequeue();
                         return false;
                     }
                 }
@@ -672,4 +680,4 @@ namespace cds { namespace intrusive {
 
 }}  // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_OPTIMISTIC_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_OPTIMISTIC_QUEUE_H

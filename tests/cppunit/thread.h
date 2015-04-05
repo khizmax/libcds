@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef __CPPUNIT_THREAD_H
-#define __CPPUNIT_THREAD_H
+#ifndef CDS_CPPUNIT_THREAD_H
+#define CDS_CPPUNIT_THREAD_H
 
 #include <cds/details/defs.h>
 #include "cppunit/cppunit_mini.h"
@@ -18,6 +18,13 @@
 #include <cds/os/timer.h>
 #include <cds/threading/model.h>    // for attach/detach thread
 #include <cds/algo/atomic.h>
+
+// Visual leak detector (see http://vld.codeplex.com/)
+#if defined(CDS_USE_VLD) && CDS_COMPILER == CDS_COMPILER_MSVC
+#   ifdef _DEBUG
+#       include <vld.h>
+#   endif
+#endif
 
 namespace CppUnitMini {
     static inline unsigned int Rand( unsigned int nMax )
@@ -140,4 +147,4 @@ namespace CppUnitMini {
     };
 }
 
-#endif    // #ifndef __CPPUNIT_THREAD_H
+#endif    // #ifndef CDS_CPPUNIT_THREAD_H

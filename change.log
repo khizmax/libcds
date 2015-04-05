@@ -1,5 +1,8 @@
 2.1.0
-    TODO
+    - cds::lock namespace is renamed to cds::sync. All classes defined in cds::lock namespace 
+      are moved to cds::sync with new names (for example, cds::lock::SpinLock is renamed to
+      cds::sync::spin_lock). cds::lock namespace and its contents is deprecated and it is kept 
+      for backward compatibility.
 
 2.0.0 30.12.2014
     General release
@@ -248,7 +251,7 @@
    10. Added compiler barrier to spin-lock release primitive for x86 and amd64
    11. Makefile script is changed to resolve the problem when an user calls 'make clean' directly.
        Thanks to Tamas Lengyel to point me to this bug.
-   12. The file dictionary.txt is exluded from distributive. This file is used for testing purposes only.
+   12. The file dictionary.txt is excluded from distributive. This file is used for testing purposes only.
        You may create dictionary.txt in this way:
         cd ./tests/data
         perl -X split.pl

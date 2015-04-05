@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_BITOP_H
-#define __CDS_BITOP_H
+#ifndef CDSLIB_BITOP_H
+#define CDSLIB_BITOP_H
 
 /*
     Different bit algorithms:
@@ -136,5 +136,5 @@ namespace cds {
     } // namespace bitop
 } //namespace cds
 
-#endif    // #ifndef __CDS_BITOP_H
+#endif    // #ifndef CDSLIB_BITOP_H
 

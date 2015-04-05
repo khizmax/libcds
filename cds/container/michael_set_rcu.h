@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_SET_RCU_H
-#define __CDS_CONTAINER_MICHAEL_SET_RCU_H
+#ifndef CDSLIB_CONTAINER_MICHAEL_SET_RCU_H
+#define CDSLIB_CONTAINER_MICHAEL_SET_RCU_H
 
 #include <cds/container/details/michael_set_base.h>
 #include <cds/details/allocator.h>
@@ -500,8 +500,7 @@ namespace cds { namespace container {
 
         /// Extracts an item from the set using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelHashSet_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p extract(Q const&) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the set.
         */
@@ -688,4 +687,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // ifndef __CDS_CONTAINER_MICHAEL_SET_RCU_H
+#endif // ifndef CDSLIB_CONTAINER_MICHAEL_SET_RCU_H

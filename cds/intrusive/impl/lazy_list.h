@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
-#define __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
+#ifndef CDSLIB_INTRUSIVE_IMPL_LAZY_LIST_H
+#define CDSLIB_INTRUSIVE_IMPL_LAZY_LIST_H
 
 #include <mutex>        // unique_lock
 #include <cds/intrusive/details/lazy_list_base.h>
@@ -1148,4 +1148,4 @@ namespace cds { namespace intrusive {
     };
 }}  // namespace cds::intrusive
 
-#endif // __CDS_INTRUSIVE_IMPL_LAZY_LIST_H
+#endif // CDSLIB_INTRUSIVE_IMPL_LAZY_LIST_H

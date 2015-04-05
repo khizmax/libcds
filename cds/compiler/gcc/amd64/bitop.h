@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_GCC_AMD64_BITOP_H
-#define __CDS_COMPILER_GCC_AMD64_BITOP_H
+#ifndef CDSLIB_COMPILER_GCC_AMD64_BITOP_H
+#define CDSLIB_COMPILER_GCC_AMD64_BITOP_H
 
 //@cond none
 namespace cds {
@@ -154,4 +154,4 @@ namespace cds {
 
 //@endcond
 
-#endif // #ifndef __CDS_COMPILER_GCC_AMD64_BITOP_H
+#endif // #ifndef CDSLIB_COMPILER_GCC_AMD64_BITOP_H

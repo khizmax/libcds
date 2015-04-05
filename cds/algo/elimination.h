@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_ALGO_ELIMINATION_H
-#define __CDS_ALGO_ELIMINATION_H
+#ifndef CDSLIB_ALGO_ELIMINATION_H
+#define CDSLIB_ALGO_ELIMINATION_H
 
 #include <cds/algo/elimination_tls.h>
 #include <cds/algo/elimination_opt.h>
@@ -55,4 +55,4 @@ namespace cds { namespace algo {
     } // namespace elimination
 }} // namespace cds::algo
 
-#endif // __CDS_ALGO_ELIMINATION_H
+#endif // CDSLIB_ALGO_ELIMINATION_H

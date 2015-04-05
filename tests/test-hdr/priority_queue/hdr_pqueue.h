@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef CDSHDRTEST_PQUEUE_H
-#define CDSHDRTEST_PQUEUE_H
+#ifndef CDSTEST_HDR_PQUEUE_H
+#define CDSTEST_HDR_PQUEUE_H
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
@@ -374,4 +374,4 @@ namespace std {
     };
 }
 
-#endif // #ifndef CDSHDRTEST_PQUEUE_H
+#endif // #ifndef CDSTEST_HDR_PQUEUE_H

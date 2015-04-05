@@ -9,8 +9,8 @@
     Download: http://sourceforge.net/projects/libcds/files/
 */
 
-#ifndef CDSHDRTEST_INTRUSIVE_BINTREE_H
-#define CDSHDRTEST_INTRUSIVE_BINTREE_H
+#ifndef CDSTEST_HDR_INTRUSIVE_BINTREE_H
+#define CDSTEST_HDR_INTRUSIVE_BINTREE_H
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
@@ -1255,4 +1255,4 @@ namespace tree {
     };
 } // namespace tree
 
-#endif // #ifndef CDSHDRTEST_INTRUSIVE_BINTREE_H
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_BINTREE_H

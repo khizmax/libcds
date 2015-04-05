@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSIMPL_HP_CONST_H
-#define __CDSIMPL_HP_CONST_H
+#ifndef CDSIMPL_HP_CONST_H
+#define CDSIMPL_HP_CONST_H
 
 /*
     File: hp_const.h
@@ -27,4 +27,4 @@ namespace cds { namespace gc {
 
 } /* namespace gc */ }    /* namespace cds */
 
-#endif    // #ifndef __CDSIMPL_HZP_CONST_H
+#endif    // #ifndef CDSIMPL_HP_CONST_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H
-#define __CDS_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H
+#ifndef CDSLIB_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H
+#define CDSLIB_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H
 
 #include <exception>
 #include <memory.h>
@@ -148,4 +148,4 @@ namespace cds { namespace memory { namespace michael {
 
 }}} // namespace cds::memory::michael
 
-#endif // #ifndef __CDS_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H
+#endif // #ifndef CDSLIB_MEMORY_MICHAEL_ALLOCATOR_BOUND_CHECK_H

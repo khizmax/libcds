@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CXX11_ATOMIC_H
-#define __CDS_CXX11_ATOMIC_H
+#ifndef CDSLIB_CXX11_ATOMIC_H
+#define CDSLIB_CXX11_ATOMIC_H
 
 #include <cds/details/defs.h>
 
@@ -316,4 +316,4 @@ namespace cds {
     }   // namespace atomicity
 }   // namespace cds
 
-#endif // #ifndef __CDS_CXX11_ATOMIC_H
+#endif // #ifndef CDSLIB_CXX11_ATOMIC_H

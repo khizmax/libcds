@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_MICHAEL_LIST_RCU_H
-#define __CDS_INTRUSIVE_MICHAEL_LIST_RCU_H
+#ifndef CDSLIB_INTRUSIVE_MICHAEL_LIST_RCU_H
+#define CDSLIB_INTRUSIVE_MICHAEL_LIST_RCU_H
 
 #include <cds/intrusive/details/michael_list_base.h>
 #include <cds/urcu/details/check_deadlock.h>
@@ -530,7 +530,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item from the list using \p pred predicate for searching
         /**
-            This function is the analog for \ref cds_intrusive_MichaelList_rcu_extract "extract(exempt_ptr&, Q const&)".
+            This function is the analog for \p extract(Q const&)
 
             The \p pred is a predicate used for key comparing.
             \p Less has the interface like \p std::less.
@@ -1016,4 +1016,4 @@ namespace cds { namespace intrusive {
 
 }}  // namespace cds::intrusive
 
-#endif  // #ifndef __CDS_INTRUSIVE_MICHAEL_LIST_NOGC_H
+#endif  // #ifndef CDSLIB_INTRUSIVE_MICHAEL_LIST_NOGC_H

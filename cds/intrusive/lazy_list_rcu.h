@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_LAZY_LIST_RCU_H
-#define __CDS_INTRUSIVE_LAZY_LIST_RCU_H
+#ifndef CDSLIB_INTRUSIVE_LAZY_LIST_RCU_H
+#define CDSLIB_INTRUSIVE_LAZY_LIST_RCU_H
 
 #include <mutex>        // unique_lock
 #include <cds/intrusive/details/lazy_list_base.h>
@@ -629,7 +629,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item from the list using \p pred predicate for searching
         /**
-            This function is the analog for \ref cds_intrusive_LazyList_rcu_extract "extract(exempt_ptr&, Q const&)".
+            This function is the analog for \p extract(Q const&).
 
             The \p pred is a predicate used for key comparing.
             \p Less has the interface like \p std::less.
@@ -1105,11 +1105,8 @@ namespace cds { namespace intrusive {
 
             search( pHead, val, pos, cmp );
             if ( pos.pCur != &m_Tail ) {
-                std::unique_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
                 if ( cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
-                {
                     return const_iterator( pos.pCur );
-                }
             }
             return end();
         }
@@ -1167,4 +1164,4 @@ namespace cds { namespace intrusive {
 
 }}  // namespace cds::intrusive
 
-#endif  // #ifndef __CDS_INTRUSIVE_LAZY_LIST_RCU_H
+#endif  // #ifndef CDSLIB_INTRUSIVE_LAZY_LIST_RCU_H
