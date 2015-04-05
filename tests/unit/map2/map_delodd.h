@@ -276,33 +276,35 @@ namespace map2 {
                 m_nDeleteSuccess =
                     m_nDeleteFailed = 0;
 
-                std::vector<size_t>& arrData = getTest().m_arrData;
-                if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
-                        for ( size_t i = 0; i < arrData.size(); ++i ) {
-                            if ( arrData[i] & 1 ) {
-                                if ( rMap.erase_with( arrData[i], key_less() ))
-                                    ++m_nDeleteSuccess;
-                                else
-                                    ++m_nDeleteFailed;
+                for ( size_t pass = 0; pass < 2; pass++ ) {
+                    std::vector<size_t>& arrData = getTest().m_arrData;
+                    if ( m_nThreadNo & 1 ) {
+                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                            for ( size_t i = 0; i < arrData.size(); ++i ) {
+                                if ( arrData[i] & 1 ) {
+                                    if ( rMap.erase_with( arrData[i], key_less() ))
+                                        ++m_nDeleteSuccess;
+                                    else
+                                        ++m_nDeleteFailed;
+                                }
                             }
+                            if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
+                                break;
                         }
-                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
-                else {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
-                        for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                            if ( arrData[i] & 1 ) {
-                                if ( rMap.erase_with( arrData[i], key_less() ))
-                                    ++m_nDeleteSuccess;
-                                else
-                                    ++m_nDeleteFailed;
+                    else {
+                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                            for ( size_t i = arrData.size() - 1; i > 0; --i ) {
+                                if ( arrData[i] & 1 ) {
+                                    if ( rMap.erase_with( arrData[i], key_less() ))
+                                        ++m_nDeleteSuccess;
+                                    else
+                                        ++m_nDeleteFailed;
+                                }
                             }
+                            if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
+                                break;
                         }
-                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
                 }
             }
@@ -349,37 +351,39 @@ namespace map2 {
 
                 typename Map::guarded_ptr gp;
 
-                std::vector<size_t>& arrData = getTest().m_arrData;
-                if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
-                        for ( size_t i = 0; i < arrData.size(); ++i ) {
-                            if ( arrData[i] & 1 ) {
-                                gp = rMap.extract_with( arrData[i], key_less());
-                                if ( gp )
-                                    ++m_nDeleteSuccess;
-                                else
-                                    ++m_nDeleteFailed;
-                                gp.release();
+                for ( size_t pass = 0; pass < 2; ++pass ) {
+                    std::vector<size_t>& arrData = getTest().m_arrData;
+                    if ( m_nThreadNo & 1 ) {
+                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                            for ( size_t i = 0; i < arrData.size(); ++i ) {
+                                if ( arrData[i] & 1 ) {
+                                    gp = rMap.extract_with( arrData[i], key_less());
+                                    if ( gp )
+                                        ++m_nDeleteSuccess;
+                                    else
+                                        ++m_nDeleteFailed;
+                                    gp.release();
+                                }
                             }
+                            if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
+                                break;
                         }
-                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
-                else {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
-                        for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                            if ( arrData[i] & 1 ) {
-                                gp = rMap.extract_with( arrData[i], key_less());
-                                if ( gp )
-                                    ++m_nDeleteSuccess;
-                                else
-                                    ++m_nDeleteFailed;
-                                gp.release();
+                    else {
+                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                            for ( size_t i = arrData.size() - 1; i > 0; --i ) {
+                                if ( arrData[i] & 1 ) {
+                                    gp = rMap.extract_with( arrData[i], key_less());
+                                    if ( gp )
+                                        ++m_nDeleteSuccess;
+                                    else
+                                        ++m_nDeleteFailed;
+                                    gp.release();
+                                }
                             }
+                            if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
+                                break;
                         }
-                        if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
                 }
             }
