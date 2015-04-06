@@ -277,6 +277,8 @@ namespace CppUnitMini
 #define CPPUNIT_TEST(X) CPPUNIT_TEST_BASE(X, false)
 #define CPPUNIT_EXPLICIT_TEST(X) CPPUNIT_TEST_BASE(X, true)
 
+#define CDSUNIT_DECLARE_TEST(X) void X();
+
 #define CPPUNIT_IGNORE \
   ignoring = true
 

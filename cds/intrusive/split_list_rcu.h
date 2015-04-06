@@ -68,6 +68,10 @@ namespace cds { namespace intrusive {
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type   hash;
 
+        //@cond
+        typedef cds::intrusive::split_list::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         //@cond
         typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;

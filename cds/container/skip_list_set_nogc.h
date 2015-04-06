@@ -157,6 +157,10 @@ namespace cds { namespace container {
         typedef typename options::stat              stat            ;   ///< internal statistics type
         typedef typename base_class::random_level_generator random_level_generator  ;   ///< random level generator
 
+        //@cond
+        typedef cds::container::skip_list::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         //@cond
         typedef typename maker::node_type           node_type;

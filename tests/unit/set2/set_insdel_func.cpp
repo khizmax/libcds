@@ -1,6 +1,7 @@
 //$$CDS-header$$
 
 #include "set2/set_insdel_func.h"
+#include "set2/set_type_michael.h"
 
 namespace set2 {
 
@@ -14,6 +15,7 @@ namespace set2 {
     size_t  Set_InsDel_func::c_nMaxLoadFactor = 8    ;  // maximum load factor
     bool    Set_InsDel_func::c_bPrintGCState = true;
 
+    CDSUNIT_DEFINE_MichaelSet( cc::michael_set::implementation_tag, Set_InsDel_func )
 
     CPPUNIT_TEST_SUITE_PART( Set_InsDel_func, run_MichaelSet )
         CDSUNIT_TEST_MichaelSet

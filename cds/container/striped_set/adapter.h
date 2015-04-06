@@ -9,6 +9,7 @@
 namespace cds { namespace container {
     /// Striped hash set related definitions
     namespace striped_set {
+        using cds::intrusive::striped_set::implementation_tag;
 
         //@cond
         struct copy_item    ;   // copy_item_policy tag

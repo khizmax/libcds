@@ -13,6 +13,7 @@ namespace cds { namespace intrusive {
 
     /// EllenBinTree related declarations
     namespace ellen_bintree {
+        struct implementation_tag;
 
         //Forwards
         template <class GC> struct base_node;

@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit-test", "unit-test", "{
 		..\..\..\tests\unit\print_skip_list_stat.h = ..\..\..\tests\unit\print_skip_list_stat.h
 		..\..\..\tests\unit\print_split_list_stat.h = ..\..\..\tests\unit\print_split_list_stat.h
 		..\..\..\tests\unit\print_sync_monitor_stat.h = ..\..\..\tests\unit\print_sync_monitor_stat.h
+		..\..\..\tests\unit\set2\set_type_cuckoo.h = ..\..\..\tests\unit\set2\set_type_cuckoo.h
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-prerequisites", "unit-prerequisites.vcxproj", "{61179F2F-07E1-490D-B64D-D85A90B6EF81}"
@@ -79,9 +80,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "set", "set", "{A64449B7-90FB-4E2B-A686-9EFC0E298644}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\tests\unit\set2\set_defs.h = ..\..\..\tests\unit\set2\set_defs.h
-		..\..\..\tests\unit\set2\set_types.h = ..\..\..\tests\unit\set2\set_types.h
-		..\..\..\tests\unit\set2\std_hash_set.h = ..\..\..\tests\unit\set2\std_hash_set.h
-		..\..\..\tests\unit\set2\std_set.h = ..\..\..\tests\unit\set2\std_set.h
+		..\..\..\tests\unit\set2\set_type.h = ..\..\..\tests\unit\set2\set_type.h
+		..\..\..\tests\unit\set2\set_type_cuckoo.h = ..\..\..\tests\unit\set2\set_type_cuckoo.h
+		..\..\..\tests\unit\set2\set_type_ellen_bintree.h = ..\..\..\tests\unit\set2\set_type_ellen_bintree.h
+		..\..\..\tests\unit\set2\set_type_lazy_list.h = ..\..\..\tests\unit\set2\set_type_lazy_list.h
+		..\..\..\tests\unit\set2\set_type_michael.h = ..\..\..\tests\unit\set2\set_type_michael.h
+		..\..\..\tests\unit\set2\set_type_michael_list.h = ..\..\..\tests\unit\set2\set_type_michael_list.h
+		..\..\..\tests\unit\set2\set_type_skip_list.h = ..\..\..\tests\unit\set2\set_type_skip_list.h
+		..\..\..\tests\unit\set2\set_type_split_list.h = ..\..\..\tests\unit\set2\set_type_split_list.h
+		..\..\..\tests\unit\set2\set_type_std.h = ..\..\..\tests\unit\set2\set_type_std.h
+		..\..\..\tests\unit\set2\set_type_striped.h = ..\..\..\tests\unit\set2\set_type_striped.h
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-map-delodd", "unit-map-delodd.vcxproj", "{3C598F96-FB84-4D42-9B43-F697F53B0221}"

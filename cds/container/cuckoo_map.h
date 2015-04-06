@@ -267,6 +267,10 @@ namespace cds { namespace container {
         /// item counter type
         typedef typename traits::item_counter  item_counter;
 
+        //@cond
+        typedef cds::container::cuckoo::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         //@cond
         typedef typename base_class::scoped_cell_lock   scoped_cell_lock;
@@ -724,7 +728,6 @@ namespace cds { namespace container {
         {
             return base_class::mutex_policy_statistics();
         }
-
     };
 }}  // namespace cds::container
 

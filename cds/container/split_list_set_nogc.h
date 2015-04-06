@@ -58,6 +58,10 @@ namespace cds { namespace container {
         typedef typename base_class::item_counter   item_counter; ///< Item counter type
         typedef typename base_class::stat           stat; ///< Internal statistics
 
+        //@cond
+        typedef cds::container::split_list::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         //@cond
         typedef typename maker::cxx_node_allocator    cxx_node_allocator;

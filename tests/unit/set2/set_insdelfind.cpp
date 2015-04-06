@@ -55,17 +55,4 @@ namespace set2 {
 
         endTestCase();
     }
-
-    /*
-        CPPUNIT_TEST_SUITE_( Set_InsDelFind, "Map_InsDelFind" )
-            CDSUNIT_TEST_MichaelSet
-            CDSUNIT_TEST_SplitList
-            CDSUNIT_TEST_SkipListSet
-            CDSUNIT_TEST_EllenBinTreeSet
-            CDSUNIT_TEST_StripedSet
-            CDSUNIT_TEST_RefinableSet
-            CDSUNIT_TEST_CuckooSet
-            CDSUNIT_TEST_StdSet
-        CPPUNIT_TEST_SUITE_END()
-        */
 } // namespace set2

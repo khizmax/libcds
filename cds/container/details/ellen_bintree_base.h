@@ -14,6 +14,8 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace ellen_bintree {
+        using cds::intrusive::ellen_bintree::implementation_tag;
+
 
 #ifdef CDS_DOXYGEN_INVOKED
         /// Typedef for \p cds::intrusive::ellen_bintree::update_desc
