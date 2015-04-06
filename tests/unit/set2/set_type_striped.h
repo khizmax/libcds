@@ -28,10 +28,12 @@ namespace set2 {
     struct set_type< cc::striped_set::implementation_tag, Key, Val >: public set_type_base< Key, Val >
     {
         typedef set_type_base< Key, Val > base_class;
-        using base_class::key_val;
-        using base_class::compare;
-        using base_class::less;
-        using base_class::hash;
+        typedef typename base_class::key_val key_val;
+        typedef typename base_class::compare compare;
+        typedef typename base_class::less less;
+        typedef typename base_class::equal_to equal_to;
+        typedef typename base_class::hash hash;
+        typedef typename base_class::hash2 hash2;
 
 
         // ***************************************************************************
