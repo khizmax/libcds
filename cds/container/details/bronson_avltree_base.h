@@ -67,7 +67,7 @@ namespace cds { namespace container {
 
             void parent( node_type * p, atomics::memory_order order )
             {
-                m_pParent.store( p );
+                m_pParent.store( p, order );
             }
 
             atomics::atomic<node_type *> const& child( int nDirection ) const
