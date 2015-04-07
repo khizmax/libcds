@@ -127,7 +127,8 @@ namespace map2 {
         static size_t  c_nMaxLoadFactor;    // maximum load factor
         static bool    c_bPrintGCState;
 
-        std::vector<size_t>     m_arrData;
+        std::vector<size_t>     m_arrInsert;
+        std::vector<size_t>     m_arrRemove;
 
     protected:
         typedef CppUnitMini::TestCase Base;
@@ -187,7 +188,7 @@ namespace map2 {
                 m_nInsertSuccess =
                     m_nInsertFailed = 0;
 
-                std::vector<size_t>& arrData = getTest().m_arrData;
+                std::vector<size_t>& arrData = getTest().m_arrInsert;
                 for ( size_t i = 0; i < arrData.size(); ++i ) {
                     if ( rMap.insert( key_type( arrData[i], m_nThreadNo )))
                         ++m_nInsertSuccess;
@@ -278,7 +279,7 @@ namespace map2 {
                     m_nDeleteFailed = 0;
 
                 for ( size_t pass = 0; pass < 2; pass++ ) {
-                    std::vector<size_t>& arrData = getTest().m_arrData;
+                    std::vector<size_t>& arrData = getTest().m_arrRemove;
                     if ( m_nThreadNo & 1 ) {
                         for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
@@ -353,7 +354,7 @@ namespace map2 {
                 typename Map::guarded_ptr gp;
 
                 for ( size_t pass = 0; pass < 2; ++pass ) {
-                    std::vector<size_t>& arrData = getTest().m_arrData;
+                    std::vector<size_t>& arrData = getTest().m_arrRemove;
                     if ( m_nThreadNo & 1 ) {
                         for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
@@ -430,7 +431,7 @@ namespace map2 {
 
                 typename Map::exempt_ptr xp;
 
-                std::vector<size_t>& arrData = getTest().m_arrData;
+                std::vector<size_t>& arrData = getTest().m_arrRemove;
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                         for ( size_t i = 0; i < arrData.size(); ++i ) {
@@ -636,7 +637,6 @@ namespace map2 {
 
             additional_cleanup( testMap );
         }
-
 
         template <class Map>
         void test()

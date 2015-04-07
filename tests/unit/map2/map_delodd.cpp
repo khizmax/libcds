@@ -27,10 +27,14 @@ namespace map2 {
             c_nDelThreadCount = cds::OS::topology::processor_count() - c_nExtractThreadCount;
         }
 
-        m_arrData.resize( c_nMapSize );
-        for ( size_t i = 0; i < c_nMapSize; ++i )
-            m_arrData[i] = i;
-        std::random_shuffle( m_arrData.begin(), m_arrData.end() );
+        m_arrInsert.resize( c_nMapSize );
+        m_arrRemove.resize( c_nMapSize );
+        for ( size_t i = 0; i < c_nMapSize; ++i ) {
+            m_arrInsert[i] = i;
+            m_arrRemove[i] = i;
+        }
+        std::random_shuffle( m_arrInsert.begin(), m_arrInsert.end() );
+        std::random_shuffle( m_arrRemove.begin(), m_arrRemove.end() );
     }
 
     void Map_DelOdd::myRun(const char *in_name, bool invert /*= false*/)
