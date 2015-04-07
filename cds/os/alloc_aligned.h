@@ -140,11 +140,16 @@ namespace cds {
                 \code
                 sizeof(T) % nAlign == 0
                 \endcode
+
+                The function, like operator \p new does not return \p nullptr. 
+                In no memory situation the function throws \p std::bad_alloc exception.
             */
             pointer allocate( size_type nAlign, size_type nCount )
             {
                 assert( cds::beans::is_power2( nAlign ) );
                 pointer p = reinterpret_cast<T *>( cds::OS::aligned_malloc( sizeof(T) * nCount, nAlign ) );
+                if ( !p )
+                    throw std::bad_alloc();
                 assert( cds::details::is_aligned( p, nAlign ));
                 return p;
             }
