@@ -13,6 +13,9 @@ namespace cds { namespace container {
 
     /// BronsonAVLTree related declarations
     namespace bronson_avltree {
+        //@cond
+        struct implementation_tag;
+        //@endcond
 
         template <typename Key, typename T, typename SyncMonitor >
         struct node;

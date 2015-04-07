@@ -1,6 +1,7 @@
 //$$CDS-header$$
 
 #include "map2/map_insdelfind.h"
+#include <cds/os/topology.h>
 
 namespace map2 {
     CPPUNIT_TEST_SUITE_REGISTRATION( Map_InsDelFind );

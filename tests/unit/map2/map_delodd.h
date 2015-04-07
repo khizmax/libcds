@@ -1,15 +1,16 @@
 //$$CDS-header$$
 
 #include "cppunit/thread.h"
-#include "map2/map_types.h"
+#include "map2/map_type.h"
 #include <algorithm> // random_shuffle
+#include <cds/os/topology.h>
 
 namespace map2 {
 
-#   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >(); }
-#   define TEST_MAP_EXTRACT(X) void X() { test_extract<MapTypes<key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF_EXTRACT(X) void X() { test_nolf_extract<MapTypes<key_type, value_type>::X >(); }
+#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_EXTRACT(IMPL, C, X) void C::X() { test_extract<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) void C::X() { test_nolf_extract<map_type<IMPL, key_type, value_type>::X >(); }
 
     namespace {
         struct key_thread
