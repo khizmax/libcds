@@ -1,8 +1,18 @@
-//$$CDS-header$$
+/*
+    This file is a part of libcds - Concurrent Data Structures library
+    Version: 2.0.0
+
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2014
+    Distributed under the BSD license (see accompanying file license.txt)
+
+    Source code repo: http://github.com/khizmax/libcds/
+    Download: http://sourceforge.net/projects/libcds/files/
+*/
 
 #ifndef CDSLIB_ALGO_FLAT_COMBINING_H
 #define CDSLIB_ALGO_FLAT_COMBINING_H
 
+#include <iostream>
 #include <mutex>
 #include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
@@ -11,7 +21,9 @@
 #include <cds/opt/options.h>
 #include <cds/algo/int_algo.h>
 #include <boost/thread/tss.hpp>     // thread_specific_ptr
-//lalala
+#include <boost/thread.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+
 
 namespace cds { namespace algo {
 
@@ -94,13 +106,11 @@ namespace cds { namespace algo {
             Each data structure based on flat combining contains a class derived from \p %publication_record
         */
         struct publication_record {
-            atomics::atomic<unsigned int>    nRequest;   ///< Request field (depends on data structure)
-            atomics::atomic<unsigned int>    nState;     ///< Record state: inactive, active, removed
-            unsigned int                        nAge;       ///< Age of the record
-            atomics::atomic<publication_record *> pNext; ///< Next record in publication list
-            void *                              pOwner;    ///< [internal data] Pointer to \ref kernel object that manages the publication list
-			//Add mutex and convar here!=))
-
+            atomics::atomic<unsigned int>         nRequest;   ///< Request field (depends on data structure) операция которую хотим выполнить
+            atomics::atomic<unsigned int>         nState;     ///< Record state: inactive, active, removed управление временем жизни
+            unsigned int                          nAge;       ///< Age of the record сколько неактивная запись может быть в списке
+            atomics::atomic<publication_record *> pNext;      ///< Next record in publication list
+            void *                                pOwner;     ///< [internal data] Pointer to \ref kernel object that manages the publication list
 
             /// Initializes publication record
             publication_record()
@@ -109,7 +119,10 @@ namespace cds { namespace algo {
                 , nAge(0)
                 , pNext( nullptr )
                 , pOwner( nullptr )
-            {}
+            {
+               // _waitMutex = new boost::recursive_mutex();
+                //_condVar = new boost::condition_variable_any();
+            }
 
             /// Returns the value of \p nRequest field
             unsigned int op() const
@@ -243,10 +256,7 @@ namespace cds { namespace algo {
               should call \ref operation_done function. On the end, the container should release
               its record by \ref release_record.
         */
-        template <
-            typename PublicationRecord
-            ,typename Traits = traits
-        >
+        template <typename PublicationRecord, typename Traits = traits>
         class kernel
         {
         public:
@@ -257,7 +267,8 @@ namespace cds { namespace algo {
             typedef typename traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
             typedef typename traits::stat      stat;               ///< Internal statistics
             typedef typename traits::memory_model memory_model;    ///< C++ memory model
-
+            boost::recursive_mutex *              _waitMutex;       //TODO: global mutex for notifying every waiting threads
+            boost::condition_variable_any *       _condVar;         //TODO: global condVar for notifying every waiting threads
         protected:
             //@cond
             typedef cds::details::Allocator< publication_record_type, allocator >   cxx11_allocator; ///< internal helper cds::details::Allocator
@@ -546,8 +557,7 @@ namespace cds { namespace algo {
                         // record is active and kernel is alive
                         unsigned int nState = active;
                         pRec->nState.compare_exchange_strong( nState, removed, memory_model::memory_order_release, atomics::memory_order_relaxed );
-                    }
-                    else {
+                    } else {
                         // record is not in publication list or kernel already deleted
                         cxx11_allocator().Delete( pRec );
                     }
@@ -562,28 +572,31 @@ namespace cds { namespace algo {
                 pRec->pOwner = this;
                 m_pThreadRec.reset( pRec );
                 m_Stat.onCreatePubRecord();
+                _waitMutex = new boost::recursive_mutex();
+                _condVar = new boost::condition_variable_any();
+
             }
 
-            void publish( publication_record_type * pRec )
-            {
-                assert( pRec->nState.load( memory_model::memory_order_relaxed ) == inactive );
+			void publish(publication_record_type * pRec)
+			{
+				assert(pRec->nState.load(memory_model::memory_order_relaxed) == inactive);
 
-                pRec->nAge = m_nCount;
-                pRec->nState.store( active, memory_model::memory_order_release );
+				pRec->nAge = m_nCount;
+				pRec->nState.store(active, memory_model::memory_order_release);
 
-                // Insert record to publication list
-                if ( m_pHead != static_cast<publication_record *>(pRec) ) {
-                    publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
-                    if ( p != static_cast<publication_record *>( pRec )) {
-                        do {
-                            pRec->pNext = p;
-                            // Failed CAS changes p
-                        } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ));
-                        m_Stat.onActivatPubRecord();
-                    }
+				// Insert record to publication list
+				if (m_pHead != static_cast<publication_record *>(pRec)) {
+					publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
+					if (p != static_cast<publication_record *>(pRec)) {
+						do {
+							pRec->pNext = p;
+							// Failed CAS changes p
+						} while (!m_pHead->pNext.compare_exchange_weak(p, static_cast<publication_record *>(pRec),
+							memory_model::memory_order_release, atomics::memory_order_relaxed));
+						m_Stat.onActivatPubRecord();
+					}
                 }
-            }
+			}
 
             void republish( publication_record_type * pRec )
             {
@@ -597,6 +610,7 @@ namespace cds { namespace algo {
             void try_combining( Container& owner, publication_record_type * pRec )
             {
                 if ( m_Mutex.try_lock() ) {
+	
                     // The thread becomes a combiner
                     lock_guard l( m_Mutex, std::adopt_lock_t() );
 
@@ -605,8 +619,7 @@ namespace cds { namespace algo {
 
                     combining( owner );
                     assert( pRec->nRequest.load( memory_model::memory_order_relaxed ) == req_Response );
-                }
-                else {
+                }   else {
                     // There is another combiner, wait while it executes our request
                     if ( !wait_for_combining( pRec ) ) {
                         // The thread becomes a combiner
@@ -676,23 +689,32 @@ namespace cds { namespace algo {
                     switch ( p->nState.load( memory_model::memory_order_acquire )) {
                         case active:
                             if ( p->op() >= req_Operation ) {
+
+                               // boost::recursive_mutex::scoped_lock lock(*(p->_waitMutex));
+
                                 p->nAge = nCurAge;
                                 owner.fc_apply( static_cast<publication_record_type *>(p) );
+                                _condVar->notify_all();
                                 operation_done( *p );
                                 bOpDone = true;
+                                break;
                             }
+                            _condVar->notify_all();
                             break;
                         case inactive:
                             // Only m_pHead can be inactive in the publication list
                             assert( p == m_pHead );
+                            _condVar->notify_all();//TODO: perhaps not need
                             break;
                         case removed:
                             // The record should be removed
+                            _condVar->notify_all();//TODO: perhaps not need
                             p = unlink_and_delete_record( pPrev, p );
                             continue;
                         default:
                             /// ??? That is impossible
                             assert(false);
+                            _condVar->notify_all();//TODO: perhaps not need
                     }
                     pPrev = p;
                     p = p->pNext.load( memory_model::memory_order_acquire );
@@ -719,22 +741,28 @@ namespace cds { namespace algo {
 
             bool wait_for_combining( publication_record_type * pRec )
             {
-                back_off bkoff;
+                //back_off bkoff;
+
                 while ( pRec->nRequest.load( memory_model::memory_order_acquire ) != req_Response ) {
 
                     // The record can be excluded from publication list. Reinsert it
                     republish( pRec );
-
-                    bkoff();
+                    
+                    //bkoff();
+                    boost::recursive_mutex::scoped_lock lock(*(_waitMutex));
+                    _condVar->wait(lock);
 
                     if ( m_Mutex.try_lock() ) {
                         if ( pRec->nRequest.load( memory_model::memory_order_acquire ) == req_Response ) {
                             m_Mutex.unlock();
+                            lock.unlock();
                             break;
                         }
                         // The thread becomes a combiner
+                        lock.unlock();
                         return false;
                     }
+                    lock.unlock();
                 }
                 return true;
             }
