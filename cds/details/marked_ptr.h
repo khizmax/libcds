@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_MARKED_PTR_H
-#define __CDS_DETAILS_MARKED_PTR_H
+#ifndef CDSLIB_DETAILS_MARKED_PTR_H
+#define CDSLIB_DETAILS_MARKED_PTR_H
 
 #include <cds/algo/atomic.h>
 
@@ -358,4 +358,4 @@ CDS_CXX11_ATOMIC_BEGIN_NAMESPACE
 CDS_CXX11_ATOMIC_END_NAMESPACE
 //@endcond
 
-#endif  // #ifndef __CDS_DETAILS_MARKED_PTR_H
+#endif  // #ifndef CDSLIB_DETAILS_MARKED_PTR_H

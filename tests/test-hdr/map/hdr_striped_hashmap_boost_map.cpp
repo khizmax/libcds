@@ -16,7 +16,7 @@ namespace map {
 
 #include <cds/container/striped_map/boost_map.h>
 #include <cds/container/striped_map.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 namespace map {
 
@@ -63,7 +63,7 @@ namespace map {
         typedef cc::StripedMap< map_t
             , co::hash< hash_int >
             , co::less< less >
-            ,co::mutex_policy< cc::striped_set::striping<cds::lock::Spin> >
+            , co::mutex_policy< cc::striped_set::striping<cds::sync::spin> >
         >   map_spin;
         test_striped< map_spin >();
 

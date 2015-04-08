@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSTEST_HDR_MAP_H
-#define __CDSTEST_HDR_MAP_H
+#ifndef CDSTEST_HDR_MAP_H
+#define CDSTEST_HDR_MAP_H
 #include "size_check.h"
 
 #include "cppunit/cppunit_proxy.h"
@@ -636,6 +636,158 @@ namespace map {
         }
 
         template <class Map>
+        void test_int_nogc_unordered()
+        {
+            typedef typename Map::iterator          iterator;
+            typedef typename Map::const_iterator    const_iterator;
+
+            {
+                Map m( 52, 4 );
+
+                CPPUNIT_ASSERT( m.empty() );
+                CPPUNIT_ASSERT( check_size( m, 0 ));
+
+                CPPUNIT_ASSERT( m.find(10) == m.end() );
+                iterator it = m.insert( 10 );
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( !m.empty() );
+                CPPUNIT_ASSERT( check_size( m, 1 ));
+                CPPUNIT_ASSERT( m.find(10) == it );
+                CPPUNIT_ASSERT( it->first == 10 );
+                CPPUNIT_ASSERT( it->second.m_val == 0 );
+
+                CPPUNIT_ASSERT( m.find(100) == m.end() );
+                it = m.insert( 100, 200 );
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( !m.empty() );
+                CPPUNIT_ASSERT( check_size( m, 2 ));
+                CPPUNIT_ASSERT( m.find_with(100, equal()) == it );
+                CPPUNIT_ASSERT( it->first == 100 );
+                CPPUNIT_ASSERT( it->second.m_val == 200 );
+
+                CPPUNIT_ASSERT( m.find(55) == m.end() );
+                it = m.insert_with( 55, insert_functor<Map>() );
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( !m.empty() );
+                CPPUNIT_ASSERT( check_size( m, 3 ));
+                CPPUNIT_ASSERT( m.find(55) == it );
+                CPPUNIT_ASSERT( it->first == 55 );
+                CPPUNIT_ASSERT( it->second.m_val == 55 * 3 );
+
+                CPPUNIT_ASSERT( m.insert( 55 ) == m.end() );
+                CPPUNIT_ASSERT( m.insert( 55, 10 ) == m.end() );
+                CPPUNIT_ASSERT( m.insert_with( 55, insert_functor<Map>()) == m.end() );
+
+                CPPUNIT_ASSERT( m.find(10) != m.end() );
+                std::pair<iterator, bool> ensureResult = m.ensure( 10 );
+                CPPUNIT_ASSERT( ensureResult.first != m.end() );
+                CPPUNIT_ASSERT( !ensureResult.second  );
+                CPPUNIT_ASSERT( !m.empty() );
+                ensureResult.first->second.m_val = ensureResult.first->first * 5;
+                CPPUNIT_ASSERT( check_size( m, 3 ));
+                CPPUNIT_ASSERT( m.find(10) == ensureResult.first );
+                it = m.find(10);
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->second.m_val == 50 );
+
+                CPPUNIT_ASSERT( m.find(120) == m.end() );
+                ensureResult = m.ensure( 120 );
+                CPPUNIT_ASSERT( ensureResult.first != m.end() );
+                CPPUNIT_ASSERT( ensureResult.second  );
+                CPPUNIT_ASSERT( !m.empty() );
+                CPPUNIT_ASSERT( check_size( m, 4 ));
+                ensureResult.first->second.m_val = ensureResult.first->first * 5;
+                CPPUNIT_ASSERT( m.find_with(120, equal()) == ensureResult.first );
+                it = m.find_with(120, equal());
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->second.m_val == 120 * 5 );
+                CPPUNIT_ASSERT( m.find_with(120, equal()) == m.find(120) );
+
+                // emplace test
+                it = m.emplace( 151 ) ;  // key = 151,  val = 0
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->first == 151 );
+                CPPUNIT_ASSERT( it->second.m_val == 0 );
+
+                it = m.emplace( 174, 471 ) ; // key == 174, val = 471
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->first == 174 );
+                CPPUNIT_ASSERT( it->second.m_val == 471 );
+
+                it = m.emplace( 190, value_type(91)) ; // key == 190, val = 19
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->first == 190 );
+                CPPUNIT_ASSERT( it->second.m_val == 91 );
+
+                it = m.emplace( 151, 1051 );
+                CPPUNIT_ASSERT( it == m.end());
+
+                it = m.find( 174 );
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->first == 174 );
+                CPPUNIT_ASSERT( it->second.m_val == 471 );
+
+                it = m.find( 190 );
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->first == 190 );
+                CPPUNIT_ASSERT( it->second.m_val == 91 );
+
+                it = m.find( 151 );
+                CPPUNIT_ASSERT( it != m.end() );
+                CPPUNIT_ASSERT( it->first == 151 );
+                CPPUNIT_ASSERT( it->second.m_val == 0 );
+            }
+
+            // iterator test
+
+            {
+                Map m( 52, 4 );
+
+                for ( int i = 0; i < 500; ++i ) {
+                    CPPUNIT_ASSERT( m.insert( i, i * 2 ) != m.end() );
+                }
+                CPPUNIT_ASSERT( check_size( m, 500 ));
+
+                {
+                    typename Map::iterator it( m.begin() );
+                    typename Map::const_iterator cit( m.cbegin() );
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != m.end() );
+                    CPPUNIT_CHECK( it != m.cend() );
+                    CPPUNIT_CHECK( cit != m.end() );
+                    CPPUNIT_CHECK( cit != m.cend() );
+                    ++it;
+                    CPPUNIT_CHECK( it != cit );
+                    CPPUNIT_CHECK( it != m.end() );
+                    CPPUNIT_CHECK( it != m.cend() );
+                    CPPUNIT_CHECK( cit != m.end() );
+                    CPPUNIT_CHECK( cit != m.cend() );
+                    ++cit;
+                    CPPUNIT_CHECK( it == cit );
+                    CPPUNIT_CHECK( it != m.end() );
+                    CPPUNIT_CHECK( it != m.cend() );
+                    CPPUNIT_CHECK( cit != m.end() );
+                    CPPUNIT_CHECK( cit != m.cend() );
+                }
+
+
+                for ( iterator it = m.begin(), itEnd = m.end(); it != itEnd; ++it ) {
+                    iterator it2 = it;
+                    CPPUNIT_CHECK( it2 == it );
+                    CPPUNIT_CHECK( it2 != itEnd );
+                    CPPUNIT_ASSERT( it->first * 2 == (*it).second.m_val );
+                    it->second = it->first;
+                }
+
+                Map const& refMap = m;
+                for ( const_iterator it = refMap.begin(), itEnd = refMap.end(); it != itEnd; ++it ) {
+                    CPPUNIT_ASSERT( it->first == it->second.m_val );
+                    CPPUNIT_ASSERT( (*it).first == (*it).second.m_val );
+                }
+            }
+        }
+
+        template <class Map>
         void test_iter()
         {
             typedef typename Map::iterator          iterator;
@@ -752,6 +904,7 @@ namespace map {
 
         void Lazy_nogc_cmp();
         void Lazy_nogc_less();
+        void Lazy_nogc_equal();
         void Lazy_nogc_cmpmix();
 
         void Split_HP_cmp();
@@ -897,6 +1050,7 @@ namespace map {
 
             CPPUNIT_TEST(Lazy_nogc_cmp)
             CPPUNIT_TEST(Lazy_nogc_less)
+            CPPUNIT_TEST(Lazy_nogc_equal)
             CPPUNIT_TEST(Lazy_nogc_cmpmix)
 
             CPPUNIT_TEST(Split_HP_cmp)
@@ -983,4 +1137,4 @@ namespace map {
     };
 }   // namespace map
 
-#endif // #ifndef __CDSTEST_HDR_MAP_H
+#endif // #ifndef CDSTEST_HDR_MAP_H

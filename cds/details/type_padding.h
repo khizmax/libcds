@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_TYPE_PADDING_H
-#define __CDS_DETAILS_TYPE_PADDING_H
+#ifndef CDSLIB_DETAILS_TYPE_PADDING_H
+#define CDSLIB_DETAILS_TYPE_PADDING_H
 
 namespace cds { namespace details {
 
@@ -53,4 +53,4 @@ namespace cds { namespace details {
     };
 
 }}   // namespace cds::details
-#endif // #ifndef __CDS_DETAILS_TYPE_PADDING_H
+#endif // #ifndef CDSLIB_DETAILS_TYPE_PADDING_H

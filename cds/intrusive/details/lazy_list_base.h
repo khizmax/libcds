@@ -1,13 +1,13 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
-#define __CDS_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
+#ifndef CDSLIB_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
+#define CDSLIB_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
 
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/details/make_const_type.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <cds/urcu/options.h>
 
 namespace cds { namespace intrusive {
@@ -20,12 +20,12 @@ namespace cds { namespace intrusive {
         /**
             Template parameters:
             - GC - garbage collector
-            - Lock - lock type. Default is \p cds::lock::Spin
+            - Lock - lock type. Default is \p cds::sync::spin
             - Tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <
             class GC
-            ,typename Lock =  cds::lock::Spin
+            ,typename Lock =  cds::sync::spin
             ,typename Tag = opt::none
         >
         struct node
@@ -68,7 +68,7 @@ namespace cds { namespace intrusive {
         struct default_hook {
             typedef undefined_gc    gc;
             typedef opt::none       tag;
-            typedef lock::Spin      lock_type;
+            typedef sync::spin      lock_type;
         };
         //@endcond
 
@@ -89,7 +89,7 @@ namespace cds { namespace intrusive {
         /**
             \p Options are:
             - opt::gc - garbage collector
-            - opt::lock_type - lock type used for node locking. Default is lock::Spin
+            - opt::lock_type - lock type used for node locking. Default is sync::spin
             - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
@@ -103,7 +103,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector
-            - opt::lock_type - lock type used for node locking. Default is lock::Spin
+            - opt::lock_type - lock type used for node locking. Default is sync::spin
             - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
@@ -121,7 +121,7 @@ namespace cds { namespace intrusive {
 
             \p Options are:
             - opt::gc - garbage collector used.
-            - opt::lock_type - lock type used for node locking. Default is lock::Spin
+            - opt::lock_type - lock type used for node locking. Default is sync::spin
             - opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
@@ -208,6 +208,21 @@ namespace cds { namespace intrusive {
             */
             typedef opt::none                       less;
 
+            /// Specifies binary functor used for comparing keys for equality (for unordered list only)
+            /**
+                If \p equal_to option is not specified, \p compare is used, if \p compare is not specified, \p less is used,
+                if \p less is not specified, then \p std::equal_to<T> is used.
+            */
+            typedef opt::none                       equal_to;
+
+            /// Specifies list ordering policy
+            /**
+                If \p sort is \p true, than list maintains items in sorted order, otherwise the list is unordered. 
+                Default is \p true.
+                Note that if \p sort is \p false, than lookup operations scan entire list.
+            */
+            static const bool sort = true;
+
             /// Back-off strategy
             typedef cds::backoff::Default           back_off;
 
@@ -245,6 +260,9 @@ namespace cds { namespace intrusive {
             - \p opt::compare - key comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::equal_to - specifies binary functor for comparing keys for equality. If \p equal_to is not specified, \p compare is
+                used, \p compare is not specified, \p less is used.
+            - \p opt::sort - specifies ordering policy. Default value is \p true.
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. Due the nature
                 of GC schema the disposer may be called asynchronously.
@@ -278,4 +296,4 @@ namespace cds { namespace intrusive {
 
 }}   // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_THREADING_DETAILS_GCC_MANAGER_H
-#define __CDS_THREADING_DETAILS_GCC_MANAGER_H
+#ifndef CDSLIB_THREADING_DETAILS_GCC_MANAGER_H
+#define CDSLIB_THREADING_DETAILS_GCC_MANAGER_H
 
 #if !( CDS_COMPILER == CDS_COMPILER_GCC || CDS_COMPILER == CDS_COMPILER_CLANG || CDS_COMPILER == CDS_COMPILER_INTEL)
 #   error "threading/details/gcc_manager.h may be used only with GCC or Clang C++ compiler"
@@ -132,4 +132,4 @@ namespace cds { namespace threading {
 }} // namespace cds::threading
 //@endcond
 
-#endif // #ifndef __CDS_THREADING_DETAILS_GCC_MANAGER_H
+#endif // #ifndef CDSLIB_THREADING_DETAILS_GCC_MANAGER_H

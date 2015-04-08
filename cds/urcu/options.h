@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_OPTIONS_H
-#define _CDS_URCU_OPTIONS_H
+#ifndef CDSLIB_URCU_OPTIONS_H
+#define CDSLIB_URCU_OPTIONS_H
 
 #include <cds/details/defs.h>
 
@@ -62,4 +62,4 @@ namespace cds { namespace opt {
 }}  // namespace cds::opt
 
 
-#endif  // #ifndef _CDS_URCU_OPTIONS_H
+#endif  // #ifndef CDSLIB_URCU_OPTIONS_H

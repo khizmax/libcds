@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
-#define __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#ifndef CDSLIB_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#define CDSLIB_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
 
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/ellen_bintree_rcu.h>
@@ -195,7 +195,7 @@ namespace cds { namespace container {
             RCU \p synchronize() method can be called. RCU should not be locked.
         */
         template <typename K, typename Func>
-        bool insert_with( const K& key, Func func )
+        bool insert_with( K const& key, Func func )
         {
             scoped_node_ptr pNode( cxx_leaf_node_allocator().New( key ));
             if ( base_class::insert( *pNode, [&func]( leaf_node& item ) { func( item.m_Value ); } )) {
@@ -227,7 +227,7 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
+            is inserted into the map (note that in this case the \p key_type should be
             constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
             The functor \p Func may be a function with signature:
@@ -243,15 +243,15 @@ namespace cds { namespace container {
 
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
+            - \p item - item of the tree
 
-            The functor may change any fields of the \p item.second that is \ref value_type.
+            The functor may change any fields of the \p item.second that is \p value_type.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
-            already is in the list.
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            \p second is \p true if new item has been added or \p false if the item with \p key
+            already is in the tree.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
@@ -392,17 +392,17 @@ namespace cds { namespace container {
 
         /// Extracts an item from the map using \p pred for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_extract "extract(exempt_ptr&, Q const&)"
+            The function is an analog of \p extract(Q const&)
             but \p pred is used for key compare.
             \p Less has the interface like \p std::less and should meet \ref cds_container_EllenBinTreeSet_rcu_less
             "predicate requirements".
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        exempt_ptr extract_with( Q const& val, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( base_class::extract_with_( val,
+            return exempt_ptr( base_class::extract_with_( key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() ));
         }
 
@@ -493,7 +493,7 @@ namespace cds { namespace container {
             The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_rcu_get "get(Q const&)"
             but \p pred is used for comparing the keys.
 
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type
+            \p Less functor has the semantics like \p std::less but should take arguments of type \p key_type
             and \p Q in any order.
             \p pred must imply the same element order as the comparator used for building the map.
         */
@@ -550,4 +550,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif //#ifndef __CDS_CONTAINER_ELLEN_BINTREE_MAP_RCU_H
+#endif //#ifndef CDSLIB_CONTAINER_ELLEN_BINTREE_MAP_RCU_H

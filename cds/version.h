@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_VERSION_H
-#define __CDS_VERSION_H
+#ifndef CDSLIB_VERSION_H
+#define CDSLIB_VERSION_H
 
 // cds library version
 
@@ -14,5 +14,5 @@
 // CDS_VERSION == CDS_VERSION_MAJOR '.' CDS_VERSION_MINOR '.' CDS_VERSION_PATCH
 #define CDS_VERSION_STRING        "2.1.0"
 
-#endif  // #ifndef __CDS_VERSION_H
+#endif  // #ifndef CDSLIB_VERSION_H
 

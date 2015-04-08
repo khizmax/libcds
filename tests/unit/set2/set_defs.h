@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDSUNIT_SET2_SET_DEFS_H
-#define _CDSUNIT_SET2_SET_DEFS_H
+#ifndef CDSUNIT_SET_DEFS_H
+#define CDSUNIT_SET_DEFS_H
 
 #define CDSUNIT_DECLARE_StdSet \
     TEST_SET(StdSet_Spin) \
@@ -548,4 +548,4 @@
     CDSUNIT_TEST_RefinableSet_boost_container \
     CDSUNIT_TEST_RefinableSet_boost_flat_container
 
-#endif // #ifndef _CDSUNIT_SET2_SET_DEFS_H
+#endif // #ifndef CDSUNIT_SET_DEFS_H

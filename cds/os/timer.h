@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_TIMER_H
-#define __CDS_OS_TIMER_H
+#ifndef CDSLIB_OS_TIMER_H
+#define CDSLIB_OS_TIMER_H
 
 #include <cds/details/defs.h>
 
@@ -28,4 +28,4 @@
 #    error Unknown operating system. Compilation aborted.
 #endif
 
-#endif    // #ifndef __CDS_OS_TIMER_H
+#endif    // #ifndef CDSLIB_OS_TIMER_H

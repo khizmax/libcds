@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INT_ALGO_H
-#define __CDS_INT_ALGO_H
+#ifndef CDSLIB_INT_ALGO_H
+#define CDSLIB_INT_ALGO_H
 
 #include <cds/algo/bitop.h>
 
@@ -71,4 +71,4 @@ namespace cds { namespace beans {
     }
 }}   // namespace cds::beans
 
-#endif  // #ifndef __CDS_INT_ALGO_H
+#endif  // #ifndef CDSLIB_INT_ALGO_H

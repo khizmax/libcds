@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_THREADING__COMMON_H
-#define __CDS_THREADING__COMMON_H
+#ifndef CDSLIB_THREADING__COMMON_H
+#define CDSLIB_THREADING__COMMON_H
 
 #include <cds/gc/impl/hp_decl.h>
 #include <cds/gc/impl/dhp_decl.h>
@@ -254,4 +254,4 @@ namespace cds {
     } // namespace threading
 } // namespace cds::threading
 
-#endif // #ifndef __CDS_THREADING__COMMON_H
+#endif // #ifndef CDSLIB_THREADING__COMMON_H

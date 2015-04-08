@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_VC_AMD64_BITOP_H
-#define __CDS_COMPILER_VC_AMD64_BITOP_H
+#ifndef CDSLIB_COMPILER_VC_AMD64_BITOP_H
+#define CDSLIB_COMPILER_VC_AMD64_BITOP_H
 
 #if _MSC_VER == 1500
     /*
@@ -123,4 +123,4 @@ namespace cds {
 }}}    // namespace cds::bitop::platform
 //@endcond
 
-#endif    // #ifndef __CDS_COMPILER_VC_AMD64_BITOP_H
+#endif    // #ifndef CDSLIB_COMPILER_VC_AMD64_BITOP_H

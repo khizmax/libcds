@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_QUEUE_TYPES_H
-#define __CDSUNIT_QUEUE_TYPES_H
+#ifndef CDSUNIT_QUEUE_TYPES_H
+#define CDSUNIT_QUEUE_TYPES_H
 
 #include <cds/container/msqueue.h>
 #include <cds/container/moir_queue.h>
@@ -511,24 +511,6 @@ namespace queue {
 // *********************************************
 // Queue statistics
 namespace std {
-    /*
-    template <typename Counter>
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
-    {
-        return o
-            << "\tStatistics:\n"
-            << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n";
-    }
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_dummy_stat const& s)
-    {
-        return o;
-    }
-    */
 
     template <typename Counter>
     static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::stat<Counter> const& s)
@@ -538,6 +520,7 @@ namespace std {
             << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
             << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
             << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t      Dequeue empty: " << s.m_EmptyDequeue.get() << "\n"
             << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
             << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
             << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n"
@@ -557,6 +540,7 @@ namespace std {
             << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
             << "\t\t      Enqueue race: " << s.m_EnqueueRace.get()  << "\n"
             << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t     Dequeue empty: " << s.m_EmptyDequeue.get() << "\n"
             << "\t\t      Dequeue race: " << s.m_DequeueRace.get()  << "\n"
             << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
             << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
@@ -581,6 +565,7 @@ namespace std {
             << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
             << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
             << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
+            << "\t\t      Dequeue empty: " << s.m_EmptyDequeue.get() << "\n"
             << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
             << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
             << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n"
@@ -652,4 +637,4 @@ namespace std {
 
 }
 
-#endif // #ifndef __CDSUNIT_QUEUE_TYPES_H
+#endif // #ifndef CDSUNIT_QUEUE_TYPES_H

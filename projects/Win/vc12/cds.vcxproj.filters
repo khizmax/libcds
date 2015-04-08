@@ -151,6 +151,9 @@
     <Filter Include="Header Files\cds\gc\impl">
       <UniqueIdentifier>{3195cce2-1710-4b79-a1cf-6c7cea085fa3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\cds\sync">
+      <UniqueIdentifier>{03d212fb-73f8-4f0e-9aff-f22b0783fee8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\dllmain.cpp">
@@ -204,9 +207,6 @@
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\bounded_array.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\comparator.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\defs.h">
@@ -641,9 +641,6 @@
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h">
       <Filter>Header Files\cds\compiler\clang</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\mapper.h">
-      <Filter>Header Files\cds\memory</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -716,12 +713,6 @@
     <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set.h">
       <Filter>Header Files\cds\container\striped_set</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_std.h">
-      <Filter>Header Files\cds\container\striped_set</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_vc.h">
-      <Filter>Header Files\cds\container\striped_set</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\striped_set\std_list.h">
       <Filter>Header Files\cds\container\striped_set</Filter>
     </ClInclude>
@@ -747,12 +738,6 @@
       <Filter>Header Files\cds\container\striped_map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map.h">
-      <Filter>Header Files\cds\container\striped_map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_std.h">
-      <Filter>Header Files\cds\container\striped_map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_vc.h">
       <Filter>Header Files\cds\container\striped_map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\striped_map\std_list.h">
@@ -1162,6 +1147,36 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\atomic.h">
       <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\bronson_avltree_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\bronson_avltree_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\bronson_avltree_map_rcu.h">
+      <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\bronson_avltree_map_rcu.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\spinlock.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\lock_array.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\monitor.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\pool_monitor.h">
+      <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

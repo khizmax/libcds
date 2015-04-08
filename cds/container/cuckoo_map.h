@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_CUCKOO_MAP_H
-#define __CDS_CONTAINER_CUCKOO_MAP_H
+#ifndef CDSLIB_CONTAINER_CUCKOO_MAP_H
+#define CDSLIB_CONTAINER_CUCKOO_MAP_H
 
 #include <cds/container/details/cuckoo_base.h>
 #include <cds/details/binary_functor_wrapper.h>
@@ -728,4 +728,4 @@ namespace cds { namespace container {
     };
 }}  // namespace cds::container
 
-#endif //#ifndef __CDS_CONTAINER_CUCKOO_MAP_H
+#endif //#ifndef CDSLIB_CONTAINER_CUCKOO_MAP_H

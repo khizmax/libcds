@@ -1,7 +1,7 @@
 //$$CDS-header$$1
 
-#ifndef _CDS_URCU_DISPOSE_THREAD_H
-#define _CDS_URCU_DISPOSE_THREAD_H
+#ifndef CDSLIB_URCU_DISPOSE_THREAD_H
+#define CDSLIB_URCU_DISPOSE_THREAD_H
 
 #include <memory>
 #include <thread>
@@ -195,4 +195,4 @@ namespace cds { namespace urcu {
     };
 }} // namespace cds::urcu
 
-#endif // #ifdef _CDS_URCU_DISPOSE_THREAD_H
+#endif // #ifdef CDSLIB_URCU_DISPOSE_THREAD_H

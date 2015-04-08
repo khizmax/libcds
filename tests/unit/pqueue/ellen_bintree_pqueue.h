@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_STD_ELLEN_BINTREE_PQUEUE_H
-#define __CDSUNIT_STD_ELLEN_BINTREE_PQUEUE_H
+#ifndef CDSUNIT_STD_ELLEN_BINTREE_PQUEUE_H
+#define CDSUNIT_STD_ELLEN_BINTREE_PQUEUE_H
 
 #include <cds/container/ellen_bintree_set_hp.h>
 #include <cds/container/ellen_bintree_set_dhp.h>
@@ -110,4 +110,4 @@ namespace pqueue {
 } // namespace pqueue
 
 
-#endif // #ifndef __CDSUNIT_STD_ELLEN_BINTREE_PQUEUE_H
+#endif // #ifndef CDSUNIT_STD_ELLEN_BINTREE_PQUEUE_H

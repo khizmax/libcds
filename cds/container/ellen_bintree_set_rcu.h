@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_ELLEN_BINTREE_SET_RCU_H
-#define __CDS_CONTAINER_ELLEN_BINTREE_SET_RCU_H
+#ifndef CDSLIB_CONTAINER_ELLEN_BINTREE_SET_RCU_H
+#define CDSLIB_CONTAINER_ELLEN_BINTREE_SET_RCU_H
 
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/intrusive/ellen_bintree_rcu.h>
@@ -406,17 +406,16 @@ namespace cds { namespace container {
 
         /// Extracts an item from the set using \p pred for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeSet_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred is used for key compare.
+            The function is an analog of \p extract(Q const&) but \p pred is used for key compare.
             \p Less has the interface like \p std::less and should meet \ref cds_container_EllenBinTreeSet_rcu_less
             "predicate requirements".
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        exempt_ptr extract_with( Q const& val, Less pred )
+        exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( base_class::extract_with_( val,
+            return exempt_ptr( base_class::extract_with_( key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >() ));
         }
 
@@ -606,4 +605,4 @@ namespace cds { namespace container {
     };
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_ELLEN_BINTREE_SET_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_ELLEN_BINTREE_SET_RCU_H

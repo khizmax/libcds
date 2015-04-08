@@ -1,9 +1,9 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OPT_MAKE_OPTIONS_VAR_H
-#define __CDS_OPT_MAKE_OPTIONS_VAR_H
+#ifndef CDSLIB_OPT_MAKE_OPTIONS_VAR_H
+#define CDSLIB_OPT_MAKE_OPTIONS_VAR_H
 
-#ifndef __CDS_OPT_OPTIONS_H
+#ifndef CDSLIB_OPT_OPTIONS_H
 #   error <cds/opt/options.h> must be included instead of <cds/opt/make_options_var.h>
 #endif
 
@@ -150,24 +150,24 @@ namespace cds { namespace opt {
         };
 
         // Specializations for integral type of option
-#define _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION( _type ) template <template <_type> class What, _type A, _type B> \
+#define CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_( _type ) template <template <_type> class What, _type A, _type B> \
         struct compare_option< What<A>, What<B> > { typedef compare_ok type ; };
 
         // For user-defined enum types
-#define CDS_DECLARE_FIND_OPTION_INTEGRAL_SPECIALIZATION( _type ) namespace cds { namespace opt { namespace details { _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(_type ) }}}
+#define CDS_DECLARE_FIND_OPTION_INTEGRAL_SPECIALIZATION( _type ) namespace cds { namespace opt { namespace details { CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(_type ) }}}
 
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(bool)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(char)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(unsigned char)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(signed char)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(short int)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(unsigned short int)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(int)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(unsigned int)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(long)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(unsigned long)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(long long)
-        _CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION(unsigned long long)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(bool)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(char)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(unsigned char)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(signed char)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(short int)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(unsigned short int)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(int)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(unsigned int)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(long)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(unsigned long)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(long long)
+        CDS_FIND_OPTION_INTEGRAL_SPECIALIZATION_(unsigned long long)
 
 
         template <typename CompResult, typename Ok, typename Fail>
@@ -298,4 +298,4 @@ namespace cds { namespace opt {
 
 }}  // namespace cds::opt
 
-#endif // #ifndef __CDS_OPT_MAKE_OPTIONS_STD_H
+#endif // #ifndef CDSLIB_OPT_MAKE_OPTIONS_STD_H

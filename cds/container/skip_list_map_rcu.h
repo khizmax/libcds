@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
-#define __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
+#ifndef CDSLIB_CONTAINER_SKIP_LIST_MAP_RCU_H
+#define CDSLIB_CONTAINER_SKIP_LIST_MAP_RCU_H
 
 #include <cds/container/details/skip_list_base.h>
 #include <cds/intrusive/skip_list_rcu.h>
@@ -430,8 +430,7 @@ namespace cds { namespace container {
 
         /// Extracts the item from the map with comparing functor \p pred
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListMap_rcu_extract "extract(exempt_ptr&, K const&)"
-            but \p pred predicate is used for key comparing.
+            The function is an analog of \p extract(K const&) but \p pred predicate is used for key comparing.
             \p Less has the semantics like \p std::less.
             \p pred must imply the same element order as the comparator used for building the map.
         */
@@ -632,4 +631,4 @@ namespace cds { namespace container {
     };
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SKIP_LIST_MAP_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_SKIP_LIST_MAP_RCU_H

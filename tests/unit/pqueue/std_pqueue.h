@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_STD_PQUEUE_H
-#define __CDSUNIT_STD_PQUEUE_H
+#ifndef CDSUNIT_STD_PQUEUE_H
+#define CDSUNIT_STD_PQUEUE_H
 
 #include <queue>
 #include <mutex>    //unique_lock
@@ -94,4 +94,4 @@ namespace std {
     }
 }
 
-#endif // #ifndef __CDSUNIT_STD_PQUEUE_H
+#endif // #ifndef CDSUNIT_STD_PQUEUE_H

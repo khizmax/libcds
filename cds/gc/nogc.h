@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_NOGC_H
-#define __CDS_GC_NOGC_H
+#ifndef CDSLIB_GC_NOGC_H
+#define CDSLIB_GC_NOGC_H
 
 namespace cds { namespace gc {
 
@@ -26,4 +26,4 @@ namespace cds { namespace gc {
 
 }}  // namespace cds::gc
 
-#endif // #define __CDS_GC_NOGC_H
+#endif // #define CDSLIB_GC_NOGC_H

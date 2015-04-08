@@ -455,19 +455,3 @@ int main(int argc, char** argv)
 
   return num_errors;
 }
-
-// See doc/README.intel for explanation about this code
-#if defined (STLPORT) && defined (__ICL) && (__ICL >= 900) && \
-            (_STLP_MSVC_LIB < 1300) && defined (_STLP_USE_DYNAMIC_LIB)
-#  include <exception>
-
-#  undef std
-namespace std
-{
-  void _STLP_CALL unexpected() {
-    unexpected_handler hdl;
-    set_unexpected(hdl = set_unexpected((unexpected_handler)0));
-    hdl();
-  }
-}
-#endif

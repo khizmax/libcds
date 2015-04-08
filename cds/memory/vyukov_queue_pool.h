@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
-#define __CDS_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
+#ifndef CDSLIB_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
+#define CDSLIB_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
 
 #include <cds/details/allocator.h>
 #include <cds/intrusive/vyukov_mpmc_cycle_queue.h>
@@ -15,13 +15,17 @@ namespace cds { namespace memory {
     {
         /// Allocator type
         typedef CDS_DEFAULT_ALLOCATOR allocator;
+
+        /// Back-off stratey
+        typedef cds::backoff::yield   back_off;
     };
-    /// Free-list based on bounded lock-free queue cds::intrusive::VyukovMPMCCycleQueue
+
+    /// Free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
-        - \p Traits - traits for cds::intrusive::VyukovMPMCCycleQueue class plus
-            cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
+        - \p Traits - traits for \p cds::intrusive::VyukovMPMCCycleQueue class plus
+            \p cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
         \b Internals
 
@@ -90,9 +94,12 @@ namespace cds { namespace memory {
         typedef T  value_type ; ///< Value type
         typedef Traits traits;  ///< Traits type
         typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef typename traits::back_off back_off; ///< back-off strategy
 
     protected:
         //@cond
+        typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+
         queue_type      m_Queue;
         value_type *    m_pFirst;
         value_type *    m_pLast;
@@ -102,11 +109,12 @@ namespace cds { namespace memory {
         //@cond
         void preallocate_pool()
         {
-            m_pFirst = allocator_type().allocate( m_Queue.capacity() );
+            m_pFirst = cxx_allocator().NewArray( m_Queue.capacity() );
             m_pLast = m_pFirst + m_Queue.capacity();
 
-            for ( value_type * p = m_pFirst; p < m_pLast; ++p )
+            for ( value_type * p = m_pFirst; p < m_pLast; ++p ) {
                 CDS_VERIFY( m_Queue.push( *p )) ;   // must be true
+            }
         }
 
         bool from_pool( value_type * p ) const
@@ -120,7 +128,7 @@ namespace cds { namespace memory {
         /**
             \p nCapacity argument is the queue capacity. It should be passed
             if the queue is based on dynamically-allocated buffer.
-            See cds::intrusive::VyukovMPMCCycleQueue for explanation.
+            See \p cds::intrusive::VyukovMPMCCycleQueue for explanation.
         */
         vyukov_queue_pool( size_t nCapacity = 0 )
             : m_Queue( nCapacity )
@@ -132,7 +140,7 @@ namespace cds { namespace memory {
         ~vyukov_queue_pool()
         {
             m_Queue.clear();
-            allocator_type().deallocate( m_pFirst, m_Queue.capacity() );
+            cxx_allocator().Delete( m_pFirst, m_Queue.capacity());
         }
 
         /// Allocates an object from pool
@@ -146,14 +154,15 @@ namespace cds { namespace memory {
         value_type * allocate( size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             value_type * p = m_Queue.pop();
             if ( p ) {
                 assert( from_pool(p) );
                 return p;
             }
-
-            return allocator_type().allocate( n );
+            // The pool is empty - allocate new from the heap
+            return cxx_allocator().New();
         }
 
         /// Deallocated the object \p p
@@ -167,12 +176,18 @@ namespace cds { namespace memory {
         void deallocate( value_type * p, size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             if ( p ) {
-                if ( from_pool( p ) )
-                    m_Queue.push( *p );
+                if ( from_pool(p) ) {
+                    // The queue can notify about false fullness state
+                    // so we push in loop 
+                    back_off bkoff;
+                    while ( !m_Queue.push( *p ))
+                        bkoff();
+                }
                 else
-                    allocator_type().deallocate( p, n );
+                    cxx_allocator().Delete( p );
             }
         }
     };
@@ -251,6 +266,8 @@ namespace cds { namespace memory {
 
     protected:
         //@cond
+        typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+
         queue_type      m_Queue;
         //@endcond
 
@@ -263,11 +280,9 @@ namespace cds { namespace memory {
         /// Deallocates all objects from the pool
         ~lazy_vyukov_queue_pool()
         {
-            allocator_type a;
-            while ( !m_Queue.empty() ) {
-                value_type * p = m_Queue.pop();
-                a.deallocate( p, 1 );
-            }
+            cxx_allocator a;
+            while ( !m_Queue.empty() )
+                a.Delete( m_Queue.pop());
         }
 
         /// Allocates an object from pool
@@ -281,12 +296,13 @@ namespace cds { namespace memory {
         value_type * allocate( size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             value_type * p = m_Queue.pop();
             if ( p )
                 return p;
 
-            return allocator_type().allocate( n );
+            return cxx_allocator().New();
         }
 
         /// Deallocated the object \p p
@@ -300,10 +316,12 @@ namespace cds { namespace memory {
         void deallocate( value_type * p, size_t n )
         {
             assert( n == 1 );
+            CDS_UNUSED(n);
 
             if ( p ) {
+                // Here we ignore false fullness state of the queue
                 if ( !m_Queue.push( *p ))
-                    allocator_type().deallocate( p, n );
+                    cxx_allocator().Delete( p );
             }
         }
 
@@ -376,16 +394,24 @@ namespace cds { namespace memory {
     template <typename T, typename Traits = vyukov_queue_pool_traits >
     class bounded_vyukov_queue_pool
     {
+        //@cond
+        struct internal_traits : public Traits {
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        //@endcond
     public:
-        typedef cds::intrusive::VyukovMPMCCycleQueue< T, Traits > queue_type  ;   ///< Queue type
+        typedef cds::intrusive::VyukovMPMCCycleQueue< T, internal_traits > queue_type  ;   ///< Queue type
 
     public:
         typedef T  value_type;  ///< Value type
         typedef Traits traits;  ///< Pool traits
         typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef typename traits::back_off back_off; ///< back-off strategy
 
     protected:
         //@cond
+        typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+
         queue_type      m_Queue;
         value_type *    m_pFirst;
         value_type *    m_pLast;
@@ -395,8 +421,9 @@ namespace cds { namespace memory {
         //@cond
         void preallocate_pool()
         {
-            m_pFirst = allocator_type().allocate( m_Queue.capacity() );
-            m_pLast = m_pFirst + m_Queue.capacity();
+            size_t const nCount = m_Queue.capacity();
+            m_pFirst = cxx_allocator().NewArray( nCount );
+            m_pLast = m_pFirst + nCount;
 
             for ( value_type * p = m_pFirst; p < m_pLast; ++p )
                 CDS_VERIFY( m_Queue.push( *p )) ;   // must be true
@@ -413,7 +440,7 @@ namespace cds { namespace memory {
         /**
             \p nCapacity argument is the queue capacity. It should be passed
             if the queue is based on dynamically-allocated buffer.
-            See cds::intrusive::VyukovMPMCCycleQueue for explanation.
+            See \p cds::intrusive::VyukovMPMCCycleQueue for explanation.
         */
         bounded_vyukov_queue_pool( size_t nCapacity = 0 )
             : m_Queue( nCapacity )
@@ -425,7 +452,7 @@ namespace cds { namespace memory {
         ~bounded_vyukov_queue_pool()
         {
             m_Queue.clear();
-            allocator_type().deallocate( m_pFirst, m_Queue.capacity() );
+            cxx_allocator().Delete( m_pFirst, m_Queue.capacity() );
         }
 
         /// Allocates an object from pool
@@ -442,12 +469,23 @@ namespace cds { namespace memory {
             CDS_UNUSED( n );
 
             value_type * p = m_Queue.pop();
-            if ( p ) {
-                assert( from_pool(p) );
-                return p;
+
+            if ( !p ) {
+                back_off bkoff;
+                while ( m_Queue.size() ) {
+                    p = m_Queue.pop();
+                    if ( p )
+                        goto ok;
+                    bkoff();
+                }
+
+                // The pool is empty
+                throw std::bad_alloc();
             }
 
-            throw std::bad_alloc();
+        ok:
+            assert( from_pool(p) );
+            return p;
         }
 
         /// Deallocated the object \p p
@@ -464,7 +502,11 @@ namespace cds { namespace memory {
 
             if ( p ) {
                 assert( from_pool( p ));
-                m_Queue.push( *p );
+                back_off bkoff;
+                // The queue can notify it is full but that is false fullness state
+                // So, we push in loop
+                while ( !m_Queue.push(*p) )
+                    bkoff();
             }
         }
     };
@@ -473,4 +515,4 @@ namespace cds { namespace memory {
 }}  // namespace cds::memory
 
 
-#endif // #ifndef __CDS_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H
+#endif // #ifndef CDSLIB_MEMORY_VYUKOV_QUEUE_ALLOCATOR_H

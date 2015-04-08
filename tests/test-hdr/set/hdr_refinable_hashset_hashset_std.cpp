@@ -3,9 +3,7 @@
 #include "set/hdr_striped_set.h"
 #include <cds/container/striped_set/std_hash_set.h>
 #include <cds/container/striped_set.h>
-#include <cds/lock/spinlock.h>
-
-#if !((CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)) && _MSC_VER < 1600)
+#include <cds/sync/spinlock.h>
 
 namespace set {
 
@@ -61,7 +59,7 @@ namespace set {
         // Spinlock as lock policy
         CPPUNIT_MESSAGE( "spinlock");
         typedef cc::StripedSet< set_t
-            ,co::mutex_policy< cc::striped_set::refinable<cds::lock::ReentrantSpin> >
+            , co::mutex_policy< cc::striped_set::refinable<cds::sync::reentrant_spin> >
             , co::hash< hash_int >
             , co::less< less<item> >
         >   set_spin;
@@ -153,4 +151,3 @@ namespace set {
     }
 
 }   // namespace set
-#endif // #if !(CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION < 1600)

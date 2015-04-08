@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_STATIC_FUNCTOR_H
-#define __CDS_DETAILS_STATIC_FUNCTOR_H
+#ifndef CDSLIB_DETAILS_STATIC_FUNCTOR_H
+#define CDSLIB_DETAILS_STATIC_FUNCTOR_H
 
 //@cond
 namespace cds { namespace details {
@@ -18,4 +18,4 @@ namespace cds { namespace details {
 }} // namespace cds::details
 //@endcond
 
-#endif // #ifndef __CDS_DETAILS_STATIC_FUNCTOR_H
+#endif // #ifndef CDSLIB_DETAILS_STATIC_FUNCTOR_H

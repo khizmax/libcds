@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef CDSHDRTEST_INTRUSIVE_PQUEUE_H
-#define CDSHDRTEST_INTRUSIVE_PQUEUE_H
+#ifndef CDSTEST_HDR_INTRUSIVE_PQUEUE_H
+#define CDSTEST_HDR_INTRUSIVE_PQUEUE_H
 
 #include "cppunit/cppunit_proxy.h"
 #include "size_check.h"
@@ -211,4 +211,4 @@ namespace priority_queue {
 
 } // namespace priority_queue
 
-#endif // #ifndef CDSHDRTEST_INTRUSIVE_PQUEUE_H
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_PQUEUE_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H
-#define __CDS_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H
+#ifndef CDSLIB_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H
+#define CDSLIB_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H
 
 #include <cds/algo/atomic.h>
 
@@ -389,4 +389,4 @@ namespace cds { namespace memory { namespace michael {
 
 }}} // namespace cds::memory::michael
 
-#endif  /// __CDS_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H
+#endif  /// CDSLIB_MEMORY_MICHAEL_ALLOCATOR_PROCHEAP_STAT_H

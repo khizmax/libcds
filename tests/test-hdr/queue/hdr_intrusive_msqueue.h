@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_INTRSUSIVE_MSQUEUE_H
+#define CDSTEST_HDR_INTRSUSIVE_MSQUEUE_H
+
 #include "cppunit/cppunit_proxy.h"
 #include <cds/intrusive/details/base.h>
 
@@ -516,3 +519,5 @@ namespace queue {
         CPPUNIT_TEST_SUITE_END()
     };
 }   // namespace queue
+
+#endif // #ifndef CDSTEST_HDR_INTRSUSIVE_MSQUEUE_H

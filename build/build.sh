@@ -17,7 +17,7 @@ usage()
     echo "Build helper script for one of the supported platforms"
     echo "Usage: build.sh \"options\""
     echo "       where options may be any of the following:"
-    echo "       -t make target"
+    echo "       -t <target> make target"
     echo "       -c <C compiler name> Possible values are: gcc,clang,icc"
     echo "       -x <C++ compiler name> (e.g. g++, CC)"
     echo "       -p <Processor architecture> Possible values are:"
@@ -453,7 +453,7 @@ cxx_debug_options="-D_DEBUG -O0 -g $cxx_debug_options"
 cxx_release_options="-DNDEBUG $cxx_release_optimization $cxx_release_options"
 
 
-if test $BOOST_INCLUDE_PATH != ''; then
+if test 'x$BOOST_INCLUDE_PATH' != 'x'; then
 	buildCXXflags="$buildCXXflags -I$BOOST_INCLUDE_PATH"
 fi
 
@@ -534,11 +534,8 @@ $MAKE -f Makefile \
      platform=$OS_FAMILY \
      BIN_PATH=$BIN_PATH \
      OBJ_PATH=$OBJ_PATH/debug \
-     debug
-
-if test $? -gt 0; then
-   exit $?
-fi
+     debug \
+  || exit $?
 
 echo ---------------------------------
 echo Make release library
@@ -560,11 +557,8 @@ $MAKE -f Makefile \
      platform=$OS_FAMILY \
      BIN_PATH=$BIN_PATH \
      OBJ_PATH=$OBJ_PATH/release \
-     release
-     
-if test $? -gt 0; then
-   exit $?
-fi
+     release \
+  || exit $?
 
 
 echo ---------------------------------
@@ -582,11 +576,8 @@ if test $MAKE_DEBUG_TEST = '0'; then
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
         OBJ_PATH=$OBJ_PATH/test \
-        $target
-        
-    if test $? -gt 0; then
-        exit $?
-    fi
+        $target \
+     || exit $?
 fi    
 
 echo ---------------------------------
@@ -604,10 +595,7 @@ if test $MAKE_DEBUG_TEST = '1'; then
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
         OBJ_PATH=$OBJ_PATH/test-debug \
-        $target
-        
-    if test $? -gt 0; then
-        exit $?
-    fi
+        $target \
+     || exit $?
 fi   
  

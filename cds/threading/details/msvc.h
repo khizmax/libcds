@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_THREADING_DETAILS_MSVC_H
-#define __CDS_THREADING_DETAILS_MSVC_H
+#ifndef CDSLIB_THREADING_DETAILS_MSVC_H
+#define CDSLIB_THREADING_DETAILS_MSVC_H
 
 #include <cds/threading/details/msvc_manager.h>
 
@@ -13,4 +13,4 @@ namespace cds { namespace threading {
 }} // namespace cds::threading
 #endif
 
-#endif // #ifndef __CDS_THREADING_DETAILS_MSVC_H
+#endif // #ifndef CDSLIB_THREADING_DETAILS_MSVC_H

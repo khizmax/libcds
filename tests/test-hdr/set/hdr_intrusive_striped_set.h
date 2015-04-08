@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_INTRUSIVE_STRIPED_SET_H
+#define CDSTEST_HDR_INTRUSIVE_STRIPED_SET_H
+
 #include "cppunit/cppunit_proxy.h"
 #include <cds/opt/hash.h>
 
@@ -732,3 +735,5 @@ namespace set {
         CPPUNIT_TEST_SUITE_END()
     };
 } // namespace set
+
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_STRIPED_SET_H

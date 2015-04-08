@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_CUCKOO_SET_H
-#define __CDS_INTRUSIVE_CUCKOO_SET_H
+#ifndef CDSLIB_INTRUSIVE_CUCKOO_SET_H
+#define CDSLIB_INTRUSIVE_CUCKOO_SET_H
 
 #include <memory>
 #include <type_traits>
@@ -10,9 +10,9 @@
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/opt/hash.h>
-#include <cds/lock/array.h>
+#include <cds/sync/lock_array.h>
 #include <cds/os/thread.h>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 
 namespace cds { namespace intrusive {
@@ -376,7 +376,7 @@ namespace cds { namespace intrusive {
             };
             //@endcond
 
-            typedef cds::lock::array< lock_type, cds::lock::pow2_select_policy, allocator_type >    lock_array_type ;   ///< lock array type
+            typedef cds::sync::lock_array< lock_type, cds::sync::pow2_select_policy, allocator_type >    lock_array_type ;   ///< lock array type
 
         protected:
             //@cond
@@ -630,13 +630,13 @@ namespace cds { namespace intrusive {
 
         protected:
             //@cond
-            typedef cds::lock::trivial_select_policy  lock_selection_policy;
+            typedef cds::sync::trivial_select_policy  lock_selection_policy;
 
             class lock_array_type
-                : public cds::lock::array< lock_type, lock_selection_policy, allocator_type >
+                : public cds::sync::lock_array< lock_type, lock_selection_policy, allocator_type >
                 , public std::enable_shared_from_this< lock_array_type >
             {
-                typedef cds::lock::array< lock_type, lock_selection_policy, allocator_type >    lock_array_base;
+                typedef cds::sync::lock_array< lock_type, lock_selection_policy, allocator_type >    lock_array_base;
             public:
                 lock_array_type( size_t nCapacity )
                     : lock_array_base( nCapacity )
@@ -648,7 +648,7 @@ namespace cds { namespace intrusive {
             typedef unsigned long long  owner_t;
             typedef cds::OS::ThreadId   threadId_t;
 
-            typedef cds::lock::Spin     spinlock_type;
+            typedef cds::sync::spin     spinlock_type;
             typedef std::unique_lock< spinlock_type > scoped_spinlock;
             //@endcond
 
@@ -2809,4 +2809,4 @@ namespace cds { namespace intrusive {
     };
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_CUCKOO_SET_H
+#endif // #ifndef CDSLIB_INTRUSIVE_CUCKOO_SET_H

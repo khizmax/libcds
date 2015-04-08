@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SEGMENTED_QUEUE_H
-#define __CDS_CONTAINER_SEGMENTED_QUEUE_H
+#ifndef CDSLIB_CONTAINER_SEGMENTED_QUEUE_H
+#define CDSLIB_CONTAINER_SEGMENTED_QUEUE_H
 
 #include <memory>
 #include <functional>   // ref
@@ -55,7 +55,7 @@ namespace cds { namespace container {
             typedef CDS_DEFAULT_ALLOCATOR allocator;
 
             /// Lock type used to maintain an internal list of allocated segments
-            typedef cds::lock::Spin lock_type;
+            typedef cds::sync::spin lock_type;
 
             /// Random \ref cds::opt::permutation_generator "permutation generator" for sequence [0, quasi_factor)
             typedef cds::opt::v::random2_permutation<int>    permutation_generator;
@@ -390,4 +390,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SEGMENTED_QUEUE_H
+#endif // #ifndef CDSLIB_CONTAINER_SEGMENTED_QUEUE_H

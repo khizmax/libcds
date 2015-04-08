@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_SPLIT_LIST_SET_RCU_H
-#define __CDS_CONTAINER_SPLIT_LIST_SET_RCU_H
+#ifndef CDSLIB_CONTAINER_SPLIT_LIST_SET_RCU_H
+#define CDSLIB_CONTAINER_SPLIT_LIST_SET_RCU_H
 
 #include <cds/intrusive/split_list_rcu.h>
 #include <cds/container/details/make_split_list_set.h>
@@ -164,7 +164,7 @@ namespace cds { namespace container {
     >
     class SplitListSet< cds::urcu::gc< RCU >, T, Traits >:
 #ifdef CDS_DOXYGEN_INVOKED
-        protected intrusive::SplitListSet< cds::urcu::gc< RCU >, typename Traits::ordered_list, Traits >
+        protected intrusive::SplitListSet< cds::urcu::gc< RCU >, T, typename Traits::ordered_list, Traits >
 #else
         protected details::make_split_list_set< cds::urcu::gc< RCU >, T, typename Traits::ordered_list, split_list::details::wrap_set_traits<T, Traits> >::type
 #endif
@@ -629,8 +629,7 @@ namespace cds { namespace container {
 
         /// Extracts an item from the set using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListSet_rcu_extract "extract(exempt_ptr&, Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p extract(Q const&) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the set.
         */
@@ -811,4 +810,4 @@ namespace cds { namespace container {
     };
 }}  // namespace cds::container
 
-#endif // #ifndef __CDS_CONTAINER_SPLIT_LIST_SET_RCU_H
+#endif // #ifndef CDSLIB_CONTAINER_SPLIT_LIST_SET_RCU_H

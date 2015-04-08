@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_INTRUSIVE_SKIPLIST_SET_H
+#define CDSTEST_HDR_INTRUSIVE_SKIPLIST_SET_H
+
 #include "set/hdr_intrusive_set.h"
 
 namespace set {
@@ -756,3 +759,5 @@ namespace set {
         CPPUNIT_TEST_SUITE_END()
     };
 } // namespace set
+
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_SKIPLIST_SET_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_POSIX_THREAD_H
-#define __CDS_OS_POSIX_THREAD_H
+#ifndef CDSLIB_OS_POSIX_THREAD_H
+#define CDSLIB_OS_POSIX_THREAD_H
 
 #include <pthread.h>
 #include <signal.h>
@@ -36,4 +36,4 @@ namespace cds { namespace OS {
 }} // namespace cds::OS
 
 
-#endif // #ifndef __CDS_OS_POSIX_THREAD_H
+#endif // #ifndef CDSLIB_OS_POSIX_THREAD_H

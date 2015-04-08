@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
-#define __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
+#ifndef CDSLIB_CONTAINER_DETAILS_LAZY_LIST_BASE_H
+#define CDSLIB_CONTAINER_DETAILS_LAZY_LIST_BASE_H
 
 #include <cds/container/details/base.h>
 #include <cds/intrusive/details/lazy_list_base.h>
@@ -34,11 +34,25 @@ namespace cds { namespace container {
             */
             typedef opt::none                       less;
 
+            /// Specifies binary functor used for comparing keys for equality
+            /**
+                No default functor is provided. If \p equal_to option is not spcified, \p compare is used, if \p compare is not
+                specified, \p less is used.
+            */
+            typedef opt::none                       equal_to;
+
+            /// Specifies list ordering policy.
+            /**
+                If \p sort is \p true, than list maintains items in sorted order, otherwise items are unordered. Default is \p true.
+                Note that if \p sort is \p false then lookup operations scan entire list.
+            */
+            static const bool sort = true;
+
             /// Lock type used to lock modifying items
             /**
-                Default is cds::lock::Spin
+                Default is cds::sync::spin
             */
-            typedef cds::lock::Spin                 lock_type;
+            typedef cds::sync::spin                 lock_type;
 
             /// back-off strategy used
             typedef cds::backoff::Default           back_off;
@@ -70,12 +84,15 @@ namespace cds { namespace container {
         /// Metafunction converting option list to \p lazy_list::traits
         /**
             \p Options are:
-            - \p opt::lock_type - lock type for node-level locking. Default \p is cds::lock::Spin. Note that <b>each</b> node
+            - \p opt::lock_type - lock type for node-level locking. Default \p is cds::sync::spin. Note that <b>each</b> node
                 of the list has member of type \p lock_type, therefore, heavy-weighted locking primitive is not
                 acceptable as candidate for \p lock_type.
             - \p opt::compare - key compare functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for key compare. Default is \p std::less<T>.
+            - \p opt::equal_to - specifies binary functor for comparing keys for equality. No default is provided. If \p equal_to is
+                not specified, \p compare is used, if \p compare is not specified, \p less is used.
+            - \p opt::sort - specifies ordering policy. Default value is \p true.
             - \p opt::back_off - back-off strategy used. If the option is not specified, \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
                 To enable item counting use \p atomicity::item_counter.
@@ -118,4 +135,4 @@ namespace cds { namespace container {
 }}  // namespace cds::container
 
 
-#endif  // #ifndef __CDS_CONTAINER_DETAILS_LAZY_LIST_BASE_H
+#endif  // #ifndef CDSLIB_CONTAINER_DETAILS_LAZY_LIST_BASE_H

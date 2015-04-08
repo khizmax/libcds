@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __UNIT_PQUEUE_TYPES_H
-#define __UNIT_PQUEUE_TYPES_H
+#ifndef CDSUNIT_PQUEUE_TYPES_H
+#define CDSUNIT_PQUEUE_TYPES_H
 
 #include <cds/container/mspriority_queue.h>
 #include <cds/container/fcpriority_queue.h>
@@ -14,7 +14,7 @@
 #include <deque>
 #include <boost/container/stable_vector.hpp>
 #include <boost/container/deque.hpp>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 
 #include "print_ellenbintree_stat.h"
 #include "print_skip_list_stat.h"
@@ -280,9 +280,9 @@ namespace pqueue {
         > FCPQueue_boost_stable_vector_stat;
 
         /// Standard priority_queue
-        typedef StdPQueue< Value, std::vector<Value>, cds::lock::Spin > StdPQueue_vector_spin;
+        typedef StdPQueue< Value, std::vector<Value>, cds::sync::spin> StdPQueue_vector_spin;
         typedef StdPQueue< Value, std::vector<Value>, std::mutex >  StdPQueue_vector_mutex;
-        typedef StdPQueue< Value, std::deque<Value>,  cds::lock::Spin > StdPQueue_deque_spin;
+        typedef StdPQueue< Value, std::deque<Value>, cds::sync::spin> StdPQueue_deque_spin;
         typedef StdPQueue< Value, std::deque<Value>,  std::mutex >  StdPQueue_deque_mutex;
     };
 
@@ -327,4 +327,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __UNIT_PQUEUE_TYPES_H
+#endif // #ifndef CDSUNIT_PQUEUE_TYPES_H

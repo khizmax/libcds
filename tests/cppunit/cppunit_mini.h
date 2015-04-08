@@ -21,8 +21,8 @@
 
 /* $Id$ */
 
-#ifndef _CPPUNITMPFR_H_
-#define _CPPUNITMPFR_H_
+#ifndef CDS_CPPUNIT_MPFR_H_
+#define CDS_CPPUNIT_MPFR_H_
 
 #include <string.h>
 #include <sstream>
@@ -81,6 +81,10 @@ namespace CppUnitMini
       unsigned int getUInt( const char * pszParamName, unsigned int nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
       long getLong( const char * pszParamName, long nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
       unsigned long getULong( const char * pszParamName, unsigned long nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
+      size_t getSizeT( const char * pszParamName, size_t nDefVal = 0 ) const 
+      {
+          return static_cast<size_t>( getULong( pszParamName, static_cast<unsigned long>(nDefVal)));
+      }
 
       bool getBool( const char * pszParamName, bool bDefVal = false ) const
       {
@@ -96,8 +100,7 @@ namespace CppUnitMini
               std::cerr << "bad_lexical_cast encountered while getting parameter "
                   << strParamName << "=" << it->second
                   << ": " << ex.what()
-                  << std::endl
-;
+                  << std::endl;
           }
           return bDefVal;
       }
@@ -366,4 +369,4 @@ namespace CppUnitMini
         error( "CPPUNIT_ASSERT_MSG", st.str().c_str(), __FILE__, __LINE__ )     ;   \
     }
 
-#endif
+#endif // #ifndef CDS_CPPUNIT_MPFR_H_

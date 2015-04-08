@@ -653,9 +653,11 @@
     <ClInclude Include="..\..\..\cds\compiler\vc\amd64\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\vc\x86\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\container\basket_queue.h" />
+    <ClInclude Include="..\..\..\cds\container\bronson_avltree_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_map.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\base.h" />
+    <ClInclude Include="..\..\..\cds\container\details\bronson_avltree_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\cuckoo_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h" />
@@ -674,6 +676,7 @@
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_hp.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_rcu.h" />
+    <ClInclude Include="..\..\..\cds\container\impl\bronson_avltree_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_map.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_set.h" />
     <ClInclude Include="..\..\..\cds\container\impl\lazy_kvlist.h" />
@@ -710,8 +713,6 @@
     <ClInclude Include="..\..\..\cds\container\striped_map\boost_slist.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\boost_unordered_map.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_std.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_map\std_hash_map_vc.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\std_list.h" />
     <ClInclude Include="..\..\..\cds\container\striped_map\std_map.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set.h" />
@@ -724,8 +725,6 @@
     <ClInclude Include="..\..\..\cds\container\striped_set\boost_unordered_set.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\boost_vector.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_std.h" />
-    <ClInclude Include="..\..\..\cds\container\striped_set\std_hash_set_vc.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_list.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_set.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_vector.h" />
@@ -744,8 +743,10 @@
     <ClInclude Include="..\..\..\cds\gc\impl\hp_decl.h" />
     <ClInclude Include="..\..\..\cds\gc\impl\hp_impl.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\details\bronson_avltree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\lazy_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_list_base.h" />
@@ -786,13 +787,17 @@
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\resizing_policy.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\striping_policy.h" />
     <ClInclude Include="..\..\..\cds\lock\array.h" />
-    <ClInclude Include="..\..\..\cds\memory\mapper.h" />
     <ClInclude Include="..\..\..\cds\memory\pool_allocator.h" />
     <ClInclude Include="..\..\..\cds\memory\vyukov_queue_pool.h" />
     <ClInclude Include="..\..\..\cds\os\osx\timer.h" />
     <ClInclude Include="..\..\..\cds\os\osx\topology.h" />
     <ClInclude Include="..\..\..\cds\os\posix\fake_topology.h" />
     <ClInclude Include="..\..\..\cds\os\posix\timer.h" />
+    <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h" />
+    <ClInclude Include="..\..\..\cds\sync\lock_array.h" />
+    <ClInclude Include="..\..\..\cds\sync\monitor.h" />
+    <ClInclude Include="..\..\..\cds\sync\pool_monitor.h" />
+    <ClInclude Include="..\..\..\cds\sync\spinlock.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11_manager.h" />
     <ClInclude Include="..\..\..\cds\urcu\details\base.h" />
@@ -821,7 +826,6 @@
     <ClInclude Include="..\..\..\cds\details\allocator.h" />
     <ClInclude Include="..\..\..\cds\details\bitop_generic.h" />
     <ClInclude Include="..\..\..\cds\details\bounded_array.h" />
-    <ClInclude Include="..\..\..\cds\details\comparator.h" />
     <ClInclude Include="..\..\..\cds\details\defs.h" />
     <ClInclude Include="..\..\..\cds\details\is_aligned.h" />
     <ClInclude Include="..\..\..\cds\details\make_const_type.h" />

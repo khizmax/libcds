@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_IMPL_MICHAEL_KVLIST_H
-#define __CDS_CONTAINER_IMPL_MICHAEL_KVLIST_H
+#ifndef CDSLIB_CONTAINER_IMPL_MICHAEL_KVLIST_H
+#define CDSLIB_CONTAINER_IMPL_MICHAEL_KVLIST_H
 
 #include <memory>
 #include <cds/container/details/guarded_ptr_cast.h>
@@ -810,4 +810,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_IMPL_MICHAEL_KVLIST_H
+#endif  // #ifndef CDSLIB_CONTAINER_IMPL_MICHAEL_KVLIST_H

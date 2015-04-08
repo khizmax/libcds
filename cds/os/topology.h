@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_OS_TOPOLOGY_H
-#define __CDS_OS_TOPOLOGY_H
+#ifndef CDSLIB_OS_TOPOLOGY_H
+#define CDSLIB_OS_TOPOLOGY_H
 
 #include <cds/details/defs.h>
 
@@ -25,4 +25,4 @@
 #   error Unknown OS. Compilation aborted
 #endif
 
-#endif  // #ifndef __CDS_OS_TOPOLOGY_H
+#endif  // #ifndef CDSLIB_OS_TOPOLOGY_H

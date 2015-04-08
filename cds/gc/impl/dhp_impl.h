@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_IMPL_DHP_IMPL_H
-#define __CDS_GC_IMPL_DHP_IMPL_H
+#ifndef CDSLIB_GC_IMPL_DHP_IMPL_H
+#define CDSLIB_GC_IMPL_DHP_IMPL_H
 
 #include <cds/threading/model.h>
 
@@ -66,4 +66,4 @@ namespace cds { namespace gc {
 }} // namespace cds::gc
 //@endcond
 
-#endif // #ifndef __CDS_GC_IMPL_DHP_IMPL_H
+#endif // #ifndef CDSLIB_GC_IMPL_DHP_IMPL_H

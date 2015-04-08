@@ -147,10 +147,8 @@ namespace cds { namespace gc { namespace dhp {
 
     void CDS_STDCALL GarbageCollector::Destruct()
     {
-        if ( m_pManager ) {
-            delete m_pManager;
-            m_pManager = nullptr;
-        }
+        delete m_pManager;
+        m_pManager = nullptr;
     }
 
     GarbageCollector::GarbageCollector( size_t nLiberateThreshold, size_t nInitialThreadGuardCount )

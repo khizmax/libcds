@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_DETAILS_GP_H
-#define _CDS_URCU_DETAILS_GP_H
+#ifndef CDSLIB_URCU_DETAILS_GP_H
+#define CDSLIB_URCU_DETAILS_GP_H
 
 #include <cds/urcu/details/gp_decl.h>
 #include <cds/threading/model.h>
@@ -98,4 +98,4 @@ namespace cds { namespace urcu { namespace details {
 }}} // namespace cds:urcu::details
 //@endcond
 
-#endif // #ifndef _CDS_URCU_DETAILS_GP_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_GP_H

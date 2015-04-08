@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_ICL_DEFS_H
-#define __CDS_COMPILER_ICL_DEFS_H
+#ifndef CDSLIB_COMPILER_ICL_DEFS_H
+#define CDSLIB_COMPILER_ICL_DEFS_H
 //@cond
 
 // Compiler version
@@ -86,6 +86,9 @@
 // C++11 inline namespace
 #define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
 
+// Inheriting constructors
+#define CDS_CXX11_INHERITING_CTOR
+
 // *************************************************
 // Alignment macro
 
@@ -102,4 +105,4 @@
 #include <cds/compiler/icl/compiler_barriers.h>
 
 //@endcond
-#endif // #ifndef __CDS_COMPILER_VC_DEFS_H
+#endif // #ifndef CDSLIB_COMPILER_VC_DEFS_H

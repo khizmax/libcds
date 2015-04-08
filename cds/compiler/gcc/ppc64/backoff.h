@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_GCC_PPC64_BACKOFF_H
-#define __CDS_COMPILER_GCC_PPC64_BACKOFF_H
+#ifndef CDSLIB_COMPILER_GCC_PPC64_BACKOFF_H
+#define CDSLIB_COMPILER_GCC_PPC64_BACKOFF_H
 
 //@cond none
 
@@ -16,4 +16,4 @@ namespace cds { namespace backoff {
 }}  // namespace cds::backoff
 
 //@endcond
-#endif  // #ifndef __CDS_COMPILER_GCC_PPC64_BACKOFF_H
+#endif  // #ifndef CDSLIB_COMPILER_GCC_PPC64_BACKOFF_H

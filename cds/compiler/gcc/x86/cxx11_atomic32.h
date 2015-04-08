@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_GCC_X86_CXX11_ATOMIC32_H
-#define __CDS_COMPILER_GCC_X86_CXX11_ATOMIC32_H
+#ifndef CDSLIB_COMPILER_GCC_X86_CXX11_ATOMIC32_H
+#define CDSLIB_COMPILER_GCC_X86_CXX11_ATOMIC32_H
 
 #include <cstdint>
 #include <cds/details/is_aligned.h>
@@ -471,4 +471,4 @@ namespace cds { namespace cxx11_atomic {
 }}  // namespace cds::cxx11_atomic
 //@endcond
 
-#endif // #ifndef __CDS_COMPILER_GCC_X86_CXX11_ATOMIC32_H
+#endif // #ifndef CDSLIB_COMPILER_GCC_X86_CXX11_ATOMIC32_H

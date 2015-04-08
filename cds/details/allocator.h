@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_ALLOCATOR_H
-#define __CDS_DETAILS_ALLOCATOR_H
+#ifndef CDSLIB_DETAILS_ALLOCATOR_H
+#define CDSLIB_DETAILS_ALLOCATOR_H
 
 #include <type_traits>
 #include <memory>
@@ -171,4 +171,4 @@ namespace cds {
     }    // namespace details
 }    // namespace cds
 
-#endif    // #ifndef __CDS_DETAILS_ALLOCATOR_H
+#endif    // #ifndef CDSLIB_DETAILS_ALLOCATOR_H

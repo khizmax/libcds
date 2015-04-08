@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDSUNIT_STACK_TYPES_H
-#define __CDSUNIT_STACK_TYPES_H
+#ifndef CDSUNIT_STACK_TYPES_H
+#define CDSUNIT_STACK_TYPES_H
 
 #include <cds/container/treiber_stack.h>
 #include <cds/container/fcstack.h>
@@ -11,7 +11,7 @@
 #include <cds/gc/dhp.h>
 
 #include <mutex>
-#include <cds/lock/spinlock.h>
+#include <cds/sync/spinlock.h>
 #include <stack>
 #include <list>
 #include <vector>
@@ -383,11 +383,11 @@ namespace stack {
 
         // std::stack
         typedef details::StdStack< T, std::stack< T >, std::mutex >  StdStack_Deque_Mutex;
-        typedef details::StdStack< T, std::stack< T >, cds::lock::Spin > StdStack_Deque_Spin;
+        typedef details::StdStack< T, std::stack< T >, cds::sync::spin > StdStack_Deque_Spin;
         typedef details::StdStack< T, std::stack< T, std::vector<T> >, std::mutex >  StdStack_Vector_Mutex;
-        typedef details::StdStack< T, std::stack< T, std::vector<T> >, cds::lock::Spin > StdStack_Vector_Spin;
+        typedef details::StdStack< T, std::stack< T, std::vector<T> >, cds::sync::spin > StdStack_Vector_Spin;
         typedef details::StdStack< T, std::stack< T, std::list<T> >, std::mutex >  StdStack_List_Mutex;
-        typedef details::StdStack< T, std::stack< T, std::list<T> >, cds::lock::Spin > StdStack_List_Spin;
+        typedef details::StdStack< T, std::stack< T, std::list<T> >, cds::sync::spin > StdStack_List_Spin;
 
     };
 } // namespace stack
@@ -470,4 +470,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef __CDSUNIT_STACK_TYPES_H
+#endif // #ifndef CDSUNIT_STACK_TYPES_H

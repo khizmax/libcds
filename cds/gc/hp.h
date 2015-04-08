@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_HP_H
-#define __CDS_GC_HP_H
+#ifndef CDSLIB_GC_HP_H
+#define CDSLIB_GC_HP_H
 
 #include <cds/gc/impl/hp_decl.h>
 #include <cds/gc/impl/hp_impl.h>
@@ -51,4 +51,4 @@ namespace cds {
 } // namespace cds
 
 
-#endif  // #ifndef __CDS_GC_HP_H
+#endif  // #ifndef CDSLIB_GC_HP_H

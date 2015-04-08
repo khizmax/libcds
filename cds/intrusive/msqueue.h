@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_MSQUEUE_H
-#define __CDS_INTRUSIVE_MSQUEUE_H
+#ifndef CDSLIB_INTRUSIVE_MSQUEUE_H
+#define CDSLIB_INTRUSIVE_MSQUEUE_H
 
 #include <type_traits>
 #include <cds/intrusive/details/single_link_struct.h>
@@ -75,6 +75,7 @@ namespace cds { namespace intrusive {
             counter_type m_DequeueRace       ;  ///< Count of dequeue race conditions encountered
             counter_type m_AdvanceTailError  ;  ///< Count of "advance tail failed" events
             counter_type m_BadTail           ;  ///< Count of events "Tail is not pointed to the last item in the queue"
+            counter_type m_EmptyDequeue      ;  ///< Count of dequeue from empty queue
 
             /// Register enqueue call
             void onEnqueue()                { ++m_EnqueueCount; }
@@ -88,6 +89,8 @@ namespace cds { namespace intrusive {
             void onAdvanceTailFailed()      { ++m_AdvanceTailError; }
             /// Register event "Tail is not pointed to last item in the queue"
             void onBadTail()                { ++m_BadTail; }
+            /// Register dequeuing from empty queue
+            void onEmptyDequeue()           { ++m_EmptyDequeue; }
 
             //@cond
             void reset()
@@ -98,6 +101,7 @@ namespace cds { namespace intrusive {
                 m_DequeueRace.reset();
                 m_AdvanceTailError.reset();
                 m_BadTail.reset();
+                m_EmptyDequeue.reset();
             }
 
             stat& operator +=( stat const& s )
@@ -108,6 +112,7 @@ namespace cds { namespace intrusive {
                 m_DequeueRace += s.m_DequeueRace.get();
                 m_AdvanceTailError += s.m_AdvanceTailError.get();
                 m_BadTail += s.m_BadTail.get();
+                m_EmptyDequeue += s.m_EmptyDequeue.get();
 
                 return *this;
             }
@@ -118,12 +123,13 @@ namespace cds { namespace intrusive {
         struct empty_stat
         {
             //@cond
-            void onEnqueue()                {}
-            void onDequeue()                {}
-            void onEnqueueRace()            {}
-            void onDequeueRace()            {}
-            void onAdvanceTailFailed()      {}
-            void onBadTail()                {}
+            void onEnqueue()                const {}
+            void onDequeue()                const {}
+            void onEnqueueRace()            const {}
+            void onDequeueRace()            const {}
+            void onAdvanceTailFailed()      const {}
+            void onBadTail()                const {}
+            void onEmptyDequeue()           const {}
 
             void reset() {}
             empty_stat& operator +=( empty_stat const& )
@@ -371,8 +377,10 @@ namespace cds { namespace intrusive {
                 if ( m_pHead.load(memory_model::memory_order_acquire) != h )
                     continue;
 
-                if ( pNext == nullptr )
-                    return false ;    // empty queue
+                if ( pNext == nullptr ) {
+                    m_Stat.onEmptyDequeue();
+                    return false;    // empty queue
+                }
 
                 node_type * t = m_pTail.load(memory_model::memory_order_acquire);
                 if ( h == t ) {
@@ -584,4 +592,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_MSQUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_MSQUEUE_H

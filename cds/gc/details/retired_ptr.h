@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_DETAILS_RETIRED_PTR_H
-#define __CDS_GC_DETAILS_RETIRED_PTR_H
+#ifndef CDSLIB_GC_DETAILS_RETIRED_PTR_H
+#define CDSLIB_GC_DETAILS_RETIRED_PTR_H
 
 #include <cds/details/defs.h>
 
@@ -90,4 +90,4 @@ namespace cds { namespace gc {
 }}   // namespace cds::gc
 //@endcond
 
-#endif // #ifndef __CDS_GC_DETAILS_RETIRED_PTR_H
+#endif // #ifndef CDSLIB_GC_DETAILS_RETIRED_PTR_H

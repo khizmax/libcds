@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_LIB_H
-#define __CDS_LIB_H
+#ifndef CDSLIB_LIB_H
+#define CDSLIB_LIB_H
 //@cond
 
 #include <cds/details/defs.h>
@@ -25,4 +25,4 @@
 #endif // #ifndef CDS_BUILD_LIB
 
 //@endcond
-#endif // #ifndef __CDS_LIB_H
+#endif // #ifndef CDSLIB_LIB_H

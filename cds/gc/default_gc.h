@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_GC_DEFAULT_GC_H
-#define __CDS_GC_DEFAULT_GC_H
+#ifndef CDSLIB_GC_DEFAULT_GC_H
+#define CDSLIB_GC_DEFAULT_GC_H
 
 #include <cds/gc/hp.h>
 
@@ -13,4 +13,4 @@ namespace cds { namespace gc {
 }} // namespace cds::gc
 
 
-#endif  // #ifndef __CDS_GC_DEFAULT_GC_H
+#endif  // #ifndef CDSLIB_GC_DEFAULT_GC_H

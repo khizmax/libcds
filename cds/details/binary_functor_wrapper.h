@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_BINARY_FUNCTOR_WRAPPER_H
-#define __CDS_DETAILS_BINARY_FUNCTOR_WRAPPER_H
+#ifndef CDSLIB_DETAILS_BINARY_FUNCTOR_WRAPPER_H
+#define CDSLIB_DETAILS_BINARY_FUNCTOR_WRAPPER_H
 
 #include <cds/details/defs.h>
 
@@ -39,6 +39,21 @@ namespace cds { namespace details {
         }
     };
 
+    struct trivial_accessor
+    {
+        template <typename T>
+        T const& operator()( T const& p ) const
+        {
+            return p;
+        }
+
+        template <typename T>
+        T& operator()( T& p ) const
+        {
+            return p;
+        }
+    };
+
     template <typename ArgType, typename Predicate, typename Accessor>
     using predicate_wrapper = binary_functor_wrapper< bool, Predicate, ArgType, Accessor>;
 
@@ -49,4 +64,4 @@ namespace cds { namespace details {
 
 //@endcond
 
-#endif // #ifndef __CDS_DETAILS_BINARY_FUNCTOR_WRAPPER_H
+#endif // #ifndef CDSLIB_DETAILS_BINARY_FUNCTOR_WRAPPER_H

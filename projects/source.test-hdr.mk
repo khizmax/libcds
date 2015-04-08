@@ -60,39 +60,41 @@ CDS_TESTHDR_MAP := \
 CDS_TESTHDR_DEQUE := \
     tests/test-hdr/deque/hdr_fcdeque.cpp
 
-CDS_TESTHDR_ORDLIST := \
-    tests/test-hdr/ordered_list/hdr_lazy_dhp.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_rcu_gpi.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_rcu_gpb.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_rcu_gpt.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_rcu_shb.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_rcu_sht.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_dhp.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpb.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpi.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_gpt.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_shb.cpp \
-    tests/test-hdr/ordered_list/hdr_lazy_kv_rcu_sht.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_dhp.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_rcu_gpi.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_rcu_gpb.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_rcu_gpt.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_rcu_shb.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_rcu_sht.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_dhp.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_hp.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_nogc.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_rcu_gpi.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_rcu_gpb.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_rcu_gpt.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_rcu_shb.cpp \
-    tests/test-hdr/ordered_list/hdr_michael_kv_rcu_sht.cpp
+CDS_TESTHDR_LIST := \
+    tests/test-hdr/list/hdr_lazy_dhp.cpp \
+    tests/test-hdr/list/hdr_lazy_hp.cpp \
+    tests/test-hdr/list/hdr_lazy_nogc.cpp \
+    tests/test-hdr/list/hdr_lazy_nogc_unord.cpp \
+    tests/test-hdr/list/hdr_lazy_rcu_gpi.cpp \
+    tests/test-hdr/list/hdr_lazy_rcu_gpb.cpp \
+    tests/test-hdr/list/hdr_lazy_rcu_gpt.cpp \
+    tests/test-hdr/list/hdr_lazy_rcu_shb.cpp \
+    tests/test-hdr/list/hdr_lazy_rcu_sht.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_dhp.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_hp.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_nogc.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_nogc_unord.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_rcu_gpb.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_rcu_gpi.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_rcu_gpt.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_rcu_shb.cpp \
+    tests/test-hdr/list/hdr_lazy_kv_rcu_sht.cpp \
+    tests/test-hdr/list/hdr_michael_dhp.cpp \
+    tests/test-hdr/list/hdr_michael_hp.cpp \
+    tests/test-hdr/list/hdr_michael_nogc.cpp \
+    tests/test-hdr/list/hdr_michael_rcu_gpi.cpp \
+    tests/test-hdr/list/hdr_michael_rcu_gpb.cpp \
+    tests/test-hdr/list/hdr_michael_rcu_gpt.cpp \
+    tests/test-hdr/list/hdr_michael_rcu_shb.cpp \
+    tests/test-hdr/list/hdr_michael_rcu_sht.cpp \
+    tests/test-hdr/list/hdr_michael_kv_dhp.cpp \
+    tests/test-hdr/list/hdr_michael_kv_hp.cpp \
+    tests/test-hdr/list/hdr_michael_kv_nogc.cpp \
+    tests/test-hdr/list/hdr_michael_kv_rcu_gpi.cpp \
+    tests/test-hdr/list/hdr_michael_kv_rcu_gpb.cpp \
+    tests/test-hdr/list/hdr_michael_kv_rcu_gpt.cpp \
+    tests/test-hdr/list/hdr_michael_kv_rcu_shb.cpp \
+    tests/test-hdr/list/hdr_michael_kv_rcu_sht.cpp
 
 CDS_TESTHDR_PQUEUE := \
     tests/test-hdr/priority_queue/hdr_intrusive_mspqueue_dyn.cpp \
@@ -245,7 +247,18 @@ CDS_TESTHDR_TREE := \
     tests/test-hdr/tree/hdr_ellenbintree_set_rcu_gpi.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_set_rcu_gpt.cpp \
     tests/test-hdr/tree/hdr_ellenbintree_set_rcu_shb.cpp \
-    tests/test-hdr/tree/hdr_ellenbintree_set_rcu_sht.cpp
+    tests/test-hdr/tree/hdr_ellenbintree_set_rcu_sht.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_gpb.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_gpb_pool_monitor.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_gpi.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_gpi_pool_monitor.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_gpt.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_gpt_pool_monitor.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_shb.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_shb_pool_monitor.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_sht.cpp \
+    tests/test-hdr/tree/hdr_bronson_avltree_map_rcu_sht_pool_monitor.cpp \
+    
 
 CDS_TESTHDR_MISC := \
     tests/test-hdr/misc/cxx11_atomic_class.cpp \
@@ -264,7 +277,7 @@ CDS_TESTHDR_SOURCES := \
     $(CDS_TESTHDR_STACK) \
     $(CDS_TESTHDR_MAP) \
     $(CDS_TESTHDR_DEQUE) \
-    $(CDS_TESTHDR_ORDLIST) \
+    $(CDS_TESTHDR_LIST) \
     $(CDS_TESTHDR_SET) \
     $(CDS_TESTHDR_TREE) \
     $(CDS_TESTHDR_MISC)

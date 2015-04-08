@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_bronsonavltree.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_cuckoo.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_ellentree.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_michael.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_refinable.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_skip.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_split.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_std.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_striped.cpp">
+      <Filter>map_find_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_bronsonavltree.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_cuckoo.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_ellentree.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_michael.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_refinable.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_skip.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_split.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_std.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_striped.cpp">
+      <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_bronsonavltree.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_cuckoo.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_ellentree.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_michael.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_refinable.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_skip.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_split.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_std.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_striped.cpp">
+      <Filter>map_insfind_int</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_find_int.h">
+      <Filter>map_find_int</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_find_string.h">
+      <Filter>map_find_string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insfind_int.h">
+      <Filter>map_insfind_int</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="map_find_int">
+      <UniqueIdentifier>{05793356-5544-4e12-893f-5761dea6536e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="map_find_string">
+      <UniqueIdentifier>{c6ad8146-72e2-473c-aa04-3db455858146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="map_insfind_int">
+      <UniqueIdentifier>{ba26fa2b-d618-4dd8-97d6-7dc874d9acf4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

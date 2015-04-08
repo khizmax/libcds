@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_INTRUSIVE_BASKET_QUEUE_H
-#define __CDS_INTRUSIVE_BASKET_QUEUE_H
+#ifndef CDSLIB_INTRUSIVE_BASKET_QUEUE_H
+#define CDSLIB_INTRUSIVE_BASKET_QUEUE_H
 
 #include <type_traits>
 #include <cds/intrusive/details/single_link_struct.h>
@@ -122,23 +122,27 @@ namespace cds { namespace intrusive {
             counter_type m_BadTail;         ///< Count of events "Tail is not pointed to the last item in the queue"
             counter_type m_TryAddBasket;    ///< Count of attemps adding new item to a basket (only or BasketQueue, for other queue this metric is not used)
             counter_type m_AddBasketCount;  ///< Count of events "Enqueue a new item into basket" (only or BasketQueue, for other queue this metric is not used)
+            counter_type m_EmptyDequeue;    ///< Count of dequeue from empty queue
 
             /// Register enqueue call
-            void onEnqueue() { ++m_EnqueueCount; }
+            void onEnqueue()                { ++m_EnqueueCount; }
             /// Register dequeue call
-            void onDequeue() { ++m_DequeueCount; }
+            void onDequeue()                { ++m_DequeueCount; }
             /// Register enqueue race event
-            void onEnqueueRace() { ++m_EnqueueRace; }
+            void onEnqueueRace()            { ++m_EnqueueRace; }
             /// Register dequeue race event
-            void onDequeueRace() { ++m_DequeueRace; }
+            void onDequeueRace()            { ++m_DequeueRace; }
             /// Register "advance tail failed" event
-            void onAdvanceTailFailed() { ++m_AdvanceTailError; }
+            void onAdvanceTailFailed()      { ++m_AdvanceTailError; }
             /// Register event "Tail is not pointed to last item in the queue"
-            void onBadTail() { ++m_BadTail; }
+            void onBadTail()                { ++m_BadTail; }
             /// Register an attempt t add new item to basket
             void onTryAddBasket()           { ++m_TryAddBasket; }
             /// Register event "Enqueue a new item into basket" (only or BasketQueue, for other queue this metric is not used)
             void onAddBasket()              { ++m_AddBasketCount; }
+            /// Register dequeuing from empty queue
+            void onEmptyDequeue()           { ++m_EmptyDequeue; }
+
 
             //@cond
             void reset()
@@ -151,6 +155,7 @@ namespace cds { namespace intrusive {
                 m_BadTail.reset();
                 m_TryAddBasket.reset();
                 m_AddBasketCount.reset();
+                m_EmptyDequeue.reset();
             }
 
             stat& operator +=( stat const& s )
@@ -163,6 +168,7 @@ namespace cds { namespace intrusive {
                 m_BadTail       += s.m_BadTail.get();
                 m_TryAddBasket  += s.m_TryAddBasket.get();
                 m_AddBasketCount += s.m_AddBasketCount.get();
+                m_EmptyDequeue  += s.m_EmptyDequeue.get();
                 return *this;
             }
             //@endcond
@@ -172,14 +178,15 @@ namespace cds { namespace intrusive {
         struct empty_stat
         {
             //@cond
-            void onEnqueue()            {}
-            void onDequeue()            {}
-            void onEnqueueRace()        {}
-            void onDequeueRace()        {}
-            void onAdvanceTailFailed()  {}
-            void onBadTail()            {}
-            void onTryAddBasket()       {}
-            void onAddBasket()          {}
+            void onEnqueue()            const {}
+            void onDequeue()            const {}
+            void onEnqueueRace()        const {}
+            void onDequeueRace()        const {}
+            void onAdvanceTailFailed()  const {}
+            void onBadTail()            const {}
+            void onTryAddBasket()       const {}
+            void onAddBasket()          const {}
+            void onEmptyDequeue()       const {}
 
             void reset() {}
             empty_stat& operator +=( empty_stat const& )
@@ -494,8 +501,10 @@ namespace cds { namespace intrusive {
 
                 if ( h == m_pHead.load( memory_model::memory_order_acquire ) ) {
                     if ( h.ptr() == t.ptr() ) {
-                        if ( !pNext.ptr() )
+                        if ( !pNext.ptr() ) {
+                            m_Stat.onEmptyDequeue();
                             return false;
+                        }
 
                         {
                             typename gc::Guard g;
@@ -791,4 +800,4 @@ namespace cds { namespace intrusive {
 
 }} // namespace cds::intrusive
 
-#endif // #ifndef __CDS_INTRUSIVE_BASKET_QUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_BASKET_QUEUE_H

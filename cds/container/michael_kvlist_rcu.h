@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_CONTAINER_MICHAEL_KVLIST_RCU_H
-#define __CDS_CONTAINER_MICHAEL_KVLIST_RCU_H
+#ifndef CDSLIB_CONTAINER_MICHAEL_KVLIST_RCU_H
+#define CDSLIB_CONTAINER_MICHAEL_KVLIST_RCU_H
 
 #include <memory>
 #include <functional>   // ref
@@ -556,7 +556,7 @@ namespace cds { namespace container {
 
         /// Extracts an item from the list using \p pred predicate for searching
         /**
-            This function is the analog for \ref cds_nonintrusive_MichaelKVList_rcu_extract "extract(exempt_ptr&, K const&)".
+            This function is the analog for \p extract(K const&).
             The \p pred is a predicate used for key comparing.
             \p Less has the interface like \p std::less.
             \p pred must imply the same element order as \ref key_comparator.
@@ -811,4 +811,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif  // #ifndef __CDS_CONTAINER_MICHAEL_KVLIST_RCU_H
+#endif  // #ifndef CDSLIB_CONTAINER_MICHAEL_KVLIST_RCU_H

@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDSUNIT_PQUEUE_PQUEUE_DEFS_H
-#define _CDSUNIT_PQUEUE_PQUEUE_DEFS_H
+#ifndef CDSUNIT_PQUEUE_PQUEUE_DEFS_H
+#define CDSUNIT_PQUEUE_PQUEUE_DEFS_H
 
 // MSPriorityQueue
 #define CDSUNIT_DECLARE_MSPriorityQueue \
@@ -179,4 +179,4 @@
     CPPUNIT_TEST(StdPQueue_deque_mutex)
 
 
-#endif // #ifndef _CDSUNIT_PQUEUE_PQUEUE_DEFS_H
+#endif // #ifndef CDSUNIT_PQUEUE_PQUEUE_DEFS_H

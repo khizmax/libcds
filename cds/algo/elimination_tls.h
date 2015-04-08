@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_ALGO_ELIMINATION_TLS_H
-#define __CDS_ALGO_ELIMINATION_TLS_H
+#ifndef CDSLIB_ALGO_ELIMINATION_TLS_H
+#define CDSLIB_ALGO_ELIMINATION_TLS_H
 
 #include <cds/algo/base.h>
 
@@ -31,4 +31,4 @@ namespace cds { namespace algo { namespace elimination {
 
 }}} // cds::algo::elimination
 
-#endif // #ifndef __CDS_ALGO_ELIMINATION_TLS_H
+#endif // #ifndef CDSLIB_ALGO_ELIMINATION_TLS_H

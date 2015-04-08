@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_DETAILS_BASE_H
-#define _CDS_URCU_DETAILS_BASE_H
+#ifndef CDSLIB_URCU_DETAILS_BASE_H
+#define CDSLIB_URCU_DETAILS_BASE_H
 
 #include <cds/algo/atomic.h>
 #include <cds/gc/details/retired_ptr.h>
@@ -24,19 +24,17 @@ namespace cds {
         - [2011] M.Desnoyers, P.McKenney, A.Stern, M.Dagenias, J.Walpole "User-Level
           Implementations of Read-Copy Update"
 
-        <b>Informal intruduction to user-space %RCU</b>
+        <b>Informal introduction to user-space %RCU</b>
 
         [<i>From Desnoyer's papers</i>] %RCU is a synchronization mechanism that was added to the
         Linux kernel in October of 2002. %RCU achieves scalability improvements by allowing
         reads to occur concurrently with updates. In contrast to conventional locking
         primitives that ensure mutual exclusion among concurrent threads regardless of whether
         they be readers or updaters, or with reader-writer locks that allow concurrent reads
-        but not in the presence of updates, %RCU supports concurrency between a single updater
-        and multiple readers. %RCU ensures that reads are coherent by maintaining multiple
-        versions of objects and ensuring that they are not freed up until all pre-existing readside
+        but not in the presence of updates, %RCU supports concurrency between multiple updaters
+        and multiple readers. %RCU ensures that data are not freed up until all pre-existing
         critical sections complete. %RCU defines and uses efficient and scalable mechanisms
-        for publishing and reading new versions of an object, and also for deferring reclamation
-        of old versions. These mechanisms distribute the work among read and update
+        for deferring reclamation of old data. These mechanisms distribute the work among read and update
         paths in such a way as to make read paths extremely fast.
 
         %RCU readers execute within %RCU read-side critical sections. Each such critical section begins with
@@ -457,4 +455,4 @@ namespace cds {
     } // namespace urcu
 } // namespace cds
 
-#endif // #ifndef _CDS_URCU_DETAILS_BASE_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_BASE_H

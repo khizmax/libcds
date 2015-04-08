@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_DETAILS_IS_ALIGNED_H
-#define __CDS_DETAILS_IS_ALIGNED_H
+#ifndef CDSLIB_DETAILS_IS_ALIGNED_H
+#define CDSLIB_DETAILS_IS_ALIGNED_H
 
 #include <cds/details/defs.h>
 
@@ -33,4 +33,4 @@ namespace cds { namespace details {
 
 }} // namespace cds::details
 
-#endif // #ifndef __CDS_DETAILS_IS_ALIGNED_H
+#endif // #ifndef CDSLIB_DETAILS_IS_ALIGNED_H

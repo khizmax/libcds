@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef _CDS_URCU_DETAILS_CHECK_DEADLOCK_H
-#define _CDS_URCU_DETAILS_CHECK_DEADLOCK_H
+#ifndef CDSLIB_URCU_DETAILS_CHECK_DEADLOCK_H
+#define CDSLIB_URCU_DETAILS_CHECK_DEADLOCK_H
 
 #include <cds/urcu/options.h>
 
@@ -38,4 +38,4 @@ namespace cds { namespace urcu { namespace details {
 }}} // namespace cds::urcu::details
 //@endcond
 
-#endif // #ifndef _CDS_URCU_DETAILS_CHECK_DEADLOCK_H
+#endif // #ifndef CDSLIB_URCU_DETAILS_CHECK_DEADLOCK_H

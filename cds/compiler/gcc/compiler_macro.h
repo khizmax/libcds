@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef __CDS_COMPILER_GCC_COMPILER_MACRO_H
-#define __CDS_COMPILER_GCC_COMPILER_MACRO_H
+#ifndef CDSLIB_COMPILER_GCC_COMPILER_MACRO_H
+#define CDSLIB_COMPILER_GCC_COMPILER_MACRO_H
 
 // OS interface && OS name
 #if defined( __linux__ )
@@ -131,4 +131,4 @@
 #endif
 
 
-#endif // #ifndef __CDS_COMPILER_GCC_COMPILER_MACRO_H
+#endif // #ifndef CDSLIB_COMPILER_GCC_COMPILER_MACRO_H

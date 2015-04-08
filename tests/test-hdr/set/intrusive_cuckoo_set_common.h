@@ -1,5 +1,8 @@
 //$$CDS-header$$
 
+#ifndef CDSTEST_HDR_INTRUSIVE_CUCKOO_SET_COMMON_H
+#define CDSTEST_HDR_INTRUSIVE_CUCKOO_SET_COMMON_H
+
 namespace set {
     namespace {
 
@@ -49,3 +52,5 @@ namespace set {
 
     }
 } // namespace set
+
+#endif // #ifndef CDSTEST_HDR_INTRUSIVE_CUCKOO_SET_COMMON_H
