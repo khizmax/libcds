@@ -30,6 +30,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <random>
+
 #include <assert.h>
 
 #include <boost/lexical_cast.hpp>
@@ -191,7 +193,13 @@ namespace CppUnitMini
 
     static void print_gc_state();
 
-    static std::vector<std::string> const &    getTestStrings();
+    static std::vector<std::string> const&    getTestStrings();
+
+    template <typename RandomIt>
+    void shuffle( RandomIt first, RandomIt last )
+    {
+        std::shuffle( first, last, m_RandomGen );
+    }
 
   protected:
     static std::vector<std::string>  m_arrStrings ;   // array of test strings
@@ -201,6 +209,10 @@ namespace CppUnitMini
       static Config m_Cfg;
       static std::string m_strTestDataDir;
       static bool m_bExactMatch;
+
+      // random shuffle support
+      static std::random_device m_RandomDevice;
+      static std::mt19937       m_RandomGen;
 
   protected:
     static int m_numErrors;

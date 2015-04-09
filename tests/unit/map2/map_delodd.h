@@ -2,7 +2,6 @@
 
 #include "cppunit/thread.h"
 #include "map2/map_type.h"
-#include <algorithm> // random_shuffle
 #include <cds/os/topology.h>
 
 namespace map2 {

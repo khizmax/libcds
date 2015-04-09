@@ -33,8 +33,8 @@ namespace map2 {
             m_arrInsert[i] = i;
             m_arrRemove[i] = i;
         }
-        std::random_shuffle( m_arrInsert.begin(), m_arrInsert.end() );
-        std::random_shuffle( m_arrRemove.begin(), m_arrRemove.end() );
+        shuffle( m_arrInsert.begin(), m_arrInsert.end() );
+        shuffle( m_arrRemove.begin(), m_arrRemove.end() );
     }
 
     void Map_DelOdd::myRun(const char *in_name, bool invert /*= false*/)
