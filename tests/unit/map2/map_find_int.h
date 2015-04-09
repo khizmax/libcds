@@ -6,7 +6,6 @@
 #include "cppunit/thread.h"
 
 #include <vector>
-#include <algorithm> // random_shuffle
 
 // find int test in map<int> in mutithreaded mode
 namespace map2 {

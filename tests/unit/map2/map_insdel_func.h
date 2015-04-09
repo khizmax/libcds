@@ -7,7 +7,6 @@
 
 #include <cds/sync/spinlock.h>
 #include <vector>
-#include <algorithm>    // random_shuffle
 
 namespace map2 {
 
@@ -414,7 +413,7 @@ namespace map2 {
             m_arrValues.reserve( c_nMapSize );
             for ( size_t i = 0; i < c_nMapSize; ++i )
                 m_arrValues.push_back( i );
-            std::random_shuffle( m_arrValues.begin(), m_arrValues.end() );
+            shuffle( m_arrValues.begin(), m_arrValues.end() );
 
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new InserterThread( pool, testMap ), c_nInsertThreadCount );

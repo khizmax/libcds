@@ -33,7 +33,7 @@ namespace map2 {
             if ( m_Arr[i].bExists )
                 ++m_nRealMapSize;
         }
-        std::random_shuffle( m_Arr.begin(), m_Arr.end() );
+        shuffle( m_Arr.begin(), m_Arr.end() );
     }
 
     void Map_find_int::initTestSequence()

@@ -31,7 +31,7 @@ namespace set {
             int arrRandom[nLimit];
             for ( int i = 0; i < nLimit; ++i )
                 arrRandom[i] = i;
-            std::random_shuffle( arrRandom, arrRandom + nLimit );
+            shuffle( arrRandom, arrRandom + nLimit );
 
 
             // Test iterator - ascending order

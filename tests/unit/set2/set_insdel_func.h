@@ -418,7 +418,7 @@ namespace set2 {
             m_pKeyLast = m_pKeyFirst + c_nMapSize;
             for ( size_t i = 0; i < c_nMapSize; ++i )
                 m_pKeyArr[i] = i;
-            std::random_shuffle( m_pKeyFirst, m_pKeyLast );
+            shuffle( m_pKeyFirst, m_pKeyLast );
 
             cds::OS::Timer    timer;
 

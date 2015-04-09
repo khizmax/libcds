@@ -2,7 +2,6 @@
 
 #include "map2/map_type.h"
 #include "cppunit/thread.h"
-#include <algorithm> // random_shuffle
 #include <vector>
 
 namespace map2 {
@@ -131,7 +130,7 @@ namespace map2 {
                 arr.reserve( c_nInitialMapSize );
                 for ( size_t i = 0; i < c_nInitialMapSize; ++i )
                     arr.push_back( i * 2 + 1);
-                std::random_shuffle( arr.begin(), arr.end() );
+                shuffle( arr.begin(), arr.end() );
                 for ( size_t i = 0; i < c_nInitialMapSize; ++i )
                     testMap.insert( arr[i], arr[i] );
             }

@@ -2,7 +2,6 @@
 
 #include "set2/set_type.h"
 #include "cppunit/thread.h"
-#include <algorithm> // random_shuffle
 
 namespace set2 {
 
@@ -138,7 +137,7 @@ namespace set2 {
                 size_t * pEnd = pInitArr + c_nInitialMapSize;
                 for ( size_t i = 0; i < c_nInitialMapSize; ++i )
                     pInitArr[i] = i * 2 + 1;
-                std::random_shuffle( pInitArr, pEnd );
+                shuffle( pInitArr, pEnd );
                 for ( size_t * p = pInitArr; p < pEnd; ++p )
                     testSet.insert( typename Set::value_type( *p, *p ) );
                 delete [] pInitArr;

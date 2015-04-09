@@ -4,7 +4,6 @@
 #include "cppunit/thread.h"
 
 #include <vector>
-#include <algorithm>    // random_shuffle
 
 namespace map2 {
 
@@ -177,7 +176,7 @@ namespace map2 {
                 v.reserve( c_nMapSize );
                 for ( size_t i = 0; i < c_nMapSize; ++i )
                     v.push_back( i );
-                std::random_shuffle( v.begin(), v.end() );
+                shuffle( v.begin(), v.end() );
                 for ( size_t i = 0; i < v.size(); ++i ) {
                     CPPUNIT_ASSERT( testMap.insert( v[i], v[i] ));
                 }

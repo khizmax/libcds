@@ -5,7 +5,6 @@
 
 #include <cds/os/topology.h>
 #include <vector>
-#include <algorithm> // random_shuffle
 
 namespace map2 {
 
@@ -54,7 +53,7 @@ namespace map2 {
                 size_t nItem = m_nThreadNo;
                 for ( size_t i = 0; i < nSize; nItem += c_nThreadCount, ++i )
                     m_arrVal[i] = nItem;
-                std::random_shuffle( m_arrVal.begin(), m_arrVal.end() );
+                shuffle( m_arrVal.begin(), m_arrVal.end() );
             }
         public:
             size_t  m_nInsertSuccess;

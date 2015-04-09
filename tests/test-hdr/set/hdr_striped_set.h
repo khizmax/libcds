@@ -9,7 +9,6 @@
 #include <cds/opt/hash.h>
 #include <cds/os/timer.h>
 #include <functional>   // ref
-#include <algorithm>    // random_shuffle
 
 // forward namespace declaration
 namespace cds {

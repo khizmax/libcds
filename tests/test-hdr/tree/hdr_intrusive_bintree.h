@@ -261,7 +261,7 @@ namespace tree {
                     p->nValue = i * 2;
                 }
 
-                std::random_shuffle( pFirst, pLast );
+                shuffle( pFirst, pLast );
             }
 
             ~data_array()

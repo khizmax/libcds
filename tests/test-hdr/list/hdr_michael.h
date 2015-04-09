@@ -463,7 +463,7 @@ namespace ordlist {
             int arr[nLimit];
             for ( int i = 0; i < nLimit; i++ )
                 arr[i] = i;
-            std::random_shuffle( arr, arr + nLimit );
+            shuffle( arr, arr + nLimit );
 
             // extract/get
             for ( int i = 0; i < nLimit; ++i )
@@ -553,7 +553,7 @@ namespace ordlist {
                 int a[nLimit];
                 for (int i = 0; i < nLimit; ++i)
                     a[i]=i;
-                std::random_shuffle( a, a + nLimit );
+                shuffle( a, a + nLimit );
 
                 // extract/get
                 for ( int i = 0; i < nLimit; ++i )

@@ -8,7 +8,6 @@
 
 #include <cds/opt/hash.h>
 #include <functional>   // ref
-#include <algorithm>    // random_shuffle
 
 // forward declaration
 namespace cds { namespace intrusive {} }
@@ -493,7 +492,7 @@ namespace set {
                 int arr[nLimit];
                 for ( size_t i = 0; i < nLimit; ++i )
                     arr[i] = (int) i;
-                std::random_shuffle( arr, arr + nLimit );
+                shuffle( arr, arr + nLimit );
 
                 for ( size_t i = 0; i < nLimit; ++i ) {
                     arrItems[i].nKey = arr[i];
@@ -1022,7 +1021,7 @@ namespace set {
                 int arr[nLimit];
                 for ( size_t i = 0; i < nLimit; ++i )
                     arr[i] = (int) i;
-                std::random_shuffle( arr, arr + nLimit );
+                shuffle( arr, arr + nLimit );
 
                 for ( size_t i = 0; i < nLimit; ++i ) {
                     arrItems[i].nKey = arr[i];

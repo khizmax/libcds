@@ -37,7 +37,7 @@ namespace set2 {
         pFirst = pLast;
         pLast = m_arrShuffle + sizeof(m_arrShuffle)/sizeof(m_arrShuffle[0]);
         std::fill( pFirst, pLast, do_find );
-        std::random_shuffle( m_arrShuffle, pLast );
+        shuffle( m_arrShuffle, pLast );
     }
 
     void Set_InsDelFind::myRun(const char *in_name, bool invert /*= false*/)

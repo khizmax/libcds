@@ -2,7 +2,6 @@
 
 #include "cppunit/thread.h"
 #include "set2/set_type.h"
-#include <algorithm> // random_shuffle
 
 namespace set2 {
 

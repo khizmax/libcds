@@ -9,7 +9,6 @@
 #include <cds/opt/hash.h>
 #include <cds/os/timer.h>
 #include <functional>   // ref
-#include <algorithm>    // random_shuffle
 
 // forward namespace declaration
 namespace cds {
@@ -353,7 +352,7 @@ namespace set {
                 int arrRandom[nLimit];
                 for ( int i = 0; i < nLimit; ++i )
                     arrRandom[i] = i;
-                std::random_shuffle( arrRandom, arrRandom + nLimit );
+                shuffle( arrRandom, arrRandom + nLimit );
 
                 for ( int i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( s.insert( arrRandom[i] ));
@@ -431,7 +430,7 @@ namespace set {
                 int arr[nLimit];
                 for ( size_t i = 0; i < nLimit; ++i )
                     arr[i] = (int) i;
-                std::random_shuffle( arr, arr + nLimit );
+                shuffle( arr, arr + nLimit );
 
                 for ( size_t i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( s.insert( arr[i] ));

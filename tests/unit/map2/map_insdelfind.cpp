@@ -38,7 +38,7 @@ namespace map2 {
         pFirst = pLast;
         pLast = m_arrShuffle + sizeof(m_arrShuffle)/sizeof(m_arrShuffle[0]);
         std::fill( pFirst, pLast, do_find );
-        std::random_shuffle( m_arrShuffle, pLast );
+        shuffle( m_arrShuffle, pLast );
     }
 
     void Map_InsDelFind::myRun(const char *in_name, bool invert /*= false*/)

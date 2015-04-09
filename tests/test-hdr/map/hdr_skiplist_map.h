@@ -102,7 +102,7 @@ namespace map {
                 for ( int i = 0; i < nLimit; ++i ) {
                     nRand[i] = i;
                 }
-                std::random_shuffle( nRand, nRand + nLimit );
+                shuffle( nRand, nRand + nLimit );
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     CPPUNIT_ASSERT( m.insert( nRand[i], nRand[i]) );
@@ -140,7 +140,7 @@ namespace map {
                 int arrItem[nLimit];
                 for ( int i = 0; i < nLimit; ++i )
                     arrItem[i] = i;
-                std::random_shuffle( arrItem, arrItem + nLimit );
+                shuffle( arrItem, arrItem + nLimit );
 
                 typedef base_class::less less;
 
