@@ -196,7 +196,7 @@ namespace CppUnitMini
     static std::vector<std::string> const&    getTestStrings();
 
     template <typename RandomIt>
-    void shuffle( RandomIt first, RandomIt last )
+    static void shuffle( RandomIt first, RandomIt last )
     {
         std::shuffle( first, last, m_RandomGen );
     }
