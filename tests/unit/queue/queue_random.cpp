@@ -276,30 +276,30 @@ namespace queue {
         }
 
     protected:
-        //CDSUNIT_DECLARE_MoirQueue( SimpleValue )
-        //CDSUNIT_DECLARE_MSQueue( SimpleValue )
-        //CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
-        //CDSUNIT_DECLARE_BasketQueue( SimpleValue )
+        CDSUNIT_DECLARE_MoirQueue( SimpleValue )
+        CDSUNIT_DECLARE_MSQueue( SimpleValue )
+        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
+        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
         CDSUNIT_DECLARE_FCQueue( SimpleValue )
         CDSUNIT_DECLARE_FCDeque( SimpleValue )
-        //CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
-        //CDSUNIT_DECLARE_RWQueue( SimpleValue )
-        //CDSUNIT_DECLARE_TsigasCysleQueue( SimpleValue )
-        //CDSUNIT_DECLARE_VyukovMPMCCycleQueue( SimpleValue )
-        //CDSUNIT_DECLARE_StdQueue( SimpleValue )
+        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
+        CDSUNIT_DECLARE_RWQueue( SimpleValue )
+        CDSUNIT_DECLARE_TsigasCysleQueue( SimpleValue )
+        CDSUNIT_DECLARE_VyukovMPMCCycleQueue( SimpleValue )
+        CDSUNIT_DECLARE_StdQueue( SimpleValue )
 
         CPPUNIT_TEST_SUITE(Queue_Random)
-            //CDSUNIT_TEST_MoirQueue
-            //CDSUNIT_TEST_MSQueue
-            //CDSUNIT_TEST_OptimisticQueue
-            //CDSUNIT_TEST_BasketQueue
+            CDSUNIT_TEST_MoirQueue
+            CDSUNIT_TEST_MSQueue
+            CDSUNIT_TEST_OptimisticQueue
+            CDSUNIT_TEST_BasketQueue
             CDSUNIT_TEST_FCQueue
             CDSUNIT_TEST_FCDeque
-            //CDSUNIT_TEST_SegmentedQueue
-            //CDSUNIT_TEST_RWQueue
-            //CDSUNIT_TEST_TsigasCysleQueue
-            //CDSUNIT_TEST_VyukovMPMCCycleQueue
-            //CDSUNIT_TEST_StdQueue
+            CDSUNIT_TEST_SegmentedQueue
+            CDSUNIT_TEST_RWQueue
+            CDSUNIT_TEST_TsigasCysleQueue
+            CDSUNIT_TEST_VyukovMPMCCycleQueue
+            CDSUNIT_TEST_StdQueue
         CPPUNIT_TEST_SUITE_END();
     };
 
