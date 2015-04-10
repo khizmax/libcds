@@ -121,6 +121,10 @@ while [ $# -gt 0 ]
         makejobs=$2
 		shift 2
 		;;
+   -D)
+	EXTRA_CXXFLAGS="$EXTRA_CXXFLAGS -D$2"
+		shift 2
+		;;
    -h)
         usage
         exit $ERROR_EXIT_CODE;; 
