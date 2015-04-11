@@ -244,9 +244,9 @@ namespace cds { namespace sync {
         /// Returns the reference to internal statistics
         /**
             If class' template argument \p Stat is \p false,
-            the function returns \ref empty_stat "dummy statistics".
+            the function returns \ref pool_monitor_traits::empty_stat "dummy statistics".
             Otherwise, it returns the reference to monitor's internal statistics 
-            of type \ref stat.
+            of type \ref pool_monitor_traits::stat.
         */
         internal_stat const& statistics() const
         {
