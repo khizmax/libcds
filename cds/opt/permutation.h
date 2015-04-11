@@ -5,7 +5,7 @@
 
 #include <cds/opt/options.h>
 #include <stdlib.h> // rand, srand
-#include <algorithm> // random_shuffle
+#include <random>
 
 namespace cds { namespace opt {
 
@@ -69,7 +69,7 @@ namespace cds { namespace opt {
 
         /// Permutation generator of arbitrary length based on \p rand()
         /**
-            The class is suitable for opt::permutation_generator option.
+            The class is suitable for \p opt::permutation_generator option.
 
             The generator calculates <tt>n = rand()</tt> and produces the sequence
             <tt>[n % nLen, (n + 1) % nLen, ..., (n + nLen - 1) % nLen]</tt>.
@@ -120,7 +120,7 @@ namespace cds { namespace opt {
 
         /// Permutation generator of power-of-2 length based on \p rand()
         /**
-            The class is suitable for opt::permutation_generator option.
+            The class is suitable for \p opt::permutation_generator option.
 
             The generator calculates <tt>n = rand()</tt> and produces the sequence
             <tt>[n % nLen, (n + 1) % nLen, ..., (n + nLen - 1) % nLen]</tt>.
@@ -176,32 +176,41 @@ namespace cds { namespace opt {
             }
         };
 
-        /// Permutation generator based on \p std::random_shuffle
+        /// Permutation generator based on \p std::shuffle
         /**
-            The class is suitable for opt::permutation_generator option.
+            The class is suitable for \p opt::permutation_generator option.
 
-            The generator produces a permutation of [0, nLen) sequence.
+            The generator produces a permutation of <tt>[0, nLen)</tt> sequence.
             The generator instance allocates a memory block.
 
-            \p Int template argument specifies the type of generated value, it should be any integer.
+            Template parameters:
+            - \p Int - specifies the type of generated value, it should be any integer.
+            - \p RandomGenerator - random generator, default is \p std::mt19937
+            - \p RandomDevice - random device, default is \p std::random_device
         */
-        template <typename Int=int>
+        template <typename Int=int, class RandomGenerator = std::mt19937, class RandomDevice = std::random_device >
         class random_shuffle_permutation
         {
         public:
-            typedef Int     integer_type;   ///< Type of generated value
+            typedef Int     integer_type;             ///< Type of generated value
+            typedef RandomGenerator random_generator; ///< random generator
+            typedef RandomDevice random_device;       ///< random device
 
         protected:
             //@cond
             integer_type *      m_pCur;
             integer_type *      m_pFirst;
             integer_type *      m_pLast;
+
+            random_generator    m_RandomGenerator;
+            random_device       m_RandomDevice;
             //@endcond
 
         public:
             /// Initializes the generator of arbitrary length \p nLength
             random_shuffle_permutation( size_t nLength )
                 : m_pCur( nullptr )
+                , m_RandomGenerator( m_RandomDevice() )
             {
                 m_pFirst = new integer_type[nLength];
                 m_pLast = m_pFirst + nLength;
@@ -230,7 +239,7 @@ namespace cds { namespace opt {
             /// Resets the generator to produce new sequence
             void reset()
             {
-                std::random_shuffle( m_pFirst, m_pLast );
+                std::shuffle( m_pFirst, m_pLast, m_RandomGenerator );
                 m_pCur = m_pFirst;
             }
         };
@@ -241,7 +250,7 @@ namespace cds { namespace opt {
                 <tt>int(Generator) + nOffset</tt>
             where \p Generator - a permutation generator.
 
-            The class is suitable for opt::permutation_generator option
+            The class is suitable for \p opt::permutation_generator option
             if the goal sequence should be a permutation of <tt>[nOffset, nOffset + nLength)</tt>
         */
         template <typename Generator>
