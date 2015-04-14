@@ -884,8 +884,10 @@ namespace cds { namespace container {
 
                     if ( result == update_flags::retry )
                         m_stat.onRemoveRetry();
-                    else
+                    else {
+                        m_stat.onExtract( result == update_flags::result_removed );
                         return;
+                    }
                 }
             }
         }
@@ -899,6 +901,7 @@ namespace cds { namespace container {
                 key_comparator(),
                 [&pExtracted]( key_type const&, mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
             );
+            m_stat.onExtract( pExtracted != nullptr );
             return pExtracted;
         }
 
@@ -912,6 +915,7 @@ namespace cds { namespace container {
                 cds::opt::details::make_comparator_from_less<Less>(),
                 [&pExtracted]( key_type const&, mapped_type pVal, rcu_disposer& ) -> bool { pExtracted = pVal; return false; }
             );
+            m_stat.onExtract( pExtracted != nullptr );
             return pExtracted;
         }
         //@endcond
@@ -1175,8 +1179,10 @@ namespace cds { namespace container {
 
                 if ( result == update_flags::retry )
                     m_stat.onRemoveRetry();
-                else
+                else {
+                    m_stat.onRemove( result == update_flags::result_removed );
                     return result == update_flags::result_removed;
+                }
             }
         }
 
@@ -1766,6 +1772,7 @@ namespace cds { namespace container {
                         return update_flags::failed;
 
                     pNode->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
+                    m_stat.onMakeRoutingNode();
                 }
 
                 --m_ItemCounter;

@@ -195,9 +195,14 @@ namespace cds { namespace container {
             event_counter   m_nDisposedNode;        ///< Count of disposed node
             event_counter   m_nDisposedValue;       ///< Count of disposed value
             event_counter   m_nExtractedValue;      ///< Count of extracted value
+            event_counter   m_nRemoveSuccess;       ///< Count of successfully \p erase() call
+            event_counter   m_nRemoveFailed;        ///< Count of failed \p erase() call
             event_counter   m_nRemoveRetry;         ///< Count o erase/extract retries
+            event_counter   m_nExtractSuccess;      ///< Count of successfully \p extract() call
+            event_counter   m_nExtractFailed;       ///< Count of failed \p extract() call
             event_counter   m_nRemoveWaitShrinking; ///< ount of waiting until shrinking completed during \p erase() or \p extract() call
             event_counter   m_nRemoveRootWaitShrinking;  ///< Count of waiting until root shrinking completed duting \p erase() or \p extract() call
+            event_counter   m_nMakeRoutingNode;     ///< How many nodes were converted to routing (valueless) nodes
 
             event_counter   m_nRightRotation;       ///< Count of single right rotation
             event_counter   m_nLeftRotation;        ///< Count of single left rotation
@@ -238,9 +243,24 @@ namespace cds { namespace container {
             void onDisposeNode()            { ++m_nDisposedNode; }
             void onDisposeValue()           { ++m_nDisposedValue; }
             void onExtractValue()           { ++m_nExtractedValue; }
+            void onRemove(bool bSuccess) 
+            { 
+                if ( bSuccess ) 
+                    ++m_nRemoveSuccess; 
+                else 
+                    ++m_nRemoveFailed; 
+            }
+            void onExtract( bool bSuccess )
+            {
+                if ( bSuccess )
+                    ++m_nExtractSuccess;
+                else
+                    ++m_nExtractFailed;
+            }
             void onRemoveRetry()            { ++m_nRemoveRetry; }
             void onRemoveWaitShrinking()    { ++m_nRemoveWaitShrinking; }
             void onRemoveRootWaitShrinking() { ++m_nRemoveRootWaitShrinking; }
+            void onMakeRoutingNode()        { ++m_nMakeRoutingNode; }
 
             void onRotateRight()            { ++m_nRightRotation; }
             void onRotateLeft()             { ++m_nLeftRotation; }
@@ -285,9 +305,12 @@ namespace cds { namespace container {
             void onDisposeNode()            const {}
             void onDisposeValue()           const {}
             void onExtractValue()           const {}
+            void onRemove(bool /*bSuccess*/) const {}
+            void onExtract(bool /*bSuccess*/) const {}
             void onRemoveRetry()            const {}
             void onRemoveWaitShrinking()    const {}
             void onRemoveRootWaitShrinking() const {}
+            void onMakeRoutingNode()        const {}
 
             void onRotateRight()            const {}
             void onRotateLeft()             const {}
