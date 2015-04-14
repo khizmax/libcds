@@ -1036,66 +1036,6 @@ namespace cds { namespace container {
             return find_result::retry;
         }
 
-#if 0
-        template <typename Q, typename Compare, typename Func>
-        find_result try_find( Q const& key, Compare cmp, Func f, node_type * pNode, int nDir, version_type nVersion ) const
-        {
-            assert( gc::is_locked() );
-            assert( pNode );
-
-            while ( true ) {
-                node_type * pChild = child( pNode, nDir );
-                if ( !pChild ) {
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                        return find_result::retry;
-
-                    m_stat.onFindFailed();
-                    return find_result::not_found;
-                }
-
-                int nCmp = cmp( key, pChild->m_key );
-                if ( nCmp == 0 ) {
-                    if ( pChild->is_valued( memory_model::memory_order_relaxed ) ) {
-                        // key found
-                        node_scoped_lock l( m_Monitor, *pChild );
-                        if ( pChild->is_valued( memory_model::memory_order_relaxed )) {
-                            if ( f( pChild ) ) {
-                                m_stat.onFindSuccess();
-                                return find_result::found;
-                            }
-                        }
-                    }
-
-                    m_stat.onFindFailed();
-                    return find_result::not_found;
-                }
-
-                version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
-                if ( nChildVersion & node_type::shrinking ) {
-                    m_stat.onFindWaitShrinking();
-                    pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
-
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                        return find_result::retry;
-                }
-                else if ( nChildVersion != node_type::unlinked && child( pNode, nDir ) == pChild )
-                {
-                    if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
-                        return find_result::retry;
-
-                    find_result found = try_find( key, cmp, f, pChild, nCmp, nChildVersion );
-                    if ( found != find_result::retry )
-                        return found;
-                }
-
-                if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                    return find_result::retry;
-
-                m_stat.onFindRetry();
-            }
-        }
-#endif
-
         template <typename K, typename Compare, typename Func>
         int try_update_root( K const& key, Compare cmp, int nFlags, Func funcUpdate, rcu_disposer& disp )
         {
@@ -1274,68 +1214,6 @@ namespace cds { namespace container {
             return update_flags::retry;
         }
 
-#if 0
-        template <typename K, typename Compare, typename Func>
-        int try_update( K const& key, Compare cmp, int nFlags, Func funcUpdate, node_type * pNode, version_type nVersion, rcu_disposer& disp )
-        {
-            assert( gc::is_locked() );
-            assert( nVersion != node_type::unlinked );
-
-            int nCmp = cmp( key, pNode->m_key );
-            if ( nCmp == 0 )
-                return try_update_node( nFlags, funcUpdate, pNode, nVersion, disp );
-
-            while ( true ) {
-                int result;
-                node_type * pChild = child( pNode, nCmp );
-                if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
-                    return update_flags::retry;
-
-                if ( pChild == nullptr ) {
-                    // insert new node
-                    if ( nFlags & update_flags::allow_insert )
-                        result = try_insert_node( key, funcUpdate, pNode, nCmp, nVersion, disp );
-                    else
-                        result = update_flags::failed;
-                }
-                else {
-                    // update child
-                    version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
-                    if ( nChildVersion & node_type::shrinking ) {
-                        m_stat.onUpdateWaitShrinking();
-                        pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
-                        // retry
-                        result = update_flags::retry;
-                    }
-                    else if ( pChild == child( pNode, nCmp )) {
-                        // this second read is important, because it is protected by nChildVersion
-
-                        // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                            return update_flags::retry;
-
-                        // At this point we know that the traversal our parent took to get to node is still valid.
-                        // The recursive implementation will validate the traversal from node to
-                        // child, so just prior to the node nVersion validation both traversals were definitely okay.
-                        // This means that we are no longer vulnerable to node shrinks, and we don't need
-                        // to validate node version any more.
-                        result = try_update( key, cmp, nFlags, funcUpdate, pChild, nChildVersion, disp );
-                    }
-                    else
-                        result = update_flags::retry;
-                }
-
-                if ( result == update_flags::retry ) {
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                        return update_flags::retry;
-                    m_stat.onUpdateRetry();
-                }
-                else
-                    return result;
-            }
-        }
-#endif
-
         template <typename K, typename Compare, typename Func>
         int try_remove( K const& key, Compare cmp, Func func, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
@@ -1416,64 +1294,6 @@ namespace cds { namespace container {
             return update_flags::retry;
         }
 
-#if 0
-        template <typename K, typename Compare, typename Func>
-        int try_remove( K const& key, Compare cmp, Func func, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
-        {
-            assert( gc::is_locked() );
-            assert( nVersion != node_type::unlinked );
-
-            int nCmp = cmp( key, pNode->m_key );
-            if ( nCmp == 0 )
-                return try_remove_node( pParent, pNode, nVersion, func, disp );
-
-            while ( true ) {
-                int result;
-
-                node_type * pChild = child( pNode, nCmp );
-                if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
-                    return update_flags::retry;
-
-                if ( pChild == nullptr )
-                    return update_flags::failed;
-                else {
-                    // update child
-                    result = update_flags::retry;
-                    version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
-                    if ( nChildVersion & node_type::shrinking ) {
-                        m_stat.onRemoveWaitShrinking();
-                        pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
-                        // retry
-                    }
-                    else if ( pChild == child( pNode, nCmp )) {
-                        // this second read is important, because it is protected by nChildVersion
-
-                        // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                            return update_flags::retry;
-
-                        // At this point we know that the traversal our parent took to get to node is still valid.
-                        // The recursive implementation will validate the traversal from node to
-                        // child, so just prior to the node nVersion validation both traversals were definitely okay.
-                        // This means that we are no longer vulnerable to node shrinks, and we don't need
-                        // to validate node version any more.
-                        result = try_remove( key, cmp, func, pNode, pChild, nChildVersion, disp );
-                    }
-                    else
-                        result = update_flags::retry;
-                }
-
-                if ( result == update_flags::retry ) {
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                        return update_flags::retry;
-                    m_stat.onRemoveRetry();
-                }
-                else
-                    return result;
-            }
-        }
-#endif
-
         template <typename Func>
         int try_extract_minmax( int nDir, Func func, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
@@ -1550,62 +1370,6 @@ namespace cds { namespace container {
             }
             return update_flags::retry;
         }
-
-#if 0
-        template <typename Func>
-        int try_extract_minmax( int nDir, Func func, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
-        {
-            assert( gc::is_locked() );
-            assert( nVersion != node_type::unlinked );
-
-            while ( true ) {
-                int result;
-                node_type * pChild = child( pNode, nDir );
-                if ( pNode->version(memory_model::memory_order_acquire) != nVersion )
-                    return update_flags::retry;
-
-                if ( pChild == nullptr ) {
-                    // Found min/max
-                    assert(pNode->is_valued( memory_model::memory_order_relaxed ));
-                    return try_remove_node( pParent, pNode, nVersion, func, disp );
-                }
-                else {
-                    //result = update_flags::retry;
-                    version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
-                    if ( nChildVersion & node_type::shrinking ) {
-                        m_stat.onRemoveWaitShrinking();
-                        pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_relaxed );
-                        // retry
-                        result = update_flags::retry;
-                    }
-                    else if ( pChild == child( pNode, nDir )) {
-                        // this second read is important, because it is protected by nChildVersion
-
-                        // validate the read that our caller took to get to node
-                        if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                            return update_flags::retry;
-
-                        // At this point we know that the traversal our parent took to get to node is still valid.
-                        // The recursive implementation will validate the traversal from node to
-                        // child, so just prior to the node nVersion validation both traversals were definitely okay.
-                        // This means that we are no longer vulnerable to node shrinks, and we don't need
-                        // to validate node version any more.
-                        result = try_extract_minmax( nDir, func, pNode, pChild, nChildVersion, disp );
-                    }
-                    else
-                        result = update_flags::retry;
-                }
-
-                if ( result == update_flags::retry ) {
-                    if ( pNode->version( memory_model::memory_order_acquire ) != nVersion )
-                        return update_flags::retry;
-                    m_stat.onRemoveRetry();
-                }
-                else
-                    return result;
-            }
-        }
-#endif
 
         template <typename K, typename Func>
         int try_insert_node( K const& key, Func funcUpdate, node_type * pNode, int nDir, version_type nVersion, rcu_disposer& disp )
