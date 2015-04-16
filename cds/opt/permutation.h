@@ -3,9 +3,11 @@
 #ifndef CDSLIB_OPT_PERMUTATION_H
 #define CDSLIB_OPT_PERMUTATION_H
 
-#include <cds/opt/options.h>
 #include <stdlib.h> // rand, srand
 #include <random>
+#include <algorithm> // std::shuffle
+
+#include <cds/opt/options.h>
 
 namespace cds { namespace opt {
 
