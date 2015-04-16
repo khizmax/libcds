@@ -277,7 +277,7 @@ namespace cds { namespace intrusive {
                                                                               : std::numeric_limits<size_t>::max();
             m_nMaxItemCount.compare_exchange_strong( nMaxCount, nNewMaxCount, memory_model::memory_order_relaxed,
                 memory_model::memory_order_relaxed );
-            m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_seq_cst, memory_model::memory_order_relaxed );
+            m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, memory_model::memory_order_relaxed );
         }
 
         //@endcond
