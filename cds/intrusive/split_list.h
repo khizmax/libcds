@@ -459,8 +459,8 @@ namespace cds { namespace intrusive {
 
         void inc_item_count()
         {
-            size_t sz = m_nBucketCountLog2.load(memory_model::memory_order_relaxed);
-            if ( ( ++m_ItemCounter >> sz ) > m_Buckets.load_factor() && ((size_t)(1 << sz )) < m_Buckets.capacity() )
+            size_t sz = m_nBucketCountLog2.load(atomics::memory_order_relaxed);
+            if ( ( ++m_ItemCounter >> sz ) > m_Buckets.load_factor() && (static_cast<size_t>(1) << sz ) < m_Buckets.capacity() )
             {
                 m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
             }
