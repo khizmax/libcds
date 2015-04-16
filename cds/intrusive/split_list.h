@@ -415,7 +415,6 @@ namespace cds { namespace intrusive {
             // In this point, we must wait while nBucket is empty.
             // The compiler can decide that waiting loop can be "optimized" (stripped)
             // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
-            //
             m_Stat.onBucketInitContenton();
             back_off bkoff;
             while ( true ) {
@@ -458,7 +457,7 @@ namespace cds { namespace intrusive {
             m_Buckets.bucket( 0, pNode );
         }
 
-        void    inc_item_count()
+        void inc_item_count()
         {
             size_t sz = m_nBucketCountLog2.load(memory_model::memory_order_relaxed);
             if ( ( ++m_ItemCounter >> sz ) > m_Buckets.load_factor() && ((size_t)(1 << sz )) < m_Buckets.capacity() )
@@ -583,7 +582,7 @@ namespace cds { namespace intrusive {
         /// Initialize split-ordered list of default capacity
         /**
             The default capacity is defined in bucket table constructor.
-            See \p split_list::expandable_bucket_table, \p split_list::static_ducket_table
+            See \p split_list::expandable_bucket_table, \p split_list::static_bucket_table
             which selects by \p split_list::dynamic_bucket_table option.
         */
         SplitListSet()
