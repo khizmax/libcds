@@ -418,7 +418,7 @@ namespace cds { namespace intrusive {
             {
                 metrics m;
 
-                // Calculate m_nSegmentSize and m_nSegmentCount  by nItemCount
+                // Calculate m_nSegmentSize and m_nSegmentCount by nItemCount
                 m.nLoadFactor = nLoadFactor > 0 ? nLoadFactor : 1;
 
                 size_t nBucketCount = (size_t)( ((float) nItemCount) / m.nLoadFactor );
