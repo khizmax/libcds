@@ -187,7 +187,7 @@ namespace cds {
             {}
 
             /// Returns current value of the counter
-            counter_type    value(atomics::memory_order order = atomics::memory_order_relaxed) const
+            counter_type value(atomics::memory_order order = atomics::memory_order_relaxed) const
             {
                 return m_Counter.load( order );
             }
@@ -199,13 +199,13 @@ namespace cds {
             }
 
             /// Returns underlying atomic interface
-            atomic_type&  getAtomic()
+            atomic_type& getAtomic()
             {
                 return m_Counter;
             }
 
             /// Returns underlying atomic interface (const)
-            const atomic_type&  getAtomic() const
+            const atomic_type& getAtomic() const
             {
                 return m_Counter;
             }
@@ -264,7 +264,7 @@ namespace cds {
             typedef size_t counter_type    ;  ///< Counter type
         public:
             /// Returns 0
-            counter_type    value(atomics::memory_order /*order*/ = atomics::memory_order_relaxed) const
+            counter_type value(atomics::memory_order /*order*/ = atomics::memory_order_relaxed) const
             {
                 return 0;
             }
