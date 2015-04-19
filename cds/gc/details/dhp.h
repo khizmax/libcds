@@ -57,8 +57,8 @@ namespace cds { namespace gc {
             /// Retired pointer buffer node
             struct retired_ptr_node {
                 retired_ptr         m_ptr   ;   ///< retired pointer
-                retired_ptr_node *  m_pNext     ;   ///< next retired pointer in buffer
-                retired_ptr_node *  m_pNextFree ;   ///< next item in free list of retired_ptr_node
+                atomics::atomic<retired_ptr_node *>  m_pNext     ;   ///< next retired pointer in buffer
+                atomics::atomic<retired_ptr_node *>  m_pNextFree ;   ///< next item in free list of \p retired_ptr_node
             };
 
             /// Internal guard representation
@@ -262,7 +262,7 @@ namespace cds { namespace gc {
                 {
                     retired_ptr_node * pHead = m_pHead.load(atomics::memory_order_acquire);
                     do {
-                        node.m_pNext = pHead;
+                        node.m_pNext.store( pHead, atomics::memory_order_relaxed );
                         // pHead is changed by compare_exchange_weak
                     } while ( !m_pHead.compare_exchange_weak( pHead, &node, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
@@ -277,7 +277,7 @@ namespace cds { namespace gc {
 
                     retired_ptr_node * pHead = m_pHead.load( atomics::memory_order_acquire );
                     do {
-                        pLast->m_pNext = pHead;
+                        pLast->m_pNext.store( pHead, atomics::memory_order_relaxed );
                         // pHead is changed by compare_exchange_weak
                     } while ( !m_pHead.compare_exchange_weak( pHead, pFirst, atomics::memory_order_release, atomics::memory_order_relaxed ) );
 
@@ -326,8 +326,8 @@ namespace cds { namespace gc {
 
                 /// Pool block
                 struct block {
-                    block *     pNext;  ///< next block
-                    item        items[m_nItemPerBlock];   ///< item array
+                    atomics::atomic<block *> pNext;     ///< next block
+                    item        items[m_nItemPerBlock]; ///< item array
                 };
 
                 atomics::atomic<block *> m_pBlockListHead;   ///< head of of allocated block list
@@ -349,24 +349,24 @@ namespace cds { namespace gc {
                     // link items within the block
                     item * pLastItem = pNew->items + m_nItemPerBlock - 1;
                     for ( item * pItem = pNew->items; pItem != pLastItem; ++pItem ) {
-                        pItem->m_pNextFree = pItem + 1;
-                        CDS_STRICT_DO( pItem->m_pNext = nullptr );
+                        pItem->m_pNextFree.store( pItem + 1, atomics::memory_order_release );
+                        CDS_STRICT_DO( pItem->m_pNext.store( nullptr, atomics::memory_order_relaxed ));
                     }
 
                     // links new block to the block list
                     {
-                        block * pHead = m_pBlockListHead.load(atomics::memory_order_acquire);
+                        block * pHead = m_pBlockListHead.load(atomics::memory_order_relaxed);
                         do {
-                            pNew->pNext = pHead;
+                            pNew->pNext.store( pHead, atomics::memory_order_relaxed );
                             // pHead is changed by compare_exchange_weak
-                        } while ( !m_pBlockListHead.compare_exchange_weak( pHead, pNew, atomics::memory_order_release, atomics::memory_order_relaxed ));
+                        } while ( !m_pBlockListHead.compare_exchange_weak( pHead, pNew, atomics::memory_order_relaxed, atomics::memory_order_relaxed ));
                     }
 
                     // links block's items to the free list
                     {
-                        item * pHead = m_pGlobalFreeHead.load(atomics::memory_order_acquire);
+                        item * pHead = m_pGlobalFreeHead.load(atomics::memory_order_relaxed);
                         do {
-                            pLastItem->m_pNextFree = pHead;
+                            pLastItem->m_pNextFree.store( pHead, atomics::memory_order_release );
                             // pHead is changed by compare_exchange_weak
                         } while ( !m_pGlobalFreeHead.compare_exchange_weak( pHead, pNew->items, atomics::memory_order_release, atomics::memory_order_relaxed ));
                     }
@@ -398,7 +398,7 @@ namespace cds { namespace gc {
                 {
                     block * p;
                     for ( block * pBlock = m_pBlockListHead.load(atomics::memory_order_relaxed); pBlock; pBlock = p ) {
-                        p = pBlock->pNext;
+                        p = pBlock->pNext.load( atomics::memory_order_relaxed );
                         m_BlockAllocator.Delete( pBlock );
                     }
                 }
@@ -418,24 +418,30 @@ namespace cds { namespace gc {
                         pItem = m_pEpochFree[ nEpoch = current_epoch() ].load(atomics::memory_order_acquire);
                         if ( !pItem )
                             goto retry;
-                        if ( m_pEpochFree[nEpoch].compare_exchange_weak( pItem, pItem->m_pNextFree, atomics::memory_order_release, atomics::memory_order_relaxed ))
+                        if ( m_pEpochFree[nEpoch].compare_exchange_weak( pItem, 
+                                                                         pItem->m_pNextFree.load(atomics::memory_order_acquire), 
+                                                                         atomics::memory_order_acquire, atomics::memory_order_relaxed ))
+                        { 
                             goto success;
+                        }
                     }
 
                     // Epoch free list is empty
                     // Alloc from global free list
                 retry:
-                    pItem = m_pGlobalFreeHead.load( atomics::memory_order_acquire );
+                    pItem = m_pGlobalFreeHead.load( atomics::memory_order_relaxed );
                     do {
                         if ( !pItem ) {
                             allocNewBlock();
                             goto retry;
                         }
                         // pItem is changed by compare_exchange_weak
-                    } while ( !m_pGlobalFreeHead.compare_exchange_weak( pItem, pItem->m_pNextFree, atomics::memory_order_release, atomics::memory_order_relaxed ));
+                    } while ( !m_pGlobalFreeHead.compare_exchange_weak( pItem, 
+                                                                        pItem->m_pNextFree.load(atomics::memory_order_acquire), 
+                                                                        atomics::memory_order_acquire, atomics::memory_order_relaxed ));
 
                 success:
-                    CDS_STRICT_DO( pItem->m_pNextFree = nullptr );
+                    CDS_STRICT_DO( pItem->m_pNextFree.store( nullptr, atomics::memory_order_relaxed ));
                     return *pItem;
                 }
 
@@ -460,7 +466,7 @@ namespace cds { namespace gc {
                     item * pCurHead;
                     do {
                         pCurHead = m_pEpochFree[nEpoch = next_epoch()].load(atomics::memory_order_acquire);
-                        pTail->m_pNextFree = pCurHead;
+                        pTail->m_pNextFree.store( pCurHead, atomics::memory_order_release );
                     } while ( !m_pEpochFree[nEpoch].compare_exchange_weak( pCurHead, pHead, atomics::memory_order_release, atomics::memory_order_relaxed ));
                 }
             };

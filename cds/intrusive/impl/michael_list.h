@@ -1077,19 +1077,19 @@ try_again:
             while ( true ) {
                 if ( pCur.ptr() == nullptr ) {
                     pos.pPrev = pPrev;
-                    pos.pCur = pCur.ptr();
-                    pos.pNext = pNext.ptr();
+                    pos.pCur = nullptr;
+                    pos.pNext = nullptr;
                     return false;
                 }
 
                 pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
                 pos.guards.assign( position::guard_next_item, node_traits::to_value_ptr( pNext.ptr() ));
-                if ( pCur->m_pNext.load(memory_model::memory_order_relaxed).all() != pNext.all() ) {
+                if ( pCur->m_pNext.load(memory_model::memory_order_acquire).all() != pNext.all() ) {
                     bkoff();
                     goto try_again;
                 }
 
-                if ( pPrev->load(memory_model::memory_order_relaxed).all() != pCur.ptr() ) {
+                if ( pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr() ) {
                     bkoff();
                     goto try_again;
                 }

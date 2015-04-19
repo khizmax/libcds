@@ -154,7 +154,7 @@ namespace cds { namespace container {
 
         static node_type * child( node_type * pNode, int nDir, atomics::memory_order order )
         {
-            return pNode->child( nDir ).load( order );
+            return pNode->child( nDir, order );
         }
 
         static node_type * parent( node_type * pNode, atomics::memory_order order )
