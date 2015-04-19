@@ -26,7 +26,8 @@ print "make copyright...\n" ;
 makeCopyright($DistrDir);
 
 print "patch files...\n";
-patch_file("$DistrDir/build/Makefile", 'VERSION=\d+\.\d+\.\d+', "VERSION=$Version" ) ;
+patch_file("$DistrDir/build/Makefile", 'VERSION=\d+\.\d+\.\d+', "VERSION=$Version" );
+patch_file("$DistrDir/CMakeList.txt", 'PROJECT_VERSION \d+\.\d+\.\d+', "PROJECT_VERSION $Version" );
 patch_file("$DistrDir/doxygen/cds.doxy", 'PROJECT_NUMBER\s*=\s*\d+\.\d+\.\d+', "PROJECT_NUMBER = $Version" ) ;
 patch_file("$DistrDir/projects/android/jni/Android.mk", 'CDS_LIBRARY_VERSION\s*:=\s*\d+\.\d+\.\d+', 
    "CDS_LIBRARY_VERSION := $Version" );
