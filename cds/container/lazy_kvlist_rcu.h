@@ -130,19 +130,28 @@ namespace cds { namespace container {
         template <typename K>
         static node_type * alloc_node(const K& key)
         {
-            return cxx_allocator().New( key );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+            node_type * p = cxx_allocator().New( key );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+            return p;
         }
 
         template <typename K, typename V>
         static node_type * alloc_node( const K& key, const V& val )
         {
-            return cxx_allocator().New( key, val );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+            node_type * p = cxx_allocator().New( key, val );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+            return p;
         }
 
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
         {
-            return cxx_allocator().MoveNew( std::forward<Args>(args)... );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+            node_type * p = cxx_allocator().MoveNew( std::forward<Args>(args)... );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+            return p;
         }
 
         static void free_node( node_type * pNode )

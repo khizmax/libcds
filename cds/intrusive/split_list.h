@@ -478,9 +478,8 @@ namespace cds { namespace intrusive {
 
             const size_t nNewMaxCount = (nBucketCount < m_Buckets.capacity()) ? max_item_count( nBucketCount << 1, nLoadFactor )
                                                                               : std::numeric_limits<size_t>::max();
-            m_nMaxItemCount.compare_exchange_strong( nMaxCount, nNewMaxCount, memory_model::memory_order_relaxed,
-                memory_model::memory_order_relaxed );
-            m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, memory_model::memory_order_relaxed );
+            m_nMaxItemCount.compare_exchange_strong( nMaxCount, nNewMaxCount, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
+            m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
         }
 
         template <typename Q, typename Compare, typename Func>

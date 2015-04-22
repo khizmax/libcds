@@ -113,8 +113,11 @@ namespace cds { namespace urcu {
             bool bPushed = m_Buffer.push( p );
             if ( !bPushed || m_Buffer.size() >= capacity() ) {
                 synchronize();
-                if ( !bPushed )
+                if ( !bPushed ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
                     p.free();
+                    CDS_TSAN_ANNOTATE_IGNORE_RW_END;
+                }
                 return true;
             }
             return false;

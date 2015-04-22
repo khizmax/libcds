@@ -138,7 +138,7 @@ namespace cds { namespace intrusive {
             link_checker::is_empty( pNode );
 
             marked_node_ptr p( pos.pCur );
-            pNode->m_pNext.store( p, memory_model::memory_order_relaxed );
+            pNode->m_pNext.store( p, memory_model::memory_order_release );
             return pos.pPrev->compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
 
@@ -146,12 +146,12 @@ namespace cds { namespace intrusive {
         {
             // Mark the node (logical deleting)
             marked_node_ptr next(pos.pNext, 0);
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
+            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                 marked_node_ptr cur(pos.pCur);
-                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                     return true;
                 next |= 1;
-                CDS_VERIFY( pos.pCur->m_pNext.compare_exchange_strong( next, next ^ 1, memory_model::memory_order_release, atomics::memory_order_relaxed ));
+                CDS_VERIFY( pos.pCur->m_pNext.compare_exchange_strong( next, next ^ 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed ));
             }
             return false;
         }
@@ -980,15 +980,15 @@ namespace cds { namespace intrusive {
             while ( true ) {
                 if ( !pCur.ptr() ) {
                     pos.pPrev = pPrev;
-                    pos.pCur = pCur.ptr();
-                    pos.pNext = pNext.ptr();
+                    pos.pCur = nullptr;
+                    pos.pNext = nullptr;
                     return false;
                 }
 
-                pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
+                pNext = pCur->m_pNext.load(memory_model::memory_order_acquire);
 
-                if ( pPrev->load(memory_model::memory_order_acquire) != pCur
-                    || pNext != pCur->m_pNext.load(memory_model::memory_order_acquire)
+                if ( pPrev->load(memory_model::memory_order_relaxed) != pCur
+                    || pNext != pCur->m_pNext.load(memory_model::memory_order_relaxed)
                     || pNext.bits() != 0 )  // pNext contains deletion mark for pCur
                 {
                     // if pCur is marked as deleted (pNext.bits() != 0)

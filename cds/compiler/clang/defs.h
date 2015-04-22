@@ -53,6 +53,13 @@
 // Inheriting constructors
 #define CDS_CXX11_INHERITING_CTOR
 
+
+// *************************************************
+// Features
+#if defined(__has_feature) && __has_feature(thread_sanitizer)
+#   define CDS_THREAD_SANITIZER_ENABLED
+#endif
+
 // *************************************************
 // Alignment macro
 

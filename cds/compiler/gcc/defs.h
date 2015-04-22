@@ -45,6 +45,11 @@
 #define CDS_CXX11_INHERITING_CTOR
 
 // *************************************************
+// Features
+// If you run under Thread Sanitizer, pass -DCDS_THREAD_SANITIZER_ENABLED in compiler command line
+//#define CDS_THREAD_SANITIZER_ENABLED
+
+// *************************************************
 // Alignment macro
 
 #define CDS_TYPE_ALIGNMENT(n)   __attribute__ ((aligned (n)))

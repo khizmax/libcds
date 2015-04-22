@@ -1,7 +1,8 @@
 //$$CDS-header$$
 
+#include <chrono>
+#include <cds/details/defs.h> // TSan annotations
 #include "cppunit/thread.h"
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 namespace CppUnitMini {
 
@@ -42,12 +43,16 @@ namespace CppUnitMini {
 
     ThreadPool::~ThreadPool()
     {
+        CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
+
         delete m_pBarrierStart;
         delete m_pBarrierDone;
 
         for ( size_t i = 0; i < m_arrThreads.size(); ++i )
             delete m_arrThreads[i];
         m_arrThreads.resize( 0 );
+
+        CDS_TSAN_ANNOTATE_IGNORE_RW_END;
     }
 
     void    ThreadPool::add( TestThread * pThread, size_t nCount )
@@ -75,7 +80,7 @@ namespace CppUnitMini {
 
         // Wait while all threads is done
         m_pBarrierDone->wait();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
     void ThreadPool::run( unsigned int nDuration )
@@ -87,17 +92,17 @@ namespace CppUnitMini {
         for ( size_t i = 0; i < nThreadCount; ++i )
             m_arrThreads[i]->create();
 
-        boost::system_time stEnd( boost::get_system_time() + boost::posix_time::seconds( nDuration ) );
+        auto stEnd(std::chrono::steady_clock::now() + std::chrono::seconds( nDuration ));
         do {
-            boost::this_thread::sleep( stEnd );
-        } while ( boost::get_system_time() < stEnd );
+            std::this_thread::sleep_until( stEnd );
+        } while ( std::chrono::steady_clock::now() < stEnd );
 
         for ( size_t i = 0; i < nThreadCount; ++i )
             m_arrThreads[i]->stop();
 
         // Wait while all threads is done
         m_pBarrierDone->wait();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
     void    ThreadPool::onThreadInitDone( TestThread * pThread )
