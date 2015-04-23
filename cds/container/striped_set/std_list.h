@@ -8,6 +8,11 @@
 #include <algorithm>    // std::lower_bound
 #include <cds/container/striped_set/adapter.h>
 
+#undef CDS_STD_LIST_SIZE_CXX11_CONFORM
+#if !( defined(__GLIBCXX__ ) && (!defined(_GLIBCXX_USE_CXX11_ABI) || _GLIBCXX_USE_CXX11_ABI == 0 ))
+#   define CDS_STD_LIST_SIZE_CXX11_CONFORM
+#endif
+
 //@cond
 namespace cds { namespace container {
     namespace striped_set {
@@ -117,7 +122,7 @@ namespace cds { namespace intrusive { namespace striped_set {
         private:
             //@cond
             container_type  m_List;
-#       if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#       if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
             // GCC C++ lib bug:
             // In GCC, the complexity of std::list::size() is O(N)
             // (see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=49561)
@@ -128,7 +133,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         public:
             adapted_container()
-#       if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#       if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                 : m_nSize(0)
 #       endif
             {}
@@ -142,7 +147,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     it = m_List.insert( it, newItem );
                     f( *it );
 
-#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                     ++m_nSize;
 #           endif
                     return true;
@@ -159,7 +164,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate() );
                 if ( it == m_List.end() || key_comparator()( val, *it ) != 0 ) {
                     it = m_List.emplace( it, std::move( val ) );
-#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                     ++m_nSize;
 #           endif
                     return true;
@@ -176,7 +181,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     value_type newItem( val );
                     it = m_List.insert( it, newItem );
                     func( true, *it, val );
-#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                     ++m_nSize;
 #           endif
                     return std::make_pair( true, true );
@@ -198,7 +203,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // key exists
                 f( *it );
                 m_List.erase( it );
-#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                 --m_nSize;
 #           endif
 
@@ -215,7 +220,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // key exists
                 f( *it );
                 m_List.erase( it );
-#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                 --m_nSize;
 #           endif
 
@@ -263,14 +268,14 @@ namespace cds { namespace intrusive { namespace striped_set {
                 assert( it == m_List.end() || key_comparator()( *itWhat, *it ) != 0 );
 
                 copy_item()( m_List, it, itWhat );
-#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                 ++m_nSize;
 #           endif
             }
 
             size_t size() const
             {
-#           if defined(__GLIBCXX__ ) && !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 50000 )
+#           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                 return m_nSize;
 #           else
                 return m_List.size();
