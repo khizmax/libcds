@@ -3,9 +3,10 @@
 #ifndef CDSLIB_INTRUSIVE_SPLIT_LIST_RCU_H
 #define CDSLIB_INTRUSIVE_SPLIT_LIST_RCU_H
 
+#include <limits>
+
 #include <cds/intrusive/details/split_list_base.h>
 #include <cds/details/binary_functor_wrapper.h>
-#include <limits>
 
 namespace cds { namespace intrusive {
 
@@ -363,17 +364,20 @@ namespace cds { namespace intrusive {
             if ( ++m_ItemCounter <= nMaxCount )
                 return;
 
-            const size_t nLoadFactor = m_Buckets.load_factor();
             size_t sz = m_nBucketCountLog2.load(memory_model::memory_order_relaxed);
             const size_t nBucketCount = static_cast<size_t>(1) << sz;
-            if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
-                return; // someone already have updated m_nBucketCountLog2, so stop here
+            if ( nBucketCount < m_Buckets.capacity() ) {
+                // we may grow the bucket table
+                const size_t nLoadFactor = m_Buckets.load_factor();
+                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
+                    return; // someone already have updated m_nBucketCountLog2, so stop here
 
-            const size_t nNewMaxCount = (nBucketCount < m_Buckets.capacity()) ? max_item_count( nBucketCount << 1, nLoadFactor )
-                                                                              : std::numeric_limits<size_t>::max();
-            m_nMaxItemCount.compare_exchange_strong( nMaxCount, nNewMaxCount, memory_model::memory_order_relaxed,
-                memory_model::memory_order_relaxed );
-            m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, memory_model::memory_order_relaxed );
+                const size_t nNewMaxCount = (nBucketCount < m_Buckets.capacity()) ? max_item_count( nBucketCount << 1, nLoadFactor )
+                                                                                  : std::numeric_limits<size_t>::max();
+                m_nMaxItemCount.compare_exchange_strong( nMaxCount, nNewMaxCount, memory_model::memory_order_relaxed,
+                    memory_model::memory_order_relaxed );
+                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, memory_model::memory_order_relaxed );
+            }
         }
 
         template <typename Q, typename Compare, typename Func>
