@@ -3,6 +3,7 @@
 #ifndef CDSLIB_OS_WIN_THREAD_H
 #define CDSLIB_OS_WIN_THREAD_H
 
+#define NOMINMAX
 #include <windows.h>
 
 namespace cds { namespace OS {
