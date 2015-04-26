@@ -84,6 +84,70 @@ namespace cds { namespace intrusive { namespace striped_set {
         {}
     };
 
+    template <size_t Numerator, size_t Denominator = 1>
+    struct rational_load_factor_resizing
+    {
+        static_assert( Denominator != 0, "Denominator must not be zero" );
+
+        /// Main policy operator returns \p true when resizing is needed
+        template <typename Container, typename Bucket>
+        bool operator ()(
+            size_t nSize,                   ///< Current item count of \p container
+            Container const& container,     ///< Container
+            Bucket const& /*bucket*/        ///< reference to a container's bucket (not used)
+        ) const
+        {
+            return nSize * Denominator > container.bucket_count() * Numerator;
+        }
+
+        /// Resets internal state of the policy (does nothing)
+        void reset()
+        {}
+    };
+
+    template <size_t Denominator>
+    struct rational_load_factor_resizing<0, Denominator>
+    {
+        ///@cond
+        const size_t m_nNumerator;
+        const size_t m_nDenominator;
+        //@endcond
+    public:
+        /// Default ctor, load factor is 1/2
+        rational_load_factor_resizing()
+            : m_nNumerator(1), m_nDenominator(2)
+        {}
+
+        /// Ctor with explicitly defined \p nLoadFactor
+        rational_load_factor_resizing( size_t nNumerator, size_t nDenominator )
+            : m_nNumerator( nNumerator ), m_nDenominator( nDenominator )
+        {}
+
+        /// Copy ctor
+        rational_load_factor_resizing( rational_load_factor_resizing const& src )
+            : m_nNumerator( src.m_nNumerator ), m_nDenominator( src.m_nDenominator )
+        {}
+
+        /// Move ctor
+        rational_load_factor_resizing( rational_load_factor_resizing&& src )
+            : m_nNumerator( src.m_nNumerator ), m_nDenominator( src.m_nDenominator )
+        {}
+
+        /// Main policy operator returns \p true when resizing is needed
+        template <typename Container, typename Bucket>
+        bool operator ()(
+            size_t nSize,                   ///< Current item count of \p container
+            Container const& container,     ///< Container
+            Bucket const& /*bucket*/        ///< reference to a container's bucket (not used)
+        )
+        {
+            return nSize * m_nDenominator > container.bucket_count() * m_nNumerator;
+        }
+
+        /// Resets internal state of the policy (does nothing)
+        void reset()
+        {}
+    };
 
     /// Single bucket threshold resizing policy
     /** @ingroup cds_striped_resizing_policy
