@@ -484,7 +484,7 @@ namespace cds { namespace gc {
                     : m_pGuard( nullptr )
                 {}
 
-                /// Ñopy-ctor is disabled
+                /// Copy-ctor is disabled
                 guard( guard const& ) = delete;
 
                 /// Move-ctor is disabled
@@ -531,7 +531,7 @@ namespace cds { namespace gc {
 
             public: // for ThreadGC.
                 /*
-                    GCC cannot compile code for template versions of ThreasGC::allocGuard/freeGuard,
+                    GCC cannot compile code for template versions of ThreadGC::allocGuard/freeGuard,
                     the compiler produces error: ‘cds::gc::dhp::details::guard_data* cds::gc::dhp::details::guard::m_pGuard’ is protected
                     despite the fact that ThreadGC is declared as friend for guard class.
                     Therefore, we have to add set_guard/get_guard public functions
