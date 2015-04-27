@@ -664,21 +664,36 @@
     CDSUNIT_DECLARE_TEST(StripedSet_vector) \
     CDSUNIT_DECLARE_TEST(StripedSet_set) \
     CDSUNIT_DECLARE_TEST(StripedSet_hashset) \
-    CDSUNIT_DECLARE_TEST(StripedSet_boost_unordered_set)
+    CDSUNIT_DECLARE_TEST(StripedSet_boost_unordered_set) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_list) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_vector) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_set) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_hashset) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_boost_unordered_set)
 
 #define CDSUNIT_DEFINE_StripedSet_common( IMPL, C ) \
     TEST_SET(IMPL, C, StripedSet_list) \
     TEST_SET(IMPL, C, StripedSet_vector) \
     TEST_SET(IMPL, C, StripedSet_set) \
     TEST_SET(IMPL, C, StripedSet_hashset) \
-    TEST_SET(IMPL, C, StripedSet_boost_unordered_set)
+    TEST_SET(IMPL, C, StripedSet_boost_unordered_set) \
+    TEST_SET(IMPL, C, StripedSet_rational_list) \
+    TEST_SET(IMPL, C, StripedSet_rational_vector) \
+    TEST_SET(IMPL, C, StripedSet_rational_set) \
+    TEST_SET(IMPL, C, StripedSet_rational_hashset) \
+    TEST_SET(IMPL, C, StripedSet_rational_boost_unordered_set)
 
 #define CDSUNIT_TEST_StripedSet_common \
     CPPUNIT_TEST(StripedSet_list) \
     CPPUNIT_TEST(StripedSet_vector) \
     CPPUNIT_TEST(StripedSet_set) \
     CPPUNIT_TEST(StripedSet_hashset) \
-    CPPUNIT_TEST(StripedSet_boost_unordered_set)
+    CPPUNIT_TEST(StripedSet_boost_unordered_set) \
+    CPPUNIT_TEST(StripedSet_rational_list) \
+    CPPUNIT_TEST(StripedSet_rational_vector) \
+    CPPUNIT_TEST(StripedSet_rational_set) \
+    CPPUNIT_TEST(StripedSet_rational_hashset) \
+    CPPUNIT_TEST(StripedSet_rational_boost_unordered_set)
 
 #if BOOST_VERSION >= 104800
 #   define CDSUNIT_DECLARE_StripedSet_boost_container \
@@ -686,21 +701,36 @@
     CDSUNIT_DECLARE_TEST(StripedSet_boost_slist) \
     CDSUNIT_DECLARE_TEST(StripedSet_boost_vector) \
     CDSUNIT_DECLARE_TEST(StripedSet_boost_stable_vector) \
-    CDSUNIT_DECLARE_TEST(StripedSet_boost_set)
+    CDSUNIT_DECLARE_TEST(StripedSet_boost_set) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_boost_list) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_boost_slist) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_boost_vector) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_boost_stable_vector) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_boost_set)
 
 #   define CDSUNIT_DEFINE_StripedSet_boost_container( IMPL, C ) \
     TEST_SET(IMPL, C, StripedSet_boost_list) \
     TEST_SET(IMPL, C, StripedSet_boost_slist) \
     TEST_SET(IMPL, C, StripedSet_boost_vector) \
     TEST_SET(IMPL, C, StripedSet_boost_stable_vector) \
-    TEST_SET(IMPL, C, StripedSet_boost_set)
+    TEST_SET(IMPL, C, StripedSet_boost_set) \
+    TEST_SET(IMPL, C, StripedSet_rational_boost_list) \
+    TEST_SET(IMPL, C, StripedSet_rational_boost_slist) \
+    TEST_SET(IMPL, C, StripedSet_rational_boost_vector) \
+    TEST_SET(IMPL, C, StripedSet_rational_boost_stable_vector) \
+    TEST_SET(IMPL, C, StripedSet_rational_boost_set)
 
 #   define CDSUNIT_TEST_StripedSet_boost_container \
     CPPUNIT_TEST(StripedSet_boost_list) \
     CPPUNIT_TEST(StripedSet_boost_slist) \
     CPPUNIT_TEST(StripedSet_boost_vector) \
     CPPUNIT_TEST(StripedSet_boost_stable_vector) \
-    CPPUNIT_TEST(StripedSet_boost_set)
+    CPPUNIT_TEST(StripedSet_boost_set) \
+    CPPUNIT_TEST(StripedSet_rational_boost_list) \
+    CPPUNIT_TEST(StripedSet_rational_boost_slist) \
+    CPPUNIT_TEST(StripedSet_rational_boost_vector) \
+    CPPUNIT_TEST(StripedSet_rational_boost_stable_vector) \
+    CPPUNIT_TEST(StripedSet_rational_boost_set)
 #else
 #   define CDSUNIT_DECLARE_StripedSet_boost_container
 #   define CDSUNIT_DEFINE_StripedSet_boost_container( IMPL, C )
@@ -709,11 +739,14 @@
 
 #if BOOST_VERSION >= 104800 && defined(CDS_UNIT_SET_TYPES_ENABLE_BOOST_FLAT_CONTAINERS)
 #   define CDSUNIT_DECLARE_StripedSet_boost_flat_container \
-    CDSUNIT_DECLARE_TEST(StripedSet_boost_flat_set)
+    CDSUNIT_DECLARE_TEST(StripedSet_boost_flat_set) \
+    CDSUNIT_DECLARE_TEST(StripedSet_rational_boost_flat_set)
 #   define CDSUNIT_DEFINE_StripedSet_boost_flat_container( IMPL, C ) \
-    TEST_SET(IMPL, C, StripedSet_boost_flat_set)
+    TEST_SET(IMPL, C, StripedSet_boost_flat_set) \
+    TEST_SET(IMPL, C, StripedSet_rational_boost_flat_set)
 #   define CDSUNIT_TEST_StripedSet_boost_flat_container \
-    CPPUNIT_TEST(StripedSet_boost_flat_set)
+    CPPUNIT_TEST(StripedSet_boost_flat_set) \
+    CPPUNIT_TEST(StripedSet_rational_boost_flat_set)
 #else
 #   define CDSUNIT_DECLARE_StripedSet_boost_flat_container
 #   define CDSUNIT_DEFINE_StripedSet_boost_flat_container( IMPL, C )
@@ -739,19 +772,34 @@
     CDSUNIT_DECLARE_TEST(RefinableSet_vector) \
     CDSUNIT_DECLARE_TEST(RefinableSet_set) \
     CDSUNIT_DECLARE_TEST(RefinableSet_hashset) \
-    CDSUNIT_DECLARE_TEST(RefinableSet_boost_unordered_set)
+    CDSUNIT_DECLARE_TEST(RefinableSet_boost_unordered_set) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_list) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_vector) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_set) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_hashset) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_boost_unordered_set)
 #define CDSUNIT_DEFINE_RefinableSet_common(IMPL, C) \
     TEST_SET(IMPL, C, RefinableSet_list) \
     TEST_SET(IMPL, C, RefinableSet_vector) \
     TEST_SET(IMPL, C, RefinableSet_set) \
     TEST_SET(IMPL, C, RefinableSet_hashset) \
-    TEST_SET(IMPL, C, RefinableSet_boost_unordered_set)
+    TEST_SET(IMPL, C, RefinableSet_boost_unordered_set) \
+    TEST_SET(IMPL, C, RefinableSet_rational_list) \
+    TEST_SET(IMPL, C, RefinableSet_rational_vector) \
+    TEST_SET(IMPL, C, RefinableSet_rational_set) \
+    TEST_SET(IMPL, C, RefinableSet_rational_hashset) \
+    TEST_SET(IMPL, C, RefinableSet_rational_boost_unordered_set)
 #define CDSUNIT_TEST_RefinableSet_common \
     CPPUNIT_TEST(RefinableSet_list) \
     CPPUNIT_TEST(RefinableSet_vector) \
     CPPUNIT_TEST(RefinableSet_set) \
     CPPUNIT_TEST(RefinableSet_hashset) \
-    CPPUNIT_TEST(RefinableSet_boost_unordered_set)
+    CPPUNIT_TEST(RefinableSet_boost_unordered_set) \
+    CPPUNIT_TEST(RefinableSet_rational_list) \
+    CPPUNIT_TEST(RefinableSet_rational_vector) \
+    CPPUNIT_TEST(RefinableSet_rational_set) \
+    CPPUNIT_TEST(RefinableSet_rational_hashset) \
+    CPPUNIT_TEST(RefinableSet_rational_boost_unordered_set)
 
 #if BOOST_VERSION >= 104800
 #   define CDSUNIT_DECLARE_RefinableSet_boost_container \
@@ -759,19 +807,34 @@
     CDSUNIT_DECLARE_TEST(RefinableSet_boost_slist) \
     CDSUNIT_DECLARE_TEST(RefinableSet_boost_vector) \
     CDSUNIT_DECLARE_TEST(RefinableSet_boost_stable_vector) \
-    CDSUNIT_DECLARE_TEST(RefinableSet_boost_set)
+    CDSUNIT_DECLARE_TEST(RefinableSet_boost_set) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_boost_list) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_boost_slist) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_boost_vector) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_boost_stable_vector) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_boost_set)
 #   define CDSUNIT_DEFINE_RefinableSet_boost_container( IMPL, C ) \
     TEST_SET(IMPL, C, RefinableSet_boost_list) \
     TEST_SET(IMPL, C, RefinableSet_boost_slist) \
     TEST_SET(IMPL, C, RefinableSet_boost_vector) \
     TEST_SET(IMPL, C, RefinableSet_boost_stable_vector) \
-    TEST_SET(IMPL, C, RefinableSet_boost_set)
+    TEST_SET(IMPL, C, RefinableSet_boost_set) \
+    TEST_SET(IMPL, C, RefinableSet_rational_boost_list) \
+    TEST_SET(IMPL, C, RefinableSet_rational_boost_slist) \
+    TEST_SET(IMPL, C, RefinableSet_rational_boost_vector) \
+    TEST_SET(IMPL, C, RefinableSet_rational_boost_stable_vector) \
+    TEST_SET(IMPL, C, RefinableSet_rational_boost_set)
 #   define CDSUNIT_TEST_RefinableSet_boost_container \
     CPPUNIT_TEST(RefinableSet_boost_list) \
     CPPUNIT_TEST(RefinableSet_boost_slist) \
     CPPUNIT_TEST(RefinableSet_boost_vector) \
     CPPUNIT_TEST(RefinableSet_boost_stable_vector) \
-    CPPUNIT_TEST(RefinableSet_boost_set)
+    CPPUNIT_TEST(RefinableSet_boost_set) \
+    CPPUNIT_TEST(RefinableSet_rational_boost_list) \
+    CPPUNIT_TEST(RefinableSet_rational_boost_slist) \
+    CPPUNIT_TEST(RefinableSet_rational_boost_vector) \
+    CPPUNIT_TEST(RefinableSet_rational_boost_stable_vector) \
+    CPPUNIT_TEST(RefinableSet_rational_boost_set)
 #else
 #   define CDSUNIT_DECLARE_RefinableSet_boost_container
 #   define CDSUNIT_DEFINE_RefinableSet_boost_container( IMPL, C ) \
@@ -780,11 +843,14 @@
 
 #if BOOST_VERSION >= 104800 && defined(CDS_UNIT_SET_TYPES_ENABLE_BOOST_FLAT_CONTAINERS)
 #   define CDSUNIT_DECLARE_RefinableSet_boost_flat_container \
-    CDSUNIT_DECLARE_TEST(RefinableSet_boost_flat_set)
+    CDSUNIT_DECLARE_TEST(RefinableSet_boost_flat_set) \
+    CDSUNIT_DECLARE_TEST(RefinableSet_rational_boost_flat_set)
 #   define CDSUNIT_DEFINE_RefinableSet_boost_flat_container( IMPL, C ) \
-    TEST_SET(IMPL, C, RefinableSet_boost_flat_set)
+    TEST_SET(IMPL, C, RefinableSet_boost_flat_set) \
+    TEST_SET(IMPL, C, RefinableSet_rational_boost_flat_set)
 #   define CDSUNIT_TEST_RefinableSet_boost_flat_container \
-    CPPUNIT_TEST(RefinableSet_boost_flat_set)
+    CPPUNIT_TEST(RefinableSet_boost_flat_set) \
+    CPPUNIT_TEST(RefinableSet_rational_boost_flat_set)
 #else
 #   define CDSUNIT_DECLARE_RefinableSet_boost_flat_container
 #   define CDSUNIT_DEFINE_RefinableSet_boost_flat_container( IMPL, C )
