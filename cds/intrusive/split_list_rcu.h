@@ -255,11 +255,16 @@ namespace cds { namespace intrusive {
         dummy_node_type * alloc_dummy_node( size_t nHash )
         {
             m_Stat.onHeadNodeAllocated();
-            return dummy_node_allocator().New( nHash );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+            dummy_node_type * p = dummy_node_allocator().New( nHash );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+            return p;
         }
         void free_dummy_node( dummy_node_type * p )
         {
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
             dummy_node_allocator().Delete( p );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             m_Stat.onHeadNodeFreed();
         }
 

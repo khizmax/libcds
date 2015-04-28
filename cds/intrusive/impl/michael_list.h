@@ -223,8 +223,10 @@ namespace cds { namespace intrusive {
         struct clean_disposer {
             void operator()( value_type * p )
             {
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 michael_list::node_cleaner<gc, node_type, memory_model>()( node_traits::to_node_ptr( p ) );
                 disposer()( p );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             }
         };
         //@endcond
@@ -1082,9 +1084,10 @@ try_again:
                     return false;
                 }
 
-                pNext = pCur->m_pNext.load(memory_model::memory_order_acquire);
+                pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
+                CDS_TSAN_ANNOTATE_HAPPENS_AFTER( pNext.ptr() );
                 pos.guards.assign( position::guard_next_item, node_traits::to_value_ptr( pNext.ptr() ));
-                if ( pCur->m_pNext.load(memory_model::memory_order_relaxed).all() != pNext.all() ) {
+                if ( pCur->m_pNext.load(memory_model::memory_order_acquire).all() != pNext.all() ) {
                     bkoff();
                     goto try_again;
                 }
