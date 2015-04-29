@@ -321,7 +321,15 @@ namespace cds { namespace gc {
                 details::retired_vector& dest = pThis->m_arrRetired;
                 assert( !dest.isFull());
                 details::retired_vector::iterator itRetired = src.begin();
+
+                // TSan can issue a warning here:
+                //  read src.m_nSize in src.end()
+                //  write src.m_nSize in src.clear() 
+                // This is false positive since we own hprec
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
                 details::retired_vector::iterator itRetiredEnd = src.end();
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
+
                 while ( itRetired != itRetiredEnd ) {
                     dest.push( *itRetired );
                     if ( dest.isFull()) {
@@ -330,7 +338,11 @@ namespace cds { namespace gc {
                     }
                     ++itRetired;
                 }
+
+                // TSan: write src.m_nSize, see a comment above
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 src.clear();
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
 
                 hprec->m_bFree.store(true, atomics::memory_order_release);
                 hprec->m_idOwner.store( nullThreadId, atomics::memory_order_release );

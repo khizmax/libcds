@@ -356,6 +356,9 @@ namespace cds { namespace container {
         {
             assert( pRec );
 
+            // this function is called under FC mutex, so switch TSan off
+            CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
+
             switch ( pRec->op() ) {
             case op_push_front:
                 assert( pRec->pValPush );
@@ -397,12 +400,17 @@ namespace cds { namespace container {
                 assert(false);
                 break;
             }
+            CDS_TSAN_ANNOTATE_IGNORE_RW_END;
         }
 
         /// Batch-processing flat combining
         void fc_process( typename fc_kernel::iterator itBegin, typename fc_kernel::iterator itEnd )
         {
             typedef typename fc_kernel::iterator fc_iterator;
+
+            // this function is called under FC mutex, so switch TSan off
+            CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
+
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
                 switch ( it->op() ) {
                 case op_push_front:
@@ -451,6 +459,7 @@ namespace cds { namespace container {
                     break;
                 }
             }
+            CDS_TSAN_ANNOTATE_IGNORE_RW_END;
         }
         //@endcond
 
