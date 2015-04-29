@@ -267,7 +267,23 @@ namespace cds { namespace intrusive {
             {
                 typedef typename Traits::back_off   back_off;
 
-                back_off    m_bkoff;
+                struct wrapper
+                {
+                    back_off m_bkoff;
+
+                    void reset()
+                    {
+                        m_bkoff.reset();
+                    }
+
+                    template <typename Stat>
+                    bool backoff( treiber_stack::operation< T >&, Stat& )
+                    {
+                        m_bkoff();
+                        return false;
+                    }
+                };
+
             public:
                 elimination_backoff()
                 {}
@@ -275,16 +291,10 @@ namespace cds { namespace intrusive {
                 elimination_backoff( size_t )
                 {}
 
-                void reset()
+                typedef wrapper type;
+                type init()
                 {
-                    m_bkoff.reset();
-                }
-
-                template <typename Stat>
-                bool backoff(treiber_stack::operation< T >&, Stat& )
-                {
-                    m_bkoff();
-                    return false;
+                    return wrapper();
                 }
             };
 
@@ -351,6 +361,13 @@ namespace cds { namespace intrusive {
                     : m_Elimination( nCollisionCapacity )
                 {
                     m_Elimination.collisions.zeroize();
+                }
+
+                typedef elimination_backoff& type;
+
+                type init()
+                {
+                    return *this;
                 }
 
                 void reset()
@@ -617,7 +634,8 @@ namespace cds { namespace intrusive {
         stat                m_stat;                 ///< Internal statistics
 
         //@cond
-        treiber_stack::details::elimination_backoff<enable_elimination, value_type, traits> m_Backoff;
+        typedef treiber_stack::details::elimination_backoff<enable_elimination, value_type, traits> elimination_backoff;
+        elimination_backoff m_Backoff;
 
         typedef intrusive::node_to_value<TreiberStack>  node_to_value;
         typedef treiber_stack::operation< value_type >  operation_desc;
@@ -675,7 +693,7 @@ namespace cds { namespace intrusive {
             node_type * pNew = node_traits::to_node_ptr( val );
             link_checker::is_empty( pNew );
 
-            m_Backoff.reset();
+            typename elimination_backoff::type bkoff = m_Backoff.init();
 
             operation_desc op;
             if ( enable_elimination ) {
@@ -686,14 +704,14 @@ namespace cds { namespace intrusive {
             node_type * t = m_Top.load(memory_model::memory_order_relaxed);
             while ( true ) {
                 pNew->m_pNext.store( t, memory_model::memory_order_relaxed );
-                if ( m_Top.compare_exchange_weak( t, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed )) {     // #1 sync-with #2
+                if ( m_Top.compare_exchange_weak( t, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                     ++m_ItemCounter;
                     m_stat.onPush();
                     return true;
                 }
                 m_stat.onPushRace();
 
-                if ( m_Backoff.backoff( op, m_stat ))
+                if ( bkoff.backoff( op, m_stat ))
                     return true;
             }
         }
@@ -706,7 +724,7 @@ namespace cds { namespace intrusive {
         */
         value_type * pop()
         {
-            m_Backoff.reset();
+            typename elimination_backoff::type bkoff = m_Backoff.init();
             typename gc::Guard  guard;
 
             operation_desc op;
@@ -720,7 +738,7 @@ namespace cds { namespace intrusive {
                     return nullptr;    // stack is empty
 
                 node_type * pNext = t->m_pNext.load(memory_model::memory_order_relaxed);
-                if ( m_Top.compare_exchange_weak( t, pNext, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {              // #2
+                if ( m_Top.compare_exchange_weak( t, pNext, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                     clear_links( t );
                     --m_ItemCounter;
                     m_stat.onPop();
@@ -728,7 +746,7 @@ namespace cds { namespace intrusive {
                 }
 
                 m_stat.onPopRace();
-                if ( m_Backoff.backoff( op, m_stat )) {
+                if ( bkoff.backoff( op, m_stat )) {
                     // may return nullptr if stack is empty
                     return op.pVal;
                 }
@@ -738,7 +756,6 @@ namespace cds { namespace intrusive {
         /// Check if stack is empty
         bool empty() const
         {
-            // http://www.manning-sandbox.com/thread.jspa?threadID=46245&tstart=0
             return m_Top.load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
@@ -757,7 +774,7 @@ namespace cds { namespace intrusive {
                 pTop = m_Top.load( memory_model::memory_order_relaxed );
                 if ( pTop == nullptr )
                     return;
-                if ( m_Top.compare_exchange_weak( pTop, nullptr, memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ) ) {    // sync-with #1 and #2
+                if ( m_Top.compare_exchange_weak( pTop, nullptr, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
                     m_ItemCounter.reset();
                     break;
                 }
