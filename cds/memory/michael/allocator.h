@@ -1450,6 +1450,9 @@ namespace michael {
 
             static_assert( (sizeof(processor_heap) % c_nAlignment) == 0, "sizeof(processor_heap) error" );
 
+            // TSan false positive: a new descriptor will be linked further with release fence
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+
             pDesc = new( m_AlignedHeap.alloc( szTotal, c_nAlignment ) ) processor_desc;
 
             pDesc->pageHeaps = reinterpret_cast<page_heap *>( pDesc + 1 );
@@ -1474,6 +1477,7 @@ namespace michael {
                 else
                     pProcHeap->nPageIdx = pProcHeap->pSizeClass->nSBSizeIdx;
             }
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             return pDesc;
         }
 

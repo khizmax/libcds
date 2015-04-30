@@ -352,7 +352,7 @@ namespace cds { namespace intrusive {
                 m_Stat.onSegmentCreated();
 
                 if ( m_List.empty() )
-                    m_pHead.store( pNew, memory_model::memory_order_relaxed );
+                    m_pHead.store( pNew, memory_model::memory_order_release );
                 m_List.push_back( *pNew );
                 m_pTail.store( pNew, memory_model::memory_order_release );
                 return guard.assign( pNew );
@@ -411,13 +411,21 @@ namespace cds { namespace intrusive {
 
             segment * allocate_segment()
             {
-                return segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor,
+                // TSan: release barrier will be issued when the segment will link to the list of segments
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                segment * p = segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor,
                     quasi_factor() );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                return p;
             }
 
             static void free_segment( segment * pSegment )
             {
+                // TSan: deallocating is called inside SMR reclamation cycle
+                // so necessary barriers have been already issued
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 segment_allocator().Delete( pSegment );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             }
 
             static void retire_segment( segment * pSegment )
