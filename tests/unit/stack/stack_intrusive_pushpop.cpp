@@ -149,12 +149,14 @@ namespace istack {
                 while ( !(getTest().m_nWorkingProducers.load(atomics::memory_order_acquire) == 0 && m_Stack.empty()) ) {
                     typename Stack::value_type * p = m_Stack.pop();
                     if ( p ) {
+                        CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                         p->nConsumer = m_nThreadNo;
                         ++m_nPopCount;
                         if ( p->nNo < sizeof(m_arrPop)/sizeof(m_arrPop[0]) )
                             ++m_arrPop[p->nNo];
                         else
                             ++m_nDirtyPop;
+                        CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                     }
                     else
                         ++m_nPopEmpty;
