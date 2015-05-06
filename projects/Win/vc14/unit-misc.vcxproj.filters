@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\alloc\hoard_threadtest.cpp">
+      <Filter>alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\alloc\larson.cpp">
+      <Filter>alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\alloc\linux_scale.cpp">
+      <Filter>alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\alloc\michael_allocator.cpp">
+      <Filter>alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\alloc\random.cpp">
+      <Filter>alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\lock\spinlock.cpp">
+      <Filter>lock</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\alloc\random_gen.h">
+      <Filter>alloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\alloc\michael_allocator.h">
+      <Filter>alloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\lock\win32_lock.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\lock\nolock.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="alloc">
+      <UniqueIdentifier>{03866e2b-6bdb-47ed-a165-3c7f19927d0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lock">
+      <UniqueIdentifier>{6952493f-7eee-4643-a7c4-b2fefbb583d2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

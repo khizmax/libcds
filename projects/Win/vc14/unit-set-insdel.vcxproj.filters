@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_cuckoo.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_ellentree.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_refinable.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_skip.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_split.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_striped.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_cuckoo.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_ellentree.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_michael.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_refinable.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_skip.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_split.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_std.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_striped.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="set_insdel_func">
+      <UniqueIdentifier>{cbe5ede5-77ea-49bb-be6a-16d30d8416f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="set_insdel_string">
+      <UniqueIdentifier>{8a51ae1e-c41c-4394-bf84-3de8c45ea8bb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\set2\set_insdel_func.h">
+      <Filter>set_insdel_func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\set2\set_insdel_string.h">
+      <Filter>set_insdel_string</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

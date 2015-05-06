@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_bronsonavltree.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_cuckoo.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_ellentree.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_michael.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_refinable.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_skip.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_split.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_striped.cpp">
+      <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_bronsonavltree.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_cuckoo.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_ellentree.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_michael.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_refinable.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_skip.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_split.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_striped.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_bronsonavltree.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_cuckoo.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_ellentree.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_michael.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_refinable.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_skip.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_split.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_std.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_striped.cpp">
+      <Filter>map_insdel_string</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="map_insdel_func">
+      <UniqueIdentifier>{7cb9e730-e4e0-4648-96f1-e1dbf119756e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="map_insdel_int">
+      <UniqueIdentifier>{55aed984-fed9-4007-9ad3-59bec69befe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="map_insdel_string">
+      <UniqueIdentifier>{f613f4ac-8b0f-4a85-81be-d243141b3ce3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_func.h">
+      <Filter>map_insdel_func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_int.h">
+      <Filter>map_insdel_int</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_string.h">
+      <Filter>map_insdel_string</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="intrusive">
+      <UniqueIdentifier>{2e5ccb52-5287-4912-8d3f-aeaf257134cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container">
+      <UniqueIdentifier>{d864adcf-d418-48b8-85be-6f4d39ac6941}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_priority_queue_reg.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_intrusive_mspqueue_dyn.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_intrusive_mspqueue_static.cpp">
+      <Filter>intrusive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_mspqueue_dyn.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_mspqueue_static.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_fcpqueue_boost_stable_vector.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_fcpqueue_deque.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\priority_queue\hdr_fcpqueue_vector.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\priority_queue\hdr_intrusive_pqueue.h">
+      <Filter>intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\priority_queue\hdr_pqueue.h">
+      <Filter>container</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
