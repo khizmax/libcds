@@ -14,7 +14,6 @@
 #include "pqueue/pqueue_type.h"
 
 #include <vector>
-#include <algorithm>    // random_shuffle
 #include <memory>
 
 namespace pqueue {
@@ -86,7 +85,7 @@ namespace pqueue {
                 m_arr.reserve( nEnd - nStart );
                 for ( size_t i = nStart; i < nEnd; ++i )
                     m_arr.push_back( i );
-                std::random_shuffle( m_arr.begin(), m_arr.end() );
+                shuffle( m_arr.begin(), m_arr.end() );
             }
         };
 

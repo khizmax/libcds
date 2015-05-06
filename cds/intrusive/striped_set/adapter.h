@@ -12,6 +12,9 @@ namespace cds { namespace intrusive {
 
     /// StripedSet related definitions
     namespace striped_set {
+        //@cond
+        struct implementation_tag;
+        //@endcond
 
         /// Default adapter for intrusive striped/refinable hash set
         /**

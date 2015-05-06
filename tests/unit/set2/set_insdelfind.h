@@ -1,15 +1,14 @@
 //$$CDS-header$$
 
-#include "set2/set_types.h"
+#include "set2/set_type.h"
 #include "cppunit/thread.h"
-#include <algorithm> // random_shuffle
 
 namespace set2 {
 
-#   define TEST_SET(X)          void X() { test<SetTypes<key_type, value_type>::X >()    ; }
-#   define TEST_SET_EXTRACT(X)  TEST_SET(X)
-#   define TEST_SET_NOLF(X)    void X() { test_nolf<SetTypes<key_type, value_type>::X >()    ; }
-#   define TEST_SET_NOLF_EXTRACT(X) TEST_SET_NOLF(X)
+#   define TEST_SET(IMPL, C, X)          void C::X() { test<set_type<IMPL, key_type, value_type>::X >()    ; }
+#   define TEST_SET_EXTRACT(IMPL, C, X)  TEST_SET(IMPL, C, X)
+#   define TEST_SET_NOLF(IMPL, C, X)     void C::X() { test_nolf<set_type<IMPL, key_type, value_type>::X >()    ; }
+#   define TEST_SET_NOLF_EXTRACT(IMPL, C, X) TEST_SET_NOLF(IMPL, C, X)
 
     class Set_InsDelFind: public CppUnitMini::TestCase
     {
@@ -138,7 +137,7 @@ namespace set2 {
                 size_t * pEnd = pInitArr + c_nInitialMapSize;
                 for ( size_t i = 0; i < c_nInitialMapSize; ++i )
                     pInitArr[i] = i * 2 + 1;
-                std::random_shuffle( pInitArr, pEnd );
+                shuffle( pInitArr, pEnd );
                 for ( size_t * p = pInitArr; p < pEnd; ++p )
                     testSet.insert( typename Set::value_type( *p, *p ) );
                 delete [] pInitArr;

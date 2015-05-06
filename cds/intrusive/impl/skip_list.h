@@ -345,6 +345,9 @@ namespace cds { namespace intrusive {
         typedef typename traits::back_off      back_off;   ///< Back-off strategy
         typedef typename traits::stat          stat;       ///< internal statistics type
 
+        //@cond
+        typedef cds::intrusive::skip_list::implementation_tag implementation_tag;
+        //@endcond
     public:
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 

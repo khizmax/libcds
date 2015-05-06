@@ -483,7 +483,7 @@ namespace ordlist {
                 int a[nLimit];
                 for (int i = 0; i < nLimit; ++i)
                     a[i]=i;
-                std::random_shuffle( a, a + nLimit );
+                shuffle( a, a + nLimit );
 
                 for (int i = 0; i < nLimit; ++i) {
                     arrItem[i].nKey = a[i];
@@ -576,7 +576,7 @@ namespace ordlist {
                 int a[nLimit];
                 for (int i = 0; i < nLimit; ++i)
                     a[i]=i;
-                std::random_shuffle( a, a + nLimit );
+                shuffle( a, a + nLimit );
 
                 for (int i = 0; i < nLimit; ++i) {
                     arrItem[i].nKey = a[i];

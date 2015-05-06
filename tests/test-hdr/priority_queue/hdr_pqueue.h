@@ -107,7 +107,7 @@ namespace priority_queue {
                 for ( T * p = pFirst; p != pLast; ++p, ++i )
                     p->k = p->v = i;
 
-                std::random_shuffle( pFirst, pLast );
+                shuffle( pFirst, pLast );
             }
 
             ~data_array()

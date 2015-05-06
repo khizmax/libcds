@@ -313,7 +313,7 @@ namespace tree {
             int keys[1000];
             for ( key_type i = 0; i < static_cast<key_type>(sizeof(keys) / sizeof(keys[0])); ++i )
                 keys[i] = i;
-            std::random_shuffle( keys, keys + sizeof(keys) / sizeof(keys[0]));
+            shuffle( keys, keys + sizeof(keys) / sizeof(keys[0]));
 
             size_t nCount = 1;
             int nPrev;

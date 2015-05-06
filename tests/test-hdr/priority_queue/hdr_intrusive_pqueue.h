@@ -71,7 +71,7 @@ namespace priority_queue {
                 for ( T * p = pFirst; p != pLast; ++p, ++i )
                     *p = i;
 
-                std::random_shuffle( pFirst, pLast );
+                CppUnitMini::TestCase::shuffle( pFirst, pLast );
             }
 
             ~data_array()

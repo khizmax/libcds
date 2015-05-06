@@ -1,15 +1,14 @@
 //$$CDS-header$$
 
 #include "cppunit/thread.h"
-#include "set2/set_types.h"
-#include <algorithm> // random_shuffle
+#include "set2/set_type.h"
 
 namespace set2 {
 
-#    define TEST_SET(X)         void X() { test<SetTypes<key_type, value_type>::X >()    ; }
-#    define TEST_SET_EXTRACT(X) void X() { test_extract<SetTypes<key_type, value_type>::X >()    ; }
-#    define TEST_SET_NOLF(X)    void X() { test_nolf<SetTypes<key_type, value_type>::X >()    ; }
-#    define TEST_SET_NOLF_EXTRACT(X)    void X() { test_nolf_extract<SetTypes<key_type, value_type>::X >()    ; }
+#    define TEST_SET(IMPL, C, X)         void C::X() { test<set_type<IMPL, key_type, value_type>::X >(); }
+#    define TEST_SET_EXTRACT(IMPL, C, X) void C::X() { test_extract<set_type<IMPL, key_type, value_type>::X >(); }
+#    define TEST_SET_NOLF(IMPL, C, X)    void C::X() { test_nolf<set_type<IMPL, key_type, value_type>::X >(); }
+#    define TEST_SET_NOLF_EXTRACT(IMPL, C, X) void C::X() { test_nolf_extract<set_type<IMPL, key_type, value_type>::X >(); }
 
     namespace {
         struct key_thread
@@ -26,7 +25,7 @@ namespace set2 {
             {}
         };
 
-        typedef SetTypes<key_thread, size_t>::key_val     key_value_pair;
+        typedef set_type_base<key_thread, size_t>::key_val     key_value_pair;
     }
 
     template <>

@@ -16,6 +16,10 @@ namespace cds { namespace intrusive {
     */
     namespace michael_set {
 
+        //@cond
+        struct implementation_tag;
+        //@endcond
+
         /// MichaelHashSet traits
         struct traits {
             /// Hash function
@@ -190,7 +194,7 @@ namespace cds { namespace intrusive {
             };
         }
         //@endcond
-    }
+    } // namespace michael_set
 
     //@cond
     // Forward declarations

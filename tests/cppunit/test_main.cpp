@@ -84,18 +84,22 @@ std::ostream& operator << (std::ostream& s, const cds::gc::hp::GarbageCollector:
 
 namespace CppUnitMini
 {
-  int TestCase::m_numErrors = 0;
-  int TestCase::m_numTests = 0;
-  std::vector<std::string>  TestCase::m_arrStrings;
-  bool TestCase::m_bPrintGCState = false;
-  std::string TestCase::m_strTestDataDir(".");
-  Config TestCase::m_Cfg;
-  bool TestCase::m_bExactMatch = false;
+    int TestCase::m_numErrors = 0;
+    int TestCase::m_numTests = 0;
+    std::vector<std::string>  TestCase::m_arrStrings;
+    bool TestCase::m_bPrintGCState = false;
+    std::string TestCase::m_strTestDataDir(".");
+    Config TestCase::m_Cfg;
+    bool TestCase::m_bExactMatch = false;
 
-  TestCase * TestCase::m_pCurTestCase = nullptr;
+    // random shuffle support
+    /*static*/ std::random_device TestCase::m_RandomDevice;
+    /*static*/ std::mt19937       TestCase::m_RandomGen( TestCase::m_RandomDevice() );
 
-  TestCase *TestCase::m_root = 0;
-  Reporter *TestCase::m_reporter = 0;
+    TestCase * TestCase::m_pCurTestCase = nullptr;
+
+    TestCase *TestCase::m_root = 0;
+    Reporter *TestCase::m_reporter = 0;
 
   void TestCase::registerTestCase(TestCase *in_testCase) {
     in_testCase->m_next = m_root;

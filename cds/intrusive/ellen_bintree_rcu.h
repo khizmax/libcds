@@ -438,6 +438,10 @@ namespace cds { namespace intrusive {
         typedef typename traits::disposer disposer;   ///< leaf node disposer
         typedef typename traits::back_off back_off;   ///< back-off strategy
 
+        //@cond
+        typedef cds::intrusive::ellen_bintree::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         //@cond
         typedef ellen_bintree::base_node< gc >                      tree_node; ///< Base type of tree node

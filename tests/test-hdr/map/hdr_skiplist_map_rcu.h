@@ -124,7 +124,7 @@ namespace map {
                 for ( int i = 0; i < nLimit; ++i ) {
                     nRand[i] = i;
                 }
-                std::random_shuffle( nRand, nRand + nLimit );
+                shuffle( nRand, nRand + nLimit );
 
                 for ( int i = 0; i < nLimit; ++i ) {
                     CPPUNIT_ASSERT( m.insert(i, i) );
@@ -167,7 +167,7 @@ namespace map {
                 int arrItem[nLimit];
                 for ( int i = 0; i < nLimit; ++i )
                     arrItem[i] = i;
-                std::random_shuffle( arrItem, arrItem + nLimit );
+                shuffle( arrItem, arrItem + nLimit );
 
                 typedef typename Map::value_type value_type;
                 typename Map::exempt_ptr ep;

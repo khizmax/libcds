@@ -13,6 +13,7 @@
 #define CDSUNIT_LOCK_WIN32_LOCK_H
 
 #if defined(_WIN32) || defined(_WIN64)
+#define NOMINMAX
 #include <windows.h>
 
 #define UNIT_LOCK_WIN_CS

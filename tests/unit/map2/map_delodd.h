@@ -1,15 +1,15 @@
 //$$CDS-header$$
 
 #include "cppunit/thread.h"
-#include "map2/map_types.h"
-#include <algorithm> // random_shuffle
+#include "map2/map_type.h"
+#include <cds/os/topology.h>
 
 namespace map2 {
 
-#   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >(); }
-#   define TEST_MAP_EXTRACT(X) void X() { test_extract<MapTypes<key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF_EXTRACT(X) void X() { test_nolf_extract<MapTypes<key_type, value_type>::X >(); }
+#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_EXTRACT(IMPL, C, X) void C::X() { test_extract<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) void C::X() { test_nolf_extract<map_type<IMPL, key_type, value_type>::X >(); }
 
     namespace {
         struct key_thread
@@ -126,7 +126,8 @@ namespace map2 {
         static size_t  c_nMaxLoadFactor;    // maximum load factor
         static bool    c_bPrintGCState;
 
-        std::vector<size_t>     m_arrData;
+        std::vector<size_t>     m_arrInsert;
+        std::vector<size_t>     m_arrRemove;
 
     protected:
         typedef CppUnitMini::TestCase Base;
@@ -186,7 +187,7 @@ namespace map2 {
                 m_nInsertSuccess =
                     m_nInsertFailed = 0;
 
-                std::vector<size_t>& arrData = getTest().m_arrData;
+                std::vector<size_t>& arrData = getTest().m_arrInsert;
                 for ( size_t i = 0; i < arrData.size(); ++i ) {
                     if ( rMap.insert( key_type( arrData[i], m_nThreadNo )))
                         ++m_nInsertSuccess;
@@ -277,7 +278,7 @@ namespace map2 {
                     m_nDeleteFailed = 0;
 
                 for ( size_t pass = 0; pass < 2; pass++ ) {
-                    std::vector<size_t>& arrData = getTest().m_arrData;
+                    std::vector<size_t>& arrData = getTest().m_arrRemove;
                     if ( m_nThreadNo & 1 ) {
                         for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
@@ -352,7 +353,7 @@ namespace map2 {
                 typename Map::guarded_ptr gp;
 
                 for ( size_t pass = 0; pass < 2; ++pass ) {
-                    std::vector<size_t>& arrData = getTest().m_arrData;
+                    std::vector<size_t>& arrData = getTest().m_arrRemove;
                     if ( m_nThreadNo & 1 ) {
                         for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
@@ -429,7 +430,7 @@ namespace map2 {
 
                 typename Map::exempt_ptr xp;
 
-                std::vector<size_t>& arrData = getTest().m_arrData;
+                std::vector<size_t>& arrData = getTest().m_arrRemove;
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
                         for ( size_t i = 0; i < arrData.size(); ++i ) {
@@ -635,7 +636,6 @@ namespace map2 {
 
             additional_cleanup( testMap );
         }
-
 
         template <class Map>
         void test()

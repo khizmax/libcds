@@ -1,17 +1,16 @@
 //$$CDS-header$$
 
-#include "map2/map_types.h"
+#include "map2/map_type.h"
 #include "cppunit/thread.h"
 
 #include <vector>
-#include <algorithm>    // random_shuffle
 
 namespace map2 {
 
-#   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >()    ; }
-#   define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >()    ; }
-#   define TEST_MAP_EXTRACT(X)  TEST_MAP(X)
-#   define TEST_MAP_NOLF_EXTRACT(X) TEST_MAP_NOLF(X)
+#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_EXTRACT(IMPL, C, X)  TEST_MAP(IMPL, C, X)
+#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) TEST_MAP_NOLF(IMPL, C, X)
 
     class Map_InsDel_Item_int: public CppUnitMini::TestCase
     {
@@ -177,7 +176,7 @@ namespace map2 {
                 v.reserve( c_nMapSize );
                 for ( size_t i = 0; i < c_nMapSize; ++i )
                     v.push_back( i );
-                std::random_shuffle( v.begin(), v.end() );
+                shuffle( v.begin(), v.end() );
                 for ( size_t i = 0; i < v.size(); ++i ) {
                     CPPUNIT_ASSERT( testMap.insert( v[i], v[i] ));
                 }

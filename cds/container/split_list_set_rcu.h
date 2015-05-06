@@ -5,6 +5,7 @@
 
 #include <cds/intrusive/split_list_rcu.h>
 #include <cds/container/details/make_split_list_set.h>
+#include <cds/urcu/exempt_ptr.h>
 
 namespace cds { namespace container {
 
@@ -191,6 +192,10 @@ namespace cds { namespace container {
         typedef typename base_class::rcu_lock      rcu_lock   ; ///< RCU scoped lock
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
+
+        //@cond
+        typedef cds::container::split_list::implementation_tag implementation_tag;
+        //@endcond
 
     protected:
         //@cond

@@ -17,7 +17,6 @@
 #include <cds/os/timer.h>
 #include <cds/opt/hash.h>
 #include <functional>   // ref
-#include <algorithm>    // random_shuffle
 
 namespace cds { namespace container {}}
 
@@ -211,7 +210,7 @@ namespace map {
                 int arrRandom[nLimit];
                 for ( int i = 0; i < nLimit; ++i )
                     arrRandom[i] = i;
-                std::random_shuffle( arrRandom, arrRandom + nLimit );
+                shuffle( arrRandom, arrRandom + nLimit );
 
                 for ( int i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( m.insert( arrRandom[i], arrRandom[i] ));
@@ -290,7 +289,7 @@ namespace map {
                 int arr[nLimit];
                 for ( size_t i = 0; i < nLimit; ++i )
                     arr[i] = (int) i;
-                std::random_shuffle( arr, arr + nLimit );
+                shuffle( arr, arr + nLimit );
 
                 for ( size_t i = 0; i < nLimit; ++i )
                     CPPUNIT_ASSERT( m.insert( arr[i], arr[i] ));

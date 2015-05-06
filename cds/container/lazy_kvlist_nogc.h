@@ -41,7 +41,7 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef Traits traits;
+        typedef Traits traits;    ///< List traits
         typedef cds::gc::nogc gc; ///< Garbage collector
 #ifdef CDS_DOXYGEN_INVOKED
         typedef Key                                 key_type        ;   ///< Key type

@@ -14,6 +14,8 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace split_list {
+        using cds::intrusive::split_list::implementation_tag;
+
         /// Internal statistics, see \p cds::intrusive::split_list::stat
         template <typename Counter = cds::intrusive::split_list::stat<>::counter_type >
         using stat = cds::intrusive::split_list::stat<Counter>;

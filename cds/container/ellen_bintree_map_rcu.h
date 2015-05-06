@@ -88,12 +88,15 @@ namespace cds { namespace container {
         typedef typename traits::copy_policy                copy_policy;        ///< key copy policy
         typedef typename traits::back_off                   back_off;           ///< Back-off strategy
 
-
         typedef typename traits::allocator                  allocator_type;        ///< Allocator for leaf nodes
         typedef typename base_class::node_allocator         node_allocator;        ///< Internal node allocator
         typedef typename base_class::update_desc_allocator  update_desc_allocator; ///< Update descriptor allocator
 
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
+
+        //@cond
+        typedef cds::container::ellen_bintree::implementation_tag implementation_tag;
+        //@endcond
 
     protected:
         //@cond

@@ -94,6 +94,10 @@ namespace cds { namespace intrusive {
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
+        //@cond
+        typedef cds::intrusive::michael_set::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         item_counter    m_ItemCounter;   ///< Item counter
         hash            m_HashFunctor;   ///< Hash functor

@@ -17,7 +17,6 @@
 #include <cds/os/timer.h>
 #include <cds/opt/hash.h>
 #include <functional>   // ref
-#include <algorithm>    // random_shuffle
 
 namespace cds { namespace container {}}
 

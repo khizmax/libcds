@@ -19,6 +19,9 @@ namespace cds { namespace intrusive {
 
     /// CuckooSet-related definitions
     namespace cuckoo {
+        //@cond
+        struct implementation_tag;
+        //@endcond
 
         /// Option to define probeset type
         /**
@@ -1888,6 +1891,9 @@ namespace cds { namespace intrusive {
         /// node disposer
         typedef typename traits::disposer      disposer;
 
+        //@cond
+        typedef cds::intrusive::cuckoo::implementation_tag implementation_tag;
+        //@endcond
     protected:
         //@cond
         typedef typename node_type::probeset_class  probeset_class;

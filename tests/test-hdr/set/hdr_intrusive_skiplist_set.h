@@ -342,7 +342,7 @@ namespace set {
             for ( int i = 0; i < (int) c_nArrSize; ++i ) {
                 nRand[i] = i;
             }
-            std::random_shuffle( nRand, nRand + c_nArrSize );
+            shuffle( nRand, nRand + c_nArrSize );
 
             for ( int i = 0; i < (int) c_nArrSize; ++i ) {
                 pArr[i].nKey = nRand[i];

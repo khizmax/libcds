@@ -1,18 +1,17 @@
 //$$CDS-header$$
 
-#include "map2/map_types.h"
+#include "map2/map_type.h"
 #include "cppunit/thread.h"
 
 #include <cds/os/topology.h>
 #include <vector>
-#include <algorithm> // random_shuffle
 
 namespace map2 {
 
-#   define TEST_MAP(X)         void X() { test<MapTypes<key_type, value_type>::X >()    ; }
-#   define TEST_MAP_NOLF(X)    void X() { test_nolf<MapTypes<key_type, value_type>::X >()    ; }
-#   define TEST_MAP_EXTRACT(X)  TEST_MAP(X)
-#   define TEST_MAP_NOLF_EXTRACT(X) TEST_MAP_NOLF(X)
+#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_MAP_EXTRACT(IMPL, C, X)  TEST_MAP(IMPL, C, X)
+#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) TEST_MAP_NOLF(IMPL, C, X)
 
     class Map_InsFind_int: public CppUnitMini::TestCase
     {
@@ -54,7 +53,7 @@ namespace map2 {
                 size_t nItem = m_nThreadNo;
                 for ( size_t i = 0; i < nSize; nItem += c_nThreadCount, ++i )
                     m_arrVal[i] = nItem;
-                std::random_shuffle( m_arrVal.begin(), m_arrVal.end() );
+                shuffle( m_arrVal.begin(), m_arrVal.end() );
             }
         public:
             size_t  m_nInsertSuccess;

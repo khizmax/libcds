@@ -11,6 +11,8 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace michael_map {
+        using cds::intrusive::michael_set::implementation_tag;
+
         /// \p MichaelHashMap traits
         typedef container::michael_set::traits  traits;
 

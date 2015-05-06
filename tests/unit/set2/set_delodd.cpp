@@ -40,7 +40,7 @@ namespace set2 {
         m_arrData.resize( c_nSetSize );
         for ( size_t i = 0; i < c_nSetSize; ++i )
             m_arrData[i] = i;
-        std::random_shuffle( m_arrData.begin(), m_arrData.end() );
+        shuffle( m_arrData.begin(), m_arrData.end() );
     }
 
     void Set_DelOdd::myRun(const char *in_name, bool invert /*= false*/)

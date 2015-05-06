@@ -3,6 +3,7 @@
 #ifndef CDSLIB_INTRUSIVE_SPLIT_LIST_H
 #define CDSLIB_INTRUSIVE_SPLIT_LIST_H
 
+#include <limits>
 #include <cds/intrusive/details/split_list_base.h>
 
 namespace cds { namespace intrusive {
@@ -195,6 +196,10 @@ namespace cds { namespace intrusive {
         typedef GC     gc;     ///< Garbage collector
         typedef Traits traits; ///< Set traits
 
+        //@cond
+        typedef cds::intrusive::split_list::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         //@cond
         typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;
@@ -345,6 +350,7 @@ namespace cds { namespace intrusive {
         ordered_list_wrapper    m_List;             ///< Ordered list containing split-list items
         bucket_table            m_Buckets;          ///< bucket table
         atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
+        atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
         item_counter            m_ItemCounter;      ///< Item counter
         hash                    m_HashFunctor;      ///< Hash functor
         stat                    m_Stat;             ///< Internal statistics
@@ -373,7 +379,7 @@ namespace cds { namespace intrusive {
 
         size_t bucket_no( size_t nHash ) const
         {
-            return nHash & ( (1 << m_nBucketCountLog2.load(atomics::memory_order_relaxed)) - 1 );
+            return nHash & ( (1 << m_nBucketCountLog2.load(memory_model::memory_order_relaxed)) - 1 );
         }
 
         static size_t parent_bucket( size_t nBucket )
@@ -411,7 +417,6 @@ namespace cds { namespace intrusive {
             // In this point, we must wait while nBucket is empty.
             // The compiler can decide that waiting loop can be "optimized" (stripped)
             // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
-            //
             m_Stat.onBucketInitContenton();
             back_off bkoff;
             while ( true ) {
@@ -454,13 +459,31 @@ namespace cds { namespace intrusive {
             m_Buckets.bucket( 0, pNode );
         }
 
-        void    inc_item_count()
+        static size_t max_item_count( size_t nBucketCount, size_t nLoadFactor )
         {
-            size_t sz = m_nBucketCountLog2.load(atomics::memory_order_relaxed);
-            if ( ( ++m_ItemCounter >> sz ) > m_Buckets.load_factor() && ((size_t)(1 << sz )) < m_Buckets.capacity() )
-            {
-                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, atomics::memory_order_seq_cst, atomics::memory_order_relaxed );
+            return nBucketCount * nLoadFactor;
+        }
+
+        void inc_item_count()
+        {
+            size_t nMaxCount = m_nMaxItemCount.load(memory_model::memory_order_relaxed);
+            if ( ++m_ItemCounter <= nMaxCount )
+                return;
+
+            size_t sz = m_nBucketCountLog2.load(memory_model::memory_order_relaxed);
+            const size_t nBucketCount = static_cast<size_t>(1) << sz;
+            if ( nBucketCount < m_Buckets.capacity() ) {
+                // we may grow the bucket table
+                const size_t nLoadFactor = m_Buckets.load_factor();
+                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
+                    return; // someone already have updated m_nBucketCountLog2, so stop here
+
+                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ), 
+                                                         memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
+                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
             }
+            else
+                m_nMaxItemCount.store( std::numeric_limits<size_t>::max(), memory_model::memory_order_relaxed );
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -579,11 +602,12 @@ namespace cds { namespace intrusive {
         /// Initialize split-ordered list of default capacity
         /**
             The default capacity is defined in bucket table constructor.
-            See \p split_list::expandable_bucket_table, \p split_list::static_ducket_table
+            See \p split_list::expandable_bucket_table, \p split_list::static_bucket_table
             which selects by \p split_list::dynamic_bucket_table option.
         */
         SplitListSet()
             : m_nBucketCountLog2(1)
+            , m_nMaxItemCount( max_item_count(2, m_Buckets.load_factor()) )
         {
             init();
         }
@@ -595,6 +619,7 @@ namespace cds { namespace intrusive {
             )
             : m_Buckets( nItemCount, nLoadFactor )
             , m_nBucketCountLog2(1)
+            , m_nMaxItemCount( max_item_count(2, m_Buckets.load_factor()) )
         {
             init();
         }

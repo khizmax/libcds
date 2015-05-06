@@ -296,6 +296,10 @@ namespace cds { namespace intrusive {
 
         typedef cds::details::Allocator< bucket_type, allocator_type > bucket_allocator;  ///< bucket allocator type based on allocator_type
 
+        //@cond
+        typedef cds::intrusive::striped_set::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         bucket_type *   m_Buckets       ;   ///< Bucket table
         size_t          m_nBucketMask   ;   ///< Bucket table size - 1. m_nBucketMask + 1 should be power of two.

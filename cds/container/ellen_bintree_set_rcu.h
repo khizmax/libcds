@@ -133,6 +133,10 @@ namespace cds { namespace container {
 
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
 
+        //@cond
+        typedef cds::container::ellen_bintree::implementation_tag implementation_tag;
+        //@endcond
+
     protected:
         //@cond
         typedef typename maker::cxx_leaf_node_allocator cxx_leaf_node_allocator;
