@@ -117,10 +117,7 @@ namespace cds { namespace container {
             {
                 void operator ()( node_type * pNode )
                 {
-                    // TSan false positive possible
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                     cxx_allocator().Delete( pNode );
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                 }
             };
 

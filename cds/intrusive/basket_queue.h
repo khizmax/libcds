@@ -514,7 +514,7 @@ namespace cds { namespace intrusive {
                             }
                         }
 
-                        m_pTail.compare_exchange_weak( t, marked_ptr(pNext.ptr()), memory_model::memory_order_release, memory_model::memory_order_relaxed );
+                        m_pTail.compare_exchange_weak( t, marked_ptr(pNext.ptr()), memory_model::memory_order_acquire, atomics::memory_order_relaxed );
                     }
                     else {
                         marked_ptr iter( h );
@@ -537,7 +537,7 @@ namespace cds { namespace intrusive {
                         else if ( bDeque ) {
                             res.pNext = pNext.ptr();
 
-                            if ( iter->m_pNext.compare_exchange_weak( pNext, marked_ptr( pNext.ptr(), 1 ), memory_model::memory_order_release, memory_model::memory_order_relaxed ) ) {
+                            if ( iter->m_pNext.compare_exchange_weak( pNext, marked_ptr( pNext.ptr(), 1 ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
                                 if ( hops >= m_nMaxHops )
                                     free_chain( h, pNext );
                                 break;
@@ -565,7 +565,7 @@ namespace cds { namespace intrusive {
         {
             // "head" and "newHead" are guarded
 
-            if ( m_pHead.compare_exchange_strong( head, marked_ptr(newHead.ptr()), memory_model::memory_order_release, memory_model::memory_order_relaxed ))
+            if ( m_pHead.compare_exchange_strong( head, marked_ptr(newHead.ptr()), memory_model::memory_order_release, atomics::memory_order_relaxed ))
             {
                 typename gc::template GuardArray<2> guards;
                 guards.assign( 0, node_traits::to_value_ptr(head.ptr()) );
@@ -659,8 +659,8 @@ namespace cds { namespace intrusive {
 
                 if ( pNext.ptr() == nullptr ) {
                     pNew->m_pNext.store( marked_ptr(), memory_model::memory_order_release );
-                    if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr(pNew), memory_model::memory_order_release, memory_model::memory_order_relaxed ) ) {
-                        if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, memory_model::memory_order_relaxed ))
+                    if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
+                        if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             m_Stat.onAdvanceTailFailed();
                         break;
                     }
@@ -681,7 +681,7 @@ namespace cds { namespace intrusive {
                     {
                         bkoff();
                         pNew->m_pNext.store( pNext, memory_model::memory_order_release );
-                        if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr( pNew ), memory_model::memory_order_release, memory_model::memory_order_relaxed )) {
+                        if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr( pNew ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                             m_Stat.onAddBasket();
                             break;
                         }
@@ -713,7 +713,7 @@ namespace cds { namespace intrusive {
                         pNext = p;
                         g.assign( 0, g.template get<value_type>( 1 ) );
                     }
-                    if ( !bTailOk || !m_pTail.compare_exchange_weak( t, marked_ptr( pNext.ptr() ), memory_model::memory_order_release, memory_model::memory_order_relaxed ))
+                    if ( !bTailOk || !m_pTail.compare_exchange_weak( t, marked_ptr( pNext.ptr() ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         m_Stat.onAdvanceTailFailed();
 
                     m_Stat.onBadTail();

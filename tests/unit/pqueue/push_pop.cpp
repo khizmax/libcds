@@ -137,14 +137,14 @@ namespace pqueue {
             }
         };
 
-        size_t  m_nPusherCount;
+        atomics::atomic<size_t>  m_nPusherCount;
         void end_pusher()
         {
-            --m_nPusherCount;
+            m_nPusherCount.fetch_sub( 1, atomics::memory_order_relaxed );
         }
         bool pushing() const
         {
-            return m_nPusherCount != 0;
+            return m_nPusherCount.load( atomics::memory_order_relaxed ) != 0;
         }
 
     protected:
@@ -179,7 +179,7 @@ namespace pqueue {
 
             pool.add( new Popper<PQueue>( pool, testQueue ), s_nPopThreadCount );
 
-            m_nPusherCount = s_nPushThreadCount;
+            m_nPusherCount.store( s_nPushThreadCount, atomics::memory_order_release );
             CPPUNIT_MSG( "   push thread count=" << s_nPushThreadCount << " pop thread count=" << s_nPopThreadCount
                 << ", item count=" << nThreadItemCount * s_nPushThreadCount << " ..." );
             pool.run();

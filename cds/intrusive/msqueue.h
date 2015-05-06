@@ -372,7 +372,7 @@ namespace cds { namespace intrusive {
             node_type * h;
             while ( true ) {
                 h = res.guards.protect( 0, m_pHead, node_to_value() );
-                pNext = h->m_pNext.load( memory_model::memory_order_relaxed );
+                pNext = h->m_pNext.load( memory_model::memory_order_acquire );
                 res.guards.assign( 1, node_to_value()( pNext ));
                 if ( m_pHead.load(memory_model::memory_order_acquire) != h )
                     continue;
@@ -390,7 +390,7 @@ namespace cds { namespace intrusive {
                     continue;
                 }
 
-                if ( m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                if ( m_pHead.compare_exchange_strong( h, pNext, memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                     break;
 
                 m_Stat.onDequeueRace();
@@ -499,7 +499,7 @@ namespace cds { namespace intrusive {
             ++m_ItemCounter;
             m_Stat.onEnqueue();
 
-            if ( !m_pTail.compare_exchange_strong( t, pNew, memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ))
+            if ( !m_pTail.compare_exchange_strong( t, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed ))
                 m_Stat.onAdvanceTailFailed();
             return true;
         }

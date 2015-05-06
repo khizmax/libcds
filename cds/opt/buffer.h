@@ -52,8 +52,8 @@ namespace cds { namespace opt {
         {
         public:
             typedef T   value_type  ;   ///< value type
-            static const size_t c_nCapacity = Capacity ;    ///< Capacity
-            static const bool c_bExp2 = Exp2; ///< \p Exp2 flag
+            static CDS_CONSTEXPR const size_t c_nCapacity = Capacity ;    ///< Capacity
+            static CDS_CONSTEXPR const bool c_bExp2 = Exp2; ///< \p Exp2 flag
 
             /// Rebind buffer for other template parameters
             template <typename Q, size_t Capacity2 = c_nCapacity, bool Exp22 = c_bExp2>

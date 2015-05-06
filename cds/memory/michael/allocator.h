@@ -60,12 +60,17 @@ namespace michael {
         /// Allocates memory block of \p nSize bytes (\p malloc wrapper)
         static void * alloc( size_t nSize )
         {
-            return ::malloc( nSize );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+            void * p = ::malloc( nSize );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+            return p;
         }
         /// Returning memory block to the system (\p free wrapper)
         static void free( void * p )
         {
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
             ::free( p );
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
         }
     };
 
@@ -1221,8 +1226,10 @@ namespace michael {
                 newAnchor = oldAnchor = pDesc->anchor.load(atomics::memory_order_acquire);
 
                 assert( oldAnchor.avail < pDesc->nCapacity );
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
                 pAddr = pDesc->pSB + oldAnchor.avail * (unsigned long long) pDesc->nBlockSize;
                 newAnchor.avail = reinterpret_cast<free_block_header *>( pAddr )->nNextFree;
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
                 newAnchor.tag += 1;
 
                 if ( oldActive.credits() == 0 ) {
@@ -1303,8 +1310,10 @@ namespace michael {
                 newAnchor = oldAnchor = pDesc->anchor.load(atomics::memory_order_acquire);
 
                 assert( oldAnchor.avail < pDesc->nCapacity );
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
                 pAddr = pDesc->pSB + oldAnchor.avail * pDesc->nBlockSize;
                 newAnchor.avail = reinterpret_cast<free_block_header *>( pAddr )->nNextFree;
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
                 ++newAnchor.tag;
             } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed) );
 
@@ -1341,11 +1350,13 @@ namespace michael {
             byte * pEnd = pDesc->pSB + pDesc->nCapacity * pDesc->nBlockSize;
             unsigned int nNext = 0;
             const unsigned int nBlockSize = pDesc->nBlockSize;
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
             for ( byte * p = pDesc->pSB; p < pEnd; p += nBlockSize ) {
                 reinterpret_cast<block_header *>( p )->set( pDesc, 0 );
                 reinterpret_cast<free_block_header *>( p )->nNextFree = ++nNext;
             }
             reinterpret_cast<free_block_header *>( pEnd - nBlockSize )->nNextFree = 0;
+            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
 
             active_tag newActive;
             newActive.set( pDesc, ( (pDesc->nCapacity - 1 < active_tag::c_nMaxCredits) ? pDesc->nCapacity - 1 : active_tag::c_nMaxCredits ) - 1 );

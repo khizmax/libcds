@@ -77,8 +77,9 @@ namespace cds { namespace intrusive {
 
             operation()
                 : pVal( nullptr )
-                , nStatus(0)
-            {}
+            {
+                nStatus.store( 0 /*op_free*/, atomics::memory_order_release );
+            }
         };
         //@endcond
 
@@ -329,8 +330,8 @@ namespace cds { namespace intrusive {
 
                 /// Elimination back-off data
                 struct elimination_data {
-                    elimination_random_engine   randEngine; ///< random engine
-                    collision_array             collisions; ///< collision array
+                    mutable elimination_random_engine randEngine; ///< random engine
+                    collision_array                   collisions; ///< collision array
 
                     elimination_data()
                     {
@@ -350,6 +351,18 @@ namespace cds { namespace intrusive {
                 };
 
                 typedef std::unique_lock< elimination_lock_type > slot_scoped_lock;
+
+                template <bool Exp2 = collision_array::c_bExp2>
+                typename std::enable_if< Exp2, size_t >::type slot_index() const
+                {
+                    return m_Elimination.randEngine() & (m_Elimination.collisions.capacity() - 1);
+                }
+
+                template <bool Exp2 = collision_array::c_bExp2>
+                typename std::enable_if< !Exp2, size_t >::type slot_index() const
+                {
+                    return m_Elimination.randEngine() % m_Elimination.collisions.capacity();
+                }
 
             public:
                 elimination_backoff()
@@ -377,11 +390,11 @@ namespace cds { namespace intrusive {
                 bool backoff( operation_desc& op, Stat& stat )
                 {
                     elimination_backoff_type bkoff;
-                    op.nStatus.store( op_busy, atomics::memory_order_relaxed );
+                    op.nStatus.store( op_busy, atomics::memory_order_release );
 
                     elimination_rec * myRec = cds::algo::elimination::init_record( op );
 
-                    collision_array_record& slot = m_Elimination.collisions[m_Elimination.randEngine() % m_Elimination.collisions.capacity()];
+                    collision_array_record& slot = m_Elimination.collisions[ slot_index() ];
                     {
                         slot.lock.lock();
                         elimination_rec * himRec = slot.pRec;
@@ -394,9 +407,9 @@ namespace cds { namespace intrusive {
                                 else
                                     op.pVal = himOp->pVal;
                                 slot.pRec = nullptr;
+                                himOp->nStatus.store( op_collided, atomics::memory_order_release );
                                 slot.lock.unlock();
 
-                                himOp->nStatus.store( op_collided, atomics::memory_order_release );
                                 cds::algo::elimination::clear_record();
                                 stat.onActiveCollision( op.idOp );
                                 return true;

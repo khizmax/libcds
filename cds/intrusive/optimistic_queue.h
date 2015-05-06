@@ -473,7 +473,7 @@ namespace cds { namespace intrusive {
                             fix_list( pTail, pHead );
                             continue;
                         }
-                        if ( m_pHead.compare_exchange_weak( pHead, pFirstNodePrev, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+                        if ( m_pHead.compare_exchange_weak( pHead, pFirstNodePrev, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                             // dequeue success
                             break;
                         }

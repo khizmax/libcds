@@ -411,21 +411,12 @@ namespace cds { namespace intrusive {
 
             segment * allocate_segment()
             {
-                // TSan: release barrier will be issued when the segment will link to the list of segments
-                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
-                segment * p = segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor,
-                    quasi_factor() );
-                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
-                return p;
+                return segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor, quasi_factor() );
             }
 
             static void free_segment( segment * pSegment )
             {
-                // TSan: deallocating is called inside SMR reclamation cycle
-                // so necessary barriers have been already issued
-                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 segment_allocator().Delete( pSegment );
-                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             }
 
             static void retire_segment( segment * pSegment )

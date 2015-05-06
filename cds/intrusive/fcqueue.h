@@ -308,7 +308,6 @@ namespace cds { namespace intrusive {
                     break;
                 }
             }
-
             CDS_TSAN_ANNOTATE_IGNORE_RW_END;
         }
         //@endcond
