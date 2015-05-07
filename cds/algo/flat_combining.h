@@ -1,4 +1,13 @@
-//$$CDS-header$$
+/*
+    This file is a part of libcds - Concurrent Data Structures library
+    Version: 2.0.0
+
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2014
+    Distributed under the BSD license (see accompanying file license.txt)
+
+    Source code repo: http://github.com/khizmax/libcds/
+    Download: http://sourceforge.net/projects/libcds/files/
+*/
 
 #ifndef CDSLIB_ALGO_FLAT_COMBINING_H
 #define CDSLIB_ALGO_FLAT_COMBINING_H
@@ -11,6 +20,7 @@
 #include <cds/opt/options.h>
 #include <cds/algo/int_algo.h>
 #include <boost/thread/tss.hpp>     // thread_specific_ptr
+#include <boost/thread.hpp>
 
 namespace cds { namespace algo {
 
@@ -93,11 +103,11 @@ namespace cds { namespace algo {
             Each data structure based on flat combining contains a class derived from \p %publication_record
         */
         struct publication_record {
-            atomics::atomic<unsigned int>    nRequest;   ///< Request field (depends on data structure)
-            atomics::atomic<unsigned int>    nState;     ///< Record state: inactive, active, removed
-            unsigned int                        nAge;       ///< Age of the record
-            atomics::atomic<publication_record *> pNext; ///< Next record in publication list
-            void *                              pOwner;    ///< [internal data] Pointer to \ref kernel object that manages the publication list
+            atomics::atomic<unsigned int>         nRequest;   ///< Request field (depends on data structure) операция которую хотим выполнить
+            atomics::atomic<unsigned int>         nState;     ///< Record state: inactive, active, removed управление временем жизни
+            unsigned int                          nAge;       ///< Age of the record сколько неактивная запись может быть в списке
+            atomics::atomic<publication_record *> pNext;      ///< Next record in publication list
+            void *                                pOwner;     ///< [internal data] Pointer to \ref kernel object that manages the publication list
 
             /// Initializes publication record
             publication_record()
@@ -240,10 +250,7 @@ namespace cds { namespace algo {
               should call \ref operation_done function. On the end, the container should release
               its record by \ref release_record.
         */
-        template <
-            typename PublicationRecord
-            ,typename Traits = traits
-        >
+        template <typename PublicationRecord, typename Traits = traits>
         class kernel
         {
         public:
@@ -543,8 +550,7 @@ namespace cds { namespace algo {
                         // record is active and kernel is alive
                         unsigned int nState = active;
                         pRec->nState.compare_exchange_strong( nState, removed, memory_model::memory_order_release, atomics::memory_order_relaxed );
-                    }
-                    else {
+                    } else {
                         // record is not in publication list or kernel already deleted
                         cxx11_allocator().Delete( pRec );
                     }
@@ -561,26 +567,26 @@ namespace cds { namespace algo {
                 m_Stat.onCreatePubRecord();
             }
 
-            void publish( publication_record_type * pRec )
-            {
-                assert( pRec->nState.load( memory_model::memory_order_relaxed ) == inactive );
+			void publish(publication_record_type * pRec)
+			{
+				assert(pRec->nState.load(memory_model::memory_order_relaxed) == inactive);
 
-                pRec->nAge = m_nCount;
-                pRec->nState.store( active, memory_model::memory_order_release );
+				pRec->nAge = m_nCount;
+				pRec->nState.store(active, memory_model::memory_order_release);
 
-                // Insert record to publication list
-                if ( m_pHead != static_cast<publication_record *>(pRec) ) {
-                    publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
-                    if ( p != static_cast<publication_record *>( pRec )) {
-                        do {
-                            pRec->pNext = p;
-                            // Failed CAS changes p
-                        } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ));
-                        m_Stat.onActivatPubRecord();
-                    }
+				// Insert record to publication list
+				if (m_pHead != static_cast<publication_record *>(pRec)) {
+					publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
+					if (p != static_cast<publication_record *>(pRec)) {
+						do {
+							pRec->pNext = p;
+							// Failed CAS changes p
+						} while (!m_pHead->pNext.compare_exchange_weak(p, static_cast<publication_record *>(pRec),
+							memory_model::memory_order_release, atomics::memory_order_relaxed));
+						m_Stat.onActivatPubRecord();
+					}
                 }
-            }
+			}
 
             void republish( publication_record_type * pRec )
             {
@@ -594,6 +600,7 @@ namespace cds { namespace algo {
             void try_combining( Container& owner, publication_record_type * pRec )
             {
                 if ( m_Mutex.try_lock() ) {
+	
                     // The thread becomes a combiner
                     lock_guard l( m_Mutex, std::adopt_lock_t() );
 
@@ -602,8 +609,7 @@ namespace cds { namespace algo {
 
                     combining( owner );
                     assert( pRec->nRequest.load( memory_model::memory_order_relaxed ) == req_Response );
-                }
-                else {
+                }   else {
                     // There is another combiner, wait while it executes our request
                     if ( !wait_for_combining( pRec ) ) {
                         // The thread becomes a combiner
@@ -717,11 +723,12 @@ namespace cds { namespace algo {
             bool wait_for_combining( publication_record_type * pRec )
             {
                 back_off bkoff;
+
                 while ( pRec->nRequest.load( memory_model::memory_order_acquire ) != req_Response ) {
 
                     // The record can be excluded from publication list. Reinsert it
                     republish( pRec );
-
+                    
                     bkoff();
 
                     if ( m_Mutex.try_lock() ) {

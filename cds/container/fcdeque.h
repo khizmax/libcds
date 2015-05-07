@@ -133,7 +133,8 @@ namespace cds { namespace container {
             op_push_back_move,      ///< Push back (move semantics)
             op_pop_front,           ///< Pop front
             op_pop_back,            ///< Pop back
-            op_clear                ///< Clear
+            op_clear,               ///< Clear
+            op_empty                ///< Empty
         };
 
         /// Flat combining publication list record
@@ -332,10 +333,18 @@ namespace cds { namespace container {
         /**
             If the combining is in process the function waits while combining done.
         */
-        bool empty() const
+        bool empty()
         {
-            m_FlatCombining.wait_while_combining();
-            return m_Deque.empty();
+            fc_record * pRec = m_FlatCombining.acquire_record();
+
+            if ( c_bEliminationEnabled )
+                m_FlatCombining.batch_combine( op_empty, pRec, *this );
+            else
+                m_FlatCombining.combine( op_empty, pRec, *this );
+
+            assert( pRec->is_done() );
+            m_FlatCombining.release_record( pRec );
+            return pRec->bEmpty;
         }
 
         /// Internal statistics
@@ -392,6 +401,9 @@ namespace cds { namespace container {
             case op_clear:
                 while ( !m_Deque.empty() )
                     m_Deque.pop_front();
+                break;
+            case op_empty:
+                pRec->bEmpty = m_Deque.empty();
                 break;
             default:
                 assert(false);
