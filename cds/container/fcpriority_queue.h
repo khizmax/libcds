@@ -111,7 +111,8 @@ namespace cds { namespace container {
             op_push = cds::algo::flat_combining::req_Operation,
             op_push_move,
             op_pop,
-            op_clear
+            op_clear,
+            op_empty
         };
 
         // Flat combining publication list record
@@ -231,10 +232,16 @@ namespace cds { namespace container {
         /**
             If the combining is in process the function waits while combining done.
         */
-        bool empty() const
+        bool empty()
         {
-            m_FlatCombining.wait_while_combining();
-            return m_PQueue.empty();
+            fc_record * pRec = m_FlatCombining.acquire_record();
+
+            m_FlatCombining.combine( op_empty, pRec, *this );
+            assert( pRec->is_done() );
+            m_FlatCombining.release_record( pRec );
+            return pRec->bEmpty;
+//            m_FlatCombining.wait_while_combining();
+//            return m_PQueue.empty();
         }
 
         /// Internal statistics
@@ -274,6 +281,9 @@ namespace cds { namespace container {
             case op_clear:
                 while ( !m_PQueue.empty() )
                     m_PQueue.pop();
+                break;
+            case op_empty:
+                pRec->bEmpty = m_PQueue.empty();
                 break;
             default:
                 assert(false);
