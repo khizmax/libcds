@@ -257,8 +257,6 @@ namespace cds { namespace container {
             assert( pRec->is_done() );
             m_FlatCombining.release_record( pRec );
             return pRec->bEmpty;
-//            m_FlatCombining.wait_while_combining();
-//            return m_Stack.empty();
         }
 
         /// Internal statistics
