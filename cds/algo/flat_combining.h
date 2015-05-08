@@ -38,6 +38,7 @@
 #include <cds/sync/spinlock.h>
 #include <cds/opt/options.h>
 #include <cds/algo/int_algo.h>
+#include <cds/algo/wait_strategy.h>
 #include <boost/thread/tss.hpp>     // thread_specific_ptr
 
 namespace cds { namespace algo {
@@ -100,21 +101,21 @@ namespace cds { namespace algo {
     */
     namespace flat_combining {
 
-        /// Special values of publication_record::nRequest
-        enum request_value
-        {
-            req_EmptyRecord,    ///< Publication record is empty
-            req_Response,       ///< Operation is done
-
-            req_Operation       ///< First operation id for derived classes
-        };
-
-        /// publication_record state
-        enum record_state {
-            inactive,       ///< Record is inactive
-            active,         ///< Record is active
-            removed         ///< Record should be removed
-        };
+//        /// Special values of publication_record::nRequest
+//        enum request_value
+//        {
+//            req_EmptyRecord,    ///< Publication record is empty
+//            req_Response,       ///< Operation is done
+//
+//            req_Operation       ///< First operation id for derived classes
+//        };
+//
+//        /// publication_record state
+//        enum record_state {
+//            inactive,       ///< Record is inactive
+//            active,         ///< Record is active
+//            removed         ///< Record should be removed
+//        };
 
         /// Record of publication list
         /**
@@ -212,11 +213,10 @@ namespace cds { namespace algo {
         */
         struct traits
         {
-            typedef cds::sync::spin             lock_type;  ///< Lock type
-            typedef cds::backoff::delay_of<2>   back_off;   ///< Back-off strategy
-            typedef CDS_DEFAULT_ALLOCATOR       allocator;  ///< Allocator used for TLS data (allocating publication_record derivatives)
-            typedef empty_stat                  stat;       ///< Internal statistics
-            typedef opt::v::relaxed_ordering  memory_model; ///< /// C++ memory ordering model
+            typedef cds::sync::spin             lock_type;       ///< Lock type
+            typedef CDS_DEFAULT_ALLOCATOR       allocator;       ///< Allocator used for TLS data (allocating publication_record derivatives)
+            typedef empty_stat                  stat;            ///< Internal statistics
+            typedef opt::v::relaxed_ordering    memory_model;    /// C++ memory ordering model
         };
 
         /// Metafunction converting option list to traits
@@ -271,17 +271,19 @@ namespace cds { namespace algo {
         template <
             typename PublicationRecord
             ,typename Traits = traits
+			,template<class, class> class WaitStrategy = WaitStartegyBasedOnSingleLocalMutexAndCondVar
         >
         class kernel
         {
         public:
-            typedef PublicationRecord   publication_record_type;   ///< publication record type
+            //typedef PublicationRecord   publication_record_type;   ///< publication record type
             typedef Traits   traits;                               ///< Type traits
             typedef typename traits::lock_type global_lock_type;   ///< Global lock type
-            typedef typename traits::back_off  back_off;           ///< back-off strategy type
             typedef typename traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
             typedef typename traits::stat      stat;               ///< Internal statistics
             typedef typename traits::memory_model memory_model;    ///< C++ memory model
+            typedef WaitStrategy<PublicationRecord, Traits> wait_strategy;  ///< Wait strategy
+            typedef typename wait_strategy::ExtendedPublicationRecord publication_record_type;   ///< publication record type
 
         protected:
             //@cond
@@ -297,6 +299,7 @@ namespace cds { namespace algo {
             mutable stat                m_Stat;     ///< Internal statistics
             unsigned int const          m_nCompactFactor; ///< Publication list compacting factor (the list will be compacted through \p %m_nCompactFactor combining passes)
             unsigned int const          m_nCombinePassCount; ///< Number of combining passes
+            wait_strategy               m_waitStrategy;
 
         public:
             /// Initializes the object
@@ -348,7 +351,7 @@ namespace cds { namespace algo {
                 If there is no publication record for the current thread
                 the function allocates it.
             */
-            publication_record_type * acquire_record()
+            PublicationRecord * acquire_record()
             {
                 publication_record_type * pRec = m_pThreadRec.get();
                 if ( !pRec ) {
@@ -365,11 +368,11 @@ namespace cds { namespace algo {
                 assert( pRec->nRequest.load( memory_model::memory_order_relaxed ) == req_EmptyRecord );
 
                 m_Stat.onAcquirePubRecord();
-                return pRec;
+                return static_cast<PublicationRecord *>(pRec);
             }
 
             /// Marks publication record for the current thread as empty
-            void release_record( publication_record_type * pRec )
+            void release_record( PublicationRecord * pRec )
             {
                 assert( pRec->is_done() );
                 pRec->nRequest.store( req_EmptyRecord, memory_model::memory_order_release );
@@ -387,7 +390,7 @@ namespace cds { namespace algo {
                 for each active non-empty publication record.
             */
             template <class Container>
-            void combine( unsigned int nOpId, publication_record_type * pRec, Container& owner )
+            void combine( unsigned int nOpId, PublicationRecord * pRec, Container& owner )
             {
                 assert( nOpId >= req_Operation );
                 assert( pRec );
@@ -396,7 +399,7 @@ namespace cds { namespace algo {
 
                 m_Stat.onOperation();
 
-                try_combining( owner, pRec );
+                try_combining( owner, static_cast<publication_record_type *>(pRec) );
             }
 
             /// Trying to execute operation \p nOpId in batch-combine mode
@@ -419,7 +422,7 @@ namespace cds { namespace algo {
                 to process rest of publication records.
             */
             template <class Container>
-            void batch_combine( unsigned int nOpId, publication_record_type * pRec, Container& owner )
+            void batch_combine( unsigned int nOpId, PublicationRecord * pRec, Container& owner )
             {
                 assert( nOpId >= req_Operation );
                 assert( pRec );
@@ -428,7 +431,7 @@ namespace cds { namespace algo {
 
                 m_Stat.onOperation();
 
-                try_batch_combining( owner, pRec );
+                try_batch_combining( owner, static_cast<publication_record_type *>(pRec) );
             }
 
             /// Waits for end of combining
@@ -444,7 +447,8 @@ namespace cds { namespace algo {
             */
             void operation_done( publication_record& rec )
             {
-                rec.nRequest.store( req_Response, memory_model::memory_order_release );
+                //rec.nRequest.store( req_Response, memory_model::memory_order_release );
+                m_waitStrategy.notify(static_cast<publication_record_type *>(&rec));
             }
 
             /// Internal statistics
@@ -698,6 +702,7 @@ namespace cds { namespace algo {
                         break;
 
                 m_Stat.onCombining();
+//                TODO::compact_list deleted sleep puclicaton record
                 if ( (nCurAge & m_nCompactFactor) == 0 )
                     compact_list( nCurAge );
             }
@@ -755,13 +760,13 @@ namespace cds { namespace algo {
 
             bool wait_for_combining( publication_record_type * pRec )
             {
-                back_off bkoff;
+                //back_off bkoff;
                 while ( pRec->nRequest.load( memory_model::memory_order_acquire ) != req_Response ) {
 
                     // The record can be excluded from publication list. Reinsert it
-                    republish( pRec );
-
-                    bkoff();
+                    republish(pRec);
+                    m_waitStrategy.wait(pRec);
+                    //bkoff();
 
                     if ( m_Mutex.try_lock() ) {
                         if ( pRec->nRequest.load( memory_model::memory_order_acquire ) == req_Response ) {
