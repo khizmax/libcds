@@ -205,14 +205,13 @@ namespace cds { namespace opt {
             integer_type *      m_pLast;
 
             random_generator    m_RandomGenerator;
-            random_device       m_RandomDevice;
             //@endcond
 
         public:
             /// Initializes the generator of arbitrary length \p nLength
             random_shuffle_permutation( size_t nLength )
                 : m_pCur( nullptr )
-                , m_RandomGenerator( m_RandomDevice() )
+                , m_RandomGenerator( random_device()() )
             {
                 m_pFirst = new integer_type[nLength];
                 m_pLast = m_pFirst + nLength;
