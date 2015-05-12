@@ -11,3 +11,6 @@ add_library(${TEST_COMMON} OBJECT ${SOURCES})
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test-hdr)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/unit)
+
+file(GLOB  CONF_FILES data/*.conf)
+file(COPY ${CONF_FILES} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
