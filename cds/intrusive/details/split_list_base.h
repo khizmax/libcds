@@ -711,10 +711,14 @@ namespace cds { namespace intrusive {
                     void operator()( value_type * v )
                     {
                         splitlist_node_type * p = static_cast<splitlist_node_type *>( node_traits::to_node_ptr( v ));
-                        if ( p->is_dummy() )
+                        if ( p->is_dummy() ) {
+                            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( p );
                             dummy_node_disposer<gc, typename traits::allocator>()( p );
-                        else
+                        }
+                        else {
+                            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( v );
                             native_disposer()( v );
+                        }
                     }
                 };
 

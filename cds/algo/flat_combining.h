@@ -95,7 +95,7 @@ namespace cds { namespace algo {
         struct publication_record {
             atomics::atomic<unsigned int>    nRequest;   ///< Request field (depends on data structure)
             atomics::atomic<unsigned int>    nState;     ///< Record state: inactive, active, removed
-            unsigned int                        nAge;       ///< Age of the record
+            atomics::atomic<unsigned int>    nAge;       ///< Age of the record
             atomics::atomic<publication_record *> pNext; ///< Next record in publication list
             void *                              pOwner;    ///< [internal data] Pointer to \ref kernel object that manages the publication list
 
@@ -338,7 +338,7 @@ namespace cds { namespace algo {
             void release_record( publication_record_type * pRec )
             {
                 assert( pRec->is_done() );
-                pRec->nRequest.store( req_EmptyRecord, memory_model::memory_order_relaxed );
+                pRec->nRequest.store( req_EmptyRecord, memory_model::memory_order_release );
                 m_Stat.onReleasePubRecord();
             }
 
@@ -565,7 +565,7 @@ namespace cds { namespace algo {
             {
                 assert( pRec->nState.load( memory_model::memory_order_relaxed ) == inactive );
 
-                pRec->nAge = m_nCount;
+                pRec->nAge.store( m_nCount, memory_model::memory_order_release );
                 pRec->nState.store( active, memory_model::memory_order_release );
 
                 // Insert record to publication list
@@ -673,7 +673,7 @@ namespace cds { namespace algo {
                     switch ( p->nState.load( memory_model::memory_order_acquire )) {
                         case active:
                             if ( p->op() >= req_Operation ) {
-                                p->nAge = nCurAge;
+                                p->nAge.store( nCurAge, memory_model::memory_order_release );
                                 owner.fc_apply( static_cast<publication_record_type *>(p) );
                                 operation_done( *p );
                                 bOpDone = true;
@@ -741,7 +741,9 @@ namespace cds { namespace algo {
                 // Thinning publication list
                 publication_record * pPrev = nullptr;
                 for ( publication_record * p = m_pHead; p; ) {
-                    if ( p->nState.load( memory_model::memory_order_acquire ) == active && p->nAge + m_nCompactFactor < nCurAge ) {
+                    if ( p->nState.load( memory_model::memory_order_acquire ) == active 
+                      && p->nAge.load( memory_model::memory_order_acquire ) + m_nCompactFactor < nCurAge ) 
+                    {
                         if ( pPrev ) {
                             publication_record * pNext = p->pNext.load( memory_model::memory_order_acquire );
                             if ( pPrev->pNext.compare_exchange_strong( p, pNext,

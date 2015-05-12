@@ -260,6 +260,9 @@ namespace cds { namespace intrusive {
         {
             assert( pRec );
 
+            // this function is called under FC mutex, so switch TSan off
+            CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
+
             switch ( pRec->op() ) {
             case op_enq:
                 assert( pRec->pVal );
@@ -282,11 +285,15 @@ namespace cds { namespace intrusive {
                 assert(false);
                 break;
             }
+            CDS_TSAN_ANNOTATE_IGNORE_RW_END;
         }
 
         /// Batch-processing flat combining
         void fc_process( typename fc_kernel::iterator itBegin, typename fc_kernel::iterator itEnd )
         {
+            // this function is called under FC mutex, so switch TSan off
+            CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
+
             typedef typename fc_kernel::iterator fc_iterator;
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
                 switch ( it->op() ) {
@@ -301,6 +308,7 @@ namespace cds { namespace intrusive {
                     break;
                 }
             }
+            CDS_TSAN_ANNOTATE_IGNORE_RW_END;
         }
         //@endcond
 

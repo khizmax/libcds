@@ -1,7 +1,10 @@
 2.1.0
+    - Added: BronsonAVLTreeMap - Bronson's et al AVL tree implementation
+    - Added: CMake build script, thanks to Eugeny Kalishenko
+    - Changed: SplitList performance improving, thanks to Mike Krinkin
     - cds::lock namespace is renamed to cds::sync. All classes defined in cds::lock namespace 
       are moved to cds::sync with new names (for example, cds::lock::SpinLock is renamed to
-      cds::sync::spin_lock). cds::lock namespace and its contents is deprecated and it is kept 
+      cds::sync::spin_lock). cds::lock namespace and its contents is deprecated, it is kept 
       for backward compatibility.
 
 2.0.0 30.12.2014

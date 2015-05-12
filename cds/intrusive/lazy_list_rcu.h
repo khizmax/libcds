@@ -1142,7 +1142,7 @@ namespace cds { namespace intrusive {
 
             while ( pCur.ptr() != pTail && ( pCur.ptr() == pHead || cmp( *node_traits::to_value_ptr( *pCur.ptr() ), key ) < 0 )) {
                 pPrev = pCur;
-                pCur = pCur->m_pNext.load(memory_model::memory_order_relaxed);
+                pCur = pCur->m_pNext.load(memory_model::memory_order_acquire);
             }
 
             pos.pCur = pCur.ptr();

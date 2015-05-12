@@ -44,8 +44,40 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_std.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_striped.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\unit\map2\map_find_int.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_find_string.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insfind_int.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BA2A9239-0299-4069-BB0E-16DACE87ADE0}</ProjectGuid>
@@ -143,34 +175,34 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -215,7 +247,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -223,7 +255,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <DisableSpecificWarnings>4520</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -239,7 +271,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -248,6 +280,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -263,7 +296,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;CDS_USE_VLD;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -271,7 +304,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <DisableSpecificWarnings>4520</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -290,7 +323,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -298,7 +331,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4520</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -317,7 +350,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -326,6 +359,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -344,7 +378,7 @@
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;CDS_USE_VLD;WIN32;NOMINMAX;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -352,7 +386,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4520</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -371,14 +405,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4520</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -399,7 +433,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -408,6 +442,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
       <UseProcessorExtensions>HOST</UseProcessorExtensions>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -431,14 +466,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4520</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -462,7 +497,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(SolutionDir)..\..\..\tests\unit;$(SolutionDir)..\..\..\tests;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;NOMINMAX;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;_SCL_SECURE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -471,6 +506,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
       <UseProcessorExtensions>HOST</UseProcessorExtensions>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>

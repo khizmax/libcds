@@ -32,6 +32,9 @@ namespace cds {
                 , typename Alloc::template rebind<T>::other
             >::type allocator_type;
 
+            /// \p true if underlined allocator is \p std::allocator, \p false otherwise
+            static CDS_CONSTEXPR bool const c_bStdAllocator = std::is_same< allocator_type, std::allocator<T>>::value;
+
             /// Element type
             typedef T   value_type;
 
@@ -39,20 +42,52 @@ namespace cds {
             template <typename... S>
             value_type *  New( S const&... src )
             {
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                }
+                value_type * pv = Construct( allocator_type::allocate(1), src... );
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                }
+                return pv;
+#           else
                 return Construct( allocator_type::allocate(1), src... );
+#           endif
             }
 
             /// Analogue of <tt>operator new T( std::forward<Args>(args)... )</tt> (move semantics)
             template <typename... Args>
             value_type * MoveNew( Args&&... args )
             {
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                }
+                value_type * pv = MoveConstruct( allocator_type::allocate(1), std::forward<Args>(args)... );
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                }
+                return pv;
+#           else
                 return MoveConstruct( allocator_type::allocate(1), std::forward<Args>(args)... );
+#           endif
             }
 
             /// Analogue of operator new T[\p nCount ]
             value_type * NewArray( size_t nCount )
             {
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                }
+#           endif
                 value_type * p = allocator_type::allocate( nCount );
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                }
+#           endif
                 for ( size_t i = 0; i < nCount; ++i )
                     Construct( p + i );
                 return p;
@@ -65,7 +100,17 @@ namespace cds {
             template <typename S>
             value_type * NewArray( size_t nCount, S const& src )
             {
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                }
+#           endif
                 value_type * p = allocator_type::allocate( nCount );
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                }
+#           endif
                 for ( size_t i = 0; i < nCount; ++i )
                     Construct( p + i, src );
                 return p;
@@ -95,16 +140,22 @@ namespace cds {
             /// Analogue of operator delete
             void Delete( value_type * p )
             {
+                // TSan false positive possible
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 allocator_type::destroy( p );
                 allocator_type::deallocate( p, 1 );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             }
 
             /// Analogue of operator delete []
             void Delete( value_type * p, size_t nCount )
             {
+                // TSan false positive possible
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                  for ( size_t i = 0; i < nCount; ++i )
                      allocator_type::destroy( p + i );
                 allocator_type::deallocate( p, nCount );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             }
 
 #       if CDS_COMPILER == CDS_COMPILER_INTEL
@@ -119,14 +170,22 @@ namespace cds {
             template <typename... S>
             value_type * Construct( void * p, S const&... src )
             {
-                return new( p ) value_type( src... );
+                // TSan false positive possible
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                value_type * pv = new( p ) value_type( src... );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                return pv;
             }
 
             /// Analogue of placement <tt>operator new( p ) T( std::forward<Args>(args)... )</tt>
             template <typename... Args>
             value_type * MoveConstruct( void * p, Args&&... args )
             {
-                return new( p ) value_type( std::forward<Args>(args)... );
+                // TSan false positive possible
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                value_type * pv = new( p ) value_type( std::forward<Args>(args)... );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                return pv;
             }
 
             /// Rebinds allocator to other type \p Q instead of \p T
@@ -143,7 +202,18 @@ namespace cds {
 
                 size_t const nPtrSize = ( nByteSize + sizeof(void *) - 1 ) / sizeof(void *);
                 typedef typename allocator_type::template rebind< void * >::other void_allocator;
-                return void_allocator().allocate( nPtrSize );
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                }
+#           endif
+                void * p = void_allocator().allocate( nPtrSize );
+#           if CDS_THREAD_SANITIZER_ENABLED
+                if ( c_bStdAllocator ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                }
+#           endif
+                return p;
             }
             //@endcond
         };
@@ -163,7 +233,7 @@ namespace cds {
             */
             static void free( T * p )
             {
-                Allocator<T, Alloc> a;
+                Allocator<type, allocator_type> a;
                 a.Delete( p );
             }
         };

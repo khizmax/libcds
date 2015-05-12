@@ -223,8 +223,10 @@ namespace cds { namespace intrusive {
         struct clean_disposer {
             void operator()( value_type * p )
             {
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 michael_list::node_cleaner<gc, node_type, memory_model>()( node_traits::to_node_ptr( p ) );
                 disposer()( p );
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             }
         };
         //@endcond
@@ -243,7 +245,7 @@ namespace cds { namespace intrusive {
             link_checker::is_empty( pNode );
 
             marked_node_ptr cur(pos.pCur);
-            pNode->m_pNext.store( cur, memory_model::memory_order_relaxed );
+            pNode->m_pNext.store( cur, memory_model::memory_order_release );
             return pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
 
@@ -258,7 +260,7 @@ namespace cds { namespace intrusive {
                 // physical deletion may be performed by search function if it detects that a node is logically deleted (marked)
                 // CAS may be successful here or in other thread that searching something
                 marked_node_ptr cur(pos.pCur);
-                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                     retire_node( pos.pCur );
                 return true;
             }
@@ -1077,19 +1079,20 @@ try_again:
             while ( true ) {
                 if ( pCur.ptr() == nullptr ) {
                     pos.pPrev = pPrev;
-                    pos.pCur = pCur.ptr();
-                    pos.pNext = pNext.ptr();
+                    pos.pCur = nullptr;
+                    pos.pNext = nullptr;
                     return false;
                 }
 
                 pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
+                CDS_TSAN_ANNOTATE_HAPPENS_AFTER( pNext.ptr() );
                 pos.guards.assign( position::guard_next_item, node_traits::to_value_ptr( pNext.ptr() ));
-                if ( pCur->m_pNext.load(memory_model::memory_order_relaxed).all() != pNext.all() ) {
+                if ( pCur->m_pNext.load(memory_model::memory_order_acquire).all() != pNext.all() ) {
                     bkoff();
                     goto try_again;
                 }
 
-                if ( pPrev->load(memory_model::memory_order_relaxed).all() != pCur.ptr() ) {
+                if ( pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr() ) {
                     bkoff();
                     goto try_again;
                 }
@@ -1098,7 +1101,7 @@ try_again:
                 if ( pNext.bits() == 1 ) {
                     // pCur marked i.e. logically deleted. Help the erase/unlink function to unlink pCur node
                     marked_node_ptr cur( pCur.ptr());
-                    if ( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+                    if ( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                         retire_node( pCur.ptr() );
                     }
                     else {

@@ -102,8 +102,11 @@ namespace cds { namespace urcu {
         {
             epoch_retired_ptr p;
             while ( pBuf->pop( p ) ) {
-                if ( p.m_nEpoch <= nCurEpoch )
+                if ( p.m_nEpoch <= nCurEpoch ) {
+                    CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
                     p.free();
+                    CDS_TSAN_ANNOTATE_IGNORE_RW_END;
+                }
                 else {
                     pBuf->push( p );
                     break;

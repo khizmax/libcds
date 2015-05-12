@@ -111,8 +111,11 @@ namespace cds { namespace urcu {
         virtual void retire_ptr( retired_ptr& p )
         {
             synchronize();
-            if ( p.m_p )
+            if ( p.m_p ) {
+                CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
                 p.free();
+                CDS_TSAN_ANNOTATE_IGNORE_RW_END;
+            }
         }
 
         /// Retires the pointer chain [\p itFirst, \p itLast)

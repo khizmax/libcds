@@ -209,9 +209,6 @@
     <ClInclude Include="..\..\..\cds\details\bounded_array.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\comparator.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\details\defs.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
@@ -643,9 +640,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h">
       <Filter>Header Files\cds\compiler\clang</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\mapper.h">
-      <Filter>Header Files\cds\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h">
       <Filter>Header Files\cds\intrusive</Filter>
@@ -1175,11 +1169,17 @@
     <ClInclude Include="..\..\..\cds\sync\lock_array.h">
       <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\sync\monitor.h">
+      <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h">
       <Filter>Header Files\cds\sync</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\sync\monitor.h">
+    <ClInclude Include="..\..\..\cds\sync\pool_monitor.h">
       <Filter>Header Files\cds\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\feature_tsan.h">
+      <Filter>Header Files\cds\compiler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

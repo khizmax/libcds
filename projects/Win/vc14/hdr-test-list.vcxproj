@@ -42,10 +42,72 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\list\hdr_lazy.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\list\hdr_michael.h" />
+    <ClInclude Include="..\..\..\tests\test-hdr\list\hdr_michael_kv.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_nogc.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_nogc_unord.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_lazy_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_list_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_list_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_list_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_list_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_list_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_intrusive_michael_nogc.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_nogc.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_nogc_unord.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_kv_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_nogc.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_nogc_unord.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_lazy_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_dhp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_nogc.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_kv_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_nogc.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\list\hdr_michael_rcu_sht.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EFCBBADE-2CF4-4E2B-ADB2-98C8D139E805}</ProjectGuid>
     <RootNamespace>hdrtestordlist</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <ProjectName>hdr-test-list</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'" Label="Configuration">
@@ -138,35 +200,35 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'" />
@@ -533,64 +595,6 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_dhp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_lazy_rcu_sht.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_dhp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_list_rcu_sht.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_intrusive_michael_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_dhp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_dhp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_kv_rcu_sht.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_lazy_rcu_sht.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_dhp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_dhp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_hp.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_kv_rcu_sht.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_nogc.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\tests\test-hdr\ordered_list\hdr_michael_rcu_sht.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

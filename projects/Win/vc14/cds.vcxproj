@@ -148,48 +148,48 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">true</GenerateManifest>
     <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PostBuildEventUseInBuild>
     <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">false</PostBuildEventUseInBuild>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\bin\vc14-icl\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\obj\vc14-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">true</GenerateManifest>
     <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PostBuildEventUseInBuild>
     <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">false</PostBuildEventUseInBuild>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\bin\vc14\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\obj\vc14\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">true</GenerateManifest>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -222,15 +222,15 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'" />
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libcds-x86-vc12_debug</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libcds-x86-vc14_debug</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">libcds-x86-icl_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">libcds-x86-vc12_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">libcds-x86-vc12</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">libcds-x86-vc14_debug</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">libcds-x86-vc14</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">libcds-x86-icl</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">libcds-amd64-vc12_debug</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">libcds-amd64-vc14_debug</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">libcds-amd64-icl_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">libcds-amd64-vc12_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libcds-amd64-vc12</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">libcds-amd64-vc14_debug</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libcds-amd64-vc14</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">libcds-amd64-icl</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -641,6 +641,7 @@
     <ClInclude Include="..\..\..\cds\algo\int_algo.h" />
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h" />
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h" />
+    <ClInclude Include="..\..\..\cds\compiler\feature_tsan.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\amd64\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\compiler_macro.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h" />
@@ -786,7 +787,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\resizing_policy.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\striping_policy.h" />
     <ClInclude Include="..\..\..\cds\lock\array.h" />
-    <ClInclude Include="..\..\..\cds\memory\mapper.h" />
     <ClInclude Include="..\..\..\cds\memory\pool_allocator.h" />
     <ClInclude Include="..\..\..\cds\memory\vyukov_queue_pool.h" />
     <ClInclude Include="..\..\..\cds\os\osx\timer.h" />
@@ -796,6 +796,7 @@
     <ClInclude Include="..\..\..\cds\sync\injecting_monitor.h" />
     <ClInclude Include="..\..\..\cds\sync\lock_array.h" />
     <ClInclude Include="..\..\..\cds\sync\monitor.h" />
+    <ClInclude Include="..\..\..\cds\sync\pool_monitor.h" />
     <ClInclude Include="..\..\..\cds\sync\spinlock.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11.h" />
     <ClInclude Include="..\..\..\cds\threading\details\cxx11_manager.h" />
@@ -825,7 +826,6 @@
     <ClInclude Include="..\..\..\cds\details\allocator.h" />
     <ClInclude Include="..\..\..\cds\details\bitop_generic.h" />
     <ClInclude Include="..\..\..\cds\details\bounded_array.h" />
-    <ClInclude Include="..\..\..\cds\details\comparator.h" />
     <ClInclude Include="..\..\..\cds\details\defs.h" />
     <ClInclude Include="..\..\..\cds\details\is_aligned.h" />
     <ClInclude Include="..\..\..\cds\details\make_const_type.h" />

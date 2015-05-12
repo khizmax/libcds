@@ -43,42 +43,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_bronsonavltree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_cuckoo.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_ellentree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_refinable.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_skip.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_split.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_striped.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_bronsonavltree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_cuckoo.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_ellentree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_refinable.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_skip.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_split.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_striped.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_bronsonavltree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_cuckoo.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_ellentree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_refinable.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_skip.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_split.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_std.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_striped.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_striped.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_bronsonavltree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_cuckoo.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_ellentree.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_skip.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_striped.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_func.h" />
-    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_int.h" />
-    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_string.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_item_int.h" />
+    <ClInclude Include="..\..\..\tests\unit\map2\map_insdel_item_string.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}</ProjectGuid>
+    <ProjectGuid>{7521DD92-56FF-4ECA-93E5-CCE50862354B}</ProjectGuid>
     <RootNamespace>unitmap</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -240,9 +229,6 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(ProjectName)_d</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(ProjectName)_d</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions>/bigobj /Zc:inline %(AdditionalOptions)</AdditionalOptions>
@@ -256,7 +242,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -281,7 +267,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -305,7 +291,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -332,7 +318,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -360,7 +346,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -387,8 +373,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <EnablePREfast>false</EnablePREfast>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -414,7 +399,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -444,7 +429,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
       <UseProcessorExtensions>HOST</UseProcessorExtensions>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -475,7 +460,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -508,7 +493,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Cpp0xSupport>true</Cpp0xSupport>
       <UseProcessorExtensions>HOST</UseProcessorExtensions>
-      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4520;4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>unit-prerequisites.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -352,7 +352,7 @@ namespace cds { namespace intrusive {
                 m_Stat.onSegmentCreated();
 
                 if ( m_List.empty() )
-                    m_pHead.store( pNew, memory_model::memory_order_relaxed );
+                    m_pHead.store( pNew, memory_model::memory_order_release );
                 m_List.push_back( *pNew );
                 m_pTail.store( pNew, memory_model::memory_order_release );
                 return guard.assign( pNew );
@@ -411,8 +411,7 @@ namespace cds { namespace intrusive {
 
             segment * allocate_segment()
             {
-                return segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor,
-                    quasi_factor() );
+                return segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor, quasi_factor() );
             }
 
             static void free_segment( segment * pSegment )

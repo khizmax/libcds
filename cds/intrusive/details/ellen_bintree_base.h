@@ -89,7 +89,7 @@ namespace cds { namespace intrusive {
                 key_infinite = key_infinite1 | key_infinite2    ///< Cumulative infinite flags
             };
 
-            unsigned int    m_nFlags    ;   ///< Internal flags
+            atomics::atomic<unsigned int>  m_nFlags    ;   ///< Internal flags
 
             /// Constructs leaf (bIntrenal == false) or internal (bInternal == true) node
             explicit basic_node( bool bInternal )
@@ -105,25 +105,26 @@ namespace cds { namespace intrusive {
             /// Checks if the node is internal
             bool is_internal() const
             {
-                return (m_nFlags & internal) != 0;
+                return (m_nFlags.load( atomics::memory_order_relaxed ) & internal) != 0;
             }
 
             /// Returns infinite key, 0 if the node is not infinite
             unsigned int infinite_key() const
             {
-                return m_nFlags & key_infinite;
+                return m_nFlags.load( atomics::memory_order_relaxed ) & key_infinite;
             }
 
             /// Sets infinite key for the node (for internal use only!!!)
             void infinite_key( int nInf )
             {
-                m_nFlags &= ~key_infinite;
+                const unsigned int nFlags = m_nFlags.load( atomics::memory_order_relaxed ) & ~key_infinite;
+                m_nFlags.store( nFlags, atomics::memory_order_relaxed );
                 switch ( nInf ) {
                 case 1:
-                    m_nFlags |= key_infinite1;
+                    m_nFlags.store( nFlags | key_infinite1, atomics::memory_order_relaxed );
                     break;
                 case 2:
-                    m_nFlags |= key_infinite2;
+                    m_nFlags.store( nFlags | key_infinite2, atomics::memory_order_relaxed );
                     break;
                 case 0:
                     break;

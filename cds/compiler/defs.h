@@ -1,7 +1,7 @@
 //$$CDS-header$$
 
-#ifndef CDSLIB_ARH_COMPILER_DEFS_H
-#define CDSLIB_ARH_COMPILER_DEFS_H
+#ifndef CDSLIB_COMPILER_DEFS_H
+#define CDSLIB_COMPILER_DEFS_H
 
 /*
     Required C++11 features:
@@ -37,4 +37,7 @@
 #   define CDS_EXPORT_API
 #endif
 
-#endif  // #ifndef CDSLIB_ARH_COMPILER_DEFS_H
+// Features
+#include <cds/compiler/feature_tsan.h>
+
+#endif  // #ifndef CDSLIB_COMPILER_DEFS_H

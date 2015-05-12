@@ -642,6 +642,7 @@
     <ClInclude Include="..\..\..\cds\algo\int_algo.h" />
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h" />
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h" />
+    <ClInclude Include="..\..\..\cds\compiler\feature_tsan.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\amd64\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\compiler_macro.h" />
     <ClInclude Include="..\..\..\cds\compiler\gcc\ia64\cxx11_atomic.h" />

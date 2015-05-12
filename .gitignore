@@ -11,12 +11,11 @@
 /bin
 obj
 /projects/Win/vc12/*.user
-/projects/Win/vc12/cds.v14.suo
 /projects/Win/vc14/cds.sdf
 /projects/Win/vc14/cds.v14.suo
-/projects/Win/vc14/cds.vcxproj.user
+/projects/Win/vc14/*.user
 /projects/Win/vc14/*.opensdf
-/projects/Win/vc14/.vs/cds/v14
+/projects/Win/vc14/.vs/
 /build/build-mingw-amd64.bat
 /build/build-mingw-amd64.log
 /todo-2.1.txt

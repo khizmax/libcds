@@ -46,23 +46,23 @@ namespace cds { namespace gc { namespace dhp {
 
             void insert( retired_ptr_node& node )
             {
-                node.m_pNext = nullptr;
+                node.m_pNext.store( nullptr, atomics::memory_order_relaxed );
 
                 item_type& refBucket = bucket( node );
                 if ( refBucket ) {
                     item_type p = refBucket;
                     do {
                         if ( p->m_ptr.m_p == node.m_ptr.m_p ) {
-                            assert( node.m_pNextFree == nullptr );
+                            assert( node.m_pNextFree.load( atomics::memory_order_relaxed ) == nullptr );
 
-                            node.m_pNextFree = p->m_pNextFree;
-                            p->m_pNextFree = &node;
+                            node.m_pNextFree.store( p->m_pNextFree.load( atomics::memory_order_relaxed ), atomics::memory_order_relaxed );
+                            p->m_pNextFree.store( &node, atomics::memory_order_relaxed );
                             return;
                         }
-                        p = p->m_pNext;
+                        p = p->m_pNext.load(atomics::memory_order_relaxed);
                     } while ( p );
 
-                    node.m_pNext = refBucket;
+                    node.m_pNext.store( refBucket, atomics::memory_order_relaxed );
                 }
                 refBucket = &node;
             }
@@ -76,14 +76,14 @@ namespace cds { namespace gc { namespace dhp {
                 while ( p ) {
                     if ( p->m_ptr.m_p == ptr ) {
                         if ( pPrev )
-                            pPrev->m_pNext = p->m_pNext;
+                            pPrev->m_pNext.store( p->m_pNext.load(atomics::memory_order_relaxed ), atomics::memory_order_relaxed );
                         else
-                            refBucket = p->m_pNext;
-                        p->m_pNext = nullptr;
+                            refBucket = p->m_pNext.load(atomics::memory_order_relaxed);
+                        p->m_pNext.store( nullptr, atomics::memory_order_relaxed );
                         return p;
                     }
                     pPrev = p;
-                    p = p->m_pNext;
+                    p = p->m_pNext.load( atomics::memory_order_relaxed );
                 }
 
                 return nullptr;
@@ -103,22 +103,24 @@ namespace cds { namespace gc { namespace dhp {
                         if ( !ret.first )
                             ret.first = pBucket;
                         else
-                            pTail->m_pNextFree = pBucket;
+                            pTail->m_pNextFree.store( pBucket, atomics::memory_order_relaxed );
 
                         pTail = pBucket;
                         for (;;) {
-                            item_type pNext = pTail->m_pNext;
+                            item_type pNext = pTail->m_pNext.load( atomics::memory_order_relaxed );
                             pTail->m_ptr.free();
-                            pTail->m_pNext = nullptr;
+                            pTail->m_pNext.store( nullptr, atomics::memory_order_relaxed );
 
-                            while ( pTail->m_pNextFree ) {
-                                pTail = pTail->m_pNextFree;
+                            while ( pTail->m_pNextFree.load( atomics::memory_order_relaxed )) {
+                                pTail = pTail->m_pNextFree.load( atomics::memory_order_relaxed );
                                 pTail->m_ptr.free();
-                                pTail->m_pNext = nullptr;
+                                pTail->m_pNext.store( nullptr, atomics::memory_order_relaxed );
                             }
 
-                            if ( pNext )
-                                pTail = pTail->m_pNextFree = pNext;
+                            if ( pNext ) {
+                                pTail->m_pNextFree.store( pNext, atomics::memory_order_relaxed );
+                                pTail = pNext;
+                            }
                             else
                                 break;
                         }
@@ -126,7 +128,7 @@ namespace cds { namespace gc { namespace dhp {
                 }
 
                 if ( pTail )
-                    pTail->m_pNextFree = nullptr;
+                    pTail->m_pNextFree.store( nullptr, atomics::memory_order_relaxed );
                 ret.second = pTail;
                 return ret;
             }
@@ -174,8 +176,8 @@ namespace cds { namespace gc { namespace dhp {
             // Get list of retired pointers
             details::retired_ptr_node * pHead = retiredList.first;
             while ( pHead ) {
-                details::retired_ptr_node * pNext = pHead->m_pNext;
-                pHead->m_pNextFree = nullptr;
+                details::retired_ptr_node * pNext = pHead->m_pNext.load( atomics::memory_order_relaxed );
+                pHead->m_pNextFree.store( nullptr, atomics::memory_order_relaxed );
                 set.insert( *pHead );
                 pHead = pNext;
             }
@@ -189,7 +191,7 @@ namespace cds { namespace gc { namespace dhp {
             for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire) )
             {
                 // get guarded pointer
-                details::guard_data::guarded_ptr  valGuarded = pGuard->pPost.load(atomics::memory_order_acquire);
+                details::guard_data::guarded_ptr valGuarded = pGuard->pPost.load(atomics::memory_order_acquire);
 
                 if ( valGuarded ) {
                     details::retired_ptr_node * pRetired = set.erase( valGuarded );
@@ -199,13 +201,15 @@ namespace cds { namespace gc { namespace dhp {
                         // List is linked on m_pNextFree field
 
                         if ( pBusyLast )
-                            pBusyLast->m_pNext = pRetired;
+                            pBusyLast->m_pNext.store( pRetired, atomics::memory_order_relaxed );
                         else
                             pBusyFirst = pRetired;
                         pBusyLast = pRetired;
                         ++nBusyCount;
-                        while ( pBusyLast->m_pNextFree ) {
-                            pBusyLast = pBusyLast->m_pNext = pBusyLast->m_pNextFree;
+                        details::retired_ptr_node * p = pBusyLast->m_pNextFree.load(atomics::memory_order_relaxed);
+                        while ( p != nullptr ) {
+                            pBusyLast->m_pNext.store( p, atomics::memory_order_relaxed );
+                            pBusyLast = p;
                             ++nBusyCount;
                         }
                     }
