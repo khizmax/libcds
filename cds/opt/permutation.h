@@ -6,6 +6,7 @@
 #include <stdlib.h> // rand, srand
 #include <random>
 #include <algorithm> // std::shuffle
+#include <numeric>   // std::iota
 
 #include <cds/opt/options.h>
 
@@ -203,20 +204,16 @@ namespace cds { namespace opt {
             integer_type *      m_pCur;
             integer_type *      m_pFirst;
             integer_type *      m_pLast;
-
-            random_generator    m_RandomGenerator;
             //@endcond
 
         public:
             /// Initializes the generator of arbitrary length \p nLength
             random_shuffle_permutation( size_t nLength )
                 : m_pCur( nullptr )
-                , m_RandomGenerator( random_device()() )
             {
                 m_pFirst = new integer_type[nLength];
                 m_pLast = m_pFirst + nLength;
-                for ( integer_type i = 0; i < static_cast<integer_type>(nLength); ++i )
-                    m_pFirst[i] = i;
+                std::iota(m_pFirst, m_pLast, integer_type{0} );
                 reset();
             }
 
@@ -240,7 +237,7 @@ namespace cds { namespace opt {
             /// Resets the generator to produce new sequence
             void reset()
             {
-                std::shuffle( m_pFirst, m_pLast, m_RandomGenerator );
+                std::shuffle( m_pFirst, m_pLast, random_generator{ random_device{}() });
                 m_pCur = m_pFirst;
             }
         };
