@@ -266,33 +266,13 @@ namespace cds { namespace container {
         /// Enqueues data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         template <typename... Args>
         bool emplace( Args&&... args )
-        {
-            cell_type* cell;
-            size_t pos = m_posEnqueue.load(memory_model::memory_order_relaxed);
-
-            for (;;)
-            {
-                cell = &m_buffer[pos & m_nBufferMask];
-                size_t seq = cell->sequence.load(memory_model::memory_order_acquire);
-
-                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos);
-
-                if (dif == 0) {
-                    if ( m_posEnqueue.compare_exchange_weak(pos, pos + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed))
-                        break;
-                }
-                else if (dif < 0)
-                    return false;
-                else
-                    pos = m_posEnqueue.load(memory_model::memory_order_relaxed);
-            }
-
-            new ( &cell->data ) value_type( std::forward<Args>(args)... );
-
-            cell->sequence.store(pos + 1, memory_model::memory_order_release);
-            ++m_ItemCounter;
-
-            return true;
+        {   
+#if (CDS_COMPILER == CDS_COMPILER_GCC) && (CDS_COMPILER_VERSION < 40900)
+            //work around unsupported feature in g++ 4.8 for forwarding parameter packs to lambda. 
+            return enqueue_with ( std::bind([]( value_type& dest,Args ... args ){ new ( &dest ) value_type( std::forward<Args>(args)... );}, std::placeholders::_1 ,args...));        
+#else            
+            return enqueue_with( [&args ...]( value_type& dest ){ new ( &dest ) value_type( std::forward<Args>(args)... ); });            
+#endif        
         }
 
         /// Dequeues a value using a functor
