@@ -81,7 +81,7 @@ namespace cds {  namespace algo {  namespace flat_combining {
         void wait(ExtendedPublicationRecord * pRec){
             boost::unique_lock<boost::mutex> lock(_globalMutex);
             if (pRec->nRequest.load( opt::v::relaxed_ordering::memory_order_acquire ) >= req_Operation)//TODO:: opt::v::relaxed_ordering -> traits::memorymodel
-                _globalCondVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(5));
+                _globalCondVar.wait(lock);
         }
 
         void notify(ExtendedPublicationRecord* pRec){
