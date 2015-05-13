@@ -254,7 +254,7 @@ namespace cds { namespace algo {
         template <
             typename PublicationRecord
             ,typename Traits = traits
-			,template<class> class WaitStrategy = WaitOneMutexOneCondVarStrategy
+			,template<class, class> class WaitStrategy = WaitOneMutexOneCondVarStrategy
         >
         class kernel
         {
@@ -265,7 +265,7 @@ namespace cds { namespace algo {
             typedef typename traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
             typedef typename traits::stat      stat;               ///< Internal statistics
             typedef typename traits::memory_model memory_model;    ///< C++ memory model
-            typedef WaitStrategy<PublicationRecord> wait_strategy;  ///< Wait strategy
+            typedef WaitStrategy<PublicationRecord, Traits> wait_strategy;  ///< Wait strategy
             typedef typename wait_strategy::ExtendedPublicationRecord publication_record_type;   ///< publication record type
 
         protected:

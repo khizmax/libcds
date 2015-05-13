@@ -23,7 +23,7 @@ namespace cds {  namespace algo {  namespace flat_combining {
         removed         ///< Record should be removed
     };
 
-    template<typename UserPublicationRecord>
+    template<typename UserPublicationRecord, typename Traits>
     struct DefautlWaitStartegy
     {
         struct ExtendedPublicationRecord: public UserPublicationRecord
@@ -31,10 +31,12 @@ namespace cds {  namespace algo {  namespace flat_combining {
         };
 
         void wait(ExtendedPublicationRecord * pRec){}
-        void notify(ExtendedPublicationRecord* pRec){}
+        void notify(ExtendedPublicationRecord* pRec){
+            pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
+        }
     };
     //===================================================================
-    template<typename UserPublicationRecord>
+    template<typename UserPublicationRecord, typename Traits>
     struct WaitStartegyBasedOnSingleLocalMutexAndCondVar
     {
         struct ExtendedPublicationRecord: public UserPublicationRecord
@@ -45,19 +47,19 @@ namespace cds {  namespace algo {  namespace flat_combining {
 
         void wait(ExtendedPublicationRecord * pRec){
             boost::unique_lock<boost::mutex> lock(pRec->_waitMutex);
-            if (pRec->nRequest.load( opt::v::relaxed_ordering::memory_order_acquire ) >= req_Operation)//TODO:: opt::v::relaxed_ordering -> traits::memorymodel
+            if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
                 pRec->_condVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(1));
         }
 
         void notify(ExtendedPublicationRecord* pRec){
             boost::unique_lock<boost::mutex> lock(pRec->_waitMutex);
-            pRec->nRequest.store( req_Response, opt::v::relaxed_ordering::memory_order_acquire);//TODO:: opt::v::relaxed_ordering -> traits::memorymodel
+            pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
             pRec->_condVar.notify_one();
         }
     };
 
     //====================================================================
-    template<typename UserPublicationRecord>
+    template<typename UserPublicationRecord, typename Traits>
     class WaitBakkOffStrategy{
         cds::backoff::delay_of<2>   back_off;   ///< Back-off strategy
     public:
@@ -67,10 +69,12 @@ namespace cds {  namespace algo {  namespace flat_combining {
         void wait(ExtendedPublicationRecord * pRec){
             back_off();
         }
-        void notify(ExtendedPublicationRecord* pRec){}
+        void notify(ExtendedPublicationRecord* pRec){
+            pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
+        }
     };
     //====================================================================
-    template<typename UserPublicationRecord>
+    template<typename UserPublicationRecord, typename Traits>
     class WaitOneMutexOneCondVarStrategy{
         boost::mutex              _globalMutex;
         boost::condition_variable _globalCondVar;
@@ -80,13 +84,13 @@ namespace cds {  namespace algo {  namespace flat_combining {
         };
         void wait(ExtendedPublicationRecord * pRec){
             boost::unique_lock<boost::mutex> lock(_globalMutex);
-            if (pRec->nRequest.load( opt::v::relaxed_ordering::memory_order_acquire ) >= req_Operation)//TODO:: opt::v::relaxed_ordering -> traits::memorymodel
+            if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
                 _globalCondVar.wait(lock);
         }
 
         void notify(ExtendedPublicationRecord* pRec){
             boost::unique_lock<boost::mutex> lock(_globalMutex);
-            pRec->nRequest.store( req_Response, opt::v::relaxed_ordering::memory_order_acquire);//TODO:: opt::v::relaxed_ordering -> traits::memorymodel
+            pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
             _globalCondVar.notify_all();
         }
     };
