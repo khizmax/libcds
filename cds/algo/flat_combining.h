@@ -101,23 +101,6 @@ namespace cds { namespace algo {
     */
     namespace flat_combining {
 
-//        /// Special values of publication_record::nRequest
-//        enum request_value
-//        {
-//            req_EmptyRecord,    ///< Publication record is empty
-//            req_Response,       ///< Operation is done
-//
-//            req_Operation       ///< First operation id for derived classes
-//        };
-//
-//        /// publication_record state
-//        enum record_state {
-//            inactive,       ///< Record is inactive
-//            active,         ///< Record is active
-//            removed         ///< Record should be removed
-//        };
-
-        /// Record of publication list
         /**
             Each data structure based on flat combining contains a class derived from \p %publication_record
         */
@@ -271,7 +254,7 @@ namespace cds { namespace algo {
         template <
             typename PublicationRecord
             ,typename Traits = traits
-			,template<class, class> class WaitStrategy = WaitStartegyBasedOnSingleLocalMutexAndCondVar
+			,template<class> class WaitStrategy = WaitOneMutexOneCondVarStrategy
         >
         class kernel
         {
@@ -282,7 +265,7 @@ namespace cds { namespace algo {
             typedef typename traits::allocator allocator;          ///< Allocator type (used for allocating publication_record_type data)
             typedef typename traits::stat      stat;               ///< Internal statistics
             typedef typename traits::memory_model memory_model;    ///< C++ memory model
-            typedef WaitStrategy<PublicationRecord, Traits> wait_strategy;  ///< Wait strategy
+            typedef WaitStrategy<PublicationRecord> wait_strategy;  ///< Wait strategy
             typedef typename wait_strategy::ExtendedPublicationRecord publication_record_type;   ///< publication record type
 
         protected:
