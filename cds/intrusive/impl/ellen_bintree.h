@@ -1235,25 +1235,28 @@ namespace cds { namespace intrusive {
                 if ( nCmp < 0 ) {
                     if ( res.pGrandParent ) {
                         assert( !res.pLeaf->infinite_key() );
-                        pNewInternal->infinite_key( 0 );
                         // TSan false positive: there is the release fence below, pNewInternal is not linked yet
                         CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                        pNewInternal->infinite_key( 0 );
                         key_extractor()(pNewInternal->m_Key, *node_traits::to_value_ptr( res.pLeaf ));
                         CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                     }
                     else {
                         assert( res.pLeaf->infinite_key() == tree_node::key_infinite1 );
+                        // TSan false positive: there is the release fence below, pNewInternal is not linked yet
+                        CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                         pNewInternal->infinite_key( 1 );
+                        CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                     }
                     pNewInternal->m_pLeft.store( static_cast<tree_node *>(pNewLeaf), memory_model::memory_order_relaxed );
                     pNewInternal->m_pRight.store( static_cast<tree_node *>(res.pLeaf), memory_model::memory_order_release );
                 }
                 else {
                     assert( !res.pLeaf->is_internal() );
-                    pNewInternal->infinite_key( 0 );
 
                     // TSan false positive: there is the release fence below, pNewInternal is not linked yet
                     CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                    pNewInternal->infinite_key( 0 );
                     key_extractor()(pNewInternal->m_Key, val);
                     CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                     pNewInternal->m_pLeft.store( static_cast<tree_node *>(res.pLeaf), memory_model::memory_order_relaxed );

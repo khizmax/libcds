@@ -259,6 +259,9 @@ namespace cds { namespace container {
         {
             assert( pRec );
 
+            // this function is called under FC mutex, so switch TSan off
+            CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
+
             switch ( pRec->op() ) {
             case op_push:
                 assert( pRec->pValPush );
@@ -287,6 +290,8 @@ namespace cds { namespace container {
                 assert(false);
                 break;
             }
+
+            CDS_TSAN_ANNOTATE_IGNORE_RW_END;
         }
         //@endcond
     };
