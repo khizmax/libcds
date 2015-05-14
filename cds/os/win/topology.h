@@ -8,7 +8,9 @@
 #endif
 
 #include <cds/details/defs.h>
-#define NOMINMAX
+#ifndef NOMINMAX
+#   define NOMINMAX
+#endif
 #include <windows.h>
 
 namespace cds { namespace OS {

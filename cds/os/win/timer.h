@@ -7,7 +7,9 @@
 #   error "<cds/os/timer.h> must be included"
 #endif
 
-#define NOMINMAX
+#ifndef NOMINMAX
+#   define NOMINMAX
+#endif
 #include <windows.h>
 
 //@cond none
