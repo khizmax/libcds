@@ -846,13 +846,21 @@ namespace cds { namespace intrusive {
             return insert_at( pHead, *node_traits::to_value_ptr( pNode ) );
         }
 
-        bool insert_at( node_type * pHead, value_type& val, bool bLock = true )
+        bool insert_at( node_type * pHead, value_type& val )
         {
+            rcu_lock l;
+            return insert_at_locked( pHead, val );
+        }
+
+        bool insert_at_locked( node_type * pHead, value_type& val )
+        {
+            // RCU lock should be locked!!!
+            assert( gc::is_locked() );
+
             link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos;
             key_comparator  cmp;
 
-            rcu_lock l( bLock );
             while ( true ) {
                 search( pHead, val, pos );
                 {
@@ -900,22 +908,31 @@ namespace cds { namespace intrusive {
             }
         }
 
-        iterator insert_at_( node_type * pHead, value_type& val, bool bLock = true )
+        iterator insert_at_( node_type * pHead, value_type& val )
         {
-            rcu_lock l( bLock );
-            if ( insert_at( pHead, val, false ))
+            rcu_lock l;
+            if ( insert_at_locked( pHead, val ))
                 return iterator( node_traits::to_node_ptr( val ));
             return end();
         }
 
 
         template <typename Func>
-        std::pair<iterator, bool> ensure_at_( node_type * pHead, value_type& val, Func func, bool bLock = true )
+        std::pair<iterator, bool> ensure_at_( node_type * pHead, value_type& val, Func func )
         {
+            rcu_lock l;
+            return ensure_at_locked( pHead, val, func );
+        }
+
+        template <typename Func>
+        std::pair<iterator, bool> ensure_at_locked( node_type * pHead, value_type& val, Func func )
+        {
+            // RCU lock should be locked!!!
+            assert( gc::is_locked() );
+
             position pos;
             key_comparator  cmp;
 
-            rcu_lock l( bLock );
             while ( true ) {
                 search( pHead, val, pos );
                 {
@@ -942,10 +959,10 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        std::pair<bool, bool> ensure_at( node_type * pHead, value_type& val, Func func, bool bLock = true )
+        std::pair<bool, bool> ensure_at( node_type * pHead, value_type& val, Func func )
         {
-            rcu_lock l( bLock );
-            std::pair<iterator, bool> ret = ensure_at_( pHead, val, func, false );
+            rcu_lock l;
+            std::pair<iterator, bool> ret = ensure_at_locked( pHead, val, func );
             return std::make_pair( ret.first != end(), ret.second );
         }
 
@@ -1072,11 +1089,11 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool find_at( node_type * pHead, Q& val, Compare cmp, Func f, bool bLock = true ) const
+        bool find_at( node_type * pHead, Q& val, Compare cmp, Func f ) const
         {
             position pos;
 
-            rcu_lock l( bLock );
+            rcu_lock l;
             search( pHead, val, pos, cmp );
             if ( pos.pCur != &m_Tail ) {
                 std::unique_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );

@@ -168,14 +168,12 @@ namespace queue {
                 while ( true ) {
                     typename Queue::value_type * p = m_Queue.pop();
                     if ( p ) {
-                        CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
                         p->nConsumer = m_nThreadNo;
                         ++m_nPopped;
                         if ( p->nWriterNo < nTotalWriters )
                             m_WriterData[ p->nWriterNo ].push_back( p->nNo );
                         else
                             ++m_nBadWriter;
-                        CDS_TSAN_ANNOTATE_IGNORE_RW_END;
                     }
                     else {
                         ++m_nPopEmpty;

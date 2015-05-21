@@ -108,9 +108,7 @@ namespace cds { namespace urcu {
             epoch_retired_ptr p;
             while ( m_Buffer.pop( p )) {
                 if ( p.m_nEpoch <= nEpoch ) {
-                    CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
                     p.free();
-                    CDS_TSAN_ANNOTATE_IGNORE_RW_END;
                 }
                 else {
                     push_buffer( p );
@@ -126,9 +124,7 @@ namespace cds { namespace urcu {
             if ( !bPushed || m_Buffer.size() >= capacity() ) {
                 synchronize();
                 if ( !bPushed ) {
-                    CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
                     ep.free();
-                    CDS_TSAN_ANNOTATE_IGNORE_RW_END;
                 }
                 return true;
             }

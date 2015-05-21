@@ -519,10 +519,7 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            // TSan false positive: hash is read-only, will be ordered when we insert a node
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
 
             if ( m_List.insert_at( pHead, val )) {
                 inc_item_count();
@@ -561,10 +558,7 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            // TSan false positive: hash is read-only, will be ordered when we insert a node
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
 
             if ( m_List.insert_at( pHead, val, f )) {
                 inc_item_count();
@@ -609,10 +603,7 @@ namespace cds { namespace intrusive {
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            // TSan false positive: hash is read-only, will be ordered when we insert a node
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
 
             std::pair<bool, bool> bRet = m_List.ensure_at( pHead, val, func );
             if ( bRet.first && bRet.second ) {

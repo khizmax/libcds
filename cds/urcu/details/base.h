@@ -407,19 +407,15 @@ namespace cds {
                 typedef ThreadGC                    thread_gc;
                 typedef typename thread_gc::rcu_tag rcu_tag;
 
-                bool m_bLocked;
             public:
-                scoped_lock(bool bLock = true)
-                    : m_bLocked( bLock )
+                scoped_lock()
                 {
-                    if ( bLock )
-                        thread_gc::access_lock();
+                    thread_gc::access_lock();
                 }
 
                 ~scoped_lock()
                 {
-                    if ( m_bLocked )
-                        thread_gc::access_unlock();
+                    thread_gc::access_unlock();
                 }
             };
             //@endcond

@@ -87,9 +87,7 @@ namespace ellen_bintree_pool {
         T * allocate( size_t n, void const * pHint = nullptr )
         {
             internal_node_counter::onAlloc();
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
             T * p = base_class::allocate( n, pHint );
-            CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             return p;
         }
 

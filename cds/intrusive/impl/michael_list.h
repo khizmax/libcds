@@ -223,10 +223,8 @@ namespace cds { namespace intrusive {
         struct clean_disposer {
             void operator()( value_type * p )
             {
-                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 michael_list::node_cleaner<gc, node_type, memory_model>()( node_traits::to_node_ptr( p ) );
                 disposer()( p );
-                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
             }
         };
         //@endcond
@@ -256,7 +254,7 @@ namespace cds { namespace intrusive {
 
             // Mark the node (logical deleting)
             marked_node_ptr next(pos.pNext, 0);
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_acq_rel, atomics::memory_order_relaxed )) {
                 // physical deletion may be performed by search function if it detects that a node is logically deleted (marked)
                 // CAS may be successful here or in other thread that searching something
                 marked_node_ptr cur(pos.pCur);
@@ -1071,9 +1069,9 @@ try_again:
             pPrev = &refHead;
             pNext = nullptr;
 
-            pCur = pPrev->load(memory_model::memory_order_relaxed);
+            pCur = pPrev->load(memory_model::memory_order_acquire);
             pos.guards.assign( position::guard_current_item, node_traits::to_value_ptr( pCur.ptr() ) );
-            if ( pPrev->load(memory_model::memory_order_acquire) != pCur.ptr() )
+            if ( pPrev->load(memory_model::memory_order_relaxed) != pCur.ptr() )
                 goto try_again;
 
             while ( true ) {
@@ -1084,15 +1082,14 @@ try_again:
                     return false;
                 }
 
-                pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
-                CDS_TSAN_ANNOTATE_HAPPENS_AFTER( pNext.ptr() );
+                pNext = pCur->m_pNext.load(memory_model::memory_order_acquire);
                 pos.guards.assign( position::guard_next_item, node_traits::to_value_ptr( pNext.ptr() ));
-                if ( pCur->m_pNext.load(memory_model::memory_order_acquire).all() != pNext.all() ) {
+                if ( pCur->m_pNext.load(memory_model::memory_order_relaxed).all() != pNext.all() ) {
                     bkoff();
                     goto try_again;
                 }
 
-                if ( pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr() ) {
+                if ( pPrev->load(memory_model::memory_order_relaxed).all() != pCur.ptr() ) {
                     bkoff();
                     goto try_again;
                 }

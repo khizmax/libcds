@@ -112,9 +112,9 @@ namespace cds { namespace urcu {
         {
             synchronize();
             if ( p.m_p ) {
-                CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
+                // TSan ignores atomic_thread_fence in synchronize()
+                //CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( p.m_p );
                 p.free();
-                CDS_TSAN_ANNOTATE_IGNORE_RW_END;
             }
         }
 
@@ -127,8 +127,11 @@ namespace cds { namespace urcu {
                 while ( itFirst != itLast ) {
                     retired_ptr p( *itFirst );
                     ++itFirst;
-                    if ( p.m_p )
+                    if ( p.m_p ) {
+                        // TSan ignores atomic_thread_fence in synchronize()
+                        //CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( p.m_p );
                         p.free();
+                    }
                 }
             }
         }

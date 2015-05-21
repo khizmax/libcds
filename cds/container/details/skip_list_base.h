@@ -171,23 +171,19 @@ namespace cds { namespace container {
                 template <typename Q>
                 node_type * New( unsigned int nHeight, Q const& v )
                 {
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                     unsigned char * pMem = alloc_space( nHeight );
                     node_type * p = new( pMem )
                         node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>(pMem + c_nNodeSize) : nullptr, v );
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                     return p;
                 }
 
                 template <typename... Args>
                 node_type * New( unsigned int nHeight, Args&&... args )
                 {
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                     unsigned char * pMem = alloc_space( nHeight );
                     node_type * p = new( pMem )
                         node_type( nHeight, nHeight > 1 ? reinterpret_cast<node_tower_item *>(pMem + c_nNodeSize) : nullptr,
                         std::forward<Args>(args)... );
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                     return p;
                 }
 
@@ -197,9 +193,7 @@ namespace cds { namespace container {
 
                     unsigned int nHeight = p->height();
                     node_allocator_type().destroy( p );
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                     free_space( reinterpret_cast<unsigned char *>(p), nHeight );
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                 }
             };
 

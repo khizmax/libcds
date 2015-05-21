@@ -1,0 +1,4 @@
+
+
+# Boost race [?] in test framework. Do not affect to libcds
+race:CppUnitMini::ThreadPool::~ThreadPool

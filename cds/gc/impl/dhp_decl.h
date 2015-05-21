@@ -140,7 +140,7 @@ namespace cds { namespace gc {
             template <typename T>
             T protect( atomics::atomic<T> const& toGuard )
             {
-                T pCur = toGuard.load(atomics::memory_order_relaxed);
+                T pCur = toGuard.load(atomics::memory_order_acquire);
                 T pRet;
                 do {
                     pRet = assign( pCur );
@@ -169,7 +169,7 @@ namespace cds { namespace gc {
             template <typename T, class Func>
             T protect( atomics::atomic<T> const& toGuard, Func f )
             {
-                T pCur = toGuard.load(atomics::memory_order_relaxed);
+                T pCur = toGuard.load(atomics::memory_order_acquire);
                 T pRet;
                 do {
                     pRet = pCur;
@@ -282,8 +282,8 @@ namespace cds { namespace gc {
             {
                 T pRet;
                 do {
-                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_relaxed) );
-                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
+                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire) );
+                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
 
                 return pRet;
             }
@@ -310,8 +310,8 @@ namespace cds { namespace gc {
             {
                 T pRet;
                 do {
-                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_relaxed) ));
-                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
+                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire) ));
+                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
 
                 return pRet;
             }

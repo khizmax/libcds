@@ -43,16 +43,12 @@ namespace CppUnitMini {
 
     ThreadPool::~ThreadPool()
     {
-        CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
-
         delete m_pBarrierStart;
         delete m_pBarrierDone;
 
         for ( size_t i = 0; i < m_arrThreads.size(); ++i )
             delete m_arrThreads[i];
         m_arrThreads.resize( 0 );
-
-        CDS_TSAN_ANNOTATE_IGNORE_RW_END;
     }
 
     void    ThreadPool::add( TestThread * pThread, size_t nCount )
