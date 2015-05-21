@@ -90,7 +90,7 @@ namespace cds { namespace gc {
     }  // namespace details
 
     template <typename Func, typename T>
-    cds::gc::details::retired_ptr make_retired_ptr( T * p )
+    static inline cds::gc::details::retired_ptr make_retired_ptr( T * p )
     {
         return cds::gc::details::retired_ptr( p, cds::details::static_functor<Func, T>::call );
     }
