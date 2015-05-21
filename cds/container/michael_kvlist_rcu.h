@@ -113,7 +113,7 @@ namespace cds { namespace container {
         typedef typename base_class::rcu_check_deadlock rcu_check_deadlock ; ///< RCU deadlock checking policy
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions require external locking
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
 
     protected:
         //@cond
@@ -477,7 +477,7 @@ namespace cds { namespace container {
 
             The functor \p Func interface:
             \code
-            struct extractor {
+            struct functor {
                 void operator()(value_type& val) { ... }
             };
             \endcode
@@ -515,10 +515,9 @@ namespace cds { namespace container {
             unlinks it from the list, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If \p key is not found the function returns an empty \p exempt_ptr.
 
-            @note The function does NOT call RCU read-side lock or synchronization,
-            and does NOT dispose the item found. It just excludes the item from the list
-            and returns a pointer to item found.
-            You should lock RCU before calling this function.
+            @note The function does NOT dispose the item found. 
+            It just excludes the item from the list and returns a pointer to item found.
+            You shouldn't lock RCU before calling this function.
 
             \code
             #include <cds/urcu/general_buffered.h>
@@ -531,19 +530,18 @@ namespace cds { namespace container {
             // ...
 
             rcu_michael_list::exempt_ptr p;
-            {
-                // first, we should lock RCU
-                rcu_michael_list::rcu_lock sl;
 
-                // Now, you can apply extract function
-                // Note that you must not delete the item found inside the RCU lock
-                p = theList.extract( 10 );
-                if ( p ) {
-                    // do something with p
-                    ...
-                }
+            // The RCU should NOT be locked when extract() is called!
+            assert( !rcu::is_locked() );
+
+            // extract() call
+            p = theList.extract( 10 );
+            if ( p ) {
+                // do something with p
+                ...
             }
-            // Outside RCU lock section we may safely release extracted pointer.
+
+            // we may safely release extracted pointer here.
             // release() passes the pointer to RCU reclamation cycle.
             p.release();
             \endcode
@@ -577,7 +575,7 @@ namespace cds { namespace container {
             The function makes RCU lock internally.
         */
         template <typename Q>
-        bool find( Q const& key ) const
+        bool find( Q const& key )
         {
             return find_at( head(), key, intrusive_key_comparator() );
         }
@@ -590,7 +588,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred ) const
+        bool find_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
@@ -617,7 +615,7 @@ namespace cds { namespace container {
             The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q const& key, Func f ) const
+        bool find( Q const& key, Func f )
         {
             return find_at( head(), key, intrusive_key_comparator(), f );
         }
@@ -630,7 +628,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& key, Less pred, Func f ) const
+        bool find_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
@@ -664,7 +662,7 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename K>
-        value_type * get( K const& key ) const
+        value_type * get( K const& key )
         {
             return get_at( head(), key, intrusive_key_comparator());
         }
@@ -679,7 +677,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename K, typename Less>
-        value_type * get_with( K const& key, Less pred ) const
+        value_type * get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
@@ -788,19 +786,19 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        bool find_at( head_type& refHead, K const& key, Compare cmp ) const
+        bool find_at( head_type& refHead, K const& key, Compare cmp )
         {
             return base_class::find_at( refHead, key, cmp, [](node_type&, K const&) {} );
         }
 
         template <typename K, typename Compare, typename Func>
-        bool find_at( head_type& refHead, K& key, Compare cmp, Func f ) const
+        bool find_at( head_type& refHead, K& key, Compare cmp, Func f )
         {
             return base_class::find_at( refHead, key, cmp, [&f](node_type& node, K const&){ f( node.m_Data ); });
         }
 
         template <typename K, typename Compare>
-        value_type * get_at( head_type& refHead, K const& val, Compare cmp ) const
+        value_type * get_at( head_type& refHead, K const& val, Compare cmp )
         {
             node_type * pNode = base_class::get_at( refHead, val, cmp );
             return pNode ? &pNode->m_Data : nullptr;
