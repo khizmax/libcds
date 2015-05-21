@@ -114,7 +114,7 @@ namespace cds { namespace urcu {
             }
         }
 
-        bool push_buffer( epoch_retired_ptr& ep )
+        bool push_buffer( epoch_retired_ptr&& ep )
         {
             bool bPushed = m_Buffer.push( ep );
             if ( !bPushed || m_Buffer.size() >= capacity() ) {
@@ -162,10 +162,8 @@ namespace cds { namespace urcu {
         */
         virtual void retire_ptr( retired_ptr& p )
         {
-            if ( p.m_p ) {
-                epoch_retired_ptr ep( p, m_nCurEpoch.load( atomics::memory_order_relaxed ));
-                push_buffer( ep );
-            }
+            if ( p.m_p )
+                push_buffer( epoch_retired_ptr( p, m_nCurEpoch.load( atomics::memory_order_relaxed )));
         }
 
         /// Retires the pointer chain [\p itFirst, \p itLast)
@@ -174,10 +172,18 @@ namespace cds { namespace urcu {
         {
             uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
             while ( itFirst != itLast ) {
-                epoch_retired_ptr ep( *itFirst, nEpoch );
+                push_buffer( epoch_retired_ptr( *itFirst, nEpoch ));
                 ++itFirst;
-                push_buffer( ep );
             }
+        }
+
+        /// Retires the pointer chain until \p Func returns \p nullptr retired pointer
+        template <typename Func>
+        void batch_retire( Func e )
+        {
+            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
+            for ( retired_ptr p{ e() }; p.m_p; p = e() )
+                push_buffer( epoch_retired_ptr( p, nEpoch ));
         }
 
         /// Wait to finish a grace period and then clear the buffer

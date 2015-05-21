@@ -96,6 +96,13 @@ namespace cds { namespace urcu {
             rcu_implementation::instance()->batch_retire( itFirst, itLast );
         }
 
+        /// Retires the pointer chain until \p Func returns \p nullptr retired pointer
+        template <typename Func>
+        static void batch_retire( Func e )
+        {
+            rcu_implementation::instance()->batch_retire( e );
+        }
+
         /// Acquires access lock (so called RCU reader-side lock)
         /**
             For safety reasons, it is better to use \ref scoped_lock class for locking/unlocking

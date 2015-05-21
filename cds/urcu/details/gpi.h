@@ -111,11 +111,8 @@ namespace cds { namespace urcu {
         virtual void retire_ptr( retired_ptr& p )
         {
             synchronize();
-            if ( p.m_p ) {
-                // TSan ignores atomic_thread_fence in synchronize()
-                //CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( p.m_p );
+            if ( p.m_p )
                 p.free();
-            }
         }
 
         /// Retires the pointer chain [\p itFirst, \p itLast)
@@ -127,12 +124,21 @@ namespace cds { namespace urcu {
                 while ( itFirst != itLast ) {
                     retired_ptr p( *itFirst );
                     ++itFirst;
-                    if ( p.m_p ) {
-                        // TSan ignores atomic_thread_fence in synchronize()
-                        //CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( p.m_p );
+                    if ( p.m_p )
                         p.free();
-                    }
                 }
+            }
+        }
+
+        /// Retires the pointer chain until \p Func returns \p nullptr retired pointer
+        template <typename Func>
+        void batch_retire( Func e )
+        {
+            retired_ptr p{ e() };
+            if ( p.m_p ) {
+                synchronize();
+                for ( ; p.m_p; p = e() )
+                    p.free();
             }
         }
 

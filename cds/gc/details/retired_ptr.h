@@ -4,6 +4,7 @@
 #define CDSLIB_GC_DETAILS_RETIRED_PTR_H
 
 #include <cds/details/defs.h>
+#include <cds/details/static_functor.h>
 
 //@cond
 namespace cds { namespace gc {
@@ -87,6 +88,13 @@ namespace cds { namespace gc {
             return !(p1 == p2);
         }
     }  // namespace details
+
+    template <typename Func, typename T>
+    cds::gc::details::retired_ptr make_retired_ptr( T * p )
+    {
+        return cds::gc::details::retired_ptr( p, cds::details::static_functor<Func, T>::call );
+    }
+
 }}   // namespace cds::gc
 //@endcond
 

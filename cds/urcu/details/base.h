@@ -255,6 +255,7 @@ namespace cds {
 
         ///@anchor cds_urcu_retired_ptr Retired pointer, i.e. pointer that ready for reclamation
         typedef cds::gc::details::retired_ptr   retired_ptr;
+        using cds::gc::make_retired_ptr;
 
         /// Pointer to function to free (destruct and deallocate) retired pointer of specific type
         typedef cds::gc::details::free_retired_ptr_func free_retired_ptr_func;

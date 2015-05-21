@@ -105,7 +105,7 @@ namespace cds { namespace urcu {
         {}
 
         // Return: true - synchronize has been called, false - otherwise
-        bool push_buffer( epoch_retired_ptr& p )
+        bool push_buffer( epoch_retired_ptr&& p )
         {
             bool bPushed = m_Buffer.push( p );
             if ( !bPushed || m_Buffer.size() >= capacity() ) {
@@ -169,7 +169,7 @@ namespace cds { namespace urcu {
         {
             if ( p.m_p ) {
                 epoch_retired_ptr ep( p, m_nCurEpoch.load( atomics::memory_order_acquire ) );
-                push_buffer( ep );
+                push_buffer( epoch_retired_ptr( p, m_nCurEpoch.load( atomics::memory_order_acquire )));
             }
         }
 
@@ -179,11 +179,20 @@ namespace cds { namespace urcu {
         {
             uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
             while ( itFirst != itLast ) {
-                epoch_retired_ptr p( *itFirst, nEpoch );
+                push_buffer( epoch_retired_ptr( *itFirst, nEpoch ) );
                 ++itFirst;
-                push_buffer( p );
             }
         }
+
+        /// Retires the pointer chain until \p Func returns \p nullptr retired pointer
+        template <typename Func>
+        void batch_retire( Func e )
+        {
+            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
+            for ( retired_ptr p{ e() }; p.m_p; p = e() )
+                push_buffer( epoch_retired_ptr( p, nEpoch ));
+        }
+
 
         /// Waits to finish a grace period and calls disposing thread
         void synchronize()

@@ -168,13 +168,14 @@ namespace cds { namespace intrusive {
             {
                 assert( !gc::is_locked() );
 
-                node_type * p = pDelChain;
-                if ( p ) {
-                    while ( p ) {
-                        node_type * pNext = p->m_pDelChain;
-                        dispose_node( p );
-                        p = pNext;
-                    }
+                node_type * chain = pDelChain;
+                if ( chain ) {
+                    auto f = [&chain]() -> cds::urcu::retired_ptr {
+                        node_type * p = chain;
+                        chain = p->m_pDelChain;
+                        return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ));
+                    };
+                    gc::batch_retire(std::ref(f));
                 }
             }
         };
@@ -721,7 +722,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * get( Q const& key )
         {
-            return get_at( const_cast<atomic_node_ptr&>( m_pHead ), key, key_comparator());
+            return get_at( m_pHead, key, key_comparator());
         }
 
         /// Finds \p key and return the item found
@@ -737,7 +738,7 @@ namespace cds { namespace intrusive {
         value_type * get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_at( const_cast<atomic_node_ptr&>( m_pHead ), key, cds::opt::details::make_comparator_from_less<Less>());
+            return get_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Clears the list using default disposer

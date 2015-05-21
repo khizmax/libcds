@@ -42,7 +42,7 @@ namespace cds { namespace urcu { namespace details {
             pRec->m_nAccessControl.store( gp_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_relaxed),
                 atomics::memory_order_relaxed );
             atomics::atomic_thread_fence( atomics::memory_order_acquire );
-            //CDS_COMPILER_RW_BARRIER;
+            CDS_COMPILER_RW_BARRIER;
         }
         else {
             pRec->m_nAccessControl.fetch_add( 1, atomics::memory_order_relaxed );
@@ -55,7 +55,7 @@ namespace cds { namespace urcu { namespace details {
         thread_record * pRec = get_thread_record();
         assert( pRec != nullptr );
 
-        //CDS_COMPILER_RW_BARRIER;
+        CDS_COMPILER_RW_BARRIER;
         pRec->m_nAccessControl.fetch_sub( 1, atomics::memory_order_release );
     }
 
