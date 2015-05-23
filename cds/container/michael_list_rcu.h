@@ -517,8 +517,8 @@ namespace cds { namespace container {
             If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
             @note The function does NOT dispose the item found. It just excludes the item from the list
-            and returns a pointer to item found.
-            You shouldn't lock RCU before calling this function.
+            and returns a pointer to the item.
+            You shouldn't lock RCU for current thread before calling this function.
 
             \code
             #include <cds/urcu/general_buffered.h>

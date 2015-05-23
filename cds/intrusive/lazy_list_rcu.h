@@ -496,7 +496,7 @@ namespace cds { namespace intrusive {
 
             The function returns \p true if success and \p false otherwise.
 
-            RCU \p synchronize method can be called.
+            RCU \p synchronize method can be called. The RCU should not be locked.
             Note that depending on RCU type used the \ref disposer call can be deferred.
 
             The function can throw cds::urcu::rcu_deadlock exception if deadlock is encountered and
@@ -513,7 +513,7 @@ namespace cds { namespace intrusive {
             unlinks it from the list, and returns \p true.
             If the item with the key equal to \p key is not found the function return \p false.
 
-            RCU \p synchronize method can be called.
+            RCU \p synchronize method can be called. The RCU should not be locked.
             Note that depending on RCU type used the \ref disposer call can be deferred.
 
             The function can throw \ref cds_urcu_rcu_deadlock "cds::urcu::rcu_deadlock" exception if deadlock is encountered and
@@ -552,7 +552,7 @@ namespace cds { namespace intrusive {
 
             If the item with the key equal to \p key is not found the function return \p false.
 
-            RCU \p synchronize method can be called.
+            RCU \p synchronize method can be called. The RCU should not be locked.
             Note that depending on RCU type used the \ref disposer call can be deferred.
 
             The function can throw \ref cds_urcu_rcu_deadlock "cds::urcu::rcu_deadlock" exception if deadlock is encountered and

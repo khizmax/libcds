@@ -608,8 +608,8 @@ namespace cds { namespace intrusive {
 
             @note The function does NOT dispose the item found. It just unlinks the item from the list
             and returns a pointer to item found.
-            You shouldn't lock RCU before calling this function, and you should manually release
-            \p dest exempt pointer outside the RCU lock before reusing the pointer.
+            You shouldn't lock RCU for current thread before calling this function, and you should manually release
+            \p dest exempt pointer outside the RCU lock before reusing it.
 
             \code
             #include <cds/urcu/general_buffered.h>
