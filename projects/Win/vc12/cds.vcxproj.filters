@@ -1181,5 +1181,8 @@
     <ClInclude Include="..\..\..\cds\compiler\feature_tsan.h">
       <Filter>Header Files\cds\compiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\urcu\raw_ptr.h">
+      <Filter>Header Files\cds\urcu</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

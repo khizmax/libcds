@@ -818,6 +818,7 @@
     <ClInclude Include="..\..\..\cds\urcu\general_instant.h" />
     <ClInclude Include="..\..\..\cds\urcu\general_threaded.h" />
     <ClInclude Include="..\..\..\cds\urcu\options.h" />
+    <ClInclude Include="..\..\..\cds\urcu\raw_ptr.h" />
     <ClInclude Include="..\..\..\cds\urcu\signal_buffered.h" />
     <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h" />
     <ClInclude Include="..\..\..\cds\init.h" />

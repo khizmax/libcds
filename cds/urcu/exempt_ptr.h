@@ -37,6 +37,7 @@ namespace cds { namespace urcu {
         For non-intrusive containers from \p cds::container namespace \p Disposer is usually an invocation
         of node deallocator. For intrusive containers the disposer can be empty or it can trigger an event "node can be reused safely".
         In any case, the exempt pointer concept keeps RCU semantics.
+        The destructor or \p release() should be called outside the RCU lock of current thread.
 
         You don't need use this helper class directly. Any RCU-based container typedefs a simplified version of this template.
 

@@ -8,6 +8,7 @@
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/details/make_const_type.h>
 #include <cds/urcu/exempt_ptr.h>
+#include <cds/urcu/raw_ptr.h>
 
 namespace cds { namespace intrusive {
 
@@ -150,6 +151,20 @@ namespace cds { namespace intrusive {
             gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ) );
         }
 
+        static void dispose_chain( node_type * pChain )
+        {
+            if ( pChain ) {
+                assert( !gc::is_locked() );
+
+                auto f = [&pChain]() -> cds::urcu::retired_ptr {
+                    node_type * p = pChain;
+                    pChain = p->m_pDelChain;
+                    return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ));
+                };
+                gc::batch_retire(std::ref(f));
+            }
+        }
+
         /// Position pointer for item search
         struct position {
             atomic_node_ptr * pPrev ;   ///< Previous node
@@ -166,17 +181,7 @@ namespace cds { namespace intrusive {
 
             ~position()
             {
-                assert( !gc::is_locked() );
-
-                node_type * chain = pDelChain;
-                if ( chain ) {
-                    auto f = [&chain]() -> cds::urcu::retired_ptr {
-                        node_type * p = chain;
-                        chain = p->m_pDelChain;
-                        return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ));
-                    };
-                    gc::batch_retire(std::ref(f));
-                }
+                dispose_chain( pDelChain );
             }
         };
 
@@ -184,6 +189,49 @@ namespace cds { namespace intrusive {
 
     public:
         using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, clear_and_dispose, void >; ///< pointer to extracted node
+
+    private:
+        //@cond
+        struct raw_ptr_disposer
+        {
+            node_type *     pReclaimedChain;
+
+            raw_ptr_disposer()
+                : pReclaimedChain( nullptr )
+            {}
+
+            raw_ptr_disposer( position& pos )
+                : pReclaimedChain( pos.pDelChain )
+            {
+                pos.pDelChain = nullptr;
+            }
+
+            raw_ptr_disposer( raw_ptr_disposer&& d )
+                : pReclaimedChain( d.pReclaimedChain )
+            {
+                d.pReclaimedChain = nullptr;
+            }
+
+            raw_ptr_disposer( raw_ptr_disposer const& ) = delete;
+
+            ~raw_ptr_disposer()
+            {
+                apply();
+            }
+
+            void apply()
+            {
+                if ( pReclaimedChain ) {
+                    dispose_chain( pReclaimedChain );
+                    pReclaimedChain = nullptr;
+                }
+            }
+        };
+        //@endcond
+
+    public:
+        /// Result of \p get(), \p get_with() functions - pointer to the node found
+        typedef cds::urcu::raw_ptr< gc, value_type, raw_ptr_disposer > raw_ptr; 
 
     protected:
         //@cond
@@ -720,7 +768,7 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& key )
+        raw_ptr get( Q const& key )
         {
             return get_at( m_pHead, key, key_comparator());
         }
@@ -735,7 +783,7 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& key, Less pred )
+        raw_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return get_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
@@ -986,12 +1034,16 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        value_type * get_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
+        raw_ptr get_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
-            value_type * pFound = nullptr;
-            return find_at( refHead, val, cmp,
-                [&pFound](value_type& found, Q const& ) { pFound = &found; } )
-                ? pFound : nullptr;
+            // RCU should be locked!
+            assert(gc::is_locked() );
+
+            position pos( refHead );
+
+            if ( search( refHead, val, pos, cmp ))
+                return raw_ptr( node_traits::to_value_ptr( pos.pCur ), raw_ptr_disposer( pos ));
+            return raw_ptr( raw_ptr_disposer( pos ));
         }
         //@endcond
 
