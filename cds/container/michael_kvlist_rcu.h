@@ -105,11 +105,11 @@ namespace cds { namespace container {
 #endif
         typedef Traits traits; ///< List traits
 
-        typedef typename base_class::back_off       back_off;       ///< Back-off strategy
-        typedef typename maker::allocator_type    allocator_type;   ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter;   ///< Item counting policy
-        typedef typename maker::key_comparator    key_comparator;   ///< key comparison functor
-        typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See \p michael_list::traits::memory_model
+        typedef typename base_class::back_off     back_off;       ///< Back-off strategy
+        typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter item_counter;   ///< Item counting policy
+        typedef typename maker::key_comparator    key_comparator; ///< key comparison functor
+        typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See \p michael_list::traits::memory_model
         typedef typename base_class::rcu_check_deadlock rcu_check_deadlock ; ///< RCU deadlock checking policy
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
@@ -130,6 +130,29 @@ namespace cds { namespace container {
         using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer,
             cds::urcu::details::conventional_exempt_pair_cast<node_type, value_type>
         >;
+
+    private:
+        struct raw_ptr_converter
+        {
+            value_type * operator()( node_type * p ) const
+            {
+               return p ? &p->m_Data : nullptr;
+            }
+
+            value_type& operator()( node_type& n ) const
+            {
+                return n.m_Data;
+            }
+
+            value_type const& operator()( node_type const& n ) const
+            {
+                return n.m_Data;
+            }
+        };
+
+    public:
+        /// Result of \p get(), \p get_with() functions - pointer to the node found
+        typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
 
     protected:
         //@cond
@@ -327,7 +350,7 @@ namespace cds { namespace container {
                 In trivial case, \p K is equal to \ref key_type.
             - The \ref mapped_type should be default-constructible.
 
-            The function makes RCU lock internally.
+            The function applies RCU lock internally.
 
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -345,7 +368,7 @@ namespace cds { namespace container {
             - The \ref key_type should be constructible from \p key of type \p K.
             - The \ref mapped_type should be constructible from \p val of type \p V.
 
-            The function makes RCU lock internally.
+            The function applies RCU lock internally.
 
             Returns \p true if inserting successful, \p false otherwise.
         */
@@ -380,7 +403,7 @@ namespace cds { namespace container {
             This can be useful if complete initialization of object of \p mapped_type is heavyweight and
             it is preferable that the initialization should be completed only if inserting is successful.
 
-            The function makes RCU lock internally.
+            The function applies RCU lock internally.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
@@ -417,7 +440,7 @@ namespace cds { namespace container {
             however, \p func must guarantee that during changing no any other modifications
             could be made on this item by concurrent threads.
 
-            The function makes RCU lock internally.
+            The function applies RCU lock internally.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
@@ -435,7 +458,7 @@ namespace cds { namespace container {
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
-            The function makes RCU lock internally.
+            The function applies RCU lock internally.
         */
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
@@ -637,7 +660,7 @@ namespace cds { namespace container {
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelKVList_rcu_get
             The function searches the item with \p key and returns the pointer to item found.
-            If \p key is not found it returns \p nullptr.
+            If \p key is not found it returns an empty \p raw_ptr object.
 
             Note the compare functor should accept a parameter of type \p K that can be not the same as \p key_type.
 
@@ -647,22 +670,24 @@ namespace cds { namespace container {
             typedef cds::container::MichaelKVList< cds::urcu::gc< cds::urcu::general_buffered<> >, int, foo, my_traits > ord_list;
             ord_list theList;
             // ...
+            tyename ord_list::raw_ptr rp;
             {
                 // Lock RCU
                 ord_list::rcu_lock lock;
 
-                ord_list::value_type * pVal = theList.get( 5 );
-                if ( pVal ) {
-                    // Deal with pVal
+                rp = theList.get( 5 );
+                if ( rp ) {
+                    // Deal with rp
                     //...
                 }
                 // Unlock RCU by rcu_lock destructor
-                // pVal can be freed at any time after RCU has been unlocked
             }
+            // rp can be released at any time after RCU has been unlocked
+            rp.release();
             \endcode
         */
         template <typename K>
-        value_type * get( K const& key )
+        raw_ptr get( K const& key )
         {
             return get_at( head(), key, intrusive_key_comparator());
         }
@@ -677,7 +702,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename K, typename Less>
-        value_type * get_with( K const& key, Less pred )
+        raw_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
@@ -798,10 +823,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        value_type * get_at( head_type& refHead, K const& val, Compare cmp )
+        raw_ptr get_at( head_type& refHead, K const& val, Compare cmp )
         {
-            node_type * pNode = base_class::get_at( refHead, val, cmp );
-            return pNode ? &pNode->m_Data : nullptr;
+            return raw_ptr( base_class::get_at( refHead, val, cmp ));
         }
 
         //@endcond
