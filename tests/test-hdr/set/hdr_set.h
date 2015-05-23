@@ -495,6 +495,97 @@ namespace set {
         }
 
         template <class Set>
+        void test_int_rcu_michael_list()
+        {
+            Set s( 100, 4 );
+            test_int_with( s );
+
+            // extract/get test
+            {
+                typedef typename Set::gc    rcu;
+                typedef typename Set::rcu_lock rcu_lock;
+                typedef typename Set::value_type value_type;
+                typename Set::exempt_ptr ep;
+                typename Set::get_result gp;
+
+                static size_t const nLimit = 100;
+                int arr[nLimit];
+                for ( size_t i = 0; i < nLimit; ++i )
+                    arr[i] = (int) i;
+                shuffle( arr, arr + nLimit );
+
+                for ( size_t i = 0; i < nLimit; ++i )
+                    CPPUNIT_ASSERT( s.insert( arr[i] ));
+
+                for ( size_t i = 0; i < nLimit; i += 2 ) {
+                    int nKey = arr[i];
+                    {
+                        rcu_lock l;
+                        gp = s.get( nKey );
+                        CPPUNIT_ASSERT( gp );
+                        CPPUNIT_CHECK( gp->nKey == nKey );
+                        CPPUNIT_CHECK( gp->nVal == nKey );
+                    }
+                    gp.release();
+
+                    ep = s.extract( nKey );
+                    CPPUNIT_ASSERT( ep );
+                    CPPUNIT_ASSERT( !ep.empty() );
+                    CPPUNIT_CHECK( nKey == ep->nKey );
+                    CPPUNIT_CHECK( nKey == (*ep).nVal );
+                    ep.release();
+
+                    {
+                        rcu_lock l;
+                        CPPUNIT_CHECK( !s.get( nKey ));
+                    }
+                    ep = s.extract( nKey );
+                    CPPUNIT_CHECK( !ep );
+                    CPPUNIT_CHECK( ep.empty() );
+
+                    {
+                        rcu_lock l;
+                        nKey = arr[i+1];
+                        gp = s.get_with( other_item(nKey), other_less() );
+                        CPPUNIT_ASSERT( gp );
+                        CPPUNIT_CHECK( gp->nKey == nKey );
+                        CPPUNIT_CHECK( gp->nVal == nKey );
+                    }
+                    gp.release();
+
+                    ep = s.extract_with( other_item( nKey ), other_less() );
+                    CPPUNIT_ASSERT( ep );
+                    CPPUNIT_ASSERT( !ep.empty() );
+                    CPPUNIT_CHECK( nKey == ep->nKey );
+                    CPPUNIT_CHECK( nKey == (*ep).nVal );
+                    ep.release();
+
+                    {
+                        rcu_lock l;
+                        CPPUNIT_CHECK( !s.get_with( other_item( nKey ), other_less()));
+                    }
+                    CPPUNIT_CHECK( !s.extract_with( other_item(nKey), other_less() ));
+                    CPPUNIT_CHECK( ep.empty() );
+                }
+                CPPUNIT_CHECK( s.empty() );
+                CPPUNIT_CHECK( check_size( s, 0 ));
+
+                {
+                    rcu_lock l;
+                    CPPUNIT_CHECK( !s.get( int( nLimit / 2 )));
+                }
+
+                ep = s.extract( int( nLimit / 2 ) );
+                CPPUNIT_CHECK( !ep );
+                CPPUNIT_CHECK( ep.empty() );
+            }
+
+            // iterator test
+            test_iter<Set>();
+        }
+
+
+        template <class Set>
         void test_int_with( Set& s)
         {
             typedef typename Set::value_type    value_type;

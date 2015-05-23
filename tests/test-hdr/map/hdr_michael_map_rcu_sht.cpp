@@ -40,7 +40,7 @@ namespace map {
 
         // traits-based version
         typedef cc::MichaelHashMap< rcu_type, list, map_traits > map;
-        test_rcu< map >();
+        test_rcu_michael_list< map >();
 
         // option-based version
         typedef cc::MichaelHashMap< rcu_type, list,
@@ -49,7 +49,7 @@ namespace map {
                 ,cc::opt::item_counter< simple_item_counter >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_michael_list< opt_map >();
 #endif
     }
 
@@ -60,7 +60,7 @@ namespace map {
 
         // traits-based version
         typedef cc::MichaelHashMap< rcu_type, list, map_traits > map;
-        test_rcu< map >();
+        test_rcu_michael_list< map >();
 
         // option-based version
         typedef cc::MichaelHashMap< rcu_type, list,
@@ -69,7 +69,7 @@ namespace map {
                 ,cc::opt::item_counter< simple_item_counter >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_michael_list< opt_map >();
 #endif
     }
 
@@ -80,7 +80,7 @@ namespace map {
 
         // traits-based version
         typedef cc::MichaelHashMap< rcu_type, list, map_traits > map;
-        test_rcu< map >();
+        test_rcu_michael_list< map >();
 
         // option-based version
         typedef cc::MichaelHashMap< rcu_type, list,
@@ -89,7 +89,7 @@ namespace map {
                 ,cc::opt::item_counter< simple_item_counter >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_michael_list< opt_map >();
 #endif
     }
 

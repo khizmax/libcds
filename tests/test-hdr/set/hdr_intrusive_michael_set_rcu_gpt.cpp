@@ -29,7 +29,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::RCU_GPT_base_less()
@@ -50,7 +50,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::RCU_GPT_base_cmpmix()
@@ -73,7 +73,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::RCU_GPT_member_cmp()
@@ -97,7 +97,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::RCU_GPT_member_less()
@@ -121,7 +121,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::RCU_GPT_member_cmpmix()
@@ -147,7 +147,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
 

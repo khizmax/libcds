@@ -42,7 +42,7 @@ namespace set {
 
         // traits-based version
         typedef cc::MichaelHashSet< rcu_type, list, set_traits > set;
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::MichaelHashSet< rcu_type, list,
@@ -51,7 +51,7 @@ namespace set {
                 ,cc::opt::item_counter< simple_item_counter >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
 #endif
     }
 
@@ -62,7 +62,7 @@ namespace set {
 
         // traits-based version
         typedef cc::MichaelHashSet< rcu_type, list, set_traits > set;
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::MichaelHashSet< rcu_type, list,
@@ -71,7 +71,7 @@ namespace set {
                 ,cc::opt::item_counter< simple_item_counter >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
 #endif
     }
 
@@ -82,7 +82,7 @@ namespace set {
 
         // traits-based version
         typedef cc::MichaelHashSet< rcu_type, list, set_traits > set;
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::MichaelHashSet< rcu_type, list,
@@ -91,7 +91,7 @@ namespace set {
                 ,cc::opt::item_counter< simple_item_counter >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
 #endif
     }
 

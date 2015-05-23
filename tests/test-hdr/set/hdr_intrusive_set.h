@@ -1033,7 +1033,7 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( arrItems[i] ));
 
                 for ( size_t i = 0; i < nLimit; i += 2 ) {
-                    value_type * pVal;
+                    value_type * 1;
                     int nKey = arr[i];
                     {
                         rcu_lock l;
@@ -1085,6 +1085,105 @@ namespace set {
                     CPPUNIT_CHECK( !ep );
                     CPPUNIT_CHECK( ep.empty() );
                 }
+
+                Set::gc::force_dispose();
+            }
+        }
+
+        template <class Set>
+        void test_rcu_int_michael_list()
+        {
+            {
+                Set s( 64, 4 );
+                test_rcu_int_with( s );
+            }
+
+            // Iterator test
+            test_iter<Set>();
+
+            // Extract tests
+            typedef typename Set::gc    rcu;
+            typedef typename Set::value_type    value_type;
+            typedef typename Set::rcu_lock      rcu_lock;
+
+            typename Set::exempt_ptr ep;
+            typename Set::get_result gp;
+
+            {
+                static size_t const nLimit = 1024;
+                value_type arrItems[nLimit];
+                int arr[nLimit];
+                for ( size_t i = 0; i < nLimit; ++i )
+                    arr[i] = (int) i;
+                shuffle( arr, arr + nLimit );
+
+                for ( size_t i = 0; i < nLimit; ++i ) {
+                    arrItems[i].nKey = arr[i];
+                    arrItems[i].nVal = arr[i] * 2;
+                }
+
+                Set s( nLimit, 2 );
+                for ( size_t i = 0; i < nLimit; ++i )
+                    CPPUNIT_ASSERT( s.insert( arrItems[i] ));
+
+                for ( size_t i = 0; i < nLimit; i += 2 ) {
+                    int nKey = arr[i];
+                    {
+                        rcu_lock l;
+                        gp = s.get( nKey );
+                        CPPUNIT_ASSERT( gp );
+                        CPPUNIT_CHECK( gp->nKey == nKey );
+                        CPPUNIT_CHECK( (*gp).nVal == nKey * 2 );
+                    }
+                    gp.release();
+
+                    ep = s.extract( nKey );
+                    CPPUNIT_ASSERT( ep );
+                    CPPUNIT_ASSERT( !ep.empty() );
+                    CPPUNIT_CHECK( nKey == ep->nKey );
+                    CPPUNIT_CHECK( nKey * 2 == (*ep).nVal );
+                    ep.release();
+                    {
+                        rcu_lock l;
+                        CPPUNIT_CHECK( !s.get( nKey ));
+                    }
+                    CPPUNIT_CHECK( !s.extract( nKey ));
+                    CPPUNIT_CHECK( ep.empty() );
+
+                    nKey = arr[i+1];
+                    {
+                        rcu_lock l;
+                        gp = s.get_with( nKey, less<value_type>() );
+                        CPPUNIT_ASSERT( gp );
+                        CPPUNIT_CHECK( gp->nKey == nKey );
+                        CPPUNIT_CHECK( gp->nVal == nKey * 2 );
+                    }
+                    gp.release();
+
+                    ep = s.extract_with( nKey, less<value_type>() );
+                    CPPUNIT_ASSERT( ep );
+                    CPPUNIT_ASSERT( !ep.empty() );
+                    CPPUNIT_CHECK( nKey == ep->nKey );
+                    CPPUNIT_CHECK( nKey * 2 == (*ep).nVal );
+                    ep.release();
+
+                    {
+                        rcu_lock l;
+                        CPPUNIT_CHECK( !s.get_with( nKey, less<value_type>()));
+                    }
+                    ep = s.extract_with( nKey, less<value_type>() );
+                    CPPUNIT_CHECK( !ep );
+                    CPPUNIT_CHECK( ep.empty() );
+                }
+                CPPUNIT_CHECK( s.empty() );
+                CPPUNIT_CHECK( check_size( s, 0 ));
+                {
+                    rcu_lock l;
+                    CPPUNIT_CHECK( !s.get( 100 ));
+                }
+                ep = s.extract( 100 );
+                CPPUNIT_CHECK( !ep );
+                CPPUNIT_CHECK( ep.empty() );
 
                 Set::gc::force_dispose();
             }

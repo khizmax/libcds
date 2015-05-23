@@ -153,6 +153,8 @@ namespace cds { namespace container {
     public:
         /// Result of \p get(), \p get_with() functions - pointer to the node found
         typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
+        /// Type of \p get() member function return value
+        typedef raw_ptr get_result;
 
     protected:
         //@cond

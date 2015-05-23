@@ -235,7 +235,9 @@ namespace cds { namespace intrusive {
 
     public:
         /// Result of \p get(), \p get_with() functions - pointer to the node found
-        typedef cds::urcu::raw_ptr< gc, value_type, raw_ptr_disposer > raw_ptr; 
+        typedef cds::urcu::raw_ptr< gc, value_type, raw_ptr_disposer > raw_ptr;
+        /// Type of \p get() member function return value
+        typedef raw_ptr get_result;
 
     protected:
         //@cond

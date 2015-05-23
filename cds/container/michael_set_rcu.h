@@ -123,6 +123,7 @@ namespace cds { namespace container {
 
         typedef typename bucket_type::rcu_lock   rcu_lock;   ///< RCU scoped lock
         typedef typename bucket_type::exempt_ptr exempt_ptr; ///< pointer to extracted node
+        typedef typename bucket_type::get_result get_result; ///< Return type of \p get() member function and its derivatives
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
@@ -456,11 +457,11 @@ namespace cds { namespace container {
             unlinks it from the set, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If the item with the key equal to \p key is not found the function return an empty \p exempt_ptr.
 
-            @note The function does NOT call RCU read-side lock or synchronization,
-            and does NOT dispose the item found. It just excludes the item from the set
-            and returns a pointer to item found.
-            You should lock RCU before calling of the function, and you should synchronize RCU
-            outside the RCU lock to free extracted item
+            The function just excludes the item from the set and returns a pointer to item found.
+            Depends on \p bucket_type you should or should not lock RCU before calling of this function:
+            - for the set based on \ref cds_nonintrusive_MichaelList_rcu "MichaelList" RCU should not be locked
+            - for the set based on \ref cds_nonintrusive_LazyList_rcu "LazyList" RCU should be locked
+            See ordered list implementation for details.
 
             \code
             #include <cds/urcu/general_buffered.h>
@@ -474,18 +475,15 @@ namespace cds { namespace container {
             rcu_michael_set theSet;
             // ...
 
-            rcu_michael_set::exempt_ptr p;
-            {
-                // first, we should lock RCU
-                rcu_michael_set::rcu_lock lock;
+            typename rcu_michael_set::exempt_ptr p;
 
-                // Now, you can apply extract function
-                // Note that you must not delete the item found inside the RCU lock
-                p = theSet.extract( 10 );
-                if ( p ) {
-                    // do something with p
-                    ...
-                }
+            // For MichaelList we should not lock RCU
+
+            // Note that you must not delete the item found inside the RCU lock
+            p = theSet.extract( 10 );
+            if ( p ) {
+                // do something with p
+                ...
             }
 
             // We may safely release p here
@@ -545,13 +543,13 @@ namespace cds { namespace container {
             The function returns \p true if \p key is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& key, Func f ) const
+        bool find( Q& key, Func f )
         {
             return bucket( key ).find( key, f );
         }
         //@cond
         template <typename Q, typename Func>
-        bool find( Q const& key, Func f ) const
+        bool find( Q const& key, Func f )
         {
             return bucket( key ).find( key, f );
         }
@@ -565,13 +563,13 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& key, Less pred, Func f ) const
+        bool find_with( Q& key, Less pred, Func f )
         {
             return bucket( key ).find_with( key, pred, f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& key, Less pred, Func f ) const
+        bool find_with( Q const& key, Less pred, Func f )
         {
             return bucket( key ).find_with( key, pred, f );
         }
@@ -587,7 +585,7 @@ namespace cds { namespace container {
             should accept a parameter of type \p Q that may be not the same as \p value_type.
         */
         template <typename Q>
-        bool find( Q const & key ) const
+        bool find( Q const & key )
         {
             return bucket( key ).find( key );
         }
@@ -600,7 +598,7 @@ namespace cds { namespace container {
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const & key, Less pred ) const
+        bool find_with( Q const & key, Less pred )
         {
             return bucket( key ).find_with( key, pred );
         }
@@ -609,6 +607,8 @@ namespace cds { namespace container {
         /** \anchor cds_nonintrusive_MichaelHashSet_rcu_get
             The function searches the item with key equal to \p key and returns the pointer to item found.
             If \p key is not found it returns \p nullptr.
+            Note the type of returned value depends on underlying \p bucket_type.
+            For details, see documentation of ordered list you use.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -617,23 +617,24 @@ namespace cds { namespace container {
             \code
             typedef cds::container::MichaelHashSet< your_template_parameters > hash_set;
             hash_set theSet;
+            typename hash_set::get_result gp;
             // ...
             {
                 // Lock RCU
                 hash_set::rcu_lock lock;
 
-                foo * pVal = theSet.get( 5 );
-                if ( pVal ) {
+                gp = theSet.get( 5 );
+                if ( gp ) {
                     // Deal with pVal
                     //...
                 }
                 // Unlock RCU by rcu_lock destructor
-                // pVal can be freed at any time after RCU has been unlocked
+                // gp can be reclaimed at any time after RCU has been unlocked
             }
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& key ) const
+        get_result get( Q const& key )
         {
             return bucket( key ).get( key );
         }
@@ -648,7 +649,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& key, Less pred ) const
+        get_result get_with( Q const& key, Less pred )
         {
             return bucket( key ).get_with( key, pred );
         }

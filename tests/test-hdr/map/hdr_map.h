@@ -345,6 +345,95 @@ namespace map {
         }
 
         template <class Map>
+        void test_rcu_michael_list()
+        {
+            Map m( 52, 4 );
+
+            test_int_with(m);
+
+            // extract/get test
+            {
+                typedef typename Map::gc    rcu;
+                typedef typename Map::rcu_lock rcu_lock;
+                typedef typename Map::value_type value_type;
+                typename Map::exempt_ptr ep;
+                typename Map::get_result gp;
+
+                static size_t const nLimit = 100;
+                int arr[nLimit];
+                for ( size_t i = 0; i < nLimit; ++i )
+                    arr[i] = (int) i;
+                shuffle( arr, arr + nLimit );
+
+                for ( size_t i = 0; i < nLimit; ++i )
+                    CPPUNIT_ASSERT( m.insert( arr[i], arr[i] ));
+
+                for ( size_t i = 0; i < nLimit; i += 2 ) {
+                    int nKey = arr[i];
+                    {
+                        rcu_lock l;
+                        gp = m.get( nKey );
+                        CPPUNIT_ASSERT( gp );
+                        CPPUNIT_CHECK( gp->first == nKey );
+                        CPPUNIT_CHECK( gp->second.m_val == nKey );
+                    }
+                    gp.release();
+
+                    ep = m.extract( nKey );
+                    CPPUNIT_ASSERT( ep );
+                    CPPUNIT_ASSERT( !ep.empty() );
+                    CPPUNIT_CHECK( nKey == ep->first );
+                    CPPUNIT_CHECK( nKey == ep->second.m_val );
+                    ep.release();
+
+                    {
+                        rcu_lock l;
+                        CPPUNIT_CHECK( !m.get( nKey ));
+                    }
+                    ep = m.extract( nKey );
+                    CPPUNIT_CHECK( !ep );
+                    CPPUNIT_CHECK( ep.empty() );
+
+                    {
+                        rcu_lock l;
+                        nKey = arr[i+1];
+                        gp = m.get_with( other_item(nKey), other_less() );
+                        CPPUNIT_ASSERT( gp );
+                        CPPUNIT_CHECK( gp->first == nKey );
+                        CPPUNIT_CHECK( gp->second.m_val == nKey );
+                    }
+                    gp.release();
+
+                    ep = m.extract_with( other_item( nKey ), other_less() );
+                    CPPUNIT_ASSERT( ep );
+                    CPPUNIT_ASSERT( !ep.empty() );
+                    CPPUNIT_CHECK( nKey == ep->first );
+                    CPPUNIT_CHECK( nKey == (*ep).second.m_val );
+                    ep.release();
+
+                    {
+                        rcu_lock l;
+                        CPPUNIT_CHECK( !m.get_with( other_item(nKey), other_less() ));
+                    }
+                    CPPUNIT_CHECK( !m.extract_with( other_item(nKey), other_less() ));
+                    CPPUNIT_CHECK( ep.empty() );
+                }
+                CPPUNIT_CHECK( m.empty() );
+                CPPUNIT_CHECK( check_size( m, 0 ));
+                {
+                    rcu_lock l;
+                    CPPUNIT_CHECK( !m.get( int(nLimit / 2) ));
+                }
+                ep = m.extract( int( nLimit / 2 ) );
+                CPPUNIT_CHECK( !ep );
+                CPPUNIT_CHECK( ep.empty() );
+            }
+
+            // iterator test
+            test_iter<Map>();
+        }
+
+        template <class Map>
         void test_int_with( Map& m )
         {
             std::pair<bool, bool> ensureResult;

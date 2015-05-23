@@ -32,7 +32,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -55,7 +55,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -80,7 +80,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -106,7 +106,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -132,7 +132,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -160,7 +160,7 @@ namespace set {
             >::type
         > set;
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
