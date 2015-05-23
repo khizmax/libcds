@@ -139,6 +139,29 @@ namespace cds { namespace container {
         using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >; ///< pointer to extracted node
 
     private:
+        struct raw_ptr_converter
+        {
+            value_type * operator()( node_type * p ) const
+            {
+               return p ? &p->m_Value : nullptr;
+            }
+
+            value_type& operator()( node_type& n ) const
+            {
+                return n.m_Value;
+            }
+
+            value_type const& operator()( node_type const& n ) const
+            {
+                return n.m_Value;
+            }
+        };
+
+    public:
+        /// Result of \p get(), \p get_with() functions - pointer to the node found
+        typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
+
+    private:
         //@cond
         static value_type& node_to_value( node_type& n )
         {
@@ -630,7 +653,7 @@ namespace cds { namespace container {
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelList_rcu_get
             The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p nullptr.
+            If \p key is not found it returns an empty \p raw_ptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -640,22 +663,25 @@ namespace cds { namespace container {
             typedef cds::container::MichaelList< cds::urcu::gc< cds::urcu::general_buffered<> >, foo, my_traits > ord_list;
             ord_list theList;
             // ...
+            typename ord_list::raw_ptr rp;
             {
                 // Lock RCU
                 ord_list::rcu_lock lock;
 
-                foo * pVal = theList.get( 5 );
-                if ( pVal ) {
-                    // Deal with pVal
+                rp = theList.get( 5 );
+                if ( rp ) {
+                    // Deal with rp
                     //...
                 }
                 // Unlock RCU by rcu_lock destructor
-                // pVal can be freed at any time after RCU has been unlocked
+                // A value owned by rp can be freed at any time after RCU has been unlocked
             }
+            // You can manually release rp after RCU-locked section
+            rp.release();
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& key )
+        raw_ptr get( Q const& key )
         {
             return get_at( head(), key, intrusive_key_comparator());
         }
@@ -670,7 +696,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& key, Less pred )
+        raw_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
@@ -777,10 +803,9 @@ namespace cds { namespace container {
         }
 
         template <typename Q, typename Compare>
-        value_type * get_at( head_type& refHead, Q const& val, Compare cmp )
+        raw_ptr get_at( head_type& refHead, Q const& val, Compare cmp )
         {
-            node_type * pNode = base_class::get_at( refHead, val, cmp );
-            return pNode ? &pNode->m_Value : nullptr;
+            return raw_ptr( base_class::get_at( refHead, val, cmp ));
         }
 
         //@endcond

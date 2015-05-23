@@ -743,7 +743,7 @@ namespace cds { namespace intrusive {
         /// Finds \p key and return the item found
         /** \anchor cds_intrusive_MichaelList_rcu_get
             The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p nullptr.
+            If \p key is not found it returns empty \p raw_ptr object.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -753,18 +753,21 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::MichaelList< cds::urcu::gc< cds::urcu::general_buffered<> >, foo, my_traits > ord_list;
             ord_list theList;
             // ...
+            typename ord_list::raw_ptr rp;
             {
                 // Lock RCU
                 ord_list::rcu_lock lock;
 
-                foo * pVal = theList.get( 5 );
-                if ( pVal ) {
-                    // Deal with pVal
+                rp = theList.get( 5 );
+                if ( rp ) {
+                    // Deal with rp
                     //...
                 }
                 // Unlock RCU by rcu_lock destructor
-                // pVal can be retired by disposer at any time after RCU has been unlocked
+                // Node owned by rp can be retired by disposer at any time after RCU has been unlocked
             }
+            // You can manually release rp after RCU-locked section
+            rp.release();
             \endcode
         */
         template <typename Q>

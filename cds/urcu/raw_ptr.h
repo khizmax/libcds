@@ -170,6 +170,105 @@ namespace cds { namespace urcu {
         }
     };
 
+    //@cond
+    /// Adapter \p raw_ptr for non-intrusive containers based on intrusive counterpart
+    template <
+        typename ValueType,
+        typename RawPtr,
+        typename Converter
+    >
+    class raw_ptr_adaptor: private RawPtr
+    {
+    public:
+        typedef RawPtr      intrusive_raw_ptr;
+        typedef ValueType   value_type;
+        typedef typename intrusive_raw_ptr::value_type node_type;
+        typedef Converter   converter_type;
+
+    public:
+        /// Constructs an empty raw pointer
+        raw_ptr_adaptor()
+            : intrusive_raw_ptr()
+        {}
+
+        /// Move ctor
+        raw_ptr_adaptor( intrusive_raw_ptr&& p )
+            : intrusive_raw_ptr( std::move(p))
+        {}
+
+        /// Move ctor
+        raw_ptr_adaptor( raw_ptr_adaptor&& p )
+            : intrusive_raw_ptr( std::move(p))
+        {}
+
+        /// Copy ctor is prohibited
+        raw_ptr_adaptor( raw_ptr_adaptor const& ) = delete;
+
+        /// Releases the raw pointer
+        ~raw_ptr_adaptor()
+        {
+            release();
+        }
+
+    public:
+        /// Move assignment operator
+        /**
+            This operator may be called only inside RCU-lock.
+            The \p this should be empty.
+
+            In general, move assignment is intented for internal use.
+        */
+        raw_ptr_adaptor& operator=( raw_ptr_adaptor&& p ) CDS_NOEXCEPT
+        {
+            intrusive_raw_ptr::operator =(std::move(p));
+            return *this;
+        }
+
+        /// Copy assignment is prohibited
+        raw_ptr_adaptor& operator=( raw_ptr_adaptor const& ) = delete;
+
+        /// Returns a pointer to stored value
+        value_type * operator ->() const CDS_NOEXCEPT
+        {
+            return converter_type()( intrusive_raw_ptr::operator->());
+        }
+
+        /// Returns a reference to stored value
+        value_type& operator *()
+        {
+            return converter_type()( intrusive_raw_ptr::operator*());
+        }
+
+        /// Returns a reference to stored value
+        value_type const& operator *() const
+        {
+            return converter_type()( intrusive_raw_ptr::operator*());
+        }
+
+        /// Checks if the \p %raw_ptr is \p nullptr
+        bool empty() const CDS_NOEXCEPT
+        {
+            return intrusive_raw_ptr::empty();
+        }
+
+        /// Checks if the \p %raw_ptr is not empty
+        explicit operator bool() const CDS_NOEXCEPT
+        {
+            return !empty();
+        }
+
+        /// Releases the \p %raw_ptr object
+        /**
+            This function may be called only outside RCU section.
+            After \p %release() the object can be reused.
+        */
+        void release()
+        {
+            intrusive_raw_ptr::release();
+        }
+    };
+    //@endcond
+
 }} // namespace cds::urcu
 
 #endif // #ifndef CDSLIB_URCU_RAW_PTR_H
