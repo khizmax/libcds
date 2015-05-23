@@ -22,10 +22,10 @@ namespace cds { namespace intrusive {
             typedef cds::urcu::gc< RCU > gc;   ///< Garbage collector
             typedef Tag                  tag;  ///< tag
 
-            typedef cds::details::marked_ptr<node, 1>   marked_ptr         ;   ///< marked pointer
-            typedef typename gc::template atomic_marked_ptr< marked_ptr>     atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
+            typedef cds::details::marked_ptr<node, 3>   marked_ptr; ///< marked pointer
+            typedef typename gc::template atomic_marked_ptr<marked_ptr> atomic_marked_ptr; ///< atomic marked pointer specific for GC
 
-            atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
+            atomic_marked_ptr m_pNext; ///< pointer to the next node in the container
             node *            m_pDelChain; ///< Deleted node chain (local for a thread)
 
             CDS_CONSTEXPR node() CDS_NOEXCEPT
@@ -158,8 +158,11 @@ namespace cds { namespace intrusive {
 
                 auto f = [&pChain]() -> cds::urcu::retired_ptr {
                     node_type * p = pChain;
-                    pChain = p->m_pDelChain;
-                    return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ));
+                    if ( p ) {
+                        pChain = p->m_pDelChain;
+                        return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ));
+                    }
+                    return cds::urcu::make_retired_ptr<clear_and_dispose>( static_cast<value_type *>(nullptr));
                 };
                 gc::batch_retire(std::ref(f));
             }
@@ -222,6 +225,7 @@ namespace cds { namespace intrusive {
             void apply()
             {
                 if ( pReclaimedChain ) {
+                    assert( !gc::is_locked());
                     dispose_chain( pReclaimedChain );
                     pReclaimedChain = nullptr;
                 }

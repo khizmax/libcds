@@ -164,7 +164,6 @@ namespace cds { namespace urcu {
         */
         void release()
         {
-            assert( !rcu::is_locked() );
             m_Enum.apply();
             m_ptr = nullptr;
         }

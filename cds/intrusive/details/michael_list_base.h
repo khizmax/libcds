@@ -28,8 +28,8 @@ namespace cds { namespace intrusive {
             typedef GC              gc  ;   ///< Garbage collector
             typedef Tag             tag ;   ///< tag
 
-            typedef cds::details::marked_ptr<node, 1>   marked_ptr         ;   ///< marked pointer
-            typedef typename gc::template atomic_marked_ptr< marked_ptr>     atomic_marked_ptr   ;   ///< atomic marked pointer specific for GC
+            typedef cds::details::marked_ptr<node, 1>   marked_ptr;   ///< marked pointer
+            typedef typename gc::template atomic_marked_ptr<marked_ptr> atomic_marked_ptr;   ///< atomic marked pointer specific for GC
 
             atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
 
