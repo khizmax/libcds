@@ -75,7 +75,7 @@ namespace cds { namespace container {
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
         /// Type of \p get() member function return value
-        typedef typename bucket_type::get_result get_result;
+        typedef typename bucket_type::raw_ptr raw_ptr;
 
         //@cond
         typedef cds::container::michael_map::implementation_tag implementation_tag;
@@ -676,7 +676,7 @@ namespace cds { namespace container {
             typedef cds::container::MichaelHashMap< your_template_parameters > hash_map;
             hash_map theMap;
             // ...
-            typename hash_map::get_result gp;
+            typename hash_map::raw_ptr gp;
             {
                 // Lock RCU
                 hash_map::rcu_lock lock;
@@ -692,7 +692,7 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename K>
-        get_result get( K const& key )
+        raw_ptr get( K const& key )
         {
             return bucket( key ).get( key );
         }
@@ -707,7 +707,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        get_result get_with( K const& key, Less pred )
+        raw_ptr get_with( K const& key, Less pred )
         {
             return bucket( key ).get_with( key, pred );
         }

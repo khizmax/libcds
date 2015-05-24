@@ -357,7 +357,7 @@ namespace map {
                 typedef typename Map::rcu_lock rcu_lock;
                 typedef typename Map::value_type value_type;
                 typename Map::exempt_ptr ep;
-                typename Map::get_result gp;
+                typename Map::raw_ptr gp;
 
                 static size_t const nLimit = 100;
                 int arr[nLimit];

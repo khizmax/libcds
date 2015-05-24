@@ -139,6 +139,7 @@ namespace cds { namespace container {
         using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >; ///< pointer to extracted node
 
     private:
+        //@cond
         struct raw_ptr_converter
         {
             value_type * operator()( node_type * p ) const
@@ -156,12 +157,11 @@ namespace cds { namespace container {
                 return n.m_Value;
             }
         };
+        //@endcond
 
     public:
         /// Result of \p get(), \p get_with() functions - pointer to the node found
         typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
-        /// Type of \p get() member function return value
-        typedef raw_ptr get_result;
 
     private:
         //@cond

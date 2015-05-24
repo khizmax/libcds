@@ -1107,7 +1107,7 @@ namespace set {
             typedef typename Set::rcu_lock      rcu_lock;
 
             typename Set::exempt_ptr ep;
-            typename Set::get_result gp;
+            typename Set::raw_ptr gp;
 
             {
                 static size_t const nLimit = 1024;

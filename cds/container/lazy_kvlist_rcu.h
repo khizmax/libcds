@@ -125,7 +125,7 @@ namespace cds { namespace container {
             cds::urcu::details::conventional_exempt_pair_cast<node_type, value_type>
         >;
         /// Type of \p get() member function return value
-        typedef value_type * get_result;
+        typedef value_type * raw_ptr;
 
     protected:
         //@cond

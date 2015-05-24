@@ -6,6 +6,8 @@
       variants for MichaelList RCU-based specialization: extract() does not
       require RCU locking, get() now returns special wrapper object of type raw_ptr,
       see doc.
+      Thus, semantics of extract()/get() of all RCU-based set and maps based on 
+      MichaelList (MichaelSet/Map, SplitListSet/Map) has been changed too.
     - cds::lock namespace is renamed to cds::sync. All classes defined in cds::lock namespace 
       are moved to cds::sync with new names (for example, cds::lock::SpinLock is renamed to
       cds::sync::spin_lock). cds::lock namespace and its contents is deprecated, it is kept 

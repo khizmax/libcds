@@ -123,7 +123,7 @@ namespace cds { namespace container {
 
         typedef typename bucket_type::rcu_lock   rcu_lock;   ///< RCU scoped lock
         typedef typename bucket_type::exempt_ptr exempt_ptr; ///< pointer to extracted node
-        typedef typename bucket_type::get_result get_result; ///< Return type of \p get() member function and its derivatives
+        typedef typename bucket_type::raw_ptr    raw_ptr;    ///< Return type of \p get() member function and its derivatives
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
@@ -617,7 +617,7 @@ namespace cds { namespace container {
             \code
             typedef cds::container::MichaelHashSet< your_template_parameters > hash_set;
             hash_set theSet;
-            typename hash_set::get_result gp;
+            typename hash_set::raw_ptr gp;
             // ...
             {
                 // Lock RCU
@@ -634,7 +634,7 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        get_result get( Q const& key )
+        raw_ptr get( Q const& key )
         {
             return bucket( key ).get( key );
         }
@@ -649,7 +649,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        get_result get_with( Q const& key, Less pred )
+        raw_ptr get_with( Q const& key, Less pred )
         {
             return bucket( key ).get_with( key, pred );
         }

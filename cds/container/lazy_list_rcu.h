@@ -131,7 +131,7 @@ namespace cds { namespace container {
     public:
         using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >; ///< pointer to extracted node
         /// Type of \p get() member function return value
-        typedef value_type * get_result;
+        typedef value_type * raw_ptr;
 
     private:
         //@cond

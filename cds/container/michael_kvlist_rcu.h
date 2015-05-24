@@ -132,6 +132,7 @@ namespace cds { namespace container {
         >;
 
     private:
+        //@cond
         struct raw_ptr_converter
         {
             value_type * operator()( node_type * p ) const
@@ -149,12 +150,11 @@ namespace cds { namespace container {
                 return n.m_Data;
             }
         };
+        //@endcond
 
     public:
         /// Result of \p get(), \p get_with() functions - pointer to the node found
         typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
-        /// Type of \p get() member function return value
-        typedef raw_ptr get_result;
 
     protected:
         //@cond

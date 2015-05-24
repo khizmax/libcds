@@ -506,7 +506,7 @@ namespace set {
                 typedef typename Set::rcu_lock rcu_lock;
                 typedef typename Set::value_type value_type;
                 typename Set::exempt_ptr ep;
-                typename Set::get_result gp;
+                typename Set::raw_ptr gp;
 
                 static size_t const nLimit = 100;
                 int arr[nLimit];

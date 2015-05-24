@@ -89,9 +89,9 @@ namespace cds { namespace intrusive {
         /// Bucket table allocator
         typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
 
-        typedef typename bucket_type::rcu_lock         rcu_lock;   ///< RCU scoped lock
-        typedef typename bucket_type::exempt_ptr       exempt_ptr; ///< pointer to extracted node
-        typedef typename bucket_type::get_result       get_result; ///< Return type of \p get() member function and its derivatives
+        typedef typename bucket_type::rcu_lock    rcu_lock;   ///< RCU scoped lock
+        typedef typename bucket_type::exempt_ptr  exempt_ptr; ///< pointer to extracted node
+        typedef typename bucket_type::raw_ptr     raw_ptr;    ///< Return type of \p get() member function and its derivatives
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
@@ -557,7 +557,7 @@ namespace cds { namespace intrusive {
             hash_set theSet;
             // ...
             // Result of get() call
-            typename hash_set::get_result ptr;
+            typename hash_set::raw_ptr ptr;
             {
                 // Lock RCU
                 hash_set::rcu_lock lock;
@@ -573,7 +573,7 @@ namespace cds { namespace intrusive {
             \endcode
         */
         template <typename Q>
-        get_result get( Q const& key )
+        raw_ptr get( Q const& key )
         {
             return bucket( key ).get( key );
         }
@@ -588,7 +588,7 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        get_result get_with( Q const& key, Less pred )
+        raw_ptr get_with( Q const& key, Less pred )
         {
             return bucket( key ).get_with( key, pred );
         }

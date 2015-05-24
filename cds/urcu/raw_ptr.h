@@ -30,26 +30,26 @@ namespace cds { namespace urcu {
         Template arguments:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p ValueType - type of values stored in container
-        - \p ReclaimedEnumerator - implemntation-defined for each type of container
+        - \p ReclaimedEnumerator - implementation-defined for each type of container
 
         Example: let \p Container is an RCU container
-        \code
-        Container c;
-        // ...
-        // Find a key
-        typename Container::raw_ptr pRaw;
+        @code
+            Container c;
+            // ...
+            // Find a key
+            typename Container::raw_ptr pRaw;
 
-        // RCU locked section
-        {
-            typename Container::rcu_lock l;
-            pRaw = c.get( key );
-            if ( pRaw ) {
-                // Deal with pRaw
+            // RCU locked section
+            {
+                typename Container::rcu_lock l;
+                pRaw = c.get( key );
+                if ( pRaw ) {
+                    // Deal with pRaw
+                }
             }
-        }
-        // Release outside RCU-lock
-        pRaw.release();
-        \endcode
+            // Release outside RCU-lock
+            pRaw.release();
+        @endcode
     */
     template <
         class RCU,
@@ -60,7 +60,7 @@ namespace cds { namespace urcu {
     {
     public:
         typedef RCU rcu;    ///< RCU type - one of <tt>cds::urcu::gc< ... ></tt>
-        typedef ValueType   value_type; ///< Value type pointed by \p raw_ptr
+        typedef ValueType   value_type; ///< Value type pointed by \p %raw_ptr
         typedef ReclaimedEnumerator reclaimed_enumerator; ///< implementation-defined, for internal use only
 
     private:
@@ -86,7 +86,7 @@ namespace cds { namespace urcu {
         /// Copy ctor is prohibited
         raw_ptr( raw_ptr const& ) = delete;
 
-        ///@cond
+        //@cond
         // Only for internal use
         raw_ptr( value_type * p, reclaimed_enumerator&& e )
             : m_ptr( p )
@@ -170,7 +170,7 @@ namespace cds { namespace urcu {
     };
 
     //@cond
-    /// Adapter \p raw_ptr for non-intrusive containers based on intrusive counterpart
+    // Adapter of \p raw_ptr for non-intrusive containers based on intrusive counterpart
     template <
         typename ValueType,
         typename RawPtr,
@@ -185,33 +185,33 @@ namespace cds { namespace urcu {
         typedef Converter   converter_type;
 
     public:
-        /// Constructs an empty raw pointer
+        // Constructs an empty raw pointer
         raw_ptr_adaptor()
             : intrusive_raw_ptr()
         {}
 
-        /// Move ctor
+        // Move ctor
         raw_ptr_adaptor( intrusive_raw_ptr&& p )
             : intrusive_raw_ptr( std::move(p))
         {}
 
-        /// Move ctor
+        // Move ctor
         raw_ptr_adaptor( raw_ptr_adaptor&& p )
             : intrusive_raw_ptr( std::move(p))
         {}
 
-        /// Copy ctor is prohibited
+        // Copy ctor is prohibited
         raw_ptr_adaptor( raw_ptr_adaptor const& ) = delete;
 
-        /// Releases the raw pointer
+        // Releases the raw pointer
         ~raw_ptr_adaptor()
         {
             release();
         }
 
     public:
-        /// Move assignment operator
-        /**
+        // Move assignment operator
+        /*
             This operator may be called only inside RCU-lock.
             The \p this should be empty.
 
@@ -223,41 +223,41 @@ namespace cds { namespace urcu {
             return *this;
         }
 
-        /// Copy assignment is prohibited
+        // Copy assignment is prohibited
         raw_ptr_adaptor& operator=( raw_ptr_adaptor const& ) = delete;
 
-        /// Returns a pointer to stored value
+        // Returns a pointer to stored value
         value_type * operator ->() const CDS_NOEXCEPT
         {
             return converter_type()( intrusive_raw_ptr::operator->());
         }
 
-        /// Returns a reference to stored value
+        // Returns a reference to stored value
         value_type& operator *()
         {
             return converter_type()( intrusive_raw_ptr::operator*());
         }
 
-        /// Returns a reference to stored value
+        // Returns a reference to stored value
         value_type const& operator *() const
         {
             return converter_type()( intrusive_raw_ptr::operator*());
         }
 
-        /// Checks if the \p %raw_ptr is \p nullptr
+        // Checks if the \p %raw_ptr is \p nullptr
         bool empty() const CDS_NOEXCEPT
         {
             return intrusive_raw_ptr::empty();
         }
 
-        /// Checks if the \p %raw_ptr is not empty
+        // Checks if the \p %raw_ptr is not empty
         explicit operator bool() const CDS_NOEXCEPT
         {
             return !empty();
         }
 
-        /// Releases the \p %raw_ptr object
-        /**
+        // Releases the \p %raw_ptr object
+        /*
             This function may be called only outside RCU section.
             After \p %release() the object can be reused.
         */
@@ -271,4 +271,3 @@ namespace cds { namespace urcu {
 }} // namespace cds::urcu
 
 #endif // #ifndef CDSLIB_URCU_RAW_PTR_H
-

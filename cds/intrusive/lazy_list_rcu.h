@@ -233,7 +233,7 @@ namespace cds { namespace intrusive {
         /// pointer to extracted node
         using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, clear_and_dispose, void >;
         /// Type of \p get() member function return value
-        typedef value_type * get_result;
+        typedef value_type * raw_ptr;
 
     protected:
         //@cond

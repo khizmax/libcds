@@ -84,6 +84,14 @@ namespace cds { namespace intrusive { namespace striped_set {
         {}
     };
 
+    /// Rational load factor resizing policy
+    /** @ingroup cds_striped_resizing_policy
+        When total item count in a container exceeds
+        <tt>container.bucket_count() * Numerator / Denominator</tt>
+        then resizing is needed.
+
+        This policy is stateless: \p Numerator and \p Denominator specifies in compile time as template arguments
+    */
     template <size_t Numerator, size_t Denominator = 1>
     struct rational_load_factor_resizing
     {
@@ -105,6 +113,14 @@ namespace cds { namespace intrusive { namespace striped_set {
         {}
     };
 
+    /// Rational load factor resizing policy
+    /** @ingroup cds_striped_resizing_policy
+        When total item count in a container exceeds
+        <tt>container.bucket_count() * Numerator / Denominator</tt>
+        then resizing is needed.
+
+        This policy is stateful: \p Numerator and \p Denominator specifies in construction time.
+    */
     template <size_t Denominator>
     struct rational_load_factor_resizing<0, Denominator>
     {
