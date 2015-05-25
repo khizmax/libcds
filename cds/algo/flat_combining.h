@@ -148,6 +148,8 @@ namespace cds { namespace algo {
             counter_type    m_nPubRecordDeteted ;   ///< Count of deleted publication records
             counter_type    m_nAcquirePubRecCount;  ///< Count of acquiring publication record
             counter_type    m_nReleasePubRecCount;  ///< Count on releasing publication record
+			counter_type    m_nIterationCount;      ///< Count on iteration of wait_for_combining
+			counter_type    m_nWaitForCombiningCount;      ///< Count on iteration of wait_for_combining
 
             /// Returns current combining factor
             /**
@@ -169,6 +171,8 @@ namespace cds { namespace algo {
             void    onDeletePubRecord()         { ++m_nPubRecordDeteted; }
             void    onAcquirePubRecord()        { ++m_nAcquirePubRecCount; }
             void    onReleasePubRecord()        { ++m_nReleasePubRecCount; }
+			void    onIteration()               { ++m_nIterationCount; }
+			void    onWaitForCombining()        { ++m_nWaitForCombiningCount; }
             //@endcond
         };
 
@@ -185,6 +189,8 @@ namespace cds { namespace algo {
             void    onDeletePubRecord()         {}
             void    onAcquirePubRecord()        {}
             void    onReleasePubRecord()        {}
+			void    onIteration()               {}
+			void    onWaitForCombining()        {}
             //@endcond
         };
 
@@ -254,7 +260,7 @@ namespace cds { namespace algo {
         template <
             typename PublicationRecord
             ,typename Traits = traits
-			,template<class, class> class WaitStrategy = WaitOneMutexOneCondVarStrategy
+			, template<class, class> class WaitStrategy = DefautlWaitStartegy
         >
         class kernel
         {
@@ -686,8 +692,8 @@ namespace cds { namespace algo {
 
                 m_Stat.onCombining();
 //                TODO::compact_list deleted sleep puclicaton record
-                if ( (nCurAge & m_nCompactFactor) == 0 )
-                    compact_list( nCurAge );
+/*                if ( (nCurAge & m_nCompactFactor) == 0 )
+                    compact_list( nCurAge );*/
             }
 
             template <class Container>
@@ -737,19 +743,19 @@ namespace cds { namespace algo {
 
                 combining_pass( owner, nCurAge );
                 m_Stat.onCombining();
-                if ( (nCurAge & m_nCompactFactor) == 0 )
-                    compact_list( nCurAge );
+/*                if ( (nCurAge & m_nCompactFactor) == 0 )
+                    compact_list( nCurAge );*/
             }
 
             bool wait_for_combining( publication_record_type * pRec )
             {
-                //back_off bkoff;
+				m_Stat.onWaitForCombining();
                 while ( pRec->nRequest.load( memory_model::memory_order_acquire ) != req_Response ) {
 
+					m_Stat.onIteration();
                     // The record can be excluded from publication list. Reinsert it
                     republish(pRec);
                     m_waitStrategy.wait(pRec);
-                    //bkoff();
 
                     if ( m_Mutex.try_lock() ) {
                         if ( pRec->nRequest.load( memory_model::memory_order_acquire ) == req_Response ) {

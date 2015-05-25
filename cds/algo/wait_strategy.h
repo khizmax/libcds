@@ -48,7 +48,8 @@ namespace cds {  namespace algo {  namespace flat_combining {
         void wait(ExtendedPublicationRecord * pRec){
             boost::unique_lock<boost::mutex> lock(pRec->_waitMutex);
             if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
-                pRec->_condVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(1));
+                //pRec->_condVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(1));
+				pRec->_condVar.wait(lock);
         }
 
         void notify(ExtendedPublicationRecord* pRec){
@@ -61,12 +62,13 @@ namespace cds {  namespace algo {  namespace flat_combining {
     //====================================================================
     template<typename UserPublicationRecord, typename Traits>
     class WaitBakkOffStrategy{
-        cds::backoff::delay_of<2>   back_off;   ///< Back-off strategy
+        //cds::backoff::delay_of<2>   back_off;   ///< Back-off strategy
     public:
         struct ExtendedPublicationRecord: public UserPublicationRecord
         {
         };
         void wait(ExtendedPublicationRecord * pRec){
+			cds::backoff::delay_of<2>   back_off;
             back_off();
         }
         void notify(ExtendedPublicationRecord* pRec){
@@ -85,7 +87,8 @@ namespace cds {  namespace algo {  namespace flat_combining {
         void wait(ExtendedPublicationRecord * pRec){
             boost::unique_lock<boost::mutex> lock(_globalMutex);
             if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
-                _globalCondVar.wait(lock);
+				//_globalCondVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(1));
+				_globalCondVar.wait(lock);
         }
 
         void notify(ExtendedPublicationRecord* pRec){

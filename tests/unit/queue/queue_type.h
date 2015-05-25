@@ -421,18 +421,21 @@ namespace queue {
         {};
         class traits_FCQueue_elimination_stat:
             public cds::container::fcqueue::make_traits<
-                cds::opt::enable_elimination< true >
+                cds::opt::enable_elimination< false >
                 ,cds::opt::stat< cds::container::fcqueue::stat<> >
             >::type
         {};
 
-        typedef cds::container::FCQueue< Value > FCQueue_deque;
-        typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
-        typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque_elimination_stat;
+		typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque;
+		typedef cds::container::FCQueueBackOf< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_backof;
+		typedef cds::container::FCQueueOneMutexOneCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_oneMutex_oneCondVar;
+		typedef cds::container::FCQueueMultMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_multMutex_multCondVar;
+        //typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
+        //typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque_elimination_stat;
 
-        typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> > > FCQueue_list;
-        typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> >, traits_FCQueue_elimination > FCQueue_list_elimination;
-        typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> >, traits_FCQueue_elimination_stat > FCQueue_list_elimination_stat;
+        //typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> > > FCQueue_list;
+        //typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> >, traits_FCQueue_elimination > FCQueue_list_elimination;
+        //typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> >, traits_FCQueue_elimination_stat > FCQueue_list_elimination_stat;
 
 
    // FCDeque
@@ -626,7 +629,10 @@ namespace std {
                 << "\t       Create pub-record: " << s.m_nPubRecordCreated.get()  << "\n"
                 << "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get()  << "\n"
                 << "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get()<< "\n"
-                << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
+                << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n"
+				<< "\t  WaitForCombining calls: " << s.m_nWaitForCombiningCount.get() << "\n"
+			    << "\t         Loop iterations: " << s.m_nIterationCount.get() << "\n"
+				<< "\t    Redundant iterations: " << s.m_nIterationCount.get() - s.m_nWaitForCombiningCount.get() << "\n";
     }
 
     static inline std::ostream& operator <<( std::ostream& o, cds::container::fcqueue::empty_stat const& /*s*/ )
@@ -666,7 +672,10 @@ namespace std {
             << "\t       Create pub-record: " << s.m_nPubRecordCreated.get()  << "\n"
             << "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get()  << "\n"
             << "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get()<< "\n"
-            << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
+            << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n"
+			<< "\t  WaitForCombining calls: " << s.m_nWaitForCombiningCount.get() << "\n"
+			<< "\t         Loop iterations: " << s.m_nIterationCount.get() << "\n"
+			<< "\t    Redundant iterations: " << s.m_nIterationCount.get() - s.m_nWaitForCombiningCount.get() << "\n";
     }
 
 }

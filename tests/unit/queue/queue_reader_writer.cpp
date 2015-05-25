@@ -339,7 +339,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_OptimisticQueue( Value )
 //        CDSUNIT_DECLARE_BasketQueue( Value )
         CDSUNIT_DECLARE_FCQueue( Value )
-        CDSUNIT_DECLARE_FCDeque( Value )
+//        CDSUNIT_DECLARE_FCDeque( Value )
 //        CDSUNIT_DECLARE_SegmentedQueue( Value )
 //        CDSUNIT_DECLARE_RWQueue( Value )
 //        CDSUNIT_DECLARE_TsigasCysleQueue( Value )
@@ -352,7 +352,7 @@ namespace queue {
 //            CDSUNIT_TEST_OptimisticQueue
 //            CDSUNIT_TEST_BasketQueue
             CDSUNIT_TEST_FCQueue
-            CDSUNIT_TEST_FCDeque
+//            CDSUNIT_TEST_FCDeque
 //            CDSUNIT_TEST_SegmentedQueue
 //            CDSUNIT_TEST_RWQueue
 //            CDSUNIT_TEST_TsigasCysleQueue

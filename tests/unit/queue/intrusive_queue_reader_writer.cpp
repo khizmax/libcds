@@ -467,7 +467,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_MoirQueue
 //        CDSUNIT_DECLARE_OptimisticQueue
 //        CDSUNIT_DECLARE_BasketQueue
-        CDSUNIT_DECLARE_FCQueue
+//       CDSUNIT_DECLARE_FCQueue
 //        CDSUNIT_DECLARE_SegmentedQueue
 //        CDSUNIT_DECLARE_TsigasCycleQueue
 //        CDSUNIT_DECLARE_VyukovMPMCCycleQueue
@@ -479,7 +479,7 @@ namespace queue {
 //            CDSUNIT_TEST_MoirQueue
 //            CDSUNIT_TEST_OptimisticQueue
 //            CDSUNIT_TEST_BasketQueue
-            CDSUNIT_TEST_FCQueue
+//            CDSUNIT_TEST_FCQueue
 //            CDSUNIT_TEST_SegmentedQueue
 //            CDSUNIT_TEST_TsigasCycleQueue
 //            CDSUNIT_TEST_VyukovMPMCCycleQueue
