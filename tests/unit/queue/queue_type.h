@@ -429,6 +429,7 @@ namespace queue {
 		typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque;
 		typedef cds::container::FCQueueBackOf< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_backof;
 		typedef cds::container::FCQueueOneMutexOneCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_oneMutex_oneCondVar;
+		typedef cds::container::FCQueueSingleMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_singleMutex_MultCondVar;
 		typedef cds::container::FCQueueMultMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_multMutex_multCondVar;
         //typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
         //typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque_elimination_stat;
@@ -616,14 +617,14 @@ namespace std {
 		int redundatOperation = (int)s.m_nIterationCount.get() - (int)s.m_nWaitForCombiningCount.get();
 
 		return o << "\tStatistics:\n"
-			<< "\t                    Push: " << s.m_nEnqueue.get() << "\n"
+			/*<< "\t                    Push: " << s.m_nEnqueue.get() << "\n"
 			<< "\t                PushMove: " << s.m_nEnqMove.get() << "\n"
 			<< "\t                     Pop: " << s.m_nDequeue.get() << "\n"
 			<< "\t               FailedPop: " << s.m_nFailedDeq.get() << "\n"
 			<< "\t  Collided push/pop pair: " << s.m_nCollided.get() << "\n"
-			<< "\tFlat combining statistics:\n"
+			<< "\tFlat combining statistics:\n"*/
 			<< "\t        Combining factor: " << s.combining_factor() << "\n"
-			<< "\t         Operation count: " << s.m_nOperationCount.get() << "\n"
+			/*<< "\t         Operation count: " << s.m_nOperationCount.get() << "\n"
 			<< "\t      Combine call count: " << s.m_nCombiningCount.get() << "\n"
 			<< "\t        Compact pub-list: " << s.m_nCompactPublicationList.get() << "\n"
 			<< "\t   Deactivate pub-record: " << s.m_nDeactivatePubRecord.get() << "\n"
@@ -631,7 +632,7 @@ namespace std {
 			<< "\t       Create pub-record: " << s.m_nPubRecordCreated.get() << "\n"
 			<< "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get() << "\n"
 			<< "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get() << "\n"
-			<< "\t      Release pub-record: " << s.m_nReleasePubRecCount.get() << "\n"
+			<< "\t      Release pub-record: " << s.m_nReleasePubRecCount.get() << "\n"*/
 			<< "\t  WaitForCombining calls: " << s.m_nWaitForCombiningCount.get() << "\n"
 			<< "\t         Loop iterations: " << s.m_nIterationCount.get() << "\n"
 			<< "\t    Redundant iterations: " << ((redundatOperation < 0) ? 0 : redundatOperation) << "\n";
@@ -657,7 +658,7 @@ namespace std {
 		int redundatOperation = (int)s.m_nIterationCount.get() - (int)s.m_nWaitForCombiningCount.get();
 
         return o << "\tStatistics:\n"
-            << "\t              Push front: " << s.m_nPushFront.get()         << "\n"
+            /*<< "\t              Push front: " << s.m_nPushFront.get()         << "\n"
             << "\t         Push front move: " << s.m_nPushFrontMove.get()     << "\n"
             << "\t               Push back: " << s.m_nPushBack.get()          << "\n"
             << "\t          Push back move: " << s.m_nPushBackMove.get()      << "\n"
@@ -666,9 +667,9 @@ namespace std {
             << "\t                Pop back: " << s.m_nPopBack.get()           << "\n"
             << "\t         Failed pop back: " << s.m_nFailedPopBack.get()     << "\n"
             << "\t  Collided push/pop pair: " << s.m_nCollided.get()          << "\n"
-            << "\tFlat combining statistics:\n"
+            << "\tFlat combining statistics:\n"*/
             << "\t        Combining factor: " << s.combining_factor()         << "\n"
-            << "\t         Operation count: " << s.m_nOperationCount.get()    << "\n"
+            /*<< "\t         Operation count: " << s.m_nOperationCount.get()    << "\n"
             << "\t      Combine call count: " << s.m_nCombiningCount.get()    << "\n"
             << "\t        Compact pub-list: " << s.m_nCompactPublicationList.get() << "\n"
             << "\t   Deactivate pub-record: " << s.m_nDeactivatePubRecord.get()    << "\n"
@@ -676,7 +677,7 @@ namespace std {
             << "\t       Create pub-record: " << s.m_nPubRecordCreated.get()  << "\n"
             << "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get()  << "\n"
             << "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get()<< "\n"
-            << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n"
+            << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n"*/
 			<< "\t  WaitForCombining calls: " << s.m_nWaitForCombiningCount.get() << "\n"
 			<< "\t         Loop iterations: " << s.m_nIterationCount.get() << "\n"
 			<< "\t    Redundant iterations: " << ((redundatOperation < 0) ? 0 : redundatOperation) << "\n";

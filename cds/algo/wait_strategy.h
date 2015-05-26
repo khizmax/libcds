@@ -61,9 +61,8 @@ namespace cds {  namespace algo {  namespace flat_combining {
 
     //====================================================================
     template<typename UserPublicationRecord, typename Traits>
-    class WaitBakkOffStrategy{
-        //cds::backoff::delay_of<2>   back_off;   ///< Back-off strategy
-    public:
+	struct WaitBakkOffStrategy
+	{
         struct ExtendedPublicationRecord: public UserPublicationRecord
         {
         };
@@ -77,10 +76,11 @@ namespace cds {  namespace algo {  namespace flat_combining {
     };
     //====================================================================
     template<typename UserPublicationRecord, typename Traits>
-    class WaitOneMutexOneCondVarStrategy{
+    struct WaitOneMutexOneCondVarStrategy
+	{
         boost::mutex              _globalMutex;
         boost::condition_variable _globalCondVar;
-    public:
+
         struct ExtendedPublicationRecord: public UserPublicationRecord
         {
         };
@@ -97,6 +97,28 @@ namespace cds {  namespace algo {  namespace flat_combining {
             _globalCondVar.notify_all();
         }
     };
+
+	template<typename UserPublicationRecord, typename Traits>
+	struct WaitStratygyBaseOnSingleMutexMutlLocalCondVars
+	{
+		boost::mutex              _globalMutex;
+
+		struct ExtendedPublicationRecord : public UserPublicationRecord
+		{
+		};
+		void wait(ExtendedPublicationRecord * pRec){
+			boost::unique_lock<boost::mutex> lock(_globalMutex);
+			if (pRec->nRequest.load(Traits::memory_model::memory_order_acquire) >= req_Operation)
+				//_globalCondVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(1));
+				pRec->_condVar.wait(lock);
+		}
+
+		void notify(ExtendedPublicationRecord* pRec){
+			boost::unique_lock<boost::mutex> lock(_globalMutex);
+			pRec->nRequest.store(req_Response, Traits::memory_model::memory_order_release);
+			pRec->_condVar.notify_one();
+		}
+	};
 }}}//end namespace cds::algo::flat_combining
 
 #endif //CDSLIB_ALGO_FLAT_COMBINING_WAIT_STRATEGY_H

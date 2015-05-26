@@ -139,6 +139,7 @@
     TEST_CASE( FCQueue_deque, ITEM_TYPE ) \
     TEST_CASE( FCQueue_backof, ITEM_TYPE ) \
 	TEST_CASE( FCQueue_oneMutex_oneCondVar, ITEM_TYPE ) \
+	TEST_CASE( FCQueue_singleMutex_MultCondVar, ITEM_TYPE ) \
 	TEST_CASE( FCQueue_multMutex_multCondVar, ITEM_TYPE ) 
     //TEST_CASE( FCQueue_deque_elimination, ITEM_TYPE ) \
     //TEST_CASE( FCQueue_deque_elimination_stat, ITEM_TYPE ) \
@@ -150,6 +151,7 @@
     CPPUNIT_TEST( FCQueue_deque) \
     CPPUNIT_TEST( FCQueue_backof) \
 	CPPUNIT_TEST( FCQueue_oneMutex_oneCondVar) \
+	CPPUNIT_TEST( FCQueue_singleMutex_MultCondVar) \
 	CPPUNIT_TEST( FCQueue_multMutex_multCondVar) 
     //CPPUNIT_TEST( FCQueue_deque_elimination) \
     //CPPUNIT_TEST( FCQueue_deque_elimination_stat) \

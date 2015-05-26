@@ -641,6 +641,7 @@
     <ClInclude Include="..\..\..\cds\algo\elimination_tls.h" />
     <ClInclude Include="..\..\..\cds\algo\flat_combining.h" />
     <ClInclude Include="..\..\..\cds\algo\int_algo.h" />
+    <ClInclude Include="..\..\..\cds\algo\wait_strategy.h" />
     <ClInclude Include="..\..\..\cds\compiler\clang\defs.h" />
     <ClInclude Include="..\..\..\cds\compiler\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\compiler\feature_tsan.h" />
