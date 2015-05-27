@@ -105,6 +105,7 @@ namespace cds {  namespace algo {  namespace flat_combining {
 
 		struct ExtendedPublicationRecord : public UserPublicationRecord
 		{
+			boost::condition_variable _globalCondVar;
 		};
 		void wait(ExtendedPublicationRecord * pRec){
 			boost::unique_lock<boost::mutex> lock(_globalMutex);
