@@ -20,9 +20,8 @@ namespace queue {
             size_t    nNo;
 
             SimpleValue(): nNo(0) {}
-            explicit SimpleValue( size_t n ): nNo(n) {}
-            SimpleValue (const SimpleValue &object):nNo(object.nNo){
-            }
+            SimpleValue( size_t n ): nNo(n) {}
+            SimpleValue (const SimpleValue &object):nNo(object.nNo){}
 
             size_t getNo() const { return  nNo; }
         };
@@ -35,7 +34,7 @@ namespace queue {
                 for (int i = 0; i < 1000000; ++i)
                     pop_buff[i] = i;
             }
-            explicit HeavyValue(size_t n) : nNo(n) {
+            HeavyValue(size_t n) : nNo(n) {
                 for (int i = 0; i < 1000000; ++i)
                     pop_buff[i] = i;
             }

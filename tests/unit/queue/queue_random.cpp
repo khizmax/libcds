@@ -21,24 +21,25 @@ namespace queue {
 
         struct SimpleValue {
             size_t    nNo;
+            size_t nThread;
 
             SimpleValue(): nNo(0) {}
-            explicit SimpleValue( size_t n ): nNo(n) {}
-            SimpleValue (const SimpleValue &object):nNo(object.nNo){
-            }
+            SimpleValue( size_t n ): nNo(n) {}
+            SimpleValue (const SimpleValue &object):nNo(object.nNo){}
 
             size_t getNo() const { return  nNo; }
         };
 
         struct HeavyValue {
             size_t    nNo;
+            size_t nThread;
             int pop_buff[1000000];
 
             HeavyValue() : nNo(0) {
                 for (int i = 0; i < 1000000; ++i)
                     pop_buff[i] = i;
             }
-            explicit HeavyValue(size_t n) : nNo(n) {
+            HeavyValue(size_t n) : nNo(n) {
                 for (int i = 0; i < 1000000; ++i)
                     pop_buff[i] = i;
             }
@@ -49,9 +50,7 @@ namespace queue {
             }
             size_t getNo() const { return  nNo; }
         };
-    };
-
-}
+    }
 
     using namespace ns_Queue_Random;
 
@@ -123,7 +122,7 @@ namespace queue {
                 size_t const nThreadCount = s_nThreadCount;
                 size_t const nTotalPush = getTest().m_nThreadPushCount;
 
-				HeavyValue node;
+                HeavyValue node;
 
                 m_fTime = m_Timer.duration();
 
