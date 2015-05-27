@@ -35,8 +35,8 @@ namespace queue {
                     pop_buff[i] = i;
             }
             HeavyValue(size_t n) : nNo(n), nWriterNo(n) {
-                for (int i = 0; i < 1000000; ++i)
-                    pop_buff[i] = i;
+//                for (int i = 0; i < 1000000; ++i)
+//                    pop_buff[i] = i;
             }
 
             HeavyValue(const HeavyValue &object):nNo(object.nNo), nWriterNo(object.nWriterNo){

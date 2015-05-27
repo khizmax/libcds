@@ -40,11 +40,11 @@ namespace queue {
                     pop_buff[i] = i;
             }
             HeavyValue(size_t n) : nNo(n) {
-                for (int i = 0; i < 1000000; ++i)
-                    pop_buff[i] = i;
+//                for (int i = 0; i < 1000000; ++i)
+//                    pop_buff[i] = i;
             }
 
-            HeavyValue(const HeavyValue &object):nNo(object.nNo){
+            HeavyValue(const HeavyValue &object):nNo(object.nNo), nThread(object.nThread){
                 for (int i = 0; i < 1000000; ++i)
                     this->pop_buff[i] = object.pop_buff[i];
             }
