@@ -28,20 +28,14 @@ namespace queue {
 
         struct HeavyValue {
             size_t    nNo;
-            static int pop_buff[1000000];
+            static int pop_buff[10000];
 
-            HeavyValue() : nNo(0) {
-                for (int i = 0; i < 1000000; ++i)
-                    pop_buff[i] = i;
-            }
-            HeavyValue(size_t n) : nNo(n) {
-                for (int i = 0; i < 1000000; ++i)
-                    pop_buff[i] = i;
-            }
+			HeavyValue() : nNo(0) {}
+            HeavyValue(size_t n) : nNo(n) {}
 
             HeavyValue(const HeavyValue &object):nNo(object.nNo){
-                for (int i = 0; i < 1000000; ++i)
-                    this->pop_buff[i] = object.pop_buff[i];
+                for (int i = 0; i < 10000; ++i)
+					this->pop_buff[i] = (int)std::sqrt(object.pop_buff[i]);
             }
             size_t getNo() const { return  nNo; }
         };

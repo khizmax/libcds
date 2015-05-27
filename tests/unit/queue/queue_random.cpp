@@ -25,7 +25,7 @@ namespace queue {
 
             SimpleValue(): nNo(0) {}
             SimpleValue( size_t n ): nNo(n) {}
-            SimpleValue (const SimpleValue &object):nNo(object.nNo){}
+			SimpleValue(const SimpleValue &object) :nNo(object.nNo), nThread(object.nThread){}
 
             size_t getNo() const { return  nNo; }
         };
@@ -33,20 +33,14 @@ namespace queue {
         struct HeavyValue {
             size_t    nNo;
             size_t nThread;
-            static int pop_buff[1000000];
+            static int pop_buff[10000];
 
-            HeavyValue() : nNo(0) {
-                for (int i = 0; i < 1000000; ++i)
-                    pop_buff[i] = i;
-            }
-            HeavyValue(size_t n) : nNo(n) {
-//                for (int i = 0; i < 1000000; ++i)
-//                    pop_buff[i] = i;
-            }
+            HeavyValue() : nNo(0) {}
+            HeavyValue(size_t n) : nNo(n) {}
 
             HeavyValue(const HeavyValue &object):nNo(object.nNo), nThread(object.nThread){
-                for (int i = 0; i < 1000000; ++i)
-                    this->pop_buff[i] = object.pop_buff[i];
+                for (int i = 0; i < 10000; ++i)
+					this->pop_buff[i] = (int)std::sqrt(object.pop_buff[i]);
             }
             size_t getNo() const { return  nNo; }
         };
