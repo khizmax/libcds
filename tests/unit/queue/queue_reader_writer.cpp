@@ -23,6 +23,21 @@ namespace queue {
             size_t      nNo;
             size_t      nWriterNo;
         };
+
+		struct HeavyValue {
+			size_t    nNo;
+			size_t      nWriterNo;
+			static int _buff[1000000];
+
+			HeavyValue() : nNo() {}
+			HeavyValue(size_t n) : nNo(n) {
+				for (int i = 0; i < 1000000; ++i)
+					_buff[i] = i;
+			}
+			size_t getNo() const { return  nNo; }
+		};
+
+		int HeavyValue::_buff[] = {};
     }
 
     class Queue_ReaderWriter: public CppUnitMini::TestCase
@@ -66,7 +81,7 @@ namespace queue {
             virtual void test()
             {
                 size_t nPushCount = getTest().m_nThreadPushCount;
-                Value v;
+				HeavyValue v;
                 v.nWriterNo = m_nThreadNo;
                 v.nNo = 0;
                 m_nPushFailed = 0;
@@ -149,7 +164,7 @@ namespace queue {
                 m_nPopped = 0;
                 m_nBadWriter = 0;
                 const size_t nTotalWriters = s_nWriterThreadCount;
-                Value v;
+                HeavyValue v;
 
                 m_fTime = m_Timer.duration();
 
@@ -190,7 +205,7 @@ namespace queue {
 
             size_t nPostTestPops = 0;
             {
-                Value v;
+                HeavyValue v;
                 while ( testQueue.pop( v ))
                     ++nPostTestPops;
             }
@@ -338,7 +353,8 @@ namespace queue {
 //        CDSUNIT_DECLARE_MSQueue( Value )
 //        CDSUNIT_DECLARE_OptimisticQueue( Value )
 //        CDSUNIT_DECLARE_BasketQueue( Value )
-        CDSUNIT_DECLARE_FCQueue( Value )
+//        CDSUNIT_DECLARE_FCQueue( Value )
+		CDSUNIT_DECLARE_FCQueue( HeavyValue )
 //        CDSUNIT_DECLARE_FCDeque( Value )
 //        CDSUNIT_DECLARE_SegmentedQueue( Value )
 //        CDSUNIT_DECLARE_RWQueue( Value )

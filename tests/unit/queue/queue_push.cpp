@@ -23,6 +23,20 @@ namespace queue {
             SimpleValue( size_t n ): nNo(n) {}
             size_t getNo() const { return  nNo; }
         };
+
+		struct HeavyValue {
+			size_t    nNo;
+			static int push_buff[1000000];
+
+			HeavyValue() : nNo() {}
+			HeavyValue(size_t n) : nNo(n) {
+				for (int i = 0; i < 1000000; ++i)
+					push_buff[i] = i;
+			}
+			size_t getNo() const { return  nNo; }
+		};
+
+		int HeavyValue::push_buff[] = {};
     }
     using namespace ns_Queue_Push;
 
@@ -101,7 +115,7 @@ namespace queue {
             cds::OS::Timer      timer;
             CPPUNIT_MSG( "   Pop (single-threaded)..." );
             size_t nPopped = 0;
-            SimpleValue val = SimpleValue();
+			HeavyValue val = HeavyValue();
             while ( testQueue.pop( val )) {
                 nPopped++;
                 ++arr[ val.getNo() ];
@@ -210,7 +224,8 @@ namespace queue {
 //        CDSUNIT_DECLARE_MSQueue( SimpleValue )
 //        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
 //        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
-        CDSUNIT_DECLARE_FCQueue( SimpleValue )
+//        CDSUNIT_DECLARE_FCQueue( SimpleValue )
+		CDSUNIT_DECLARE_FCQueue( HeavyValue )
 //       CDSUNIT_DECLARE_FCDeque( SimpleValue )
 //        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
 //        CDSUNIT_DECLARE_RWQueue( SimpleValue )
