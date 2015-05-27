@@ -24,20 +24,27 @@ namespace queue {
             size_t      nWriterNo;
         };
 
-		struct HeavyValue {
-			size_t    nNo;
-			size_t      nWriterNo;
-			static int _buff[1000000];
+        struct HeavyValue {
+            size_t    nNo;
+            size_t    nWriterNo;
 
-			HeavyValue() : nNo() {}
-			HeavyValue(size_t n) : nNo(n) {
-				for (int i = 0; i < 1000000; ++i)
-					_buff[i] = i;
-			}
-			size_t getNo() const { return  nNo; }
-		};
+            int pop_buff[1000000];
 
-		int HeavyValue::_buff[] = {};
+            HeavyValue() : nNo(0),nWriterNo(0) {
+                for (int i = 0; i < 1000000; ++i)
+                    pop_buff[i] = i;
+            }
+            explicit HeavyValue(size_t n) : nNo(n), nWriterNo(n) {
+                for (int i = 0; i < 1000000; ++i)
+                    pop_buff[i] = i;
+            }
+
+            HeavyValue(const HeavyValue &object):nNo(object.nNo), nWriterNo(object.nWriterNo){
+                for (int i = 0; i < 1000000; ++i)
+                    this->pop_buff[i] = object.pop_buff[i];
+            }
+            size_t getNo() const { return  nNo; }
+        };
     }
 
     class Queue_ReaderWriter: public CppUnitMini::TestCase

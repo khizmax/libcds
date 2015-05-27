@@ -17,26 +17,35 @@ namespace queue {
         static size_t s_nQueueSize = 20000000 ;   // no more than 20 million records
 
         struct SimpleValue {
-            size_t      nNo;
+            size_t    nNo;
 
             SimpleValue(): nNo(0) {}
-            SimpleValue( size_t n ): nNo(n) {}
+            explicit SimpleValue( size_t n ): nNo(n) {}
+            SimpleValue (const SimpleValue &object):nNo(object.nNo){
+            }
+
             size_t getNo() const { return  nNo; }
         };
 
-		struct HeavyValue {
-			size_t    nNo;
-			static int push_buff[1000000];
+        struct HeavyValue {
+            size_t    nNo;
+            int pop_buff[1000000];
 
-			HeavyValue() : nNo() {}
-			HeavyValue(size_t n) : nNo(n) {
-				for (int i = 0; i < 1000000; ++i)
-					push_buff[i] = i;
-			}
-			size_t getNo() const { return  nNo; }
-		};
+            HeavyValue() : nNo(0) {
+                for (int i = 0; i < 1000000; ++i)
+                    pop_buff[i] = i;
+            }
+            explicit HeavyValue(size_t n) : nNo(n) {
+                for (int i = 0; i < 1000000; ++i)
+                    pop_buff[i] = i;
+            }
 
-		int HeavyValue::push_buff[] = {};
+            HeavyValue(const HeavyValue &object):nNo(object.nNo){
+                for (int i = 0; i < 1000000; ++i)
+                    this->pop_buff[i] = object.pop_buff[i];
+            }
+            size_t getNo() const { return  nNo; }
+        };
     }
     using namespace ns_Queue_Push;
 
