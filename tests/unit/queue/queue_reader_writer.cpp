@@ -28,7 +28,7 @@ namespace queue {
             size_t    nNo;
             size_t    nWriterNo;
 
-            int pop_buff[1000000];
+            static int pop_buff[1000000];
 
             HeavyValue() : nNo(0),nWriterNo(0) {
                 for (int i = 0; i < 1000000; ++i)
@@ -45,6 +45,7 @@ namespace queue {
             }
             size_t getNo() const { return  nNo; }
         };
+        int HeavyValue::pop_buff[] = {};
     }
 
     class Queue_ReaderWriter: public CppUnitMini::TestCase
@@ -88,7 +89,7 @@ namespace queue {
             virtual void test()
             {
                 size_t nPushCount = getTest().m_nThreadPushCount;
-				Value v;
+				HeavyValue v;
                 v.nWriterNo = m_nThreadNo;
                 v.nNo = 0;
                 m_nPushFailed = 0;
@@ -171,7 +172,7 @@ namespace queue {
                 m_nPopped = 0;
                 m_nBadWriter = 0;
                 const size_t nTotalWriters = s_nWriterThreadCount;
-                Value v;
+                HeavyValue v;
 
                 m_fTime = m_Timer.duration();
 
@@ -212,7 +213,7 @@ namespace queue {
 
             size_t nPostTestPops = 0;
             {
-                Value v;
+                HeavyValue v;
                 while ( testQueue.pop( v ))
                     ++nPostTestPops;
             }
@@ -356,12 +357,12 @@ namespace queue {
         }
 
     protected:
-        CDSUNIT_DECLARE_MoirQueue( Value )
+//        CDSUNIT_DECLARE_MoirQueue( Value )
 //        CDSUNIT_DECLARE_MSQueue( Value )
 //        CDSUNIT_DECLARE_OptimisticQueue( Value )
 //        CDSUNIT_DECLARE_BasketQueue( Value )
 //        CDSUNIT_DECLARE_FCQueue( Value )
-//		CDSUNIT_DECLARE_FCQueue( Value )
+		CDSUNIT_DECLARE_FCQueue( HeavyValue )
 //        CDSUNIT_DECLARE_FCDeque( Value )
 //        CDSUNIT_DECLARE_SegmentedQueue( Value )
 //        CDSUNIT_DECLARE_RWQueue( Value )
@@ -370,11 +371,11 @@ namespace queue {
 //        CDSUNIT_DECLARE_StdQueue( Value )
 
         CPPUNIT_TEST_SUITE(Queue_ReaderWriter)
-            CDSUNIT_TEST_MoirQueue
+//            CDSUNIT_TEST_MoirQueue
 //            CDSUNIT_TEST_MSQueue
 //            CDSUNIT_TEST_OptimisticQueue
 //            CDSUNIT_TEST_BasketQueue
-//            CDSUNIT_TEST_FCQueue
+            CDSUNIT_TEST_FCQueue
 //            CDSUNIT_TEST_FCDeque
 //            CDSUNIT_TEST_SegmentedQueue
 //            CDSUNIT_TEST_RWQueue

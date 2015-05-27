@@ -33,7 +33,7 @@ namespace queue {
         struct HeavyValue {
             size_t    nNo;
             size_t nThread;
-            int pop_buff[1000000];
+            static int pop_buff[1000000];
 
             HeavyValue() : nNo(0) {
                 for (int i = 0; i < 1000000; ++i)
@@ -50,6 +50,7 @@ namespace queue {
             }
             size_t getNo() const { return  nNo; }
         };
+        int HeavyValue::pop_buff[] = {};
     }
 
     using namespace ns_Queue_Random;
