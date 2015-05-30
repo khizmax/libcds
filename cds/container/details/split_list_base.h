@@ -91,8 +91,8 @@ namespace cds { namespace container {
             /**
                 Selects appropriate ordered-list implementation for split-list.
                 Supported types are:
-                - \p michael_list_tag - for MichaelList
-                - \p lazy_list_tag - for LazyList
+                - \p michael_list_tag - for \p MichaelList
+                - \p lazy_list_tag - for \p LazyList
             */
             typedef michael_list_tag    ordered_list;
 

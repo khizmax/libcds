@@ -90,6 +90,7 @@ namespace cds { namespace intrusive {
         typedef typename ordered_list::disposer       disposer;       ///< Node disposer functor
         typedef typename ordered_list::rcu_lock       rcu_lock;       ///< RCU scoped lock
         typedef typename ordered_list::exempt_ptr     exempt_ptr;     ///< pointer to extracted node
+        typedef typename ordered_list::raw_ptr        raw_ptr;        ///< pointer to the node for \p get() function
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
 
@@ -186,7 +187,7 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare, typename Func>
-            bool find_at( dummy_node_type * pHead, split_list::details::search_value_type<Q>& val, Compare cmp, Func f ) const
+            bool find_at( dummy_node_type * pHead, split_list::details::search_value_type<Q>& val, Compare cmp, Func f )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
@@ -194,7 +195,7 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
-            bool find_at( dummy_node_type * pHead, split_list::details::search_value_type<Q> const & val, Compare cmp ) const
+            bool find_at( dummy_node_type * pHead, split_list::details::search_value_type<Q> const & val, Compare cmp )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
@@ -202,7 +203,7 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
-            value_type * get_at( dummy_node_type * pHead, split_list::details::search_value_type<Q>& val, Compare cmp ) const
+            raw_ptr get_at( dummy_node_type * pHead, split_list::details::search_value_type<Q>& val, Compare cmp )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
@@ -404,15 +405,15 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        value_type * get_( Q const& val, Compare cmp )
+        raw_ptr get_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            value_type * p = m_List.get_at( pHead, sv, cmp );
-            m_Stat.onFind( p != nullptr );
+            raw_ptr p = m_List.get_at( pHead, sv, cmp );
+            m_Stat.onFind( !!p );
             return p;
         }
 
@@ -725,11 +726,10 @@ namespace cds { namespace intrusive {
             unlinks it, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
-            @note The function does NOT call RCU read-side lock or synchronization,
-            and does NOT dispose the item found. It just excludes the item from the set
-            and returns a pointer to item found.
-            You should lock RCU before calling of the function, and you should synchronize RCU
-            outside the RCU lock before reusing returned pointer.
+            Depends on \p bucket_type you should or should not lock RCU before calling of this function:
+            - for the set based on \ref cds_intrusive_MichaelList_rcu "MichaelList" RCU should not be locked
+            - for the set based on \ref cds_intrusive_LazyList_rcu "LazyList" RCU should be locked
+            See ordered list implementation for details.
 
             \code
             typedef cds::urcu::gc< general_buffered<> > rcu;
@@ -740,17 +740,15 @@ namespace cds { namespace intrusive {
             // ...
 
             rcu_splitlist_set::exempt_ptr p;
-            {
-                // first, we should lock RCU
-                rcu_splitlist_set::rcu_lock lock;
 
-                // Now, you can apply extract function
-                // Note that you must not delete the item found inside the RCU lock
-                p = theList.extract( 10 );
-                if ( p ) {
-                    // do something with p
-                    ...
-                }
+            // For MichaelList we should not lock RCU
+
+            // Now, you can apply extract function
+            // Note that you must not delete the item found inside the RCU lock
+            p = theList.extract( 10 );
+            if ( p ) {
+                // do something with p
+                ...
             }
 
             // We may safely release p here
@@ -873,24 +871,26 @@ namespace cds { namespace intrusive {
             RCU should be locked before call of this function.
             Returned item is valid only while RCU is locked:
             \code
-            cds::intrusive::SplitListSet< your_template_parameters > theSet;
+            typedef cds::intrusive::SplitListSet< your_template_parameters > set_class;
+            set_class theSet;
             // ...
+            typename set_class::raw_ptr rp;
             {
                 // Lock RCU
                 hash_set::rcu_lock lock;
 
-                foo * pVal = theSet.get( 5 );
-                if ( pVal ) {
-                    // Deal with pVal
+                rp = theSet.get( 5 );
+                if ( rp ) {
+                    // Deal with rp
                     //...
                 }
                 // Unlock RCU by rcu_lock destructor
-                // pVal can be retired by disposer at any time after RCU has been unlocked
+                // rp can be retired by disposer at any time after RCU has been unlocked
             }
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& key )
+        raw_ptr get( Q const& key )
         {
             return get_( key, key_comparator() );
         }
@@ -905,7 +905,7 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& key, Less pred )
+        raw_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return get_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());

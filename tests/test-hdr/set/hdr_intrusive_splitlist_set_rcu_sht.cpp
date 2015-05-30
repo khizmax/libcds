@@ -34,7 +34,7 @@ namespace set {
         > set;
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -59,7 +59,7 @@ namespace set {
         > set;
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -86,7 +86,7 @@ namespace set {
         > set;
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -113,7 +113,7 @@ namespace set {
         > set;
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -141,7 +141,7 @@ namespace set {
         > set;
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -171,7 +171,7 @@ namespace set {
         > set;
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -199,7 +199,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -225,7 +225,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -252,7 +252,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -281,7 +281,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -310,7 +310,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -340,7 +340,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -367,7 +367,7 @@ namespace set {
 
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -399,7 +399,7 @@ namespace set {
         typedef ci::SplitListSet< rcu_type, ord_list, set_traits > set;
         static_assert( set::traits::dynamic_bucket_table, "Set has static bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -427,7 +427,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 
@@ -458,7 +458,7 @@ namespace set {
         > set;
         static_assert( !set::traits::dynamic_bucket_table, "Set has dynamic bucket table" );
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
 #endif
     }
 

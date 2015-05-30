@@ -31,7 +31,7 @@ namespace set {
         > set;
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_dyn_RCU_GPB_base_less()
@@ -54,7 +54,7 @@ namespace set {
         > set;
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_dyn_RCU_GPB_base_cmpmix()
@@ -79,7 +79,7 @@ namespace set {
         > set;
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_dyn_RCU_GPB_base_cmpmix_stat()
@@ -104,7 +104,7 @@ namespace set {
 
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_dyn_RCU_GPB_member_cmp()
@@ -129,7 +129,7 @@ namespace set {
         > set;
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_dyn_RCU_GPB_member_less()
@@ -155,7 +155,7 @@ namespace set {
         > set;
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_dyn_RCU_GPB_member_cmpmix()
@@ -183,7 +183,7 @@ namespace set {
         > set;
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_dyn_RCU_GPB_member_cmpmix_stat()
@@ -213,7 +213,7 @@ namespace set {
         typedef ci::SplitListSet< rcu_type, ord_list, set_traits > set;
         static_assert(set::traits::dynamic_bucket_table, "Set has static bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     // Static bucket table
@@ -238,7 +238,7 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_st_RCU_GPB_base_less()
@@ -262,7 +262,7 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_st_RCU_GPB_base_cmpmix()
@@ -287,7 +287,7 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_st_RCU_GPB_base_cmpmix_stat()
@@ -313,7 +313,7 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_st_RCU_GPB_member_cmp()
@@ -340,7 +340,7 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_st_RCU_GPB_member_less()
@@ -367,7 +367,7 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_st_RCU_GPB_member_cmpmix()
@@ -395,7 +395,7 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 
     void IntrusiveHashSetHdrTest::split_st_RCU_GPB_member_cmpmix_stat()
@@ -424,6 +424,6 @@ namespace set {
         > set;
         static_assert(!set::traits::dynamic_bucket_table, "Set has dynamic bucket table");
 
-        test_rcu_int<set>();
+        test_rcu_int_michael_list<set>();
     }
 } // namespace set

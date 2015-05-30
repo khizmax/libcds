@@ -61,7 +61,7 @@ namespace map {
     {
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_GPT_cmp_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -80,14 +80,14 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
     }
 
     void HashMapHdrTest::Split_RCU_GPT_less()
     {
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_GPT_less_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -106,14 +106,14 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
     }
 
     void HashMapHdrTest::Split_RCU_GPT_cmpmix()
     {
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_cmpmix_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -131,14 +131,14 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
     }
 
     void HashMapHdrTest::Split_RCU_GPT_cmpmix_stat()
     {
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_cmpmix_stat_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -157,7 +157,7 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
     }
 
 } // namespace map

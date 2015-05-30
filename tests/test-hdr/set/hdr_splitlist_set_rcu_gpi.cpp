@@ -62,7 +62,7 @@ namespace set {
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_GPI_cmp_traits > set;
 
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -79,7 +79,7 @@ namespace set {
                 >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
     }
 
     void HashSetHdrTest::Split_RCU_GPI_less()
@@ -87,7 +87,7 @@ namespace set {
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_GPI_less_traits > set;
 
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -104,14 +104,14 @@ namespace set {
                 >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
     }
 
     void HashSetHdrTest::Split_RCU_GPI_cmpmix()
     {
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_cmpmix_traits > set;
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -127,14 +127,14 @@ namespace set {
                 >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
     }
 
     void HashSetHdrTest::Split_RCU_GPI_cmpmix_stat()
     {
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_cmpmix_stat_traits > set;
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -151,7 +151,7 @@ namespace set {
                 >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
     }
 
 } // namespace set

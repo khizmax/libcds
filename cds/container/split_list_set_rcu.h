@@ -9,6 +9,70 @@
 
 namespace cds { namespace container {
 
+    //@cond
+    namespace split_list { namespace details {
+
+        template <
+            typename T,
+            class OrdList,
+            typename OrdListTag
+        >
+        class make_raw_ptr;
+
+#ifdef CDSLIB_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
+        template <typename T, class RawPtr>
+        class make_raw_ptr< T, RawPtr, cds::container::michael_list_tag >
+        {
+            typedef RawPtr intrusive_raw_ptr;
+            typedef typename intrusive_raw_ptr::value_type node_type;
+            typedef T value_type;
+
+            struct raw_ptr_converter
+            {
+                value_type * operator()( node_type * p ) const
+                {
+                   return p ? &p->m_Value : nullptr;
+                }
+
+                value_type& operator()( node_type& n ) const
+                {
+                    return n.m_Value;
+                }
+
+                value_type const& operator()( node_type const& n ) const
+                {
+                    return n.m_Value;
+                }
+            };
+        public:
+            typedef cds::urcu::raw_ptr_adaptor< value_type, intrusive_raw_ptr, raw_ptr_converter > raw_ptr;
+
+            static raw_ptr make( typename intrusive_raw_ptr&& p )
+            {
+                return raw_ptr(std::move( p ));
+            }
+        };
+#endif
+
+#ifdef CDSLIB_CONTAINER_DETAILS_LAZY_LIST_BASE_H
+        template <typename T, typename RawPtr>
+        class make_raw_ptr< T, RawPtr, cds::container::lazy_list_tag >
+        {
+            typedef RawPtr node_type_pointer;
+            typedef T value_type;
+
+        public:
+            typedef value_type * raw_ptr;
+
+            static raw_ptr make( node_type_pointer p )
+            {
+                return p ? &p->m_Value : nullptr;
+            }
+        };
+#endif
+    }} //namespace split_list::details
+    //@endcond
+
     /// Split-ordered list set (template specialization for \ref cds_urcu_desc "RCU")
     /** @ingroup cds_nonintrusive_set
         \anchor cds_nonintrusive_SplitListSet_rcu
@@ -181,6 +245,7 @@ namespace cds { namespace container {
         typedef T       value_type; ///< Type of value to be storedin the set
         typedef Traits  traits;    ///< \p Traits template argument
 
+        // Note: ordered_list is not real ordered list type. Actual type is base_class::ordered_list
         typedef typename maker::ordered_list        ordered_list;   ///< Underlying ordered list class
         typedef typename base_class::key_comparator key_comparator; ///< key compare functor
 
@@ -206,6 +271,20 @@ namespace cds { namespace container {
     public:
         /// pointer to extracted node
         using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::ordered_list_traits::disposer >;
+#   ifdef CDS_DOXYGEN_INVOKED
+        /// pointer to the node for \p get() function
+        /**
+            For \p LazyList, \p %raw_ptr is just pointer to \p value_type.
+
+            For \p MichaelList, \p %raw_ptr is \p cds::urcu::raw_ptr object giving access to \p value_type.
+        */
+        typedef implementation_defined raw_ptr;
+#   else
+    private:
+        typedef split_list::details::make_raw_ptr< value_type, typename base_class::ordered_list::raw_ptr, typename traits::ordered_list > raw_ptr_maker;
+    public:
+        typedef typename raw_ptr_maker::raw_ptr raw_ptr;
+#endif
 
     protected:
         //@cond
@@ -594,31 +673,29 @@ namespace cds { namespace container {
             unlinks it from the set, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
-            @note The function does NOT call RCU read-side lock or synchronization,
-            and does NOT dispose the item found. It just excludes the item from the set
-            and returns a pointer to item found.
-            You should lock RCU before calling of the function, and you should synchronize RCU
-            outside the RCU lock to free extracted item
+            Depends on \p bucket_type you should or should not lock RCU before calling of this function:
+            - for the set based on \ref cds_intrusive_MichaelList_rcu "MichaelList" RCU should not be locked
+            - for the set based on \ref cds_intrusive_LazyList_rcu "LazyList" RCU should be locked
+            See ordered list implementation for details.
 
             \code
             typedef cds::urcu::gc< general_buffered<> > rcu;
+
+            // Split-list set based on MichaelList by default
             typedef cds::container::SplitListSet< rcu, Foo > splitlist_set;
 
             splitlist_set theSet;
             // ...
 
             splitlist_set::exempt_ptr p;
-            {
-                // first, we should lock RCU
-                splitlist_set::rcu_lock lock;
 
-                // Now, you can apply extract function
-                // Note that you must not delete the item found inside the RCU lock
-                p = theSet.extract( 10 );
-                if ( p ) {
-                    // do something with p
-                    ...
-                }
+            // For MichaelList we should not lock RCU
+
+            // Now, you can apply extract function
+            p = theSet.extract( 10 );
+            if ( p ) {
+                // do something with p
+                ...
             }
 
             // We may safely release p here
@@ -762,10 +839,9 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename Q>
-        value_type * get( Q const& key )
+        raw_ptr get( Q const& key )
         {
-            node_type * pNode = base_class::get( key );
-            return pNode ? &pNode->m_Value : nullptr;
+            return raw_ptr_maker::make( base_class::get( key ));
         }
 
         /// Finds the key \p key and return the item found
@@ -778,11 +854,10 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& key, Less pred )
+        raw_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            node_type * pNode = base_class::get_with( key, typename maker::template predicate_wrapper<Less>::type());
-            return pNode ? &pNode->m_Value : nullptr;
+            return raw_ptr_maker::make( base_class::get_with( key, typename maker::template predicate_wrapper<Less>::type()));
         }
 
         /// Clears the set (not atomic)

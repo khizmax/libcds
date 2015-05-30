@@ -178,6 +178,7 @@ namespace cds { namespace container {
         typedef typename base_class::exempt_ptr     exempt_ptr; ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
+        typedef typename base_class::raw_ptr        raw_ptr;    ///< type of \p get() return value
 
         //@cond
         typedef cds::container::split_list::implementation_tag implementation_tag;
@@ -462,31 +463,29 @@ namespace cds { namespace container {
             unlinks it from the map, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If the item with the key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
-            @note The function does NOT call RCU read-side lock or synchronization,
-            and does NOT dispose the item found. It just excludes the item from the map
-            and returns a pointer to item found.
-            You should lock RCU before calling of the function, and you should synchronize RCU
-            outside the RCU lock to free extracted item
+            Depends on ordered list you should or should not lock RCU before calling of this function:
+            - for the set based on \ref cds_intrusive_MichaelList_rcu "MichaelList" RCU should not be locked
+            - for the set based on \ref cds_intrusive_LazyList_rcu "LazyList" RCU should be locked
+            See ordered list implementation for details.
 
             \code
             typedef cds::urcu::gc< general_buffered<> > rcu;
+
+            // Split-list set based on MichaelList by default
             typedef cds::container::SplitListMap< rcu, int, Foo > splitlist_map;
 
             splitlist_map theMap;
             // ...
 
             typename splitlist_map::exempt_ptr p;
-            {
-                // first, we should lock RCU
-                typename splitlist_map::rcu_lock lock;
 
-                // Now, you can apply extract function
-                // Note that you must not delete the item found inside the RCU lock
-                p = theMap.extract( 10 )
-                if ( p ) {
-                    // do something with p
-                    ...
-                }
+            // For MichaelList we should not lock RCU
+
+            // Now, you can apply extract function
+            p = theMap.extract( 10 )
+            if ( p ) {
+                // do something with p
+                ...
             }
 
             // We may safely release p here
@@ -587,7 +586,7 @@ namespace cds { namespace container {
         /// Finds \p key and return the item found
         /** \anchor cds_intrusive_SplitListMap_rcu_get
             The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p nullptr.
+            If \p key is not found it returns empty \p raw_ptr.
 
             Note the compare functor should accept a parameter of type \p K that can be not the same as \p value_type.
 
@@ -602,7 +601,7 @@ namespace cds { namespace container {
                 // Lock RCU
                 typename splitlist_map::rcu_lock lock;
 
-                typename splitlist_map::value_type * pVal = theMap.get( 5 );
+                typename splitlist_map::raw_ptr pVal = theMap.get( 5 );
                 if ( pVal ) {
                     // Deal with pVal
                     //...
@@ -613,7 +612,7 @@ namespace cds { namespace container {
             \endcode
         */
         template <typename K>
-        value_type * get( K const& key )
+        raw_ptr get( K const& key )
         {
             return base_class::get( key );
         }
@@ -628,7 +627,7 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        value_type * get_with( K const& key, Less pred )
+        raw_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return base_class::get_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());

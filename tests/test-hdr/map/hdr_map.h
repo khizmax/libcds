@@ -434,6 +434,12 @@ namespace map {
         }
 
         template <class Map>
+        void test_rcu_split_list()
+        {
+            test_rcu_michael_list<Map>();
+        }
+
+        template <class Map>
         void test_int_with( Map& m )
         {
             std::pair<bool, bool> ensureResult;

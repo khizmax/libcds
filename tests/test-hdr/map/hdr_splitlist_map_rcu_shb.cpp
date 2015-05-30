@@ -64,7 +64,7 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_SHB_cmp_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -83,7 +83,7 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
 #endif
     }
 
@@ -92,7 +92,7 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_SHB_less_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -111,7 +111,7 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
 #endif
     }
 
@@ -120,7 +120,7 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_cmpmix_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -138,7 +138,7 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
 #endif
     }
 
@@ -147,7 +147,7 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         // traits-based version
         typedef cc::SplitListMap< rcu_type, key_type, value_type, RCU_cmpmix_stat_traits > map_type;
-        test_rcu< map_type >();
+        test_rcu_split_list< map_type >();
 
         // option-based version
         typedef cc::SplitListMap< rcu_type,
@@ -166,7 +166,7 @@ namespace map {
                 >
             >::type
         > opt_map;
-        test_rcu< opt_map >();
+        test_rcu_split_list< opt_map >();
 #endif
     }
 

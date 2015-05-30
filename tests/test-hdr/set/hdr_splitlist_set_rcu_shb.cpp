@@ -66,7 +66,7 @@ namespace set {
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_SHB_cmp_traits > set;
 
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -83,7 +83,7 @@ namespace set {
                 >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
 #endif
     }
 
@@ -93,7 +93,7 @@ namespace set {
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_SHB_less_traits > set;
 
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -110,7 +110,7 @@ namespace set {
                 >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
 #endif
     }
 
@@ -119,7 +119,7 @@ namespace set {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_cmpmix_traits > set;
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -135,7 +135,7 @@ namespace set {
                 >
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
 #endif
     }
 
@@ -144,7 +144,7 @@ namespace set {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         // traits-based version
         typedef cc::SplitListSet< rcu_type, item, RCU_cmpmix_stat_traits > set;
-        test_int_rcu< set >();
+        test_int_rcu_michael_list< set >();
 
         // option-based version
         typedef cc::SplitListSet< rcu_type, item,
@@ -161,7 +161,7 @@ namespace set {
                 ,cc::opt::stat< cc::split_list::stat<>>
             >::type
         > opt_set;
-        test_int_rcu< opt_set >();
+        test_int_rcu_michael_list< opt_set >();
 #endif
     }
 

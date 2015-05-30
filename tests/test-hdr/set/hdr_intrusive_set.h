@@ -1033,7 +1033,7 @@ namespace set {
                     CPPUNIT_ASSERT( s.insert( arrItems[i] ));
 
                 for ( size_t i = 0; i < nLimit; i += 2 ) {
-                    value_type * 1;
+                    value_type * pVal;
                     int nKey = arr[i];
                     {
                         rcu_lock l;
