@@ -120,6 +120,49 @@ namespace cds {  namespace algo {  namespace flat_combining {
 			pRec->_condVar.notify_one();
 		}
 	};
+
+	//===================================================================
+    template<typename UserPublicationRecord, typename Traits>
+    struct TimedWaitLocalMutexAndCondVar
+    {
+        struct ExtendedPublicationRecord: public UserPublicationRecord
+        {
+            boost::mutex                _waitMutex;
+            boost::condition_variable   _condVar;
+        };
+
+        void wait(ExtendedPublicationRecord * pRec){
+            boost::unique_lock<boost::mutex> lock(pRec->_waitMutex);
+            if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
+                pRec->_condVar.timed_wait(lock, boost::posix_time::millisec(2));
+        }
+
+        void notify(ExtendedPublicationRecord* pRec){
+            pRec->nRequest.store(req_Response, Traits::memory_model::memory_order_release);
+            pRec->_condVar.notify_one();
+        }
+    };
+    //===================================================================
+    template<typename UserPublicationRecord, typename Traits>
+    struct TimedWaitGlobalMutexAndCondVar
+    {
+        boost::mutex              _globalMutex;
+        boost::condition_variable _globalCondVar;
+
+        struct ExtendedPublicationRecord: public UserPublicationRecord
+        {
+        };
+        void wait(ExtendedPublicationRecord * pRec){
+            boost::unique_lock<boost::mutex> lock(_globalMutex);
+            if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
+                _globalCondVar.timed_wait(lock, boost::posix_time::millisec(2));
+        }
+
+        void notify(ExtendedPublicationRecord* pRec){
+            pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
+            _globalCondVar.notify_all();
+        }
+    };
 }}}//end namespace cds::algo::flat_combining
 
 #endif //CDSLIB_ALGO_FLAT_COMBINING_WAIT_STRATEGY_H

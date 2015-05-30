@@ -431,7 +431,12 @@ namespace queue {
 		typedef cds::container::FCQueueOneMutexOneCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_oneMutex_oneCondVar;
 		typedef cds::container::FCQueueSingleMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_singleMutex_MultCondVar;
 		typedef cds::container::FCQueueMultMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_multMutex_multCondVar;
-        //typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
+		typedef cds::container::FCQueueTimedWaitGlobalMutexAndCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat >
+		                FCQueue_timedWait_Global_Mutex_And_CondVar;
+		typedef cds::container::FCQueueTimedWaitLocalMutexAndCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat >
+		                FCQueue_timedWait_Local_Mutex_And_CondVar;
+
+		//typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
         //typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque_elimination_stat;
 
         //typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> > > FCQueue_list;

@@ -290,7 +290,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
 //        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
 //        CDSUNIT_DECLARE_FCQueue( SimpleValue )
-		CDSUNIT_DECLARE_FCQueue( HeavyValue )
+		  CDSUNIT_DECLARE_FCQueue( HeavyValue )
 //        CDSUNIT_DECLARE_FCDeque( SimpleValue )
 //        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
 //        CDSUNIT_DECLARE_RWQueue( SimpleValue )
