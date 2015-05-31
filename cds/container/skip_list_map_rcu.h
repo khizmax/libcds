@@ -144,16 +144,36 @@ namespace cds { namespace container {
         /// pointer to extracted node
         using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_type_traits::disposer >;
 
+    private:
+        //@cond
+        struct raw_ptr_converter
+        {
+            value_type * operator()( node_type * p ) const
+            {
+               return p ? &p->m_Value : nullptr;
+            }
+
+            value_type& operator()( node_type& n ) const
+            {
+                return n.m_Value;
+            }
+
+            value_type const& operator()( node_type const& n ) const
+            {
+                return n.m_Value;
+            }
+        };
+        //@endcond
+
+    public:
+        /// Result of \p get(), \p get_with() functions - pointer to the node found
+        typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
+
     protected:
         //@cond
         unsigned int random_level()
         {
             return base_class::random_level();
-        }
-
-        value_type * to_value_ptr( node_type * pNode ) const CDS_NOEXCEPT
-        {
-            return pNode ? &pNode->m_Value : nullptr;
         }
         //@endcond
 
@@ -548,8 +568,8 @@ namespace cds { namespace container {
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SkipListMap_rcu_get
-            The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p nullptr.
+            The function searches the item with key equal to \p key and returns a \p raw_ptr object pointing to an item found.
+            If \p key is not found it returns empty \p raw_ptr.
 
             Note the compare functor in \p Traits class' template argument
             should accept a parameter of type \p K that can be not the same as \p key_type.
@@ -560,26 +580,25 @@ namespace cds { namespace container {
             typedef cds::container::SkipListMap< cds::urcu::gc< cds::urcu::general_buffered<> >, int, foo, my_traits > skip_list;
             skip_list theList;
             // ...
+            typename skip_list::raw_ptr pVal;
             {
                 // Lock RCU
                 skip_list::rcu_lock lock;
 
-                skip_list::value_type * pVal = theList.get( 5 );
-                // Deal with pVal
-                //...
-
-                // Unlock RCU by rcu_lock destructor
-                // pVal can be freed at any time after RCU unlocking
+                pVal = theList.get( 5 );
+                if ( pVal ) {
+                    // Deal with pVal
+                    //...
+                }
             }
+            // You can manually release pVal after RCU-locked section
+            pVal.release();
             \endcode
-
-            After RCU unlocking the \p %force_dispose member function can be called manually,
-            see \ref force_dispose for explanation.
         */
         template <typename K>
-        value_type * get( K const& key )
+        raw_ptr get( K const& key )
         {
-            return to_value_ptr( base_class::get( key ));
+            return raw_ptr( base_class::get( key ));
         }
 
         /// Finds the key \p key and return the item found
@@ -592,10 +611,10 @@ namespace cds { namespace container {
             \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        value_type * get_with( K const& key, Less pred )
+        raw_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return to_value_ptr( base_class::get_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >() ));
+            return raw_ptr( base_class::get_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >() ));
         }
 
         /// Clears the map (not atomic)
@@ -623,14 +642,6 @@ namespace cds { namespace container {
         stat const& statistics() const
         {
             return base_class::statistics();
-        }
-
-        /// Clears internal list of ready-to-delete items passing them to RCU reclamation cycle
-        /** @copydetails cds_intrusive_SkipListSet_rcu_force_dispose
-        */
-        void force_dispose()
-        {
-            return base_class::force_dispose();
         }
     };
 }} // namespace cds::container

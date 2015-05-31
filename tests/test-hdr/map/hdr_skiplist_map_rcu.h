@@ -162,17 +162,19 @@ namespace map {
 
                 typedef typename Map::value_type value_type;
                 typename Map::exempt_ptr ep;
+                typename Map::raw_ptr rp;
 
                 // extract/get
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrItem[i];
                     {
                         rcu_lock l;
-                        value_type * pVal = m.get( nKey );
-                        CPPUNIT_ASSERT( pVal != nullptr );
-                        CPPUNIT_CHECK( pVal->first == nKey );
-                        CPPUNIT_CHECK( pVal->second.m_val == nKey * 2 );
+                        rp = m.get( nKey );
+                        CPPUNIT_ASSERT( rp );
+                        CPPUNIT_CHECK( rp->first == nKey );
+                        CPPUNIT_CHECK( rp->second.m_val == nKey * 2 );
                     }
+                    rp.release();
 
                     ep = m.extract( nKey );
                     CPPUNIT_ASSERT( ep );
@@ -183,7 +185,7 @@ namespace map {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( m.get( nKey ) ==  nullptr );
+                        CPPUNIT_CHECK( !m.get( nKey ));
                     }
                     ep = m.extract( nKey );
                     CPPUNIT_CHECK( !ep );
@@ -198,11 +200,12 @@ namespace map {
                     int nKey = arrItem[i];
                     {
                         rcu_lock l;
-                        value_type * pVal = m.get_with( wrapped_item(nKey), wrapped_less() );
-                        CPPUNIT_ASSERT( pVal != nullptr );
-                        CPPUNIT_CHECK( pVal->first == nKey );
-                        CPPUNIT_CHECK( pVal->second.m_val == nKey * 2 );
+                        rp = m.get_with( wrapped_item(nKey), wrapped_less() );
+                        CPPUNIT_ASSERT( rp );
+                        CPPUNIT_CHECK( rp->first == nKey );
+                        CPPUNIT_CHECK( rp->second.m_val == nKey * 2 );
                     }
+                    rp.release();
 
                     ep = m.extract_with( wrapped_item( nKey ), wrapped_less() );
                     CPPUNIT_ASSERT( ep );
@@ -213,7 +216,7 @@ namespace map {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( m.get_with( wrapped_item(nKey), wrapped_less() ) ==  nullptr );
+                        CPPUNIT_CHECK( !m.get_with( wrapped_item(nKey), wrapped_less() ));
                     }
                     ep = m.extract_with( wrapped_item( nKey ), wrapped_less() );
                     CPPUNIT_CHECK( !ep );

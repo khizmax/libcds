@@ -8,6 +8,9 @@
       see doc.
       Thus, semantics of extract()/get() of all RCU-based set and maps based on 
       MichaelList (MichaelSet/Map, SplitListSet/Map) has been changed too.
+    - Changed: SplitListSet/Map functions get() and get_with() return special wrapper
+      object of type raw_ptr, see doc.
+    - Removed: SplitListSet/Map force_dispose() function.
     - cds::lock namespace is renamed to cds::sync. All classes defined in cds::lock namespace 
       are moved to cds::sync with new names (for example, cds::lock::SpinLock is renamed to
       cds::sync::spin_lock). cds::lock namespace and its contents is deprecated, it is kept 

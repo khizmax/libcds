@@ -753,6 +753,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_set_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\node_traits.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\details\raw_ptr_disposer.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\single_link_struct.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\skip_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\split_list_base.h" />

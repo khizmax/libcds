@@ -9,6 +9,7 @@
 #include <cds/details/make_const_type.h>
 #include <cds/urcu/exempt_ptr.h>
 #include <cds/urcu/raw_ptr.h>
+#include <cds/intrusive/details/raw_ptr_disposer.h>
 
 namespace cds { namespace intrusive {
 
@@ -195,42 +196,13 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
-        struct raw_ptr_disposer
-        {
-            node_type *     pReclaimedChain;
-
-            raw_ptr_disposer()
-                : pReclaimedChain( nullptr )
-            {}
-
-            raw_ptr_disposer( position& pos )
-                : pReclaimedChain( pos.pDelChain )
+        struct chain_disposer {
+            void operator()( node_type * pChain ) const
             {
-                pos.pDelChain = nullptr;
-            }
-
-            raw_ptr_disposer( raw_ptr_disposer&& d )
-                : pReclaimedChain( d.pReclaimedChain )
-            {
-                d.pReclaimedChain = nullptr;
-            }
-
-            raw_ptr_disposer( raw_ptr_disposer const& ) = delete;
-
-            ~raw_ptr_disposer()
-            {
-                apply();
-            }
-
-            void apply()
-            {
-                if ( pReclaimedChain ) {
-                    assert( !gc::is_locked());
-                    dispose_chain( pReclaimedChain );
-                    pReclaimedChain = nullptr;
-                }
+                dispose_chain( pChain );
             }
         };
+        typedef cds::intrusive::details::raw_ptr_disposer< gc, node_type, chain_disposer> raw_ptr_disposer;
         //@endcond
 
     public:

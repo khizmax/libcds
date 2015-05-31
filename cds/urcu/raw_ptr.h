@@ -19,7 +19,7 @@ namespace cds { namespace urcu {
         outside RCU lock.
 
         The object of \p %raw_ptr solves that problem: it contains the pointer to the node found
-        and a chain of nodes that be reclaimed during traversing. The \p %raw_ptr object destructor
+        and a chain of nodes that were reclaimed during traversing. The \p %raw_ptr object destructor
         frees the chain (but not the node found) passing it to RCU \p batch_retire().
 
         The object of \p %raw_ptr class must be destructed only outside RCU-lock of current thread.
@@ -109,12 +109,12 @@ namespace cds { namespace urcu {
         /**
             This operator may be called only inside RCU-lock.
             The \p this should be empty.
-
-            In general, move assignment is intented for internal use.
         */
         raw_ptr& operator=( raw_ptr&& p ) CDS_NOEXCEPT
         {
             assert( empty() );
+            if ( !rcu::is_locked() )
+                release();
 
             m_ptr = p.m_ptr;
             m_Enum = std::move( p.m_Enum );
@@ -159,8 +159,8 @@ namespace cds { namespace urcu {
 
         /// Releases the \p %raw_ptr object
         /**
-            This function may be called only outside RCU section.
-            After \p %release() the object can be reused.
+            This function may be called only outside RCU locked region.
+            After \p %release() the object becomes empty and can be reused.
         */
         void release()
         {

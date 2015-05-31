@@ -1,0 +1,65 @@
+//$$CDS-header$$
+
+#ifndef CDSLIB_INTRUSIVE_DETAILS_RAW_PTR_DISPOSER_H
+#define CDSLIB_INTRUSIVE_DETAILS_RAW_PTR_DISPOSER_H
+
+#include <cds/details/defs.h>
+
+//@cond
+namespace cds { namespace intrusive { namespace details {
+
+    template <typename RCU, typename NodeType, typename Disposer>
+    struct raw_ptr_disposer
+    {
+        typedef RCU gc;
+        typedef NodeType node_type;
+        typedef Disposer disposer;
+
+        node_type *     pReclaimedChain;
+
+        raw_ptr_disposer()
+            : pReclaimedChain( nullptr )
+        {}
+
+        template <typename Position>
+        explicit raw_ptr_disposer( Position& pos )
+            : pReclaimedChain( pos.pDelChain )
+        {
+            pos.pDelChain = nullptr;
+        }
+
+        raw_ptr_disposer( raw_ptr_disposer&& d )
+            : pReclaimedChain( d.pReclaimedChain )
+        {
+            d.pReclaimedChain = nullptr;
+        }
+
+        raw_ptr_disposer( raw_ptr_disposer const& ) = delete;
+
+        ~raw_ptr_disposer()
+        {
+            apply();
+        }
+
+        raw_ptr_disposer& operator=(raw_ptr_disposer&& d)
+        {
+            assert( pReclaimedChain == nullptr );
+            pReclaimedChain = d.pReclaimedChain;
+            d.pReclaimedChain = nullptr;
+            retur *this;
+        }
+
+        void apply()
+        {
+            if ( pReclaimedChain ) {
+                assert( !gc::is_locked());
+                disposer()( pReclaimedChain );
+                pReclaimedChain = nullptr;
+            }
+        }
+    };
+
+}}} // namespace cds::intrusive::details
+//@endcond
+
+#endif // #ifndef CDSLIB_INTRUSIVE_DETAILS_RAW_PTR_DISPOSER_H

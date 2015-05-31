@@ -257,19 +257,21 @@ namespace set {
             // extract/get test
             {
                 typename Set::exempt_ptr ep;
+                typename Set::raw_ptr rp;
                 // extract
                 {
                     fill_skiplist( s, v );
-                    value_type * pVal;
+
                     for ( int i = c_nArrSize - 1; i >= 0; i -= 1 ) {
                         {
                             rcu_lock l;
-                            pVal = s.get( i );
-                            CPPUNIT_ASSERT( pVal != nullptr );
-                            CPPUNIT_CHECK( pVal->nKey == i );
-                            CPPUNIT_CHECK( pVal->nVal == i * 2 );
-                            pVal->nVal *= 2;
+                            rp = s.get( i );
+                            CPPUNIT_ASSERT( rp );
+                            CPPUNIT_CHECK( rp->nKey == i );
+                            CPPUNIT_CHECK( rp->nVal == i * 2 );
+                            rp->nVal *= 2;
                         }
+                        rp.release();
 
                         ep = s.extract( i );
                         CPPUNIT_ASSERT( ep );
@@ -280,7 +282,7 @@ namespace set {
 
                         {
                             rcu_lock l;
-                            CPPUNIT_CHECK( s.get( i ) == nullptr );
+                            CPPUNIT_CHECK( !s.get( i ));
                         }
                         ep = s.extract( i );
                         CPPUNIT_CHECK( !ep );
@@ -296,12 +298,13 @@ namespace set {
                     for ( int i = c_nArrSize - 1; i >= 0; i -= 1 ) {
                         {
                             rcu_lock l;
-                            value_type * pVal = s.get_with( other_key(i), other_key_less<typename Set::value_type>() );
-                            CPPUNIT_ASSERT( pVal != nullptr );
-                            CPPUNIT_CHECK( pVal->nKey == i );
-                            CPPUNIT_CHECK( pVal->nVal == i * 2 );
-                            pVal->nVal *= 2;
+                            rp = s.get_with( other_key(i), other_key_less<typename Set::value_type>() );
+                            CPPUNIT_ASSERT( rp );
+                            CPPUNIT_CHECK( rp->nKey == i );
+                            CPPUNIT_CHECK( rp->nVal == i * 2 );
+                            rp->nVal *= 2;
                         }
+                        rp.release();
 
                         ep = s.extract_with( other_key( i ), other_key_less<typename Set::value_type>() );
                         CPPUNIT_ASSERT( ep );
@@ -312,7 +315,7 @@ namespace set {
 
                         {
                             rcu_lock l;
-                            CPPUNIT_CHECK( s.get_with( other_key( i ), other_key_less<typename Set::value_type>() ) == nullptr );
+                            CPPUNIT_CHECK( !s.get_with( other_key( i ), other_key_less<typename Set::value_type>() ));
                         }
                         ep = s.extract_with( other_key( i ), other_key_less<typename Set::value_type>() );
                         CPPUNIT_CHECK( !ep );

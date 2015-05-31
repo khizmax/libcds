@@ -10,7 +10,8 @@
 #include <cds/urcu/details/check_deadlock.h>
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/urcu/exempt_ptr.h>
-
+#include <cds/urcu/raw_ptr.h>
+#include <cds/intrusive/details/raw_ptr_disposer.h>
 
 namespace cds { namespace intrusive {
 
@@ -551,6 +552,39 @@ namespace cds { namespace intrusive {
 
         typedef std::unique_ptr< node_type, typename node_builder::node_disposer >    scoped_node_ptr;
 
+        static void dispose_node( value_type * pVal )
+        {
+            assert( pVal );
+
+            typename node_builder::node_disposer()( node_traits::to_node_ptr(pVal) );
+            disposer()( pVal );
+        }
+
+        struct node_disposer
+        {
+            void operator()( value_type * pVal )
+            {
+                dispose_node( pVal );
+            }
+        };
+
+        static void dispose_chain( node_type * pChain )
+        {
+            if ( pChain ) {
+                assert( !gc::is_locked() );
+
+                auto f = [&pChain]() -> cds::urcu::retired_ptr {
+                    node_type * p = pChain;
+                    if ( p ) {
+                        pChain = p->m_pDelChain;
+                        return cds::urcu::make_retired_ptr<node_disposer>( node_traits::to_value_ptr( p ));
+                    }
+                    return cds::urcu::make_retired_ptr<node_disposer>( static_cast<value_type *>(nullptr));
+                };
+                gc::batch_retire(std::ref(f));
+            }
+        }
+
         struct position {
             node_type *   pPrev[ c_nMaxHeight ];
             node_type *   pSucc[ c_nMaxHeight ];
@@ -562,12 +596,20 @@ namespace cds { namespace intrusive {
             position()
                 : pDelChain( nullptr )
             {}
-#       ifdef _DEBUG
+
             ~position()
             {
-                assert( pDelChain == nullptr );
+                dispose_chain( pDelChain );
             }
-#       endif
+
+            void dispose( node_type * p )
+            {
+                assert( p != nullptr );
+                assert( p->m_pDelChain == nullptr );
+
+                p->m_pDelChain = pDelChain;
+                pDelChain = p;
+            }
         };
 
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock>   check_deadlock_policy;
@@ -596,26 +638,25 @@ namespace cds { namespace intrusive {
         {
             return node_builder::make_tower( v, m_RandomLevelGen );
         }
-
-        static void dispose_node( value_type * pVal )
-        {
-            assert( pVal );
-
-            typename node_builder::node_disposer()( node_traits::to_node_ptr(pVal) );
-            disposer()( pVal );
-        }
-
-        struct node_disposer
-        {
-            void operator()( value_type * pVal )
-            {
-                dispose_node( pVal );
-            }
-        };
         //@endcond
 
     public:
         using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, node_disposer, void >; ///< pointer to extracted node
+
+    private:
+        //@cond
+        struct chain_disposer {
+            void operator()( node_type * pChain ) const
+            {
+                dispose_chain( pChain );
+            }
+        };
+        typedef cds::intrusive::details::raw_ptr_disposer< gc, node_type, chain_disposer> raw_ptr_disposer;
+        //@endcond
+
+    public:
+        /// Result of \p get(), \p get_with() functions - pointer to the node found
+        typedef cds::urcu::raw_ptr< gc, value_type, raw_ptr_disposer > raw_ptr;
 
     protected:
         //@cond
@@ -672,7 +713,7 @@ namespace cds { namespace intrusive {
                                 if ( !is_extracted( pSucc )) {
                                     // We cannot free the node at this moment since RCU is locked
                                     // Link deleted nodes to a chain to free later
-                                    link_for_remove( pos, pCur.ptr() );
+                                    pos.dispose( pCur.ptr() );
                                     m_Stat.onEraseWhileFind();
                                 }
                                 else {
@@ -746,7 +787,7 @@ namespace cds { namespace intrusive {
                                 if ( !is_extracted( pSucc )) {
                                     // We cannot free the node at this moment since RCU is locked
                                     // Link deleted nodes to a chain to free later
-                                    link_for_remove( pos, pCur.ptr() );
+                                    pos.dispose( pCur.ptr() );
                                     m_Stat.onEraseWhileFind();
                                 }
                                 else {
@@ -773,7 +814,7 @@ namespace cds { namespace intrusive {
             marked_node_ptr pSucc;
             marked_node_ptr pCur;
 
-retry:
+        retry:
             pPred = m_Head.head();
 
             for ( int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel ) {
@@ -810,7 +851,7 @@ retry:
                                 if ( !is_extracted( pSucc )) {
                                     // We cannot free the node at this moment since RCU is locked
                                     // Link deleted nodes to a chain to free later
-                                    link_for_remove( pos, pCur.ptr() );
+                                    pos.dispose( pCur.ptr() );
                                     m_Stat.onEraseWhileFind();
                                 }
                                 else {
@@ -883,14 +924,6 @@ retry:
             return true;
         }
 
-        static void link_for_remove( position& pos, node_type * pDel )
-        {
-            assert( pDel->m_pDelChain == nullptr );
-
-            pDel->m_pDelChain = pos.pDelChain;
-            pos.pDelChain = pDel;
-        }
-
         template <typename Func>
         bool try_remove_at( node_type * pDel, position& pos, Func f, bool bExtract )
         {
@@ -948,7 +981,7 @@ retry:
                     if ( !bExtract ) {
                         // We cannot free the node at this moment since RCU is locked
                         // Link deleted nodes to a chain to free later
-                        link_for_remove( pos, pDel );
+                        pos.dispose( pDel );
                         m_Stat.onFastErase();
                     }
                     else
@@ -1034,32 +1067,37 @@ retry:
         bool do_find_with( Q& val, Compare cmp, Func f )
         {
             position pos;
+            return do_find_with( val, cmp, f, pos );
+        }
+
+        template <typename Q, typename Compare, typename Func>
+        bool do_find_with( Q& val, Compare cmp, Func f, position& pos )
+        {
             bool bRet;
 
-            rcu_lock l;
+            {
+                rcu_lock l;
 
-            switch ( find_fastpath( val, cmp, f )) {
-            case find_fastpath_found:
-                m_Stat.onFindFastSuccess();
-                return true;
-            case find_fastpath_not_found:
-                m_Stat.onFindFastFailed();
-                return false;
-            default:
-                break;
+                switch ( find_fastpath( val, cmp, f )) {
+                case find_fastpath_found:
+                    m_Stat.onFindFastSuccess();
+                    return true;
+                case find_fastpath_not_found:
+                    m_Stat.onFindFastFailed();
+                    return false;
+                default:
+                    break;
+                }
+
+                if ( find_slowpath( val, cmp, f, pos )) {
+                    m_Stat.onFindSlowSuccess();
+                    bRet = true;
+                }
+                else {
+                    m_Stat.onFindSlowFailed();
+                    bRet = false;
+                }
             }
-
-            if ( find_slowpath( val, cmp, f, pos )) {
-                m_Stat.onFindSlowSuccess();
-                bRet = true;
-            }
-            else {
-                m_Stat.onFindSlowFailed();
-                bRet = false;
-            }
-
-            defer_chain( pos );
-
             return bRet;
         }
 
@@ -1096,17 +1134,15 @@ retry:
                 }
             }
 
-            dispose_chain( pos );
             return bRet;
         }
 
         template <typename Q, typename Compare>
-        value_type * do_extract_key( Q const& key, Compare cmp )
+        value_type * do_extract_key( Q const& key, Compare cmp, position& pos )
         {
             // RCU should be locked!!!
             assert( gc::is_locked() );
 
-            position pos;
             node_type * pDel;
 
             if ( !find_position( key, pos, cmp, false ) ) {
@@ -1130,7 +1166,6 @@ retry:
                 }
             }
 
-            defer_chain( pos );
             return pDel ? node_traits::to_value_ptr( pDel ) : nullptr;
         }
 
@@ -1139,12 +1174,12 @@ retry:
         {
             check_deadlock_policy::check();
             value_type * pDel = nullptr;
+            position pos;
             {
                 rcu_lock l;
-                pDel = do_extract_key( key, key_comparator() );
+                pDel = do_extract_key( key, key_comparator(), pos );
             }
 
-            dispose_deferred();
             return pDel;
         }
 
@@ -1154,13 +1189,12 @@ retry:
             CDS_UNUSED(pred);
             check_deadlock_policy::check();
             value_type * pDel = nullptr;
-
+            position pos;
             {
                 rcu_lock l;
-                pDel = do_extract_key( key, cds::opt::details::make_comparator_from_less<Less>() );
+                pDel = do_extract_key( key, cds::opt::details::make_comparator_from_less<Less>(), pos );
             }
 
-            dispose_deferred();
             return pDel;
         }
 
@@ -1192,11 +1226,8 @@ retry:
                         pDel = nullptr;
                     }
                 }
-
-                defer_chain( pos );
             }
 
-            dispose_deferred();
             return pDel ? node_traits::to_value_ptr( pDel ) : nullptr;
         }
 
@@ -1228,11 +1259,8 @@ retry:
                         pDel = nullptr;
                     }
                 }
-
-                defer_chain( pos );
             }
 
-            dispose_deferred();
             return pDel ? node_traits::to_value_ptr( pDel ) : nullptr;
         }
 
@@ -1242,83 +1270,6 @@ retry:
             if ( nCur < nHeight )
                 m_nHeight.compare_exchange_strong( nCur, nHeight, memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
-
-        class deferred_list_iterator
-        {
-            node_type * pCur;
-        public:
-            explicit deferred_list_iterator( node_type * p )
-                : pCur(p)
-            {}
-            deferred_list_iterator()
-                : pCur( nullptr )
-            {}
-
-            cds::urcu::retired_ptr operator *() const
-            {
-                return cds::urcu::retired_ptr( node_traits::to_value_ptr(pCur), dispose_node );
-            }
-
-            void operator ++()
-            {
-                pCur = pCur->m_pDelChain;
-            }
-
-            bool operator ==( deferred_list_iterator const& i ) const
-            {
-                return pCur == i.pCur;
-            }
-            bool operator !=( deferred_list_iterator const& i ) const
-            {
-                return !operator ==( i );
-            }
-        };
-
-        void dispose_chain( node_type * pHead )
-        {
-            // RCU should NOT be locked
-            check_deadlock_policy::check();
-
-            gc::batch_retire( deferred_list_iterator( pHead ), deferred_list_iterator() );
-        }
-
-        void dispose_chain( position& pos )
-        {
-            // RCU should NOT be locked
-            check_deadlock_policy::check();
-
-            // Delete local chain
-            if ( pos.pDelChain ) {
-                dispose_chain( pos.pDelChain );
-                pos.pDelChain = nullptr;
-            }
-
-            // Delete deferred chain
-            dispose_deferred();
-        }
-
-        void dispose_deferred()
-        {
-            dispose_chain( m_pDeferredDelChain.exchange( nullptr, memory_model::memory_order_acq_rel ) );
-        }
-
-        void defer_chain( position& pos )
-        {
-            if ( pos.pDelChain ) {
-                node_type * pHead = pos.pDelChain;
-                node_type * pTail = pHead;
-                while ( pTail->m_pDelChain )
-                    pTail = pTail->m_pDelChain;
-
-                node_type * pDeferList = m_pDeferredDelChain.load( memory_model::memory_order_relaxed );
-                do {
-                    pTail->m_pDelChain = pDeferList;
-                } while ( !m_pDeferredDelChain.compare_exchange_weak( pDeferList, pHead, memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ));
-
-                pos.pDelChain = nullptr;
-            }
-        }
-
         //@endcond
 
     public:
@@ -1469,8 +1420,6 @@ retry:
                 }
             }
 
-            dispose_chain( pos );
-
             return bRet;
         }
 
@@ -1553,8 +1502,6 @@ retry:
                 }
             }
 
-            dispose_chain( pos );
-
             return bRet;
         }
 
@@ -1583,7 +1530,7 @@ retry:
             bool bRet;
 
             {
-                rcu_lock rcuLock;
+                rcu_lock l;
 
                 if ( !find_position( val, pos, key_comparator(), false ) ) {
                     m_Stat.onUnlinkFailed();
@@ -1607,8 +1554,6 @@ retry:
                     }
                 }
             }
-
-            dispose_chain( pos );
 
             return bRet;
         }
@@ -1884,8 +1829,8 @@ retry:
 
         /// Finds \p key and return the item found
         /** \anchor cds_intrusive_SkipListSet_rcu_get
-            The function searches the item with key equal to \p key and returns the pointer to item found.
-            If \p key is not found it returns \p nullptr.
+            The function searches the item with key equal to \p key and returns a \p raw_ptr object pointed to item found.
+            If \p key is not found it returns empty \p raw_ptr.
 
             Note the compare functor should accept a parameter of type \p Q that can be not the same as \p value_type.
 
@@ -1895,31 +1840,31 @@ retry:
             typedef cds::intrusive::SkipListSet< cds::urcu::gc< cds::urcu::general_buffered<> >, foo, my_traits > skip_list;
             skip_list theList;
             // ...
+            typename skip_list::raw_ptr pVal;
             {
                 // Lock RCU
                 skip_list::rcu_lock lock;
 
-                foo * pVal = theList.get( 5 );
+                pVal = theList.get( 5 );
                 if ( pVal ) {
                     // Deal with pVal
                     //...
                 }
             }
-            // Unlock RCU by rcu_lock destructor
-            // pVal can be retired by disposer at any time after RCU has been unlocked
+            // You can manually release pVal after RCU-locked section
+            pVal.release();
             \endcode
-
-            After RCU unlocking the \p %force_dispose member function can be called manually,
-            see \ref force_dispose for explanation.
         */
         template <typename Q>
-        value_type * get( Q const& key )
+        raw_ptr get( Q const& key )
         {
             assert( gc::is_locked());
 
+            position pos;
             value_type * pFound;
-            return do_find_with( key, key_comparator(), [&pFound](value_type& found, Q const& ) { pFound = &found; } )
-                ? pFound : nullptr;
+            if ( do_find_with( key, key_comparator(), [&pFound](value_type& found, Q const& ) { pFound = &found; }, pos ))
+                return raw_ptr( pFound, raw_ptr_disposer( pos ));
+            return raw_ptr( raw_ptr_disposer( pos ));
         }
 
         /// Finds \p key and return the item found
@@ -1932,15 +1877,19 @@ retry:
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * get_with( Q const& key, Less pred )
+        raw_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             assert( gc::is_locked());
 
             value_type * pFound;
-            return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(),
-                [&pFound](value_type& found, Q const& ) { pFound = &found; } )
-                ? pFound : nullptr;
+            position pos;
+            if ( do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(),
+                [&pFound](value_type& found, Q const& ) { pFound = &found; }, pos ))
+            {
+                return raw_ptr( pFound, raw_ptr_disposer( pos ));
+            }
+            return raw_ptr( raw_ptr_disposer( pos ));
         }
 
         /// Returns item count in the set
@@ -1990,27 +1939,6 @@ retry:
         stat const& statistics() const
         {
             return m_Stat;
-        }
-
-        /// Clears internal list of ready-to-remove items passing it to RCU reclamation cycle
-        /** @anchor cds_intrusive_SkipListSet_rcu_force_dispose
-            Skip list has complex multi-step algorithm for removing an item. In fact, when you
-            remove the item it is just marked as removed that is enough for the success of your operation.
-            Actual removing can take place in the future, in another call or even in another thread.
-            Inside RCU lock the removed item cannot be passed to RCU reclamation cycle
-            since it can lead to deadlock. To solve this problem, the current skip list implementation
-            has internal list of items which is ready to remove but is not yet passed to RCU reclamation.
-            Usually, this list will be passed to RCU reclamation in the next suitable call of skip list member function.
-            In some cases we want to pass it to RCU reclamation immediately after RCU unlocking.
-            This function provides such opportunity: it checks whether the RCU is not locked and if it is true
-            the function passes the internal ready-to-remove list to RCU reclamation cycle.
-
-            The RCU \p synchronize can be called.
-        */
-        void force_dispose()
-        {
-            if ( !gc::is_locked() )
-                dispose_deferred();
         }
     };
 

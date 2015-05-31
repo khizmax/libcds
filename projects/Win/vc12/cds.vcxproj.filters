@@ -1184,5 +1184,8 @@
     <ClInclude Include="..\..\..\cds\urcu\raw_ptr.h">
       <Filter>Header Files\cds\urcu</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\raw_ptr_disposer.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

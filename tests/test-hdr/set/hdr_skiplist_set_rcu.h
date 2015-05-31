@@ -157,19 +157,20 @@ namespace set {
             // extract/get tests
             {
                 typedef typename base_class::less<typename Set::value_type> less_predicate;
-                typename Set::value_type * pVal;
                 typename Set::exempt_ptr ep;
+                typename Set::raw_ptr rp;
 
                 // extract/get
                 for ( int i = 0; i < nLimit; ++i ) {
                     int nKey = arrRandom[i];
                     {
                         rcu_lock l;
-                        pVal = s.get( nKey );
-                        CPPUNIT_ASSERT( pVal != nullptr );
-                        CPPUNIT_CHECK( pVal->nKey == nKey );
-                        CPPUNIT_CHECK( pVal->nVal == nKey * 2 );
+                        rp = s.get( nKey );
+                        CPPUNIT_ASSERT( rp );
+                        CPPUNIT_CHECK( rp->nKey == nKey );
+                        CPPUNIT_CHECK( rp->nVal == nKey * 2 );
                     }
+                    rp.release();
 
                     ep = s.extract( nKey );
                     CPPUNIT_ASSERT( ep );
@@ -180,7 +181,7 @@ namespace set {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get( nKey ) == nullptr );
+                        CPPUNIT_CHECK( !s.get( nKey ));
                     }
                     ep = s.extract( nKey );
                     CPPUNIT_CHECK( !ep );
@@ -195,11 +196,12 @@ namespace set {
                     int nKey = arrRandom[i];
                     {
                         rcu_lock l;
-                        pVal = s.get_with( wrapped_item(nKey), wrapped_less() );
-                        CPPUNIT_ASSERT( pVal != nullptr );
-                        CPPUNIT_CHECK( pVal->nKey == nKey );
-                        CPPUNIT_CHECK( pVal->nVal == nKey );
+                        rp = s.get_with( wrapped_item(nKey), wrapped_less() );
+                        CPPUNIT_ASSERT( rp );
+                        CPPUNIT_CHECK( rp->nKey == nKey );
+                        CPPUNIT_CHECK( rp->nVal == nKey );
                     }
+                    rp.release();
 
                     ep = s.extract_with( wrapped_item( nKey ), wrapped_less() );
                     CPPUNIT_ASSERT( ep );
@@ -210,7 +212,7 @@ namespace set {
 
                     {
                         rcu_lock l;
-                        CPPUNIT_CHECK( s.get_with( wrapped_item( nKey ), wrapped_less() ) == nullptr );
+                        CPPUNIT_CHECK( !s.get_with( wrapped_item( nKey ), wrapped_less() ));
                     }
                     ep = s.extract_with( wrapped_item( nKey ), wrapped_less() );
                     CPPUNIT_CHECK( !ep );
