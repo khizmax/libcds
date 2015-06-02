@@ -19,7 +19,7 @@ namespace cds { namespace container {
         See intrusive::SplitListSet for a brief description of the split-list algorithm.
 
         Template parameters:
-        - \p GC - Garbage collector used
+        - \p GC - Garbage collector used like \p cds::gc::HP or \p cds::gc::DHP
         - \p Key - key type of an item stored in the map. It should be copy-constructible
         - \p Value - value type stored in the map
         - \p Traits - map traits, default is \p split_list::traits. Instead of declaring \p %split_list::traits -based
@@ -75,7 +75,7 @@ namespace cds { namespace container {
 
         You may use the modern option-based declaration instead of classic type-traits-based one:
         \code
-        typedef cc:SplitListMap<
+        typedef cc::SplitListMap<
             cs::gc::DHP             // GC used
             ,int                    // key type
             ,std::string            // value type

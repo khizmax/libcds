@@ -8,6 +8,7 @@
 #include <cds/details/allocator.h>
 #include <cds/algo/int_algo.h>
 #include <cds/algo/bitop.h>
+#include <cds/opt/hash.h>
 
 namespace cds { namespace intrusive {
 

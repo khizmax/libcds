@@ -112,7 +112,7 @@ namespace cds { namespace container {
 
         You may use the modern option-based declaration instead of classic traits-based one:
         \code
-        typedef cc:SplitListMap<
+        typedef cc::SplitListMap<
             cds::urcu::gc<cds::urcu::general_buffered<> >  // RCU type
             ,int                    // key type
             ,std::string            // value type

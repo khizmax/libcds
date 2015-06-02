@@ -195,7 +195,7 @@ namespace cds { namespace container {
 
         You may use the modern option-based declaration instead of classic type-traits-based one:
         \code
-        typedef cc:SplitListSet<
+        typedef cc::SplitListSet<
             cds::urcu::gc<cds::urcu::general_buffered<> >   // RCU type used
             ,foo                                            // type of data stored
             ,cc::split_list::make_traits<      // metafunction to build split-list traits
