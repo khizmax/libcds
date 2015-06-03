@@ -1065,13 +1065,13 @@ namespace cds { namespace intrusive {
 
             back_off        bkoff;
 
-try_again:
+        try_again:
             pPrev = &refHead;
             pNext = nullptr;
 
             pCur = pPrev->load(memory_model::memory_order_acquire);
             pos.guards.assign( position::guard_current_item, node_traits::to_value_ptr( pCur.ptr() ) );
-            if ( pPrev->load(memory_model::memory_order_relaxed) != pCur.ptr() )
+            if ( pPrev->load(memory_model::memory_order_acquire) != pCur.ptr() )
                 goto try_again;
 
             while ( true ) {
@@ -1084,12 +1084,9 @@ try_again:
 
                 pNext = pCur->m_pNext.load(memory_model::memory_order_acquire);
                 pos.guards.assign( position::guard_next_item, node_traits::to_value_ptr( pNext.ptr() ));
-                if ( pCur->m_pNext.load(memory_model::memory_order_relaxed).all() != pNext.all() ) {
-                    bkoff();
-                    goto try_again;
-                }
-
-                if ( pPrev->load(memory_model::memory_order_relaxed).all() != pCur.ptr() ) {
+                if ( pCur->m_pNext.load(memory_model::memory_order_acquire).all() != pNext.all() 
+                  || pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr() )
+                {
                     bkoff();
                     goto try_again;
                 }

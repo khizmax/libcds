@@ -131,7 +131,7 @@ namespace cds { namespace intrusive {
 
         static void clear_links( node_type * pNode )
         {
-            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_release );
             pNode->m_pDelChain = nullptr;
         }
 
