@@ -47,7 +47,7 @@ namespace cds { namespace container {
         public:
             typedef cds::urcu::raw_ptr_adaptor< value_type, intrusive_raw_ptr, raw_ptr_converter > raw_ptr;
 
-            static raw_ptr make( typename intrusive_raw_ptr&& p )
+            static raw_ptr make( intrusive_raw_ptr&& p )
             {
                 return raw_ptr(std::move( p ));
             }

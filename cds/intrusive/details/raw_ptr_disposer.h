@@ -46,8 +46,10 @@ namespace cds { namespace intrusive { namespace details {
             assert( pReclaimedChain == nullptr );
             pReclaimedChain = d.pReclaimedChain;
             d.pReclaimedChain = nullptr;
-            retur *this;
+            return *this;
         }
+
+        raw_ptr_disposer& operator=(raw_ptr_disposer const& d) = delete;
 
         void apply()
         {

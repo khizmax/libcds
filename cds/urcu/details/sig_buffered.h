@@ -108,7 +108,7 @@ namespace cds { namespace urcu {
                     p.free();
                 }
                 else {
-                    push_buffer( p );
+                    push_buffer( std::move(p) );
                     break;
                 }
             }
