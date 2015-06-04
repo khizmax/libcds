@@ -143,8 +143,7 @@ namespace cds { namespace intrusive {
             /**
                 Hash function converts the key fields of struct \p T stored in the split list
                 into hash value of type \p size_t that is an index in hash table.
-
-                Hash typedef is mandatory and has no predefined one.
+                By default, \p std::hash is used.
             */
             typedef opt::none       hash;
 
