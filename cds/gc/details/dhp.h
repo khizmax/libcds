@@ -727,12 +727,12 @@ namespace cds { namespace gc {
         private:
             static GarbageCollector * m_pManager    ;   ///< GC global instance
 
+            atomics::atomic<size_t>  m_nLiberateThreshold;   ///< Max size of retired pointer buffer to call \p scan()
+            const size_t             m_nInitialThreadGuardCount; ///< Initial count of guards allocated for ThreadGC
+
             details::guard_allocator<>      m_GuardPool         ;   ///< Guard pool
             details::retired_ptr_pool<>     m_RetiredAllocator  ;   ///< Pool of free retired pointers
             details::retired_ptr_buffer     m_RetiredBuffer     ;   ///< Retired pointer buffer for liberating
-
-            atomics::atomic<size_t>      m_nLiberateThreshold;   ///< Max size of retired pointer buffer to call \p scan()
-            const size_t    m_nInitialThreadGuardCount; ///< Initial count of guards allocated for ThreadGC
 
             internal_stat   m_stat  ;   ///< Internal statistics
             bool            m_bStatEnabled  ;   ///< Internal Statistics enabled

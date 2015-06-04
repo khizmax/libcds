@@ -49,7 +49,7 @@ namespace cds { namespace gc {
             scan_type nScanType
         )
             : m_pListHead( nullptr )
-            ,m_bStatEnabled( true )
+            ,m_bStatEnabled( false )
             ,m_nHazardPointerCount( nHazardPtrCount == 0 ? c_nHazardPointerPerThread : nHazardPtrCount )
             ,m_nMaxThreadCount( nMaxThreadCount == 0 ? c_nMaxThreadCount : nMaxThreadCount )
             ,m_nMaxRetiredPtrCount( nMaxRetiredPtrCount > c_nMaxRetireNodeCount ? nMaxRetiredPtrCount : c_nMaxRetireNodeCount )

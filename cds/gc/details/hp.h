@@ -271,7 +271,7 @@ namespace cds {
                     assert( m_idOwner.load( atomics::memory_order_relaxed ) == OS::c_NullThreadId );
                     assert( m_bFree.load(atomics::memory_order_relaxed) );
                 }
-				//@endcond
+                //@endcond
             };
 
             atomics::atomic<hplist_node *>   m_pListHead  ;  ///< Head of GC list
