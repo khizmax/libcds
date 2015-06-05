@@ -548,16 +548,16 @@ namespace opt {
     /// [type-option] Option setter for C++ memory model
     /**
         The <b>cds</b> library supports following memory ordering constraints for atomic operations in container implementation:
-        - v::relaxed_ordering - relaxed C++ memory model. This mode supports full set of memory ordering constraints:
+        - \p v::relaxed_ordering - relaxed C++ memory model. This mode supports full set of memory ordering constraints:
             \p memory_order_relaxed, \p memory_order_acquire, \p memory_order_release and so on.
-        - v::sequential_consistent - sequentially consistent C++ memory model (default memory ordering for C++). In
+        - \p v::sequential_consistent - sequentially consistent C++ memory model (default memory ordering for C++). In
             this mode any memory ordering constraint maps to \p memory_order_seq_cst.
 
-        The \p Type template parameter can be v::relaxed_ordering or v::sequential_consistent.
+        The \p Type template parameter can be \p v::relaxed_ordering or \p v::sequential_consistent.
 
         You may mix different memory ordering options for different containers: one declare as sequentially consistent,
         another declare as relaxed.
-        Usually, v::relaxed_ordering is the default memory ordering for <b>cds</b> containers.
+        Usually, \p v::relaxed_ordering is the default memory ordering for <b>libcds</b> containers.
     */
     template <typename Type>
     struct memory_model {
@@ -572,14 +572,13 @@ namespace opt {
     namespace v {
         /// Relaxed memory ordering model
         /**
-            In this memory model the memory constraints are defined according to C++ Memory Model specification.
+            In this memory model the memory constraints are defined according to C++ Memory Model specification:
+            each constraint is mapped to \p std::memory_order constraints one-to-one
 
-            See opt::memory_model for explanations
+            See \p opt::memory_model for explanations
         */
         struct relaxed_ordering {
             //@cond
-
-            // For new C++11 (cds-1.1.0)
             static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
             static const atomics::memory_order memory_order_consume    = atomics::memory_order_consume;
             static const atomics::memory_order memory_order_acquire    = atomics::memory_order_acquire;
@@ -593,18 +592,35 @@ namespace opt {
         /**
             In this memory model any memory constraint is equivalent to \p memory_order_seq_cst.
 
-            See opt::memory_model for explanations
+            See \p opt::memory_model for explanations
         */
         struct sequential_consistent {
             //@cond
-
-            // For new C++11 (cds-1.1.0)
             static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_seq_cst;
             static const atomics::memory_order memory_order_consume    = atomics::memory_order_seq_cst;
             static const atomics::memory_order memory_order_acquire    = atomics::memory_order_seq_cst;
             static const atomics::memory_order memory_order_release    = atomics::memory_order_seq_cst;
             static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_seq_cst;
             static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_seq_cst;
+            //@endcond
+        };
+
+        /// Totally relaxed memory ordering model (do not use!)
+        /**
+            In this memory model any memory constraint is equivalent to \p memory_order_relaxed.
+            @warn Do not use this model! It intended for testing purposes only
+            to verify debugging instruments like Thread Sanitizer.
+
+            See \p opt::memory_model for explanations
+        */
+        struct total_relaxed_ordering {
+            //@cond
+            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_consume    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_release    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_relaxed;
             //@endcond
         };
     } // namespace v
