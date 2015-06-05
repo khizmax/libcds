@@ -608,7 +608,7 @@ namespace opt {
         /// Totally relaxed memory ordering model (do not use!)
         /**
             In this memory model any memory constraint is equivalent to \p memory_order_relaxed.
-            @warn Do not use this model! It intended for testing purposes only
+            @warning Do not use this model! It intended for testing purposes only
             to verify debugging instruments like Thread Sanitizer.
 
             See \p opt::memory_model for explanations
