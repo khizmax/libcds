@@ -117,10 +117,8 @@ namespace cds { namespace gc {
             // No HP records available for reuse
             // Allocate and push a new HP record
             hprec = NewHPRec();
-            hprec->m_idOwner.store( curThreadId, atomics::memory_order_relaxed );
-            hprec->m_bFree.store( false, atomics::memory_order_relaxed );
-
-            atomics::atomic_thread_fence( atomics::memory_order_release );
+            hprec->m_idOwner.store( curThreadId, atomics::memory_order_release );
+            hprec->m_bFree.store( false, atomics::memory_order_release );
 
             hplist_node * pOldHead = m_pListHead.load( atomics::memory_order_acquire );
             do {
@@ -168,6 +166,7 @@ namespace cds { namespace gc {
 
             while ( pNode ) {
                 for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
+                    pRec->sync();
                     void * hptr = pNode->m_hzp[i];
                     if ( hptr )
                         plist.push_back( hptr );
@@ -249,6 +248,7 @@ namespace cds { namespace gc {
                 while ( pNode ) {
                     if ( !pNode->m_bFree.load( atomics::memory_order_acquire ) ) {
                         for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
+                            pRec->sync();
                             void * hptr = pNode->m_hzp[i];
                             if ( hptr ) {
                                 dummyRetired.m_p = hptr;

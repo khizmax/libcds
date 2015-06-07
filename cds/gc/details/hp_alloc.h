@@ -85,7 +85,7 @@ namespace cds {
             /**
                 Clearing has relaxed semantics.
             */
-            void clear( atomics::memory_order order = atomics::memory_order_relaxed ) CDS_NOEXCEPT
+            void clear( atomics::memory_order order = atomics::memory_order_release ) CDS_NOEXCEPT
             {
                 // memory order is not necessary here
                 base_class::store( nullptr, order );

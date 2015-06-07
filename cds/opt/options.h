@@ -605,6 +605,7 @@ namespace opt {
             //@endcond
         };
 
+        //@cond
         /// Totally relaxed memory ordering model (do not use!)
         /**
             In this memory model any memory constraint is equivalent to \p memory_order_relaxed.
@@ -614,15 +615,14 @@ namespace opt {
             See \p opt::memory_model for explanations
         */
         struct total_relaxed_ordering {
-            //@cond
             static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
             static const atomics::memory_order memory_order_consume    = atomics::memory_order_relaxed;
             static const atomics::memory_order memory_order_acquire    = atomics::memory_order_relaxed;
             static const atomics::memory_order memory_order_release    = atomics::memory_order_relaxed;
             static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_relaxed;
             static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_relaxed;
-            //@endcond
         };
+        //@endcond
     } // namespace v
 
     /// [type-option] Base type traits option setter

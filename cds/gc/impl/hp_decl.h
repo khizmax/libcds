@@ -181,10 +181,7 @@ namespace cds { namespace gc {
                 Can be used for a pointer that cannot be changed concurrently
             */
             template <typename T>
-            T * assign( T * p )
-            {
-                return base_class::operator =(p);
-            }
+            T * assign( T * p );    // inline in hp_impl.h
 
             //@cond
             std::nullptr_t assign( std::nullptr_t )
@@ -261,7 +258,7 @@ namespace cds { namespace gc {
             GuardArray( GuardArray const& ) = delete;
             GuardArray( GuardArray&& ) = delete;
             GuardArray& operator=(GuardArray const&) = delete;
-            GuardArray& operator-(GuardArray&&) = delete;
+            GuardArray& operator=(GuardArray&&) = delete;
             //@endcond
 
             /// Protects a pointer of type \p atomic<T*>
@@ -277,7 +274,7 @@ namespace cds { namespace gc {
                 T pRet;
                 do {
                     pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire) );
-                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }
@@ -305,7 +302,7 @@ namespace cds { namespace gc {
                 T pRet;
                 do {
                     assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire) ));
-                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }
@@ -315,11 +312,7 @@ namespace cds { namespace gc {
                 The function equals to a simple assignment, no loop is performed.
             */
             template <typename T>
-            T * assign( size_t nIndex, T * p )
-            {
-                base_class::set(nIndex, p);
-                return p;
-            }
+            T * assign( size_t nIndex, T * p ); // inline in hp_impl.h
 
             /// Store marked pointer \p p to the guard
             /**

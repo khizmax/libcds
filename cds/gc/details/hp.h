@@ -6,6 +6,7 @@
 #include <cds/algo/atomic.h>
 #include <cds/os/thread.h>
 #include <cds/details/bounded_array.h>
+#include <cds/user_setup/cache_line.h>
 
 #include <cds/gc/details/hp_type.h>
 #include <cds/gc/details/hp_alloc.h>
@@ -148,8 +149,11 @@ namespace cds {
                 other threads have read-only access.
             */
             struct hp_record {
-                hp_allocator<>    m_hzp; ///< array of hazard pointers. Implicit \ref CDS_DEFAULT_ALLOCATOR dependency
+                hp_allocator<>    m_hzp;         ///< array of hazard pointers. Implicit \ref CDS_DEFAULT_ALLOCATOR dependency
                 retired_vector    m_arrRetired ; ///< Retired pointer array
+
+                char padding[cds::c_nCacheLineSize];
+                atomics::atomic<unsigned int> m_nSync; ///< dummy var to introduce synchronizes-with relationship between threads
 
                 /// Ctor
                 hp_record( const cds::gc::hp::GarbageCollector& HzpMgr );    // inline
@@ -160,6 +164,11 @@ namespace cds {
                 void clear()
                 {
                     m_hzp.clear();
+                }
+
+                void sync()
+                {
+                    m_nSync.fetch_add( 1, atomics::memory_order_acq_rel );
                 }
             };
         }    // namespace details
@@ -616,6 +625,12 @@ namespace cds {
                 m_HzpManager.Scan( m_pHzpRec );
                 m_HzpManager.HelpScan( m_pHzpRec );
             }
+
+            void sync()
+            {
+                assert( m_pHzpRec != nullptr );
+                m_pHzpRec->sync();
+            }
         };
 
         /// Auto hp_guard.
@@ -701,8 +716,9 @@ namespace cds {
         {}
 
         inline hp_record::hp_record( const cds::gc::hp::GarbageCollector& HzpMgr )
-            : m_hzp( HzpMgr.getHazardPointerCount() ),
-            m_arrRetired( HzpMgr )
+            : m_hzp( HzpMgr.getHazardPointerCount() )
+            , m_arrRetired( HzpMgr )
+            , m_nSync( 0 )
         {}
 
     }}} // namespace gc::hp::details

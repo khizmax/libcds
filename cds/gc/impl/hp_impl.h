@@ -68,6 +68,23 @@ namespace cds { namespace gc {
     }
 
     template <typename T>
+    inline T * HP::Guard::assign( T * p )
+    {
+        T * pp = base_class::operator =(p);
+        cds::threading::getGC<HP>().sync();
+        return pp;
+    }
+
+    template <size_t Count>
+    template <typename T>
+    inline T * HP::GuardArray<Count>::assign( size_t nIndex, T * p )
+    {
+        base_class::set(nIndex, p);
+        cds::threading::getGC<HP>().sync();
+        return p;
+    }
+
+    template <typename T>
     inline void HP::retire( T * p, void (* pFunc)(T *) )
     {
         cds::threading::getGC<HP>().retirePtr( p, pFunc );
