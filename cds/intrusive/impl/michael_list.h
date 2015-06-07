@@ -254,7 +254,7 @@ namespace cds { namespace intrusive {
 
             // Mark the node (logical deleting)
             marked_node_ptr next(pos.pNext, 0);
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_acq_rel, atomics::memory_order_relaxed )) {
+            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                 // physical deletion may be performed by search function if it detects that a node is logically deleted (marked)
                 // CAS may be successful here or in other thread that searching something
                 marked_node_ptr cur(pos.pCur);
@@ -1069,10 +1069,11 @@ namespace cds { namespace intrusive {
             pPrev = &refHead;
             pNext = nullptr;
 
-            pCur = pPrev->load(memory_model::memory_order_acquire);
-            pos.guards.assign( position::guard_current_item, node_traits::to_value_ptr( pCur.ptr() ) );
-            if ( pPrev->load(memory_model::memory_order_acquire) != pCur.ptr() )
-                goto try_again;
+            pCur = pos.guards.protect( position::guard_current_item, *pPrev,
+                   [](marked_node_ptr p) -> value_type * 
+                    {
+                        return node_traits::to_value_ptr( p.ptr() );
+                    });
 
             while ( true ) {
                 if ( pCur.ptr() == nullptr ) {
@@ -1082,11 +1083,12 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                pNext = pCur->m_pNext.load(memory_model::memory_order_acquire);
-                pos.guards.assign( position::guard_next_item, node_traits::to_value_ptr( pNext.ptr() ));
-                if ( pCur->m_pNext.load(memory_model::memory_order_acquire).all() != pNext.all() 
-                  || pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr() )
-                {
+                pNext = pos.guards.protect( position::guard_next_item, pCur->m_pNext, 
+                        [](marked_node_ptr p ) -> value_type * 
+                        {
+                            return node_traits::to_value_ptr( p.ptr() );
+                        });
+                if ( pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr() ) {
                     bkoff();
                     goto try_again;
                 }
@@ -1113,10 +1115,10 @@ namespace cds { namespace intrusive {
                         return nCmp == 0;
                     }
                     pPrev = &( pCur->m_pNext );
-                    pos.guards.assign( position::guard_prev_item, node_traits::to_value_ptr( pCur.ptr() ) );
+                    pos.guards.copy( position::guard_prev_item, position::guard_current_item );
                 }
                 pCur = pNext;
-                pos.guards.assign( position::guard_current_item, node_traits::to_value_ptr( pCur.ptr() ));
+                pos.guards.copy( position::guard_current_item, position::guard_next_item );
             }
         }
         //@endcond
