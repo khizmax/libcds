@@ -1223,7 +1223,11 @@ namespace michael {
 
                 assert( oldAnchor.avail < pDesc->nCapacity );
                 pAddr = pDesc->pSB + oldAnchor.avail * (unsigned long long) pDesc->nBlockSize;
+
+                // TSan reports data race if the block contained atomic ops before
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                 newAnchor.avail = reinterpret_cast<free_block_header *>( pAddr )->nNextFree;
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                 newAnchor.tag += 1;
 
                 if ( oldActive.credits() == 0 ) {
@@ -1686,6 +1690,7 @@ namespace michael {
                 );
             }
 
+            CDS_TSAN_ANNOTATE_NEW_MEMORY( pBlock + 1, nSize );
             return pBlock + 1;
         }
 
