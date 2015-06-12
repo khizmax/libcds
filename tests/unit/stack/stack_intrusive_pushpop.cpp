@@ -26,13 +26,12 @@ namespace istack {
         template <typename Base = empty >
         struct SimpleValue: public Base
         {
-            size_t      nNo;
+            atomics::atomic<size_t> nNo;
             size_t      nProducer;
             size_t      nConsumer;
 
             SimpleValue() {}
             SimpleValue( size_t n ): nNo(n) {}
-            size_t getNo() const { return  nNo; }
         };
 
     } // namespace
@@ -91,9 +90,10 @@ namespace istack {
                 size_t i = 0;
                 for ( typename Stack::value_type * p = m_pStart; p < m_pEnd; ++p, ++i ) {
                     p->nProducer = m_nThreadNo;
-                    p->nNo = i % c_nValArraySize;
+                    size_t no;
+                    p->nNo.store( no = i % c_nValArraySize, atomics::memory_order_release );
                     if ( m_Stack.push( *p ))
-                        ++m_arrPush[ p->nNo ];
+                        ++m_arrPush[ no ];
                     else
                         ++m_nPushError;
                 }
@@ -151,8 +151,9 @@ namespace istack {
                     if ( p ) {
                         p->nConsumer = m_nThreadNo;
                         ++m_nPopCount;
-                        if ( p->nNo < sizeof(m_arrPop)/sizeof(m_arrPop[0]) )
-                            ++m_arrPop[p->nNo];
+                        size_t no = p->nNo.load( atomics::memory_order_acquire );
+                        if ( no < sizeof(m_arrPop)/sizeof(m_arrPop[0]) )
+                            ++m_arrPop[no];
                         else
                             ++m_nDirtyPop;
                     }
