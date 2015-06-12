@@ -151,6 +151,7 @@ namespace cds { namespace intrusive {
 
     //@cond
     /// Functor converting container's node type to value type
+    //TODO: delete
     template <class Container>
     struct node_to_value {
         typename Container::value_type * operator()( typename Container::node_type * p ) const

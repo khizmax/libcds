@@ -650,7 +650,6 @@ namespace cds { namespace intrusive {
         typedef treiber_stack::details::elimination_backoff<enable_elimination, value_type, traits> elimination_backoff;
         elimination_backoff m_Backoff;
 
-        typedef intrusive::node_to_value<TreiberStack>  node_to_value;
         typedef treiber_stack::operation< value_type >  operation_desc;
 
         // GC and node_type::gc must be the same
@@ -746,7 +745,10 @@ namespace cds { namespace intrusive {
             }
 
             while ( true ) {
-                node_type * t = guard.protect( m_Top, node_to_value() );
+                node_type * t = guard.protect( m_Top, 
+                    []( node_type * p ) -> value_type * {
+                        return node_traits::to_value_ptr( p );
+                    });
                 if ( t == nullptr )
                     return nullptr;    // stack is empty
 
