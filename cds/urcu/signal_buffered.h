@@ -11,13 +11,13 @@ namespace cds { namespace urcu {
     /// User-space signal-handled RCU with deferred buffered reclamation
     /** @anchor cds_urcu_signal_buffered_gc
 
-        This is a wrapper around signal_buffered class used for metaprogramming.
+        This is a wrapper around \p signal_buffered class.
 
         Template arguments:
         - \p Buffer - lock-free queue or lock-free bounded queue.
-            Default is cds::container::VyukovMPMCCycleQueue< retired_ptr >
+            Default is \p cds::container::VyukovMPMCCycleQueue< retired_ptr >
         - \p Lock - mutex type, default is \p std::mutex
-        - \p Backoff - back-off schema, default is cds::backoff::Default
+        - \p Backoff - back-off schema, default is \p cds::backoff::Default
     */
     template <
 #ifdef CDS_DOXGEN_INVOKED

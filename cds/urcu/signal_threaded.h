@@ -12,15 +12,15 @@ namespace cds { namespace urcu {
     /// User-space signal-handled RCU with special thread for deferred reclamation
     /** @anchor cds_urcu_signal_threaded_gc
 
-        This is a wrapper around signal_threaded class used for metaprogramming.
+        This is a wrapper around \p signal_threaded class.
 
         Template arguments:
         - \p Buffer - lock-free queue or lock-free bounded queue.
-            Default is cds::container::VyukovMPMCCycleQueue< retired_ptr >
+            Default is \p cds::container::VyukovMPMCCycleQueue< retired_ptr >
         - \p Lock - mutex type, default is \p std::mutex
         - \p DisposerThread - reclamation thread class, default is \p %general_threaded_dispose_thread
             See \ref cds::urcu::dispose_thread for class interface.
-        - \p Backoff - back-off schema, default is cds::backoff::Default
+        - \p Backoff - back-off schema, default is \p cds::backoff::Default
 
     */
     template <

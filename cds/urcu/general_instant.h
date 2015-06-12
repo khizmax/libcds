@@ -10,11 +10,11 @@ namespace cds { namespace urcu {
     /// User-space general-purpose RCU with immediate reclamation
     /** @anchor cds_urcu_general_instant_gc
 
-        This is a wrapper around general_instant class used for metaprogramming.
+        This is a wrapper around \p general_instant class.
 
         Template arguments:
         - \p Lock - mutex type, default is \p std::mutex
-        - \p Backoff - back-off schema, default is cds::backoff::Default
+        - \p Backoff - back-off schema, default is \p cds::backoff::Default
     */
     template <
 #ifdef CDS_DOXGEN_INVOKED
