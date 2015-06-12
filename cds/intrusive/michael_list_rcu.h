@@ -235,7 +235,7 @@ namespace cds { namespace intrusive {
             // Mark the node (logical deletion)
             marked_node_ptr next(pos.pNext, 0);
 
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_acq_rel, atomics::memory_order_relaxed )) {
+            if ( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
 
                 // Try physical removal - fast path
                 marked_node_ptr cur(pos.pCur);
@@ -1056,8 +1056,8 @@ namespace cds { namespace intrusive {
 
                 pNext = pCur->m_pNext.load(memory_model::memory_order_acquire);
 
-                if ( pPrev->load(memory_model::memory_order_relaxed) != pCur
-                    || pNext != pCur->m_pNext.load(memory_model::memory_order_relaxed))
+                if ( pPrev->load(memory_model::memory_order_acquire) != pCur
+                    || pNext != pCur->m_pNext.load(memory_model::memory_order_acquire))
                 {
                     bkoff();
                     goto try_again;
