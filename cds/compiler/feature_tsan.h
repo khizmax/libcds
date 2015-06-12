@@ -22,6 +22,7 @@
 #   define CDS_TSAN_ANNOTATE_IGNORE_RW_END          \
                                                     CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;\
                                                     CDS_TSAN_ANNOTATE_IGNORE_READS_END
+#   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz ) AnnotateNewMemory( __FILE__, __LINE__, addr, sz )
 
     // provided by TSan
     extern "C" {
@@ -32,19 +33,24 @@
         void AnnotateIgnoreReadsEnd(const char *f, int l);
         void AnnotateIgnoreWritesBegin(const char *f, int l);
         void AnnotateIgnoreWritesEnd(const char *f, int l);
+
+        void AnnotateNewMemory(char *f, int l, void * mem, size_t size);
+
     }
 
 #else // CDS_THREAD_SANITIZER_ENABLED
 
-#   define CDS_TSAN_ANNOTATE_HAPPENS_BEFORE(addr)
-#   define CDS_TSAN_ANNOTATE_HAPPENS_AFTER(addr)
+#   define CDS_TSAN_ANNOTATE_HAPPENS_BEFORE(addr)   (void)
+#   define CDS_TSAN_ANNOTATE_HAPPENS_AFTER(addr)    (void)
 
-#   define CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN
-#   define CDS_TSAN_ANNOTATE_IGNORE_READS_END
-#   define CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN
-#   define CDS_TSAN_ANNOTATE_IGNORE_WRITES_END
-#   define CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN
-#   define CDS_TSAN_ANNOTATE_IGNORE_RW_END
+#   define CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN     (void)
+#   define CDS_TSAN_ANNOTATE_IGNORE_READS_END       (void)
+#   define CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN    (void)
+#   define CDS_TSAN_ANNOTATE_IGNORE_WRITES_END      (void)
+#   define CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN        (void)
+#   define CDS_TSAN_ANNOTATE_IGNORE_RW_END          (void)
+
+#   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz ) (void)
 
 #endif
 
