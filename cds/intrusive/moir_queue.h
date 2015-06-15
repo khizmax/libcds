@@ -105,7 +105,6 @@ namespace cds { namespace intrusive {
     protected:
         //@cond
         typedef typename base_class::dequeue_result dequeue_result;
-        typedef typename base_class::node_to_value node_to_value;
 
         bool do_dequeue( dequeue_result& res )
         {
@@ -114,8 +113,8 @@ namespace cds { namespace intrusive {
             node_type * pNext;
             node_type * h;
             while ( true ) {
-                h = res.guards.protect( 0, base_class::m_pHead, node_to_value() );
-                pNext = res.guards.protect( 1, h->m_pNext, node_to_value() );
+                h = res.guards.protect( 0, base_class::m_pHead, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );});
+                pNext = res.guards.protect( 1, h->m_pNext, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );});
 
                 if ( pNext == nullptr ) {
                     base_class::m_Stat.onEmptyDequeue();

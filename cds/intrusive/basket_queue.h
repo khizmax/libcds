@@ -434,7 +434,6 @@ namespace cds { namespace intrusive {
         typedef typename node_type::marked_ptr   marked_ptr;
         typedef typename node_type::atomic_marked_ptr atomic_marked_ptr;
 
-        typedef intrusive::node_to_value<BasketQueue> node_to_value;
         typedef typename opt::details::alignment_setter< atomic_marked_ptr, traits::alignment >::type aligned_node_ptr;
         typedef typename opt::details::alignment_setter< node_type, traits::alignment >::type dummy_node_type;
 
@@ -453,31 +452,6 @@ namespace cds { namespace intrusive {
 
         //@cond
 
-        template <size_t Count>
-        static marked_ptr guard_node( typename gc::template GuardArray<Count>& g, size_t idx, atomic_marked_ptr const& p )
-        {
-            marked_ptr pg;
-            while ( true ) {
-                pg = p.load( memory_model::memory_order_relaxed );
-                g.assign( idx, node_traits::to_value_ptr( pg.ptr() ) );
-                if ( p.load( memory_model::memory_order_acquire) == pg ) {
-                    return pg;
-                }
-            }
-        }
-
-        static marked_ptr guard_node( typename gc::Guard& g, atomic_marked_ptr const& p )
-        {
-            marked_ptr pg;
-            while ( true ) {
-                pg = p.load( memory_model::memory_order_relaxed );
-                g.assign( node_traits::to_value_ptr( pg.ptr() ) );
-                if ( p.load( memory_model::memory_order_acquire) == pg ) {
-                    return pg;
-                }
-            }
-        }
-
         struct dequeue_result {
             typename gc::template GuardArray<3>  guards;
             node_type * pNext;
@@ -495,9 +469,9 @@ namespace cds { namespace intrusive {
             marked_ptr pNext;
 
             while ( true ) {
-                h = guard_node( res.guards, 0, m_pHead );
-                t = guard_node( res.guards, 1, m_pTail );
-                pNext = guard_node( res.guards, 2, h->m_pNext );
+                h = res.guards.protect( 0, m_pHead, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                t = res.guards.protect( 1, m_pTail, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                pNext = res.guards.protect( 2, h->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
 
                 if ( h == m_pHead.load( memory_model::memory_order_acquire ) ) {
                     if ( h.ptr() == t.ptr() ) {
@@ -509,8 +483,8 @@ namespace cds { namespace intrusive {
                         {
                             typename gc::Guard g;
                             while ( pNext->m_pNext.load(memory_model::memory_order_relaxed).ptr() && m_pTail.load(memory_model::memory_order_relaxed) == t ) {
-                                pNext = guard_node( g, pNext->m_pNext );
-                                res.guards.assign( 2, g.template get<value_type>() );
+                                pNext = g.protect( pNext->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                                res.guards.copy( 2, g );
                             }
                         }
 
@@ -525,7 +499,7 @@ namespace cds { namespace intrusive {
                         while ( pNext.ptr() && pNext.bits() && iter.ptr() != t.ptr() && m_pHead.load(memory_model::memory_order_relaxed) == h ) {
                             iter = pNext;
                             g.assign( res.guards.template get<value_type>(2) );
-                            pNext = guard_node( res.guards, 2, pNext->m_pNext );
+                            pNext = res.guards.protect( 2, pNext->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
                             ++hops;
                         }
 
@@ -570,10 +544,10 @@ namespace cds { namespace intrusive {
                 typename gc::template GuardArray<2> guards;
                 guards.assign( 0, node_traits::to_value_ptr(head.ptr()) );
                 while ( head.ptr() != newHead.ptr() ) {
-                    marked_ptr pNext = guard_node( guards, 1, head->m_pNext );
+                    marked_ptr pNext = guards.protect( 1, head->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
                     assert( pNext.bits() != 0 );
                     dispose_node( head.ptr() );
-                    guards.assign( 0, guards.template get<value_type>(1) );
+                    guards.copy( 0, 1 );
                     head = pNext;
                 }
             }
@@ -653,7 +627,7 @@ namespace cds { namespace intrusive {
 
             marked_ptr t;
             while ( true ) {
-                t = guard_node( guard, m_pTail );
+                t = guard.protect( m_pTail, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
 
                 marked_ptr pNext = t->m_pNext.load(memory_model::memory_order_acquire );
 
@@ -672,7 +646,7 @@ namespace cds { namespace intrusive {
                     typename gc::Guard gNext;
 
                 try_again:
-                    pNext = guard_node( gNext, t->m_pNext );
+                    pNext = gNext.protect( t->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
 
                     // add to the basket
                     if ( m_pTail.load(memory_model::memory_order_relaxed) == t

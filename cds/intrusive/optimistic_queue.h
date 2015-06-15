@@ -421,7 +421,6 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef intrusive::node_to_value<OptimisticQueue> node_to_value;
         typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
 
         // GC and node_type::gc must be the same
@@ -460,10 +459,10 @@ namespace cds { namespace intrusive {
             back_off bkoff;
 
             while ( true ) { // Try till success or empty
-                pHead = res.guards.protect( 0, m_pHead, node_to_value() );
-                pTail = res.guards.protect( 1, m_pTail, node_to_value() );
+                pHead = res.guards.protect( 0, m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
+                pTail = res.guards.protect( 1, m_pTail, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                 assert( pHead != nullptr );
-                pFirstNodePrev = res.guards.protect( 2, pHead->m_pPrev, node_to_value() );
+                pFirstNodePrev = res.guards.protect( 2, pHead->m_pPrev, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 
                 if ( pHead == m_pHead.load(memory_model::memory_order_relaxed)) {
                     if ( pTail != pHead ) {
@@ -510,7 +509,7 @@ namespace cds { namespace intrusive {
 
             pCurNode = pTail;
             while ( pCurNode != pHead ) { // While not at head
-                pCurNodeNext = guards.protect(0, pCurNode->m_pNext, node_to_value() );
+                pCurNodeNext = guards.protect(0, pCurNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);} );
                 if ( pHead != m_pHead.load(memory_model::memory_order_relaxed) )
                     break;
                 pCurNodeNext->m_pPrev.store( pCurNode, memory_model::memory_order_release );
@@ -577,16 +576,16 @@ namespace cds { namespace intrusive {
             back_off bkoff;
 
             guards.assign( 1, &val );
-            node_type * pTail = guards.protect( 0, m_pTail, node_to_value() )  ;   // Read the tail
+            node_type * pTail = guards.protect( 0, m_pTail, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);} );   // Read the tail
             while( true ) {
                 pNew->m_pNext.store( pTail, memory_model::memory_order_release );
-                if ( m_pTail.compare_exchange_strong( pTail, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {     // Try to CAS the tail
-                    pTail->m_pPrev.store( pNew, memory_model::memory_order_release )     ;           // Success, write prev
+                if ( m_pTail.compare_exchange_strong( pTail, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed )) { // Try to CAS the tail
+                    pTail->m_pPrev.store( pNew, memory_model::memory_order_release ); // Success, write prev
                     ++m_ItemCounter;
                     m_Stat.onEnqueue();
                     break ;     // Enqueue done!
                 }
-                guards.assign( 0, node_traits::to_value_ptr( pTail ) )   ;  // pTail has been changed by CAS above
+                guards.assign( 0, node_traits::to_value_ptr( pTail ));  // pTail has been changed by CAS above
                 m_Stat.onEnqueueRace();
                 bkoff();
             }

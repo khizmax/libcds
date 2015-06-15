@@ -22,7 +22,7 @@
 #   define CDS_TSAN_ANNOTATE_IGNORE_RW_END          \
                                                     CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;\
                                                     CDS_TSAN_ANNOTATE_IGNORE_READS_END
-#   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz ) AnnotateNewMemory( __FILE__, __LINE__, addr, sz )
+#   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz ) AnnotateNewMemory( (char *) __FILE__, __LINE__, reinterpret_cast<void *>(addr), sz )
 
     // provided by TSan
     extern "C" {

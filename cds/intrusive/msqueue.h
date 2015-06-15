@@ -345,7 +345,6 @@ namespace cds { namespace intrusive {
         // GC and node_type::gc must be the same
         static_assert((std::is_same<gc, typename node_type::gc>::value), "GC and node_type::gc must be the same");
 
-        typedef intrusive::node_to_value<MSQueue> node_to_value;
         typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
         typedef typename opt::details::alignment_setter< node_type, traits::alignment >::type dummy_node_type;
 
@@ -371,9 +370,8 @@ namespace cds { namespace intrusive {
 
             node_type * h;
             while ( true ) {
-                h = res.guards.protect( 0, m_pHead, node_to_value() );
-                pNext = h->m_pNext.load( memory_model::memory_order_acquire );
-                res.guards.assign( 1, node_to_value()( pNext ));
+                h = res.guards.protect( 0, m_pHead, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );});
+                pNext = res.guards.protect( 1, h->m_pNext, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );});
                 if ( m_pHead.load(memory_model::memory_order_acquire) != h )
                     continue;
 
@@ -479,7 +477,7 @@ namespace cds { namespace intrusive {
 
             node_type * t;
             while ( true ) {
-                t = guard.protect( m_pTail, node_to_value() );
+                t = guard.protect( m_pTail, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );});
 
                 node_type * pNext = t->m_pNext.load(memory_model::memory_order_acquire);
                 if ( pNext != nullptr ) {
@@ -556,7 +554,8 @@ namespace cds { namespace intrusive {
         bool empty() const
         {
             typename gc::Guard guard;
-            return guard.protect( m_pHead, node_to_value() )->m_pNext.load( memory_model::memory_order_relaxed ) == nullptr;
+            return guard.protect( m_pHead, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );})
+                ->m_pNext.load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
         /// Clear the queue
