@@ -228,8 +228,8 @@ namespace cds { namespace intrusive {
             /// Link checking, see \p cds::opt::link_checker
             static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
 
-            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
 
@@ -248,7 +248,7 @@ namespace cds { namespace intrusive {
             - opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p basket_queue::stat, \p basket_queue::empty_stat, user-provided class that supports \p %basket_queue::stat interface.
                 Default is \p %basket_queue::empty_stat (internal statistics disabled).
-            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
@@ -379,7 +379,7 @@ namespace cds { namespace intrusive {
 
         // BasketQueue with Hazard Pointer garbage collector,
         // member hook + item disposer + item counter,
-        // without alignment of internal queue data:
+        // without padding of internal queue data:
         struct Bar
         {
             // Your data
@@ -397,7 +397,7 @@ namespace cds { namespace intrusive {
                 >
                 ,ci::opt::disposer< fooDisposer >
                 ,cds::opt::item_counter< cds::atomicity::item_counter >
-                ,cds::opt::alignment< cds::opt::no_special_alignment >
+                ,cds::opt::padding< cds::opt::no_special_padding >
             >::type
         {};
         typedef ci::BasketQueue< hp_gc, Bar, barTraits > barQueue;
@@ -434,16 +434,16 @@ namespace cds { namespace intrusive {
         typedef typename node_type::marked_ptr   marked_ptr;
         typedef typename node_type::atomic_marked_ptr atomic_marked_ptr;
 
-        typedef typename opt::details::alignment_setter< atomic_marked_ptr, traits::alignment >::type aligned_node_ptr;
-        typedef typename opt::details::alignment_setter< node_type, traits::alignment >::type dummy_node_type;
-
         // GC and node_type::gc must be the same
         static_assert( std::is_same<gc, typename node_type::gc>::value, "GC and node_type::gc must be the same");
         //@endcond
 
-        aligned_node_ptr    m_pHead ;           ///< Queue's head pointer (aligned)
-        aligned_node_ptr    m_pTail ;           ///< Queue's tail pointer (aligned)
-        dummy_node_type     m_Dummy ;           ///< dummy node
+        atomic_marked_ptr    m_pHead ;           ///< Queue's head pointer (aligned)
+        typename opt::details::apply_padding< atomic_marked_ptr, traits::padding >::padding_type pad1_;
+        atomic_marked_ptr    m_pTail ;           ///< Queue's tail pointer (aligned)
+        typename opt::details::apply_padding< atomic_marked_ptr, traits::padding >::padding_type pad2_;
+        node_type           m_Dummy ;           ///< dummy node
+        typename opt::details::apply_padding< node_type, traits::padding >::padding_type pad3_;
         item_counter        m_ItemCounter   ;   ///< Item counter
         stat                m_Stat  ;           ///< Internal statistics
         //@cond

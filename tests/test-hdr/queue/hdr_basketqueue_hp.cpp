@@ -71,7 +71,7 @@ namespace queue {
         typedef cds::container::BasketQueue < cds::gc::HP, int,
             typename cds::container::basket_queue::make_traits <
                 cds::opt::memory_model< cds::opt::v::relaxed_ordering>
-                ,cds::opt::alignment< 16 >
+                ,cds::opt::padding< 16 >
             >::type
         > queue_type;
         test_no_ic< queue_type >();
@@ -83,7 +83,7 @@ namespace queue {
         {
             typedef cds::atomicity::item_counter item_counter;
             typedef cds::opt::v::relaxed_ordering memory_model;
-            enum { alignment = 32 };
+            enum { padding = 32 };
         };
         typedef cds::container::BasketQueue < cds::gc::HP, int, traits > queue_type;
         test_ic< queue_type >();
@@ -94,7 +94,7 @@ namespace queue {
         typedef cds::container::BasketQueue < cds::gc::HP, int,
             typename cds::container::basket_queue::make_traits <
                 cds::opt::memory_model< cds::opt::v::sequential_consistent>
-                , cds::opt::alignment< cds::opt::no_special_alignment >
+                , cds::opt::padding< cds::opt::no_special_padding >
             > ::type
         > queue_type;
         test_no_ic< queue_type >();
@@ -106,7 +106,7 @@ namespace queue {
             typename cds::container::basket_queue::make_traits <
                 cds::opt::item_counter< cds::atomicity::item_counter >
                 ,cds::opt::memory_model< cds::opt::v::sequential_consistent>
-                ,cds::opt::alignment< cds::opt::cache_line_alignment >
+                ,cds::opt::padding< cds::opt::cache_line_padding >
             > ::type
         > queue_type;
         test_ic< queue_type >();

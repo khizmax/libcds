@@ -171,8 +171,8 @@ namespace cds { namespace intrusive {
             /// Link checking, see \p cds::opt::link_checker
             static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
 
-            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
         /// Metafunction converting option list to \p msqueue::traits
@@ -190,7 +190,7 @@ namespace cds { namespace intrusive {
             - \p opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p msqueue::stat, \p msqueue::empty_stat, user-provided class that supports \p %msqueue::stat interface.
                 Default is \p %msqueue::empty_stat (internal statistics disabled).
-            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
@@ -287,7 +287,7 @@ namespace cds { namespace intrusive {
         // Example 2:
         //  MSQueue with Hazard Pointer garbage collector,
         //  member hook + item disposer + item counter,
-        //  without alignment of internal queue data
+        //  without padding of internal queue data
         //  Use msqueue::make_traits
         struct Bar
         {
@@ -307,7 +307,7 @@ namespace cds { namespace intrusive {
                 >
                 ,ci::opt::disposer< fooDisposer >
                 ,cds::opt::item_counter< cds::atomicity::item_counter >
-                ,cds::opt::alignment< cds::opt::no_special_alignment >
+                ,cds::opt::padding< cds::opt::no_special_padding >
             >::type
         > barQueue;
         \endcode
@@ -345,14 +345,16 @@ namespace cds { namespace intrusive {
         // GC and node_type::gc must be the same
         static_assert((std::is_same<gc, typename node_type::gc>::value), "GC and node_type::gc must be the same");
 
-        typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
-        typedef typename opt::details::alignment_setter< node_type, traits::alignment >::type dummy_node_type;
+        typedef typename node_type::atomic_node_ptr atomic_node_ptr;
 
-        aligned_node_ptr    m_pHead ;           ///< Queue's head pointer
-        aligned_node_ptr    m_pTail ;           ///< Queue's tail pointer
-        dummy_node_type     m_Dummy ;           ///< dummy node
-        item_counter        m_ItemCounter   ;   ///< Item counter
-        stat                m_Stat  ;           ///< Internal statistics
+        atomic_node_ptr    m_pHead;        ///< Queue's head pointer
+        typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad1_;
+        atomic_node_ptr    m_pTail;        ///< Queue's tail pointer
+        typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad2_;
+        node_type          m_Dummy;        ///< dummy node
+        typename opt::details::apply_padding< node_type, traits::padding >::padding_type pad3_;
+        item_counter        m_ItemCounter; ///< Item counter
+        stat                m_Stat;        ///< Internal statistics
         //@endcond
 
         //@cond
@@ -554,8 +556,8 @@ namespace cds { namespace intrusive {
         bool empty() const
         {
             typename gc::Guard guard;
-            return guard.protect( m_pHead, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );})
-                ->m_pNext.load( memory_model::memory_order_relaxed ) == nullptr;
+            node_type * p = guard.protect( m_pHead, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );});
+            return p->m_pNext.load( memory_model::memory_order_relaxed ) == nullptr;
         }
 
         /// Clear the queue

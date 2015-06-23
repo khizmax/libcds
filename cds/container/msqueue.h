@@ -46,8 +46,8 @@ namespace cds { namespace container {
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
-            /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
         /// Metafunction converting option list to \p msqueue::traits
@@ -60,7 +60,7 @@ namespace cds { namespace container {
             - \p opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p msqueue::stat, \p msqueue::empty_stat, user-provided class that supports \p %msqueue::stat interface.
                 Default is \p %msqueue::empty_stat.
-            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 

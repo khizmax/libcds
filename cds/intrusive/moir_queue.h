@@ -61,7 +61,7 @@ namespace cds { namespace intrusive {
 
         // MoirQueue with Hazard Pointer garbage collector,
         // member hook + item disposer + item counter,
-        // without alignment of internal queue data:
+        // without padding of internal queue data:
         struct Bar
         {
             // Your data
@@ -74,7 +74,7 @@ namespace cds { namespace intrusive {
             typedef ci::msqueue::member_hook< offsetof(Bar, hMember), ,ci::opt::gc<hp_gc> > hook;
             typedef fooDisposer disposer;
             typedef cds::atomicity::item_counter item_counter;
-            enum { aligment = cds::opt::no_special_alignment alignment };
+            enum { padding = cds::opt::no_special_padding };
         };
         typedef ci::MoirQueue< hp_gc, Bar, barQueueTraits > barQueue;
         \endcode

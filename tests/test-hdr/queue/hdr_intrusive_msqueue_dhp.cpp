@@ -86,18 +86,18 @@ namespace queue {
             >::type
         > MSQueue_DHP_member_stat;
 
-        // DHP base hook + alignment
+        // DHP base hook + padding
         typedef ci::MSQueue< cds::gc::DHP, base_item_type,
             typename ci::msqueue::make_traits<
             ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
             , ci::opt::hook<
             ci::msqueue::base_hook< ci::opt::gc<cds::gc::DHP> >
             >
-            , co::alignment< 32 >
+            , co::padding< 32 >
             >::type
         > MSQueue_DHP_base_align;
 
-        // DHP member hook + alignment
+        // DHP member hook + padding
         typedef ci::MSQueue< cds::gc::DHP, member_item_type,
             typename ci::msqueue::make_traits<
             ci::opt::hook<
@@ -106,42 +106,42 @@ namespace queue {
             ci::opt::gc<cds::gc::DHP>
             >
             >
-            , co::alignment< 32 >
+            , co::padding< 32 >
             , ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
             >::type
         > MSQueue_DHP_member_align;
 
-        // DHP base hook + no alignment
+        // DHP base hook + no padding
         struct traits_MSQueue_DHP_base_noalign : public ci::msqueue::traits {
             typedef ci::msqueue::base_hook< ci::opt::gc<cds::gc::DHP> > hook;
             typedef IntrusiveQueueHeaderTest::faked_disposer disposer;
-            enum { alignment = co::no_special_alignment };
+            enum { padding = co::no_special_padding };
         };
         typedef ci::MSQueue< cds::gc::DHP, base_item_type, traits_MSQueue_DHP_base_noalign > MSQueue_DHP_base_noalign;
 
-        // DHP member hook + no alignment
+        // DHP member hook + no padding
         struct traits_MSQueue_DHP_member_noalign : public ci::msqueue::traits {
             typedef ci::msqueue::member_hook <
                 offsetof( member_item_type, hMember ),
                 ci::opt::gc < cds::gc::DHP >
             > hook;
             typedef IntrusiveQueueHeaderTest::faked_disposer disposer;
-            enum { alignment = co::no_special_alignment };
+            enum { padding = co::no_special_padding };
         };
         typedef ci::MSQueue< cds::gc::DHP, member_item_type, traits_MSQueue_DHP_member_noalign > MSQueue_DHP_member_noalign;
 
 
-        // DHP base hook + cache alignment
+        // DHP base hook + cache padding
         struct traits_MSQueue_DHP_base_cachealign : public traits_MSQueue_DHP_base_noalign
         {
-            enum { alignment = co::cache_line_alignment };
+            enum { padding = co::cache_line_padding };
         };
         typedef ci::MSQueue< cds::gc::DHP, base_item_type, traits_MSQueue_DHP_base_cachealign > MSQueue_DHP_base_cachealign;
 
-        // DHP member hook + cache alignment
+        // DHP member hook + cache padding
         struct traits_MSQueue_DHP_member_cachealign : public traits_MSQueue_DHP_member_noalign
         {
-            enum { alignment = co::cache_line_alignment };
+            enum { padding = co::cache_line_padding };
         };
         typedef ci::MSQueue< cds::gc::DHP, member_item_type, traits_MSQueue_DHP_member_cachealign > MSQueue_DHP_member_cachealign;
     }   // namespace

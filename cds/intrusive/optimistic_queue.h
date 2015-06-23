@@ -32,10 +32,11 @@ namespace cds { namespace intrusive {
             atomic_node_ptr m_pPrev ;   ///< Pointer to previous node
             atomic_node_ptr m_pNext ;   ///< Pointer to next node
 
-            CDS_CONSTEXPR node() CDS_NOEXCEPT
-                : m_pPrev( nullptr )
-                , m_pNext( nullptr )
-            {}
+            node() CDS_NOEXCEPT
+            {
+                m_pPrev.store( nullptr, atomics::memory_order_release );
+                m_pNext.store( nullptr, atomics::memory_order_release );
+            }
         };
 
         //@cond
@@ -464,10 +465,10 @@ namespace cds { namespace intrusive {
                 assert( pHead != nullptr );
                 pFirstNodePrev = res.guards.protect( 2, pHead->m_pPrev, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 
-                if ( pHead == m_pHead.load(memory_model::memory_order_relaxed)) {
+                if ( pHead == m_pHead.load(memory_model::memory_order_acquire)) {
                     if ( pTail != pHead ) {
                         if ( pFirstNodePrev == nullptr
-                          || pFirstNodePrev->m_pNext.load(memory_model::memory_order_relaxed) != pHead )
+                          || pFirstNodePrev->m_pNext.load(memory_model::memory_order_acquire) != pHead )
                         {
                             fix_list( pTail, pHead );
                             continue;
@@ -509,8 +510,8 @@ namespace cds { namespace intrusive {
 
             pCurNode = pTail;
             while ( pCurNode != pHead ) { // While not at head
-                pCurNodeNext = guards.protect(0, pCurNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);} );
-                if ( pHead != m_pHead.load(memory_model::memory_order_relaxed) )
+                pCurNodeNext = guards.protect(0, pCurNode->m_pNext, [](node_type * p) -> value_type * { return node_traits::to_value_ptr(p);});
+                if ( pHead != m_pHead.load(memory_model::memory_order_acquire))
                     break;
                 pCurNodeNext->m_pPrev.store( pCurNode, memory_model::memory_order_release );
                 guards.assign( 1, node_traits::to_value_ptr( pCurNode = pCurNodeNext ));

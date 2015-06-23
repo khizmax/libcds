@@ -74,7 +74,7 @@ namespace queue {
         typedef cds::container::MoirQueue < cds::gc::DHP, int,
             typename cds::container::msqueue::make_traits <
                 cds::opt::memory_model< cds::opt::v::relaxed_ordering>
-                , cds::opt::alignment < 16 >
+                , cds::opt::padding < 16 >
             > ::type
         > test_queue;
 
@@ -87,7 +87,7 @@ namespace queue {
             typename cds::container::msqueue::make_traits <
                 cds::opt::item_counter< cds::atomicity::item_counter >
                 , cds::opt::memory_model< cds::opt::v::relaxed_ordering>
-                , cds::opt::alignment < 32 >
+                , cds::opt::padding < 32 >
             >::type
         > test_queue;
 
@@ -99,7 +99,7 @@ namespace queue {
         typedef cds::container::MoirQueue < cds::gc::DHP, int,
             typename cds::container::msqueue::make_traits <
                 cds::opt::memory_model< cds::opt::v::sequential_consistent>
-                ,cds::opt::alignment < cds::opt::no_special_alignment >
+                ,cds::opt::padding < cds::opt::no_special_padding >
             > ::type
         > test_queue;
 
@@ -112,7 +112,7 @@ namespace queue {
             typename cds::container::msqueue::make_traits <
                 cds::opt::item_counter< cds::atomicity::item_counter >
                 , cds::opt::memory_model< cds::opt::v::sequential_consistent>
-                , cds::opt::alignment < cds::opt::cache_line_alignment >
+                , cds::opt::padding < cds::opt::cache_line_padding >
             > ::type
         > test_queue;
         test_ic< test_queue >();

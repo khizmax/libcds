@@ -408,7 +408,6 @@ namespace opt {
         struct alignment_setter<Type, cache_line_alignment> {
             typedef typename cds::details::aligned_type< Type, c_nCacheLineSize >::type  type;
         };
-
     } // namespace details
     //@endcond
 
@@ -468,6 +467,7 @@ namespace opt {
             struct type {
                 T   data;
             };
+            typedef void padding_type;
         };
 
         template <typename T, unsigned int Padding, bool TinyOnly >
@@ -476,23 +476,27 @@ namespace opt {
             struct type {
                 T   data;
             };
+            typedef void padding_type;
         };
 
         template <typename T, unsigned int Padding, bool TinyOnly >
         struct apply_padding_helper < T, Padding, false, padding_datasize_less, TinyOnly >
         {
+            typedef uint8_t padding_type[Padding - sizeof( T )];
             struct type {
                 T data;
-                uint8_t pad_[Padding - sizeof( T )];
+                padding_type pad_;
             };
+
         };
 
         template <typename T, unsigned int Padding >
         struct apply_padding_helper < T, Padding, false, padding_datasize_greater, false >
         {
+            typedef uint8_t padding_type[Padding - sizeof( T ) % Padding];
             struct type {
                 T data;
-                uint8_t pad_[Padding - sizeof( T ) % Padding];
+                padding_type pad_;
             };
         };
 
@@ -502,6 +506,7 @@ namespace opt {
             struct type {
                 T data;
             };
+            typedef void padding_type;
         };
 
         template <typename T, unsigned int Padding >
@@ -517,12 +522,20 @@ namespace opt {
 
             static_assert( (c_nPadding & (c_nPadding - 1)) == 0, "Padding must be a power-of-two number" );
 
-            typedef typename apply_padding_helper< T,
+            typedef apply_padding_helper< T,
                 c_nPadding,
                 c_nPadding == 0,
                 sizeof( T ) < c_nPadding ? padding_datasize_less : sizeof( T ) == c_nPadding ? padding_datasize_equal : padding_datasize_greater,
                 (Padding & padding_tiny_data_only) != 0
-            >::type type;
+            > result;
+
+            typedef typename result::type type;
+
+            typedef typename std::conditional<
+                std::is_same< typename result::padding_type, void >::value,
+                unsigned int,
+                typename result::padding_type
+            >::type padding_type;
         };
 
     } // namespace details

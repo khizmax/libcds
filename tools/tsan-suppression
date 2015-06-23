@@ -1,4 +1,8 @@
-
-
 # Boost race [?] in test framework. Do not affect to libcds
 race:CppUnitMini::ThreadPool::~ThreadPool
+
+# DHP 
+race:cds::gc::details::retired_ptr::free
+
+# uRCU false positive
+race:cds::urcu::gc*::batch_retire*
