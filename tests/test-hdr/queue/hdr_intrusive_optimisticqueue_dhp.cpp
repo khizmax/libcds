@@ -94,18 +94,18 @@ namespace queue {
             >::type
         > OptimisticQueue_DHP_member_stat;
 
-        // DHP base hook + alignment
+        // DHP base hook + padding
         typedef ci::OptimisticQueue< cds::gc::DHP, base_hook_item,
             typename ci::optimistic_queue::make_traits<
                 ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
                 ,ci::opt::hook<
                     ci::optimistic_queue::base_hook< ci::opt::gc<cds::gc::DHP> >
                 >
-                ,co::alignment< 32 >
+                ,co::padding< 32 >
             >::type
         > OptimisticQueue_DHP_base_align;
 
-        // DHP member hook + alignment
+        // DHP member hook + padding
         typedef ci::OptimisticQueue< cds::gc::DHP, member_hook_item,
             typename ci::optimistic_queue::make_traits<
                 ci::opt::hook<
@@ -114,23 +114,23 @@ namespace queue {
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >
-                ,co::alignment< 32 >
+                ,co::padding< 32 >
                 ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
             >::type
         > OptimisticQueue_DHP_member_align;
 
-        // DHP base hook + no alignment
+        // DHP base hook + no padding
         typedef ci::OptimisticQueue< cds::gc::DHP, base_hook_item,
             typename ci::optimistic_queue::make_traits<
                 ci::opt::hook<
                     ci::optimistic_queue::base_hook< ci::opt::gc<cds::gc::DHP> >
                 >
                 ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
-                ,co::alignment< co::no_special_alignment >
+                ,co::padding< co::no_special_padding >
             >::type
         > OptimisticQueue_DHP_base_noalign;
 
-        // DHP member hook + no alignment
+        // DHP member hook + no padding
         typedef ci::OptimisticQueue< cds::gc::DHP, member_hook_item,
             typename ci::optimistic_queue::make_traits<
                 ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
@@ -140,23 +140,23 @@ namespace queue {
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >
-                ,co::alignment< co::no_special_alignment >
+                ,co::padding< co::no_special_padding >
             >::type
         > OptimisticQueue_DHP_member_noalign;
 
 
-        // DHP base hook + cache alignment
+        // DHP base hook + cache padding
         typedef ci::OptimisticQueue< cds::gc::DHP, base_hook_item,
             typename ci::optimistic_queue::make_traits<
                 ci::opt::hook<
                     ci::optimistic_queue::base_hook< ci::opt::gc<cds::gc::DHP> >
                 >
-                ,co::alignment< co::cache_line_alignment >
+                ,co::padding< co::cache_line_padding >
                 ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
             >::type
         > OptimisticQueue_DHP_base_cachealign;
 
-        // DHP member hook + cache alignment
+        // DHP member hook + cache padding
         typedef ci::OptimisticQueue< cds::gc::DHP, member_hook_item,
             typename ci::optimistic_queue::make_traits<
                 ci::opt::hook<
@@ -165,7 +165,7 @@ namespace queue {
                         ci::opt::gc<cds::gc::DHP>
                     >
                 >
-                ,co::alignment< co::cache_line_alignment >
+                ,co::padding< co::cache_line_padding >
                 ,ci::opt::disposer< IntrusiveQueueHeaderTest::faked_disposer >
             >::type
         > OptimisticQueue_DHP_member_cachealign;

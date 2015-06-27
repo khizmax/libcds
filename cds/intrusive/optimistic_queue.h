@@ -268,28 +268,28 @@ namespace cds { namespace intrusive {
             /// Link checking, see \p cds::opt::link_checker
             static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
 
-            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
         /// Metafunction converting option list to \p optimistic_queue::traits
         /**
             Supported \p Options are:
 
-            - opt::hook - hook used. Possible hooks are: \p optimistic_queue::base_hook, \p optimistic_queue::member_hook, \p optimistic_queue::traits_hook.
+            - \p opt::hook - hook used. Possible hooks are: \p optimistic_queue::base_hook, \p optimistic_queue::member_hook, \p optimistic_queue::traits_hook.
                 If the option is not specified, \p %optimistic_queue::base_hook<> is used.
-            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
-            - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+            - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
                 when dequeuing.
-            - opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
-            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+            - \p opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
-            - opt::stat - the type to gather internal statistics.
+            - \p opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat,
                 user-provided class that supports \p %optimistic_queue::stat interface.
                 Default is \p %optimistic_queue::empty_stat (internal statistics disabled).
-            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
-            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
             Example: declare \p %OptimisticQueue with item counting and internal statistics
@@ -422,16 +422,18 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef typename opt::details::alignment_setter< typename node_type::atomic_node_ptr, traits::alignment >::type aligned_node_ptr;
+        typedef typename node_type::atomic_node_ptr atomic_node_ptr;
 
         // GC and node_type::gc must be the same
         static_assert((std::is_same<gc, typename node_type::gc>::value), "GC and node_type::gc must be the same");
-
         //@endcond
 
-        aligned_node_ptr m_pTail ;   ///< Pointer to tail node
-        aligned_node_ptr m_pHead ;   ///< Pointer to head node
-        node_type        m_Dummy ;   ///< dummy node
+        atomic_node_ptr     m_pTail;   ///< Pointer to tail node
+        typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad1_;
+        atomic_node_ptr     m_pHead;   ///< Pointer to head node
+        typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad2_;
+        node_type           m_Dummy ;   ///< dummy node
+        typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad3_;
         item_counter        m_ItemCounter   ;   ///< Item counter
         stat                m_Stat          ;   ///< Internal statistics
 
@@ -584,7 +586,7 @@ namespace cds { namespace intrusive {
                     pTail->m_pPrev.store( pNew, memory_model::memory_order_release ); // Success, write prev
                     ++m_ItemCounter;
                     m_Stat.onEnqueue();
-                    break ;     // Enqueue done!
+                    break;     // Enqueue done!
                 }
                 guards.assign( 0, node_traits::to_value_ptr( pTail ));  // pTail has been changed by CAS above
                 m_Stat.onEnqueueRace();

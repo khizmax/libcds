@@ -46,23 +46,23 @@ namespace cds { namespace container {
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
-            /// Alignment of internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
         /// Metafunction converting option list to \p msqueue::traits
         /**
             Supported \p Options are:
-            - opt::allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
-            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
-            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+            - \p opt::allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
-            - opt::stat - the type to gather internal statistics.
+            - \p opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat,
                 user-provided class that supports \p %optimistic_queue::stat interface.
                 Default is \p %optimistic_queue::empty_stat.
-            - opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
-            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
             Example: declare \p OptimisticQueue with item counting and internal statistics

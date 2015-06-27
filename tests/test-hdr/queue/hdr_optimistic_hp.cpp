@@ -70,7 +70,7 @@ namespace queue {
             cds::container::OptimisticQueue< cds::gc::HP, int,
                 typename cds::container::optimistic_queue::make_traits<
                     cds::opt::memory_model< cds::opt::v::relaxed_ordering>
-                    ,cds::opt::alignment< 16 >
+                    ,cds::opt::padding< 16 >
                 >::type
             >
         >();
@@ -83,7 +83,7 @@ namespace queue {
                 typename cds::container::optimistic_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                     ,cds::opt::memory_model< cds::opt::v::relaxed_ordering>
-                    ,cds::opt::alignment< 32 >
+                    ,cds::opt::padding< 32 >
                 >::type
             >
         >();
@@ -95,7 +95,7 @@ namespace queue {
             cds::container::OptimisticQueue< cds::gc::HP, int,
                 typename cds::container::optimistic_queue::make_traits<
                     cds::opt::memory_model< cds::opt::v::sequential_consistent>
-                    ,cds::opt::alignment< cds::opt::no_special_alignment >
+                    ,cds::opt::padding< cds::opt::no_special_padding >
                 >::type
             >
         >();
@@ -108,7 +108,7 @@ namespace queue {
                 typename cds::container::optimistic_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                     ,cds::opt::memory_model< cds::opt::v::sequential_consistent>
-                    ,cds::opt::alignment< cds::opt::cache_line_alignment >
+                    ,cds::opt::padding< cds::opt::cache_line_padding >
                 >::type
             >
         >();
