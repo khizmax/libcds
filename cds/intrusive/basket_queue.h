@@ -427,7 +427,7 @@ namespace cds { namespace intrusive {
             typedef BasketQueue< GC2, T2, Traits2> other   ;   ///< Rebinding result
         };
 
-        static CDS_CONSTEXPR const size_t m_nHazardPtrCount = 6 ; ///< Count of hazard pointer required for the algorithm
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 6 ; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond

@@ -211,7 +211,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::lock_type     lock_type;   ///< Type of mutex for maintaining an internal list of allocated segments.
         typedef typename traits::permutation_generator permutation_generator; ///< Random permutation generator for sequence [0, quasi-factor)
 
-        static const size_t m_nHazardPtrCount = 2 ; ///< Count of hazard pointer required for the algorithm
+        static const size_t c_nHazardPtrCount = 2 ; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond

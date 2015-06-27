@@ -197,7 +197,7 @@ namespace cds { namespace container {
         typedef typename base_class::lock_type     lock_type   ;   ///< Type of mutex for maintaining an internal list of allocated segments.
         typedef typename base_class::permutation_generator permutation_generator; ///< Random permutation generator for sequence [0, quasi-factor)
 
-        static const size_t m_nHazardPtrCount = base_class::m_nHazardPtrCount ; ///< Count of hazard pointer required for the algorithm
+        static const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount ; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond

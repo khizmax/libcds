@@ -29,13 +29,13 @@ namespace cds { namespace intrusive {
 
             typedef typename gc::template atomic_ref<node>    atomic_node_ptr    ;    ///< atomic pointer
 
-            atomic_node_ptr m_pPrev ;   ///< Pointer to previous node
             atomic_node_ptr m_pNext ;   ///< Pointer to next node
+            atomic_node_ptr m_pPrev ;   ///< Pointer to previous node
 
             node() CDS_NOEXCEPT
             {
-                m_pPrev.store( nullptr, atomics::memory_order_release );
                 m_pNext.store( nullptr, atomics::memory_order_release );
+                m_pPrev.store( nullptr, atomics::memory_order_release );
             }
         };
 
