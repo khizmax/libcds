@@ -85,6 +85,7 @@ namespace queue {
                 for ( typename Queue::value_type * p = m_pStart; p < m_pEnd; ) {
                     p->nNo = i;
                     p->nWriterNo = m_nThreadNo;
+                    CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &p->nWriterNo );
                     if ( m_Queue.push( *p )) {
                         ++p;
                         ++i;
@@ -170,6 +171,7 @@ namespace queue {
                     if ( p ) {
                         p->nConsumer = m_nThreadNo;
                         ++m_nPopped;
+                        CDS_TSAN_ANNOTATE_HAPPENS_AFTER( &p->nWriterNo );
                         if ( p->nWriterNo < nTotalWriters )
                             m_WriterData[ p->nWriterNo ].push_back( p->nNo );
                         else

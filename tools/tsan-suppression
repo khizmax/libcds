@@ -6,3 +6,5 @@ race:cds::gc::details::retired_ptr::free
 
 # uRCU false positive
 race:cds::urcu::gc*::batch_retire*
+
+race:cds::container::OptimisticQueue*::alloc_node

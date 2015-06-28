@@ -261,6 +261,7 @@ namespace cds { namespace intrusive {
             assert( pRec );
 
             // this function is called under FC mutex, so switch TSan off
+            // All TSan warnings are false positive
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
             switch ( pRec->op() ) {
@@ -292,6 +293,7 @@ namespace cds { namespace intrusive {
         void fc_process( typename fc_kernel::iterator itBegin, typename fc_kernel::iterator itEnd )
         {
             // this function is called under FC mutex, so switch TSan off
+            // All TSan warnings are false positive
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
             typedef typename fc_kernel::iterator fc_iterator;
