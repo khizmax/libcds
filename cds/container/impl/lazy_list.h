@@ -10,7 +10,7 @@ namespace cds { namespace container {
 
     /// Lazy ordered list
     /** @ingroup cds_nonintrusive_list
-        \anchor cds_nonintrusive_LazyList_gc
+        @anchor cds_nonintrusive_LazyList_gc
 
         Usually, ordered single-linked list is used as a building block for the hash table implementation.
         The complexity of searching is <tt>O(N)</tt>.

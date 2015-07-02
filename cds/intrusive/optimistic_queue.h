@@ -428,11 +428,17 @@ namespace cds { namespace intrusive {
         //@endcond
 
         atomic_node_ptr     m_pTail;   ///< Pointer to tail node
+        //@cond
         typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad1_;
+        //@endcond
         atomic_node_ptr     m_pHead;   ///< Pointer to head node
+        //@cond
         typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad2_;
+        //@endcond
         node_type           m_Dummy ;   ///< dummy node
+        //@cond
         typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad3_;
+        //@endcond
         item_counter        m_ItemCounter   ;   ///< Item counter
         stat                m_Stat          ;   ///< Internal statistics
 

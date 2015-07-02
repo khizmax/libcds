@@ -356,7 +356,7 @@ namespace cds { namespace container {
             The user-defined functor is called only if the inserting is success.
 
             @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            @ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename Q, typename Func>
@@ -393,7 +393,7 @@ namespace cds { namespace container {
             already is in the set.
 
             @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            @ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
             */
         template <typename Q, typename Func>
