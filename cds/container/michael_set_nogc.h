@@ -155,7 +155,13 @@ namespace cds { namespace container {
 
     public:
         /// Initialize hash set
-        /** @copydetails cds_nonintrusive_MichaelHashSet_hp_ctor
+        /**
+            The Michael's hash set is non-expandable container. You should point the average count of items \p nMaxItemCount
+            when you create an object.
+            \p nLoadFactor parameter defines average count of items per bucket and it should be small number between 1 and 10.
+            Remember, since the bucket implementation is an ordered list, searching in the bucket is linear [<tt>O(nLoadFactor)</tt>].
+
+            The ctor defines hash table size as rounding <tt>nMaxItemCount / nLoadFactor</tt> up to nearest power of two.
         */
         MichaelHashSet(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set

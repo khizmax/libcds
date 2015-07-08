@@ -22,7 +22,7 @@ namespace cds { namespace container {
         relationship (\p Traits::equal_to), but for the ordered list \p less
         or \p compare relations should be specified in \p Traits.
 
-        @copydetails cds_nonintrusive_LazyList_gc
+        See @ref cds_nonintrusive_LazyList_gc "cds::container::LazyList<cds::gc::nogc, T, Traits>"
     */
     template <
         typename T,

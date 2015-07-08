@@ -138,7 +138,12 @@ namespace cds { namespace intrusive {
 
     public:
         /// Initializes hash set
-        /** @copydetails cds_intrusive_MichaelHashSet_hp_ctor
+        /**
+            The Michael's hash set is an unbounded container, but its hash table is non-expandable.
+            At construction time you should pass estimated maximum item count and a load factor.
+            The load factor is average size of one bucket - a small number between 1 and 10.
+            The bucket is an ordered single-linked list, searching in the bucket has linear complexity <tt>O(nLoadFactor)</tt>.
+            The constructor defines hash table size as rounding <tt>nMaxItemCount / nLoadFactor</tt> up to nearest power of two.
         */
         MichaelHashSet(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set

@@ -15,9 +15,9 @@ namespace cds { namespace container {
         @anchor cds_nonintrusive_LazyKVList_nogc
 
         This specialization is append-only list when no item
-        reclamation may be performed. The class does not support deleting of list item.
+        reclamation may be performed. The class does not support deleting of list's item.
 
-        @copydetails cds_nonintrusive_LazyList_gc
+        See @ref cds_nonintrusive_LazyList_gc "cds::container::LazyList<cds::gc::nogc, T, Traits>"
     */
     template <
         typename Key,

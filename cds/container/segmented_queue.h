@@ -47,7 +47,11 @@ namespace cds { namespace container {
             enum { alignment = opt::cache_line_alignment };
 
             /// Padding of segment data, default is no special padding
-            /** @copydetails cds::intrusive::segmented_queue::traits::padding
+            /**
+                The segment is just an array of atomic data pointers,
+                so, the high load leads to false sharing and performance degradation.
+                A padding of segment data can eliminate false sharing issue.
+                On the other hand, the padding leads to increase segment size.
             */
             enum { padding = cds::intrusive::segmented_queue::traits::padding };
 

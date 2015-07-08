@@ -286,7 +286,14 @@ namespace cds { namespace container {
 
     public:
         /// Initializes the map
-        /** @copydetails cds_nonintrusive_MichaelHashMap_hp_ctor
+        /**
+            The Michael's hash map is non-expandable container. You should point the average count of items \p nMaxItemCount
+            when you create an object.
+            \p nLoadFactor parameter defines average count of items per bucket and it should be small number between 1 and 10.
+            Remember, since the bucket implementation is an ordered list, searching in the bucket is linear [<tt>O(nLoadFactor)</tt>].
+            Note, that many popular STL hash map implementation uses load factor 1.
+
+            The ctor defines hash table size as rounding <tt>nMacItemCount / nLoadFactor</tt> up to nearest power of two.
         */
         MichaelHashMap(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash map
