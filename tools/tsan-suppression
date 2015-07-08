@@ -7,4 +7,5 @@ race:cds::gc::details::retired_ptr::free
 # uRCU false positive
 race:cds::urcu::gc*::batch_retire*
 
+# TODO: TSan false positive or library issues?
 race:cds::container::OptimisticQueue*::alloc_node
