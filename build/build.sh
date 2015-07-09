@@ -569,13 +569,10 @@ echo ---------------------------------
 echo Make tests
 
 if test $MAKE_DEBUG_TEST = '0'; then
-    CXXFLAGS="$compileroptions $cxx_release_options $cxx_test_release_options $EXTRA_CXXFLAGS "
-    export CXXFLAGS
-    CFLAGS="$compileroptions $cxx_release_options $EXTRA_CFLAGS "
-    export CFLAGS
-    LDFLAGS="$linkeroptions $ld_release_options $ld_test_release_options $ld_libs $EXTRA_TEST_LDFLAGS "
-    export LDFLAGS
-
+    CXXFLAGS="$compileroptions $cxx_release_options $cxx_test_release_options $EXTRA_CXXFLAGS " \
+    CFLAGS="$compileroptions $cxx_release_options $EXTRA_CFLAGS " \
+    LDFLAGS="$linkeroptions $ld_release_options $ld_test_release_options $EXTRA_TEST_LDFLAGS " \
+    LDLIBS="$ld_libs" \
     $MAKE -f Makefile -j $makejobs \
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
@@ -592,8 +589,10 @@ if test $MAKE_DEBUG_TEST = '1'; then
     export CXXFLAGS
     CFLAGS="$compileroptions $cxx_debug_options $EXTRA_CFLAGS "
     export CFLAGS
-    LDFLAGS="$linkeroptions $ld_debug_options $ld_test_release_options $ld_libs $EXTRA_TEST_LDFLAGS "
+    LDFLAGS="$linkeroptions $ld_debug_options $ld_test_release_options $EXTRA_TEST_LDFLAGS "
     export LDFLAGS
+    LDLIBS="$ld_libs"
+    export LDLIBS
 
     $MAKE -f Makefile -j $makejobs \
         platform=$OS_FAMILY \
