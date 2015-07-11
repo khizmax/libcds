@@ -42,4 +42,14 @@ namespace queue {
         test_ic< cds::container::RWQueue< int, queue_traits > >();
     }
 
+    void HdrTestQueue::RWQueue_padding()
+    {
+        struct queue_traits : public cds::container::rwqueue::traits
+        {
+            enum { padding = 16 };
+        };
+
+        test_ic< cds::container::RWQueue< int, queue_traits > >();
+    }
+
 }

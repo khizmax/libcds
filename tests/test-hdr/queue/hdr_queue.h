@@ -339,6 +339,7 @@ namespace queue {
         void RWQueue_mutex();
         void RWQueue_ic();
         void RWQueue_ic_mutex();
+        void RWQueue_padding();
 
         void TsigasCycleQueue_static();
         void TsigasCycleQueue_static_ic();
@@ -452,6 +453,8 @@ namespace queue {
             CPPUNIT_TEST( RWQueue_default)
             CPPUNIT_TEST( RWQueue_mutex )
             CPPUNIT_TEST( RWQueue_ic )
+            CPPUNIT_TEST( RWQueue_ic_mutex )
+            CPPUNIT_TEST( RWQueue_padding )
 
         CPPUNIT_TEST_SUITE_END();
 
