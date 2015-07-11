@@ -167,10 +167,8 @@ namespace cds { namespace urcu {
         */
         virtual void retire_ptr( retired_ptr& p )
         {
-            if ( p.m_p ) {
-                epoch_retired_ptr ep( p, m_nCurEpoch.load( atomics::memory_order_acquire ) );
+            if ( p.m_p )
                 push_buffer( epoch_retired_ptr( p, m_nCurEpoch.load( atomics::memory_order_acquire )));
-            }
         }
 
         /// Retires the pointer chain [\p itFirst, \p itLast)
