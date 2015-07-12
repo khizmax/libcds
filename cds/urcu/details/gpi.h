@@ -137,8 +137,11 @@ namespace cds { namespace urcu {
             retired_ptr p{ e() };
             if ( p.m_p ) {
                 synchronize();
-                for ( ; p.m_p; p = e() )
-                    p.free();
+                while ( p.m_p ) {
+                    retired_ptr pr( p );
+                    p = e();
+                    pr.free();
+                }
             }
         }
 

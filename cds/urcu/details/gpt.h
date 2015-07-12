@@ -178,8 +178,9 @@ namespace cds { namespace urcu {
         {
             uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
             while ( itFirst != itLast ) {
-                push_buffer( epoch_retired_ptr( *itFirst, nEpoch ));
+                epoch_retired_ptr ep( *itFirst, nEpoch );
                 ++itFirst;
+                push_buffer( std::move(ep));
             }
         }
 
@@ -188,8 +189,11 @@ namespace cds { namespace urcu {
         void batch_retire( Func e )
         {
             uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
-            for ( retired_ptr p{ e() }; p.m_p; p = e() )
-                push_buffer( epoch_retired_ptr( p, nEpoch ));
+            for ( retired_ptr p{ e() }; p.m_p; ) {
+                epoch_retired_ptr ep( p, nEpoch );
+                p = e();
+                push_buffer( std::move(ep));
+            }
         }
 
 
