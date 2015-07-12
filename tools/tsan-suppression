@@ -7,5 +7,8 @@ race:cds::gc::details::retired_ptr::free
 # uRCU false positive
 race:cds::urcu::gc*::batch_retire*
 
+# EllenBinTree false positive
+race:ellen_bintree_pool::internal_node_allocator*::allocate
+
 # TODO: TSan false positive or library issues?
 race:cds::container::OptimisticQueue*::alloc_node

@@ -164,6 +164,8 @@ namespace cds { namespace intrusive {
         typedef typename traits::node_allocator        node_allocator;        ///< Allocator for internal node
         typedef typename traits::update_desc_allocator update_desc_allocator; ///< Update descriptor allocator
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 8; ///< Count of hazard pointer required for the algorithm
+
     protected:
         //@cond
         typedef ellen_bintree::details::compare< key_type, value_type, key_comparator, node_traits > node_compare;
@@ -178,9 +180,6 @@ namespace cds { namespace intrusive {
                 Guard_Leaf,
                 Guard_updGrandParent,
                 Guard_updParent,
-
-                // helping
-                Guard_helpLeaf,
 
                 // end of guard indices
                 guard_count
@@ -204,11 +203,6 @@ namespace cds { namespace intrusive {
                 ,bRightLeaf( false )
                 ,bRightParent( false )
             {}
-
-            void clean_help_guards()
-            {
-                guards.clear( Guard_helpLeaf );
-            }
         };
         //@endcond
 
@@ -882,16 +876,15 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        tree_node * protect_child_node( search_result& res, internal_node * pParent, bool bRight, update_ptr updParent ) const
+        static tree_node * protect_child_node( search_result& res, internal_node * pParent, bool bRight, update_ptr updParent )
         {
-            tree_node * p;
-            tree_node * pn = bRight ? pParent->m_pRight.load( memory_model::memory_order_relaxed ) : pParent->m_pLeft.load( memory_model::memory_order_relaxed );
-            do {
-                p = pn;
-                res.guards.assign( search_result::Guard_Leaf, static_cast<internal_node *>( p ));
-                res.guards.assign( search_result::Guard_helpLeaf, node_traits::to_value_ptr( static_cast<leaf_node *>( p ) ));
-                pn = bRight ? pParent->m_pRight.load( memory_model::memory_order_acquire ) : pParent->m_pLeft.load( memory_model::memory_order_acquire );
-            } while ( p != pn );
+            tree_node * p = bRight
+                ? res.guards.protect( search_result::Guard_Leaf, pParent->m_pRight,
+                                                []( tree_node * p ) -> internal_node* { return static_cast<internal_node *>(p);})
+                : res.guards.protect( search_result::Guard_Leaf, pParent->m_pLeft,
+                                                []( tree_node * p ) -> internal_node* { return static_cast<internal_node *>(p);});
+            if ( p && p->is_leaf() )
+                res.guards.assign( search_result::Guard_Leaf, node_traits::to_value_ptr( static_cast<leaf_node *>( p )));
 
             // child node is guarded
             // See whether pParent->m_pUpdate has not been changed
@@ -899,22 +892,12 @@ namespace cds { namespace intrusive {
                 // update has been changed - returns nullptr as a flag to search retry
                 return nullptr;
             }
-
-            if ( p && p->is_leaf() )
-                res.guards.copy( search_result::Guard_Leaf, search_result::Guard_helpLeaf );
-            res.guards.clear( search_result::Guard_helpLeaf );
             return p;
         }
 
-        update_ptr search_protect_update( search_result& res, atomics::atomic<update_ptr> const& src ) const
+        static update_ptr search_protect_update( search_result& res, atomics::atomic<update_ptr> const& src )
         {
-            update_ptr ret;
-            update_ptr upd( src.load( memory_model::memory_order_relaxed ) );
-            do {
-                ret = upd;
-                res.guards.assign( search_result::Guard_updParent, upd );
-            } while ( ret != (upd = src.load( memory_model::memory_order_acquire )) );
-            return ret;
+            return res.guards.protect( search_result::Guard_updParent, src, [](update_ptr p) -> update_desc* { return p.ptr(); });
         }
 
         template <typename KeyValue, typename Compare>
@@ -1179,21 +1162,11 @@ namespace cds { namespace intrusive {
             }
         }
 
-        tree_node * protect_sibling( typename gc::Guard& guard, atomics::atomic<tree_node *>& sibling )
+        static tree_node * protect_sibling( typename gc::Guard& guard, atomics::atomic<tree_node *>& sibling )
         {
-            typename gc::Guard guardLeaf;
-
-            tree_node * pSibling;
-            tree_node * p = sibling.load( memory_model::memory_order_relaxed );
-            do {
-                pSibling = p;
-                guard.assign( static_cast<internal_node *>(p) );
-                guardLeaf.assign( node_traits::to_value_ptr( static_cast<leaf_node *>(p)));
-            } while ( pSibling != ( p = sibling.load( memory_model::memory_order_acquire )) );
-
+            tree_node * pSibling = guard.protect( sibling, [](tree_node * p) -> internal_node* { return static_cast<internal_node *>(p); } );
             if ( pSibling->is_leaf() )
-                guard.copy( guardLeaf );
-
+                guard.assign( node_traits::to_value_ptr( static_cast<leaf_node *>( pSibling )));
             return pSibling;
         }
 
