@@ -47,8 +47,8 @@ namespace cds { namespace container {
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
-            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
         /// Metafunction converting option list to \p vyukov_queue::traits
@@ -64,7 +64,7 @@ namespace cds { namespace container {
                 Default value is \ref opt::v::destruct_cleaner
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
-            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
@@ -156,16 +156,17 @@ namespace cds { namespace container {
         };
 
         typedef typename traits::buffer::template rebind<cell_type>::other buffer;
-        typedef typename opt::details::alignment_setter< sequence_type, traits::alignment >::type aligned_sequence_type;
-        typedef typename opt::details::alignment_setter< buffer, traits::alignment >::type aligned_buffer;
         //@endcond
 
     protected:
         //@cond
-        aligned_buffer  m_buffer;
+        buffer          m_buffer;
+        typename opt::details::apply_padding< buffer, traits::padding >::padding_type pad1_;
         size_t const    m_nBufferMask;
-        aligned_sequence_type m_posEnqueue;
-        aligned_sequence_type m_posDequeue;
+        sequence_type   m_posEnqueue;
+        typename opt::details::apply_padding< sequence_type, traits::padding >::padding_type pad2_;
+        sequence_type   m_posDequeue;
+        typename opt::details::apply_padding< sequence_type, traits::padding >::padding_type pad3_;
         item_counter    m_ItemCounter;
         //@endcond
 
