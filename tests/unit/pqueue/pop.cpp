@@ -94,9 +94,6 @@ namespace pqueue {
             size_t              m_nPopSuccess;
             size_t              m_nPopFailed;
 
-            typedef std::vector<size_t> array_type;
-            array_type          m_arr;
-
         public:
             Popper( CppUnitMini::ThreadPool& pool, PQueue& q )
                 : CppUnitMini::TestThread( pool )
@@ -147,6 +144,8 @@ namespace pqueue {
                             ++m_nPopFailed;
                     }
                 }
+                else
+                    ++m_nPopFailed;
             }
         };
 
