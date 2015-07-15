@@ -49,7 +49,7 @@ namespace queue {
             enum { padding = 16 };
         };
 
-        test_ic< cds::container::RWQueue< int, queue_traits > >();
+        test_no_ic< cds::container::RWQueue< int, queue_traits > >();
     }
 
 }
