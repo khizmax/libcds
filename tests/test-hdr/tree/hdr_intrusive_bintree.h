@@ -56,7 +56,6 @@ namespace tree {
                 , nValue(val)
             {}
 
-#   ifdef _DEBUG
             base_hook_value( base_hook_value&& s )
                 : Hook()
                 , nKey(s.nKey)
@@ -68,7 +67,6 @@ namespace tree {
                 nValue = s.nValue;
                 return *this;
             }
-#   endif
         };
 
         template <typename Hook>
@@ -91,7 +89,7 @@ namespace tree {
                 : nKey(key)
                 , nValue(val)
             {}
-#   ifdef _DEBUG
+
             member_hook_value( member_hook_value&& s )
                 : nKey(s.nKey)
                 , nValue(s.nValue)
@@ -103,7 +101,6 @@ namespace tree {
                 nValue = s.nValue;
                 return *this;
             }
-#   endif
         };
 
         template <typename ValueType>

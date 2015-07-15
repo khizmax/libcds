@@ -357,7 +357,7 @@ namespace cds { namespace container {
 
         //@cond
         /// The class has no internal statistics. For test consistency only
-        nullptr_t statistics() const
+        std::nullptr_t statistics() const
         {
             return nullptr;
         }

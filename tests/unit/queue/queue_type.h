@@ -605,7 +605,7 @@ namespace std {
         return o;
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, nullptr_t /*s*/ )
+    static inline std::ostream& operator <<( std::ostream& o, std::nullptr_t /*s*/ )
     {
         return o;
     }
