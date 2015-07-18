@@ -22,7 +22,7 @@ namespace cds {
         template <typename T, int Bitmask>
         class marked_ptr
         {
-            T *     m_ptr   ;   ///< pointer and its mark bits
+            T *         m_ptr   ;   ///< pointer and its mark bits
 
         public:
             typedef T       value_type      ;       ///< type of value the class points to
@@ -67,14 +67,21 @@ namespace cds {
 
         private:
             //@cond
+            union pointer_cast {
+                T *       ptr;
+                uintptr_t n;
+
+                pointer_cast(T * p) : ptr(p) {}
+                pointer_cast(uintptr_t i) : n(i) {}
+            };
             static uintptr_t   to_int( value_type * p ) CDS_NOEXCEPT
             {
-                return reinterpret_cast<uintptr_t>( p );
+                return pointer_cast(p).n;
             }
 
             static value_type * to_ptr( uintptr_t n ) CDS_NOEXCEPT
             {
-                return reinterpret_cast< value_type *>( n );
+                return pointer_cast(n).ptr;
             }
 
             uintptr_t   to_int() const CDS_NOEXCEPT
