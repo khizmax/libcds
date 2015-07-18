@@ -232,6 +232,8 @@ namespace cds { namespace intrusive {
 
         bool unlink_node( position& pos, erase_node_mask nMask )
         {
+            assert(gc::is_locked() );
+
             // Mark the node (logical deletion)
             marked_node_ptr next(pos.pNext, 0);
 
@@ -239,7 +241,7 @@ namespace cds { namespace intrusive {
 
                 // Try physical removal - fast path
                 marked_node_ptr cur(pos.pCur);
-                if ( pos.pPrev->compare_exchange_strong(cur, marked_node_ptr(pos.pNext), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                if ( pos.pPrev->compare_exchange_strong(cur, marked_node_ptr(pos.pNext), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                     if ( nMask == erase_mask )
                         link_to_remove_chain( pos, pos.pCur );
                 }
@@ -970,18 +972,23 @@ namespace cds { namespace intrusive {
             back_off bkoff;
             assert( !gc::is_locked() )  ;   // RCU must not be locked!!!
 
+            node_type * pExtracted;
             {
                 rcu_lock l;
                 for (;;) {
                     if ( !search( refHead, val, pos, cmp ) )
                         return nullptr;
+                    // store pCur since it may be changed by unlink_node() slow path
+                    pExtracted = pos.pCur;
                     if ( !unlink_node( pos, extract_mask )) {
                         bkoff();
                         continue;
                     }
 
                     --m_ItemCounter;
-                    return node_traits::to_value_ptr( pos.pCur );
+                    value_type * pRet = node_traits::to_value_ptr( pExtracted );
+                    assert( pRet->m_pDelChain == nullptr );
+                    return pRet;
                 }
             }
         }
