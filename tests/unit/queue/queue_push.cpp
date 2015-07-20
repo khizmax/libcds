@@ -118,7 +118,7 @@ namespace queue {
             cds::OS::Timer      timer;
             CPPUNIT_MSG( "   Pop (single-threaded)..." );
             size_t nPopped = 0;
-			HeavyValue val = HeavyValue();
+            HeavyValue val = HeavyValue();
             while ( testQueue.pop( val )) {
                 nPopped++;
                 ++arr[ val.getNo() ];

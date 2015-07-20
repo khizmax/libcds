@@ -433,8 +433,9 @@ namespace queue {
 		typedef cds::container::FCQueueMultMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_multMutex_multCondVar;
 		typedef cds::container::FCQueueTimedWaitGlobalMutexAndCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat >
 		                FCQueue_timedWait_Global_Mutex_And_CondVar;
-		typedef cds::container::FCQueueTimedWaitLocalMutexAndCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat >
-		                FCQueue_timedWait_Local_Mutex_And_CondVar;
+		typedef cds::container::FCQueueAutoWaitStrategy< Value, std::queue<Value>, traits_FCQueue_elimination_stat >
+		                FCQueue_autoWaitStrategy;
+
 
 		//typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
         //typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque_elimination_stat;

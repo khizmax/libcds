@@ -1,9 +1,10 @@
 #ifndef CDSLIB_ALGO_FLAT_COMBINING_WAIT_STRATEGY_H
 #define CDSLIB_ALGO_FLAT_COMBINING_WAIT_STRATEGY_H
 
+#include <iostream>
+
 #include <boost/thread.hpp>
 #include <cds/algo/backoff_strategy.h>
-//#include <cds/algo/flat_combining.h>
 
 namespace cds {  namespace algo {  namespace flat_combining {
 
@@ -163,6 +164,56 @@ namespace cds {  namespace algo {  namespace flat_combining {
             _globalCondVar.notify_all();
         }
     };
+    //===================================================================
+    template <int v>
+    struct Int2Type{
+        enum {value = v};
+    };
+
+    template<typename UserPublicationRecord, typename Traits>
+    struct AutoWaitStrategy
+    {
+        struct ExtendedPublicationRecord: public UserPublicationRecord
+        {
+            boost::mutex                _waitMutex;
+            boost::condition_variable   _condVar;
+        };
+
+        void wait(ExtendedPublicationRecord * pRec){
+            doWait(pRec, Int2Type<sizeof(typename UserPublicationRecord::value_type) <= 4*sizeof(int) >());
+        }
+
+        void notify(ExtendedPublicationRecord* pRec){
+            doNotify(pRec, Int2Type<sizeof(typename UserPublicationRecord::value_type) <= 4*sizeof(int) >());
+        }
+
+     private:
+        //The container consists a small data
+        void doWait(ExtendedPublicationRecord * pRec, Int2Type<true>){
+            std::cerr << "this class AutoWaitStrategy, function doWait, type Int2Type<true>\n";
+            cds::backoff::delay_of<2>   back_off;
+            back_off();
+        }
+
+        void doNotify(ExtendedPublicationRecord * pRec, Int2Type<true>){
+            std::cerr << "this class AutoWaitStrategy, function doNotify, type Int2Type<true>\n";
+            pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
+        }
+
+        //The container consists a big data
+        void doWait(ExtendedPublicationRecord * pRec, Int2Type<false>){
+            std::cerr << "this class AutoWaitStrategy, function doWait, type Int2Type<false>\n";
+            boost::unique_lock<boost::mutex> lock(pRec->_waitMutex);
+            if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
+                pRec->_condVar.timed_wait(lock, boost::posix_time::millisec(2));
+        }
+
+        void doNotify(ExtendedPublicationRecord * pRec, Int2Type<false>){
+            std::cerr << "this class AutoWaitStrategy, function doNotify, type Int2Type<false>\n";
+            pRec->nRequest.store(req_Response, Traits::memory_model::memory_order_release);
+            pRec->_condVar.notify_one();
+        }
+    };//class AutoWaitStrategy
 }}}//end namespace cds::algo::flat_combining
 
 #endif //CDSLIB_ALGO_FLAT_COMBINING_WAIT_STRATEGY_H
