@@ -747,11 +747,11 @@
     <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\details\bronson_avltree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\lazy_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_set_base.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\details\multilevel_hashset_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\node_traits.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\raw_ptr_disposer.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\single_link_struct.h" />
@@ -763,6 +763,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\lazy_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\michael_list.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\impl\multilevel_hashset.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\skip_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_rcu.h" />
@@ -770,6 +771,8 @@
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\michael_set_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\mspriority_queue.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_dhp.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\options.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h" />

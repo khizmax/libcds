@@ -166,8 +166,8 @@ namespace cds { namespace opt {
             }
         };
 
-        template <typename T, typename Traits, bool Forced = true >
-        struct make_comparator
+        template <typename T, typename Traits, typename DefaultCmp = make_comparator_from_less< std::less<T>>::type >
+        struct make_comparator_from
         {
             typedef typename Traits::compare compare;
             typedef typename Traits::less less;
@@ -176,12 +176,16 @@ namespace cds { namespace opt {
                 std::is_same< compare, opt::none >::value,
                 typename std::conditional<
                     std::is_same< less, opt::none >::value,
-                    typename std::conditional< Forced, make_comparator_from_less< std::less<T> >, opt::none >::type,
+                    DefaultCmp,
                     make_comparator_from_less< less >
                 >::type,
                 compare
             >::type type;
         };
+
+
+        template <typename T, typename Traits, bool Forced = true >
+        using make_comparator = make_comparator_from< T, Traits, typename std::conditional< Forced, make_comparator_from_less< std::less<T>>, opt::none >::type >;
 
         template <typename T, typename... Options>
         struct make_comparator_from_option_list

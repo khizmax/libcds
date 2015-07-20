@@ -1148,9 +1148,6 @@
     <ClInclude Include="..\..\..\cds\algo\atomic.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\details\bronson_avltree_base.h">
-      <Filter>Header Files\cds\intrusive\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1186,6 +1183,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\raw_ptr_disposer.h">
       <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\impl\multilevel_hashset.h">
+      <Filter>Header Files\cds\intrusive\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\multilevel_hashset_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_hp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_dhp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
