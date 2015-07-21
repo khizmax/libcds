@@ -166,7 +166,7 @@ namespace cds { namespace opt {
             }
         };
 
-        template <typename T, typename Traits, typename DefaultCmp = typename make_comparator_from_less< std::less<T>>::type >
+        template <typename T, typename Traits, typename DefaultCmp = make_comparator_from_less< std::less<T>> >
         struct make_comparator_from
         {
             typedef typename Traits::compare compare;
@@ -188,7 +188,7 @@ namespace cds { namespace opt {
         using make_comparator = make_comparator_from< T, Traits, 
             typename std::conditional< 
                 Forced, 
-                typename make_comparator_from_less< std::less<T>>::type, 
+                make_comparator_from_less< std::less<T>>, 
                 opt::none 
             >::type >;
 
