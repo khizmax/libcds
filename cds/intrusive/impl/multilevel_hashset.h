@@ -88,7 +88,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::hash_accessor hash_accessor; ///< Hash accessor functor
         static_assert(!std::is_same< hash_accessor, cds::opt::none >::value, "hash_accessor functor must be specified" );
 
-        /// Hash type
+        /// Hash type defined as \p hash_accessor return type
         typedef typename std::decay< 
             typename std::remove_reference<
                 decltype( hash_accessor()( std::declval<T>()) )
