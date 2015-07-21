@@ -1882,7 +1882,7 @@ namespace cds { namespace intrusive {
             CDS_UNUSED( pred );
             assert( gc::is_locked());
 
-            value_type * pFound;
+            value_type * pFound = nullptr;
             position pos;
             if ( do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(),
                 [&pFound](value_type& found, Q const& ) { pFound = &found; }, pos ))
