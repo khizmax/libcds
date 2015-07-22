@@ -60,7 +60,7 @@ namespace cds { namespace intrusive {
           converts variable-length strings to fixed-length bit-strings, and use that hash as a key in \p %MultiLevelHashSet.
         - \p %MultiLevelHashSet uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
           have identical hash then you cannot insert both that keys in the set. \p %MultiLevelHashSet does not maintain the key,
-          it maintains its fized-size hash value.
+          it maintains its fixed-size hash value.
 
 
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
@@ -188,7 +188,7 @@ namespace cds { namespace intrusive {
             The function allows to split creating of new item into two part:
             - create item with key only
             - insert new item into the set
-            - if inserting is success, calls  \p f functor to initialize value-field of \p val.
+            - if inserting is success, calls  \p f functor to initialize \p val.
 
             The functor signature is:
             \code
@@ -207,31 +207,21 @@ namespace cds { namespace intrusive {
 
         /// Updates the node
         /**
-            The operation performs inserting or changing data with lock-free manner.
+            Performs inserting or updating the item with hash value equal to \p val.
+            - If hash value is found then existing item is replaced with \p val, old item is disposed
+              with \p Traits::disposer. Note that the disposer is called by \p GC asynchronously.
+              The function returns <tt> std::pair<true, false> </tt>
+            - If hash value is not found and \p bInsert is \p true then \p val is inserted,
+              the function returns <tt> std::pair<true, true> </tt>
+            - If hash value is not found and \p bInsert is \p false then the set is unchanged,
+              the function returns <tt> std::pair<false, false> </tt>
 
-            If the item \p val not found in the set, then \p val is inserted into the set iff \p bInsert is \p true.
-            Otherwise, the functor \p func is called with item found, \p bInsert argument is ignored.
-
-            The functor signature is:
-            \code
-                void func( bool bNew, value_type& item, value_type& val );
-            \endcode
-            with arguments:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - the item in the set (new or existing)
-            - \p val - argument \p val passed into the \p update function
-            If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
-            refers to the same thing.
-
-            The functor may change non-key fields of the \p item.
-
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull
+            (i.e. the item has been inserted or updated),
             \p second is \p true if new item has been added or \p false if the set contains that hash.
-
-            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting".
         */
         template <typename Func>
-        std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
+        std::pair<bool, bool> update( value_type& val, bool bInsert = true )
         {
         }
 
@@ -257,11 +247,6 @@ namespace cds { namespace intrusive {
         */
         bool erase( hash_type const& hash )
         {
-            if ( bucket( key ).erase( key )) {
-                --m_ItemCounter;
-                return true;
-            }
-            return false;
         }
 
         /// Deletes the item from the set
@@ -333,22 +318,16 @@ namespace cds { namespace intrusive {
             The function returns \p true if \p hash is found, \p false otherwise.
         */
         template <typename Func>
-        bool find( hash_type& hash, Func f )
-        {
-        }
-        //@cond
-        template <typename Func>
         bool find( hash_type const& hash, Func f )
         {
         }
-        //@endcond
 
-        /// Finds an item by it's \p hash
+        /// Checks whether the set contains \p hash
         /**
             The function searches the item by its \p hash
             and returns \p true if it is found, or \p false otherwise.
         */
-        bool find( hash_type const& hash )
+        bool contains( hash_type const& hash )
         {
         }
 
