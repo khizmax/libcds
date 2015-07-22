@@ -3,7 +3,7 @@
 #ifndef CDSLIB_INTRUSIVE_DETAILS_MULTILEVEL_HASHSET_BASE_H
 #define CDSLIB_INTRUSIVE_DETAILS_MULTILEVEL_HASHSET_BASE_H
 
-#include <memory.h> // memcmp
+#include <memory.h> // memcmp, memcpy
 #include <type_traits>
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
@@ -215,6 +215,97 @@ namespace cds { namespace intrusive {
                 return memcmp( &lhs, &rhs, sizeof(T));
             }
         };
+
+        //@cond
+        namespace details {
+            template <typename HashType, typename UInt = size_t >
+            class hash_splitter
+            {
+            public:
+                typedef HashType hash_type;
+                typedef UInt     uint_type;
+
+                static CDS_CONSTEXPR size_t const c_nHashSize   = (sizeof(hash_type) + sizeof(uint_type) - 1) / sizeof(uint_type);
+                static CDS_CONSTEXPR size_t const c_nBitPerByte = 8;
+                static CDS_CONSTEXPR size_t const c_nBitPerHash = sizeof(hash_type) * c_nBitPerByte;
+                static CDS_CONSTEXPR size_t const c_nBitPerInt  = sizeof(uint_type) * c_nBitPerByte;
+
+            public:
+                explicit hash_splitter( hash_type const& h )
+                    : m_ptr(reinterpret_cast<uint_type const*>( &h ))
+                    , m_pos(0)
+#           ifdef _DEBUG
+                    , m_last( m_ptr + c_nHashSize )
+#           endif
+                {}
+
+                explicit operator bool() const
+                {
+                    return !eos();
+                }
+
+                // end-of-bitstring
+                bool eos() const
+                {
+                    return m_pos >= c_nBitPerHash;
+                }
+
+                uint_type cut( size_t nBits )
+                {
+                    assert( !eos() );
+                    assert( nBits <= c_nBitPerInt );
+                    assert( m_pos + nBits <= c_nBitPerHash );
+#           ifdef _DEBUG
+                    assert( m_ptr < m_last );
+#           endif
+                    uint_type result;
+
+                    size_t const nRest = c_nBitPerInt - m_pos % c_nBitPerInt;
+                    m_pos += nBits;
+                    if ( nBits < nRest ) {
+                        result = *m_ptr << ( nRest - nBits );
+                        result = result >> ( c_nBitPerInt - nBits );
+                    }
+                    else if ( nBits == nRest ) {
+                        result = *m_ptr >> ( c_nBitPerInt - nRest );
+                        ++m_ptr;
+                    }
+                    else {
+                        size_t const lsb = *m_ptr >> ( c_nBitPerInt - nRest );
+                        nBits -= nRest;
+                        ++m_ptr;
+
+                        result = *m_ptr << ( c_nBitPerInt - nBits );
+                        result = result >> ( c_nBitPerInt - nBits );
+                        result = (result << nRest) + lsb;
+                    }
+
+                    assert( m_pos <= c_nBitPerHash );
+#           ifdef _DEBUG
+                    assert( m_ptr < m_last );
+#           endif
+                    return result;
+                }
+
+                uint_type safe_cut( size_t nBits )
+                {
+                    assert( !eos() );
+                    assert( nBits <= sizeof(uint_type) * c_nBitPerByte );
+
+                    if ( m_pos + nBits > c_nBitPerHash )
+                        nBits = c_nBitPerHash - m_pos;
+                    return nBits ? cut( nBits ) : 0;
+                }
+
+            private:
+                uint_type const* m_ptr;  ///< current position in the hash
+                size_t           m_pos;  ///< current position in bits
+#           ifdef _DEBUG
+                uint_type const* m_last;
+#           endif
+            };
+        } // namespace details
+        //@endcond
 
     } // namespace multilevel_hashset
 

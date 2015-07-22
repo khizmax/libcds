@@ -130,6 +130,8 @@ namespace cds { namespace intrusive {
         typedef cds::details::Allocator< atomic_node_ptr, head_node_allocator > cxx_head_node_allocator;
         typedef cds::details::Allocator< atomic_node_ptr, array_node_allocator > cxx_array_node_allocator;
 
+        typedef multilevel_hashset::details::hash_splitter< hash_type > hash_splitter;
+
         struct metrics {
             size_t  head_node_size;     // power-of-two
             size_t  head_node_size_log; // log2( head_node_size )
