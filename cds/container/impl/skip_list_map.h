@@ -295,48 +295,52 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Ensures that the \p key exists in the map
+        /// Updates data by \p key
         /**
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
-            constructible from type \p K).
-            Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            will be inserted into the map iff \p bInsert is \p true
+            (note that in this case the \ref key_type should be constructible from type \p K).
+            Otherwise, if \p key is found, the functor \p func is called with item found.
+            The functor \p Func signature:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
                 };
             \endcode
-
-            with arguments:
+            where:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
+            - \p item - item of the map
 
             The functor may change any fields of the \p item.second that is \ref value_type.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
-            already is in the list.
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            \p second is \p true if new item has been added or \p false if \p key already exists.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
+        std::pair<bool, bool> update( K const& key, Func func, bool bInsert = true )
         {
             scoped_node_ptr pNode( node_allocator().New( random_level(), key ));
-            std::pair<bool, bool> res = base_class::ensure( *pNode,
-                [&func](bool bNew, node_type& item, node_type const& ){ func( bNew, item.m_Value ); }
+            std::pair<bool, bool> res = base_class::update( *pNode,
+                [&func](bool bNew, node_type& item, node_type const& ){ func( bNew, item.m_Value );},
+                bInsert
             );
             if ( res.first && res.second )
                 pNode.release();
             return res;
         }
+
+        //@cond
+        // Deprecated, use update()
+        template <typename K, typename Func>
+        std::pair<bool, bool> ensure( K const& key, Func func )
+        {
+            return update( key, func, true );
+        }
+        //@endcond
 
         /// Delete \p key from the map
         /** \anchor cds_nonintrusive_SkipListMap_erase_val

@@ -679,11 +679,12 @@ namespace cds { namespace intrusive {
             }
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val is not found in the set, then \p val is inserted into the set.
+            If the item \p val is not found in the set, then \p val is inserted into the set
+            iff \p bInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -692,7 +693,7 @@ namespace cds { namespace intrusive {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 
@@ -706,7 +707,7 @@ namespace cds { namespace intrusive {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
         {
             node_type * pNode = node_traits::to_node_ptr( val );
             scoped_node_ptr scp( pNode );
@@ -724,8 +725,13 @@ namespace cds { namespace intrusive {
                         scp.release();
 
                     func( false, *node_traits::to_value_ptr(pos.pCur), val );
-                    m_Stat.onEnsureExist();
+                    m_Stat.onUpdateExist();
                     return std::make_pair( true, false );
+                }
+
+                if ( !bInsert ) {
+                    scp.release();
+                    return std::make_pair( false, false );
                 }
 
                 if ( !bTowerOk ) {
@@ -744,10 +750,19 @@ namespace cds { namespace intrusive {
                 ++m_ItemCounter;
                 scp.release();
                 m_Stat.onAddNode( nHeight );
-                m_Stat.onEnsureNew();
+                m_Stat.onUpdateNew();
                 return std::make_pair( true, true );
             }
         }
+
+        //@cond
+        // Deprecated, use update() instead
+        template <typename Func>
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Finds \p key
         /** \anchor cds_intrusive_SkipListSet_nogc_find_func

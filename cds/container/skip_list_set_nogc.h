@@ -267,26 +267,38 @@ namespace cds { namespace container {
             return end();
         }
 
-        /// Ensures that the item \p val exists in the set
+        /// Updates the item
         /**
-            The operation inserts new item if the key \p val is not found in the set.
-            Otherwise, the function returns an iterator that points to item found.
+            The operation inserts new item if \p val is not found in the set and \p bInsert is \p true.
+            Otherwise, if that key exists, the function returns an iterator that points to item found.
 
-            Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
+            Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
+            item found or inserted or \p end() if \p val is not found and \p bInsert is \p false,
+            \p second is \p true if new item has been added or \p false if the item
             already is in the set.
         */
         template <typename Q>
-        std::pair<iterator, bool> ensure( const Q& val )
+        std::pair<iterator, bool> update( const Q& val, bool bInsert = true )
         {
             scoped_node_ptr sp( node_allocator().New( base_class::random_level(), val ));
             node_type * pNode;
-            std::pair<bool, bool> bRes = base_class::ensure( *sp, [&pNode](bool, node_type& item, node_type&) { pNode = &item; } );
+            std::pair<bool, bool> bRes = base_class::update( *sp, [&pNode](bool, node_type& item, node_type&) { pNode = &item; }, bInsert );
             if ( bRes.first && bRes.second )
                 sp.release();
+            else if ( !bRes.first )
+                return std::make_pair( end(), false );
             assert( pNode );
             return std::make_pair( node_to_iterator( pNode ), bRes.second );
         }
+
+        //@cond
+        // Deprecated, use update()
+        template <typename Q>
+        std::pair<iterator, bool> ensure( const Q& val )
+        {
+            return update( val, true );
+        }
+        //@endcond
 
         /// Searches \p key
         /** \anchor cds_nonintrusive_SkipListSet_nogc_find_val

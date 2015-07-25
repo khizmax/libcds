@@ -101,7 +101,15 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height() );
                 assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
-                return nLevel ? m_arrNext[nLevel - 1] : m_pNext;
+#           ifdef CDS_THREAD_SANITIZER_ENABLED
+                // TSan false positive: m_arrNext is read-only array
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
+                atomic_marked_ptr& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
+                return r;
+#           else
+                return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+#           endif
             }
 
             /// Access to element of next pointer array (const version)
@@ -110,7 +118,15 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height() );
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
-                return nLevel ? m_arrNext[nLevel - 1] : m_pNext;
+#           ifdef CDS_THREAD_SANITIZER_ENABLED
+                // TSan false positive: m_arrNext is read-only array
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
+                atomic_marked_ptr& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
+                return r;
+#           else
+                return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+#           endif
             }
 
             /// Access to element of next pointer array (same as \ref next function)
@@ -682,7 +698,7 @@ namespace cds { namespace intrusive {
             for ( int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel ) {
 
                 while ( true ) {
-                    pCur = pPred->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
                     if ( pCur.bits() ) {
                         // pCur.bits() means that pPred is logically deleted
                         goto retry;
@@ -694,9 +710,9 @@ namespace cds { namespace intrusive {
                     }
 
                     // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_relaxed ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
                         goto retry;
 
                     if ( pSucc.bits() ) {
@@ -760,7 +776,7 @@ namespace cds { namespace intrusive {
 
             for ( int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel ) {
 
-                pCur = pPred->next( nLevel ).load( memory_model::memory_order_relaxed );
+                pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
                 // pCur.bits() means that pPred is logically deleted
                 // head cannot be deleted
                 assert( pCur.bits() == 0 );
@@ -768,9 +784,9 @@ namespace cds { namespace intrusive {
                 if ( pCur.ptr() ) {
 
                     // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_relaxed ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
                         goto retry;
 
                     if ( pSucc.bits() ) {
@@ -820,7 +836,7 @@ namespace cds { namespace intrusive {
             for ( int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel ) {
 
                 while ( true ) {
-                    pCur = pPred->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
                     if ( pCur.bits() ) {
                         // pCur.bits() means that pPred is logically deleted
                         goto retry;
@@ -832,9 +848,9 @@ namespace cds { namespace intrusive {
                     }
 
                     // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_relaxed ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
                         goto retry;
 
                     if ( pSucc.bits() ) {
@@ -986,9 +1002,9 @@ namespace cds { namespace intrusive {
                     }
                     else
                         m_Stat.onFastExtract();
-
                     return true;
                 }
+                m_Stat.onEraseRetry();
             }
         }
 
@@ -1423,11 +1439,12 @@ namespace cds { namespace intrusive {
             return bRet;
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val is not found in the set, then \p val is inserted into the set.
+            If the item \p val is not found in the set, then \p val is inserted into the set
+            iff \p bInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -1436,7 +1453,7 @@ namespace cds { namespace intrusive {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p %ensure() function
+            - \p val - argument \p val passed into the \p %update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 
@@ -1446,13 +1463,14 @@ namespace cds { namespace intrusive {
             RCU \p synchronize method can be called. RCU should not be locked.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            i.e. the node has been inserted or updated,
             \p second is \p true if new item has been added or \p false if the item with \p key
-            already is in the set.
+            already exists.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
         {
             check_deadlock_policy::check();
 
@@ -1476,7 +1494,13 @@ namespace cds { namespace intrusive {
                             scp.release();
 
                         func( false, *node_traits::to_value_ptr(pos.pCur), val );
-                        m_Stat.onEnsureExist();
+                        m_Stat.onUpdateExist();
+                        break;
+                    }
+
+                    if ( !bInsert ) {
+                        scp.release();
+                        bRet.first = false;
                         break;
                     }
 
@@ -1496,7 +1520,7 @@ namespace cds { namespace intrusive {
                     ++m_ItemCounter;
                     scp.release();
                     m_Stat.onAddNode( nHeight );
-                    m_Stat.onEnsureNew();
+                    m_Stat.onUpdateNew();
                     bRet.second = true;
                     break;
                 }
@@ -1504,6 +1528,15 @@ namespace cds { namespace intrusive {
 
             return bRet;
         }
+
+        //@cond
+        // Deprecated, use update().
+        template <typename Func>
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Unlinks the item \p val from the set
         /**

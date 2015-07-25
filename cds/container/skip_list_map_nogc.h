@@ -235,21 +235,30 @@ namespace cds { namespace container {
             return base_class::emplace( std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)));
         }
 
-        /// Ensures that the key \p key exists in the map
+        /// UPdates data by \p key
         /**
-            The operation inserts new item if the key \p key is not found in the map.
-            Otherwise, the function returns an iterator that points to item found.
+            The operation inserts new item if \p key is not found in the map and \p bInsert is \p true.
+            Otherwise, if \p key is found, the function returns an iterator that points to item found.
 
             Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
-            already is in the list.
+            item found or inserted or \p end() if \p key is not found and insertion is not allowed (\p bInsert is \p false),  
+            \p second is \p true if new item has been added or \p false if the item already exists.
         */
+        template <typename K>
+        std::pair<iterator, bool> update( K const& key, bool bInsert = true )
+        {
+            //TODO: pass arguments by reference (make_pair makes copy)
+            return base_class::update( std::make_pair( key, mapped_type() ), bInsert );
+        }
+
+        //@cond
+        // Deprecated, use update()
         template <typename K>
         std::pair<iterator, bool> ensure( K const& key )
         {
-            //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::ensure( std::make_pair( key, mapped_type() ));
+            return update( key, true );
         }
+        //@endcond
 
         /// Finds the key \p key
         /** \anchor cds_nonintrusive_SkipListMap_nogc_find_val

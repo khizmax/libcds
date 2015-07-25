@@ -86,7 +86,15 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height() );
                 assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
 
+#           ifdef CDS_THREAD_SANITIZER_ENABLED
+                // TSan false positive: m_arrNext is read-only array
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
+                atomic_marked_ptr& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
+                return r;
+#           else
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+#           endif
             }
 
             /// Access to element of next pointer array (const version)
@@ -95,7 +103,15 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height() );
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
+#           ifdef CDS_THREAD_SANITIZER_ENABLED
+                // TSan false positive: m_arrNext is read-only array
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
+                atomic_marked_ptr const& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
+                return r;
+#           else
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+#           endif
             }
 
             /// Access to element of next pointer array (same as \ref next function)
@@ -350,12 +366,13 @@ namespace cds { namespace intrusive {
             event_counter   m_nInsertSuccess        ; ///< Count of success insertion
             event_counter   m_nInsertFailed         ; ///< Count of failed insertion
             event_counter   m_nInsertRetries        ; ///< Count of unsuccessful retries of insertion
-            event_counter   m_nEnsureExist          ; ///< Count of \p ensure call for existed node
-            event_counter   m_nEnsureNew            ; ///< Count of \p ensure call for new node
+            event_counter   m_nUpdateExist          ; ///< Count of \p update() call for existed node
+            event_counter   m_nUpdateNew            ; ///< Count of \p update() call for new node
             event_counter   m_nUnlinkSuccess        ; ///< Count of successful call of \p unlink
             event_counter   m_nUnlinkFailed         ; ///< Count of failed call of \p unlink
             event_counter   m_nEraseSuccess         ; ///< Count of successful call of \p erase
             event_counter   m_nEraseFailed          ; ///< Count of failed call of \p erase
+            event_counter   m_nEraseRetry           ; ///< Count of retries while erasing node
             event_counter   m_nFindFastSuccess      ; ///< Count of successful call of \p find and all derivatives (via fast-path)
             event_counter   m_nFindFastFailed       ; ///< Count of failed call of \p find and all derivatives (via fast-path)
             event_counter   m_nFindSlowSuccess      ; ///< Count of successful call of \p find and all derivatives (via slow-path)
@@ -394,12 +411,13 @@ namespace cds { namespace intrusive {
             void onInsertSuccess()          { ++m_nInsertSuccess    ; }
             void onInsertFailed()           { ++m_nInsertFailed     ; }
             void onInsertRetry()            { ++m_nInsertRetries    ; }
-            void onEnsureExist()            { ++m_nEnsureExist      ; }
-            void onEnsureNew()              { ++m_nEnsureNew        ; }
+            void onUpdateExist()            { ++m_nUpdateExist      ; }
+            void onUpdateNew()              { ++m_nUpdateNew        ; }
             void onUnlinkSuccess()          { ++m_nUnlinkSuccess    ; }
             void onUnlinkFailed()           { ++m_nUnlinkFailed     ; }
             void onEraseSuccess()           { ++m_nEraseSuccess     ; }
             void onEraseFailed()            { ++m_nEraseFailed      ; }
+            void onEraseRetry()             { ++m_nEraseRetry; }
             void onFindFastSuccess()        { ++m_nFindFastSuccess  ; }
             void onFindFastFailed()         { ++m_nFindFastFailed   ; }
             void onFindSlowSuccess()        { ++m_nFindSlowSuccess  ; }
@@ -434,12 +452,13 @@ namespace cds { namespace intrusive {
             void onInsertSuccess()          const {}
             void onInsertFailed()           const {}
             void onInsertRetry()            const {}
-            void onEnsureExist()            const {}
-            void onEnsureNew()              const {}
+            void onUpdateExist()            const {}
+            void onUpdateNew()              const {}
             void onUnlinkSuccess()          const {}
             void onUnlinkFailed()           const {}
             void onEraseSuccess()           const {}
             void onEraseFailed()            const {}
+            void onEraseRetry()             const {}
             void onFindFastSuccess()        const {}
             void onFindFastFailed()         const {}
             void onFindSlowSuccess()        const {}

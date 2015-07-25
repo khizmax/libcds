@@ -391,7 +391,7 @@ namespace cds { namespace intrusive {
             node_type *   pSucc[ c_nMaxHeight ];
 
             typename gc::template GuardArray< c_nMaxHeight * 2 > guards;   ///< Guards array for pPrev/pSucc
-            node_type *   pCur;   // guarded by guards; needed only for \p ensure()
+            node_type *   pCur;   // guarded by guards; needed only for \p update()
         };
         //@endcond
 
@@ -460,16 +460,16 @@ namespace cds { namespace intrusive {
                     }
 
                     // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_relaxed ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
                         goto retry;
 
                     if ( pSucc.bits() ) {
                         // pCur is marked, i.e. logically deleted.
                         marked_node_ptr p( pCur.ptr() );
                         if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                         {
                             if ( nLevel == 0 ) {
                                 gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
@@ -528,19 +528,21 @@ namespace cds { namespace intrusive {
                 if ( pCur.ptr() ) {
 
                     // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_relaxed ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
                         goto retry;
 
                     if ( pSucc.bits() ) {
                         // pCur is marked, i.e. logically deleted.
                         marked_node_ptr p( pCur.ptr() );
                         if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                         {
-                            if ( nLevel == 0 )
+                            if ( nLevel == 0 ) {
                                 gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
+                                m_Stat.onEraseWhileFind();
+                            }
                         }
                         goto retry;
                     }
@@ -582,19 +584,21 @@ namespace cds { namespace intrusive {
                     }
 
                     // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_relaxed );
+                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_relaxed ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
                         goto retry;
 
                     if ( pSucc.bits() ) {
                         // pCur is marked, i.e. logically deleted.
                         marked_node_ptr p( pCur.ptr() );
                         if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                         {
-                            if ( nLevel == 0 )
+                            if ( nLevel == 0 ) {
                                 gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
+                                m_Stat.onEraseWhileFind();
+                            }
                         }
                         goto retry;
                     }
@@ -624,15 +628,17 @@ namespace cds { namespace intrusive {
             for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel )
                 pNode->next(nLevel).store( marked_node_ptr(), memory_model::memory_order_relaxed );
 
+            // Insert at level 0
             {
                 marked_node_ptr p( pos.pSucc[0] );
                 pNode->next( 0 ).store( p, memory_model::memory_order_release );
-                if ( !pos.pPrev[0]->next(0).compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
+                if ( !pos.pPrev[0]->next(0).compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     return false;
-                }
+
                 f( val );
             }
 
+            // Insert at level 1..max
             for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel ) {
                 marked_node_ptr p;
                 while ( true ) {
@@ -645,7 +651,7 @@ namespace cds { namespace intrusive {
                         return true;
                     }
                     p = q;
-                    if ( pos.pPrev[nLevel]->next(nLevel).compare_exchange_strong( q, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ) )
+                    if ( pos.pPrev[nLevel]->next(nLevel).compare_exchange_strong( q, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         break;
 
                     // Renew insert position
@@ -666,14 +672,13 @@ namespace cds { namespace intrusive {
             assert( pDel != nullptr );
 
             marked_node_ptr pSucc;
-            typename gc::Guard gSucc;
 
             // logical deletion (marking)
             for ( unsigned int nLevel = pDel->height() - 1; nLevel > 0; --nLevel ) {
                 while ( true ) {
-                    pSucc = gSucc.protect( pDel->next(nLevel), gc_protect );
+                    pSucc = pDel->next(nLevel);
                     if ( pSucc.bits() || pDel->next(nLevel).compare_exchange_weak( pSucc, pSucc | 1,
-                         memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                         memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     {
                         break;
                     }
@@ -681,10 +686,8 @@ namespace cds { namespace intrusive {
             }
 
             while ( true ) {
-                pSucc = gSucc.protect( pDel->next(0), gc_protect );
-                marked_node_ptr p( pSucc.ptr() );
-                if ( pDel->next(0).compare_exchange_strong( p, marked_node_ptr(p.ptr(), 1),
-                     memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                marked_node_ptr p( pDel->next(0).load(memory_model::memory_order_relaxed).ptr() );
+                if ( pDel->next(0).compare_exchange_strong( p, p | 1, memory_model::memory_order_release, atomics::memory_order_relaxed ))
                 {
                     f( *node_traits::to_value_ptr( pDel ));
 
@@ -692,9 +695,9 @@ namespace cds { namespace intrusive {
                     // try fast erase
                     p = pDel;
                     for ( int nLevel = static_cast<int>( pDel->height() - 1 ); nLevel >= 0; --nLevel ) {
-                        pSucc = gSucc.protect( pDel->next(nLevel), gc_protect );
+                        pSucc = pDel->next(nLevel).load(memory_model::memory_order_relaxed);
                         if ( !pos.pPrev[nLevel]->next(nLevel).compare_exchange_strong( p, marked_node_ptr(pSucc.ptr()),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed) )
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed) )
                         {
                             // Make slow erase
                             find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false );
@@ -710,9 +713,11 @@ namespace cds { namespace intrusive {
                 }
                 else {
                     if ( p.bits() ) {
+                        // Another thread is deleting pDel right now
                         return false;
                     }
                 }
+                m_Stat.onEraseRetry();
             }
         }
 
@@ -1045,8 +1050,7 @@ namespace cds { namespace intrusive {
             position pos;
             while ( true )
             {
-                bool bFound = find_position( val, pos, key_comparator(), true );
-                if ( bFound ) {
+                if ( find_position( val, pos, key_comparator(), true )) {
                     // scoped_node_ptr deletes the node tower if we create it
                     if ( !bTowerMade )
                         scp.release();
@@ -1076,31 +1080,33 @@ namespace cds { namespace intrusive {
             }
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val is not found in the set, then \p val is inserted into the set.
+            If the item \p val is not found in the set, then \p val is inserted into the set
+            iff \p bInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor signature is:
+            The functor \p func signature is:
             \code
                 void func( bool bNew, value_type& item, value_type& val );
             \endcode
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            i.e. the node has been inserted or updated,
             \p second is \p true if new item has been added or \p false if the item with \p key
-            already is in the set.
+            already exists.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
         {
             typename gc::Guard gNew;
             gNew.assign( &val );
@@ -1121,8 +1127,13 @@ namespace cds { namespace intrusive {
                         scp.release();
 
                     func( false, *node_traits::to_value_ptr(pos.pCur), val );
-                    m_Stat.onEnsureExist();
+                    m_Stat.onUpdateExist();
                     return std::make_pair( true, false );
+                }
+
+                if ( !bInsert ) {
+                    scp.release();
+                    return std::make_pair( false, false );
                 }
 
                 if ( !bTowerOk ) {
@@ -1141,10 +1152,19 @@ namespace cds { namespace intrusive {
                 ++m_ItemCounter;
                 scp.release();
                 m_Stat.onAddNode( nHeight );
-                m_Stat.onEnsureNew();
+                m_Stat.onUpdateNew();
                 return std::make_pair( true, true );
             }
         }
+
+        //@cond
+        // Deprecated, use update() instead
+        template <typename Func>
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Unlinks the item \p val from the set
         /**

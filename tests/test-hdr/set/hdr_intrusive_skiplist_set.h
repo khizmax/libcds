@@ -397,21 +397,28 @@ namespace set {
             //CPPUNIT_MSG( PrintStat()(s, "Insert test") );
 
             ensure_functor f;
-            std::pair<bool, bool> ret = s.ensure( v1, f );
+            std::pair<bool, bool> ret = s.update( v1, f, true );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( ret.second );
             CPPUNIT_ASSERT( v1.nEnsureNewCount == 1 );
             CPPUNIT_ASSERT( v1.nEnsureCount == 0 );
             CPPUNIT_ASSERT( check_size( s, 1 ));
 
-            ret = s.ensure( v2, f );
+            ret = s.update( v2, f, false );
+            CPPUNIT_ASSERT( !ret.first );
+            CPPUNIT_ASSERT( !ret.second );
+            CPPUNIT_ASSERT( v2.nEnsureNewCount == 0 );
+            CPPUNIT_ASSERT( v2.nEnsureCount == 0 );
+            CPPUNIT_ASSERT( check_size( s, 1 ));
+
+            ret = s.update( v2, f );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( ret.second );
             CPPUNIT_ASSERT( v2.nEnsureNewCount == 1 );
             CPPUNIT_ASSERT( v2.nEnsureCount == 0 );
             CPPUNIT_ASSERT( check_size( s, 2 ));
 
-            ret = s.ensure( v3, f );
+            ret = s.update( v3, f, true );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( ret.second );
             CPPUNIT_ASSERT( v3.nEnsureNewCount == 1 );
@@ -422,21 +429,21 @@ namespace set {
             CPPUNIT_ASSERT( s.find_with( v2, base_class::less<value_type>() ) == &v2 );
             CPPUNIT_ASSERT( s.find( v3 ) == &v3 );
 
-            ret = s.ensure( v1, f );
+            ret = s.update( v1, f, true );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( !ret.second );
             CPPUNIT_ASSERT( v1.nEnsureNewCount == 1 );
             CPPUNIT_ASSERT( v1.nEnsureCount == 1 );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
-            ret = s.ensure( v2, f );
+            ret = s.update( v2, f, false );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( !ret.second );
             CPPUNIT_ASSERT( v2.nEnsureNewCount == 1 );
             CPPUNIT_ASSERT( v2.nEnsureCount == 1 );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
-            ret = s.ensure( v3, f );
+            ret = s.update( v3, f );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( !ret.second );
             CPPUNIT_ASSERT( v3.nEnsureNewCount == 1 );

@@ -330,27 +330,23 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Ensures that the item exists in the set
+        /// Updates the item
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the \p val key not found in the set, then the new item created from \p val
-            is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func should be a function with signature:
-            \code
-                void func( bool bNew, value_type& item, const Q& val );
-            \endcode
-            or a functor:
+            If \p val not found in the set, then the new item created from \p val
+            is inserted into the set iff \p bInsert is \p true.
+            Otherwise, the functor \p func is called with the item found.
+            The functor \p Func signature:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item, const Q& val );
                 };
             \endcode
-
-            with arguments:
+            where:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the set
-            - \p val - argument \p key passed into the \p ensure function
+            - \p item - an item of the set
+            - \p val - argument \p val passed into the \p %update() function
 
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
@@ -359,18 +355,27 @@ namespace cds { namespace container {
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
-            already is in the set.
+            already exists.
         */
         template <typename Q, typename Func>
-        std::pair<bool, bool> ensure( const Q& val, Func func )
+        std::pair<bool, bool> update( const Q& val, Func func, bool bInsert = true )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
-            std::pair<bool, bool> bRes = base_class::ensure( *sp,
-                [&func, &val](bool bNew, node_type& node, node_type&){ func( bNew, node.m_Value, val ); });
+            std::pair<bool, bool> bRes = base_class::update( *sp,
+                [&func, &val](bool bNew, node_type& node, node_type&){ func( bNew, node.m_Value, val );}, bInsert );
             if ( bRes.first && bRes.second )
                 sp.release();
             return bRes;
         }
+
+        //@cond
+        // Deprecated, use update()
+        template <typename Q, typename Func>
+        std::pair<bool, bool> ensure( const Q& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
