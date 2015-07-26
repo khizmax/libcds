@@ -525,11 +525,12 @@ namespace cds { namespace intrusive {
             return insert_at( m_pHead, val, f );
         }
 
-        /// Ensures that the \p val exists in the list
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val is not found in the list, then \p val is inserted.
+            If the item \p val is not found in the list, then \p val is inserted
+            iff \p bInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -538,7 +539,7 @@ namespace cds { namespace intrusive {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
@@ -552,10 +553,19 @@ namespace cds { namespace intrusive {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
+        std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
+        {
+            return update_at( m_pHead, val, func, bInsert );
+        }
+
+        //@cond
+        // Deprecated, use update()
+        template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
-            return ensure_at( m_pHead, val, func );
+            return update( val, func, true );
         }
+        //@endcond
 
         /// Unlinks the item \p val from the list
         /**
@@ -925,7 +935,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        std::pair<bool, bool> ensure_at( atomic_node_ptr& refHead, value_type& val, Func func )
+        std::pair<bool, bool> update_at( atomic_node_ptr& refHead, value_type& val, Func func, bool bInsert )
         {
             position pos;
 
@@ -942,6 +952,9 @@ namespace cds { namespace intrusive {
                     return std::make_pair( true, false );
                 }
                 else {
+                    if ( !bInsert )
+                        return std::make_pair( false, false );
+
                     typename gc::Guard guard;
                     guard.assign( &val );
                     if ( link_node( pNode, pos ) ) {
@@ -953,6 +966,12 @@ namespace cds { namespace intrusive {
                     pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
                 }
             }
+        }
+
+        template <typename Func>
+        std::pair<bool, bool> ensure_at( atomic_node_ptr& refHead, value_type& val, Func func )
+        {
+            return update_at( refHead, val, func, true );
         }
 
         bool unlink_at( atomic_node_ptr& refHead, value_type& val )

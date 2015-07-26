@@ -447,11 +447,12 @@ namespace cds { namespace intrusive {
             return insert_at( m_pHead, val, f );
         }
 
-        /// Ensures that the \p item exists in the list
+        /// Updates the item
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val not found in the list, then \p val is inserted into the list.
+            If the item \p val not found in the list, then \p val is inserted into the list
+            iff \p bInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -462,15 +463,15 @@ namespace cds { namespace intrusive {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            Returns <tt> std::pair<bool, bool>  </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
+            Returns <tt> std::pair<bool, bool>  </tt> where \p first is \p true if operation is successfull,
+            \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the list.
 
             The function makes RCU lock internally.
@@ -478,9 +479,17 @@ namespace cds { namespace intrusive {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
+        std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
+        {
+            return update_at( m_pHead, val, func, bInsert );
+        }
+
+        //@cond
+        // Deprecated, use update()
+        template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
-            return ensure_at( m_pHead, val, func );
+            return update( val, func, true );
         }
 
         /// Unlinks the item \p val from the list
@@ -886,24 +895,36 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        std::pair<iterator, bool> ensure_at_( atomic_node_ptr& refHead, value_type& val, Func func )
+        std::pair<iterator, bool> update_at_( atomic_node_ptr& refHead, value_type& val, Func func, bool bInsert )
         {
             position pos( refHead );
             {
                 rcu_lock l;
-                return ensure_at_locked( pos, val, func );
+                return update_at_locked( pos, val, func, bInsert );
+            }
+        }
+
+        template <typename Func>
+        std::pair<iterator, bool> ensure_at_( atomic_node_ptr& refHead, value_type& val, Func func )
+        {
+            return update_at_( refHead, val, func, true );
+        }
+
+        template <typename Func>
+        std::pair<bool, bool> update_at( atomic_node_ptr& refHead, value_type& val, Func func, bool bInsert )
+        {
+            position pos( refHead );
+            {
+                rcu_lock l;
+                std::pair<iterator, bool> ret = update_at_locked( pos, val, func, bInsert );
+                return std::make_pair( ret.first != end(), ret.second );
             }
         }
 
         template <typename Func>
         std::pair<bool, bool> ensure_at( atomic_node_ptr& refHead, value_type& val, Func func )
         {
-            position pos( refHead );
-            {
-                rcu_lock l;
-                std::pair<iterator, bool> ret = ensure_at_locked( pos, val, func );
-                return std::make_pair( ret.first != end(), ret.second );
-            }
+            return update_at( refHead, val, func, true );
         }
 
         bool unlink_at( atomic_node_ptr& refHead, value_type& val )
@@ -987,7 +1008,7 @@ namespace cds { namespace intrusive {
 
                     --m_ItemCounter;
                     value_type * pRet = node_traits::to_value_ptr( pExtracted );
-                    assert( pRet->m_pDelChain == nullptr );
+                    assert( pExtracted->m_pDelChain == nullptr );
                     return pRet;
                 }
             }
@@ -1117,7 +1138,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        std::pair<iterator, bool> ensure_at_locked( position& pos, value_type& val, Func func )
+        std::pair<iterator, bool> update_at_locked( position& pos, value_type& val, Func func, bool bInsert )
         {
             // RCU lock should be locked!!!
             assert( gc::is_locked() );
@@ -1130,6 +1151,9 @@ namespace cds { namespace intrusive {
                     return std::make_pair( iterator( pos.pCur ), false );
                 }
                 else {
+                    if ( !bInsert )
+                        return std::make_pair( end(), false );
+
                     link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
