@@ -64,10 +64,65 @@ namespace cds { namespace intrusive {
         template <typename EventCounter = cds::atomicity::event_counter>
         struct stat {
             typedef EventCounter event_counter ; ///< Event counter type
+
+            event_counter   m_nInsertSuccess;   ///< Number of success \p insert() operations
+            event_counter   m_nInsertFailed;    ///< Number of failed \p insert() operations
+            event_counter   m_nInsertRetry;     ///< Number of attempts to insert new item
+            event_counter   m_nUpdateNew;       ///< Number of new item inserted for \p update()
+            event_counter   m_nUpdateExisting;  ///< Number of existing item updates
+            event_counter   m_nUpdateFailed;    ///< Number of failed \p update() call
+            event_counter   m_nUpdateRetry;     ///< Number of attempts to update the item
+            event_counter   m_nEraseSuccess;    ///< Number of successful \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseFailed;     ///< Number of failed \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseRetry;      ///< Number of attempts to \p erase() an item
+            event_counter   m_nFindSuccess;     ///< Number of successful \p find() and \p get() operations
+            event_counter   m_nFindFailed;      ///< Number of failed \p find() and \p get() operations
+
+            event_counter   m_nExpandNodeSuccess; ///< Number of succeeded attempts converting data node to array node
+            event_counter   m_nExpandNodeFailed;  ///< Number of failed attempts converting data node to array node
+            event_counter   m_nSlotChanged;     ///< Number of array node slot changing by other thread during an operation
+            event_counter   m_nSlotConverting;  ///< Number of events when we encounter a slot while it is converting to array node
+
+            void onInsertSuccess()              { ++m_nInsertSuccess;       }
+            void onInserFailed()                { ++m_nInsertFailed;        }
+            void onInsertRetry()                { ++m_nInsertRetry;         }
+            void onUpdateNew()                  { ++m_nUpdateNew;           }
+            void onUpdateExisting()             { ++m_nUpdateExisting;      }
+            void onUpdateFailed()               { ++m_nUpdateFailed;        }
+            void onUpdateRetry()                { ++m_nUpdateRetry;         }
+            void onEraseSuccess()               { ++m_nEraseSuccess;        }
+            void onEraseFailed()                { ++m_nEraseFailed;         }
+            void onEraseRetry()                 { ++m_nEraseRetry;          }
+            void onFindSuccess()                { ++m_nFinSuccess;          }
+            void onFindFailed()                 { ++m_nFindFailed;          }
+
+            void onExpandNodeSuccess()          { ++m_nExpandNodeSuccess;   }
+            void onExpandNodeFailed()           { ++m_nExpandNodeFailed;    }
+            void onSlotChanged()                { ++m_nSlotChanged;         }
+            void onSlotConverting()             { ++m_nSlotConverting;      }
         };
 
         /// \p MultiLevelHashSet empty internal statistics
         struct empty_stat {
+            //@cond
+            void onInsertSuccess()              const {}
+            void onInsertFailed()               const {}
+            void onInsertRetry()                const {}
+            void onUpdateNew()                  const {}
+            void onUpdateExisting()             const {}
+            void onUpdateFailed()               const {}
+            void onUpdateRetry()                const {}
+            void onEraseSuccess()               const {}
+            void onEraseFailed()                const {}
+            void onEraseRetry()                 const {}
+            void onFindSuccess()                const {}
+            void onFindFailed()                 const {}
+
+            void onExpandNodeSuccess()          const {}
+            void onExpandNodeFailed()           const {}
+            void onSlotChanged()                const {}
+            void onSlotConverting()             const {}
+            //@endcond
         };
 
         /// MultiLevelHashSet traits
@@ -87,7 +142,8 @@ namespace cds { namespace intrusive {
                     // ... other fields
                 };
 
-                struct foo_hash_functor {
+                // Hash accessor
+                struct foo_hash_accessor {
                     hash_type const& operator()( foo const& d ) const
                     {
                         return d.hash;
@@ -234,6 +290,7 @@ namespace cds { namespace intrusive {
                 explicit hash_splitter( hash_type const& h )
                     : m_ptr(reinterpret_cast<uint_type const*>( &h ))
                     , m_pos(0)
+                    , m_first( m_ptr )
 #           ifdef _DEBUG
                     , m_last( m_ptr + c_nHashSize )
 #           endif
@@ -297,11 +354,18 @@ namespace cds { namespace intrusive {
                     return nBits ? cut( nBits ) : 0;
                 }
 
+                void reset()
+                {
+                    m_ptr = m_first;
+                    m_pos = 0;
+                }
+
             private:
                 uint_type const* m_ptr;  ///< current position in the hash
                 size_t           m_pos;  ///< current position in bits
+                uint_type const* m_first; ///< first position
 #           ifdef _DEBUG
-                uint_type const* m_last;
+                uint_type const* m_last;  ///< last position
 #           endif
             };
         } // namespace details
