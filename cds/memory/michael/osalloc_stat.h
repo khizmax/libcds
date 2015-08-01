@@ -51,13 +51,13 @@ namespace cds { namespace memory { namespace michael {
         }
 
         /// Returns current value of nBytesAllocated counter
-        atomic64u_t allocatedBytes() const
+        uint64_t allocatedBytes() const
         {
             return nBytesAllocated.load(atomics::memory_order_relaxed);
         }
 
         /// Returns current value of nBytesAllocated counter
-        atomic64u_t deallocatedBytes() const
+        uint64_t deallocatedBytes() const
         {
             return nBytesDeallocated.load(atomics::memory_order_relaxed);
         }
@@ -92,13 +92,13 @@ namespace cds { namespace memory { namespace michael {
         }
 
         /// Returns current value of nBytesAllocated counter
-        atomic64u_t allocatedBytes() const
+        uint64_t allocatedBytes() const
         {
             return 0;
         }
 
         /// Returns current value of nBytesAllocated counter
-        atomic64u_t deallocatedBytes() const
+        uint64_t deallocatedBytes() const
         {
             return 0;
         }

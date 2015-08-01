@@ -32,7 +32,7 @@ protected:
 
     void bitop64()
     {
-        cds::atomic64u_t    n;
+        uint64_t n;
         n = 0;
         CPPUNIT_ASSERT_EX( cds::bitop::MSB(n) == 0, "n=" << n );
         CPPUNIT_ASSERT_EX( cds::bitop::LSB(n) == 0, "n=" << n );

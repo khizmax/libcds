@@ -14,7 +14,7 @@ namespace cds { namespace memory { namespace michael {
         class bound_checker
         {
         protected:
-            typedef atomic64u_t trailer_type;
+            typedef uint64_t trailer_type;
             static const trailer_type s_BoundCheckerTrailer = 0xbadcafeedeadc0feULL;
 
         public:

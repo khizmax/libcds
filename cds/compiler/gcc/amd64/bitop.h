@@ -77,9 +77,9 @@ namespace cds {
         }
 
 #        define cds_bitop_msb64_DEFINED
-        static inline int msb64( atomic64u_unaligned nArg )
+        static inline int msb64( uint64_t nArg )
         {
-            atomic64u_unaligned        nRet;
+            uint64_t  nRet;
             asm volatile (
                 "bsrq        %[nArg], %[nRet]     ;\n\t"
                 "jnz        1f                    ;\n\t"
@@ -95,10 +95,10 @@ namespace cds {
         }
 
 #        define cds_bitop_msb64nz_DEFINED
-        static inline int msb64nz( atomic64u_unaligned nArg )
+        static inline int msb64nz( uint64_t nArg )
         {
             assert( nArg != 0 );
-            atomic64u_unaligned        nRet;
+            uint64_t nRet;
             __asm__ __volatile__ (
                 "bsrq        %[nArg], %[nRet]    ;"
                 : [nRet] "=a" (nRet)
@@ -110,10 +110,9 @@ namespace cds {
 
         // LSB - return index (0..31) of least significant bit in nArg. If nArg == 0 return -1U
 #        define cds_bitop_lsb64_DEFINED
-        static inline int lsb64( atomic64u_unaligned nArg )
+        static inline int lsb64( uint64_t nArg )
         {
-
-            atomic64u_unaligned        nRet;
+            uint64_t nRet;
             __asm__ __volatile__ (
                 "bsfq        %[nArg], %[nRet]     ;"
                 "jnz        1f        ;"
@@ -132,10 +131,10 @@ namespace cds {
         // LSB - return index (0..31) of least significant bit in nArg.
         // Condition: nArg != 0
 #        define cds_bitop_lsb64nz_DEFINED
-        static inline int lsb64nz( atomic64u_unaligned nArg )
+        static inline int lsb64nz( uint64_t nArg )
         {
             assert( nArg != 0 );
-            atomic64u_unaligned        nRet;
+            uint64_t nRet;
             __asm__ __volatile__ (
                 "bsfq        %[nArg], %[nRet]    ;"
                 : [nRet] "=a" (nRet)

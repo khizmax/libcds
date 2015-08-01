@@ -247,7 +247,7 @@ namespace cds { namespace memory { namespace michael {
             To get count of bytes allocated but not yet deallocated you should call
             \code allocatedBytes() - deallocatedBytes() \endcode
         */
-        atomic64u_t allocatedBytes() const
+        uint64_t allocatedBytes() const
         {
             return nBytesAllocated.load(atomics::memory_order_relaxed);
         }
@@ -258,7 +258,7 @@ namespace cds { namespace memory { namespace michael {
 
             See \ref allocatedBytes notes
         */
-        atomic64u_t deallocatedBytes() const
+        uint64_t deallocatedBytes() const
         {
             return nBytesDeallocated.load(atomics::memory_order_relaxed);
         }
@@ -370,9 +370,9 @@ namespace cds { namespace memory { namespace michael {
         { return 0; }
         size_t descFull() const
         { return 0; }
-        atomic64u_t allocatedBytes() const
+        uint64_t allocatedBytes() const
         { return 0; }
-        atomic64u_t deallocatedBytes() const
+        uint64_t deallocatedBytes() const
         { return 0; }
         size_t activeDescCASFailureCount() const
         { return 0; }

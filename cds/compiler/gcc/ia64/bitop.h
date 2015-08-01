@@ -13,14 +13,14 @@ namespace cds {
         {
             if ( !nArg )
                 return 0;
-            atomic64u_t x = nArg;
+            uint64_t x = nArg;
             x |= x >> 1;
             x |= x >> 2;
             x |= x >> 4;
             x |= x >> 8;
             x |= x >> 16;
 
-            atomic64u_t    nRes;
+            uint64_t    nRes;
             asm __volatile__( "popcnt %0=%1\n\t" : "=r" (nRes) : "r" (x) );
             return (int) nRes;
         }
@@ -42,7 +42,7 @@ namespace cds {
         // MSB - return index (0..63) of most significant bit in nArg.
         // !!! nArg != 0
 #        define cds_bitop_msb64nz_DEFINED
-        static inline int msb64nz( atomic64u_t nArg )
+        static inline int msb64nz( uint64_t nArg )
         {
             assert( nArg != 0 );
             long double d = nArg;

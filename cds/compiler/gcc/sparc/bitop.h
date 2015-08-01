@@ -11,9 +11,9 @@ namespace cds {
         // Source: UltraSPARC Architecture 2007
         //
         // Test result: this variant and its variation about 100 times slower then generic implementation :-(
-        static inline int sparc_msb64( atomic64u_t nArg )
+        static inline int sparc_msb64( uint64_t nArg )
         {
-            atomic64u_t result;
+            uint64_t result;
             asm volatile (
                 "neg %[nArg], %[result] \n\t"
                 "xnor %[nArg], %[result], %%g5 \n\t"
@@ -29,7 +29,7 @@ namespace cds {
         // MSB - return index (1..32) of most significant bit in nArg. If nArg == 0 return 0
         static inline int sparc_msb32( uint32_t nArg )
         {
-            return sparc_msb64( (atomic64u_t) nArg );
+            return sparc_msb64( (uint64_t) nArg );
         }
 
     }} // namespace gcc::Sparc

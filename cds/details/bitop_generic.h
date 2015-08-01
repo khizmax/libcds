@@ -15,7 +15,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_isPow2_64_DEFINED
-        static inline bool isPow2_64( atomic64_unaligned x )
+        static inline bool isPow2_64( uint64_t x )
         {
             return (x & ( x - 1 )) == 0 && x;
         }
@@ -67,7 +67,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_msb64_DEFINED
-        static inline int msb64( atomic64u_unaligned x )
+        static inline int msb64( uint64_t x )
         {
             uint32_t h = (uint32_t) (x >> 32);
             if ( h )
@@ -77,7 +77,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_msb64nz_DEFINED
-        static inline int msb64nz( atomic64u_unaligned x )
+        static inline int msb64nz( uint64_t x )
         {
             return msb64( x ) - 1;
         }
@@ -129,7 +129,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_lsb64_DEFINED
-        static inline int lsb64( atomic64u_unaligned x )
+        static inline int lsb64( uint64_t x )
         {
             if ( !x )
                 return 0;
@@ -140,7 +140,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_lsb64nz_DEFINED
-        static inline int lsb64nz( atomic64u_unaligned x )
+        static inline int lsb64nz( uint64_t x )
         {
             return lsb64( x ) - 1;
         }
@@ -166,10 +166,10 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_rbo64_DEFINED
-        static inline atomic64u_t rbo64( atomic64u_unaligned x )
+        static inline uint64_t rbo64( uint64_t x )
         {
             //                      Low 32bit                                          Hight 32bit
-            return ( ((atomic64u_t) rbo32( (uint32_t) x )) << 32 ) | ((atomic64u_t) rbo32( (uint32_t) (x >> 32) ));
+            return ( static_cast<uint64_t>(rbo32( (uint32_t) x )) << 32 ) | ( static_cast<uint64_t>( rbo32( (uint32_t) (x >> 32) )));
         }
 #endif
 
@@ -191,7 +191,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_sbc64_DEFINED
-        static inline int sbc64( atomic64u_unaligned x )
+        static inline int sbc64( uint64_t x )
         {
 #        ifdef cds_beans_zbc64_DEFINED
             return 64 - zbc64( x );
@@ -212,7 +212,7 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_zbc64_DEFINED
-        static inline int zbc64( atomic64u_unaligned x )
+        static inline int zbc64( uint64_t x )
         {
             return 64 - sbc64( x );
         }
@@ -230,11 +230,11 @@ namespace cds {
 #endif
 
 #ifndef cds_bitop_complement64_DEFINED
-        static inline bool complement64( atomic64u_t * pArg, unsigned int nBit )
+        static inline bool complement64( uint64_t * pArg, unsigned int nBit )
         {
             assert( pArg );
-            atomic64u_t nVal = *pArg & (atomic64u_t(1) << nBit);
-            *pArg ^= atomic64u_t(1) << nBit;
+            uint64_t nVal = *pArg & (uint64_t(1) << nBit);
+            *pArg ^= uint64_t(1) << nBit;
             return nVal != 0;
         }
 #endif
@@ -257,8 +257,8 @@ namespace cds {
 
         static inline uint64_t RandXorShift64(uint64_t x)
         {
-            //static atomic64u_t xRandom = 88172645463325252LL;
-            //atomic64u_t x = xRandom;
+            //static uint64_t xRandom = 88172645463325252LL;
+            //uint64_t x = xRandom;
             if ( !x )
                 x = 88172645463325252LL;
             x ^= x << 13;

@@ -682,7 +682,7 @@ namespace cds { namespace intrusive {
 
         /// Finds \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_rcu_find_func "find(Q&, Func)"
+            The function is an analog of \p find(Q&, Func)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.

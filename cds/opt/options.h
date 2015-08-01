@@ -10,11 +10,12 @@
         2011.01.23 khizmax  Created
 */
 
+#include <stdlib.h> // rand, srand
+
 #include <cds/details/aligned_type.h>
 #include <cds/user_setup/allocator.h>
 #include <cds/user_setup/cache_line.h>
 #include <cds/algo/atomic.h>
-#include <stdlib.h> // rand, srand
 
 namespace cds {
 

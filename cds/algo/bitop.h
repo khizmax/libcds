@@ -44,7 +44,7 @@ namespace cds {
 
             // 64-bit bit ops
             template <> struct BitOps<8> {
-                typedef atomic64u_unaligned        TUInt;
+                typedef uint64_t TUInt;
 
                 static int      MSB( TUInt x )        { return bitop::platform::msb64( x );     }
                 static int      LSB( TUInt x )        { return bitop::platform::lsb64( x );     }

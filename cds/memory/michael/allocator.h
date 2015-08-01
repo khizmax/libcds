@@ -430,13 +430,13 @@ namespace michael {
         size_t      nPageDeallocCount   ;  ///< Count of page (superblock) deallocated
         size_t      nDescAllocCount     ;  ///< Count of superblock descriptors
         size_t      nDescFull           ;  ///< Count of full superblock
-        atomic64u_t nBytesAllocated     ;  ///< Count of allocated bytes (for heap managed memory blocks)
-        atomic64u_t nBytesDeallocated   ;  ///< Count of deallocated bytes (for heap managed memory blocks)
+        uint64_t    nBytesAllocated     ;  ///< Count of allocated bytes (for heap managed memory blocks)
+        uint64_t    nBytesDeallocated   ;  ///< Count of deallocated bytes (for heap managed memory blocks)
 
         size_t      nSysAllocCount      ;  ///< Count of \p alloc and \p alloc_aligned function call (for large memory blocks that allocated directly from OS)
         size_t      nSysFreeCount       ;  ///< Count of \p free and \p free_aligned function call (for large memory blocks that allocated directly from OS)
-        atomic64u_t nSysBytesAllocated  ;  ///< Count of allocated bytes (for large memory blocks that allocated directly from OS)
-        atomic64_t  nSysBytesDeallocated;  ///< Count of deallocated bytes (for large memory blocks that allocated directly from OS)
+        uint64_t    nSysBytesAllocated  ;  ///< Count of allocated bytes (for large memory blocks that allocated directly from OS)
+        int64_t     nSysBytesDeallocated;  ///< Count of deallocated bytes (for large memory blocks that allocated directly from OS)
 
         // Internal contention indicators
         /// CAS failure counter for updating active field of active block of \p alloc_from_active Heap internal function

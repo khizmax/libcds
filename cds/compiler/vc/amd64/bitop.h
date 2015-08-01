@@ -68,7 +68,7 @@ namespace cds {
 
 
 #        define cds_bitop_msb64_DEFINED
-        static inline int msb64( atomic64u_unaligned nArg )
+        static inline int msb64( uint64_t nArg )
         {
             unsigned long nIndex;
             if ( _BitScanReverse64( &nIndex, nArg ))
@@ -77,7 +77,7 @@ namespace cds {
         }
 
 #        define cds_bitop_msb64nz_DEFINED
-        static inline int msb64nz( atomic64u_unaligned nArg )
+        static inline int msb64nz( uint64_t nArg )
         {
             assert( nArg != 0 );
             unsigned long nIndex;
@@ -86,7 +86,7 @@ namespace cds {
         }
 
 #        define cds_bitop_lsb64_DEFINED
-        static inline int lsb64( atomic64u_unaligned nArg )
+        static inline int lsb64( uint64_t nArg )
         {
             unsigned long nIndex;
             if ( _BitScanForward64( &nIndex, nArg ))
@@ -95,7 +95,7 @@ namespace cds {
         }
 
 #        define cds_bitop_lsb64nz_DEFINED
-        static inline int lsb64nz( atomic64u_unaligned nArg )
+        static inline int lsb64nz( uint64_t nArg )
         {
             assert( nArg != 0 );
             unsigned long nIndex;
@@ -110,7 +110,7 @@ namespace cds {
         }
 
 #       define cds_bitop_complement64_DEFINED
-        static inline bool complement64( atomic64u_t * pArg, unsigned int nBit )
+        static inline bool complement64( uint64_t * pArg, unsigned int nBit )
         {
             return _bittestandcomplement64( reinterpret_cast<__int64 *>( pArg ), nBit ) != 0;
         }

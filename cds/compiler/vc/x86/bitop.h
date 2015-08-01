@@ -65,7 +65,7 @@ namespace cds {
         }
 
 #       define cds_bitop_complement64_DEFINED
-        static inline bool complement64( atomic64u_t * pArg, unsigned int nBit )
+        static inline bool complement64( uint64_t * pArg, unsigned int nBit )
         {
             if ( nBit < 32 )
                 return _bittestandcomplement( reinterpret_cast<long *>( pArg ), nBit ) != 0;

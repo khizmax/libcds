@@ -346,29 +346,6 @@ namespace cds {}
 #   define CDS_CXX11_INLINE_NAMESPACE
 #endif
 
-//@cond
-// typedefs for back compatibility
-namespace cds {
-    /// 64bit unaligned int
-    typedef int64_t     atomic64_unaligned;
-
-    /// 64bit unaligned unsigned int
-    typedef uint64_t  atomic64u_unaligned;
-
-    /// 64bit aligned int
-    typedef atomic64_unaligned CDS_TYPE_ALIGNMENT(8)    atomic64_aligned;
-
-    /// 64bit aligned unsigned int
-    typedef atomic64u_unaligned CDS_TYPE_ALIGNMENT(8)   atomic64u_aligned;
-
-    /// 64bit atomic int (aligned)
-    typedef atomic64_aligned    atomic64_t;
-
-    /// 64bit atomic unsigned int (aligned)
-    typedef atomic64u_aligned   atomic64u_t;
-} // namespace cds
-//@endcond
-
 /*************************************************************************
  Common things
 **************************************************************************/
