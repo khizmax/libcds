@@ -7,7 +7,6 @@
 /tests/cppunit/*.o
 *.o
 *.d
-/todo-2.0.txt
 /tests/data/dictionary.txt
 /bin
 obj

@@ -1196,5 +1196,8 @@
     <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_dhp.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\split_bitstring.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

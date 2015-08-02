@@ -144,7 +144,6 @@ namespace set {
 
         test_int<set>();
     }
-
-
 } // namespace set
+
 CPPUNIT_TEST_SUITE_REGISTRATION(set::IntrusiveHashSetHdrTest);

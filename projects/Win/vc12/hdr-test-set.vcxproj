@@ -232,6 +232,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">
@@ -291,6 +292,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">
@@ -358,6 +360,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <Profile>true</Profile>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">
@@ -433,6 +436,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <Profile>true</Profile>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">
@@ -501,6 +505,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">
@@ -532,9 +537,11 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_set.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_set.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_set_rcu.h" />
@@ -559,6 +566,7 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_shb_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_sht_lazy.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_hp.cpp" />

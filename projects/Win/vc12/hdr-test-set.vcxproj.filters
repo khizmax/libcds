@@ -19,6 +19,9 @@
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_rcu.h">
       <Filter>container\skip_list</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset.h">
+      <Filter>intrusive\multilevel_hashset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="intrusive">
@@ -44,6 +47,9 @@
     </Filter>
     <Filter Include="container\split_list">
       <UniqueIdentifier>{61f94a40-c964-4233-af67-66a1be1e0aab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="intrusive\multilevel_hashset">
+      <UniqueIdentifier>{a878aed0-83c9-4ca7-95bb-74f10aad8bde}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -310,6 +316,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_dhp.cpp">
       <Filter>container\skip_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_hp.cpp">
+      <Filter>intrusive\multilevel_hashset</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

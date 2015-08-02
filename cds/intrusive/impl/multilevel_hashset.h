@@ -65,11 +65,14 @@ namespace cds { namespace intrusive {
           have identical hash then you cannot insert both that keys in the set. \p %MultiLevelHashSet does not maintain the key,
           it maintains its fixed-size hash value.
 
+        Template parameters:
+        - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
+        - \p T - a value type to be stored in the set
+        - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction
 
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
         - <tt><cds/intrusive/multilevel_hashset_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/intrusive/multilevel_hashset_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/intrusive/multilevel_hashset_nogc.h></tt> for \ref cds_intrusive_MultiLevelHashSet_nogc for append-only set
         - <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type"
     */
     template <
@@ -97,7 +100,7 @@ namespace cds { namespace intrusive {
                 decltype( hash_accessor()( std::declval<T>()) )
             >::type
         >::type hash_type;
-        static_assert( !std::is_pointer<hash_type>, "hash_accessor should return a reference to hash value" );
+        static_assert( !std::is_pointer<hash_type>::value, "hash_accessor should return a reference to hash value" );
 
         typedef typename traits::disposer disposer; ///< data node disposer
 
@@ -218,7 +221,7 @@ namespace cds { namespace intrusive {
             hash_type const& hash = hash_accessor()( val );
             hash_splitter splitter( hash );
             hash_comparator cmp;
-            gc::Guard guard;
+            typename gc::Guard guard;
             back_off bkoff;
 
             atomic_node_ptr * pArr = m_Head;
@@ -267,7 +270,7 @@ namespace cds { namespace intrusive {
                     else {
                         // the slot is empty, try to insert data node
                         node_ptr pNull;
-                        if ( pArr[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )
+                        if ( pArr[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         {
                             // the new data node has been inserted
                             f( val );
@@ -305,7 +308,7 @@ namespace cds { namespace intrusive {
             hash_type const& hash = hash_accessor()( val );
             hash_splitter splitter( hash );
             hash_comparator cmp;
-            gc::Guard guard;
+            typename gc::Guard guard;
             back_off bkoff;
 
             atomic_node_ptr * pArr = m_Head;
@@ -363,7 +366,7 @@ namespace cds { namespace intrusive {
                         // the slot is empty, try to insert data node
                         if ( bInsert ) {
                             node_ptr pNull;
-                            if ( pArr[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )
+                            if ( pArr[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             {
                                 // the new data node has been inserted
                                 f( val );
@@ -374,7 +377,7 @@ namespace cds { namespace intrusive {
                         }
                         else {
                             m_Stat.onUpdateFailed();
-                            return std:make_pair( false, false );
+                            return std::make_pair( false, false );
                         }
 
                         // insert failed - slot has been changed by another thread
@@ -396,7 +399,7 @@ namespace cds { namespace intrusive {
         {
             typename gc::Guard guard;
             auto pred = [&val](value_type const& item) -> bool { return &item == &val; };
-            value_type * p = do_erase( hash, guard, std::ref( pred ));
+            value_type * p = do_erase( hash_accessor()( val ), guard, std::ref( pred ));
 
             // p is guarded by HP
             if ( p ) {
@@ -637,21 +640,21 @@ namespace cds { namespace intrusive {
 
             metrics m;
             m.head_node_size_log = head_bits;
-            m.head_node_size = 1 << head_bits;
+            m.head_node_size = size_t(1) << head_bits;
             m.array_node_size_log = array_bits;
-            m.array_node_size = 1 << array_bits;
+            m.array_node_size = size_t(1) << array_bits;
             return m;
         }
 
-        template <typename T>
-        static bool check_node_alignment( T * p )
+        template <typename Q>
+        static bool check_node_alignment( Q const* p )
         {
             return (reinterpret_cast<uintptr_t>(p) & node_ptr::bitmask) == 0;
         }
 
         atomic_node_ptr * alloc_array_node() const
         {
-            return cxx_array_node_allocator().NewArray( array_node_size(), nullptr )
+            return cxx_array_node_allocator().NewArray( array_node_size(), nullptr );
         }
 
         void free_array_node( atomic_node_ptr * parr ) const
@@ -709,8 +712,8 @@ namespace cds { namespace intrusive {
                     }
                     else {
                         // data node
-                        if ( pArr->compare_exchange_strong( slot, node_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
-                            gc::template retire<disposer>( p );
+                        if ( pArr->compare_exchange_strong( slot, node_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
+                            gc::template retire<disposer>( slot.ptr() );
                             --m_ItemCounter;
                             m_Stat.onEraseSuccess();
                             break;
@@ -755,7 +758,9 @@ namespace cds { namespace intrusive {
             pArr[idx].store( current, memory_model::memory_order_release );
 
             cur = cur | array_converting;
-            CDS_VERIFY( slot.compare_exchange_strong( cur, node_ptr( to_node( pArr ), array_node ), memory_model::memory_order_release, atomics::memory_order_relaxed )));
+            CDS_VERIFY( 
+                slot.compare_exchange_strong( cur, node_ptr( to_node( pArr ), array_node ), memory_model::memory_order_release, atomics::memory_order_relaxed )
+            );
 
             return std::make_pair( pArr, idx );
         }
@@ -863,4 +868,3 @@ namespace cds { namespace intrusive {
 }} // namespace cds::intrusive
 
 #endif // #ifndef CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H
-1

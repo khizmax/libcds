@@ -5,9 +5,11 @@
 
 #include <memory.h> // memcmp, memcpy
 #include <type_traits>
+
 #include <cds/intrusive/details/base.h>
 #include <cds/opt/compare.h>
 #include <cds/algo/atomic.h>
+#include <cds/algo/split_bitstring.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/urcu/options.h>
 
@@ -83,6 +85,7 @@ namespace cds { namespace intrusive {
             event_counter   m_nSlotChanged;     ///< Number of array node slot changing by other thread during an operation
             event_counter   m_nSlotConverting;  ///< Number of events when we encounter a slot while it is converting to array node
 
+            //@cond
             void onInsertSuccess()              { ++m_nInsertSuccess;       }
             void onInserFailed()                { ++m_nInsertFailed;        }
             void onInsertRetry()                { ++m_nInsertRetry;         }
@@ -93,13 +96,14 @@ namespace cds { namespace intrusive {
             void onEraseSuccess()               { ++m_nEraseSuccess;        }
             void onEraseFailed()                { ++m_nEraseFailed;         }
             void onEraseRetry()                 { ++m_nEraseRetry;          }
-            void onFindSuccess()                { ++m_nFinSuccess;          }
+            void onFindSuccess()                { ++m_nFindSuccess;         }
             void onFindFailed()                 { ++m_nFindFailed;          }
 
             void onExpandNodeSuccess()          { ++m_nExpandNodeSuccess;   }
             void onExpandNodeFailed()           { ++m_nExpandNodeFailed;    }
             void onSlotChanged()                { ++m_nSlotChanged;         }
             void onSlotConverting()             { ++m_nSlotConverting;      }
+            //@endcond
         };
 
         /// \p MultiLevelHashSet empty internal statistics
@@ -266,6 +270,13 @@ namespace cds { namespace intrusive {
         template <typename T>
         struct bitwise_compare
         {
+            /// Compares \p lhs and \p rhs
+            /**
+                Returns:
+                - <tt> < 0</tt> if <tt>lhs < rhs</tt>
+                - <tt>0</tt> if <tt>lhs == rhs</tt>
+                - <tt> > 0</tt> if <tt>lhs > rhs</tt>
+            */
             int operator()( T const& lhs, T const& rhs ) const
             {
                 return memcmp( &lhs, &rhs, sizeof(T));
@@ -275,99 +286,7 @@ namespace cds { namespace intrusive {
         //@cond
         namespace details {
             template <typename HashType, typename UInt = size_t >
-            class hash_splitter
-            {
-            public:
-                typedef HashType hash_type;
-                typedef UInt     uint_type;
-
-                static CDS_CONSTEXPR size_t const c_nHashSize   = (sizeof(hash_type) + sizeof(uint_type) - 1) / sizeof(uint_type);
-                static CDS_CONSTEXPR size_t const c_nBitPerByte = 8;
-                static CDS_CONSTEXPR size_t const c_nBitPerHash = sizeof(hash_type) * c_nBitPerByte;
-                static CDS_CONSTEXPR size_t const c_nBitPerInt  = sizeof(uint_type) * c_nBitPerByte;
-
-            public:
-                explicit hash_splitter( hash_type const& h )
-                    : m_ptr(reinterpret_cast<uint_type const*>( &h ))
-                    , m_pos(0)
-                    , m_first( m_ptr )
-#           ifdef _DEBUG
-                    , m_last( m_ptr + c_nHashSize )
-#           endif
-                {}
-
-                explicit operator bool() const
-                {
-                    return !eos();
-                }
-
-                // end-of-bitstring
-                bool eos() const
-                {
-                    return m_pos >= c_nBitPerHash;
-                }
-
-                uint_type cut( size_t nBits )
-                {
-                    assert( !eos() );
-                    assert( nBits <= c_nBitPerInt );
-                    assert( m_pos + nBits <= c_nBitPerHash );
-#           ifdef _DEBUG
-                    assert( m_ptr < m_last );
-#           endif
-                    uint_type result;
-
-                    size_t const nRest = c_nBitPerInt - m_pos % c_nBitPerInt;
-                    m_pos += nBits;
-                    if ( nBits < nRest ) {
-                        result = *m_ptr << ( nRest - nBits );
-                        result = result >> ( c_nBitPerInt - nBits );
-                    }
-                    else if ( nBits == nRest ) {
-                        result = *m_ptr >> ( c_nBitPerInt - nRest );
-                        ++m_ptr;
-                    }
-                    else {
-                        size_t const lsb = *m_ptr >> ( c_nBitPerInt - nRest );
-                        nBits -= nRest;
-                        ++m_ptr;
-
-                        result = *m_ptr << ( c_nBitPerInt - nBits );
-                        result = result >> ( c_nBitPerInt - nBits );
-                        result = (result << nRest) + lsb;
-                    }
-
-                    assert( m_pos <= c_nBitPerHash );
-#           ifdef _DEBUG
-                    assert( m_ptr < m_last );
-#           endif
-                    return result;
-                }
-
-                uint_type safe_cut( size_t nBits )
-                {
-                    assert( !eos() );
-                    assert( nBits <= sizeof(uint_type) * c_nBitPerByte );
-
-                    if ( m_pos + nBits > c_nBitPerHash )
-                        nBits = c_nBitPerHash - m_pos;
-                    return nBits ? cut( nBits ) : 0;
-                }
-
-                void reset()
-                {
-                    m_ptr = m_first;
-                    m_pos = 0;
-                }
-
-            private:
-                uint_type const* m_ptr;  ///< current position in the hash
-                size_t           m_pos;  ///< current position in bits
-                uint_type const* m_first; ///< first position
-#           ifdef _DEBUG
-                uint_type const* m_last;  ///< last position
-#           endif
-            };
+            using hash_splitter = cds::algo::split_bitstring< HashType, UInt >;
         } // namespace details
         //@endcond
 
