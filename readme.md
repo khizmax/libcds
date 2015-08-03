@@ -82,9 +82,6 @@ References
   - *StripedMap*, *StripedSet*: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
   - *CuckooMap*, *CuckooSet*: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
   - *SkipListMap*, *SkipListSet*: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
-  - *BronsonAVLTreeMap* - lock-based fine-grained AVL-tree implementation: 
-        [2010] Nathan Bronson, Jared Casper, Hassan Chafi, Kunle Olukotun "A Practical Concurrent Binary Search Tree"
-        [pdf](https://ppl.stanford.edu/papers/ppopp207-bronson.pdf)
         
 *Ordered single-linked list*
   - *LazyList*: [2005] Steve Heller, Maurice Herlihy, Victor Luchangco, Mark Moir, William N. Scherer III, and Nir Shavit "A Lazy Concurrent List-Based Set Algorithm"
@@ -99,6 +96,9 @@ References
 *Tree*
   - *EllenBinTree*: [2010] F.Ellen, P.Fatourou, E.Ruppert, F.van Breugel "Non-blocking Binary Search Tree"
         [pdf](http://www.cs.vu.nl/~tcs/cm/faith.pdf)
+  - *BronsonAVLTreeMap* - lock-based fine-grained AVL-tree implementation: 
+        [2010] Nathan Bronson, Jared Casper, Hassan Chafi, Kunle Olukotun "A Practical Concurrent Binary Search Tree"
+        [pdf](https://ppl.stanford.edu/papers/ppopp207-bronson.pdf)
 
 *SMR*
   - Hazard Pointers
