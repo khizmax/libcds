@@ -70,7 +70,7 @@ namespace cds { namespace algo {
 #   endif
             uint_type result;
 
-            size_t const nRest = c_nBitPerInt - m_pos % c_nBitPerInt;
+            uint_type const nRest = c_nBitPerInt - m_pos % c_nBitPerInt;
             m_pos += nBits;
             if ( nBits < nRest ) {
                 result = *m_ptr << ( nRest - nBits );
@@ -81,7 +81,7 @@ namespace cds { namespace algo {
                 ++m_ptr;
             }
             else {
-                size_t const lsb = *m_ptr >> ( c_nBitPerInt - nRest );
+                uint_type const lsb = *m_ptr >> ( c_nBitPerInt - nRest );
                 nBits -= nRest;
                 ++m_ptr;
 
