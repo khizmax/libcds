@@ -81,7 +81,7 @@ namespace queue {
             virtual void test()
             {
                 size_t nPushCount = getTest().m_nThreadPushCount;
-				Value v;
+                typename Queue::value_type v;
                 v.nWriterNo = m_nThreadNo;
                 v.nNo = 0;
                 m_nPushFailed = 0;
@@ -164,7 +164,7 @@ namespace queue {
                 m_nPopped = 0;
                 m_nBadWriter = 0;
                 const size_t nTotalWriters = s_nWriterThreadCount;
-                Value v;
+                typename Queue::value_type v;
 
                 m_fTime = m_Timer.duration();
 
@@ -205,7 +205,7 @@ namespace queue {
 
             size_t nPostTestPops = 0;
             {
-                Value v;
+                typename Queue::value_type v;
                 while ( testQueue.pop( v ))
                     ++nPostTestPops;
             }
@@ -354,7 +354,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_OptimisticQueue( Value )
 //        CDSUNIT_DECLARE_BasketQueue( Value )
 //        CDSUNIT_DECLARE_FCQueue( Value )
-//		  CDSUNIT_DECLARE_FCQueue( Value )
+		  CDSUNIT_DECLARE_FCQueue( Value )
 //        CDSUNIT_DECLARE_FCDeque( Value )
 //        CDSUNIT_DECLARE_SegmentedQueue( Value )
 //        CDSUNIT_DECLARE_RWQueue( Value )
@@ -367,7 +367,7 @@ namespace queue {
 //            CDSUNIT_TEST_MSQueue
 //            CDSUNIT_TEST_OptimisticQueue
 //            CDSUNIT_TEST_BasketQueue
-//            CDSUNIT_TEST_FCQueue
+           CDSUNIT_TEST_FCQueue
 //            CDSUNIT_TEST_FCDeque
 //            CDSUNIT_TEST_SegmentedQueue
 //            CDSUNIT_TEST_RWQueue

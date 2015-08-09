@@ -117,7 +117,7 @@ namespace queue {
                 size_t const nThreadCount = s_nThreadCount;
                 size_t const nTotalPush = getTest().m_nThreadPushCount;
 
-                HeavyValue node;
+                typename Queue::value_type node;
 
                 m_fTime = m_Timer.duration();
 
@@ -154,7 +154,7 @@ namespace queue {
 
             bool pop( size_t nThreadCount )
             {
-                HeavyValue node;
+                typename Queue::value_type node;
                 node.nThread = -1;
                 node.nNo = -1;
                 if ( m_Queue.pop( node )) {
@@ -290,7 +290,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
 //        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
 //        CDSUNIT_DECLARE_FCQueue( SimpleValue )
-		  CDSUNIT_DECLARE_FCQueue( HeavyValue )
+		  CDSUNIT_DECLARE_FCQueue( SimpleValue )
 //        CDSUNIT_DECLARE_FCDeque( SimpleValue )
 //        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
 //        CDSUNIT_DECLARE_RWQueue( SimpleValue )

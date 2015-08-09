@@ -30,7 +30,7 @@ namespace queue {
             size_t    nNo;
             static int pop_buff[10000];
 
-			HeavyValue() : nNo(0) {}
+		        HeavyValue() : nNo(0) {}
             HeavyValue(size_t n) : nNo(n) {}
 
             HeavyValue(const HeavyValue &object):nNo(object.nNo){
@@ -118,7 +118,7 @@ namespace queue {
             cds::OS::Timer      timer;
             CPPUNIT_MSG( "   Pop (single-threaded)..." );
             size_t nPopped = 0;
-            HeavyValue val = HeavyValue();
+            typename Queue::value_type val;
             while ( testQueue.pop( val )) {
                 nPopped++;
                 ++arr[ val.getNo() ];
@@ -228,7 +228,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
 //        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
 //        CDSUNIT_DECLARE_FCQueue( SimpleValue )
-		  CDSUNIT_DECLARE_FCQueue( HeavyValue )
+		  CDSUNIT_DECLARE_FCQueue( SimpleValue )
 //        CDSUNIT_DECLARE_FCDeque( SimpleValue )
 //        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
 //        CDSUNIT_DECLARE_RWQueue( SimpleValue )

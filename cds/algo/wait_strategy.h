@@ -190,26 +190,22 @@ namespace cds {  namespace algo {  namespace flat_combining {
      private:
         //The container consists a small data
         void doWait(ExtendedPublicationRecord * pRec, Int2Type<true>){
-            std::cerr << "this class AutoWaitStrategy, function doWait, type Int2Type<true>\n";
             cds::backoff::delay_of<2>   back_off;
             back_off();
         }
 
         void doNotify(ExtendedPublicationRecord * pRec, Int2Type<true>){
-            std::cerr << "this class AutoWaitStrategy, function doNotify, type Int2Type<true>\n";
             pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
         }
 
         //The container consists a big data
         void doWait(ExtendedPublicationRecord * pRec, Int2Type<false>){
-            std::cerr << "this class AutoWaitStrategy, function doWait, type Int2Type<false>\n";
             boost::unique_lock<boost::mutex> lock(pRec->_waitMutex);
             if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
                 pRec->_condVar.timed_wait(lock, boost::posix_time::millisec(2));
         }
 
         void doNotify(ExtendedPublicationRecord * pRec, Int2Type<false>){
-            std::cerr << "this class AutoWaitStrategy, function doNotify, type Int2Type<false>\n";
             pRec->nRequest.store(req_Response, Traits::memory_model::memory_order_release);
             pRec->_condVar.notify_one();
         }

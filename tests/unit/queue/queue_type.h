@@ -426,15 +426,25 @@ namespace queue {
             >::type
         {};
 
-		typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque;
-		typedef cds::container::FCQueueBackOf< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_backof;
-		typedef cds::container::FCQueueOneMutexOneCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_oneMutex_oneCondVar;
-		typedef cds::container::FCQueueSingleMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_singleMutex_MultCondVar;
-		typedef cds::container::FCQueueMultMutexMultCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_multMutex_multCondVar;
-		typedef cds::container::FCQueueTimedWaitGlobalMutexAndCondVar< Value, std::queue<Value>, traits_FCQueue_elimination_stat >
-		                FCQueue_timedWait_Global_Mutex_And_CondVar;
-		typedef cds::container::FCQueueAutoWaitStrategy< Value, std::queue<Value>, traits_FCQueue_elimination_stat >
-		                FCQueue_autoWaitStrategy;
+
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat, cds::algo::flat_combining::DefautlWaitStartegy > FCQueue_deque;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat > FCQueue_backof;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat, cds::algo::flat_combining::WaitOneMutexOneCondVarStrategy >
+      FCQueue_oneMutex_oneCondVar;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat, cds::algo::flat_combining::WaitStratygyBaseOnSingleMutexMutlLocalCondVars >
+      FCQueue_singleMutex_MultCondVar;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat, cds::algo::flat_combining::WaitStartegyBasedOnSingleLocalMutexAndCondVar >
+      FCQueue_multMutex_multCondVar;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+     traits_FCQueue_elimination_stat, cds::algo::flat_combining::TimedWaitLocalMutexAndCondVar >
+     FCQueue_timedWait_Global_Mutex_And_CondVar;
+		 typedef cds::container::FCQueue< Value, std::queue<Value>,
+       traits_FCQueue_elimination_stat, cds::algo::flat_combining::AutoWaitStrategy > FCQueue_autoWaitStrategy;
 
 
 		//typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
