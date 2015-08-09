@@ -635,7 +635,7 @@ namespace cds {
 
         /// Auto hp_guard.
         /**
-            This class encapsulates Hazard Pointer guard to protect a pointer against deletion .
+            This class encapsulates Hazard Pointer guard to protect a pointer against deletion.
             It allocates one HP from thread's HP array in constructor and free the hazard pointer allocated
             in destructor.
         */

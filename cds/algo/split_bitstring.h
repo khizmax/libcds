@@ -9,7 +9,7 @@ namespace cds { namespace algo {
 
     /// Cuts a bit sequence from fixed-size bit-string
     /**
-        The splitter an be used as iterator over bit-string.
+        The splitter can be used as iterator over bit-string.
         Each call of \p cut() or \p safe_cut() cuts the bit count specified
         and keeps the position inside bit-string for the next call.
 
@@ -31,7 +31,7 @@ namespace cds { namespace algo {
         //@endcond
 
     public:
-        /// Initializises the splitter with reference to \p h
+        /// Initializises the splitter with reference to \p h and zero start bit offset
         explicit split_bitstring( bitstring const& h )
             : m_ptr(reinterpret_cast<uint_type const*>( &h ))
             , m_pos(0)
@@ -40,6 +40,17 @@ namespace cds { namespace algo {
             , m_last( m_ptr + c_nHashSize )
 #   endif
         {}
+
+        /// Initializises the splitter with reference to \p h and start bit offset \p nBitOffset
+        split_bitstring( bitstring const& h, size_t nBitOffset )
+            : m_ptr( reinterpret_cast<uint_type const*>( &h ) + nBitOffset / c_nBitPerInt )
+            , m_pos( nBitOffset % c_nBitPerInt )
+            , m_first( m_ptr )
+#   ifdef _DEBUG
+            , m_last( m_ptr + c_nHashSize )
+#   endif
+        {}
+
 
         /// Returns \p true if end-of-string is not reached yet
         explicit operator bool() const

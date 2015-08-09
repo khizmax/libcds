@@ -163,7 +163,7 @@ namespace cds { namespace intrusive {
     public:
         /// Creates empty set
         /**
-            @param head_bits: 2<sup>head_bits</sup> specifies the size of head array, minimum is 8.
+            @param head_bits: 2<sup>head_bits</sup> specifies the size of head array, minimum is 4.
             @param array_bits: 2<sup>array_bits</sup> specifies the size of array node, minimum is 2.
 
             Equation for \p head_bits and \p array_bits:
@@ -224,6 +224,7 @@ namespace cds { namespace intrusive {
             typename gc::Guard guard;
             back_off bkoff;
 
+            size_t nOffset = m_Metrics.head_node_size_log;
             atomic_node_ptr * pArr = m_Head;
             size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
             assert( nSlot < m_Metrics.head_node_size );
@@ -236,6 +237,7 @@ namespace cds { namespace intrusive {
                     nSlot = splitter.cut( m_Metrics.array_node_size_log );
                     assert( nSlot < m_Metrics.array_node_size );
                     pArr = to_array( slot.ptr() );
+                    nOffset += m_Metrics.array_node_size_log;
                 }
                 else if ( slot.bits() == array_converting ) {
                     // the slot is converting to array node right now
@@ -259,13 +261,7 @@ namespace cds { namespace intrusive {
                         }
 
                         // the slot must be expanded
-                        atomic_node_ptr * pNewArr;
-                        size_t nNewSlot;
-                        std::tie( pNewArr, nNewSlot ) = expand_slot( pArr[ nSlot ], slot, splitter );
-                        if ( pNewArr ) {
-                            pArr = pNewArr;
-                            nSlot = nNewSlot;
-                        }
+                        expand_slot( pArr[ nSlot ], slot, nOffset );
                     }
                     else {
                         // the slot is empty, try to insert data node
@@ -302,7 +298,6 @@ namespace cds { namespace intrusive {
             (i.e. the item has been inserted or updated),
             \p second is \p true if new item has been added or \p false if the set contains that hash.
         */
-        template <typename Func>
         std::pair<bool, bool> update( value_type& val, bool bInsert = true )
         {
             hash_type const& hash = hash_accessor()( val );
@@ -314,6 +309,7 @@ namespace cds { namespace intrusive {
             atomic_node_ptr * pArr = m_Head;
             size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
             assert( nSlot < m_Metrics.head_node_size );
+            size_t nOffset = m_Metrics.head_node_size_log;
 
             while ( true ) {
                 node_ptr slot = pArr[nSlot].load( memory_model::memory_order_acquire );
@@ -323,6 +319,7 @@ namespace cds { namespace intrusive {
                     nSlot = splitter.cut( m_Metrics.array_node_size_log );
                     assert( nSlot < m_Metrics.array_node_size );
                     pArr = to_array( slot.ptr() );
+                    nOffset += m_Metrics.array_node_size_log;
                 }
                 else if ( slot.bits() == array_converting ) {
                     // the slot is converting to array node right now
@@ -342,7 +339,12 @@ namespace cds { namespace intrusive {
                         if ( cmp( hash, hash_accessor()( *slot.ptr() )) == 0 ) {
                             // the item with that hash value already exists
                             // Replace it with val
-                            if ( pArr[nSlot].compare_exchange_strong( slot, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
+                            if ( slot.ptr() == &val ) {
+                                m_Stat.onUpdateExisting();
+                                return std::make_pair( true, false );
+                            }
+
+                            if ( pArr[nSlot].compare_exchange_strong( slot, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                                 // slot can be disposed
                                 gc::template retire<disposer>( slot.ptr() );
                                 m_Stat.onUpdateExisting();
@@ -354,13 +356,7 @@ namespace cds { namespace intrusive {
                         }
 
                         // the slot must be expanded
-                        atomic_node_ptr * pNewArr;
-                        size_t nNewSlot;
-                        std::tie( pNewArr, nNewSlot ) = expand_slot( pArr[ nSlot ], slot, splitter );
-                        if ( pNewArr ) {
-                            pArr = pNewArr;
-                            nSlot = nNewSlot;
-                        }
+                        expand_slot( pArr[ nSlot ], slot, nOffset );
                     }
                     else {
                         // the slot is empty, try to insert data node
@@ -369,7 +365,6 @@ namespace cds { namespace intrusive {
                             if ( pArr[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             {
                                 // the new data node has been inserted
-                                f( val );
                                 ++m_ItemCounter;
                                 m_Stat.onUpdateNew();
                                 return std::make_pair( true, true );
@@ -395,7 +390,7 @@ namespace cds { namespace intrusive {
 
             The function returns \p true if success and \p false otherwise.
         */
-        bool unlink( value_type& val )
+        bool unlink( value_type const& val )
         {
             typename gc::Guard guard;
             auto pred = [&val](value_type const& item) -> bool { return &item == &val; };
@@ -485,17 +480,20 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr extract( hash_type const& hash )
         {
-            typename gc::Guard guard;
-            value_type * p = do_erase( hash, guard, []( value_type const&) -> bool {return true; } );
+            guarded_ptr gp;
+            {
+                typename gc::Guard guard;
+                value_type * p = do_erase( hash, guard, []( value_type const&) -> bool {return true; } );
 
-            // p is guarded by HP
-            if ( p ) {
-                gc::template retire<disposer>( p );
-                --m_ItemCounter;
-                m_Stat.onEraseSuccess();
-                return guarded_ptr(p);
+                // p is guarded by HP
+                if ( p ) {
+                    gc::template retire<disposer>( p );
+                    --m_ItemCounter;
+                    m_Stat.onEraseSuccess();
+                    gp.reset( p );
+                }
             }
-            return guarded_ptr();
+            return gp;
         }
 
         /// Finds an item by it's \p hash
@@ -565,13 +563,12 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr get( hash_type const& hash )
         {
-            typename gc::Guard guard;
-            value_type * p = search( hash, guard );
-
-            // p is guarded by HP
-            if ( p )
-                return guarded_ptr( p );
-            return guarded_ptr();
+            guarded_ptr gp;
+            {
+                typename gc::Guard guard;
+                gp.reset( search( hash, guard ));
+            }
+            return gp;
         }
 
         /// Clears the set (non-atomic)
@@ -629,8 +626,8 @@ namespace cds { namespace intrusive {
 
             if ( array_bits < 2 )
                 array_bits = 2;
-            if ( head_bits < 8 )
-                head_bits = 8;
+            if ( head_bits < 4 )
+                head_bits = 4;
             if ( head_bits > hash_bits )
                 head_bits = hash_bits;
             if ( (hash_bits - head_bits) % array_bits != 0 )
@@ -713,9 +710,11 @@ namespace cds { namespace intrusive {
                     else {
                         // data node
                         if ( pArr->compare_exchange_strong( slot, node_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
-                            gc::template retire<disposer>( slot.ptr() );
-                            --m_ItemCounter;
-                            m_Stat.onEraseSuccess();
+                            if ( slot.ptr() ) {
+                                gc::template retire<disposer>( slot.ptr() );
+                                --m_ItemCounter;
+                                m_Stat.onEraseSuccess();
+                            }
                             break;
                         }
                     }
@@ -740,21 +739,26 @@ namespace cds { namespace intrusive {
         {
             return converter( p ).pArr;
         }
-        static node_ptr * to_node( atomic_node_ptr * p )
+        static value_type * to_node( atomic_node_ptr * p )
         {
             return converter( p ).pData;
         }
 
-        std::pair< atomic_node_ptr *, size_t > expand_slot( atomic_node_ptr& slot, node_ptr current, hash_splitter& splitter )
+        bool expand_slot( atomic_node_ptr& slot, node_ptr current, size_t nOffset )
         {
+            assert( current.bits() == 0 );
+            assert( current.ptr() );
+
+            size_t idx = hash_splitter(hash_accessor()(*current.ptr()), nOffset).cut( m_Metrics.array_node_size_log );
+            atomic_node_ptr * pArr = alloc_array_node();
+
             node_ptr cur(current.ptr());
             if ( !slot.compare_exchange_strong( cur, cur | array_converting, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                 m_Stat.onExpandNodeFailed();
-                return std::make_pair(static_cast<atomic_node_ptr *>(nullptr), size_t(0));
+                free_array_node( pArr );
+                return false;
             }
 
-            atomic_node_ptr * pArr = alloc_array_node();
-            size_t idx = splitter.cut( m_Metrics.array_node_size_log );
             pArr[idx].store( current, memory_model::memory_order_release );
 
             cur = cur | array_converting;
@@ -762,7 +766,8 @@ namespace cds { namespace intrusive {
                 slot.compare_exchange_strong( cur, node_ptr( to_node( pArr ), array_node ), memory_model::memory_order_release, atomics::memory_order_relaxed )
             );
 
-            return std::make_pair( pArr, idx );
+            m_Stat.onArrayNodeCreated();
+            return true;
         }
 
         value_type * search( hash_type const& hash, typename gc::Guard& guard )
@@ -800,7 +805,7 @@ namespace cds { namespace intrusive {
                     }
                     else if ( slot.ptr() && cmp( hash, hash_accessor()( *slot.ptr() )) == 0 ) {
                         // item found
-                        m_Stat.onFindSucces();
+                        m_Stat.onFindSuccess();
                         return slot.ptr();
                     }
                     m_Stat.onFindFailed();

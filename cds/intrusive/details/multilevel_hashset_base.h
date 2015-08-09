@@ -85,9 +85,11 @@ namespace cds { namespace intrusive {
             event_counter   m_nSlotChanged;     ///< Number of array node slot changing by other thread during an operation
             event_counter   m_nSlotConverting;  ///< Number of events when we encounter a slot while it is converting to array node
 
+            event_counter   m_nArrayNodeCount;  ///< Number of array nodes
+
             //@cond
             void onInsertSuccess()              { ++m_nInsertSuccess;       }
-            void onInserFailed()                { ++m_nInsertFailed;        }
+            void onInsertFailed()               { ++m_nInsertFailed;        }
             void onInsertRetry()                { ++m_nInsertRetry;         }
             void onUpdateNew()                  { ++m_nUpdateNew;           }
             void onUpdateExisting()             { ++m_nUpdateExisting;      }
@@ -103,6 +105,7 @@ namespace cds { namespace intrusive {
             void onExpandNodeFailed()           { ++m_nExpandNodeFailed;    }
             void onSlotChanged()                { ++m_nSlotChanged;         }
             void onSlotConverting()             { ++m_nSlotConverting;      }
+            void onArrayNodeCreated()           { ++m_nArrayNodeCount;      }
             //@endcond
         };
 
@@ -126,6 +129,7 @@ namespace cds { namespace intrusive {
             void onExpandNodeFailed()           const {}
             void onSlotChanged()                const {}
             void onSlotConverting()             const {}
+            void onArrayNodeCreated()           const {}
             //@endcond
         };
 

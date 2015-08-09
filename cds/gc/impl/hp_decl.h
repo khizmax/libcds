@@ -435,15 +435,16 @@ namespace cds { namespace gc {
             /// Creates empty guarded pointer
             guarded_ptr() CDS_NOEXCEPT
                 : m_pGuard(nullptr)
-            {}
+            {
+                alloc_guard();
+            }
 
             //@cond
             /// Initializes guarded pointer with \p p
             explicit guarded_ptr( guarded_type * p ) CDS_NOEXCEPT
+                : m_pGuard( nullptr )
             {
-                alloc_guard();
-                assert( m_pGuard );
-                m_pGuard->set(p);
+                reset(p);
             }
             explicit guarded_ptr( std::nullptr_t ) CDS_NOEXCEPT
                 : m_pGuard( nullptr )
@@ -538,6 +539,13 @@ namespace cds { namespace gc {
                 alloc_guard();
                 assert( m_pGuard );
                 return *m_pGuard;
+            }
+
+            void reset(guarded_type * p) CDS_NOEXCEPT
+            {
+                alloc_guard();
+                assert( m_pGuard );
+                m_pGuard->set(p);
             }
             //@endcond
 
