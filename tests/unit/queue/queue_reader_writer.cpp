@@ -24,20 +24,22 @@ namespace queue {
             size_t      nWriterNo;
         };
 
+#define array_size  100000
         struct HeavyValue {
             size_t    nNo;
             size_t    nWriterNo;
 
-            static int pop_buff[10000];
+            static int pop_buff[array_size] ;
 
 			HeavyValue() :nNo(0), nWriterNo(0){}
             HeavyValue(const HeavyValue &object):nNo(object.nNo), nWriterNo(object.nWriterNo){
-                for (int i = 0; i < 10000; ++i)
+                for (int i = 0; i < array_size; ++i)
                     this->pop_buff[i] = (int)std::sqrt(object.pop_buff[i]);
             }
             size_t getNo() const { return  nNo; }
         };
-        int HeavyValue::pop_buff[] = {};
+        int HeavyValue::pop_buff[]= {};
+#undef array_size
     }
 
     class Queue_ReaderWriter: public CppUnitMini::TestCase
@@ -354,7 +356,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_OptimisticQueue( Value )
 //        CDSUNIT_DECLARE_BasketQueue( Value )
 //        CDSUNIT_DECLARE_FCQueue( Value )
-		  CDSUNIT_DECLARE_FCQueue( Value )
+		  CDSUNIT_DECLARE_FCQueue( HeavyValue )
 //        CDSUNIT_DECLARE_FCDeque( Value )
 //        CDSUNIT_DECLARE_SegmentedQueue( Value )
 //        CDSUNIT_DECLARE_RWQueue( Value )

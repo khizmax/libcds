@@ -24,22 +24,24 @@ namespace queue {
 
             size_t getNo() const { return  nNo; }
         };
-
+#define array_size  100000
 		struct HeavyValue {
-			size_t    nNo;
-			static int pop_buff[10000];
+            size_t    nNo;
+			static int pop_buff[array_size];
 
 			HeavyValue() : nNo(0) {}
 			HeavyValue(size_t n) : nNo(n) {}
 
 			HeavyValue(const HeavyValue &object):nNo(object.nNo){
-                for (int i = 0; i < 10000; ++i)
+                for (int i = 0; i < array_size; ++i)
 					this->pop_buff[i] = (int)std::sqrt(object.pop_buff[i]);
             }
 			size_t getNo() const { return  nNo; }
 		};
-		int HeavyValue::pop_buff[] = {};
+		int HeavyValue::pop_buff[]= {};
+#undef array_size
     }
+
     using namespace ns_Queue_Pop;
 
 
@@ -218,7 +220,7 @@ namespace queue {
 //        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
 //        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
 //        CDSUNIT_DECLARE_FCQueue( SimpleValue )
-		CDSUNIT_DECLARE_FCQueue( SimpleValue )
+		CDSUNIT_DECLARE_FCQueue( HeavyValue )
 //        CDSUNIT_DECLARE_FCDeque( SimpleValue )
 //        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
 //        CDSUNIT_DECLARE_RWQueue( SimpleValue )
