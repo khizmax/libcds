@@ -65,6 +65,10 @@ namespace cds { namespace intrusive {
           have identical hash then you cannot insert both that keys in the set. \p %MultiLevelHashSet does not maintain the key,
           it maintains its fixed-size hash value.
 
+        The set supports bidirectional thread-safe iterators. You may iterate over the set in multi-threaded environment.
+        It is guaranteed that the iterators will be valid even if you or another thread delete the node the iterator points to:
+        Hazard Pointer built into the iterator object protects the node from physical reclamation.
+
         Template parameters:
         - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
         - \p T - a value type to be stored in the set
@@ -163,6 +167,246 @@ namespace cds { namespace intrusive {
             size_t  array_node_size_log;// log2( array_node_size )
         };
         //@endcond
+
+    protected:
+        /// Bidirectional iterator class
+        /**
+            Each iterator object owns one Hazard Pointer that is a limited resource.
+
+            The iterator guarantees that while it points to a node
+            that node is guarded by Hazard Pointer and cannot be physically deleted but it can be excluded from the set.
+
+            The iterator object is a thread-private resource and should not be passed to another thread.
+
+            @note The iterator does not support post-increment/post-decrement operators.
+        */
+        template <bool IsConst>
+        class bidirectional_iterator
+        {
+            //@cond
+            friend class MultLevelHashSet;
+
+            array_node *        m_pNode;    ///< current array node
+            size_t              m_idx;      ///< current position in m_pNode
+            typename gc::Guard  m_guard;    ///< HP guard
+            MultiLevelHashSet const*  m_set;    ///< Hash set
+            //@endcond
+
+        public:
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr;
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref;
+
+        public:
+            /// Default ctor
+            bidirectional_iterator() CDS_NOEXCEPT
+                : m_pNode( nullptr )
+                , m_idx( 0 )
+                , m_set( nullptr )
+            {}
+
+            /// Copy ctor
+            bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+                : m_pNode( rhs.m_pNode )
+                , m_idx( rhs.m_idx )
+                , m_set( rhs.m_set )
+            {
+                m_guard.copy( rhs.m_guard );
+            }
+
+            bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            {
+                m_pNode = rhs.m_pNode;
+                m_idx = rhs.m_idx;
+                m_set = rhs.m_set;
+                m_guard.copy( rhs.m_guard );
+                return *this;
+            }
+
+            /// Pre-increment
+            bidirectional_iterator& operator++()
+            {
+                forward();
+                return *this;
+            }
+
+            /// Pre-decrement
+            bidirectional_iterator& operator--()
+            {
+                backward();
+                return *this;
+            }
+
+            /// Dereference the iterator
+            value_ptr operator ->() const CDS_NOEXCEPT
+            {
+                return pointer();
+            }
+
+            /// Dereference the iterator
+            value_ref operator *() const CDS_NOEXCEPT
+            {
+                value_ptr p = pointer();
+                assert( p );
+                return *p;
+            }
+
+            ///
+            void release()
+            {
+                m_guard.clear();
+            }
+
+            /// Comparing two iterators
+            /**
+                Iterators are equal iff they point to the same cell of the same array node.
+                @note for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                does not entail <tt> &(*it1) == &(*it2) </tt>: welcome to concurrent containers
+                
+            */
+            template <bool IsConst1, bool IsConst2>
+            friend bool operator ==(bidirectional_iterator<IsConst1> const& lhs, bidirectional_iterator<IsConst2> const& rhs)
+            {
+                return lhs.m_pNode == rhs.m_pNode && lhs.m_idx == rhs.m_idx && lhs.m_set == rhs.m_set;
+            }
+
+            /// Comparing two iterators
+            template <bool IsConst1, bool IsConst2>
+            friend bool operator !=(bidirectional_iterator<IsConst1> const& lhs, bidirectional_iterator<IsConst2> const& rhs)
+            {
+                return !( lhs == rhs );
+            }
+
+        private:
+            //@cond
+            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool bForward )
+                : m_pNode( pNode )
+                , m_idx( idx )
+                , m_set( &set )
+            {
+                if ( bForward )
+                    forward();
+                else
+                    backward();
+            }
+
+            value_ptr pointer() const CDS_NOEXCEPT
+            {
+                return m_guard.template get<value_ptr>();
+            }
+
+            void forward()
+            {
+                assert( m_set != nullptr );
+                assert( m_pNode != nullptr );
+
+                size_t const arrayNodeSize = m_set->array_node_size();
+                size_t const headSize = m_set->head_size();
+                array_node * pNode = m_pNode;
+                size_t idx = m_idx + 1;
+                size_t nodeSize = m_pNode->pParent? arrayNodeSize : headSize;
+
+                for ( ;; ) {
+                    if ( idx < nodeSize ) {
+                        node_ptr slot = pNode->nodes[idx].load( memory_model::memory_order_acquire );
+                        if ( slot.bits() == flag_array_node ) {
+                            // array node, go down the tree
+                            assert( slot.ptr() != nullptr );
+                            pNode = to_array( slot.ptr() );
+                            idx = 0;
+                            nodeSize = arrayNodeSize;
+                        }
+                        else if ( slot.bits() == flag_array_converting ) {
+                            // the slot is converting to array node right now - skip the node
+                            ++idx;
+                        }
+                        else if ( slot.ptr() ) {
+                            // data node
+                            if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
+                                m_pNode = pNode;
+                                m_idx = idx;
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        // up to parent node
+                        if ( pNode->pParent ) {
+                            idx = pNode->m_idx + 1;
+                            pNode = pNode->pParent;
+                            nodeSize = pNode->pParent ? arrayNodeSize : headSize;
+                        }
+                        else {
+                            // end()
+                            assert( pNode == m_set->m_Head );
+                            assert( idx == headSize );
+                            m_pNode = pNode;
+                            m_idx = idx;
+                            return;
+                        }
+                    }
+                }
+            }
+
+            void backward()
+            {
+                assert( m_set != nullptr );
+                assert( m_pNode != nullptr );
+
+                size_t const arrayNodeSize = m_set->array_node_size();
+                size_t const headSize = m_set->head_size();
+                size_t const endIdx = size_t(0) - 1;
+
+                array_node * pNode = m_pNode;
+                size_t idx = m_idx - 1;
+                size_t nodeSize = m_pNode->pParent? arrayNodeSize : headSize;
+
+                for ( ;; ) {
+                    if ( idx != endIdx ) {
+                        node_ptr slot = pNode->nodes[idx].load( memory_model::memory_order_acquire );
+                        if ( slot.bits() == flag_array_node ) {
+                            // array node, go down the tree
+                            assert( slot.ptr() != nullptr );
+                            pNode = to_array( slot.ptr() );
+                            nodeSize = arrayNodeSize;
+                            idx = nodeSize - 1;
+                        }
+                        else if ( slot.bits() == flag_array_converting ) {
+                            // the slot is converting to array node right now - skip the node
+                            --idx;
+                        }
+                        else if ( slot.ptr() ) {
+                            // data node
+                            if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
+                                m_pNode = pNode;
+                                m_idx = idx;
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        // up to parent node
+                        if ( pNode->pParent ) {
+                            idx = pNode->m_idx - 1;
+                            pNode = pNode->pParent;
+                            nodeSize = pNode->pParent ? arrayNodeSize : headSize;
+                        }
+                        else {
+                            // rend()
+                            assert( pNode == m_set->m_Head );
+                            assert( idx == endIdx );
+                            m_pNode = pNode;
+                            m_idx = idx;
+                            return;
+                        }
+                    }
+                }
+            }
+            //@endcond
+        };
+
+    public:
+        typedef bidirectional_iterator<false>   iterator;       ///< bidiretional iterator type
+        typedef bidirectional_iterator<true>    const_iterator; ///< bidirectional const iterator type
 
     private:
         //@cond
@@ -628,6 +872,43 @@ namespace cds { namespace intrusive {
         size_t array_node_size() const
         {
             return m_Metrics.array_node_size;
+        }
+
+    public:
+        /// Returns an iterator to the beginning of the set
+        iterator begin()
+        {
+            return iterator( *this, m_Head, size_t(0) - 1, true );
+        }
+
+        /// Returns an const iterator to the beginning of the set
+        const_iterator begin() const
+        {
+            return const_iterator( *this, m_Head, size_t(0) - 1, true );
+        }
+
+        /// Returns an const iterator to the beginning of the set
+        const_iterator cbegin()
+        {
+            return const_iterator( *this, m_Head, size_t(0) - 1, true );
+        }
+
+        /// Returns an iterator to the end of the set
+        iterator end()
+        {
+            return iterator( *this, m_Head, head_size() - 1, true );
+        }
+
+        /// Returns an const iterator to the end of the set
+        const_iterator end() const
+        {
+            return const_iterator( *this, m_Head, head_size() - 1, true );
+        }
+
+        /// Returns an const iterator to the end of the set
+        const_iterator cend()
+        {
+            return const_iterator( *this, m_Head, 0, false );
         }
 
     private:
