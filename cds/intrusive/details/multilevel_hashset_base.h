@@ -34,34 +34,6 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Head node allocator option
-        /**
-            @copydetails traits::head_node_allocator
-        */
-        template <typename Accessor>
-        struct head_node_allocator {
-            //@cond
-            template <typename Base> struct pack: public Base
-            {
-                typedef Accessor head_node_allocator;
-            };
-            //@endcond
-        };
-
-        /// Array node allocator option
-        /**
-            @copydetails traits::array_node_allocator
-        */
-        template <typename Accessor>
-        struct array_node_allocator {
-            //@cond
-            template <typename Base> struct pack: public Base
-            {
-                typedef Accessor array_node_allocator;
-            };
-            //@endcond
-        };
-
         /// \p MultiLevelHashSet internal statistics
         template <typename EventCounter = cds::atomicity::event_counter>
         struct stat {
@@ -188,21 +160,12 @@ namespace cds { namespace intrusive {
             */
             typedef cds::atomicity::item_counter item_counter;
 
-            /// Head node allocator
-            /**
-                Allocator for head node. That allocator uses only in the set's constructor for allocating
-                main head array and in the destructor for destroying the head array.
-                Default is \ref CDS_DEFAULT_ALLOCATOR
-            */
-            typedef CDS_DEFAULT_ALLOCATOR head_node_allocator;
-
             /// Array node allocator
             /**
-                Allocator for array nodes. That allocator is used for creating \p arrayNode when the set grows.
-                The size of each array node is fixed.
+                Allocator for array nodes. That allocator is used for creating \p headNode and \p arrayNode when the set grows.
                 Default is \ref CDS_DEFAULT_ALLOCATOR
             */
-            typedef CDS_DEFAULT_ALLOCATOR array_node_allocator;
+            typedef CDS_DEFAULT_ALLOCATOR node_allocator;
 
             /// C++ memory ordering model
             /**
@@ -233,10 +196,8 @@ namespace cds { namespace intrusive {
             Supported \p Options are:
             - \p multilevel_hashset::hash_accessor - mandatory option, hash accessor functor.
                 @copydetails traits::hash_accessor
-            - \p multilevel_hashset::head_node_allocator - head node allocator.
-                @copydetails traits::head_node_allocator
-            - \p multilevel_hashset::array_node_allocator - array node allocator.
-                @copydetails traits::array_node_allocator
+            - \p opt::node_allocator - array node allocator.
+                @copydetails traits::node_allocator
             - \p opt::compare - hash comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for hash comparison. 
