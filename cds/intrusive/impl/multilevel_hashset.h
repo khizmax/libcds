@@ -65,9 +65,7 @@ namespace cds { namespace intrusive {
           have identical hash then you cannot insert both that keys in the set. \p %MultiLevelHashSet does not maintain the key,
           it maintains its fixed-size hash value.
 
-        The set supports bidirectional thread-safe iterators. You may iterate over the set in multi-threaded environment.
-        It is guaranteed that the iterators will be valid even if you or another thread delete the node the iterator points to:
-        Hazard Pointer built into the iterator object protects the node from physical reclamation.
+        The set supports @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional thread-safe iterators".
 
         Template parameters:
         - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
@@ -169,42 +167,29 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
+        //@cond
         /// Bidirectional iterator class
-        /**
-            Each iterator object owns one Hazard Pointer that is a limited resource.
-
-            The iterator guarantees that while it points to a node
-            that node is guarded by Hazard Pointer and cannot be physically deleted but it can be excluded from the set.
-
-            The iterator object is a thread-private resource and should not be passed to another thread.
-
-            @note The iterator does not support post-increment/post-decrement operators.
-        */
         template <bool IsConst>
         class bidirectional_iterator
         {
-            //@cond
             friend class MultLevelHashSet;
 
             array_node *        m_pNode;    ///< current array node
             size_t              m_idx;      ///< current position in m_pNode
             typename gc::Guard  m_guard;    ///< HP guard
             MultiLevelHashSet const*  m_set;    ///< Hash set
-            //@endcond
 
         public:
-            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr;
-            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref;
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
 
         public:
-            /// Default ctor
             bidirectional_iterator() CDS_NOEXCEPT
                 : m_pNode( nullptr )
                 , m_idx( 0 )
                 , m_set( nullptr )
             {}
 
-            /// Copy ctor
             bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
                 : m_pNode( rhs.m_pNode )
                 , m_idx( rhs.m_idx )
@@ -222,27 +207,23 @@ namespace cds { namespace intrusive {
                 return *this;
             }
 
-            /// Pre-increment
             bidirectional_iterator& operator++()
             {
                 forward();
                 return *this;
             }
 
-            /// Pre-decrement
             bidirectional_iterator& operator--()
             {
                 backward();
                 return *this;
             }
 
-            /// Dereference the iterator
             value_ptr operator ->() const CDS_NOEXCEPT
             {
                 return pointer();
             }
 
-            /// Dereference the iterator
             value_ref operator *() const CDS_NOEXCEPT
             {
                 value_ptr p = pointer();
@@ -250,43 +231,36 @@ namespace cds { namespace intrusive {
                 return *p;
             }
 
-            ///
             void release()
             {
                 m_guard.clear();
             }
 
-            /// Comparing two iterators
-            /**
-                Iterators are equal iff they point to the same cell of the same array node.
-                @note for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
-                does not entail <tt> &(*it1) == &(*it2) </tt>: welcome to concurrent containers
-                
-            */
             template <bool IsConst1, bool IsConst2>
             friend bool operator ==(bidirectional_iterator<IsConst1> const& lhs, bidirectional_iterator<IsConst2> const& rhs)
             {
                 return lhs.m_pNode == rhs.m_pNode && lhs.m_idx == rhs.m_idx && lhs.m_set == rhs.m_set;
             }
 
-            /// Comparing two iterators
             template <bool IsConst1, bool IsConst2>
             friend bool operator !=(bidirectional_iterator<IsConst1> const& lhs, bidirectional_iterator<IsConst2> const& rhs)
             {
                 return !( lhs == rhs );
             }
 
-        private:
-            //@cond
-            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool bForward )
+        protected:
+            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool )
+                : m_pNode( pNode )
+                , m_idx( idx )
+                , m_set( &set )
+            {}
+
+            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
                 : m_pNode( pNode )
                 , m_idx( idx )
                 , m_set( &set )
             {
-                if ( bForward )
-                    forward();
-                else
-                    backward();
+                forward();
             }
 
             value_ptr pointer() const CDS_NOEXCEPT
@@ -401,12 +375,87 @@ namespace cds { namespace intrusive {
                     }
                 }
             }
-            //@endcond
         };
 
+        /// Reverse bidirectional iterator
+        template <bool IsConst>
+        class reverse_bidirectional_iterator : protected bidirectional_iterator<IsConst>
+        {
+            typedef bidirectional_iterator<IsConst> base_class;
+            friend class MultLevelHashSet;
+
+        public:
+            typedef typename base_class::value_ptr value_ptr;
+            typedef typename base_class::value_ref value_ref;
+
+        public:
+            reverse_bidirectional_iterator() CDS_NOEXCEPT
+                : base_class()
+            {}
+
+            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+                : base_class( rhs )
+            {}
+
+            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            {
+                base_class::operator=( rhs );
+                return *this;
+            }
+
+            bidirectional_iterator& operator++()
+            {
+                base_class::backward();
+                return *this;
+            }
+
+            bidirectional_iterator& operator--()
+            {
+                base_class::forward();
+                return *this;
+            }
+
+            value_ptr operator ->() const CDS_NOEXCEPT
+            {
+                return base_class::operator->();
+            }
+
+            value_ref operator *() const CDS_NOEXCEPT
+            {
+                return base_class::operator*();
+            }
+
+            void release()
+            {
+                base_class::release();
+            }
+
+            template <bool IsConst1, bool IsConst2>
+            friend bool operator ==(reverse_bidirectional_iterator<IsConst1> const& lhs, reverse_bidirectional_iterator<IsConst2> const& rhs)
+            {
+                return lhs.m_pNode == rhs.m_pNode && lhs.m_idx == rhs.m_idx && lhs.m_set == rhs.m_set;
+            }
+
+            template <bool IsConst1, bool IsConst2>
+            friend bool operator !=(reverse_bidirectional_iterator<IsConst1> const& lhs, reverse_bidirectional_iterator<IsConst2> const& rhs)
+            {
+                return !( lhs == rhs );
+            }
+
+        private:
+            reverse_bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
+                : base_class( set, pNode, idx, false )
+            {
+                base_class::backward();
+            }
+        };
+        //@endcond
+
     public:
-        typedef bidirectional_iterator<false>   iterator;       ///< bidiretional iterator type
-        typedef bidirectional_iterator<true>    const_iterator; ///< bidirectional const iterator type
+        typedef bidirectional_iterator<false>   iterator;       ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional iterator" type
+        typedef bidirectional_iterator<true>    const_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional const iterator" type
+        typedef reverse_bidirectional_iterator<false>   reverse_iterator;       ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse iterator" type
+        typedef reverse_bidirectional_iterator<true>    const_reverse_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse const iterator" type
 
     private:
         //@cond
@@ -875,41 +924,115 @@ namespace cds { namespace intrusive {
         }
 
     public:
+    ///@name Thread-safe iterators
+        /** @anchor cds_intrusive_MultilevelHashSet_iterators
+            The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment.
+            It is guaranteed that the iterators will remain valid even if another thread deletes the node the iterator points to:
+            Hazard Pointer embedded into the iterator object protects the node from physical reclamation.
+
+            @note Since the iterator object contains hazard pointer that is a thread-local resource,
+            the iterator should not be passed to another thread.
+
+            Each iterator object supports the common interface:
+            - dereference operators:
+                @code
+                value_type [const] * operator ->() noexcept
+                value_type [const] & operator *() noexcept
+                @endcode
+            - pre-increment and pre-decrement. Post-operators is not supported
+            - equality operators <tt>==</tt> and <tt>!=</tt>.
+                Iterators are equal iff they point to the same cell of the same array node.
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                does not entail <tt> &(*it1) == &(*it2) </tt>: welcome to concurrent containers
+            - helper member function \p release() that clears internal hazard pointer.
+                After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+        */
+    ///@{
+
         /// Returns an iterator to the beginning of the set
         iterator begin()
         {
-            return iterator( *this, m_Head, size_t(0) - 1, true );
+            return iterator( *this, m_Head, size_t(0) - 1 );
         }
 
         /// Returns an const iterator to the beginning of the set
         const_iterator begin() const
         {
-            return const_iterator( *this, m_Head, size_t(0) - 1, true );
+            return const_iterator( *this, m_Head, size_t(0) - 1 );
         }
 
         /// Returns an const iterator to the beginning of the set
         const_iterator cbegin()
         {
-            return const_iterator( *this, m_Head, size_t(0) - 1, true );
+            return const_iterator( *this, m_Head, size_t(0) - 1 );
         }
 
-        /// Returns an iterator to the end of the set
+        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
         iterator end()
         {
-            return iterator( *this, m_Head, head_size() - 1, true );
+            return iterator( *this, m_Head, head_size() - 1 );
         }
 
-        /// Returns an const iterator to the end of the set
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
         const_iterator end() const
         {
-            return const_iterator( *this, m_Head, head_size() - 1, true );
+            return const_iterator( *this, m_Head, head_size() - 1 );
         }
 
-        /// Returns an const iterator to the end of the set
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
         const_iterator cend()
         {
-            return const_iterator( *this, m_Head, 0, false );
+            return const_iterator( *this, m_Head, head_size() - 1 );
         }
+
+        /// Returns a reverse iterator to the first element of the reversed set
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator( *this, m_Head, head_size() );
+        }
+
+        /// Returns a const reverse iterator to the first element of the reversed set
+        const_reverse_iterator rbegin() const
+        {
+            return const_reverse_iterator( *this, m_Head, head_size() );
+        }
+
+        /// Returns a const reverse iterator to the first element of the reversed set
+        const_reverse_iterator crbegin()
+        {
+            return const_reverse_iterator( *this, m_Head, head_size() );
+        }
+
+        /// Returns a reverse iterator to the element following the last element of the reversed set
+        /**
+            It corresponds to the element preceding the first element of the non-reversed container. 
+            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+        */
+        reverse_iterator rend()
+        {
+            return reverse_iterator( *this, m_Head, 0 );
+        }
+
+        /// Returns a const reverse iterator to the element following the last element of the reversed set
+        /**
+            It corresponds to the element preceding the first element of the non-reversed container. 
+            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+        */
+        const_reverse_iterator rend() const
+        {
+            return const_reverse_iterator( *this, m_Head, 0 );
+        }
+
+        /// Returns a const reverse iterator to the element following the last element of the reversed set
+        /**
+            It corresponds to the element preceding the first element of the non-reversed container. 
+            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+        */
+        const_reverse_iterator crend()
+        {
+            return const_reverse_iterator( *this, m_Head, 0 );
+        }
+    ///@}
 
     private:
         //@cond
