@@ -25,12 +25,14 @@ namespace set {
             unsigned int nInsertCall;
             unsigned int nFindCall;
             unsigned int nEraseCall;
+            mutable unsigned int nIteratorCall;
 
             Item()
                 : nDisposeCount(0)
                 , nInsertCall(0)
                 , nFindCall(0)
                 , nEraseCall(0)
+                , nIteratorCall(0)
             {}
         };
 
@@ -51,13 +53,13 @@ namespace set {
             }
         };
 
-        template <typename Set>
-        void test_hp()
+        template <typename Set, typename Hash>
+        void test_hp( size_t nHeadBits, size_t nArrayBits )
         {
             typedef typename Set::hash_type hash_type;
             typedef typename Set::value_type value_type;
 
-            std::hash<hash_type> hasher;
+            Hash hasher;
 
             size_t const arrCapacity = 1000;
             std::vector< value_type > arrValue;
@@ -68,9 +70,10 @@ namespace set {
             }
             CPPUNIT_ASSERT( arrValue.size() == arrCapacity );
 
-            Set s( 4, 2 );
-            CPPUNIT_ASSERT(s.head_size() == 16 );
-            CPPUNIT_ASSERT(s.array_node_size() == 4 );
+            Set s( nHeadBits, nArrayBits );
+            CPPUNIT_MSG("Array size: head=" << s.head_size() << ", array_node=" << s.array_node_size());
+            CPPUNIT_ASSERT(s.head_size() >= (size_t(1) << nHeadBits));
+            CPPUNIT_ASSERT(s.array_node_size() == (size_t(1) << nArrayBits));
 
             // insert() test
             CPPUNIT_ASSERT(s.size() == 0 );
@@ -86,6 +89,49 @@ namespace set {
             }
             CPPUNIT_ASSERT(s.size() == arrCapacity );
             CPPUNIT_ASSERT( !s.empty() );
+
+            // Iterator test
+            {
+                typedef typename Set::iterator iterator;
+                for ( iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it )
+                    ++(it->nIteratorCall);
+                for ( auto& el : arrValue ) {
+                    CPPUNIT_ASSERT( el.nIteratorCall == 1 );
+                    el.nIteratorCall = 0;
+                }
+            }
+
+            {
+                // Const iterator test
+                for ( typename Set::const_iterator it = s.cbegin(), itEnd = s.cend(); it != itEnd; ++it )
+                    (*it).nIteratorCall += 1;
+                for ( auto& el : arrValue ) {
+                    CPPUNIT_ASSERT( el.nIteratorCall == 1 );
+                    el.nIteratorCall = 0;
+                }
+            }
+
+            {
+                // Reverse iterator test
+                for ( typename Set::reverse_iterator it = s.rbegin(), itEnd = s.rend(); it != itEnd; ++it )
+                    it->nIteratorCall += 1;
+                for ( auto& el : arrValue ) {
+                    CPPUNIT_ASSERT( el.nIteratorCall == 1 );
+                    el.nIteratorCall = 0;
+                }
+            }
+
+            {
+                // Reverse const iterator test
+                for ( typename Set::const_reverse_iterator it = s.crbegin(), itEnd = s.crend(); it != itEnd; ++it ) {
+                    (*it).nIteratorCall += 1;
+                    it.release();
+                }
+                for ( auto& el : arrValue ) {
+                    CPPUNIT_ASSERT( el.nIteratorCall == 1 );
+                    el.nIteratorCall = 0;
+                }
+            }
 
             // update() exists test
             for ( auto& el : arrValue ) {
@@ -227,10 +273,14 @@ namespace set {
 
         void hp_stdhash();
         void hp_stdhash_stat();
+        void hp_stdhash_5_3();
+        void hp_stdhash_5_3_stat();
 
         CPPUNIT_TEST_SUITE(IntrusiveMultiLevelHashSetHdrTest)
             CPPUNIT_TEST(hp_stdhash)
             CPPUNIT_TEST(hp_stdhash_stat)
+            CPPUNIT_TEST(hp_stdhash_5_3)
+            CPPUNIT_TEST(hp_stdhash_5_3_stat)
         CPPUNIT_TEST_SUITE_END()
     };
 } // namespace set

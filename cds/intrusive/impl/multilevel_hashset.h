@@ -102,6 +102,7 @@ namespace cds { namespace intrusive {
                 decltype( hash_accessor()( std::declval<T>()) )
             >::type
         >::type hash_type;
+        //typedef typename std::result_of< hash_accessor( std::declval<T>()) >::type hash_type;
         static_assert( !std::is_pointer<hash_type>::value, "hash_accessor should return a reference to hash value" );
 
         typedef typename traits::disposer disposer; ///< data node disposer
@@ -172,7 +173,7 @@ namespace cds { namespace intrusive {
         template <bool IsConst>
         class bidirectional_iterator
         {
-            friend class MultLevelHashSet;
+            friend class MultiLevelHashSet;
 
             array_node *        m_pNode;    ///< current array node
             size_t              m_idx;      ///< current position in m_pNode
@@ -236,16 +237,16 @@ namespace cds { namespace intrusive {
                 m_guard.clear();
             }
 
-            template <bool IsConst1, bool IsConst2>
-            friend bool operator ==(bidirectional_iterator<IsConst1> const& lhs, bidirectional_iterator<IsConst2> const& rhs)
+            template <bool IsConst2>
+            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const
             {
-                return lhs.m_pNode == rhs.m_pNode && lhs.m_idx == rhs.m_idx && lhs.m_set == rhs.m_set;
+                return m_pNode == rhs.m_pNode && m_idx == rhs.m_idx && m_set == rhs.m_set;
             }
 
-            template <bool IsConst1, bool IsConst2>
-            friend bool operator !=(bidirectional_iterator<IsConst1> const& lhs, bidirectional_iterator<IsConst2> const& rhs)
+            template <bool IsConst2>
+            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const
             {
-                return !( lhs == rhs );
+                return !( *this == rhs );
             }
 
         protected:
@@ -265,7 +266,7 @@ namespace cds { namespace intrusive {
 
             value_ptr pointer() const CDS_NOEXCEPT
             {
-                return m_guard.template get<value_ptr>();
+                return m_guard.template get<value_type>();
             }
 
             void forward()
@@ -293,19 +294,22 @@ namespace cds { namespace intrusive {
                             // the slot is converting to array node right now - skip the node
                             ++idx;
                         }
-                        else if ( slot.ptr() ) {
-                            // data node
-                            if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
-                                m_pNode = pNode;
-                                m_idx = idx;
-                                return;
+                        else {
+                            if ( slot.ptr()) {
+                                // data node
+                                if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
+                                    m_pNode = pNode;
+                                    m_idx = idx;
+                                    return;
+                                }
                             }
+                            ++idx;
                         }
                     }
                     else {
                         // up to parent node
                         if ( pNode->pParent ) {
-                            idx = pNode->m_idx + 1;
+                            idx = pNode->idxParent + 1;
                             pNode = pNode->pParent;
                             nodeSize = pNode->pParent ? arrayNodeSize : headSize;
                         }
@@ -348,19 +352,22 @@ namespace cds { namespace intrusive {
                             // the slot is converting to array node right now - skip the node
                             --idx;
                         }
-                        else if ( slot.ptr() ) {
-                            // data node
-                            if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
-                                m_pNode = pNode;
-                                m_idx = idx;
-                                return;
+                        else {
+                            if ( slot.ptr()) {
+                                // data node
+                                if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
+                                    m_pNode = pNode;
+                                    m_idx = idx;
+                                    return;
+                                }
                             }
+                            --idx;
                         }
                     }
                     else {
                         // up to parent node
                         if ( pNode->pParent ) {
-                            idx = pNode->m_idx - 1;
+                            idx = pNode->idxParent - 1;
                             pNode = pNode->pParent;
                             nodeSize = pNode->pParent ? arrayNodeSize : headSize;
                         }
@@ -382,7 +389,7 @@ namespace cds { namespace intrusive {
         class reverse_bidirectional_iterator : protected bidirectional_iterator<IsConst>
         {
             typedef bidirectional_iterator<IsConst> base_class;
-            friend class MultLevelHashSet;
+            friend class MultiLevelHashSet;
 
         public:
             typedef typename base_class::value_ptr value_ptr;
@@ -403,13 +410,13 @@ namespace cds { namespace intrusive {
                 return *this;
             }
 
-            bidirectional_iterator& operator++()
+            reverse_bidirectional_iterator& operator++()
             {
                 base_class::backward();
                 return *this;
             }
 
-            bidirectional_iterator& operator--()
+            reverse_bidirectional_iterator& operator--()
             {
                 base_class::forward();
                 return *this;
@@ -430,16 +437,16 @@ namespace cds { namespace intrusive {
                 base_class::release();
             }
 
-            template <bool IsConst1, bool IsConst2>
-            friend bool operator ==(reverse_bidirectional_iterator<IsConst1> const& lhs, reverse_bidirectional_iterator<IsConst2> const& rhs)
+            template <bool IsConst2>
+            bool operator ==(reverse_bidirectional_iterator<IsConst2> const& rhs) const
             {
-                return lhs.m_pNode == rhs.m_pNode && lhs.m_idx == rhs.m_idx && lhs.m_set == rhs.m_set;
+                return base_class::operator==( rhs );
             }
 
-            template <bool IsConst1, bool IsConst2>
-            friend bool operator !=(reverse_bidirectional_iterator<IsConst1> const& lhs, reverse_bidirectional_iterator<IsConst2> const& rhs)
+            template <bool IsConst2>
+            bool operator !=(reverse_bidirectional_iterator<IsConst2> const& rhs)
             {
-                return !( lhs == rhs );
+                return !( *this == rhs );
             }
 
         private:
