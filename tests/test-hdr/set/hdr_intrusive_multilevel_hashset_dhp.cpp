@@ -1,15 +1,15 @@
 //$$CDS-header$$
 
 #include "set/hdr_intrusive_multilevel_hashset.h"
-#include <cds/intrusive/multilevel_hashset_hp.h>
+#include <cds/intrusive/multilevel_hashset_dhp.h>
 #include "unit/print_multilevel_hashset_stat.h"
 
 namespace set {
     namespace {
-        typedef cds::gc::HP gc_type;
+        typedef cds::gc::DHP gc_type;
     } // namespace
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_stdhash()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_stdhash()
     {
         typedef size_t hash_type;
 
@@ -33,7 +33,7 @@ namespace set {
         test_hp<set_type2, std::hash<hash_type>>(4, 2);
     }
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_hash128()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_hash128()
     {
         typedef hash128 hash_type;
 
@@ -59,7 +59,7 @@ namespace set {
         test_hp<set_type2, hash128::make>(4, 2);
     }
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_stdhash_stat()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_stdhash_stat()
     {
         typedef size_t hash_type;
 
@@ -85,7 +85,7 @@ namespace set {
         test_hp<set_type2, std::hash<hash_type>>(4, 2);
     }
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_hash128_stat()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_hash128_stat()
     {
         typedef hash128 hash_type;
 
@@ -113,7 +113,7 @@ namespace set {
         test_hp<set_type2, hash_type::make>(4, 2);
     }
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_stdhash_5_3()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_stdhash_5_3()
     {
         typedef size_t hash_type;
 
@@ -137,7 +137,7 @@ namespace set {
         test_hp<set_type2, std::hash<hash_type>>(5, 3);
     }
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_hash128_4_3()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_hash128_4_3()
     {
         typedef hash128 hash_type;
 
@@ -163,7 +163,7 @@ namespace set {
         test_hp<set_type2, hash128::make >(4, 3);
     }
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_stdhash_5_3_stat()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_stdhash_5_3_stat()
     {
         typedef size_t hash_type;
 
@@ -189,7 +189,7 @@ namespace set {
         test_hp<set_type2, std::hash<hash_type>>(5, 3);
     }
 
-    void IntrusiveMultiLevelHashSetHdrTest::hp_hash128_4_3_stat()
+    void IntrusiveMultiLevelHashSetHdrTest::dhp_hash128_4_3_stat()
     {
         typedef hash128 hash_type;
 

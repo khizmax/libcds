@@ -164,5 +164,6 @@
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_striped_set.h">
       <Filter>container\striped</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\size_check.h" />
   </ItemGroup>
 </Project>

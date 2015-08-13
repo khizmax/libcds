@@ -542,6 +542,14 @@ namespace cds { namespace gc {
                 assert( m_guard.is_initialized() );
                 return m_guard;
             }
+
+            void reset(guarded_type * p) CDS_NOEXCEPT
+            {
+                alloc_guard();
+                assert( m_guard.is_initialized() );
+                m_guard.set(p);
+            }
+
             //@endcond
 
         private:

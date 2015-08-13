@@ -175,12 +175,14 @@ namespace cds { namespace gc { namespace dhp {
             details::liberate_set set( beans::ceil2( retiredList.second > nLiberateThreshold ? retiredList.second : nLiberateThreshold ) );
 
             // Get list of retired pointers
+            size_t nRetiredCount = 0;
             details::retired_ptr_node * pHead = retiredList.first;
             while ( pHead ) {
                 details::retired_ptr_node * pNext = pHead->m_pNext.load( atomics::memory_order_relaxed );
                 pHead->m_pNextFree.store( nullptr, atomics::memory_order_relaxed );
                 set.insert( *pHead );
                 pHead = pNext;
+                ++nRetiredCount;
             }
 
             // Liberate cycle
@@ -230,7 +232,7 @@ namespace cds { namespace gc { namespace dhp {
                 assert( range.second != nullptr );
                 m_RetiredAllocator.free_range( range.first, range.second );
             }
-            else {
+            else if ( nRetiredCount >= nLiberateThreshold ) {
                 // scan() cycle did not free any retired pointer - double scan() threshold
                 m_nLiberateThreshold.compare_exchange_strong( nLiberateThreshold, nLiberateThreshold * 2, atomics::memory_order_release, atomics::memory_order_relaxed );
             }

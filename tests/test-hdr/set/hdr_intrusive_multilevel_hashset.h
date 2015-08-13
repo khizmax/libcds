@@ -53,6 +53,45 @@ namespace set {
             }
         };
 
+        struct hash128
+        {
+            size_t lo;
+            size_t hi;
+
+            hash128() {}
+            hash128(size_t l, size_t h) : lo(l), hi(h) {}
+
+            struct make {
+                hash128 operator()( size_t n ) const
+                {
+                    return hash128( std::hash<size_t>()( n ), std::hash<size_t>()( ~n ));
+                }
+                hash128 operator()( hash128 const& n ) const
+                {
+                    return hash128( std::hash<size_t>()( n.lo ), std::hash<size_t>()( ~n.hi ));
+                }
+            };
+
+            struct less {
+                bool operator()( hash128 const& lhs, hash128 const& rhs ) const
+                {
+                    if ( lhs.hi != rhs.hi )
+                        return lhs.hi < rhs.hi;
+                    return lhs.lo < rhs.lo;
+                }
+            };
+
+            struct cmp {
+                int operator()( hash128 const& lhs, hash128 const& rhs ) const
+                {
+                    if ( lhs.hi != rhs.hi )
+                        return lhs.hi < rhs.hi ? -1 : 1;
+                    return lhs.lo < rhs.lo ? -1 : lhs.lo == rhs.lo ? 0 : 1;
+                }
+            };
+        };
+
+
         template <typename Set, typename Hash>
         void test_hp( size_t nHeadBits, size_t nArrayBits )
         {
@@ -268,6 +307,24 @@ namespace set {
             CPPUNIT_ASSERT(s.size() == 0 );
             CPPUNIT_ASSERT(s.empty() );
 
+            // erase with iterator
+            for ( auto& el : arrValue ) {
+                el.nDisposeCount = 0;
+                el.nIteratorCall = 0;
+                CPPUNIT_ASSERT(s.insert( el ));
+            }
+            for ( typename Set::iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
+                s.erase_at( it );
+                it->nIteratorCall = 1;
+            }
+            CPPUNIT_ASSERT(s.size() == 0 );
+            Set::gc::force_dispose();
+            for ( auto& el : arrValue ) {
+                CPPUNIT_ASSERT( el.nDisposeCount == 1 );
+                CPPUNIT_ASSERT( el.nIteratorCall == 1 );
+            }
+            CPPUNIT_ASSERT(s.empty() );
+
             CPPUNIT_MSG( s.statistics() );
         }
 
@@ -275,12 +332,38 @@ namespace set {
         void hp_stdhash_stat();
         void hp_stdhash_5_3();
         void hp_stdhash_5_3_stat();
+        void hp_hash128();
+        void hp_hash128_stat();
+        void hp_hash128_4_3();
+        void hp_hash128_4_3_stat();
+
+        void dhp_stdhash();
+        void dhp_stdhash_stat();
+        void dhp_stdhash_5_3();
+        void dhp_stdhash_5_3_stat();
+        void dhp_hash128();
+        void dhp_hash128_stat();
+        void dhp_hash128_4_3();
+        void dhp_hash128_4_3_stat();
 
         CPPUNIT_TEST_SUITE(IntrusiveMultiLevelHashSetHdrTest)
             CPPUNIT_TEST(hp_stdhash)
             CPPUNIT_TEST(hp_stdhash_stat)
             CPPUNIT_TEST(hp_stdhash_5_3)
             CPPUNIT_TEST(hp_stdhash_5_3_stat)
+            CPPUNIT_TEST(hp_hash128)
+            CPPUNIT_TEST(hp_hash128_stat)
+            CPPUNIT_TEST(hp_hash128_4_3)
+            CPPUNIT_TEST(hp_hash128_4_3_stat)
+
+            CPPUNIT_TEST(dhp_stdhash)
+            CPPUNIT_TEST(dhp_stdhash_stat)
+            CPPUNIT_TEST(dhp_stdhash_5_3)
+            CPPUNIT_TEST(dhp_stdhash_5_3_stat)
+            CPPUNIT_TEST(dhp_hash128)
+            CPPUNIT_TEST(dhp_hash128_stat)
+            CPPUNIT_TEST(dhp_hash128_4_3)
+            CPPUNIT_TEST(dhp_hash128_4_3_stat)
         CPPUNIT_TEST_SUITE_END()
     };
 } // namespace set

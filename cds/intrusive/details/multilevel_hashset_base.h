@@ -131,24 +131,24 @@ namespace cds { namespace intrusive {
                 };
                 \endcode
             */
-            typedef opt::none hash_accessor;
+            typedef cds::opt::none hash_accessor;
 
             /// Disposer for removing data nodes
-            typedef opt::v::empty_disposer disposer;
+            typedef cds::intrusive::opt::v::empty_disposer disposer;
 
             /// Hash comparing functor
             /**
                 No default functor is provided.
                 If the option is not specified, the \p less option is used.
             */
-            typedef opt::none compare;
+            typedef cds::opt::none compare;
 
             /// Specifies binary predicate used for hash compare.
             /**
                 If the option is not specified, \p memcmp() -like bit-wise hash comparator is used
                 because the hash value is treated as fixed-sized bit-string.
             */
-            typedef opt::none less;
+            typedef cds::opt::none less;
 
             /// Item counter
             /**
@@ -172,7 +172,7 @@ namespace cds { namespace intrusive {
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
-            typedef opt::v::relaxed_ordering memory_model;
+            typedef cds::opt::v::relaxed_ordering memory_model;
 
             /// Back-off strategy
             typedef cds::backoff::Default back_off;
@@ -188,7 +188,7 @@ namespace cds { namespace intrusive {
             /**
                 List of available policy see \p opt::rcu_check_deadlock
             */
-            typedef opt::v::rcu_throw_deadlock rcu_check_deadlock;
+            typedef cds::opt::v::rcu_throw_deadlock rcu_check_deadlock;
         };
 
         /// Metafunction converting option list to \p multilevel_hashset::traits

@@ -320,5 +320,8 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_hp.cpp">
       <Filter>intrusive\multilevel_hashset</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_dhp.cpp">
+      <Filter>intrusive\multilevel_hashset</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

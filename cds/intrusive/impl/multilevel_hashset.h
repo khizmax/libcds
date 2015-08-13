@@ -70,12 +70,15 @@ namespace cds { namespace intrusive {
         Template parameters:
         - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
         - \p T - a value type to be stored in the set
-        - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction
+        - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction.
+            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor" 
+            to hash value of \p T. The set algorithm does not calculate that hash value.
 
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
         - <tt><cds/intrusive/multilevel_hashset_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/intrusive/multilevel_hashset_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type"
+        - <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type". RCU specialization
+            has a slightly different interface.
     */
     template <
         class GC
@@ -763,6 +766,37 @@ namespace cds { namespace intrusive {
                 return true;
             }
             return false;
+        }
+
+        /// Deletes the item pointed by iterator \p it
+        /**
+            Returns \p true if the operation is successful, \p false otherwise.
+
+            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
+        */
+        bool erase_at( iterator const& it )
+        {
+            if ( it.m_set != this )
+                return false;
+            if ( it.m_pNode == m_Head && it.m_idx >= head_size())
+                return false;
+            if ( it.m_idx >= array_node_size() )
+                return false;
+
+            for (;;) {
+                node_ptr slot = it.m_pNode->nodes[it.m_idx].load( memory_model::memory_order_acquire );
+                if ( slot.bits() == 0 && slot.ptr() == it.pointer() ) {
+                    if ( it.m_pNode->nodes[it.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                        // the item is guarded by iterator, so we may retire it safely
+                        gc::template retire<disposer>( slot.ptr() );
+                        --m_ItemCounter;
+                        m_Stat.onEraseSuccess();
+                        return true;
+                    }
+                }
+                else
+                    return false;
+            }
         }
 
         /// Extracts the item with specified \p hash

@@ -131,6 +131,8 @@ set(CDS_TESTHDR_QUEUE
     queue/hdr_vyukov_mpmc_cyclic.cpp)
 
 set(CDS_TESTHDR_SET
+    set/hdr_intrusive_multilevel_hashset_hp.cpp
+    set/hdr_intrusive_multilevel_hashset_dhp.cpp
     set/hdr_intrusive_refinable_hashset_avlset.cpp
     set/hdr_intrusive_refinable_hashset_list.cpp
     set/hdr_intrusive_refinable_hashset_set.cpp
@@ -270,6 +272,7 @@ set(CDS_TESTHDR_MISC
     misc/michael_allocator.cpp
     misc/hash_tuple.cpp
     misc/bitop_st.cpp
+    misc/split_bitstring.cpp
     misc/permutation_generator.cpp
     misc/thread_init_fini.cpp)
 
