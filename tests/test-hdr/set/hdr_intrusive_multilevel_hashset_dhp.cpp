@@ -220,5 +220,3 @@ namespace set {
     }
 
 } // namespace set
-
-CPPUNIT_TEST_SUITE_REGISTRATION(set::IntrusiveMultiLevelHashSetHdrTest);
