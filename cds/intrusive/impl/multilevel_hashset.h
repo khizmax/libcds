@@ -3,8 +3,8 @@
 #ifndef CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H
 #define CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H
 
-#include <tuple> // std::tie
-#include <functional> // std::ref
+#include <functional>   // std::ref
+#include <iterator>     // std::iterator_traits
 
 #include <cds/intrusive/details/multilevel_hashset_base.h>
 #include <cds/details/allocator.h>
@@ -1338,5 +1338,39 @@ namespace cds { namespace intrusive {
         //@endcond
     };
 }} // namespace cds::intrusive
+
+/*
+//@cond
+namespace std {
+
+    template <class GC, typename T, typename Traits>
+    struct iterator_traits< typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::iterator >
+    {
+        typedef typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::iterator iterator_class;
+
+        // difference_type is not applicable for that iterator
+        // typedef ??? difference_type
+        typedef T value_type;
+        typedef typename iterator_class::value_ptr pointer;
+        typedef typename iterator_class::value_ref reference;
+        typedef bidirectional_iterator_tag iterator_category;
+    };
+
+    template <class GC, typename T, typename Traits>
+    struct iterator_traits< typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::const_iterator >
+    {
+        typedef typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::const_iterator iterator_class;
+
+        // difference_type is not applicable for that iterator
+        // typedef ??? difference_type
+        typedef T value_type;
+        typedef typename iterator_class::value_ptr pointer;
+        typedef typename iterator_class::value_ref reference;
+        typedef bidirectional_iterator_tag iterator_category;
+    };
+
+} // namespace std
+//@endcond
+*/
 
 #endif // #ifndef CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H
