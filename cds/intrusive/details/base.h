@@ -18,7 +18,7 @@ namespace cds {
 
     In terms of lock-free approach, the main advantage of intrusive containers is
     that no memory allocation is performed to maintain container items.
-    However, additional requirements is imposed for types and values that can be stored in intrusive container.
+    However, additional requirements are imposed for types and values that can be stored in intrusive container.
     See the container documentation for details.
 
     \anchor cds_intrusive_hook_tag
@@ -36,19 +36,19 @@ namespace cds {
     \anchor cds_intrusive_item_creating
     \par Inserting items
     Many intrusive and non-intrusive (standard-like) containers in the library have the member functions
-    that take an functor argument to initialize the inserted item after it has been successfully inserted,
+    that take a functor argument to initialize the inserted item after it has been successfully inserted,
     for example:
     \code
     template <typename Q, typename Func>
     bool insert( Q& key, Func f );
 
     template <typename Q, typename Func>
-    std::pair<bool, bool> ensure( Q& key, Func f );
+    std::pair<bool, bool> update( Q& key, Func f, bool bAllowInsert = true );
     \endcode
-    The first member function calls \p f functor iif an new item has been inserted. The functor takes two parameter: a reference to inserted item and
+    The first member function calls \p f functor iif a new item has been inserted. The functor takes two parameter: a reference to inserted item and
     \p key.
 
-    The second member function, \p ensure, allows to insert a new item to the container if \p key is not found, or to find the item with \p key and
+    The second member function, \p update(), allows to insert a new item to the container if \p key is not found, or to find the item with \p key and
     to perform some action with it. The \p f signature is:
     \code
     void f( bool bNew, item_type& item, Q& key );
@@ -90,11 +90,11 @@ namespace cds {
     initializing the item, thread 2 is reading (or writing) the item's fields.
     In any case, Thread 2 can read uninitialized or incomplete initialized fields.
 
-    \p ensure member function race. Suppose, thread 1 and thread 2 perform
+    \p update() member function race. Suppose, thread 1 and thread 2 perform
     the
     following code:
     \code
-        q.ensure( 5, []( bool bNew, Foo& item, int  arg )
+        q.update( 5, []( bool bNew, Foo& item, int  arg )
            {
               // bNew: true if the new element has been created
               //       false otherwise
@@ -138,7 +138,7 @@ namespace cds {
        // ....
     };
 
-    q.ensure( 5, []( bool bNew, Foo& item, int  arg )
+    q.update( 5, []( bool bNew, Foo& item, int  arg )
         {
             // Lock access to the item
             std::unique_lock( item.lock );
