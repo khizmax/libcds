@@ -97,7 +97,7 @@ namespace cds { namespace container {
             {}
         };
 
-        /// Type traits for EllenBinTreeSet and EllenBinTreeMap
+        /// Type traits for \p EllenBinTreeSet and \p EllenBinTreeMap
         struct traits
         {
             /// Key extracting functor (only for \p EllenBinTreeSet)

@@ -34,7 +34,7 @@ namespace cds { namespace intrusive {
         We know that if we expand the hash map a fixed number of times there can be no collision as duplicate keys
         are not provided for in the standard semantics of a hash map.
 
-        \p %MultiLevelHashSet is a multi-level array whitch has a structure similar to a tree:
+        \p %MultiLevelHashSet is a multi-level array which has a structure similar to a tree:
         @image html multilevel_hashset.png
         The multi-level array differs from a tree in that each position on the tree could hold an array of nodes or a single node.
         A position that holds a single node is a \p dataNode which holds the hash value of a key and the value that is associated
@@ -52,7 +52,7 @@ namespace cds { namespace intrusive {
         We define \p currentDepth as the number of memory arrays that we need to traverse to reach the \p arrayNode on which
         we need to operate; this is initially one, because of \p head.
 
-        That approach to the structure of the hash map uses an extensible hashing scheme; <b> the hash value is treated as a bit
+        That approach to the structure of the hash set uses an extensible hashing scheme; <b> the hash value is treated as a bit
         string</b> and rehash incrementally.
 
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
@@ -99,7 +99,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::hash_accessor hash_accessor; ///< Hash accessor functor
         static_assert(!std::is_same< hash_accessor, cds::opt::none >::value, "hash_accessor functor must be specified" );
 
-        /// Hash type defined as \p hash_accessor return type
+        /// Hash type deduced from \p hash_accessor return type
         typedef typename std::decay< 
             typename std::remove_reference<
                 decltype( hash_accessor()( std::declval<T>()) )
@@ -728,7 +728,6 @@ namespace cds { namespace intrusive {
             If that item is not found the function returns \p false.
 
             The \ref disposer specified in \p Traits is called by garbage collector \p GC asynchronously.
-
         */
         bool erase( hash_type const& hash )
         {
@@ -1340,7 +1339,6 @@ namespace cds { namespace intrusive {
 }} // namespace cds::intrusive
 
 /*
-//@cond
 namespace std {
 
     template <class GC, typename T, typename Traits>
@@ -1370,7 +1368,6 @@ namespace std {
     };
 
 } // namespace std
-//@endcond
 */
 
 #endif // #ifndef CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H

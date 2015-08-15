@@ -1199,5 +1199,17 @@
     <ClInclude Include="..\..\..\cds\algo\split_bitstring.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\multilevel_hashset_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\multilevel_hashset.h">
+      <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\multilevel_hashset_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\multilevel_hashset_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,7 +15,7 @@
 
 namespace cds { namespace intrusive {
 
-    /// MultiLevelHashSet ordered list related definitions
+    /// MultiLevelHashSet related definitions
     /** @ingroup cds_intrusive_helper
     */
     namespace multilevel_hashset {
@@ -105,7 +105,7 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// MultiLevelHashSet traits
+        /// \p MultiLevelHashSet traits
         struct traits 
         {
             /// Mandatory functor to get hash value from data node
@@ -145,7 +145,7 @@ namespace cds { namespace intrusive {
 
             /// Specifies binary predicate used for hash compare.
             /**
-                If the option is not specified, \p memcmp() -like bit-wise hash comparator is used
+                If \p %less and \p %compare are not specified, \p memcmp() -like @ref bitwise_compare "bit-wise hash comparator" is used
                 because the hash value is treated as fixed-sized bit-string.
             */
             typedef cds::opt::none less;
