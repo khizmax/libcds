@@ -1211,5 +1211,17 @@
     <ClInclude Include="..\..\..\cds\container\multilevel_hashset_dhp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\multilevel_hashmap_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\multilevel_hashmap.h">
+      <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\multilevel_hashmap_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\multilevel_hashmap_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

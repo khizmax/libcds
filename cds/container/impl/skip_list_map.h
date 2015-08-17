@@ -121,7 +121,7 @@ namespace cds { namespace container {
         typedef T       mapped_type; ///< Mapped type
         typedef Traits  traits;      ///< Map traits
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef std::pair< K const, T> value_type;   ///< Key-value pair to be stored in the map
+        typedef std::pair< Key const, T> value_type;   ///< Key-value pair to be stored in the map
 #   else
         typedef typename maker::value_type  value_type;
 #   endif
@@ -270,7 +270,7 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename K, typename Func>
-        bool insert_with( const K& key, Func func )
+        bool insert_with( K const& key, Func func )
         {
             scoped_node_ptr pNode( node_allocator().New( random_level(), key ));
             if ( base_class::insert( *pNode, [&func]( node_type& item ) { func( item.m_Value ); } )) {
