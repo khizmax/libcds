@@ -587,7 +587,7 @@ namespace cds { namespace container {
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SkipListMap_hp_get
             The function searches the item with key equal to \p key
-            and returns an guarded pointer to the item found.
+            and returns a guarded pointer to the item found.
             If \p key is not found the function returns an empty guarded pointer.
 
             It is safe when a concurrent thread erases the item returned as \p guarded_ptr.

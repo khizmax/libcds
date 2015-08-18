@@ -183,6 +183,9 @@ namespace cds { namespace intrusive {
             typename gc::Guard  m_guard;    ///< HP guard
             MultiLevelHashSet const*  m_set;    ///< Hash set
 
+        protected:
+            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
+
         public:
             typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
             typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
@@ -241,13 +244,13 @@ namespace cds { namespace intrusive {
             }
 
             template <bool IsConst2>
-            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const
+            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
             {
                 return m_pNode == rhs.m_pNode && m_idx == rhs.m_idx && m_set == rhs.m_set;
             }
 
             template <bool IsConst2>
-            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const
+            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
@@ -462,10 +465,17 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef bidirectional_iterator<false>   iterator;       ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional iterator" type
-        typedef bidirectional_iterator<true>    const_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional const iterator" type
-        typedef reverse_bidirectional_iterator<false>   reverse_iterator;       ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse iterator" type
-        typedef reverse_bidirectional_iterator<true>    const_reverse_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse const iterator" type
+#ifdef CDS_DOXYGEN_INVOKED
+        typedef implementation_defined iterator;            ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional iterator" type
+        typedef implementation_defined const_iterator;      ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional const iterator" type
+        typedef implementation_defined reverse_iterator;    ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse iterator" type
+        typedef implementation_defined const_reverse_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse const iterator" type
+#else
+        typedef bidirectional_iterator<false>   iterator;
+        typedef bidirectional_iterator<true>    const_iterator;
+        typedef reverse_bidirectional_iterator<false>   reverse_iterator;
+        typedef reverse_bidirectional_iterator<true>    const_reverse_iterator;
+#endif
 
     private:
         //@cond
@@ -630,15 +640,7 @@ namespace cds { namespace intrusive {
             typename gc::Guard guard;
             auto pred = [&val](value_type const& item) -> bool { return &item == &val; };
             value_type * p = do_erase( hash_accessor()( val ), guard, std::ref( pred ));
-
-            // p is guarded by HP
-            if ( p ) {
-                gc::template retire<disposer>( p );
-                --m_ItemCounter;
-                m_Stat.onEraseSuccess();
-                return true;
-            }
-            return false;
+            return p != nullptr;
         }
 
         /// Deletes the item from the set
@@ -678,10 +680,7 @@ namespace cds { namespace intrusive {
 
             // p is guarded by HP
             if ( p ) {
-                gc::template retire<disposer>( p );
-                --m_ItemCounter;
                 f( *p );
-                m_Stat.onEraseSuccess();
                 return true;
             }
             return false;
@@ -748,15 +747,11 @@ namespace cds { namespace intrusive {
             guarded_ptr gp;
             {
                 typename gc::Guard guard;
-                value_type * p = do_erase( hash, guard, []( value_type const&) -> bool {return true; } );
+                value_type * p = do_erase( hash, guard, []( value_type const&) -> bool {return true;} );
 
                 // p is guarded by HP
-                if ( p ) {
-                    gc::template retire<disposer>( p );
-                    --m_ItemCounter;
-                    m_Stat.onEraseSuccess();
+                if ( p )
                     gp.reset( p );
-                }
             }
             return gp;
         }
@@ -1240,8 +1235,14 @@ namespace cds { namespace intrusive {
                     else if ( slot.ptr() ) {
                         if ( cmp( hash, hash_accessor()( *slot.ptr() )) == 0 && pred( *slot.ptr() )) {
                             // item found - replace it with nullptr
-                            if ( pArr->nodes[nSlot].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed))
+                            if ( pArr->nodes[nSlot].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                                // slot is guarded by HP
+                                gc::template retire<disposer>( slot.ptr() );
+                                --m_ItemCounter;
+                                m_Stat.onEraseSuccess();
+
                                 return slot.ptr();
+                            }
                             m_Stat.onEraseRetry();
                             continue;
                         }
