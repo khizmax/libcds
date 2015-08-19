@@ -3,8 +3,8 @@
 #ifndef CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H
 #define CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H
 
-#include <tuple> // std::tie
-#include <functional> // std::ref
+#include <functional>   // std::ref
+#include <iterator>     // std::iterator_traits
 
 #include <cds/intrusive/details/multilevel_hashset_base.h>
 #include <cds/details/allocator.h>
@@ -34,7 +34,7 @@ namespace cds { namespace intrusive {
         We know that if we expand the hash map a fixed number of times there can be no collision as duplicate keys
         are not provided for in the standard semantics of a hash map.
 
-        \p %MultiLevelHashSet is a multi-level array whitch has a structure similar to a tree:
+        \p %MultiLevelHashSet is a multi-level array which has a structure similar to a tree:
         @image html multilevel_hashset.png
         The multi-level array differs from a tree in that each position on the tree could hold an array of nodes or a single node.
         A position that holds a single node is a \p dataNode which holds the hash value of a key and the value that is associated
@@ -52,7 +52,7 @@ namespace cds { namespace intrusive {
         We define \p currentDepth as the number of memory arrays that we need to traverse to reach the \p arrayNode on which
         we need to operate; this is initially one, because of \p head.
 
-        That approach to the structure of the hash map uses an extensible hashing scheme; <b> the hash value is treated as a bit
+        That approach to the structure of the hash set uses an extensible hashing scheme; <b> the hash value is treated as a bit
         string</b> and rehash incrementally.
 
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
@@ -99,7 +99,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::hash_accessor hash_accessor; ///< Hash accessor functor
         static_assert(!std::is_same< hash_accessor, cds::opt::none >::value, "hash_accessor functor must be specified" );
 
-        /// Hash type defined as \p hash_accessor return type
+        /// Hash type deduced from \p hash_accessor return type
         typedef typename std::decay< 
             typename std::remove_reference<
                 decltype( hash_accessor()( std::declval<T>()) )
@@ -183,6 +183,9 @@ namespace cds { namespace intrusive {
             typename gc::Guard  m_guard;    ///< HP guard
             MultiLevelHashSet const*  m_set;    ///< Hash set
 
+        protected:
+            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
+
         public:
             typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
             typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
@@ -241,13 +244,13 @@ namespace cds { namespace intrusive {
             }
 
             template <bool IsConst2>
-            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const
+            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
             {
                 return m_pNode == rhs.m_pNode && m_idx == rhs.m_idx && m_set == rhs.m_set;
             }
 
             template <bool IsConst2>
-            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const
+            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
@@ -462,10 +465,17 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef bidirectional_iterator<false>   iterator;       ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional iterator" type
-        typedef bidirectional_iterator<true>    const_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional const iterator" type
-        typedef reverse_bidirectional_iterator<false>   reverse_iterator;       ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse iterator" type
-        typedef reverse_bidirectional_iterator<true>    const_reverse_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse const iterator" type
+#ifdef CDS_DOXYGEN_INVOKED
+        typedef implementation_defined iterator;            ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional iterator" type
+        typedef implementation_defined const_iterator;      ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional const iterator" type
+        typedef implementation_defined reverse_iterator;    ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse iterator" type
+        typedef implementation_defined const_reverse_iterator; ///< @ref cds_intrusive_MultilevelHashSet_iterators "bidirectional reverse const iterator" type
+#else
+        typedef bidirectional_iterator<false>   iterator;
+        typedef bidirectional_iterator<true>    const_iterator;
+        typedef reverse_bidirectional_iterator<false>   reverse_iterator;
+        typedef reverse_bidirectional_iterator<true>    const_reverse_iterator;
+#endif
 
     private:
         //@cond
@@ -615,87 +625,7 @@ namespace cds { namespace intrusive {
         */
         std::pair<bool, bool> update( value_type& val, bool bInsert = true )
         {
-            hash_type const& hash = hash_accessor()( val );
-            hash_splitter splitter( hash );
-            hash_comparator cmp;
-            typename gc::Guard guard;
-            back_off bkoff;
-
-            array_node * pArr = m_Head;
-            size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
-            assert( nSlot < m_Metrics.head_node_size );
-            size_t nOffset = m_Metrics.head_node_size_log;
-
-            while ( true ) {
-                node_ptr slot = pArr->nodes[nSlot].load( memory_model::memory_order_acquire );
-                if ( slot.bits() == flag_array_node ) {
-                    // array node, go down the tree
-                    assert( slot.ptr() != nullptr );
-                    nSlot = splitter.cut( m_Metrics.array_node_size_log );
-                    assert( nSlot < m_Metrics.array_node_size );
-                    pArr = to_array( slot.ptr() );
-                    nOffset += m_Metrics.array_node_size_log;
-                }
-                else if ( slot.bits() == flag_array_converting ) {
-                    // the slot is converting to array node right now
-                    bkoff();
-                    m_Stat.onSlotConverting();
-                }
-                else {
-                    // data node
-                    assert(slot.bits() == 0 );
-
-                    // protect data node by hazard pointer
-                    if ( guard.protect( pArr->nodes[nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
-                        // slot value has been changed - retry
-                        m_Stat.onSlotChanged();
-                    }
-                    else if ( slot.ptr() ) {
-                        if ( cmp( hash, hash_accessor()( *slot.ptr() )) == 0 ) {
-                            // the item with that hash value already exists
-                            // Replace it with val
-                            if ( slot.ptr() == &val ) {
-                                m_Stat.onUpdateExisting();
-                                return std::make_pair( true, false );
-                            }
-
-                            if ( pArr->nodes[nSlot].compare_exchange_strong( slot, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
-                                // slot can be disposed
-                                gc::template retire<disposer>( slot.ptr() );
-                                m_Stat.onUpdateExisting();
-                                return std::make_pair( true, false );
-                            }
-
-                            m_Stat.onUpdateRetry();
-                            continue;
-                        }
-
-                        // the slot must be expanded
-                        expand_slot( pArr, nSlot, slot, nOffset );
-                    }
-                    else {
-                        // the slot is empty, try to insert data node
-                        if ( bInsert ) {
-                            node_ptr pNull;
-                            if ( pArr->nodes[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
-                            {
-                                // the new data node has been inserted
-                                ++m_ItemCounter;
-                                m_Stat.onUpdateNew();
-                                return std::make_pair( true, true );
-                            }
-                        }
-                        else {
-                            m_Stat.onUpdateFailed();
-                            return std::make_pair( false, false );
-                        }
-
-                        // insert failed - slot has been changed by another thread
-                        // retry updating
-                        m_Stat.onUpdateRetry();
-                    }
-                }
-            } // while
+            return do_update(val, [](bool, value_type&) {}, bInsert );
         }
 
         /// Unlinks the item \p val from the set
@@ -710,15 +640,7 @@ namespace cds { namespace intrusive {
             typename gc::Guard guard;
             auto pred = [&val](value_type const& item) -> bool { return &item == &val; };
             value_type * p = do_erase( hash_accessor()( val ), guard, std::ref( pred ));
-
-            // p is guarded by HP
-            if ( p ) {
-                gc::template retire<disposer>( p );
-                --m_ItemCounter;
-                m_Stat.onEraseSuccess();
-                return true;
-            }
-            return false;
+            return p != nullptr;
         }
 
         /// Deletes the item from the set
@@ -728,7 +650,6 @@ namespace cds { namespace intrusive {
             If that item is not found the function returns \p false.
 
             The \ref disposer specified in \p Traits is called by garbage collector \p GC asynchronously.
-
         */
         bool erase( hash_type const& hash )
         {
@@ -759,34 +680,31 @@ namespace cds { namespace intrusive {
 
             // p is guarded by HP
             if ( p ) {
-                gc::template retire<disposer>( p );
-                --m_ItemCounter;
                 f( *p );
-                m_Stat.onEraseSuccess();
                 return true;
             }
             return false;
         }
 
-        /// Deletes the item pointed by iterator \p it
+        /// Deletes the item pointed by iterator \p iter
         /**
             Returns \p true if the operation is successful, \p false otherwise.
 
             The function does not invalidate the iterator, it remains valid and can be used for further traversing.
         */
-        bool erase_at( iterator const& it )
+        bool erase_at( iterator const& iter )
         {
-            if ( it.m_set != this )
+            if ( iter.m_set != this )
                 return false;
-            if ( it.m_pNode == m_Head && it.m_idx >= head_size())
+            if ( iter.m_pNode == m_Head && iter.m_idx >= head_size())
                 return false;
-            if ( it.m_idx >= array_node_size() )
+            if ( iter.m_idx >= array_node_size() )
                 return false;
 
             for (;;) {
-                node_ptr slot = it.m_pNode->nodes[it.m_idx].load( memory_model::memory_order_acquire );
-                if ( slot.bits() == 0 && slot.ptr() == it.pointer() ) {
-                    if ( it.m_pNode->nodes[it.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                node_ptr slot = iter.m_pNode->nodes[iter.m_idx].load( memory_model::memory_order_acquire );
+                if ( slot.bits() == 0 && slot.ptr() == iter.pointer() ) {
+                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
                         // the item is guarded by iterator, so we may retire it safely
                         gc::template retire<disposer>( slot.ptr() );
                         --m_ItemCounter;
@@ -829,15 +747,11 @@ namespace cds { namespace intrusive {
             guarded_ptr gp;
             {
                 typename gc::Guard guard;
-                value_type * p = do_erase( hash, guard, []( value_type const&) -> bool {return true; } );
+                value_type * p = do_erase( hash, guard, []( value_type const&) -> bool {return true;} );
 
                 // p is guarded by HP
-                if ( p ) {
-                    gc::template retire<disposer>( p );
-                    --m_ItemCounter;
-                    m_Stat.onEraseSuccess();
+                if ( p )
                     gp.reset( p );
-                }
             }
             return gp;
         }
@@ -1236,7 +1150,10 @@ namespace cds { namespace intrusive {
             m_Stat.onArrayNodeCreated();
             return true;
         }
+        //@endcond
 
+    protected:
+        //@cond
         value_type * search( hash_type const& hash, typename gc::Guard& guard )
         {
             hash_splitter splitter( hash );
@@ -1318,8 +1235,14 @@ namespace cds { namespace intrusive {
                     else if ( slot.ptr() ) {
                         if ( cmp( hash, hash_accessor()( *slot.ptr() )) == 0 && pred( *slot.ptr() )) {
                             // item found - replace it with nullptr
-                            if ( pArr->nodes[nSlot].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed))
+                            if ( pArr->nodes[nSlot].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                                // slot is guarded by HP
+                                gc::template retire<disposer>( slot.ptr() );
+                                --m_ItemCounter;
+                                m_Stat.onEraseSuccess();
+
                                 return slot.ptr();
+                            }
                             m_Stat.onEraseRetry();
                             continue;
                         }
@@ -1335,8 +1258,127 @@ namespace cds { namespace intrusive {
             } // while
         }
 
+        template <typename Func>
+        std::pair<bool, bool> do_update( value_type& val, Func f, bool bInsert = true )
+        {
+            hash_type const& hash = hash_accessor()( val );
+            hash_splitter splitter( hash );
+            hash_comparator cmp;
+            typename gc::Guard guard;
+            back_off bkoff;
+
+            array_node * pArr = m_Head;
+            size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
+            assert( nSlot < m_Metrics.head_node_size );
+            size_t nOffset = m_Metrics.head_node_size_log;
+
+            while ( true ) {
+                node_ptr slot = pArr->nodes[nSlot].load( memory_model::memory_order_acquire );
+                if ( slot.bits() == flag_array_node ) {
+                    // array node, go down the tree
+                    assert( slot.ptr() != nullptr );
+                    nSlot = splitter.cut( m_Metrics.array_node_size_log );
+                    assert( nSlot < m_Metrics.array_node_size );
+                    pArr = to_array( slot.ptr() );
+                    nOffset += m_Metrics.array_node_size_log;
+                }
+                else if ( slot.bits() == flag_array_converting ) {
+                    // the slot is converting to array node right now
+                    bkoff();
+                    m_Stat.onSlotConverting();
+                }
+                else {
+                    // data node
+                    assert(slot.bits() == 0 );
+
+                    // protect data node by hazard pointer
+                    if ( guard.protect( pArr->nodes[nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
+                        // slot value has been changed - retry
+                        m_Stat.onSlotChanged();
+                    }
+                    else if ( slot.ptr() ) {
+                        if ( cmp( hash, hash_accessor()( *slot.ptr() )) == 0 ) {
+                            // the item with that hash value already exists
+                            // Replace it with val
+                            if ( slot.ptr() == &val ) {
+                                m_Stat.onUpdateExisting();
+                                return std::make_pair( true, false );
+                            }
+
+                            if ( pArr->nodes[nSlot].compare_exchange_strong( slot, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+                                // slot can be disposed
+                                f( false, val );
+                                gc::template retire<disposer>( slot.ptr() );
+                                m_Stat.onUpdateExisting();
+                                return std::make_pair( true, false );
+                            }
+
+                            m_Stat.onUpdateRetry();
+                            continue;
+                        }
+
+                        // the slot must be expanded
+                        expand_slot( pArr, nSlot, slot, nOffset );
+                    }
+                    else {
+                        // the slot is empty, try to insert data node
+                        if ( bInsert ) {
+                            node_ptr pNull;
+                            if ( pArr->nodes[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                            {
+                                // the new data node has been inserted
+                                f( true, val );
+                                ++m_ItemCounter;
+                                m_Stat.onUpdateNew();
+                                return std::make_pair( true, true );
+                            }
+                        }
+                        else {
+                            m_Stat.onUpdateFailed();
+                            return std::make_pair( false, false );
+                        }
+
+                        // insert failed - slot has been changed by another thread
+                        // retry updating
+                        m_Stat.onUpdateRetry();
+                    }
+                }
+            } // while
+        }
         //@endcond
     };
 }} // namespace cds::intrusive
+
+/*
+namespace std {
+
+    template <class GC, typename T, typename Traits>
+    struct iterator_traits< typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::iterator >
+    {
+        typedef typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::iterator iterator_class;
+
+        // difference_type is not applicable for that iterator
+        // typedef ??? difference_type
+        typedef T value_type;
+        typedef typename iterator_class::value_ptr pointer;
+        typedef typename iterator_class::value_ref reference;
+        typedef bidirectional_iterator_tag iterator_category;
+    };
+
+    template <class GC, typename T, typename Traits>
+    struct iterator_traits< typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::const_iterator >
+    {
+        typedef typename cds::intrusive::MultiLevelHashSet< GC, T, Traits >::const_iterator iterator_class;
+
+        // difference_type is not applicable for that iterator
+        // typedef ??? difference_type
+        typedef T value_type;
+        typedef typename iterator_class::value_ptr pointer;
+        typedef typename iterator_class::value_ref reference;
+        typedef bidirectional_iterator_tag iterator_category;
+    };
+
+} // namespace std
+*/
 
 #endif // #ifndef CDSLIB_INTRUSIVE_IMPL_MULTILEVEL_HASHSET_H

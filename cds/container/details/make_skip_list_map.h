@@ -49,9 +49,9 @@ namespace cds { namespace container { namespace details {
                 init_tower( nHeight, pTower );
             }
 
-        private:
-            node_type() ;   // no default ctor
+            node_type() = delete;
 
+        private:
             void init_tower( unsigned int nHeight, atomic_marked_ptr * pTower )
             {
                 if ( nHeight > 1 ) {
