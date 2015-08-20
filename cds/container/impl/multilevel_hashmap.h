@@ -137,6 +137,7 @@ namespace cds { namespace container {
         {
             friend class MultiLevelHashMap;
             typedef Iterator base_class;
+
         public:
             typedef typename std::conditional< base_class::c_bConstantIterator, value_type const*, value_type*>::type value_ptr; ///< Value pointer
             typedef typename std::conditional< base_class::c_bConstantIterator, value_type const&, value_type&>::type value_ref; ///< Value reference
@@ -436,8 +437,14 @@ namespace cds { namespace container {
         */
         bool erase_at( iterator const& iter )
         {
-            return base_class::erase_at( iter );
+            return base_class::erase_at( static_cast<typename iterator::base_class const&>( iter ));
         }
+        //@cond
+        bool erase_at( reverse_iterator const& iter )
+        {
+            return base_class::erase_at( static_cast<typenamereverse_iterator::base_class const&>( iter ));
+        }
+        //@endcond
 
         /// Extracts the item from the map with specified \p key
         /** 

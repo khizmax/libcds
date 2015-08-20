@@ -174,6 +174,7 @@ set(CDS_TESTHDR_SET
     set/hdr_michael_set_lazy_rcu_shb.cpp
     set/hdr_michael_set_lazy_rcu_sht.cpp
     set/hdr_michael_set_lazy_nogc.cpp
+    set/hdr_multilevel_hashset_hp.cpp
     set/hdr_refinable_hashset_hashset_std.cpp
     set/hdr_refinable_hashset_boost_flat_set.cpp
     set/hdr_refinable_hashset_boost_list.cpp

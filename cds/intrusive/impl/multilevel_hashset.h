@@ -129,7 +129,7 @@ namespace cds { namespace intrusive {
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
         /// Count of hazard pointers required
-        static CDS_CONSTEXPR size_t const c_nHazardPtrCount = 1;
+        static CDS_CONSTEXPR size_t const c_nHazardPtrCount = 2;
 
         /// Node marked poiter
         typedef cds::details::marked_ptr< value_type, 3 > node_ptr;
@@ -625,7 +625,7 @@ namespace cds { namespace intrusive {
         */
         std::pair<bool, bool> update( value_type& val, bool bInsert = true )
         {
-            return do_update(val, [](bool, value_type&) {}, bInsert );
+            return do_update(val, [](value_type&, value_type *) {}, bInsert );
         }
 
         /// Unlinks the item \p val from the set
@@ -716,6 +716,12 @@ namespace cds { namespace intrusive {
                     return false;
             }
         }
+        //@cond
+        bool erase_at( reverse_iterator const& iter )
+        {
+            return erase_at(static_cast<iterator const&>( iter ));
+        }
+        //@endcond
 
         /// Extracts the item with specified \p hash
         /** 
@@ -1264,13 +1270,15 @@ namespace cds { namespace intrusive {
             hash_type const& hash = hash_accessor()( val );
             hash_splitter splitter( hash );
             hash_comparator cmp;
-            typename gc::Guard guard;
+            typename gc::GuardArray<2> guards;
             back_off bkoff;
 
             array_node * pArr = m_Head;
             size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
             assert( nSlot < m_Metrics.head_node_size );
             size_t nOffset = m_Metrics.head_node_size_log;
+
+            guards.assign( 1, &val );
 
             while ( true ) {
                 node_ptr slot = pArr->nodes[nSlot].load( memory_model::memory_order_acquire );
@@ -1292,7 +1300,7 @@ namespace cds { namespace intrusive {
                     assert(slot.bits() == 0 );
 
                     // protect data node by hazard pointer
-                    if ( guard.protect( pArr->nodes[nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
+                    if ( guards.protect( 0, pArr->nodes[nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
                         // slot value has been changed - retry
                         m_Stat.onSlotChanged();
                     }
@@ -1307,7 +1315,7 @@ namespace cds { namespace intrusive {
 
                             if ( pArr->nodes[nSlot].compare_exchange_strong( slot, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                                 // slot can be disposed
-                                f( false, val );
+                                f( val, slot.ptr() );
                                 gc::template retire<disposer>( slot.ptr() );
                                 m_Stat.onUpdateExisting();
                                 return std::make_pair( true, false );
@@ -1327,7 +1335,7 @@ namespace cds { namespace intrusive {
                             if ( pArr->nodes[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             {
                                 // the new data node has been inserted
-                                f( true, val );
+                                f( val, nullptr );
                                 ++m_ItemCounter;
                                 m_Stat.onUpdateNew();
                                 return std::make_pair( true, true );

@@ -18,7 +18,7 @@ namespace set {
     class IntrusiveMultiLevelHashSetHdrTest: public CppUnitMini::TestCase
     {
         template <typename Hash>
-        struct Item 
+        struct Item
         {
             unsigned int nDisposeCount  ;   // count of disposer calling
             Hash hash;
@@ -313,7 +313,25 @@ namespace set {
                 el.nIteratorCall = 0;
                 CPPUNIT_ASSERT(s.insert( el ));
             }
-            for ( typename Set::iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
+            for ( auto it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
+                s.erase_at( it );
+                it->nIteratorCall = 1;
+            }
+            CPPUNIT_ASSERT(s.size() == 0 );
+            Set::gc::force_dispose();
+            for ( auto& el : arrValue ) {
+                CPPUNIT_ASSERT( el.nDisposeCount == 1 );
+                CPPUNIT_ASSERT( el.nIteratorCall == 1 );
+            }
+            CPPUNIT_ASSERT(s.empty() );
+
+            // erase with reverse_iterator
+            for ( auto& el : arrValue ) {
+                el.nDisposeCount = 0;
+                el.nIteratorCall = 0;
+                CPPUNIT_ASSERT(s.insert( el ));
+            }
+            for ( auto it = s.rbegin(), itEnd = s.rend(); it != itEnd; ++it ) {
                 s.erase_at( it );
                 it->nIteratorCall = 1;
             }

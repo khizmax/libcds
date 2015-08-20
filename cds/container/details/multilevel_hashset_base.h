@@ -17,7 +17,7 @@ namespace cds { namespace container {
             @copydetails cds::intrusive::multilevel_hashset::traits::hash_accessor
         */
         template <typename Accessor>
-        using hash_accessor = cds::intrusive::hash_accessor< Accessor >;
+        using hash_accessor = cds::intrusive::multilevel_hashset::hash_accessor< Accessor >;
 
         /// \p MultiLevelHashSet internal statistics, see cds::intrusive::multilevel_hashset::stat
         template <typename EventCounter = cds::atomicity::event_counter>
@@ -130,7 +130,7 @@ namespace cds { namespace container {
 
     //@cond
     // Forward declaration
-    template < class GC, typename T, class Traits = multilevel_hashset::traits >
+    template < class GC, typename T, class Traits = cds::container::multilevel_hashset::traits >
     class MultiLevelHashSet;
     //@endcond
 

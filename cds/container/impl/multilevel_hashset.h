@@ -155,7 +155,7 @@ namespace cds { namespace container {
         /**
             The function creates an element with copy of \p val value and then inserts it into the set.
 
-            The type \p Q should contain as minimum the complete key for the element.
+            The type \p Q should contain as minimum the complete hash for the element.
             The object of \ref value_type should be constructible from a value of type \p Q.
             In trivial case, \p Q is equal to \ref value_type.
 
@@ -200,22 +200,23 @@ namespace cds { namespace container {
 
         /// Updates the element
         /**
-            The operation performs inserting or changing data with lock-free manner.
+            The operation performs inserting or replacing with lock-free manner.
 
             If the \p val key not found in the set, then the new item created from \p val
-            will be inserted into the set iff \p bInsert is \p true. 
-            Otherwise, if \p val is found, the functor \p func will be called with the item found.
+            will be inserted into the set iff \p bInsert is \p true.
+            Otherwise, if \p val is found, it is replaced with new item created from \p val.
+            In both cases \p func functor is called.
 
             The functor \p Func signature:
             \code
                 struct my_functor {
-                    void operator()( bool bNew, value_type& item, const Q& val );
+                    void operator()( value_type& cur, value_type * prev );
                 };
             \endcode
             where:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the set
-            - \p val - argument \p key passed into the \p %update() function
+            - \p cur - current element
+            - \p prev - pointer to previous element with such hash. \p prev is \p nullptr
+                 if \p cur was just inserted.
 
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
@@ -231,8 +232,8 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( const Q& val, Func func, bool bInsert = true )
         {
             scoped_node_ptr sp( cxx_node_allocator().New( val ));
-            std::pair<bool, bool> bRes = base_class::update( *sp, func, bInsert );
-            if ( bRes.first && bRes.second )
+            std::pair<bool, bool> bRes = base_class::do_update( *sp, func, bInsert );
+            if ( bRes.first )
                 sp.release();
             return bRes;
         }
@@ -293,6 +294,12 @@ namespace cds { namespace container {
         {
             return base_class::erase_at( iter );
         }
+        //@cond
+        bool erase_at( reverse_iterator const& iter )
+        {
+            return base_class::erase_at( iter );
+        }
+        //@endcond
 
         /// Extracts the item with specified \p hash
         /** 
