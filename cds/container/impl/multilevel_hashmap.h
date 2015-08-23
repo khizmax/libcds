@@ -702,7 +702,7 @@ namespace cds { namespace container {
                 Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
                 does not entail <tt> &(*it1) == &(*it2) </tt>
             - helper member function \p release() that clears internal hazard pointer.
-                After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+                After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
         */
     ///@{
         /// Returns an iterator to the beginning of the map
