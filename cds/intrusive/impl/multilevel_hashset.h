@@ -172,32 +172,24 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        /// Bidirectional iterator class
-        template <bool IsConst>
-        class bidirectional_iterator
+        class iterator_base
         {
             friend class MultiLevelHashSet;
 
+        protected:
             array_node *        m_pNode;    ///< current array node
             size_t              m_idx;      ///< current position in m_pNode
             typename gc::Guard  m_guard;    ///< HP guard
             MultiLevelHashSet const*  m_set;    ///< Hash set
-
-        protected:
-            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
-
+            
         public:
-            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
-            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
-
-        public:
-            bidirectional_iterator() CDS_NOEXCEPT
+            iterator_base() CDS_NOEXCEPT
                 : m_pNode( nullptr )
                 , m_idx( 0 )
                 , m_set( nullptr )
             {}
 
-            bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+            iterator_base( iterator_base const& rhs ) CDS_NOEXCEPT
                 : m_pNode( rhs.m_pNode )
                 , m_idx( rhs.m_idx )
                 , m_set( rhs.m_set )
@@ -205,7 +197,7 @@ namespace cds { namespace intrusive {
                 m_guard.copy( rhs.m_guard );
             }
 
-            bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            iterator_base& operator=(iterator_base const& rhs) CDS_NOEXCEPT
             {
                 m_pNode = rhs.m_pNode;
                 m_idx = rhs.m_idx;
@@ -214,28 +206,16 @@ namespace cds { namespace intrusive {
                 return *this;
             }
 
-            bidirectional_iterator& operator++()
+            iterator_base& operator++()
             {
                 forward();
                 return *this;
             }
 
-            bidirectional_iterator& operator--()
+            iterator_base& operator--()
             {
                 backward();
                 return *this;
-            }
-
-            value_ptr operator ->() const CDS_NOEXCEPT
-            {
-                return pointer();
-            }
-
-            value_ref operator *() const CDS_NOEXCEPT
-            {
-                value_ptr p = pointer();
-                assert( p );
-                return *p;
             }
 
             void release()
@@ -243,26 +223,24 @@ namespace cds { namespace intrusive {
                 m_guard.clear();
             }
 
-            template <bool IsConst2>
-            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator ==(iterator_base const& rhs) const CDS_NOEXCEPT
             {
                 return m_pNode == rhs.m_pNode && m_idx == rhs.m_idx && m_set == rhs.m_set;
             }
 
-            template <bool IsConst2>
-            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator !=(iterator_base const& rhs) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
 
         protected:
-            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool )
+            iterator_base( MultiLevelHashSet const& set, array_node * pNode, size_t idx, bool )
                 : m_pNode( pNode )
                 , m_idx( idx )
                 , m_set( &set )
             {}
 
-            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
+            iterator_base( MultiLevelHashSet const& set, array_node * pNode, size_t idx )
                 : m_pNode( pNode )
                 , m_idx( idx )
                 , m_set( &set )
@@ -270,7 +248,7 @@ namespace cds { namespace intrusive {
                 forward();
             }
 
-            value_ptr pointer() const CDS_NOEXCEPT
+            value_type * pointer() const CDS_NOEXCEPT
             {
                 return m_guard.template get<value_type>();
             }
@@ -390,63 +368,166 @@ namespace cds { namespace intrusive {
             }
         };
 
-        /// Reverse bidirectional iterator
-        template <bool IsConst>
-        class reverse_bidirectional_iterator : protected bidirectional_iterator<IsConst>
+        template <class Iterator>
+        Iterator init_begin() const
         {
-            typedef bidirectional_iterator<IsConst> base_class;
+            return Iterator( *this, m_Head, size_t(0) - 1 );
+        }
+
+        template <class Iterator>
+        Iterator init_end() const
+        {
+            return Iterator( *this, m_Head, head_size(), false );
+        }
+
+        template <class Iterator>
+        Iterator init_rbegin() const
+        {
+            return Iterator( *this, m_Head, head_size() );
+        }
+
+        template <class Iterator>
+        Iterator init_rend() const
+        {
+            return Iterator( *this, m_Head, size_t(0) - 1, false );
+        }
+
+        /// Bidirectional iterator class
+        template <bool IsConst>
+        class bidirectional_iterator: protected iterator_base
+        {
             friend class MultiLevelHashSet;
 
-        public:
-            typedef typename base_class::value_ptr value_ptr;
-            typedef typename base_class::value_ref value_ref;
+        protected:
+            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
 
         public:
-            reverse_bidirectional_iterator() CDS_NOEXCEPT
-                : base_class()
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
+
+        public:
+            bidirectional_iterator() CDS_NOEXCEPT
             {}
 
-            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) CDS_NOEXCEPT
-                : base_class( rhs )
+            bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+                : iterator_base( rhs )
             {}
 
-            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
             {
-                base_class::operator=( rhs );
+                iterator_base::operator=( rhs );
                 return *this;
             }
 
-            reverse_bidirectional_iterator& operator++()
+            bidirectional_iterator& operator++()
             {
-                base_class::backward();
+                iterator_base::operator++();
                 return *this;
             }
 
-            reverse_bidirectional_iterator& operator--()
+            bidirectional_iterator& operator--()
             {
-                base_class::forward();
+                iterator_base::operator--();
                 return *this;
             }
 
             value_ptr operator ->() const CDS_NOEXCEPT
             {
-                return base_class::operator->();
+                return iterator_base::pointer();
             }
 
             value_ref operator *() const CDS_NOEXCEPT
             {
-                return base_class::operator*();
+                value_ptr p = iterator_base::pointer();
+                assert( p );
+                return *p;
             }
 
             void release()
             {
-                base_class::release();
+                iterator_base::release();
+            }
+
+            template <bool IsConst2>
+            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            {
+                return iterator_base::operator==( rhs );
+            }
+
+            template <bool IsConst2>
+            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            {
+                return !( *this == rhs );
+            }
+
+        protected:
+            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool )
+                : iterator_base( set, pNode, idx, false )
+            {}
+
+            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
+                : iterator_base( set, pNode, idx )
+            {}
+        };
+
+        /// Reverse bidirectional iterator
+        template <bool IsConst>
+        class reverse_bidirectional_iterator : public iterator_base
+        {
+            friend class MultiLevelHashSet;
+
+        public:
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
+
+        public:
+            reverse_bidirectional_iterator() CDS_NOEXCEPT
+                : iterator_base()
+            {}
+
+            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+                : iterator_base( rhs )
+            {}
+
+            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            {
+                iterator_base::operator=( rhs );
+                return *this;
+            }
+
+            reverse_bidirectional_iterator& operator++()
+            {
+                iterator_base::operator--();
+                return *this;
+            }
+
+            reverse_bidirectional_iterator& operator--()
+            {
+                iterator_base::operator++();
+                return *this;
+            }
+
+            value_ptr operator ->() const CDS_NOEXCEPT
+            {
+                return iterator_base::pointer();
+            }
+
+            value_ref operator *() const CDS_NOEXCEPT
+            {
+                value_ptr p = iterator_base::pointer();
+                assert( p );
+                return *p;
+            }
+
+            void release()
+            {
+                iterator_base::release();
             }
 
             template <bool IsConst2>
             bool operator ==(reverse_bidirectional_iterator<IsConst2> const& rhs) const
             {
-                return base_class::operator==( rhs );
+                return iterator_base::operator==( rhs );
             }
 
             template <bool IsConst2>
@@ -456,10 +537,14 @@ namespace cds { namespace intrusive {
             }
 
         private:
+            reverse_bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool )
+                : iterator_base( set, pNode, idx, false )
+            {}
+
             reverse_bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
-                : base_class( set, pNode, idx, false )
+                : iterator_base( set, pNode, idx, false )
             {
-                base_class::backward();
+                iterator_base::backward();
             }
         };
         //@endcond
@@ -694,32 +779,12 @@ namespace cds { namespace intrusive {
         */
         bool erase_at( iterator const& iter )
         {
-            if ( iter.m_set != this )
-                return false;
-            if ( iter.m_pNode == m_Head && iter.m_idx >= head_size())
-                return false;
-            if ( iter.m_idx >= array_node_size() )
-                return false;
-
-            for (;;) {
-                node_ptr slot = iter.m_pNode->nodes[iter.m_idx].load( memory_model::memory_order_acquire );
-                if ( slot.bits() == 0 && slot.ptr() == iter.pointer() ) {
-                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
-                        // the item is guarded by iterator, so we may retire it safely
-                        gc::template retire<disposer>( slot.ptr() );
-                        --m_ItemCounter;
-                        m_Stat.onEraseSuccess();
-                        return true;
-                    }
-                }
-                else
-                    return false;
-            }
+            return do_erase_at( iter );
         }
         //@cond
         bool erase_at( reverse_iterator const& iter )
         {
-            return erase_at(static_cast<iterator const&>( iter ));
+            return do_erase_at( iter );
         }
         //@endcond
 
@@ -931,19 +996,19 @@ namespace cds { namespace intrusive {
         /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
         iterator end()
         {
-            return iterator( *this, m_Head, head_size() - 1 );
+            return iterator( *this, m_Head, head_size(), false );
         }
 
         /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
         const_iterator end() const
         {
-            return const_iterator( *this, m_Head, head_size() - 1 );
+            return const_iterator( *this, m_Head, head_size(), false );
         }
 
         /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
         const_iterator cend()
         {
-            return const_iterator( *this, m_Head, head_size() - 1 );
+            return const_iterator( *this, m_Head, head_size(), false );
         }
 
         /// Returns a reverse iterator to the first element of the reversed set
@@ -971,7 +1036,7 @@ namespace cds { namespace intrusive {
         */
         reverse_iterator rend()
         {
-            return reverse_iterator( *this, m_Head, 0 );
+            return reverse_iterator( *this, m_Head, size_t(0) - 1, false );
         }
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
@@ -981,7 +1046,7 @@ namespace cds { namespace intrusive {
         */
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator( *this, m_Head, 0 );
+            return const_reverse_iterator( *this, m_Head, size_t(0) - 1, false );
         }
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
@@ -991,7 +1056,7 @@ namespace cds { namespace intrusive {
         */
         const_reverse_iterator crend()
         {
-            return const_reverse_iterator( *this, m_Head, 0 );
+            return const_reverse_iterator( *this, m_Head, size_t(0) - 1, false );
         }
     ///@}
 
@@ -1262,6 +1327,31 @@ namespace cds { namespace intrusive {
                     }
                 }
             } // while
+        }
+
+        bool do_erase_at( iterator_base const& iter )
+        {
+            if ( iter.m_set != this )
+                return false;
+            if ( iter.m_pNode == m_Head && iter.m_idx >= head_size())
+                return false;
+            if ( iter.m_idx >= array_node_size() )
+                return false;
+
+            for (;;) {
+                node_ptr slot = iter.m_pNode->nodes[iter.m_idx].load( memory_model::memory_order_acquire );
+                if ( slot.bits() == 0 && slot.ptr() == iter.pointer() ) {
+                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                        // the item is guarded by iterator, so we may retire it safely
+                        gc::template retire<disposer>( slot.ptr() );
+                        --m_ItemCounter;
+                        m_Stat.onEraseSuccess();
+                        return true;
+                    }
+                }
+                else
+                    return false;
+            }
         }
 
         template <typename Func>

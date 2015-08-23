@@ -76,14 +76,6 @@ namespace set {
             }
         };
 
-        struct item_disposer {
-            template <typename Hash>
-            void operator()( Item<Hash> * p )
-            {
-                ++p->nDisposeCount;
-            }
-        };
-
         struct hash128
         {
             size_t lo;

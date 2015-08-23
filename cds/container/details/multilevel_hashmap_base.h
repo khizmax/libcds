@@ -29,7 +29,7 @@ namespace cds { namespace container {
         {
             /// Hash functor, default is \p std::hash
             /**
-                \p MultiLevelHashMap may use any hash functor converting key to
+                \p MultiLevelHashMap may use any hash functor converting a key to
                 fixed-sized bit-string, for example, <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
                 <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>,
                 <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
@@ -162,19 +162,19 @@ namespace cds { namespace container {
 
                 template <typename Q>
                 node_type( hasher& h, Q const& key )
-                    : m_Value( std::make_pair( key, mapped_type()))
+                    : m_Value( std::move( std::make_pair( key, mapped_type())))
                     , m_hash( h( m_Value.first ))
                 {}
 
                 template <typename Q, typename U >
                 node_type( hasher& h, Q const& key, U const& val )
-                    : m_Value( std::make_pair( key, val ))
+                    : m_Value( std::move( std::make_pair( key, mapped_type(val))))
                     , m_hash( h( m_Value.first ))
                 {}
 
                 template <typename Q, typename... Args>
                 node_type( hasher& h, Q&& key, Args&&... args )
-                    : m_Value( std::forward<Q>(key), std::move( mapped_type( std::forward<Args>(args)... )))
+                    : m_Value( std::move( std::make_pair( std::forward<Q>(key), std::move( mapped_type( std::forward<Args>(args)... )))))
                     , m_hash( h( m_Value.first ))
                 {}
             };
@@ -199,7 +199,7 @@ namespace cds { namespace container {
 
             struct intrusive_traits: public original_traits
             {
-                typedef get_node_hash hash_accesor;
+                typedef get_node_hash hash_accessor;
                 typedef node_disposer disposer;
             };
 

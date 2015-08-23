@@ -17,6 +17,8 @@ set(CDS_TESTHDR_MAP
     map/hdr_michael_map_lazy_rcu_shb.cpp
     map/hdr_michael_map_lazy_rcu_sht.cpp
     map/hdr_michael_map_lazy_nogc.cpp
+    map/hdr_multilevel_hashmap_hp.cpp
+    map/hdr_multilevel_hashmap_dhp.cpp
     map/hdr_refinable_hashmap_hashmap_std.cpp
     map/hdr_refinable_hashmap_boost_list.cpp
     map/hdr_refinable_hashmap_list.cpp
