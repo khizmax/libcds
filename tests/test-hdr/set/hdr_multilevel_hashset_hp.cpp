@@ -21,9 +21,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!" );
         test_hp<set_type, std::hash<hash_type>>(4, 2);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
             >::type
@@ -44,9 +44,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, hash_type>::value, "set::hash_type != hash128!!!" );
         test_hp<set_type, hash128::make>(4, 2);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
                 , co::less< hash_type::less >
@@ -68,9 +68,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!" );
         test_hp<set_type, std::hash<hash_type>>(4, 2);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
                 ,co::stat< cc::multilevel_hashset::stat<>>
@@ -93,9 +93,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, hash_type>::value, "set::hash_type != hash_type!!!" );
         test_hp<set_type, hash_type::make>(4, 2);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
                 ,co::stat< cc::multilevel_hashset::stat<>>
@@ -117,9 +117,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!" );
         test_hp<set_type, std::hash<hash_type>>(5, 3);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
             >::type
@@ -140,9 +140,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, hash_type>::value, "set::hash_type != hash_type!!!" );
         test_hp<set_type, hash128::make >(4, 3);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
                 ,co::memory_model< co::v::sequential_consistent >
@@ -164,9 +164,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!" );
         test_hp<set_type, std::hash<hash_type>>(5, 3);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
                 ,co::stat< cc::multilevel_hashset::stat<>>
@@ -190,9 +190,9 @@ namespace set {
         static_assert(std::is_same< typename set_type::hash_type, hash_type>::value, "set::hash_type != hash_type!!!" );
         test_hp<set_type, hash_type::make>(4, 3);
 
-        typedef cc::MultiLevelHashSet< 
-            gc_type, 
-            Item<hash_type>, 
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<hash_type>,
             typename cc::multilevel_hashset::make_traits<
                 cc::multilevel_hashset::hash_accessor< get_hash<hash_type>>
                 , co::stat< cc::multilevel_hashset::stat<>>

@@ -241,7 +241,7 @@ namespace cds { namespace container {
             Otherwise, if \p key is found, the function returns an iterator that points to item found.
 
             Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted or \p end() if \p key is not found and insertion is not allowed (\p bInsert is \p false),  
+            item found or inserted or \p end() if \p key is not found and insertion is not allowed (\p bInsert is \p false),
             \p second is \p true if new item has been added or \p false if the item already exists.
         */
         template <typename K>

@@ -141,7 +141,7 @@ namespace cds {
                 sizeof(T) % nAlign == 0
                 \endcode
 
-                The function, like operator \p new does not return \p nullptr. 
+                The function, like operator \p new does not return \p nullptr.
                 In no memory situation the function throws \p std::bad_alloc exception.
             */
             pointer allocate( size_type nAlign, size_type nCount )

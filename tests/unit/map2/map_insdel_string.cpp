@@ -12,7 +12,7 @@ namespace map2 {
     size_t Map_InsDel_string::c_nMaxLoadFactor = 8;
     bool   Map_InsDel_string::c_bPrintGCState = true;
 
-    void Map_InsDel_string::setUpParams( const CppUnitMini::TestCfg& cfg ) 
+    void Map_InsDel_string::setUpParams( const CppUnitMini::TestCfg& cfg )
     {
         c_nInsertThreadCount = cfg.getSizeT("InsertThreadCount", c_nInsertThreadCount );
         c_nDeleteThreadCount = cfg.getSizeT("DeleteThreadCount", c_nDeleteThreadCount );

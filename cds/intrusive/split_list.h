@@ -478,7 +478,7 @@ namespace cds { namespace intrusive {
                 if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
                     return; // someone already have updated m_nBucketCountLog2, so stop here
 
-                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ), 
+                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),
                                                          memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
                 m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
             }

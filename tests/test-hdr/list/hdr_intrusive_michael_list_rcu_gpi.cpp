@@ -65,7 +65,7 @@ namespace ordlist {
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_cmp()
     {
         typedef member_int_item< RCU > item;
-        struct traits: public 
+        struct traits: public
             ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),
@@ -81,7 +81,7 @@ namespace ordlist {
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_less()
     {
         typedef member_int_item< RCU > item;
-        struct traits: public 
+        struct traits: public
             ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),
@@ -97,7 +97,7 @@ namespace ordlist {
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_cmpmix()
     {
         typedef member_int_item< RCU > item;
-        struct traits: public 
+        struct traits: public
             ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),
@@ -114,7 +114,7 @@ namespace ordlist {
     void IntrusiveMichaelListHeaderTest::RCU_GPI_member_ic()
     {
         typedef member_int_item< RCU > item;
-        struct traits: public 
+        struct traits: public
             ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook<
                     offsetof( item, hMember ),

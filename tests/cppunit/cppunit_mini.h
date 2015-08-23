@@ -83,7 +83,7 @@ namespace CppUnitMini
       unsigned int getUInt( const char * pszParamName, unsigned int nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
       long getLong( const char * pszParamName, long nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
       unsigned long getULong( const char * pszParamName, unsigned long nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
-      size_t getSizeT( const char * pszParamName, size_t nDefVal = 0 ) const 
+      size_t getSizeT( const char * pszParamName, size_t nDefVal = 0 ) const
       {
           return static_cast<size_t>( getULong( pszParamName, static_cast<unsigned long>(nDefVal)));
       }

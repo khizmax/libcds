@@ -1487,8 +1487,8 @@ namespace cds { namespace container {
             if ( !pNode->is_valued( memory_model::memory_order_acquire ) )
                 return update_flags::failed;
 
-            if ( child( pNode, left_child, memory_model::memory_order_acquire ) == nullptr 
-              || child( pNode, right_child, memory_model::memory_order_acquire ) == nullptr ) 
+            if ( child( pNode, left_child, memory_model::memory_order_acquire ) == nullptr
+              || child( pNode, right_child, memory_model::memory_order_acquire ) == nullptr )
             {
                 // pNode can be replaced with its child
 
@@ -1682,7 +1682,7 @@ namespace cds { namespace container {
                 }
             }
 
-            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode 
+            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode
                  || child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
 
             int h = height( pNode, memory_model::memory_order_acquire );
@@ -1708,7 +1708,7 @@ namespace cds { namespace container {
         node_type * rebalance_to_right_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR )
         {
             assert( parent( pNode, memory_model::memory_order_relaxed ) == pParent );
-            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode 
+            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode
                  || child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
 
             // pParent and pNode is locked yet
@@ -1762,7 +1762,7 @@ namespace cds { namespace container {
         node_type * rebalance_to_left_locked( node_type * pParent, node_type * pNode, node_type * pRight, int hL )
         {
             assert( parent( pNode, memory_model::memory_order_relaxed ) == pParent );
-            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode 
+            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode
                  || child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
 
             // pParent and pNode is locked yet

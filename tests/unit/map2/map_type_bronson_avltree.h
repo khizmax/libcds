@@ -25,7 +25,7 @@ namespace map2 {
         typedef cds::memory::lazy_vyukov_queue_pool< std::mutex > BronsonAVLTreeMap_lazy_pool;
         typedef cds::memory::bounded_vyukov_queue_pool< std::mutex > BronsonAVLTreeMap_bounded_pool;
 
-        struct BronsonAVLTreeMap_less: public 
+        struct BronsonAVLTreeMap_less: public
             cc::bronson_avltree::make_traits<
                 co::less< less >
                 ,cc::bronson_avltree::relaxed_insert< false >
@@ -39,7 +39,7 @@ namespace map2 {
         typedef cc::BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_shb_less;
         typedef cc::BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_sht_less;
 #endif
-        struct BronsonAVLTreeMap_cmp_stat: public 
+        struct BronsonAVLTreeMap_cmp_stat: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,cc::bronson_avltree::relaxed_insert< false >
@@ -142,8 +142,8 @@ namespace map2 {
     {
         CPPUNIT_MSG( "  Check internal consistency (single-threaded)..." );
         bool bOk = m.check_consistency([]( size_t nLevel, size_t hLeft, size_t hRight )
-            { 
-                CPPUNIT_MSG( "Tree violation on level=" << nLevel << ": hLeft=" << hLeft << ", hRight=" << hRight ) 
+            {
+                CPPUNIT_MSG( "Tree violation on level=" << nLevel << ": hLeft=" << hLeft << ", hRight=" << hRight )
             });
         CPPUNIT_CHECK_CURRENT_EX( bOk, "check_consistency failed");
     }

@@ -6,7 +6,7 @@
 #include "cppunit/cppunit_proxy.h"
 
 // forward declaration
-namespace cds { 
+namespace cds {
     namespace container {}
     namespace opt {}
 }
@@ -114,9 +114,9 @@ namespace map {
                 CPPUNIT_ASSERT(m.contains( key ));
                 CPPUNIT_ASSERT(m.size() == i + 1);
 
-                auto ret = m.update(key, [] ( value_type& v, value_type * old ) { 
+                auto ret = m.update(key, [] ( value_type& v, value_type * old ) {
                     CPPUNIT_ASSERT_CURRENT( old != nullptr );
-                    ++v.second.nInsertCall; 
+                    ++v.second.nInsertCall;
                 }, false );
                 CPPUNIT_ASSERT( ret.first );
                 CPPUNIT_ASSERT( !ret.second );
@@ -152,7 +152,7 @@ namespace map {
                 ++nCount;
             }
             CPPUNIT_ASSERT( nCount == capacity );
-            
+
             nCount = 0;
             for ( auto it = m.cbegin(), itEnd = m.cend(); it != itEnd; ++it ) {
                 CPPUNIT_ASSERT( it->second.nInsertCall == 1 );

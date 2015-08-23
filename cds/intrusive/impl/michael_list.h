@@ -1089,7 +1089,7 @@ namespace cds { namespace intrusive {
             pNext = nullptr;
 
             pCur = pos.guards.protect( position::guard_current_item, *pPrev,
-                   [](marked_node_ptr p) -> value_type * 
+                   [](marked_node_ptr p) -> value_type *
                     {
                         return node_traits::to_value_ptr( p.ptr() );
                     });
@@ -1102,8 +1102,8 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                pNext = pos.guards.protect( position::guard_next_item, pCur->m_pNext, 
-                        [](marked_node_ptr p ) -> value_type * 
+                pNext = pos.guards.protect( position::guard_next_item, pCur->m_pNext,
+                        [](marked_node_ptr p ) -> value_type *
                         {
                             return node_traits::to_value_ptr( p.ptr() );
                         });

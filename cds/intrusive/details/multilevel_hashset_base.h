@@ -106,7 +106,7 @@ namespace cds { namespace intrusive {
         };
 
         /// \p MultiLevelHashSet traits
-        struct traits 
+        struct traits
         {
             /// Mandatory functor to get hash value from data node
             /**
@@ -200,7 +200,7 @@ namespace cds { namespace intrusive {
                 @copydetails traits::node_allocator
             - \p opt::compare - hash comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
-            - \p opt::less - specifies binary predicate used for hash comparison. 
+            - \p opt::less - specifies binary predicate used for hash comparison.
                 If the option is not specified, \p memcmp() -like bit-wise hash comparator is used
                 because the hash value is treated as fixed-sized bit-string.
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.

@@ -231,10 +231,10 @@ namespace tree {
                 CPPUNIT_ASSERT( f.m_found.stat.nEnsureNewFuncCall == 0 );
             }
 
-            ensureResult = s.update( 13, []( bool /*bNew*/, key_type key, value_type& v ) 
-                { 
-                    v.nVal = key * 1000; 
-                    ++v.stat.nEnsureNewFuncCall; 
+            ensureResult = s.update( 13, []( bool /*bNew*/, key_type key, value_type& v )
+                {
+                    v.nVal = key * 1000;
+                    ++v.stat.nEnsureNewFuncCall;
                 });
             CPPUNIT_ASSERT( ensureResult.first && ensureResult.second );
             CPPUNIT_ASSERT( !s.empty() );
@@ -391,7 +391,7 @@ namespace tree {
             xp = s.extract_max();
             CPPUNIT_ASSERT( xp );
             nPrev = xp->nVal;
-            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1), 
+            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1),
                 "Expected=" << c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1) << " real=" << nPrev );
             while ( !s.empty() ) {
                 xp = s.extract_max();
@@ -411,9 +411,9 @@ namespace tree {
             xp = s.extract_max( [&keyPrev]( key_type k ){ keyPrev = k; });
             CPPUNIT_ASSERT( xp );
             nPrev = xp->nVal;
-            CPPUNIT_CHECK_EX( keyPrev == sizeof(keys) / sizeof(keys[0]) - 1, 
+            CPPUNIT_CHECK_EX( keyPrev == sizeof(keys) / sizeof(keys[0]) - 1,
                 "Expected=" << sizeof(keys) / sizeof(keys[0]) - 1 << " real=" << keyPrev );
-            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1), 
+            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1),
                 "Expected=" << c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1) << " real=" << nPrev );
             while ( !s.empty() ) {
                 xp = s.extract_max( [&key](key_type k){ key = k; });
@@ -435,9 +435,9 @@ namespace tree {
             xp = s.extract_max_key( keyPrev );
             CPPUNIT_ASSERT( xp );
             nPrev = xp->nVal;
-            CPPUNIT_CHECK_EX( keyPrev == sizeof(keys) / sizeof(keys[0]) - 1, 
+            CPPUNIT_CHECK_EX( keyPrev == sizeof(keys) / sizeof(keys[0]) - 1,
                 "Expected=" << sizeof(keys) / sizeof(keys[0]) - 1 << " real=" << keyPrev );
-            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1), 
+            CPPUNIT_CHECK_EX( nPrev == c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1),
                 "Expected=" << c_nStep * (sizeof(keys) / sizeof(keys[0]) - 1) << " real=" << nPrev );
             while ( !s.empty() ) {
                 xp = s.extract_max_key( key );

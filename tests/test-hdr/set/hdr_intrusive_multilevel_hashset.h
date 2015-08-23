@@ -6,7 +6,7 @@
 #include "cppunit/cppunit_proxy.h"
 
 // forward declaration
-namespace cds { 
+namespace cds {
     namespace intrusive {}
     namespace opt {}
 }

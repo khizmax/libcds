@@ -78,8 +78,8 @@ namespace cds { namespace container {
                     typename equal_to_wrapper< typename original_type_traits::equal_to >::type
                 >::type equal_to;
 
-                typedef typename std::conditional< 
-                    original_type_traits::sort 
+                typedef typename std::conditional<
+                    original_type_traits::sort
                        || !std::is_same<typename original_type_traits::compare, cds::opt::none>::value
                        || !std::is_same<typename original_type_traits::less, cds::opt::none>::value,
                     cds::details::compare_wrapper<

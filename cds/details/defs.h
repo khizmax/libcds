@@ -21,7 +21,7 @@
 
    The main namespace for the library is \ref cds.
    To see the full list of container's class go to <a href="modules.html">modules</a> tab.
-   
+
    Supported processor architectures and operating systems (OS) are:
       - x86 [32bit] Linux, Windows, FreeBSD, MinGW
       - amd64 (x86-64) [64bit] Linux, Windows, FreeBSD, MinGW
@@ -32,7 +32,7 @@
 
    Supported compilers:
       - GCC 4.8+
-      - Clang 3.3+ 
+      - Clang 3.3+
       - MS Visual C++ 2013 Update 4 and above
       - Intel C++ Compiler 15
 
@@ -41,11 +41,11 @@
    schema used. However, any implementation supports common interface for the type of data structure.
 
    To use any lock-free data structure, the following are needed:
-   - atomic operation library conforming with C++11 memory model. 
-      The <b>libcds</b> can be built with \p std::atomic, \p boost::atomic or its own 
+   - atomic operation library conforming with C++11 memory model.
+      The <b>libcds</b> can be built with \p std::atomic, \p boost::atomic or its own
       @ref cds_cxx11_atomic "atomic implementation"
-   - safe memory reclamation (SMR) or garbage collecting (GC) algorithm.  
-   
+   - safe memory reclamation (SMR) or garbage collecting (GC) algorithm.
+
    SMR is the main part of lock-free data structs. The SMR solves the problem of safe
    memory reclamation that is one of the main problem for lock-free programming.
    The library contains the implementations of several light-weight \ref cds_garbage_collector "memory reclamation schemes":
@@ -130,12 +130,12 @@
     }
     \endcode
 
-   
+
    \par How to build
 
    The <b>cds</b> is mostly header-only library. Only small part of library related to GC core functionality
-   should be compiled. 
-   
+   should be compiled.
+
    The test projects depends on the following static library from \p boost:
    - \p boost.thread
    - \p boost.date_time

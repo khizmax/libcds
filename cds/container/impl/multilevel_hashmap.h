@@ -55,11 +55,11 @@ namespace cds { namespace container {
         string</b> and rehash incrementally.
 
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashMap:
-        - all keys is converted to fixed-size bit-string by hash functor provided. 
+        - all keys is converted to fixed-size bit-string by hash functor provided.
           You can use variable-length keys, for example, \p std::string as a key for \p %MultiLevelHashMap,
           but real key in the map will be fixed-ize hash values of your keys.
           For the strings you may use well-known hashing algorithms like <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
-          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a> 
+          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
           or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
           converts variable-length strings to fixed-length bit-strings, and such hash values will be the keys in \p %MultiLevelHashMap.
         - \p %MultiLevelHashMap uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
@@ -80,12 +80,12 @@ namespace cds { namespace container {
         - <tt><cds/container/multilevel_hashmap_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashMap_rcu "RCU type". RCU specialization
             has a slightly different interface.
     */
-    template < 
+    template <
         class GC
         ,typename Key
         ,typename T
 #ifdef CDS_DOXYGEN_INVOKED
-        ,class Traits = multilevel_hashmap::traits 
+        ,class Traits = multilevel_hashmap::traits
 #else
         ,class Traits
 #endif
@@ -463,8 +463,8 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K&& key, Func func, bool bInsert = true )
         {
             scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key)));
-            std::pair<bool, bool> result = base_class::do_update( *sp, 
-                [&func]( node_type& node, node_type * old ) { func( node.m_Value, old ? &old->m_Value : nullptr );}, 
+            std::pair<bool, bool> result = base_class::do_update( *sp,
+                [&func]( node_type& node, node_type * old ) { func( node.m_Value, old ? &old->m_Value : nullptr );},
                 bInsert );
             if ( result.first )
                 sp.release();
@@ -527,7 +527,7 @@ namespace cds { namespace container {
         //@endcond
 
         /// Extracts the item from the map with specified \p key
-        /** 
+        /**
             The function searches an item with key equal to <tt>hash( key_type( key ))</tt> in the map,
             unlinks it from the map, and returns a guarded pointer to the item found.
             If \p key is not found the function returns an empty guarded pointer.
@@ -699,7 +699,7 @@ namespace cds { namespace container {
             - pre-increment and pre-decrement. Post-operators is not supported
             - equality operators <tt>==</tt> and <tt>!=</tt>.
                 Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
                 does not entail <tt> &(*it1) == &(*it2) </tt>
             - helper member function \p release() that clears internal hazard pointer.
                 After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
@@ -723,19 +723,19 @@ namespace cds { namespace container {
             return base_class::template init_begin<const_iterator>();
         }
 
-        /// Returns an iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns an iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior.
         iterator end()
         {
             return base_class::template init_end<iterator>();
         }
 
-        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator end() const
         {
             return base_class::template init_end<const_iterator>();
         }
 
-        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator cend()
         {
             return base_class::template init_end<const_iterator>();

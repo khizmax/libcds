@@ -217,7 +217,7 @@ namespace cds { namespace intrusive {
 
             /// Specifies list ordering policy
             /**
-                If \p sort is \p true, than list maintains items in sorted order, otherwise the list is unordered. 
+                If \p sort is \p true, than list maintains items in sorted order, otherwise the list is unordered.
                 Default is \p true.
                 Note that if \p sort is \p false, than lookup operations scan entire list.
             */

@@ -181,7 +181,7 @@ namespace cds { namespace memory {
             if ( p ) {
                 if ( from_pool(p) ) {
                     // The queue can notify about false fullness state
-                    // so we push in loop 
+                    // so we push in loop
                     back_off bkoff;
                     while ( !m_Queue.push( *p ))
                         bkoff();

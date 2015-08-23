@@ -58,7 +58,7 @@ namespace cds { namespace intrusive {
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
         - all keys must be fixed-size. It means that you cannot use \p std::string as a key for \p %MultiLevelHashSet.
           Instead, for the strings you should use well-known hashing algorithms like <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
-          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a> 
+          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
           or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
           converts variable-length strings to fixed-length bit-strings, and use that hash as a key in \p %MultiLevelHashSet.
         - \p %MultiLevelHashSet uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
@@ -71,7 +71,7 @@ namespace cds { namespace intrusive {
         - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
         - \p T - a value type to be stored in the set
         - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction.
-            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor" 
+            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor"
             to hash value of \p T. The set algorithm does not calculate that hash value.
 
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
@@ -100,7 +100,7 @@ namespace cds { namespace intrusive {
         static_assert(!std::is_same< hash_accessor, cds::opt::none >::value, "hash_accessor functor must be specified" );
 
         /// Hash type deduced from \p hash_accessor return type
-        typedef typename std::decay< 
+        typedef typename std::decay<
             typename std::remove_reference<
                 decltype( hash_accessor()( std::declval<T>()) )
             >::type
@@ -113,7 +113,7 @@ namespace cds { namespace intrusive {
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined hash_comparator  ;    ///< hash compare functor based on opt::compare and opt::less option setter
 #   else
-        typedef typename cds::opt::details::make_comparator_from< 
+        typedef typename cds::opt::details::make_comparator_from<
             hash_type,
             traits,
             multilevel_hashset::bitwise_compare< hash_type >
@@ -181,7 +181,7 @@ namespace cds { namespace intrusive {
             size_t              m_idx;      ///< current position in m_pNode
             typename gc::Guard  m_guard;    ///< HP guard
             MultiLevelHashSet const*  m_set;    ///< Hash set
-            
+
         public:
             iterator_base() CDS_NOEXCEPT
                 : m_pNode( nullptr )
@@ -596,7 +596,7 @@ namespace cds { namespace intrusive {
 
         /// Inserts new node
         /**
-            The function inserts \p val in the set if it does not contain 
+            The function inserts \p val in the set if it does not contain
             an item with that hash.
 
             Returns \p true if \p val is placed into the set, \p false otherwise.
@@ -729,7 +729,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the set
-        /** 
+        /**
             The function searches \p hash in the set,
             unlinks the item found, and returns \p true.
             If that item is not found the function returns \p false.
@@ -789,7 +789,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
         /// Extracts the item with specified \p hash
-        /** 
+        /**
             The function searches \p hash in the set,
             unlinks it from the set, and returns an guarded pointer to the item extracted.
             If \p hash is not found the function returns an empty guarded pointer.
@@ -968,7 +968,7 @@ namespace cds { namespace intrusive {
             - pre-increment and pre-decrement. Post-operators is not supported
             - equality operators <tt>==</tt> and <tt>!=</tt>.
                 Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
                 does not entail <tt> &(*it1) == &(*it2) </tt>: welcome to concurrent containers
             - helper member function \p release() that clears internal hazard pointer.
                 After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
@@ -993,19 +993,19 @@ namespace cds { namespace intrusive {
             return const_iterator( *this, m_Head, size_t(0) - 1 );
         }
 
-        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         iterator end()
         {
             return iterator( *this, m_Head, head_size(), false );
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator end() const
         {
             return const_iterator( *this, m_Head, head_size(), false );
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator cend()
         {
             return const_iterator( *this, m_Head, head_size(), false );
@@ -1031,8 +1031,8 @@ namespace cds { namespace intrusive {
 
         /// Returns a reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         reverse_iterator rend()
         {
@@ -1041,8 +1041,8 @@ namespace cds { namespace intrusive {
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator rend() const
         {
@@ -1051,8 +1051,8 @@ namespace cds { namespace intrusive {
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator crend()
         {
@@ -1204,7 +1204,7 @@ namespace cds { namespace intrusive {
 
             node_ptr cur(current.ptr());
             atomic_node_ptr& slot = pParent->nodes[idxParent];
-            if ( !slot.compare_exchange_strong( cur, cur | flag_array_converting, memory_model::memory_order_release, atomics::memory_order_relaxed )) 
+            if ( !slot.compare_exchange_strong( cur, cur | flag_array_converting, memory_model::memory_order_release, atomics::memory_order_relaxed ))
             {
                 m_Stat.onExpandNodeFailed();
                 free_array_node( pArr );
@@ -1214,7 +1214,7 @@ namespace cds { namespace intrusive {
             pArr->nodes[idx].store( current, memory_model::memory_order_release );
 
             cur = cur | flag_array_converting;
-            CDS_VERIFY( 
+            CDS_VERIFY(
                 slot.compare_exchange_strong( cur, node_ptr( to_node( pArr ), flag_array_node ), memory_model::memory_order_release, atomics::memory_order_relaxed )
             );
 

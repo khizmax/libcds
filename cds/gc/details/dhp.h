@@ -418,10 +418,10 @@ namespace cds { namespace gc {
                         pItem = m_pEpochFree[ nEpoch = current_epoch() ].load(atomics::memory_order_acquire);
                         if ( !pItem )
                             goto retry;
-                        if ( m_pEpochFree[nEpoch].compare_exchange_weak( pItem, 
-                                                                         pItem->m_pNextFree.load(atomics::memory_order_acquire), 
+                        if ( m_pEpochFree[nEpoch].compare_exchange_weak( pItem,
+                                                                         pItem->m_pNextFree.load(atomics::memory_order_acquire),
                                                                          atomics::memory_order_acquire, atomics::memory_order_relaxed ))
-                        { 
+                        {
                             goto success;
                         }
                     }
@@ -436,8 +436,8 @@ namespace cds { namespace gc {
                             goto retry;
                         }
                         // pItem is changed by compare_exchange_weak
-                    } while ( !m_pGlobalFreeHead.compare_exchange_weak( pItem, 
-                                                                        pItem->m_pNextFree.load(atomics::memory_order_acquire), 
+                    } while ( !m_pGlobalFreeHead.compare_exchange_weak( pItem,
+                                                                        pItem->m_pNextFree.load(atomics::memory_order_acquire),
                                                                         atomics::memory_order_acquire, atomics::memory_order_relaxed ));
 
                 success:

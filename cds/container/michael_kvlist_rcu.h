@@ -540,7 +540,7 @@ namespace cds { namespace container {
             unlinks it from the list, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If \p key is not found the function returns an empty \p exempt_ptr.
 
-            @note The function does NOT dispose the item found. 
+            @note The function does NOT dispose the item found.
             It just excludes the item from the list and returns a pointer to item found.
             You shouldn't lock RCU before calling this function.
 

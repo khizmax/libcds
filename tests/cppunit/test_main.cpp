@@ -120,7 +120,7 @@ namespace CppUnitMini
   }
 
   bool TestCase::shouldRunThis(const char *in_desiredTest, const char *in_className, const char *in_functionName,
-                       bool invert, bool explicit_test, bool &do_progress) 
+                       bool invert, bool explicit_test, bool &do_progress)
   {
       if ((in_desiredTest) && (in_desiredTest[0] != '\0')) {
         do_progress = false;

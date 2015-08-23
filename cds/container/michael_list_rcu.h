@@ -536,7 +536,7 @@ namespace cds { namespace container {
 
             // The RCU should NOT be locked when extract() is called!
             assert( !rcu::is_locked() );
-                
+
             // extract() call
             p = theList.extract( 10 )
             if ( p ) {

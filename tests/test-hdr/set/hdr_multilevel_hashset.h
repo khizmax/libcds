@@ -6,7 +6,7 @@
 #include "cppunit/cppunit_proxy.h"
 
 // forward declaration
-namespace cds { 
+namespace cds {
     namespace container {}
     namespace opt {}
 }
@@ -162,8 +162,8 @@ namespace set {
             for ( size_t i = 0; i < capacity; ++i ) {
                 hash_type h = hasher(i);
                 CPPUNIT_ASSERT( s.contains( h ));
-                std::pair<bool, bool> ret = s.update( arg_type( i, h ), 
-                    [](value_type& i, value_type * prev ) { 
+                std::pair<bool, bool> ret = s.update( arg_type( i, h ),
+                    [](value_type& i, value_type * prev ) {
                         CPPUNIT_ASSERT_CURRENT( prev != nullptr );
                         CPPUNIT_ASSERT_CURRENT( i.key == prev->key );
                         CPPUNIT_ASSERT_CURRENT( i.hash == prev->hash );
@@ -262,11 +262,11 @@ namespace set {
                 size_t nSum = 0;
                 for ( size_t i = 1; i <= capacity; ++i ) {
                     CPPUNIT_ASSERT( s.size() == capacity - i + 1 );
-                    CPPUNIT_ASSERT(s.erase(hasher(i), [&nSum]( value_type const& val ) { 
+                    CPPUNIT_ASSERT(s.erase(hasher(i), [&nSum]( value_type const& val ) {
                         CPPUNIT_ASSERT_CURRENT( val.nInsertCall == 1 );
                         CPPUNIT_ASSERT_CURRENT( val.nFindCall == 4 );
                         CPPUNIT_ASSERT_CURRENT( val.nIteratorCall == 2 );
-                        nSum += val.key; 
+                        nSum += val.key;
                     } ))
                     CPPUNIT_ASSERT( s.size() == capacity - i );
                     CPPUNIT_ASSERT( !s.erase(hasher(i), [&nSum]( value_type const& val ) { nSum += val.key; } ))
@@ -281,8 +281,8 @@ namespace set {
                 CPPUNIT_ASSERT( !s.contains( h ));
                 guarded_ptr gp(s.get( h ));
                 CPPUNIT_ASSERT( !gp );
-                std::pair<bool, bool> ret = s.update( arg_type( i, h ), 
-                    [](value_type& i, value_type * prev ) { 
+                std::pair<bool, bool> ret = s.update( arg_type( i, h ),
+                    [](value_type& i, value_type * prev ) {
                         CPPUNIT_ASSERT_CURRENT( prev == nullptr );
                         i.nInsertCall += 1;
                     });

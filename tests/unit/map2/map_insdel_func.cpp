@@ -20,7 +20,7 @@ namespace map2 {
     size_t  Map_InsDel_func::c_nMaxLoadFactor = def_nMaxLoadFactor;  // maximum load factor
     bool    Map_InsDel_func::c_bPrintGCState = true;
 
-    void Map_InsDel_func::setUpParams( const CppUnitMini::TestCfg& cfg ) 
+    void Map_InsDel_func::setUpParams( const CppUnitMini::TestCfg& cfg )
     {
         c_nInsertThreadCount = cfg.getULong("InsertThreadCount", def_nInsertThreadCount );
         c_nDeleteThreadCount = cfg.getULong("DeleteThreadCount", def_nDeleteThreadCount );

@@ -56,7 +56,7 @@ namespace cds { namespace container {
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
         - all keys must be fixed-size. It means that you cannot use \p std::string as a key for \p %MultiLevelHashSet.
           Instead, for the strings you should use well-known hashing algorithms like <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
-          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a> 
+          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
           or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
           converts variable-length strings to fixed-length bit-strings, and use that hash as a key in \p %MultiLevelHashSet.
         - \p %MultiLevelHashSet uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
@@ -69,7 +69,7 @@ namespace cds { namespace container {
         - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
         - \p T - a value type to be stored in the set
         - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction.
-            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor" 
+            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor"
             to hash value of \p T. The set algorithm does not calculate that hash value.
 
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
@@ -254,7 +254,7 @@ namespace cds { namespace container {
         }
 
         /// Deletes the item from the set
-        /** 
+        /**
             The function searches \p hash in the set,
             deletes the item found, and returns \p true.
             If that item is not found the function returns \p false.
@@ -302,12 +302,12 @@ namespace cds { namespace container {
         //@endcond
 
         /// Extracts the item with specified \p hash
-        /** 
+        /**
             The function searches \p hash in the set,
             unlinks it from the set, and returns an guarded pointer to the item extracted.
             If \p hash is not found the function returns an empty guarded pointer.
 
-            The item returned is reclaimed by garbage collector \p GC 
+            The item returned is reclaimed by garbage collector \p GC
             when returned \ref guarded_ptr object to be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
@@ -457,7 +457,7 @@ namespace cds { namespace container {
             - pre-increment and pre-decrement. Post-operators is not supported
             - equality operators <tt>==</tt> and <tt>!=</tt>.
                 Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
                 does not entail <tt> &(*it1) == &(*it2) </tt>
             - helper member function \p release() that clears internal hazard pointer.
                 After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
@@ -482,19 +482,19 @@ namespace cds { namespace container {
             return base_class::cbegin();
         }
 
-        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         iterator end()
         {
             return base_class::end();
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator end() const
         {
             return base_class::end();
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator cend()
         {
             return base_class::cend();
@@ -520,8 +520,8 @@ namespace cds { namespace container {
 
         /// Returns a reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         reverse_iterator rend()
         {
@@ -530,8 +530,8 @@ namespace cds { namespace container {
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator rend() const
         {
@@ -540,8 +540,8 @@ namespace cds { namespace container {
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator crend()
         {

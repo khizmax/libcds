@@ -19,7 +19,7 @@ namespace cds { namespace sync {
 
     /// @ref cds_sync_monitor "Monitor" that injects the lock into each node
     /**
-        This simple monitor injects the lock object of type \p Lock into each node. 
+        This simple monitor injects the lock object of type \p Lock into each node.
         The monitor is designed for user-space locking primitives like \ref sync::spin_lock "spin-lock".
 
         Template arguments:
@@ -66,7 +66,7 @@ namespace cds { namespace sync {
 
         /// Scoped lock
         template <typename Node>
-        using scoped_lock = monitor_scoped_lock< injecting_monitor, Node > ;
+        using scoped_lock = monitor_scoped_lock< injecting_monitor, Node >;
     };
 }} // namespace cds::sync
 

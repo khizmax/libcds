@@ -100,12 +100,12 @@ namespace cds { namespace container {
                 @copydetails traits::node_allocator
             - \p opt::compare - hash comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
-            - \p opt::less - specifies binary predicate used for hash comparison. 
+            - \p opt::less - specifies binary predicate used for hash comparison.
                 @copydetails cds::container::multilevel_hashmap::traits::less
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature.
                 @copydetails cds::container::multilevel_hashmap::traits::item_counter
-            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)                
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::stat - internal statistics. By default, it is disabled (\p multilevel_hashmap::empty_stat).
                 To enable it use \p multilevel_hashmap::stat
@@ -144,7 +144,7 @@ namespace cds { namespace container {
             typedef Traits  original_traits;
             typedef typename cds::opt::v::hash_selector< typename original_traits::hash >::type hasher;
 
-            typedef typename std::decay< 
+            typedef typename std::decay<
                 typename std::remove_reference<
                     decltype( hasher()( std::declval<key_type>()) )
                 >::type
@@ -152,7 +152,7 @@ namespace cds { namespace container {
             //typedef typename std::result_of< hasher( std::declval<key_type>()) >::type hash_type;
             static_assert( !std::is_pointer<hash_type>::value, "hash functor should return a reference to hash value" );
 
-            struct node_type 
+            struct node_type
             {
                 std::pair< key_type const, mapped_type> m_Value;
                 hash_type const m_hash;

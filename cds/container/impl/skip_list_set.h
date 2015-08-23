@@ -255,7 +255,7 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p val key not found in the set, then the new item created from \p val
-            will be inserted into the set iff \p bInsert is \p true. 
+            will be inserted into the set iff \p bInsert is \p true.
             Otherwise, if \p val is found, the functor \p func will be called with the item found.
 
             The functor \p Func signature:
@@ -284,7 +284,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
             std::pair<bool, bool> bRes = base_class::update( *sp,
-                [&func, &val](bool bNew, node_type& node, node_type&){ func( bNew, node.m_Value, val ); }, 
+                [&func, &val](bool bNew, node_type& node, node_type&){ func( bNew, node.m_Value, val ); },
                 bInsert );
             if ( bRes.first && bRes.second )
                 sp.release();
