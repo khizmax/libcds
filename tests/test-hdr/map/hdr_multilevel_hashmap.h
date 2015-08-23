@@ -98,7 +98,7 @@ namespace map {
 
             size_t const capacity = 1000;
 
-            Map m;
+            Map m( nHeadBits, nArrayBits );
             CPPUNIT_MSG("Array size: head=" << m.head_size() << ", array_node=" << m.array_node_size());
             //CPPUNIT_ASSERT(m.head_size() >= (size_t(1) << nHeadBits));
             //CPPUNIT_ASSERT(m.array_node_size() == (size_t(1) << nArrayBits));

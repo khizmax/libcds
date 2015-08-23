@@ -129,7 +129,7 @@ namespace set {
         {
             typedef typename Set::hash_type hash_type;
             typedef typename Set::value_type value_type;
-            typedef typename Arg<hash_type> arg_type;
+            typedef Arg<hash_type> arg_type;
             typedef typename Set::guarded_ptr guarded_ptr;
 
             Hasher hasher;

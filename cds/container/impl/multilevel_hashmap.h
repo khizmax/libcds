@@ -136,7 +136,6 @@ namespace cds { namespace container {
         class bidirectional_iterator: public base_class::iterator_base
         {
             friend class MultiLevelHashMap;
-            friend typename base_class;
             typedef typename base_class::iterator_base iterator_base;
 
         protected:
@@ -202,7 +201,7 @@ namespace cds { namespace container {
                 return !( *this == rhs );
             }
 
-        protected:
+        public: // for internal use only!
             bidirectional_iterator( base_class const& set, typename base_class::array_node * pNode, size_t idx, bool )
                 : iterator_base( set, pNode, idx, false )
             {}
@@ -217,7 +216,6 @@ namespace cds { namespace container {
         class reverse_bidirectional_iterator : public base_class::iterator_base
         {
             friend class MultiLevelHashMap;
-            friend typename base_class;
             typedef typename base_class::iterator_base iterator_base;
 
         public:
@@ -281,7 +279,7 @@ namespace cds { namespace container {
                 return !( *this == rhs );
             }
 
-        protected:
+        public: // for internal use only!
             reverse_bidirectional_iterator( base_class const& set, typename base_class::array_node * pNode, size_t idx, bool )
                 : iterator_base( set, pNode, idx, false )
             {}

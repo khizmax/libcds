@@ -1360,7 +1360,7 @@ namespace cds { namespace intrusive {
             hash_type const& hash = hash_accessor()( val );
             hash_splitter splitter( hash );
             hash_comparator cmp;
-            typename gc::GuardArray<2> guards;
+            typename gc::template GuardArray<2> guards;
             back_off bkoff;
 
             array_node * pArr = m_Head;
