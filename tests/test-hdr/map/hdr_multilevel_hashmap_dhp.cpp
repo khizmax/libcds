@@ -136,5 +136,3 @@ namespace map {
     }
 
 } // namespace map
-
-CPPUNIT_TEST_SUITE_REGISTRATION(map::MultiLevelHashMapHdrTest);

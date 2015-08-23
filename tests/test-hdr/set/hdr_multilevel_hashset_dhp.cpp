@@ -203,5 +203,4 @@ namespace set {
         test_hp<set_type2, hash_type::make>(4, 3);
     }
 
-
 } // namespace set
