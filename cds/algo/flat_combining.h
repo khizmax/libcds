@@ -1,32 +1,4 @@
-/*
-    This file is a part of libcds - Concurrent Data Structures library
-
-    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
-
-    Source code repo: http://github.com/khizmax/libcds/
-    Download: http://sourceforge.net/projects/libcds/files/
-    
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
-*/
+//$$CDS-header$$
 
 #ifndef CDSLIB_ALGO_FLAT_COMBINING_H
 #define CDSLIB_ALGO_FLAT_COMBINING_H
@@ -148,8 +120,8 @@ namespace cds { namespace algo {
             counter_type    m_nPubRecordDeteted ;   ///< Count of deleted publication records
             counter_type    m_nAcquirePubRecCount;  ///< Count of acquiring publication record
             counter_type    m_nReleasePubRecCount;  ///< Count on releasing publication record
-			counter_type    m_nIterationCount;      ///< Count on iteration of wait_for_combining
-			counter_type    m_nWaitForCombiningCount;      ///< Count on iteration of wait_for_combining
+            counter_type    m_nIterationCount;      ///< Count on iteration of wait_for_combining
+            counter_type    m_nWaitForCombiningCount;      ///< Count on iteration of wait_for_combining
 
             /// Returns current combining factor
             /**
@@ -171,8 +143,8 @@ namespace cds { namespace algo {
             void    onDeletePubRecord()         { ++m_nPubRecordDeteted; }
             void    onAcquirePubRecord()        { ++m_nAcquirePubRecCount; }
             void    onReleasePubRecord()        { ++m_nReleasePubRecCount; }
-			void    onIteration()               { ++m_nIterationCount; }
-			void    onWaitForCombining()        { ++m_nWaitForCombiningCount; }
+            void    onIteration()               { ++m_nIterationCount; }
+            void    onWaitForCombining()        { ++m_nWaitForCombiningCount; }
             //@endcond
         };
 
@@ -189,8 +161,8 @@ namespace cds { namespace algo {
             void    onDeletePubRecord()         {}
             void    onAcquirePubRecord()        {}
             void    onReleasePubRecord()        {}
-			void    onIteration()               {}
-			void    onWaitForCombining()        {}
+            void    onIteration()               {}
+            void    onWaitForCombining()        {}
             //@endcond
         };
 
@@ -216,8 +188,8 @@ namespace cds { namespace algo {
             - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::stat - internal statistics, possible type: \ref stat, \ref empty_stat (the default)
             - \p opt::memory_model - C++ memory ordering model.
-                List of all available memory ordering see \p opt::memory_model.
-                Default is \p cds::opt::v::relaxed_ordering
+                List of all available memory ordering see opt::memory_model.
+                Default if cds::opt::v:relaxed_ordering
         */
         template <typename... Options>
         struct make_traits {
@@ -240,27 +212,27 @@ namespace cds { namespace algo {
 
             The kernel object should be a member of a container class. The container cooperates with flat combining
             kernel object. There are two ways to interact with the kernel:
-            - One-by-one processing the active records of the publication list. This mode provides by \p combine() function:
-              the container acquires its publication record by \p acquire_record(), fills its fields and calls
-              \p combine() function of its kernel object. If the current thread becomes a combiner, the kernel
-              calls \p fc_apply() function of the container for each active non-empty record. Then, the container
-              should release its publication record by \p release_record(). Only one pass through the publication
+            - One-by-one processing the active records of the publication list. This mode provides \ref combine function:
+              the container acquires its publication record by \ref acquire_record, fills its fields and calls
+              \p combine function of its kernel object. If the current thread becomes a combiner, the kernel
+              calls \p fc_apply function of the container for each active non-empty record. Then, the container
+              should release its publication record by \ref release_record. Only one pass through the publication
               list is possible.
-            - Batch processing - \p batch_combine() function. It this mode the container obtains access
+            - Batch processing (\ref batch_combine function). It this mode the container obtains access
               to entire publication list. This mode allows the container to perform an elimination, for example,
-              the stack can collide \p push() and \p pop() requests. The sequence of invocations is the following:
-              the container acquires its publication record by \p acquire_record(), fills its field and call
-              \p batch_combine() function of its kernel object. If the current thread becomes a combiner,
-              the kernel calls \p fc_process() function of the container passing two iterators pointing to
-              the begin and the end of publication list (see \ref iterator class). The iterators allow
+              the stack can collide \p push and \p pop requests. The sequence of invocations is the following:
+              the container acquires its publication record by \ref acquire_record, fills its field and call
+              \p batch_combine function of its kernel object. If the current thread becomes a combiner,
+              the kernel calls \p fc_process function of the container passing two iterators pointing to
+              begin and end of publication list (see \ref iterator class). The iterators allows
               multiple pass through active records of publication list. For each processed record the container
-              should call \p operation_done() function. On the end, the container should release
-              its record by \p release_record().
+              should call \ref operation_done function. On the end, the container should release
+              its record by \ref release_record.
         */
         template <
             typename PublicationRecord
-            ,typename Traits = traits
-			, template<class, class> class WaitStrategy = DefautlWaitStartegy
+            ,typename Traits
+            ,template<class, class> class WaitStrategy
         >
         class kernel
         {
@@ -325,14 +297,8 @@ namespace cds { namespace algo {
             ~kernel()
             {
                 // mark all publication record as detached
-                for ( publication_record * p = m_pHead; p; ) {
+                for ( publication_record * p = m_pHead; p; p = p->pNext.load( memory_model::memory_order_relaxed ))
                     p->pOwner = nullptr;
-
-                    publication_record * pRec = p;
-                    p = p->pNext.load( memory_model::memory_order_relaxed );
-                    if ( pRec->nState.load( memory_model::memory_order_relaxed ) == removed )
-                        free_publication_record( static_cast<publication_record_type *>( pRec ));
-                }
             }
 
             /// Gets publication list record for the current thread
@@ -566,21 +532,16 @@ namespace cds { namespace algo {
                 // Thread done
                 // pRec that is TLS data should be excluded from publication list
                 if ( pRec ) {
-                    if ( pRec->pOwner && pRec->nState.load(memory_model::memory_order_relaxed) == active ) {
+                    if ( pRec->nState.load(memory_model::memory_order_relaxed) == active && pRec->pOwner ) {
                         // record is active and kernel is alive
                         unsigned int nState = active;
                         pRec->nState.compare_exchange_strong( nState, removed, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     }
                     else {
                         // record is not in publication list or kernel already deleted
-                        free_publication_record( pRec );
+                        cxx11_allocator().Delete( pRec );
                     }
                 }
-            }
-
-            static void free_publication_record( publication_record_type * pRec )
-            {
-                cxx11_allocator().Delete( pRec );
             }
 
             void init()
@@ -749,10 +710,10 @@ namespace cds { namespace algo {
 
             bool wait_for_combining( publication_record_type * pRec )
             {
-				m_Stat.onWaitForCombining();
+                m_Stat.onWaitForCombining();
                 while ( pRec->nRequest.load( memory_model::memory_order_acquire ) != req_Response ) {
 
-					m_Stat.onIteration();
+                    m_Stat.onIteration();
                     // The record can be excluded from publication list. Reinsert it
                     republish(pRec);
                     m_waitStrategy.wait(pRec);
@@ -803,14 +764,14 @@ namespace cds { namespace algo {
                     if ( pPrev->pNext.compare_exchange_strong( p, pNext,
                         memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     {
-                        free_publication_record( static_cast<publication_record_type *>( p ));
+                        cxx11_allocator().Delete( static_cast<publication_record_type *>( p ));
                         m_Stat.onDeletePubRecord();
                     }
                     return pNext;
                 }
                 else {
                     m_pHead = static_cast<publication_record_type *>( p->pNext.load( memory_model::memory_order_acquire ));
-                    free_publication_record( static_cast<publication_record_type *>( p ));
+                    cxx11_allocator().Delete( static_cast<publication_record_type *>( p ));
                     m_Stat.onDeletePubRecord();
                     return m_pHead;
                 }

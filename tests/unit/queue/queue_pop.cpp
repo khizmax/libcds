@@ -24,21 +24,21 @@ namespace queue {
 
             size_t getNo() const { return  nNo; }
         };
-#define array_size  100000
-		struct HeavyValue {
+#define array_size  10000
+        struct HeavyValue {
             size_t    nNo;
-			static int pop_buff[array_size];
+            static int pop_buff[array_size];
 
-			HeavyValue() : nNo(0) {}
-			HeavyValue(size_t n) : nNo(n) {}
+            HeavyValue() : nNo(0) {}
+            HeavyValue(size_t n) : nNo(n) {}
 
-			HeavyValue(const HeavyValue &object):nNo(object.nNo){
+            HeavyValue(const HeavyValue &object):nNo(object.nNo){
                 for (int i = 0; i < array_size; ++i)
-					this->pop_buff[i] = (int)std::sqrt(object.pop_buff[i]);
+                    this->pop_buff[i] = (int)std::sqrt(object.pop_buff[i]);
             }
-			size_t getNo() const { return  nNo; }
-		};
-		int HeavyValue::pop_buff[]= {};
+            size_t getNo() const { return  nNo; }
+        };
+        int HeavyValue::pop_buff[]= {};
 #undef array_size
     }
 
@@ -215,31 +215,10 @@ namespace queue {
         }
 
     protected:
-//        CDSUNIT_DECLARE_MoirQueue( SimpleValue )
-//        CDSUNIT_DECLARE_MSQueue( SimpleValue )
-//        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
-//        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
-//        CDSUNIT_DECLARE_FCQueue( SimpleValue )
-		CDSUNIT_DECLARE_FCQueue( HeavyValue )
-//        CDSUNIT_DECLARE_FCDeque( SimpleValue )
-//        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
-//        CDSUNIT_DECLARE_RWQueue( SimpleValue )
-//        CDSUNIT_DECLARE_TsigasCysleQueue( SimpleValue )
-//        CDSUNIT_DECLARE_VyukovMPMCCycleQueue( SimpleValue )
-//        CDSUNIT_DECLARE_StdQueue( SimpleValue )
+        CDSUNIT_DECLARE_FCQueue( HeavyValue )
 
         CPPUNIT_TEST_SUITE(Queue_Pop)
-//            CDSUNIT_TEST_MoirQueue
-//            CDSUNIT_TEST_MSQueue
-//            CDSUNIT_TEST_OptimisticQueue
-//            CDSUNIT_TEST_BasketQueue
             CDSUNIT_TEST_FCQueue
-//            CDSUNIT_TEST_FCDeque
-//            CDSUNIT_TEST_SegmentedQueue
-//            CDSUNIT_TEST_RWQueue
-//            CDSUNIT_TEST_TsigasCysleQueue
-//            CDSUNIT_TEST_VyukovMPMCCycleQueue
-//            CDSUNIT_TEST_StdQueue
         CPPUNIT_TEST_SUITE_END();
     };
 

@@ -38,7 +38,7 @@ namespace cds {  namespace algo {  namespace flat_combining {
     };
     //===================================================================
     template<typename UserPublicationRecord, typename Traits>
-    struct WaitStartegyBasedOnSingleLocalMutexAndCondVar
+    struct WaitStartegyMultMutexMultCondVar
     {
         struct ExtendedPublicationRecord: public UserPublicationRecord
         {
@@ -68,7 +68,7 @@ namespace cds {  namespace algo {  namespace flat_combining {
         {
         };
         void wait(ExtendedPublicationRecord * pRec){
-			cds::backoff::delay_of<2>   back_off;
+			      cds::backoff::delay_of<2>   back_off;
             back_off();
         }
         void notify(ExtendedPublicationRecord* pRec){
@@ -112,19 +112,19 @@ namespace cds {  namespace algo {  namespace flat_combining {
 			boost::unique_lock<boost::mutex> lock(_globalMutex);
 			if (pRec->nRequest.load(Traits::memory_model::memory_order_acquire) >= req_Operation)
 				//_globalCondVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(1));
-				pRec->_condVar.wait(lock);
+				pRec->_globalCondVar.wait(lock);
 		}
 
 		void notify(ExtendedPublicationRecord* pRec){
 			boost::unique_lock<boost::mutex> lock(_globalMutex);
 			pRec->nRequest.store(req_Response, Traits::memory_model::memory_order_release);
-			pRec->_condVar.notify_one();
+			pRec->_globalCondVar.notify_one();
 		}
 	};
 
 	//===================================================================
     template<typename UserPublicationRecord, typename Traits>
-    struct TimedWaitLocalMutexAndCondVar
+    struct TimedWaitMultMutexMultCondVar
     {
         struct ExtendedPublicationRecord: public UserPublicationRecord
         {
