@@ -166,7 +166,6 @@
 
 #else
 #   define CDSUNIT_DECLARE_SplitList_RCU_signal
-#   define CDSUNIT_DEFINE_SplitList_RCU_signal( IMPL, C )
 #   define CDSUNIT_TEST_SplitList_RCU_signal
 #endif
 
@@ -322,24 +321,14 @@
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_SkipListMap_RCU_signal \
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_shb_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_shb_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_shb_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_shb_cmp_xorshift_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_sht_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_sht_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_sht_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_sht_cmp_xorshift_stat)
-
-#   define CDSUNIT_DEFINE_SkipListMap_RCU_signal( IMPL, C ) \
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_shb_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_shb_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_shb_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_shb_cmp_xorshift_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_sht_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_sht_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_sht_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_sht_cmp_xorshift_stat)
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_shb_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_shb_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_shb_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_shb_cmp_xorshift_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_sht_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_sht_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_sht_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_sht_cmp_xorshift_stat)
 
 #   define CDSUNIT_TEST_SkipListMap_RCU_signal \
     CPPUNIT_TEST(SkipListMap_rcu_shb_less_pascal)\
@@ -353,55 +342,31 @@
 
 #else
 #   define CDSUNIT_DECLARE_SkipListMap_RCU_signal
-#   define CDSUNIT_DEFINE_SkipListMap_RCU_signal( IMPL, C )
 #   define CDSUNIT_TEST_SkipListMap_RCU_signal
 #endif
 
 #define CDSUNIT_DECLARE_SkipListMap \
-    CDSUNIT_DECLARE_TEST(SkipListMap_hp_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_hp_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_hp_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_hp_cmp_xorshift_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_dhp_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_dhp_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_dhp_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_dhp_cmp_xorshift_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpi_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpi_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpi_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpi_cmp_xorshift_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpb_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpb_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpb_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpb_cmp_xorshift_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpt_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpt_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpt_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_rcu_gpt_cmp_xorshift_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_hp_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_hp_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_hp_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_hp_cmp_xorshift_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_dhp_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_dhp_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_dhp_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_dhp_cmp_xorshift_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpi_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpi_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpi_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpi_cmp_xorshift_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpb_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpb_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpb_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpb_cmp_xorshift_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpt_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpt_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpt_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_rcu_gpt_cmp_xorshift_stat)\
     CDSUNIT_DECLARE_SkipListMap_RCU_signal
-
-#define CDSUNIT_DEFINE_SkipListMap( IMPL, C ) \
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_hp_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_hp_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_hp_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_hp_cmp_xorshift_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_dhp_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_dhp_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_dhp_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_dhp_cmp_xorshift_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpi_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpi_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpi_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpi_cmp_xorshift_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpb_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpb_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpb_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpb_cmp_xorshift_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpt_less_pascal)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpt_cmp_pascal_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpt_less_xorshift)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, SkipListMap_rcu_gpt_cmp_xorshift_stat)\
-    CDSUNIT_DEFINE_SkipListMap_RCU_signal( IMPL, C )
 
 #define CDSUNIT_TEST_SkipListMap \
     CPPUNIT_TEST(SkipListMap_hp_less_pascal)\
@@ -427,16 +392,10 @@
     CDSUNIT_TEST_SkipListMap_RCU_signal
 
 #define CDSUNIT_DECLARE_SkipListMap_nogc \
-    CDSUNIT_DECLARE_TEST(SkipListMap_nogc_less_pascal)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_nogc_cmp_pascal_stat)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_nogc_less_xorshift)\
-    CDSUNIT_DECLARE_TEST(SkipListMap_nogc_cmp_xorshift_stat)
-
-#define CDSUNIT_DEFINE_SkipListMap_nogc( IMPL, C ) \
-    TEST_MAP_NOLF(IMPL, C, SkipListMap_nogc_less_pascal)\
-    TEST_MAP_NOLF(IMPL, C, SkipListMap_nogc_cmp_pascal_stat)\
-    TEST_MAP_NOLF(IMPL, C, SkipListMap_nogc_less_xorshift)\
-    TEST_MAP_NOLF(IMPL, C, SkipListMap_nogc_cmp_xorshift_stat)
+    TEST_CASE(tag_SkipListMap, SkipListMap_nogc_less_pascal)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_nogc_cmp_pascal_stat)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_nogc_less_xorshift)\
+    TEST_CASE(tag_SkipListMap, SkipListMap_nogc_cmp_xorshift_stat)
 
 #define CDSUNIT_TEST_SkipListMap_nogc \
     CPPUNIT_TEST(SkipListMap_nogc_less_pascal)\

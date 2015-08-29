@@ -754,7 +754,6 @@ namespace cds { namespace intrusive {
                 return std::make_pair( true, true );
             }
         }
-
         //@cond
         // Deprecated, use update() instead
         template <typename Func>
@@ -823,32 +822,36 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds \p key
-        /** \anchor cds_intrusive_SkipListSet_nogc_find_val
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns \p true if it is found, and \p false otherwise.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
+            and returns pointer to item found or \p nullptr.
         */
         template <typename Q>
-        value_type * find( Q const& key ) const
+        value_type * contains( Q const& key ) const
         {
             node_type * pNode = find_with_( key, key_comparator(), [](value_type& , Q const& ) {} );
             if ( pNode )
                 return node_traits::to_value_ptr( pNode );
             return nullptr;
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q>
+        value_type * find( Q const& key ) const
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds \p key using \p pred predicate for comparing
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_SkipListSet_nogc_find_val "find(Q const&)"
-            but \p pred predicate is used for key compare.
-            \p Less has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        value_type * find_with( Q const& key, Less pred ) const
+        value_type * contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
             node_type * pNode = find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
@@ -856,6 +859,14 @@ namespace cds { namespace intrusive {
                 return node_traits::to_value_ptr( pNode );
             return nullptr;
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Less>
+        value_type * find_with( Q const& key, Less pred ) const
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Gets minimum key from the set
         /**

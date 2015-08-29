@@ -290,7 +290,6 @@ namespace cds { namespace container {
             assert( pNode );
             return std::make_pair( node_to_iterator( pNode ), bRes.second );
         }
-
         //@cond
         // Deprecated, use update()
         template <typename Q>
@@ -300,38 +299,51 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Searches \p key
-        /** \anchor cds_nonintrusive_SkipListSet_nogc_find_val
-
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise
+            and returns an iterator to item found or \p end() if the key is not fund
         */
         template <typename Q>
-        iterator find( Q const& key ) const
+        iterator contains( Q const& key ) const
         {
-            node_type * pNode = base_class::find( key );
+            node_type * pNode = base_class::contains( key );
             if ( pNode )
                 return node_to_iterator( pNode );
             return base_class::nonconst_end();
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q>
+        iterator find( Q const& key ) const
+        {
+            return contains( key );
+        }
+        //@edncond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListSet_nogc_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        iterator find_with( Q const& key, Less pred ) const
+        iterator contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            node_type * pNode = base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, key_accessor>() );
+            node_type * pNode = base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, key_accessor>() );
             if ( pNode )
                 return node_to_iterator( pNode );
             return base_class::nonconst_end();
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Less>
+        iterator find_with( Q const& key, Less pred ) const
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Gets minimum key from the set
         /**

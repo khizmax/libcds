@@ -250,7 +250,6 @@ namespace cds { namespace container {
             //TODO: pass arguments by reference (make_pair makes copy)
             return base_class::update( std::make_pair( key, mapped_type() ), bInsert );
         }
-
         //@cond
         // Deprecated, use update()
         template <typename K>
@@ -260,31 +259,45 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_nonintrusive_SkipListMap_nogc_find_val
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
             and \ref end() otherwise
         */
         template <typename K>
+        iterator contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond 
+        // Deprecated, use contains()
+        template <typename K>
         iterator find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p key with comparing functor \p cmp
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListMap_nogc_find_val "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
+            \p Less must imply the same element order as the comparator used for building the map.
         */
+        template <typename K, typename Less>
+        iterator contains( K const& key, Less pred ) const
+        {
+            return base_class::contains( key, pred );
+        }
+        //@cond
+        // Deprecated, use contains()
         template <typename K, typename Less>
         iterator find_with( K const& key, Less pred ) const
         {
-            return base_class::find_with( key, pred );
+            return contains( key, pred );
         }
+        //@endcond
 
         /// Gets minimum key from the map
         /**

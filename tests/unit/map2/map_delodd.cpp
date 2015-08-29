@@ -5,13 +5,6 @@
 namespace map2 {
     CPPUNIT_TEST_SUITE_REGISTRATION( Map_DelOdd );
 
-    //size_t  Map_DelOdd::c_nMapSize = 1000000         ;  // max map size
-    //size_t  Map_DelOdd::c_nInsThreadCount = 4        ;  // insert thread count
-    //size_t  Map_DelOdd::c_nDelThreadCount = 4        ;  // delete thread count
-    //size_t  Map_DelOdd::c_nExtractThreadCount = 4    ;  // extract thread count
-    //size_t  Map_DelOdd::c_nMaxLoadFactor = 8         ;  // maximum load factor
-    //bool    Map_DelOdd::c_bPrintGCState = true;
-
     void Map_DelOdd::setUpParams( const CppUnitMini::TestCfg& cfg ) {
         c_nMapSize = cfg.getULong("MapSize", static_cast<unsigned long>(c_nMapSize) );
         c_nInsThreadCount = cfg.getULong("InsThreadCount", static_cast<unsigned long>(c_nInsThreadCount) );

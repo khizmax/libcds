@@ -3,10 +3,10 @@
 #include "map2/map_delodd.h"
 #include "map2/map_type_skip_list.h"
 
-namespace map2 {
-    CDSUNIT_DEFINE_SkipListMap( cc::skip_list::implementation_tag, Map_DelOdd)
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_DelOdd::X() { run_test<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Map_DelOdd, run_SkipListMap )
-        CDSUNIT_TEST_SkipListMap
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace map2 {
+    CDSUNIT_DECLARE_SkipListMap
 } // namespace map2

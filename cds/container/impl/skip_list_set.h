@@ -290,7 +290,6 @@ namespace cds { namespace container {
                 sp.release();
             return bRes;
         }
-
         //@cond
         // Deprecated, use update()
         template <typename Q, typename Func>
@@ -559,34 +558,45 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Find \p key
-        /** \anchor cds_nonintrusive_SkipListSet_find_val
-
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \ref value_type.
         */
+        template <typename Q>
+        bool contains( Q const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        // Deprecated, use contains()
         template <typename Q>
         bool find( Q const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds \p key using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListSet_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
+            return base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Less>
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_SkipListSet_hp_get
