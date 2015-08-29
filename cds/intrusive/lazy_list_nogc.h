@@ -343,11 +343,12 @@ namespace cds { namespace intrusive {
             return insert_at( &m_Head, val );
         }
 
-        /// Ensures that the \p item exists in the list
+        /// Updates the item
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val not found in the list, then \p val is inserted into the list.
+            If the item \p val not found in the list, then \p val is inserted into the list
+            iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -358,23 +359,30 @@ namespace cds { namespace intrusive {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
-            refers to the same thing.
+            refer to the same thing.
 
             The functor may change non-key fields of the \p item.
             While the functor \p f is calling the item \p item is locked.
 
-            Returns <tt> std::pair<bool, bool>  </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
+            Returns <tt> std::pair<bool, bool>  </tt> where \p first is \p true if operation is successfull,
+            \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the list.
         */
-
+        template <typename Func>
+        std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
+        {
+            return update_at( &m_Head, val, func, bAllowInsert );
+        }
+        //@cond
+        // Deprecated, use update()
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
-            return ensure_at( &m_Head, val, func );
+            return update( &m_Head, val, func, true );
         }
+        //@endcond
 
         /// Finds the key \p key
         /** \anchor cds_intrusive_LazyList_nogc_find_func
@@ -448,42 +456,64 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_intrusive_LazyList_nogc_find_val
+        /// Checks whether the list contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns pointer to value found or \p nullptr.
+            and returns \p true if it is found, and \p false otherwise.
         */
         template <typename Q>
-        value_type * find( Q const& key )
+        value_type * contains( Q const& key )
         {
             return find_at( &m_Head, key, key_comparator() );
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q>
+        value_type * find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching. Disabled for unordered lists.
+        /// Checks whether the map contains \p key using \p pred predicate for searching (ordered list version)
         /**
-            The function is an analog of \ref cds_intrusive_LazyList_nogc_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
+            \p Less must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, bool Sort = c_bSort>
-        typename std::enable_if<Sort, value_type *>::type find_with( Q const& key, Less pred )
+        typename std::enable_if<Sort, value_type *>::type contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Less, bool Sort = c_bSort>
+        typename std::enable_if<Sort, value_type *>::type find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
-        /// Finds the key \p key using \p equal predicate for searching. Disabled for ordered lists.
+        /// Checks whether the map contains \p key using \p equal predicate for searching (unordered list version)
         /**
-            The function is an analog of \ref cds_intrusive_LazyList_nogc_find_val "find(Q const&)"
-            but \p equal is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p equal is used for key comparing.
             \p Equal functor has the interface like \p std::equal_to.
         */
         template <typename Q, typename Equal, bool Sort = c_bSort>
-        typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal equal )
+        typename std::enable_if<!Sort, value_type *>::type contains( Q const& key, Equal equal )
         {
             return find_at( &m_Head, key, equal );
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Equal, bool Sort = c_bSort>
+        typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal equal )
+        {
+            return contains( key, equal );
+        }
+        //@endcond
 
         /// Clears the list
         /**
@@ -586,7 +616,7 @@ namespace cds { namespace intrusive {
 
 
         template <typename Func>
-        std::pair<iterator, bool> ensure_at_( node_type * pHead, value_type& val, Func func )
+        std::pair<iterator, bool> update_at_( node_type * pHead, value_type& val, Func func, bool bAllowInsert )
         {
             position pos;
             key_comparator pred;
@@ -604,6 +634,9 @@ namespace cds { namespace intrusive {
                         }
                         else {
                             // new key
+                            if ( !bAllowInsert )
+                                return std::make_pair( end(), false );
+
                             link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
@@ -617,9 +650,9 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        std::pair<bool, bool> ensure_at( node_type * pHead, value_type& val, Func func )
+        std::pair<bool, bool> update_at( node_type * pHead, value_type& val, Func func, bool bAllowInsert )
         {
-            std::pair<iterator, bool> ret = ensure_at_( pHead, val, func );
+            std::pair<iterator, bool> ret = update_at_( pHead, val, func, bAllowInsert );
             return std::make_pair( ret.first != end(), ret.second );
         }
 

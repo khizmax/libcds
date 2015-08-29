@@ -16,15 +16,15 @@ namespace ordlist {
 
         struct stat {
             int nDisposeCount;
-            int nEnsureExistsCall;
-            int nEnsureNewCall;
+            int nUpdateExistsCall;
+            int nUpdateNewCall;
             int nFindCall;
             int nEraseCall;
 
             stat()
                 : nDisposeCount(0)
-                , nEnsureExistsCall(0)
-                , nEnsureNewCall(0)
+                , nUpdateExistsCall(0)
+                , nUpdateNewCall(0)
                 , nFindCall(0)
                 , nEraseCall(0)
             {}
@@ -201,15 +201,15 @@ namespace ordlist {
             }
         };
 
-        struct ensure_functor
+        struct update_functor
         {
             template <typename T>
             void operator ()(bool bNew, T& item, T& /*val*/ )
             {
                 if ( bNew )
-                    ++item.s.nEnsureNewCall;
+                    ++item.s.nUpdateNewCall;
                 else
-                    ++item.s.nEnsureExistsCall;
+                    ++item.s.nUpdateExistsCall;
             }
         };
 
@@ -244,13 +244,13 @@ namespace ordlist {
                 CPPUNIT_ASSERT( l.empty() );
 
                 CPPUNIT_ASSERT( l.insert( v1 ))     ;   // true
-                CPPUNIT_ASSERT( l.find( v1.key() ));
+                CPPUNIT_ASSERT( l.contains( v1.key() ));
 
                 CPPUNIT_ASSERT( v1.s.nFindCall == 0 );
                 CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                 CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
 
-                CPPUNIT_ASSERT( !l.find_with( v2.key(), less<value_type>() ));
+                CPPUNIT_ASSERT( !l.contains( v2.key(), less<value_type>() ));
                 CPPUNIT_ASSERT( !l.find( v3.key(), find_functor() ));
                 CPPUNIT_ASSERT( !l.empty() );
 
@@ -261,56 +261,56 @@ namespace ordlist {
                     CPPUNIT_ASSERT( !l.insert( v )) ;   // false
                 }
 
-                std::pair<bool, bool> ret = l.ensure( v2, ensure_functor() );
+                std::pair<bool, bool> ret = l.update( v2, update_functor() );
                 CPPUNIT_ASSERT( ret.first );
                 CPPUNIT_ASSERT( ret.second );
-                CPPUNIT_ASSERT( v2.s.nEnsureNewCall == 1 );
-                CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == 0 );
+                CPPUNIT_ASSERT( v2.s.nUpdateNewCall == 1 );
+                CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == 0 );
 
                 //CPPUNIT_ASSERT( !l.insert( v2 ))    ;   // assertion "is_empty"
 
-                CPPUNIT_ASSERT( l.find( v1.key() )) ;   // true
+                CPPUNIT_ASSERT( l.contains( v1.key() )) ;   // true
 
                 CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
                 CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                 CPPUNIT_ASSERT( v1.s.nFindCall == 2 );
 
-                CPPUNIT_ASSERT( l.find( v2.key() ));
+                CPPUNIT_ASSERT( l.contains( v2.key() ));
 
                 CPPUNIT_ASSERT( v2.s.nFindCall == 0 );
                 CPPUNIT_ASSERT( l.find_with( v2.key(), less<value_type>(), find_functor() ));
                 CPPUNIT_ASSERT( v2.s.nFindCall == 1 );
 
-                CPPUNIT_ASSERT( !l.find( v3.key() ));
+                CPPUNIT_ASSERT( !l.contains( v3.key() ));
 
                 {
-                    CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == 0 );
-                    CPPUNIT_ASSERT( v2.s.nEnsureNewCall == 1 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == 0 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateNewCall == 1 );
 
                     value_type v( v2 );
-                    ret = l.ensure( v, ensure_functor() );
+                    ret = l.update( v, update_functor() );
 
                     CPPUNIT_ASSERT( ret.first );
                     CPPUNIT_ASSERT( !ret.second );
-                    CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == 1 );
-                    CPPUNIT_ASSERT( v2.s.nEnsureNewCall == 1 );
-                    CPPUNIT_ASSERT( v.s.nEnsureExistsCall == 0 );
-                    CPPUNIT_ASSERT( v.s.nEnsureNewCall == 0 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == 1 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateNewCall == 1 );
+                    CPPUNIT_ASSERT( v.s.nUpdateExistsCall == 0 );
+                    CPPUNIT_ASSERT( v.s.nUpdateNewCall == 0 );
                 }
 
                 CPPUNIT_ASSERT( !l.empty() );
 
                 CPPUNIT_ASSERT( l.insert( v3 ))     ;   // true
-                CPPUNIT_ASSERT( l.find( v3.key() ));
+                CPPUNIT_ASSERT( l.contains( v3.key() ));
 
                 CPPUNIT_ASSERT( v3.s.nFindCall == 0 );
                 CPPUNIT_ASSERT( l.find( v3.key(), find_functor() ));
                 CPPUNIT_ASSERT( v3.s.nFindCall == 1 );
 
                 CPPUNIT_ASSERT( l.unlink( v2 ) );
-                CPPUNIT_ASSERT( l.find( v1.key() )) ;   // true
-                CPPUNIT_ASSERT( !l.find( v2.key() )) ;   // true
-                CPPUNIT_ASSERT( l.find( v3.key() )) ;   // true
+                CPPUNIT_ASSERT( l.contains( v1.key() )) ;   // true
+                CPPUNIT_ASSERT( !l.contains( v2.key() )) ;   // true
+                CPPUNIT_ASSERT( l.contains( v3.key() )) ;   // true
                 CPPUNIT_ASSERT( !l.empty() );
                 CPPUNIT_ASSERT( !l.unlink( v2 ) );
 
@@ -322,17 +322,17 @@ namespace ordlist {
 
                 CPPUNIT_ASSERT( l.unlink( v1 ) );
                 CPPUNIT_ASSERT( !l.unlink( v1 ) );
-                CPPUNIT_ASSERT( !l.find( v1.key() ));
-                CPPUNIT_ASSERT( !l.find( v2.key() ));
-                CPPUNIT_ASSERT( l.find( v3.key() ));
+                CPPUNIT_ASSERT( !l.contains( v1.key() ));
+                CPPUNIT_ASSERT( !l.contains( v2.key() ));
+                CPPUNIT_ASSERT( l.contains( v3.key() ));
                 CPPUNIT_ASSERT( !l.empty() );
                 CPPUNIT_ASSERT( !l.unlink( v1 ) );
                 CPPUNIT_ASSERT( !l.unlink( v2 ) );
 
                 CPPUNIT_ASSERT( l.unlink( v3 ) );
-                CPPUNIT_ASSERT( !l.find( v1.key() ));
-                CPPUNIT_ASSERT( !l.find_with( v2.key(), less<value_type>() ));
-                CPPUNIT_ASSERT( !l.find( v3.key() ));
+                CPPUNIT_ASSERT( !l.contains( v1.key() ));
+                CPPUNIT_ASSERT( !l.contains( v2.key(), less<value_type>() ));
+                CPPUNIT_ASSERT( !l.contains( v3.key() ));
                 CPPUNIT_ASSERT( l.empty() );
                 CPPUNIT_ASSERT( !l.unlink( v1 ) );
                 CPPUNIT_ASSERT( !l.unlink( v2 ) );
@@ -342,27 +342,27 @@ namespace ordlist {
                 OrdList::gc::force_dispose();
 
                 stat s( v3.s );
-                ret = l.ensure( v3, ensure_functor() );
+                ret = l.update( v3, update_functor() );
                 CPPUNIT_ASSERT( ret.first );
                 CPPUNIT_ASSERT( ret.second );
-                CPPUNIT_ASSERT( v3.s.nEnsureNewCall == s.nEnsureNewCall + 1);
-                CPPUNIT_ASSERT( v3.s.nEnsureExistsCall == s.nEnsureExistsCall );
+                CPPUNIT_ASSERT( v3.s.nUpdateNewCall == s.nUpdateNewCall + 1);
+                CPPUNIT_ASSERT( v3.s.nUpdateExistsCall == s.nUpdateExistsCall );
                 CPPUNIT_ASSERT( !l.empty() );
 
                 s = v2.s;
-                ret = l.ensure( v2, ensure_functor() );
+                ret = l.update( v2, update_functor() );
                 CPPUNIT_ASSERT( ret.first );
                 CPPUNIT_ASSERT( ret.second );
-                CPPUNIT_ASSERT( v2.s.nEnsureNewCall == s.nEnsureNewCall + 1);
-                CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == s.nEnsureExistsCall );
+                CPPUNIT_ASSERT( v2.s.nUpdateNewCall == s.nUpdateNewCall + 1);
+                CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == s.nUpdateExistsCall );
                 CPPUNIT_ASSERT( !l.empty() );
 
                 s = v1.s;
-                ret = l.ensure( v1, ensure_functor() );
+                ret = l.update( v1, update_functor() );
                 CPPUNIT_ASSERT( ret.first );
                 CPPUNIT_ASSERT( ret.second );
-                CPPUNIT_ASSERT( v1.s.nEnsureNewCall == s.nEnsureNewCall + 1);
-                CPPUNIT_ASSERT( v1.s.nEnsureExistsCall == s.nEnsureExistsCall );
+                CPPUNIT_ASSERT( v1.s.nUpdateNewCall == s.nUpdateNewCall + 1);
+                CPPUNIT_ASSERT( v1.s.nUpdateExistsCall == s.nUpdateExistsCall );
                 CPPUNIT_ASSERT( !l.empty() );
 
                 // Erase test
@@ -670,14 +670,14 @@ namespace ordlist {
                     CPPUNIT_ASSERT( l.empty() );
 
                     CPPUNIT_ASSERT( l.insert( v1 ))     ;   // true
-                    CPPUNIT_ASSERT( l.find( v1.key() ) == &v1 );
+                    CPPUNIT_ASSERT( l.contains( v1.key() ) == &v1 );
 
                     CPPUNIT_ASSERT( v1.s.nFindCall == 0 );
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
 
-                    CPPUNIT_ASSERT( l.find_with( v2.key(), less<value_type>() ) == nullptr );
-                    CPPUNIT_ASSERT( l.find( v3.key() ) == nullptr );
+                    CPPUNIT_ASSERT( l.contains( v2.key(), less<value_type>() ) == nullptr );
+                    CPPUNIT_ASSERT( l.contains( v3.key() ) == nullptr );
                     CPPUNIT_ASSERT( !l.empty() );
 
                     //CPPUNIT_ASSERT( !l.insert( v1 ))    ;   // assertion "is_empty" is raised
@@ -687,42 +687,42 @@ namespace ordlist {
                         CPPUNIT_ASSERT( !l.insert( v )) ;   // false
                     }
 
-                    std::pair<bool, bool> ret = l.ensure( v2, ensure_functor() );
+                    std::pair<bool, bool> ret = l.update( v2, update_functor() );
                     CPPUNIT_ASSERT( ret.first );
                     CPPUNIT_ASSERT( ret.second );
-                    CPPUNIT_ASSERT( v2.s.nEnsureNewCall == 1 );
-                    CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == 0 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateNewCall == 1 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == 0 );
 
                     //CPPUNIT_ASSERT( !l.insert( v2 ))    ;   // assertion "is_empty"
 
-                    CPPUNIT_ASSERT( l.find( v1.key() ) == &v1 ) ;   // true
+                    CPPUNIT_ASSERT( l.contains( v1.key() ) == &v1 ) ;   // true
 
                     CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 2 );
 
-                    CPPUNIT_ASSERT( l.find_with( v2.key(), less<value_type>() ) == &v2 );
+                    CPPUNIT_ASSERT( l.contains( v2.key(), less<value_type>() ) == &v2 );
 
                     CPPUNIT_ASSERT( v2.s.nFindCall == 0 );
                     CPPUNIT_ASSERT( l.find_with( v2.key(), less<value_type>(), find_functor() ));
                     CPPUNIT_ASSERT( v2.s.nFindCall == 1 );
 
-                    CPPUNIT_ASSERT( !l.find( v3.key() ));
+                    CPPUNIT_ASSERT( !l.contains( v3.key() ));
 
                     {
                         value_type v( v2 );
-                        ret = l.ensure( v, ensure_functor() );
+                        ret = l.update( v, update_functor() );
 
                         CPPUNIT_ASSERT( ret.first );
                         CPPUNIT_ASSERT( !ret.second );
-                        CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == 1 );
-                        CPPUNIT_ASSERT( v.s.nEnsureExistsCall == 0 && v.s.nEnsureNewCall == 0 );
+                        CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == 1 );
+                        CPPUNIT_ASSERT( v.s.nUpdateExistsCall == 0 && v.s.nUpdateNewCall == 0 );
                     }
 
                     CPPUNIT_ASSERT( !l.empty() );
 
                     CPPUNIT_ASSERT( l.insert( v3 ))     ;   // true
-                    CPPUNIT_ASSERT( l.find( v3.key() ) == &v3 );
+                    CPPUNIT_ASSERT( l.contains( v3.key() ) == &v3 );
 
                     CPPUNIT_ASSERT( v3.s.nFindCall == 0 );
                     CPPUNIT_ASSERT( l.find( v3.key(), find_functor() ));
@@ -786,14 +786,14 @@ namespace ordlist {
                     CPPUNIT_ASSERT( l.empty() );
 
                     CPPUNIT_ASSERT( l.insert( v1 ));   // true
-                    CPPUNIT_ASSERT( l.find( v1.key() ) == &v1 );
+                    CPPUNIT_ASSERT( l.contains( v1.key() ) == &v1 );
 
                     CPPUNIT_ASSERT( v1.s.nFindCall == 0 );
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
 
-                    CPPUNIT_ASSERT( l.find_with( v2.key(), equal_to<value_type>() ) == nullptr );
-                    CPPUNIT_ASSERT( l.find( v3.key() ) == nullptr );
+                    CPPUNIT_ASSERT( l.contains( v2.key(), equal_to<value_type>() ) == nullptr );
+                    CPPUNIT_ASSERT( l.contains( v3.key() ) == nullptr );
                     CPPUNIT_ASSERT( !l.empty() );
 
                     //CPPUNIT_ASSERT( !l.insert( v1 ))    ;   // assertion "is_empty" is raised
@@ -803,42 +803,42 @@ namespace ordlist {
                         CPPUNIT_ASSERT( !l.insert( v )) ;   // false
                     }
 
-                    std::pair<bool, bool> ret = l.ensure( v2, ensure_functor() );
+                    std::pair<bool, bool> ret = l.update( v2, update_functor() );
                     CPPUNIT_ASSERT( ret.first );
                     CPPUNIT_ASSERT( ret.second );
-                    CPPUNIT_ASSERT( v2.s.nEnsureNewCall == 1 );
-                    CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == 0 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateNewCall == 1 );
+                    CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == 0 );
 
                     //CPPUNIT_ASSERT( !l.insert( v2 ))    ;   // assertion "is_empty"
 
-                    CPPUNIT_ASSERT( l.find( v1.key() ) == &v1 ) ;   // true
+                    CPPUNIT_ASSERT( l.contains( v1.key() ) == &v1 ) ;   // true
 
                     CPPUNIT_ASSERT( v1.s.nFindCall == 1 );
                     CPPUNIT_ASSERT( l.find( v1.key(), find_functor() ));
                     CPPUNIT_ASSERT( v1.s.nFindCall == 2 );
 
-                    CPPUNIT_ASSERT( l.find_with( v2.key(), equal_to<value_type>() ) == &v2 );
+                    CPPUNIT_ASSERT( l.contains( v2.key(), equal_to<value_type>() ) == &v2 );
 
                     CPPUNIT_ASSERT( v2.s.nFindCall == 0 );
                     CPPUNIT_ASSERT( l.find_with( v2.key(), equal_to<value_type>(), find_functor() ));
                     CPPUNIT_ASSERT( v2.s.nFindCall == 1 );
 
-                    CPPUNIT_ASSERT( !l.find( v3.key() ));
+                    CPPUNIT_ASSERT( !l.contains( v3.key() ));
 
                     {
                         value_type v( v2 );
-                        ret = l.ensure( v, ensure_functor() );
+                        ret = l.update( v, update_functor() );
 
                         CPPUNIT_ASSERT( ret.first );
                         CPPUNIT_ASSERT( !ret.second );
-                        CPPUNIT_ASSERT( v2.s.nEnsureExistsCall == 1 );
-                        CPPUNIT_ASSERT( v.s.nEnsureExistsCall == 0 && v.s.nEnsureNewCall == 0 );
+                        CPPUNIT_ASSERT( v2.s.nUpdateExistsCall == 1 );
+                        CPPUNIT_ASSERT( v.s.nUpdateExistsCall == 0 && v.s.nUpdateNewCall == 0 );
                     }
 
                     CPPUNIT_ASSERT( !l.empty() );
 
                     CPPUNIT_ASSERT( l.insert( v3 ))     ;   // true
-                    CPPUNIT_ASSERT( l.find( v3.key() ) == &v3 );
+                    CPPUNIT_ASSERT( l.contains( v3.key() ) == &v3 );
 
                     CPPUNIT_ASSERT( v3.s.nFindCall == 0 );
                     CPPUNIT_ASSERT( l.find( v3.key(), find_functor() ));

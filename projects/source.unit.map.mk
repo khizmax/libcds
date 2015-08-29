@@ -90,6 +90,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_delodd_michael.cpp \
     tests/unit/map2/map_delodd_bronsonavltree.cpp \
     tests/unit/map2/map_delodd_ellentree.cpp \
+    tests/unit/map2/map_delodd_multilevel_hashmap.cpp \
     tests/unit/map2/map_delodd_split.cpp \
     tests/unit/map2/map_delodd_skip.cpp \
     tests/unit/map2/map_delodd_cuckoo.cpp \

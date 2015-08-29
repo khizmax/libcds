@@ -296,60 +296,91 @@ namespace cds { namespace container {
             return node_to_iterator( emplace_at( head(), std::forward<Args>(args)... ));
         }
 
-        /// Ensures that the item \p val exists in the list
+        /// Updates the item
         /**
-            The operation inserts new item if the key \p val is not found in the list.
-            Otherwise, the function returns an iterator that points to item found.
+            If \p key is not in the list and \p bAllowInsert is \p true, 
+            the function inserts a new item.
+            Otherwise, the function returns an iterator pointing to the item found.
 
             Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is \p true if new item has been added or \p false if the item
+            item found or inserted, \p second is true if new item has been added or \p false if the item
             already is in the list.
         */
         template <typename Q>
-        std::pair<iterator, bool> ensure( Q const& val )
+        std::pair<iterator, bool> update( Q const& val, bool bAllowInsert = true )
         {
-            std::pair< node_type *, bool > ret = ensure_at( head(), val );
+            std::pair< node_type *, bool > ret = update_at( head(), val, bAllowInsert );
             return std::make_pair( node_to_iterator( ret.first ), ret.second );
         }
+        //@cond
+        // Deprecated, use update()
+        template <typename Q>
+        std::pair<iterator, bool> ensure( Q const& val )
+        {
+            return update( val, true );
+        }
+        //@endcond
 
-        /// Find the key \p val
-        /** \anchor cds_nonintrusive_LazyList_nogc_find
-            The function searches the item with key equal to \p val
+        /// Checks whether the list contains \p key
+        /**
+            The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
             and \ref end() otherwise
         */
         template <typename Q>
-        iterator find( Q const& key )
+        iterator contains( Q const& key )
         {
             return node_to_iterator( find_at( head(), key, intrusive_key_comparator() ));
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q>
+        iterator find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching (only for ordered list)
+        /// Checks whether the map contains \p key using \p pred predicate for searching (ordered list version)
         /**
-            The function is an analog of \ref cds_nonintrusive_LazyList_nogc_find "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
+            \p Less must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, bool Sort = c_bSort>
-        typename std::enable_if<Sort, iterator>::type find_with( Q const& key, Less pred )
+        typename std::enable_if<Sort, iterator>::type contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ));
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Less, bool Sort = c_bSort>
+        typename std::enable_if<Sort, iterator>::type find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p equal predicate for searching (only for unordered list)
+        /// Finds the key \p val using \p equal predicate for searching (unordered list version)
         /**
-            The function is an analog of \ref cds_nonintrusive_LazyList_nogc_find "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p equal is used for key comparing.
             \p Equal functor has the interface like \p std::equal_to.
         */
         template <typename Q, typename Equal, bool Sort = c_bSort>
-        typename std::enable_if<!Sort, iterator>::type find_with( Q const& key, Equal equal )
+        typename std::enable_if<!Sort, iterator>::type contains( Q const& key, Equal equal )
         {
             CDS_UNUSED( equal );
             return node_to_iterator( find_at( head(), key, typename maker::template equal_to_wrapper<Equal>::type() ));
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Equal, bool Sort = c_bSort>
+        typename std::enable_if<!Sort, iterator>::type find_with( Q const& key, Equal equal )
+        {
+            return contains( key, equal );
+        }
+        //@endcond
 
         /// Check if the list is empty
         bool empty() const
@@ -401,13 +432,14 @@ namespace cds { namespace container {
         }
 
         template <typename Q>
-        std::pair< node_type *, bool > ensure_at( head_type& refHead, Q const& val )
+        std::pair< node_type *, bool > update_at( head_type& refHead, Q const& val, bool bAllowInsert )
         {
             scoped_node_ptr pNode( alloc_node( val ));
             node_type * pItemFound = nullptr;
 
-            std::pair<bool, bool> ret = base_class::ensure_at( &refHead, *pNode,
-                [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; });
+            std::pair<bool, bool> ret = base_class::update_at( &refHead, *pNode,
+                [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; },
+                bAllowInsert );
             assert( pItemFound != nullptr );
 
             if ( ret.first && ret.second )

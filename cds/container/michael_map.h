@@ -474,44 +474,54 @@ namespace cds { namespace container {
             return bRet;
         }
 
-
-        /// Ensures that the \p key exists in the map
+        /// Updates data by \p key
         /**
-            The operation performs inserting or changing data with lock-free manner.
+            The operation performs inserting or replacing the element with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \p key_type should be
-            constructible from type \p K).
-            Otherwise, the functor \p func is called with item found.
-            The functor \p Func may signature is:
+            will be inserted into the map iff \p bAllowInsert is \p true.
+            (note that in this case the \ref key_type should be constructible from type \p K).
+            Otherwise, if \p key is found, the functor \p func is called with item found.
+
+            The functor \p Func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
+            - \p item - the item found or inserted
 
             The functor may change any fields of the \p item.second that is \p mapped_type.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
-            already is in the list.
+            already exists.
 
             @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
-        template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
+        template <typename K, typename Func >
+        std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
-            std::pair<bool, bool> bRet = bucket( key ).ensure( key, func );
+            std::pair<bool, bool> bRet = bucket( key ).update( key, func, bAllowInsert );
             if ( bRet.first && bRet.second )
                 ++m_ItemCounter;
             return bRet;
         }
+        //@cond
+        // Deprecated
+        template <typename K, typename Func>
+        std::pair<bool, bool> ensure( K const& key, Func func )
+        {
+            std::pair<bool, bool> bRet = bucket( key ).update( key, func, true );
+            if ( bRet.first && bRet.second )
+                ++m_ItemCounter;
+            return bRet;
+        }
+        //@endcond
 
         /// For key \p key inserts data of type \p mapped_type created from \p args
         /**
@@ -689,29 +699,44 @@ namespace cds { namespace container {
             return bucket( key ).find_with( key, pred, f );
         }
 
-        /// Finds the key \p key
-        /** \anchor cds_nonintrusive_MichaelMap_find_val
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
         */
         template <typename K>
+        bool contains( K const& key )
+        {
+            return bucket( key ).contains( key );
+        }
+        //@cond
+        // Deprecated
+        template <typename K>
         bool find( K const& key )
         {
-            return bucket( key ).find( key );
+            return bucket( key ).contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelMap_find_val "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
+        bool contains( K const& key, Less pred )
+        {
+            return bucket( key ).contains( key, pred );
+        }
+        //@cond
+        // Deprecated
+        template <typename K, typename Less>
         bool find_with( K const& key, Less pred )
         {
-            return bucket( key ).find_with( key, pred );
+            return bucket( key ).contains( key, pred );
         }
+        //@endcond
 
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelHashMap_hp_get

@@ -1,8 +1,5 @@
 //$$CDS-header$$
 
-#ifndef CDSUNIT_MAP_DEFS_H
-#define CDSUNIT_MAP_DEFS_H
-
 #define CDSUNIT_DECLARE_StdMap \
     CDSUNIT_DECLARE_TEST(StdMap_Spin) \
     CDSUNIT_DECLARE_TEST(StdHashMap_Spin)
@@ -13,26 +10,23 @@
     CPPUNIT_TEST(StdMap_Spin) \
     CPPUNIT_TEST(StdHashMap_Spin) \
 
+
+// **************************************************************************************
+// MichaelMap
+
+#undef CDSUNIT_DECLARE_MichaelMap_RCU_signal
+#undef CDSUNIT_TEST_MichaelMap_RCU_signal
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_MichaelMap_RCU_signal \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_SHB_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_SHB_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_SHT_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_SHT_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_SHB_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_SHT_less_michaelAlloc)
-
-#   define CDSUNIT_DEFINE_MichaelMap_RCU_signal(IMPL, C) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_SHB_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_SHB_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_SHT_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_SHT_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_SHB_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_SHT_less_michaelAlloc)
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHB_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHB_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHB_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHT_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHT_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_SHB_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_SHT_less_michaelAlloc)
 
 #   define CDSUNIT_TEST_MichaelMap_RCU_signal \
     CPPUNIT_TEST(MichaelMap_RCU_SHB_cmp_stdAlloc) \
@@ -46,57 +40,34 @@
 
 #else
 #   define CDSUNIT_DECLARE_MichaelMap_RCU_signal
-#   define CDSUNIT_DEFINE_MichaelMap_RCU_signal(IMPL, C)
 #   define CDSUNIT_TEST_MichaelMap_RCU_signal
 #endif
 
-
+#undef CDSUNIT_DECLARE_MichaelMap
 #define CDSUNIT_DECLARE_MichaelMap  \
-    CDSUNIT_DECLARE_TEST(MichaelMap_HP_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_HP_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_DHP_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_DHP_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_GPI_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_GPI_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_GPB_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_GPB_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_GPT_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_RCU_GPT_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_HP_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_HP_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_DHP_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_DHP_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_GPI_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_GPB_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_RCU_GPT_less_michaelAlloc)\
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_HP_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_HP_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_DHP_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_DHP_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_GPI_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_GPI_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_GPB_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_GPB_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_GPT_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_GPT_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_HP_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_HP_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_DHP_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_DHP_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_GPI_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_GPB_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_RCU_GPT_less_michaelAlloc)\
     CDSUNIT_DECLARE_MichaelMap_RCU_signal
 
-#define CDSUNIT_DEFINE_MichaelMap( IMPL, C )  \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_HP_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_HP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_DHP_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_DHP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_GPI_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_GPI_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_GPB_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_GPB_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_GPT_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_RCU_GPT_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_HP_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_HP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_DHP_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_DHP_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_GPI_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_GPB_less_michaelAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc) \
-    TEST_MAP_EXTRACT(IMPL, C, MichaelMap_Lazy_RCU_GPT_less_michaelAlloc)\
-    CDSUNIT_DEFINE_MichaelMap_RCU_signal( IMPL, C )
-
+#undef  CDSUNIT_TEST_MichaelMap
 #define CDSUNIT_TEST_MichaelMap  \
     CPPUNIT_TEST(MichaelMap_HP_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_HP_less_michaelAlloc) \
@@ -120,26 +91,25 @@
     CPPUNIT_TEST(MichaelMap_Lazy_RCU_GPT_less_michaelAlloc)\
     CDSUNIT_TEST_MichaelMap_RCU_signal
 
+#undef  CDSUNIT_DECLARE_MichaelMap_nogc
 #define CDSUNIT_DECLARE_MichaelMap_nogc  \
-    CDSUNIT_DECLARE_TEST(MichaelMap_NOGC_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_NOGC_less_michaelAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_NOGC_cmp_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_NOGC_unord_stdAlloc) \
-    CDSUNIT_DECLARE_TEST(MichaelMap_Lazy_NOGC_less_michaelAlloc)
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_NOGC_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_NOGC_less_michaelAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_NOGC_cmp_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_NOGC_unord_stdAlloc) \
+    TEST_CASE(tag_MichaelHashMap, MichaelMap_Lazy_NOGC_less_michaelAlloc)
 
-#define CDSUNIT_DEFINE_MichaelMap_nogc( IMPL, C ) \
-    TEST_MAP(IMPL, C, MichaelMap_NOGC_cmp_stdAlloc) \
-    TEST_MAP(IMPL, C, MichaelMap_NOGC_less_michaelAlloc) \
-    TEST_MAP(IMPL, C, MichaelMap_Lazy_NOGC_cmp_stdAlloc) \
-    TEST_MAP(IMPL, C, MichaelMap_Lazy_NOGC_unord_stdAlloc) \
-    TEST_MAP(IMPL, C, MichaelMap_Lazy_NOGC_less_michaelAlloc)
-
+#undef  CDSUNIT_TEST_MichaelMap_nogc
 #define CDSUNIT_TEST_MichaelMap_nogc  \
     CPPUNIT_TEST(MichaelMap_NOGC_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_NOGC_less_michaelAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_NOGC_cmp_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_NOGC_unord_stdAlloc) \
     CPPUNIT_TEST(MichaelMap_Lazy_NOGC_less_michaelAlloc) \
+
+
+// **************************************************************************************
+// SplitListMap
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_SplitList_RCU_signal  \
@@ -445,6 +415,10 @@
     CPPUNIT_TEST(SplitList_Lazy_NOGC_dyn_less)\
     CPPUNIT_TEST(SplitList_Lazy_NOGC_st_less)
 
+
+// **************************************************************************************
+// SkipListMap
+
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_SkipListMap_RCU_signal \
     CDSUNIT_DECLARE_TEST(SkipListMap_rcu_shb_less_pascal)\
@@ -569,6 +543,10 @@
     CPPUNIT_TEST(SkipListMap_nogc_less_xorshift)\
     CPPUNIT_TEST(SkipListMap_nogc_cmp_xorshift_stat)
 
+
+// **************************************************************************************
+// EllenBinTreeMap
+
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_EllenBinTreeMap_RCU_signal \
     CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_shb)\
@@ -640,6 +618,10 @@
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpt)\
     CPPUNIT_TEST(EllenBinTreeMap_rcu_gpt_stat)\
     CDSUNIT_TEST_EllenBinTreeMap_RCU_signal
+
+
+// **************************************************************************************
+// BronsonACLTreeMap
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_BronsonAVLTreeMap_RCU_signal \
@@ -783,6 +765,10 @@
     CPPUNIT_TEST(BronsonAVLTreeMap_rcu_gpt_less_pool_bounded_stat)\
     CDSUNIT_TEST_BronsonAVLTreeMap_RCU_signal
 
+
+// **************************************************************************************
+// StripedMap
+
 #define CDSUNIT_DECLARE_StripedMap_common \
     CDSUNIT_DECLARE_TEST(StripedMap_list) \
     CDSUNIT_DECLARE_TEST(StripedMap_map) \
@@ -847,6 +833,8 @@
     CDSUNIT_TEST_StripedMap_boost_flat_container
 
 
+// **************************************************************************************
+// RefinableMap
 
 #define CDSUNIT_DECLARE_RefinableMap_common \
     CDSUNIT_DECLARE_TEST(RefinableMap_list) \
@@ -908,6 +896,10 @@
     CDSUNIT_TEST_RefinableMap_common \
     CDSUNIT_TEST_RefinableMap_boost_container \
     CDSUNIT_TEST_RefinableMap_boost_flat_container
+
+
+// **************************************************************************************
+// CuckooMap
 
 #define CDSUNIT_DECLARE_CuckooMap \
     CDSUNIT_DECLARE_TEST(CuckooStripedMap_list_unord)\
@@ -987,4 +979,21 @@
     CPPUNIT_TEST(CuckooRefinableMap_vector_ord_stat)\
     CPPUNIT_TEST(CuckooRefinableMap_vector_ord_storehash)
 
-#endif // #ifndef CDSUNIT_MAP_DEFS_H
+
+// **************************************************************************************
+// MultiLevelHashMap
+
+#undef CDSUNIT_DECLARE_MultiLevelHashMap
+#define CDSUNIT_DECLARE_MultiLevelHashMap  \
+    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_stdhash) \
+    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_stdhash) \
+    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_stdhash_stat)
+
+#undef CDSUNIT_TEST_MultiLevelHashMap
+#define CDSUNIT_TEST_MultiLevelHashMap  \
+    CPPUNIT_TEST(MultiLevelHashMap_hp_stdhash) \
+    CPPUNIT_TEST(MultiLevelHashMap_hp_stdhash_stat) \
+    CPPUNIT_TEST(MultiLevelHashMap_dhp_stdhash) \
+    CPPUNIT_TEST(MultiLevelHashMap_dhp_stdhash_stat)
+

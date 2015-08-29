@@ -391,21 +391,30 @@ namespace cds { namespace container {
             return node_to_iterator( insert_with_at( head(), key, func ));
         }
 
-        /// Ensures that the key \p key exists in the list
+        /// Updates the item
         /**
-            The operation inserts new item if the key \p key is not found in the list.
-            Otherwise, the function returns an iterator that points to item found.
+            If \p key is not in the list and \p bAllowInsert is \p true, 
+            the function inserts a new item.
+            Otherwise, the function returns an iterator pointing to the item found.
 
-            Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
+            Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
             item found or inserted, \p second is true if new item has been added or \p false if the item
             already is in the list.
         */
         template <typename K>
-        std::pair<iterator, bool> ensure( const K& key )
+        std::pair<iterator, bool> update( K const& key, bool bAllowInsert = true )
         {
-            std::pair< node_type *, bool > ret = ensure_at( head(), key );
+            std::pair< node_type *, bool > ret = update_at( head(), key, bAllowInsert );
             return std::make_pair( node_to_iterator( ret.first ), ret.second );
         }
+        //@cond
+        // Deprecated, use update()
+        template <typename K>
+        std::pair<iterator, bool> ensure( K const& key )
+        {
+            return update( key );
+        }
+        //@endcond
 
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
@@ -417,32 +426,45 @@ namespace cds { namespace container {
             return node_to_iterator( emplace_at( head(), std::forward<K>(key), std::forward<Args>(args)... ));
         }
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_MichaelKVList_nogc_find
-
+        /// Checks whether the list contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise
+            and returns an iterator pointed to item found and \ref end() otherwise
         */
         template <typename Q>
-        iterator find( Q const& key )
+        iterator contains( Q const& key )
         {
             return node_to_iterator( find_at( head(), key, intrusive_key_comparator() ) );
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q>
+        iterator find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Checks whether the list contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelKVList_nogc_find "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        iterator find_with( Q const& key, Less pred )
+        iterator contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ) );
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Less>
+        iterator find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Check if the list is empty
         bool empty() const
@@ -505,12 +527,14 @@ namespace cds { namespace container {
         }
 
         template <typename K>
-        std::pair< node_type *, bool > ensure_at( head_type& refHead, const K& key )
+        std::pair< node_type *, bool > update_at( head_type& refHead, const K& key, bool bAllowInsert )
         {
             scoped_node_ptr pNode( alloc_node( key ));
             node_type * pItemFound = nullptr;
 
-            std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode, [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; });
+            std::pair<bool, bool> ret = base_class::update_at( refHead, *pNode, 
+                [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; },
+                bAllowInsert );
             assert( pItemFound != nullptr );
 
             if ( ret.first && ret.second )

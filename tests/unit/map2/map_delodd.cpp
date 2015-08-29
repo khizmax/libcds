@@ -5,12 +5,12 @@
 namespace map2 {
     CPPUNIT_TEST_SUITE_REGISTRATION( Map_DelOdd );
 
-    size_t  Map_DelOdd::c_nMapSize = 1000000         ;  // max map size
-    size_t  Map_DelOdd::c_nInsThreadCount = 4        ;  // insert thread count
-    size_t  Map_DelOdd::c_nDelThreadCount = 4        ;  // delete thread count
-    size_t  Map_DelOdd::c_nExtractThreadCount = 4    ;  // extract thread count
-    size_t  Map_DelOdd::c_nMaxLoadFactor = 8         ;  // maximum load factor
-    bool    Map_DelOdd::c_bPrintGCState = true;
+    //size_t  Map_DelOdd::c_nMapSize = 1000000         ;  // max map size
+    //size_t  Map_DelOdd::c_nInsThreadCount = 4        ;  // insert thread count
+    //size_t  Map_DelOdd::c_nDelThreadCount = 4        ;  // delete thread count
+    //size_t  Map_DelOdd::c_nExtractThreadCount = 4    ;  // extract thread count
+    //size_t  Map_DelOdd::c_nMaxLoadFactor = 8         ;  // maximum load factor
+    //bool    Map_DelOdd::c_bPrintGCState = true;
 
     void Map_DelOdd::setUpParams( const CppUnitMini::TestCfg& cfg ) {
         c_nMapSize = cfg.getULong("MapSize", static_cast<unsigned long>(c_nMapSize) );
@@ -19,6 +19,9 @@ namespace map2 {
         c_nExtractThreadCount = cfg.getULong("ExtractThreadCount", static_cast<unsigned long>(c_nExtractThreadCount) );
         c_nMaxLoadFactor = cfg.getULong("MaxLoadFactor", static_cast<unsigned long>(c_nMaxLoadFactor) );
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", true );
+        c_nMultiLevelMap_HeadBits = cfg.getULong("MultiLevelMap_HeadBits", static_cast<unsigned long>(c_nMultiLevelMap_HeadBits) );
+        c_nMultiLevelMap_ArrayBits = cfg.getULong("MultiLevelMap_ArrayBits", static_cast<unsigned long>(c_nMultiLevelMap_ArrayBits) );
+
 
         if ( c_nInsThreadCount == 0 )
             c_nInsThreadCount = cds::OS::topology::processor_count();
@@ -35,23 +38,6 @@ namespace map2 {
         }
         shuffle( m_arrInsert.begin(), m_arrInsert.end() );
         shuffle( m_arrRemove.begin(), m_arrRemove.end() );
-    }
-
-    void Map_DelOdd::myRun(const char *in_name, bool invert /*= false*/)
-    {
-        setUpParams( m_Cfg.get( "Map_DelOdd" ));
-
-        run_MichaelMap(in_name, invert);
-        run_SplitList(in_name, invert);
-        run_SkipListMap(in_name, invert);
-        run_EllenBinTreeMap(in_name, invert);
-        run_BronsonAVLTreeMap(in_name, invert);
-        //run_StripedMap(in_name, invert);
-        //run_RefinableMap(in_name, invert);
-        run_CuckooMap(in_name, invert);
-        //run_StdMap(in_name, invert);
-
-        endTestCase();
     }
 
 } // namespace map2

@@ -91,6 +91,7 @@ set(CDSUNIT_MAP_SOURCES
     map_delodd_michael.cpp
     map_delodd_bronsonavltree.cpp
     map_delodd_ellentree.cpp
+    map_delodd_multilevel_hashmap.cpp
     map_delodd_split.cpp
     map_delodd_skip.cpp
     map_delodd_cuckoo.cpp
