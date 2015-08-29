@@ -6,12 +6,6 @@
 
 namespace map2 {
 
-//#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
-//#   define TEST_MAP_DEFAULT_CONSTRUCTIBLE(IMPL, C, X) void C::X() { test_default_constructible<map_type<IMPL, key_type, value_type>::X >(); }
-//#   define TEST_MAP_EXTRACT(IMPL, C, X) void C::X() { test_extract<map_type<IMPL, key_type, value_type>::X >(); }
-//#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
-//#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) void C::X() { test_nolf_extract<map_type<IMPL, key_type, value_type>::X >(); }
-
 #   define TEST_CASE(TAG, X)  void X();
 
     namespace {
@@ -654,68 +648,6 @@ namespace map2 {
             additional_cleanup( testMap );
         }
 
-        //template <class Map>
-        //void test()
-        //{
-        //    CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
-        //        << " delete thread count=" << c_nDelThreadCount
-        //        << " set size=" << c_nMapSize
-        //        );
-
-        //    for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-        //        CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-        //        do_test<Map>( nLoadFactor );
-        //        if ( c_bPrintGCState )
-        //            print_gc_state();
-        //    }
-        //}
-
-        //template <class Map>
-        //void test_extract()
-        //{
-        //    CPPUNIT_MSG( "Thread count: insert=" << c_nInsThreadCount
-        //        << ", delete=" << c_nDelThreadCount
-        //        << ", extract=" << c_nExtractThreadCount
-        //        << "; set size=" << c_nMapSize
-        //        );
-
-        //    for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-        //        CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-        //        do_test_extract<Map>( nLoadFactor );
-        //        if ( c_bPrintGCState )
-        //            print_gc_state();
-        //    }
-        //}
-
-        //template <class Map>
-        //void test_nolf()
-        //{
-        //    CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
-        //        << " delete thread count=" << c_nDelThreadCount
-        //        << " set size=" << c_nMapSize
-        //        );
-
-        //    Map s;
-        //    do_test_with( s );
-        //    if ( c_bPrintGCState )
-        //        print_gc_state();
-        //}
-
-        //template <class Map>
-        //void test_nolf_extract()
-        //{
-        //    CPPUNIT_MSG( "Thread count: insert=" << c_nInsThreadCount
-        //        << ", delete=" << c_nDelThreadCount
-        //        << ", extract=" << c_nExtractThreadCount
-        //        << "; set size=" << c_nMapSize
-        //        );
-
-        //    Map s;
-        //    do_test_extract_with( s );
-        //    if ( c_bPrintGCState )
-        //        print_gc_state();
-        //}
-
         template <class Map>
         void run_test()
         {
@@ -756,26 +688,15 @@ namespace map2 {
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
 
-        //void run_MichaelMap(const char *in_name, bool invert = false);
-        //void run_SplitList(const char *in_name, bool invert = false);
-        ////void run_StripedMap(const char *in_name, bool invert = false);
-        ////void run_RefinableMap(const char *in_name, bool invert = false);
-        //void run_CuckooMap(const char *in_name, bool invert = false);
-        //void run_SkipListMap(const char *in_name, bool invert = false);
-        //void run_EllenBinTreeMap(const char *in_name, bool invert = false);
-        //void run_BronsonAVLTreeMap(const char *in_name, bool invert = false);
-        //void run_MultiLevelHashMap(const char *in_name, bool invert = false);
-        ////void run_StdMap(const char *in_name, bool invert = false);
-
-        //virtual void myRun(const char *in_name, bool invert = false);
-
 #   include "map2/map_defs.h"
         CDSUNIT_DECLARE_MichaelMap
-        CDSUNIT_DECLARE_MultiLevelHashMap
+
+        // This test is not suitable for MultiLevelHashMap
+        //CDSUNIT_DECLARE_MultiLevelHashMap
 
         CPPUNIT_TEST_SUITE(Map_DelOdd)
             CDSUNIT_TEST_MichaelMap
-            //CDSUNIT_TEST_MultiLevelHashMap
+            //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
         CPPUNIT_TEST_SUITE_END();
 
         //CDSUNIT_DECLARE_MichaelMap

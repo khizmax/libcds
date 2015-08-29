@@ -25,14 +25,12 @@ namespace map2 {
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-        static CDS_CONSTEXPR bool const c_erase_with_supported = false;
-        static CDS_CONSTEXPR bool const c_extract_with_supported = false;
     };
 
     struct tag_MultiLevelHashMap;
 
     template <typename Key, typename Value>
-    struct map_type< map2::tag_MultiLevelHashMap, Key, Value >: public map_type_base< Key, Value >
+    struct map_type< tag_MultiLevelHashMap, Key, Value >: public map_type_base< Key, Value >
     {
         typedef map_type_base< Key, Value > base_class;
         typedef typename base_class::compare    compare;

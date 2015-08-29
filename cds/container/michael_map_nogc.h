@@ -435,7 +435,7 @@ namespace cds { namespace container {
             and returns an iterator pointed to item found and \ref end() otherwise
         */
         template <typename K>
-        iterator find( K const& key )
+        iterator contains( K const& key )
         {
             bucket_type& refBucket = bucket( key );
             bucket_iterator it = refBucket.contains( key );

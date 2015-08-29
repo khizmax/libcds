@@ -25,8 +25,6 @@ namespace map2 {
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
-        static CDS_CONSTEXPR bool const c_erase_with_supported = true;
-        static CDS_CONSTEXPR bool const c_extract_with_supported = true;
     };
 
     struct tag_MichaelHashMap;
