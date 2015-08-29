@@ -10,4 +10,3 @@
 namespace map2 {
     CDSUNIT_DECLARE_MichaelMap
 } // namespace map2
-

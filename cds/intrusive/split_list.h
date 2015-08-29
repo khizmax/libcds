@@ -272,11 +272,11 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Func>
-            std::pair<bool, bool> ensure_at( dummy_node_type * pHead, value_type& val, Func func )
+            std::pair<bool, bool> update_at( dummy_node_type * pHead, value_type& val, Func func, bool bAllowInsert )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
-                return base_class::ensure_at( h, val, func );
+                return base_class::update_at( h, val, func, bAllowInsert );
             }
 
             bool unlink_at( dummy_node_type * pHead, value_type& val )
@@ -687,11 +687,12 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val is not found in the set, then \p val is inserted into the set.
+            If the item \p val is not found in the set, then \p val is inserted
+            iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -700,22 +701,22 @@ namespace cds { namespace intrusive {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
-            The functor can change non-key fields of the \p item.
+            The functor may change non-key fields of the \p item.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
-            already is in the set.
+            already is in the list.
 
             @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
         {
             size_t nHash = hash_value( val );
             dummy_node_type * pHead = get_bucket( nHash );
@@ -723,7 +724,7 @@ namespace cds { namespace intrusive {
 
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
 
-            std::pair<bool, bool> bRet = m_List.ensure_at( pHead, val, func );
+            std::pair<bool, bool> bRet = m_List.update_at( pHead, val, func, bAllowInsert );
             if ( bRet.first && bRet.second ) {
                 inc_item_count();
                 m_Stat.onEnsureNew();
@@ -732,6 +733,14 @@ namespace cds { namespace intrusive {
                 m_Stat.onEnsureExist();
             return bRet;
         }
+        //@cond
+        // Deprecated, use update()
+        template <typename Func>
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Unlinks the item \p val from the set
         /**
@@ -940,34 +949,49 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_intrusive_SplitListSet_hp_find_val
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
-            Otherwise, you may use \p find_with functions with explicit predicate for key comparing.
+            Otherwise, you may use \p contains( Q const&, Less pred ) functions with explicit predicate for key comparing.
         */
         template <typename Q>
-        bool find( Q const& key )
+        bool contains( Q const& key )
         {
             return find_( key, key_comparator() );
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q>
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p key with \p pred predicate for comparing
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_SplitListSet_hp_find_val "find(Q const&)"
-            but \p cmp is used for key compare.
-            \p Less has the interface like \p std::less.
-            \p cmp must imply the same element order as the comparator used for building the set.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
         }
+        //@cond
+        // Deprecated, use contains()
+        template <typename Q, typename Less>
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_SplitListSet_hp_get

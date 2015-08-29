@@ -113,56 +113,30 @@
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_SplitList_RCU_signal  \
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHB_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHB_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHB_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHB_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHB_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHB_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHT_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHT_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHT_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHT_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHT_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_SHT_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHB_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHB_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHB_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHB_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHB_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHB_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHT_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHT_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHT_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHT_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHT_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_SHT_st_less_stat)
-
-#   define CDSUNIT_DEFINE_SplitList_RCU_signal( IMPL, C )  \
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHB_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHB_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHB_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHB_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHB_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHB_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHT_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHT_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHT_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHT_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHT_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_SHT_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHB_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHB_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHB_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHB_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHB_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHB_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHT_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHT_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHT_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHT_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHT_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_SHT_st_less_stat)
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHB_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHB_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHB_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHB_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHB_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHB_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHT_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHT_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHT_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHT_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHT_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_SHT_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHB_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHB_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHB_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHB_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHB_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHB_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHT_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHT_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHT_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHT_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHT_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_SHT_st_less_stat)
 
 #   define CDSUNIT_TEST_SplitList_RCU_signal \
     CPPUNIT_TEST(SplitList_Michael_RCU_SHB_dyn_cmp)\
@@ -197,130 +171,67 @@
 #endif
 
 #define CDSUNIT_DECLARE_SplitList \
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_HP_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_HP_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_HP_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_HP_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_HP_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_HP_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_DHP_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_DHP_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_DHP_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_DHP_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_DHP_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_DHP_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPI_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPI_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPI_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPI_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPI_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPI_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPB_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPB_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPB_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPB_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPB_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPB_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPT_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPT_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPT_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPT_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPT_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_RCU_GPT_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_HP_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_HP_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_HP_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_HP_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_HP_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_HP_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_DHP_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_DHP_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_DHP_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_DHP_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_DHP_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_DHP_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPI_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPI_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPI_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPI_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPI_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPI_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPB_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPB_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPB_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPB_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPB_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPB_st_less_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPT_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPT_dyn_cmp_stat)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPT_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPT_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPT_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_RCU_GPT_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_HP_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_HP_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_HP_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_HP_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_HP_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_HP_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_DHP_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_DHP_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_DHP_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_DHP_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_DHP_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_DHP_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPI_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPI_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPI_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPI_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPI_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPI_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPB_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPB_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPB_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPB_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPB_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPB_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPT_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPT_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPT_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPT_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPT_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_RCU_GPT_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_HP_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_HP_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_HP_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_HP_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_HP_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_HP_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_DHP_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_DHP_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_DHP_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_DHP_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_DHP_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_DHP_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPI_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPI_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPI_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPI_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPI_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPI_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPB_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPB_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPB_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPB_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPB_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPB_st_less_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPT_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPT_dyn_cmp_stat)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPT_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPT_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPT_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_RCU_GPT_st_less_stat)\
     CDSUNIT_DECLARE_SplitList_RCU_signal
-
-#define CDSUNIT_DEFINE_SplitList( IMPL, C ) \
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_HP_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_HP_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_HP_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_HP_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_HP_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_HP_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_DHP_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_DHP_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_DHP_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_DHP_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_DHP_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_DHP_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPI_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPI_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPI_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPI_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPI_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPI_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPB_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPB_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPB_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPB_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPB_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPB_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPT_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPT_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPT_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPT_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPT_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Michael_RCU_GPT_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_HP_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_HP_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_HP_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_HP_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_HP_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_HP_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_DHP_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_DHP_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_DHP_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_DHP_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_DHP_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_DHP_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPI_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPI_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPI_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPI_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPI_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPI_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPB_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPB_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPB_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPB_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPB_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPB_st_less_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPT_dyn_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPT_dyn_cmp_stat)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPT_st_cmp)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPT_dyn_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPT_st_less)\
-    TEST_MAP_EXTRACT(IMPL, C, SplitList_Lazy_RCU_GPT_st_less_stat)\
-    CDSUNIT_DEFINE_SplitList_RCU_signal( IMPL, C )
 
 #define CDSUNIT_TEST_SplitList  \
     CPPUNIT_TEST(SplitList_Michael_HP_dyn_cmp)\
@@ -386,24 +297,14 @@
     CDSUNIT_TEST_SplitList_RCU_signal
 
 #define CDSUNIT_DECLARE_SplitList_nogc  \
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_NOGC_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_NOGC_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_NOGC_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Michael_NOGC_st_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_NOGC_dyn_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_NOGC_st_cmp)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_NOGC_dyn_less)\
-    CDSUNIT_DECLARE_TEST(SplitList_Lazy_NOGC_st_less)
-
-#define CDSUNIT_DEFINE_SplitList_nogc( IMPL, C )  \
-    TEST_MAP(IMPL, C, SplitList_Michael_NOGC_dyn_cmp)\
-    TEST_MAP(IMPL, C, SplitList_Michael_NOGC_st_cmp)\
-    TEST_MAP(IMPL, C, SplitList_Michael_NOGC_dyn_less)\
-    TEST_MAP(IMPL, C, SplitList_Michael_NOGC_st_less)\
-    TEST_MAP(IMPL, C, SplitList_Lazy_NOGC_dyn_cmp)\
-    TEST_MAP(IMPL, C, SplitList_Lazy_NOGC_st_cmp)\
-    TEST_MAP(IMPL, C, SplitList_Lazy_NOGC_dyn_less)\
-    TEST_MAP(IMPL, C, SplitList_Lazy_NOGC_st_less)
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_NOGC_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_NOGC_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_NOGC_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Michael_NOGC_st_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_NOGC_dyn_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_NOGC_st_cmp)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_NOGC_dyn_less)\
+    TEST_CASE(tag_SplitListMap, SplitList_Lazy_NOGC_st_less)
 
 #define CDSUNIT_TEST_SplitList_nogc  \
     CPPUNIT_TEST(SplitList_Michael_NOGC_dyn_cmp)\

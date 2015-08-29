@@ -770,7 +770,7 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Checks whether the map contains \p key using \p pred predicate for searching
+        /// Checks whether the list contains \p key using \p pred predicate for searching
         /**
             The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.

@@ -690,17 +690,17 @@ namespace map2 {
 
 #   include "map2/map_defs.h"
         CDSUNIT_DECLARE_MichaelMap
+        CDSUNIT_DECLARE_SplitList
 
         // This test is not suitable for MultiLevelHashMap
         //CDSUNIT_DECLARE_MultiLevelHashMap
 
         CPPUNIT_TEST_SUITE(Map_DelOdd)
             CDSUNIT_TEST_MichaelMap
+            CDSUNIT_TEST_SplitList
             //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
         CPPUNIT_TEST_SUITE_END();
 
-        //CDSUNIT_DECLARE_MichaelMap
-        //CDSUNIT_DECLARE_SplitList
         ////CDSUNIT_DECLARE_StripedMap
         ////CDSUNIT_DECLARE_RefinableMap
         //CDSUNIT_DECLARE_CuckooMap

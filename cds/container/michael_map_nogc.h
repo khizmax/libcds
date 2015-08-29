@@ -397,13 +397,13 @@ namespace cds { namespace container {
 
         /// Updates the item
         /**
-            If \p key is not in the list and \p bAllowInsert is \p true, 
-            the function inserts a new item.
+            If \p key is not in the map and \p bAllowInsert is \p true, the function inserts a new item.
             Otherwise, the function returns an iterator pointing to the item found.
 
             Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
-            already is in the list.
+            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()), 
+            \p second is true if new item has been added or \p false if the item
+            already is in the map.
 
             @warning For \ref cds_nonintrusive_MichaelKVList_nogc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_nogc "LazyKVList" provides exclusive access to inserted item and does not require any node-level

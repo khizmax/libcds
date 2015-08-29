@@ -227,48 +227,70 @@ namespace cds { namespace container {
             return base_class::emplace( std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)));
         }
 
-        /// Ensures that the key \p key exists in the map
+        /// Updates the item
         /**
-            The operation inserts new item if the key \p key is not found in the map.
-            Otherwise, the function returns an iterator that points to item found.
+            If \p key is not in the map and \p bAllowInsert is \p true, the function inserts a new item.
+            Otherwise, the function returns an iterator pointing to the item found.
 
-            Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
-            already is in the list.
+            Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
+            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()), 
+            \p second is true if new item has been added or \p false if the item
+            already is in the map.
         */
+        template <typename K>
+        std::pair<iterator, bool> update( K const& key, bool bAllowInsert = true )
+        {
+            //TODO: pass arguments by reference (make_pair makes copy)
+            return base_class::update( std::make_pair( key, mapped_type() ), bAllowInsert );
+        }
+        //@cond
+        // Deprecated, use update()
         template <typename K>
         std::pair<iterator, bool> ensure( K const& key )
         {
-            //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::ensure( std::make_pair( key, mapped_type() ));
+            return update( key, true );
         }
+        //@endcond
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_SplitListMap_nogc_find
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns an iterator pointed to item found if the key is found,
-            and \p end() otherwise
+            and returns an iterator pointed to item found and \ref end() otherwise
         */
+        template <typename K>
+        iterator contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        // Deprecated, use contains()
         template <typename K>
         iterator find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListMap_nogc_find "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the map.
+            \p pred must imply the same element order as the comparator used for building the map.
         */
+        template <typename K, typename Less>
+        iterator contains( K const& key, Less pred )
+        {
+            CDS_UNUSED( pred );
+            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+        }
+        //@cond
+        // Deprecated, use contains()
         template <typename K, typename Less>
         iterator find_with( K const& key, Less pred )
         {
-            CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return contains( key, pred );
         }
+        //@endcond
 
         /// Checks if the map is empty
         /**
