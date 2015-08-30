@@ -14,8 +14,25 @@
 
 namespace map2 {
 
+    template <class GC, typename Key, typename T, typename Traits = cc::ellen_bintree::traits >
+    class EllenBinTreeMap : public cc::EllenBinTreeMap< GC, Key, T, Traits >
+    {
+        typedef cc::EllenBinTreeMap< GC, Key, T, Traits > base_class;
+    public:
+        template <typename Config>
+        EllenBinTreeMap( Config const& /*cfg*/)
+            : base_class()
+        {}
+
+        // for testing
+        static CDS_CONSTEXPR bool const c_bExtractSupported = true;
+        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+    };
+
+    struct tag_EllenBinTreeMap;
+
     template <typename Key, typename Value>
-    struct map_type< cc::ellen_bintree::implementation_tag, Key, Value >: public map_type_base< Key, Value >
+    struct map_type< tag_EllenBinTreeMap, Key, Value >: public map_type_base< Key, Value >
     {
         typedef map_type_base< Key, Value > base_class;
         typedef typename base_class::compare    compare;
@@ -70,38 +87,38 @@ namespace map2 {
         struct traits_EllenBinTreeMap_hp : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_hp >EllenBinTreeMap_hp;
+        typedef EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_hp >EllenBinTreeMap_hp;
 
         struct traits_EllenBinTreeMap_dhp : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::dhp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< cds::gc::DHP, Key, Value, traits_EllenBinTreeMap_dhp >EllenBinTreeMap_dhp;
+        typedef EllenBinTreeMap< cds::gc::DHP, Key, Value, traits_EllenBinTreeMap_dhp >EllenBinTreeMap_dhp;
 
         struct traits_EllenBinTreeMap_gpi : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpi::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_gpi, Key, Value, traits_EllenBinTreeMap_gpi >EllenBinTreeMap_rcu_gpi;
+        typedef EllenBinTreeMap< rcu_gpi, Key, Value, traits_EllenBinTreeMap_gpi >EllenBinTreeMap_rcu_gpi;
 
         struct traits_EllenBinTreeMap_gpb : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_gpb, Key, Value, traits_EllenBinTreeMap_gpb >EllenBinTreeMap_rcu_gpb;
+        typedef EllenBinTreeMap< rcu_gpb, Key, Value, traits_EllenBinTreeMap_gpb >EllenBinTreeMap_rcu_gpb;
 
         struct traits_EllenBinTreeMap_gpt : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpt::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_gpt, Key, Value, traits_EllenBinTreeMap_gpt >EllenBinTreeMap_rcu_gpt;
+        typedef EllenBinTreeMap< rcu_gpt, Key, Value, traits_EllenBinTreeMap_gpt >EllenBinTreeMap_rcu_gpt;
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         struct traits_EllenBinTreeMap_shb : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_shb, Key, Value, traits_EllenBinTreeMap_shb >EllenBinTreeMap_rcu_shb;
+        typedef EllenBinTreeMap< rcu_shb, Key, Value, traits_EllenBinTreeMap_shb >EllenBinTreeMap_rcu_shb;
 
         struct traits_EllenBinTreeMap_sht : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_sht, Key, Value, traits_EllenBinTreeMap_sht >EllenBinTreeMap_rcu_sht;
+        typedef EllenBinTreeMap< rcu_sht, Key, Value, traits_EllenBinTreeMap_sht >EllenBinTreeMap_rcu_sht;
 #endif
 
         struct traits_EllenBinTreeMap_yield : public traits_EllenBinTreeMap
@@ -111,17 +128,17 @@ namespace map2 {
         struct traits_EllenBinTreeMap_hp_yield : traits_EllenBinTreeMap_yield {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_hp_yield >EllenBinTreeMap_hp_yield;
+        typedef EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_hp_yield >EllenBinTreeMap_hp_yield;
 
         struct traits_EllenBinTreeMap_dhp_yield : traits_EllenBinTreeMap_yield {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::dhp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< cds::gc::DHP, Key, Value, traits_EllenBinTreeMap_dhp_yield >EllenBinTreeMap_dhp_yield;
+        typedef EllenBinTreeMap< cds::gc::DHP, Key, Value, traits_EllenBinTreeMap_dhp_yield >EllenBinTreeMap_dhp_yield;
 
         struct traits_EllenBinTreeMap_gpb_yield : traits_EllenBinTreeMap_yield {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_gpb, Key, Value, traits_EllenBinTreeMap_gpb_yield >EllenBinTreeMap_rcu_gpb_yield;
+        typedef EllenBinTreeMap< rcu_gpb, Key, Value, traits_EllenBinTreeMap_gpb_yield >EllenBinTreeMap_rcu_gpb_yield;
 
 
         struct traits_EllenBinTreeMap_stat: public cc::ellen_bintree::make_set_traits<
@@ -139,54 +156,54 @@ namespace map2 {
         {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_stat_hp > EllenBinTreeMap_hp_stat;
+        typedef EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_stat_hp > EllenBinTreeMap_hp_stat;
 
         struct traits_EllenBinTreeMap_stat_dhp : public traits_EllenBinTreeMap_stat
         {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::dhp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_stat_dhp > EllenBinTreeMap_dhp_stat;
+        typedef EllenBinTreeMap< cds::gc::HP, Key, Value, traits_EllenBinTreeMap_stat_dhp > EllenBinTreeMap_dhp_stat;
 
         struct traits_EllenBinTreeMap_stat_gpi : public traits_EllenBinTreeMap_stat
         {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpi::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_gpi, Key, Value, traits_EllenBinTreeMap_stat_gpi > EllenBinTreeMap_rcu_gpi_stat;
+        typedef EllenBinTreeMap< rcu_gpi, Key, Value, traits_EllenBinTreeMap_stat_gpi > EllenBinTreeMap_rcu_gpi_stat;
 
         struct traits_EllenBinTreeMap_stat_gpb : public traits_EllenBinTreeMap_stat
         {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_gpb, Key, Value, traits_EllenBinTreeMap_stat_gpb > EllenBinTreeMap_rcu_gpb_stat;
+        typedef EllenBinTreeMap< rcu_gpb, Key, Value, traits_EllenBinTreeMap_stat_gpb > EllenBinTreeMap_rcu_gpb_stat;
 
         struct traits_EllenBinTreeMap_stat_gpt : public traits_EllenBinTreeMap_stat
         {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpt::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_gpt, Key, Value, traits_EllenBinTreeMap_stat_gpt > EllenBinTreeMap_rcu_gpt_stat;
+        typedef EllenBinTreeMap< rcu_gpt, Key, Value, traits_EllenBinTreeMap_stat_gpt > EllenBinTreeMap_rcu_gpt_stat;
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         struct traits_EllenBinTreeMap_stat_shb : public traits_EllenBinTreeMap_stat
         {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_shb, Key, Value, traits_EllenBinTreeMap_stat_shb > EllenBinTreeMap_rcu_shb_stat;
+        typedef EllenBinTreeMap< rcu_shb, Key, Value, traits_EllenBinTreeMap_stat_shb > EllenBinTreeMap_rcu_shb_stat;
 
         struct traits_EllenBinTreeMap_stat_sht : public traits_EllenBinTreeMap_stat
         {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
-        typedef cc::EllenBinTreeMap< rcu_sht, Key, Value, traits_EllenBinTreeMap_stat_sht > EllenBinTreeMap_rcu_sht_stat;
+        typedef EllenBinTreeMap< rcu_sht, Key, Value, traits_EllenBinTreeMap_stat_sht > EllenBinTreeMap_rcu_sht_stat;
 #endif
     };
 
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void print_stat( cc::EllenBinTreeMap<GC, Key, T, Traits> const& s )
+    static inline void print_stat( EllenBinTreeMap<GC, Key, T, Traits> const& s )
     {
         CPPUNIT_MSG( s.statistics() );
     }
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void additional_cleanup( cc::EllenBinTreeMap<GC, Key, T, Traits>& /*s*/ )
+    static inline void additional_cleanup( EllenBinTreeMap<GC, Key, T, Traits>& /*s*/ )
     {
         ellen_bintree_pool::internal_node_counter::reset();
     }
@@ -216,14 +233,14 @@ namespace map2 {
         }
     }   // namespace ellen_bintree_check
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void additional_check( cc::EllenBinTreeMap<GC, Key, T, Traits>& s )
+    static inline void additional_check( EllenBinTreeMap<GC, Key, T, Traits>& s )
     {
         GC::force_dispose();
         ellen_bintree_check::check_stat( s.statistics() );
     }
 
     template <typename GC, typename Key, typename T, typename Traits>
-    static inline void check_before_cleanup( cc::EllenBinTreeMap<GC, Key, T, Traits>& m )
+    static inline void check_before_cleanup( EllenBinTreeMap<GC, Key, T, Traits>& m )
     {
         CPPUNIT_MSG( "  Check internal consistency (single-threaded)..." );
         CPPUNIT_CHECK_CURRENT( m.check_consistency() );

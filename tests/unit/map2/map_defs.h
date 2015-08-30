@@ -409,16 +409,10 @@
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_EllenBinTreeMap_RCU_signal \
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_shb)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_shb_stat)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_sht)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_sht_stat)
-
-#   define CDSUNIT_DEFINE_EllenBinTreeMap_RCU_signal( IMPL, C ) \
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_shb)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_shb_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_sht)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_sht_stat)
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_shb)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_shb_stat)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_sht)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_sht_stat)
 
 #   define CDSUNIT_TEST_EllenBinTreeMap_RCU_signal \
     CPPUNIT_TEST(EllenBinTreeMap_rcu_shb)\
@@ -427,41 +421,24 @@
     CPPUNIT_TEST(EllenBinTreeMap_rcu_sht_stat)
 #else
 #   define CDSUNIT_DECLARE_EllenBinTreeMap_RCU_signal
-#   define CDSUNIT_DEFINE_EllenBinTreeMap_RCU_signal( IMPL, C )
 #   define CDSUNIT_TEST_EllenBinTreeMap_RCU_signal
 #endif
 
 #define CDSUNIT_DECLARE_EllenBinTreeMap \
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_hp)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_hp_yield)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_hp_stat)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_dhp)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_dhp_yield)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_dhp_stat)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_gpi)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_gpi_stat)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_gpb)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_gpb_yield)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_gpb_stat)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_gpt)\
-    CDSUNIT_DECLARE_TEST(EllenBinTreeMap_rcu_gpt_stat)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_hp)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_hp_yield)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_hp_stat)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_dhp)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_dhp_yield)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_dhp_stat)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_gpi)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_gpi_stat)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_gpb)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_gpb_yield)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_gpb_stat)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_gpt)\
+    TEST_CASE(tag_EllenBinTreeMap, EllenBinTreeMap_rcu_gpt_stat)\
     CDSUNIT_DECLARE_EllenBinTreeMap_RCU_signal
-
-#define CDSUNIT_DEFINE_EllenBinTreeMap( IMPL, C ) \
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_hp)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_hp_yield)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_hp_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_dhp)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_dhp_yield)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_dhp_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_gpi)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_gpi_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_gpb)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_gpb_yield)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_gpb_stat)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_gpt)\
-    TEST_MAP_NOLF_EXTRACT(IMPL, C, EllenBinTreeMap_rcu_gpt_stat)\
-    CDSUNIT_DEFINE_EllenBinTreeMap_RCU_signal( IMPL, C )
 
 #define CDSUNIT_TEST_EllenBinTreeMap \
     CPPUNIT_TEST(EllenBinTreeMap_hp)\
