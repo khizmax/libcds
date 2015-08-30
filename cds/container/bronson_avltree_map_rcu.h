@@ -276,15 +276,15 @@ namespace cds { namespace container {
 #       endif
         }
 
-        /// Ensures that the \p key exists in the map
+        /// Updates the value for \p key
         /**
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            will be inserted into the map (note that in this case the \ref key_type should be
-            constructible from type \p K).
+            will be inserted into the map iff \p bAllowInsert is \p true 
+            (note that in this case the \ref key_type should be constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a functor:
+            The functor \p Func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, key_type const& key, mapped_type& item );
@@ -295,7 +295,8 @@ namespace cds { namespace container {
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - value
 
-            The functor may change any fields of the \p item. The functor is called under the node lock.
+            The functor may change any fields of the \p item. The functor is called under the node lock,
+            the caller can change any field of \p item.
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
@@ -304,7 +305,7 @@ namespace cds { namespace container {
             already exists.
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> update( K const& key, Func func )
+        std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             int result = base_class::do_update( key, key_comparator(),
                 [&func]( node_type * pNode ) -> mapped_type*
@@ -318,18 +319,10 @@ namespace cds { namespace container {
                         func( false, pNode->m_key, *pVal );
                     return pVal;
                 },
-                update_flags::allow_insert | update_flags::allow_update
+                (bAllowInsert ? update_flags::allow_insert : 0) | update_flags::allow_update
             );
             return std::make_pair( result != 0, (result & update_flags::result_inserted) != 0 );
         }
-
-        //@cond
-        template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
-        {
-            return update( key, func );
-        }
-        //@endcond
 
 
         /// Delete \p key from the map
@@ -600,7 +593,7 @@ namespace cds { namespace container {
             return base_class::find_with( key, pred, f );
         }
 
-        /// Find the key \p key
+        /// Checks whether the map contains \p key
         /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
@@ -608,22 +601,21 @@ namespace cds { namespace container {
             The function applies RCU lock internally.
         */
         template <typename K>
-        bool find( K const& key )
+        bool contains( K const& key )
         {
-            return base_class::find( key );
+            return base_class::contains( key );
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \p find(K const&)
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the map.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename K, typename Less>
-        bool find_with( K const& key, Less pred )
+        bool contains( K const& key, Less pred )
         {
-            return base_class::find_with( key, pred );
+            return base_class::contains( key, pred );
         }
 
         /// Clears the map

@@ -1148,9 +1148,6 @@
     <ClInclude Include="..\..\..\cds\algo\atomic.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\bronson_avltree_base.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>

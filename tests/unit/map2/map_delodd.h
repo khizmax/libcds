@@ -693,6 +693,7 @@ namespace map2 {
         CDSUNIT_DECLARE_SplitList
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
+        CDSUNIT_DECLARE_BronsonAVLTreeMap
 
         // This test is not suitable for MultiLevelHashMap
         //CDSUNIT_DECLARE_MultiLevelHashMap
@@ -702,6 +703,7 @@ namespace map2 {
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
 
             //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
         CPPUNIT_TEST_SUITE_END();
@@ -709,7 +711,6 @@ namespace map2 {
         ////CDSUNIT_DECLARE_StripedMap
         ////CDSUNIT_DECLARE_RefinableMap
         //CDSUNIT_DECLARE_CuckooMap
-        //CDSUNIT_DECLARE_BronsonAVLTreeMap
         //CDSUNIT_DECLARE_MultiLevelHashMap
         ////CDSUNIT_DECLARE_StdMap
     };

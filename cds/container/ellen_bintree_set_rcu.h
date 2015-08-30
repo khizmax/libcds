@@ -259,7 +259,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         std::pair<bool, bool> ensure( const Q& val, Func func )
         {
-            return update( val, func true );
+            return update( val, func, true );
         }
         //@endcond
 
