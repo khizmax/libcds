@@ -535,45 +535,51 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
-            The operation performs inserting or changing data.
+            The operation performs inserting or changing data with lock-free manner.
 
-            If the \p val key not found in the set, then the new item created from \p val
-            is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func should be a function with signature:
-            \code
-                void func( bool bNew, value_type& item, const Q& val );
-            \endcode
-            or a functor:
+            If the item \p val is not found in the set, then \p val is inserted into the set
+            iff \p bAllowInsert is \p true.
+            Otherwise, the functor \p func is called with item found.
+            The functor \p func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item, const Q& val );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %update() function
+            If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
+            refer to the same thing.
 
-            The functor can change non-key fields of the \p item.
-
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p val key
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            i.e. the node has been inserted or updated,
+            \p second is \p true if new item has been added or \p false if the item with \p key
             already exists.
         */
         template <typename Q, typename Func>
-        std::pair<bool, bool> ensure( Q const& val, Func func )
+        std::pair<bool, bool> update( Q const& val, Func func, bool bAllowInsert = true )
         {
             scoped_node_ptr pNode( alloc_node( val ));
-            std::pair<bool, bool> res = base_class::ensure( *pNode,
-                [&val,&func](bool bNew, node_type& item, node_type const& ){ func( bNew, item.m_val, val ); }
+            std::pair<bool, bool> res = base_class::update( *pNode,
+                [&val,&func](bool bNew, node_type& item, node_type const& ){ func( bNew, item.m_val, val ); },
+                bAllowInsert
             );
             if ( res.first && res.second )
                 pNode.release();
             return res;
         }
+        //@cond
+        template <typename Q, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( Q const& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Delete \p key from the set
         /** \anchor cds_nonintrusive_CuckooSet_erase
@@ -690,6 +696,13 @@ namespace cds { namespace container {
         {
             return base_class::find( val, [&f](node_type& item, Q& v) { f( item.m_val, v );});
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& val, Func f )
+        {
+            return base_class::find( val, [&f](node_type& item, Q const& v) { f( item.m_val, v );});
+        }
+        //@endcond
 
         /// Find the key \p val using \p pred predicate for comparing
         /**
@@ -706,40 +719,7 @@ namespace cds { namespace container {
             return base_class::find_with( val, typename maker::template predicate_wrapper<Predicate, bool>(),
                 [&f](node_type& item, Q& v) { f( item.m_val, v );});
         }
-
-        /// Find the key \p val
-        /** \anchor cds_nonintrusive_CuckooSet_find_cfunc
-
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            The functor can change non-key fields of \p item.
-
-            The type \p Q can differ from \ref value_type of items storing in the container.
-            Therefore, the \p value_type should be comparable with type \p Q.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return base_class::find( val, [&f](node_type& item, Q const& v) { f( item.m_val, v );});
-        }
-
-        /// Find the key \p val using \p pred predicate for comparing
-        /**
-            The function is an analog of \ref cds_nonintrusive_CuckooSet_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparison.
-            If you use ordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::less.
-            If you use unordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::equal_to.
-            \p pred must imply the same element order as the comparator used for building the set.
-        */
+        //@cond
         template <typename Q, typename Predicate, typename Func>
         bool find_with( Q const& val, Predicate pred, Func f )
         {
@@ -747,36 +727,47 @@ namespace cds { namespace container {
             return base_class::find_with( val, typename maker::template predicate_wrapper<Predicate, bool>(),
                 [&f](node_type& item, Q const& v) { f( item.m_val, v );});
         }
+        //@endcond
 
-        /// Find the key \p val
-        /** \anchor cds_nonintrusive_CuckooSet_find_val
-
-            The function searches the item with key equal to \p val
+        /// Checks whether the set contains \p key
+        /**
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \ref value_type.
         */
         template <typename Q>
-        bool find( Q const& val )
+        bool contains( Q const& key )
         {
-            return base_class::find( val, [](node_type&, Q const&) {});
+            return base_class::find( key, [](node_type&, Q const&) {});
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("the function is deprecated, use contains()")
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Find the key \p val using \p pred predicate for comparing
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_CuckooSet_find_val "find(Q const&)"
-            but \p pred is used for key comparison.
-            If you use ordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::less.
-            If you use unordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::equal_to.
-            \p pred must imply the same element order as the comparator used for building the set.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Predicate>
-        bool find_with( Q const& val, Predicate pred )
+        bool contains( Q const& key, Predicate pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( val, typename maker::template predicate_wrapper<Predicate, bool>(), [](node_type&, Q const&) {});
+            return base_class::find_with( key, typename maker::template predicate_wrapper<Predicate, bool>(), [](node_type&, Q const&) {});
         }
+        //@cond
+        template <typename Q, typename Predicate>
+        CDS_DEPRECATED("the function is deprecated, use contains()")
+        bool find_with( Q const& key, Predicate pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Clears the set
         /**

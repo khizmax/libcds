@@ -428,7 +428,7 @@ namespace cds { namespace container {
         // Deprecated, use update()
         template <typename Q, typename Func>
         std::pair<bool, bool> ensure( Q const& key, Func f )
-        {1
+        {
             return update( key, f, true );
         }
         //@endcond

@@ -12,8 +12,10 @@ namespace map2 {
         c_nExtractThreadCount = cfg.getULong("ExtractThreadCount", static_cast<unsigned long>(c_nExtractThreadCount) );
         c_nMaxLoadFactor = cfg.getULong("MaxLoadFactor", static_cast<unsigned long>(c_nMaxLoadFactor) );
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", true );
-        c_nMultiLevelMap_HeadBits = cfg.getULong("MultiLevelMap_HeadBits", static_cast<unsigned long>(c_nMultiLevelMap_HeadBits) );
-        c_nMultiLevelMap_ArrayBits = cfg.getULong("MultiLevelMap_ArrayBits", static_cast<unsigned long>(c_nMultiLevelMap_ArrayBits) );
+
+        c_nCuckooInitialSize = cfg.getULong("CuckooInitialSize", static_cast<unsigned long>(c_nCuckooInitialSize) );
+        c_nCuckooProbesetSize = cfg.getULong("CuckooProbesetSize", static_cast<unsigned long>(c_nCuckooProbesetSize) );
+        c_nCuckooProbesetThreshold = cfg.getULong("CuckooProbesetThreshold", static_cast<unsigned long>(c_nCuckooProbesetThreshold) );
 
 
         if ( c_nInsThreadCount == 0 )

@@ -120,8 +120,9 @@ namespace map2 {
         size_t  c_nExtractThreadCount = 4;  // extract thread count
         size_t  c_nMapSize = 1000000;       // max map size
         size_t  c_nMaxLoadFactor = 8;       // maximum load factor
-        size_t  c_nMultiLevelMap_HeadBits = 10; // for MultiLevelHashMap - log2(size of head array)
-        size_t  c_nMultiLevelMap_ArrayBits = 8; // for MultiLevelHashMap - log2(size of array node)
+        size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooMap
+        size_t  c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t  c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
 
         bool    c_bPrintGCState = true;
 
@@ -651,39 +652,44 @@ namespace map2 {
         template <class Map>
         void run_test()
         {
-            if ( Map::c_bExtractSupported ) {
-                CPPUNIT_MSG( "Thread count: insert=" << c_nInsThreadCount
-                    << ", delete=" << c_nDelThreadCount
-                    << ", extract=" << c_nExtractThreadCount
-                    << "; set size=" << c_nMapSize
-                    );
-                if ( Map::c_bLoadFactorDepended ) {
-                    for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
-                        CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
-                        do_test_extract<Map>();
-                        if ( c_bPrintGCState )
-                            print_gc_state();
-                    }
-                }
-                else
+            static_assert( Map::c_bExtractSupported, "Map class must support extract() method" );
+
+            CPPUNIT_MSG( "Thread count: insert=" << c_nInsThreadCount
+                << ", delete=" << c_nDelThreadCount
+                << ", extract=" << c_nExtractThreadCount
+                << "; set size=" << c_nMapSize
+                );
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
                     do_test_extract<Map>();
-            }
-            else {
-                CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
-                    << " delete thread count=" << c_nDelThreadCount
-                    << " set size=" << c_nMapSize
-                    );
-                if ( Map::c_bLoadFactorDepended ) {
-                    for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
-                        CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
-                        do_test<Map>();
-                        if ( c_bPrintGCState )
-                            print_gc_state();
-                    }
+                    if ( c_bPrintGCState )
+                        print_gc_state();
                 }
-                else
-                    do_test<Map>();
             }
+            else
+                do_test_extract<Map>();
+        }
+
+        template <class Map>
+        void run_test_no_extract()
+        {
+            static_assert( !Map::c_bExtractSupported, "Map class must not support extract() method" );
+
+            CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
+                << " delete thread count=" << c_nDelThreadCount
+                << " set size=" << c_nMapSize
+                );
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+                    do_test<Map>();
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else
+                do_test<Map>();
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
@@ -694,6 +700,7 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
+        CDSUNIT_DECLARE_CuckooMap
 
         // This test is not suitable for MultiLevelHashMap
         //CDSUNIT_DECLARE_MultiLevelHashMap
@@ -704,14 +711,13 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_CuckooMap
 
             //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
         CPPUNIT_TEST_SUITE_END();
 
         ////CDSUNIT_DECLARE_StripedMap
         ////CDSUNIT_DECLARE_RefinableMap
-        //CDSUNIT_DECLARE_CuckooMap
-        //CDSUNIT_DECLARE_MultiLevelHashMap
         ////CDSUNIT_DECLARE_StdMap
     };
 } // namespace map2

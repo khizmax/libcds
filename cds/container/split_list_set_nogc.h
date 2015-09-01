@@ -306,7 +306,7 @@ namespace cds { namespace container {
 
             std::pair<typename base_class::iterator, bool> ret = base_class::update_( *pNode, 
                 [](bool /*bNew*/, node_type& /*item*/, node_type& /*val*/){},
-                bAllowInser );
+                bAllowInsert );
             if ( ret.first != base_class::end() && ret.second ) {
                 pNode.release();
                 return std::make_pair( iterator(ret.first), ret.second );

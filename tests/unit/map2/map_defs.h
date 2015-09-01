@@ -693,56 +693,30 @@
 // CuckooMap
 
 #define CDSUNIT_DECLARE_CuckooMap \
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_list_unord)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_list_ord)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_vector_unord)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_vector_ord)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_list_unord_stat)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_list_ord_stat)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_vector_unord_stat)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_vector_ord_stat)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_list_unord)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_list_ord)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_vector_unord)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_vector_ord) \
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_list_unord_stat)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_list_ord_stat)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_vector_unord_stat)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_vector_ord_stat) \
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_list_unord_storehash)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_list_ord_storehash)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_vector_unord_storehash)\
-    CDSUNIT_DECLARE_TEST(CuckooStripedMap_vector_ord_storehash)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_list_unord_storehash)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_list_ord_storehash)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_vector_unord_storehash)\
-    CDSUNIT_DECLARE_TEST(CuckooRefinableMap_vector_ord_storehash)
-
-#define CDSUNIT_DEFINE_CuckooMap( IMPL, C ) \
-    TEST_MAP(IMPL, C, CuckooStripedMap_list_unord)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_list_ord)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_vector_unord)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_vector_ord)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_list_unord_stat)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_list_ord_stat)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_vector_unord_stat)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_vector_ord_stat)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_list_unord)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_list_ord)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_vector_unord)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_vector_ord) \
-    TEST_MAP(IMPL, C, CuckooRefinableMap_list_unord_stat)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_list_ord_stat)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_vector_unord_stat)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_vector_ord_stat) \
-    TEST_MAP(IMPL, C, CuckooStripedMap_list_unord_storehash)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_list_ord_storehash)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_vector_unord_storehash)\
-    TEST_MAP(IMPL, C, CuckooStripedMap_vector_ord_storehash)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_list_unord_storehash)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_list_ord_storehash)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_vector_unord_storehash)\
-    TEST_MAP(IMPL, C, CuckooRefinableMap_vector_ord_storehash)
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_list_unord)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_list_ord)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_vector_unord)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_vector_ord)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_list_unord_stat)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_list_ord_stat)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_vector_unord_stat)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_vector_ord_stat)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_list_unord)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_list_ord)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_vector_unord)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_vector_ord) \
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_list_unord_stat)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_list_ord_stat)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_vector_unord_stat)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_vector_ord_stat) \
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_list_unord_storehash)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_list_ord_storehash)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_vector_unord_storehash)\
+    TEST_CASE(tag_CuckooMap, CuckooStripedMap_vector_ord_storehash)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_list_unord_storehash)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_list_ord_storehash)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_vector_unord_storehash)\
+    TEST_CASE(tag_CuckooMap, CuckooRefinableMap_vector_ord_storehash)
 
 #define CDSUNIT_TEST_CuckooMap \
     CPPUNIT_TEST(CuckooStripedMap_list_unord)\

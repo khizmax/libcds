@@ -102,11 +102,7 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGEN_INVOKED
         /// Probe set type option
         /**
-            The option specifies probe set type for the CuckooSet and CuckooMap.
-            Available \p Type:
-            - \p cuckoo::list - the probe-set is a single-linked list.
-            - \p cuckoo::vector<Capacity> - the probe-set is a vector
-                with constant-size \p Capacity where \p Capacity is an <tt>unsigned int</tt> constant.
+            @copydetails cds::intrusive::cuckoo::probeset_type
         */
         template <typename Type>
         struct probeset_type

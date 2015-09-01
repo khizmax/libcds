@@ -3,10 +3,10 @@
 #include "map2/map_delodd.h"
 #include "map2/map_type_cuckoo.h"
 
-namespace map2 {
-    CDSUNIT_DEFINE_CuckooMap(cds::intrusive::cuckoo::implementation_tag, Map_DelOdd)
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_DelOdd::X() { run_test_no_extract<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Map_DelOdd, run_CuckooMap )
-        CDSUNIT_TEST_CuckooMap
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace map2 {
+    CDSUNIT_DECLARE_CuckooMap
 } // namespace map2

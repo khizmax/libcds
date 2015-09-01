@@ -380,7 +380,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
-            return update( &m_Head, val, func, true );
+            return update( val, func, true );
         }
         //@endcond
 
