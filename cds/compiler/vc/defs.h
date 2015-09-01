@@ -121,6 +121,9 @@
 #define CDS_DATA_ALIGNMENT(n)     __declspec( align(n) )
 #define CDS_CLASS_ALIGNMENT(n)    __declspec( align(n) )
 
+// Attributes
+#define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
+
 #include <cds/compiler/vc/compiler_barriers.h>
 
 //@endcond

@@ -53,6 +53,12 @@
 // Inheriting constructors
 #define CDS_CXX11_INHERITING_CTOR
 
+// Attributes
+#if CDS_COMPILER_VERSION >= 30400
+#   define CDS_DEPRECATED( reason ) [[deprecated(reason)]]
+else
+#   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
+#endif
 
 // *************************************************
 // Features

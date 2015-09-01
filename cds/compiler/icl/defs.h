@@ -102,6 +102,13 @@
 #   define CDS_DATA_ALIGNMENT(n)   __attribute__ ((aligned (n)))
 #endif
 
+// Attributes
+#if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
+#   define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
+#else
+#   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
+#endif
+
 #include <cds/compiler/icl/compiler_barriers.h>
 
 //@endcond
