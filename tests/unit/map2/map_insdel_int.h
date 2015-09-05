@@ -270,6 +270,5 @@ namespace map2 {
             CDSUNIT_TEST_RefinableMap
             CDSUNIT_TEST_StdMap
         CPPUNIT_TEST_SUITE_END();
-
     };
 } // namespace map2

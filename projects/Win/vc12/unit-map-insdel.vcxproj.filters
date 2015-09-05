@@ -64,9 +64,6 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_michael.cpp">
       <Filter>map_insdel_string</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_refinable.cpp">
-      <Filter>map_insdel_string</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_skip.cpp">
       <Filter>map_insdel_string</Filter>
     </ClCompile>
@@ -87,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_multilevelhashmap.cpp">
       <Filter>map_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_multilevelhashmap.cpp">
+      <Filter>map_insdel_string</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
