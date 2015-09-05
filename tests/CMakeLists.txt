@@ -5,7 +5,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(SOURCES cppunit/test_main.cpp
             cppunit/thread.cpp
             unit/michael_alloc.cpp
-            unit/ellen_bintree_update_desc_pool.cpp)
+            unit/ellen_bintree_update_desc_pool.cpp
+            hashing/city.cc
+            hashing/md5.cpp
+            hashing/sha256.cpp)
 
 add_library(${TEST_COMMON} OBJECT ${SOURCES})
 

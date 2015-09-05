@@ -9,6 +9,7 @@
 #include <cds/container/multilevel_hashmap_dhp.h>
 
 #include "print_multilevel_hashset_stat.h"
+#include "hashing/hash_func.h"
 
 namespace map2 {
 
@@ -46,6 +47,66 @@ namespace map2 {
 
         typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_hp_stdhash_stat;
         typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_dhp_stdhash_stat;
+
+        // SHA256
+        struct traits_MultiLevelHashMap_sha256 : public cc::multilevel_hashmap::traits
+        {
+            typedef ::hashing::sha256 hash;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_sha256 >    MultiLevelHashMap_hp_sha256;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_sha256 >    MultiLevelHashMap_dhp_sha256;
+
+        struct traits_MultiLevelHashMap_sha256_stat : public traits_MultiLevelHashMap_sha256
+        {
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_sha256_stat >    MultiLevelHashMap_hp_sha256_stat;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_sha256_stat >    MultiLevelHashMap_dhp_sha256_stat;
+
+        //MD5
+        struct traits_MultiLevelHashMap_md5 : public cc::multilevel_hashmap::traits
+        {
+            typedef ::hashing::md5 hash;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_md5 >    MultiLevelHashMap_hp_md5;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_md5 >    MultiLevelHashMap_dhp_md5;
+
+        struct traits_MultiLevelHashMap_md5_stat : public traits_MultiLevelHashMap_md5
+        {
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_md5_stat >    MultiLevelHashMap_hp_md5_stat;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_md5_stat >    MultiLevelHashMap_dhp_md5_stat;
+
+        // CityHash
+        struct traits_MultiLevelHashMap_city64 : public cc::multilevel_hashmap::traits
+        {
+            typedef ::hashing::city64 hash;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_city64 >    MultiLevelHashMap_hp_city64;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_city64 >    MultiLevelHashMap_dhp_city64;
+
+        struct traits_MultiLevelHashMap_city64_stat : public traits_MultiLevelHashMap_city64
+        {
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_city64_stat >    MultiLevelHashMap_hp_city64_stat;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_city64_stat >    MultiLevelHashMap_dhp_city64_stat;
+
+        struct traits_MultiLevelHashMap_city128 : public cc::multilevel_hashmap::traits
+        {
+            typedef ::hashing::city128 hash;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_city128 >    MultiLevelHashMap_hp_city128;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_city128 >    MultiLevelHashMap_dhp_city128;
+
+        struct traits_MultiLevelHashMap_city128_stat : public traits_MultiLevelHashMap_city128
+        {
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_city128_stat >    MultiLevelHashMap_hp_city128_stat;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_city128_stat >    MultiLevelHashMap_dhp_city128_stat;
+
     };
 
     template <typename GC, typename K, typename T, typename Traits >

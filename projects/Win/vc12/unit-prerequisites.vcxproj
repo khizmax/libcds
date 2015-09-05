@@ -415,12 +415,19 @@
     <ClInclude Include="..\..\..\tests\cppunit\cppunit_mini.h" />
     <ClInclude Include="..\..\..\tests\cppunit\cppunit_proxy.h" />
     <ClInclude Include="..\..\..\tests\cppunit\file_reporter.h" />
+    <ClInclude Include="..\..\..\tests\hashing\city.h" />
+    <ClInclude Include="..\..\..\tests\hashing\hash_func.h" />
+    <ClInclude Include="..\..\..\tests\hashing\md5.h" />
+    <ClInclude Include="..\..\..\tests\hashing\sha256.h" />
     <ClInclude Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.h" />
     <ClInclude Include="..\..\..\tests\unit\michael_alloc.h" />
     <ClInclude Include="..\..\..\tests\cppunit\test_beans.h" />
     <ClInclude Include="..\..\..\tests\cppunit\thread.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\tests\hashing\city.cc" />
+    <ClCompile Include="..\..\..\tests\hashing\md5.cpp" />
+    <ClCompile Include="..\..\..\tests\hashing\sha256.cpp" />
     <ClCompile Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.cpp" />
     <ClCompile Include="..\..\..\tests\unit\michael_alloc.cpp" />
     <ClCompile Include="..\..\..\tests\cppunit\test_main.cpp">
