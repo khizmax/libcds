@@ -85,6 +85,9 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_multilevelhashmap.cpp">
       <Filter>map_insdel_int</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_std.cpp">
+      <Filter>map_insdel_int</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="map_insdel_func">

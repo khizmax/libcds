@@ -60,6 +60,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_multilevelhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_std.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_bronsonavltree.cpp" />

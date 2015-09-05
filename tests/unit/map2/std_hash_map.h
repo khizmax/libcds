@@ -32,7 +32,11 @@ namespace map2 {
         typedef typename base_class::mapped_type value_type;
         typedef size_t      item_counter;
 
-        StdHashMap( size_t /*nMapSize*/, size_t /*nLoadFactor*/ )
+        StdHashMap()
+        {}
+
+        template <class Config>
+        StdHashMap( Config const& )
         {}
 
         bool find( const Key& key )
@@ -60,7 +64,7 @@ namespace map2 {
         }
 
         template <typename T, typename Func>
-        std::pair<bool, bool> ensure( const T& key, Func func )
+        std::pair<bool, bool> update( const T& key, Func func, bool /*bAllowInsert*/ = true )
         {
             scoped_lock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value() ));
@@ -93,6 +97,11 @@ namespace map2 {
         }
 
         std::ostream& dump( std::ostream& stm ) { return stm; }
+
+
+        // for testing
+        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
     };
 }   // namespace map2
 

@@ -1,14 +1,16 @@
 //$$CDS-header$$
 
 #define CDSUNIT_DECLARE_StdMap \
-    CDSUNIT_DECLARE_TEST(StdMap_Spin) \
-    CDSUNIT_DECLARE_TEST(StdHashMap_Spin)
-#define CDSUNIT_DEFINE_StdMap(IMPL, C) \
-    TEST_MAP(IMPL, C, StdMap_Spin) \
-    TEST_MAP(IMPL, C, StdHashMap_Spin)
+    TEST_CASE(tag_StdMap, StdMap_Spin) \
+    TEST_CASE(tag_StdMap, StdHashMap_Spin) \
+    TEST_CASE(tag_StdMap, StdMap_Mutex) \
+    TEST_CASE(tag_StdMap, StdHashMap_Mutex)
+
 #define CDSUNIT_TEST_StdMap \
     CPPUNIT_TEST(StdMap_Spin) \
     CPPUNIT_TEST(StdHashMap_Spin) \
+    CPPUNIT_TEST(StdMap_Mutex) \
+    CPPUNIT_TEST(StdHashMap_Mutex) \
 
 
 // **************************************************************************************

@@ -48,6 +48,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_int_skip.cpp \
     tests/unit/map2/map_insdel_int_split.cpp \
     tests/unit/map2/map_insdel_int_striped.cpp \
+    tests/unit/map2/map_insdel_int_std.cpp \
     tests/unit/map2/map_insdel_item_int.cpp \
     tests/unit/map2/map_insdel_item_int_michael.cpp \
     tests/unit/map2/map_insdel_item_int_split.cpp \

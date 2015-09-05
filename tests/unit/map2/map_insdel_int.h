@@ -256,7 +256,7 @@ namespace map2 {
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
-        //CDSUNIT_DECLARE_StdMap
+        CDSUNIT_DECLARE_StdMap
 
         CPPUNIT_TEST_SUITE(Map_InsDel_int)
             CDSUNIT_TEST_MichaelMap
@@ -268,9 +268,7 @@ namespace map2 {
             CDSUNIT_TEST_CuckooMap
             CDSUNIT_TEST_StripedMap
             CDSUNIT_TEST_RefinableMap
-            //CDSUNIT_TEST_StdMap
-
-            //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
+            CDSUNIT_TEST_StdMap
         CPPUNIT_TEST_SUITE_END();
 
     };

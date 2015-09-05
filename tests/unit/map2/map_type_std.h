@@ -12,19 +12,21 @@
 
 namespace map2 {
 
-    struct std_implementation_tag;
+    struct tag_StdMap;
 
     template <typename Key, typename Value>
-    struct map_type< std_implementation_tag, Key, Value >: public map_type_base< Key, Value >
+    struct map_type< tag_StdMap, Key, Value >: public map_type_base< Key, Value >
     {
         typedef map_type_base< Key, Value > base_class;
         typedef typename base_class::compare    compare;
         typedef typename base_class::less       less;
 
-        typedef StdMap< Key, Value, cds::sync::spin >     StdMap_Spin;
-        typedef StdMap< Key, Value, lock::NoLock>         StdMap_NoLock;
+        typedef StdMap< Key, Value, cds::sync::spin >   StdMap_Spin;
+        typedef StdMap< Key, Value, std::mutex >        StdMap_Mutex;
+        typedef StdMap< Key, Value, lock::NoLock>       StdMap_NoLock;
 
         typedef StdHashMap< Key, Value, cds::sync::spin > StdHashMap_Spin;
+        typedef StdHashMap< Key, Value, std::mutex >      StdHashMap_Mutex;
         typedef StdHashMap< Key, Value, lock::NoLock >    StdHashMap_NoLock;
     };
 }   // namespace map2
