@@ -20,8 +20,10 @@
 
 namespace map2 {
 
+    struct tag_StripedMap;
+
     template <typename Key, typename Value>
-    struct map_type< cc::striped_set::implementation_tag, Key, Value >: public map_type_base< Key, Value >
+    struct map_type< tag_StripedMap, Key, Value >: public map_type_base< Key, Value >
     {
         typedef map_type_base< Key, Value > base_class;
         typedef typename base_class::compare    compare;
@@ -49,9 +51,14 @@ namespace map2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashMap_seq( size_t nCapacity, size_t nLoadFactor )
-                : base_class( nCapacity / nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor )) )
+            template <class Config>
+            StripedHashMap_seq( Config const& cfg )
+                : base_class( cfg.c_nMapSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nLoadFactor )) )
             {}
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         // for non-sequential ordered containers
@@ -72,9 +79,14 @@ namespace map2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashMap_ord( size_t /*nCapacity*/, size_t nLoadFactor )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
+            template <class Config>
+            StripedHashMap_ord( Config const& cfg )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nMaxLoadFactor * 1024 )) )
             {}
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
         };
 
 
@@ -152,9 +164,14 @@ namespace map2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashMap_seq( size_t nCapacity, size_t nLoadFactor )
-                : base_class( nCapacity / nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor )) )
+            template <class Config>
+            RefinableHashMap_seq( Config const& cfg )
+                : base_class( cfg.c_nMapSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nLoadFactor )))
             {}
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         // for non-sequential ordered containers
@@ -175,9 +192,14 @@ namespace map2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashMap_ord( size_t /*nCapacity*/, size_t nLoadFactor )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
+            template <class Config>
+            RefinableHashMap_ord( Config const& cfg )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nMaxLoadFactor * 1024 )) )
             {}
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
         };
 
 

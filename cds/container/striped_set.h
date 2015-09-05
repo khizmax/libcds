@@ -482,10 +482,6 @@ namespace cds { namespace container {
         typedef typename base_class::allocator_type     allocator_type  ; ///< allocator type specified in options.
         typedef typename base_class::mutex_policy       mutex_policy    ; ///< Mutex policy
 
-        //@cond
-        typedef cds::container::striped_set::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::scoped_cell_lock   scoped_cell_lock;

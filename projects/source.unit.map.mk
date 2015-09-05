@@ -46,7 +46,6 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_int_ellentree.cpp \
     tests/unit/map2/map_insdel_int_bronsonavltree.cpp \
     tests/unit/map2/map_insdel_int_striped.cpp \
-    tests/unit/map2/map_insdel_int_refinable.cpp \
     tests/unit/map2/map_insdel_int_cuckoo.cpp \
     tests/unit/map2/map_insdel_item_int.cpp \
     tests/unit/map2/map_insdel_item_int_michael.cpp \

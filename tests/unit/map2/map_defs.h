@@ -561,16 +561,10 @@
 // StripedMap
 
 #define CDSUNIT_DECLARE_StripedMap_common \
-    CDSUNIT_DECLARE_TEST(StripedMap_list) \
-    CDSUNIT_DECLARE_TEST(StripedMap_map) \
-    CDSUNIT_DECLARE_TEST(StripedMap_hashmap) \
-    CDSUNIT_DECLARE_TEST(StripedMap_boost_unordered_map)
-
-#define CDSUNIT_DEFINE_StripedMap_common( IMPL, C ) \
-    TEST_MAP(IMPL, C, StripedMap_list) \
-    TEST_MAP(IMPL, C, StripedMap_map) \
-    TEST_MAP(IMPL, C, StripedMap_hashmap) \
-    TEST_MAP(IMPL, C, StripedMap_boost_unordered_map)
+    TEST_CASE(tag_StripedMap, StripedMap_list) \
+    TEST_CASE(tag_StripedMap, StripedMap_map) \
+    TEST_CASE(tag_StripedMap, StripedMap_hashmap) \
+    TEST_CASE(tag_StripedMap, StripedMap_boost_unordered_map)
 
 #define CDSUNIT_TEST_StripedMap_common \
     CPPUNIT_TEST(StripedMap_list) \
@@ -580,33 +574,27 @@
 
 #if BOOST_VERSION >= 104800
 #   define CDSUNIT_DECLARE_StripedMap_boost_container \
-        CDSUNIT_DECLARE_TEST(StripedMap_boost_list) \
-        CDSUNIT_DECLARE_TEST(StripedMap_slist) \
-        CDSUNIT_DECLARE_TEST(StripedMap_boost_map)
-#   define CDSUNIT_DEFINE_StripedMap_boost_container( IMPL, C ) \
-        TEST_MAP(IMPL, C, StripedMap_boost_list) \
-        TEST_MAP(IMPL, C, StripedMap_slist) \
-        TEST_MAP(IMPL, C, StripedMap_boost_map)
+        TEST_CASE(tag_StripedMap, StripedMap_boost_list) \
+        TEST_CASE(tag_StripedMap, StripedMap_slist) \
+        TEST_CASE(tag_StripedMap, StripedMap_boost_map)
+
 #   define CDSUNIT_TEST_StripedMap_boost_container \
         CPPUNIT_TEST(StripedMap_boost_list) \
         CPPUNIT_TEST(StripedMap_slist) \
         CPPUNIT_TEST(StripedMap_boost_map)
 #else
 #   define CDSUNIT_DECLARE_StripedMap_boost_container
-#   define CDSUNIT_DEFINE_StripedMap_boost_container( IMPL, C )
 #   define CDSUNIT_TEST_StripedMap_boost_container
 #endif
 
 #if BOOST_VERSION >= 104800 && defined(CDS_UNIT_MAP_TYPES_ENABLE_BOOST_FLAT_CONTAINERS)
 #   define CDSUNIT_DECLARE_StripedMap_boost_flat_container \
-        CDSUNIT_DECLARE_TEST(StripedMap_boost_flat_map)
-#   define CDSUNIT_DEFINE_StripedMap_boost_flat_container( IMPL, C ) \
-        TEST_MAP(IMPL, C, StripedMap_boost_flat_map)
+        TEST_CASE(tag_StripedMap, StripedMap_boost_flat_map)
+
 #   define CDSUNIT_TEST_StripedMap_boost_flat_container \
         CPPUNIT_TEST(StripedMap_boost_flat_map)
 #else
 #   define CDSUNIT_DECLARE_StripedMap_boost_flat_container
-#   define CDSUNIT_DEFINE_StripedMap_boost_flat_container( IMPL, C )
 #   define CDSUNIT_TEST_StripedMap_boost_flat_container
 #endif
 
@@ -614,10 +602,7 @@
     CDSUNIT_DECLARE_StripedMap_common \
     CDSUNIT_DECLARE_StripedMap_boost_container \
     CDSUNIT_DECLARE_StripedMap_boost_flat_container
-#define CDSUNIT_DEFINE_StripedMap( IMPL, C ) \
-    CDSUNIT_DEFINE_StripedMap_common( IMPL, C ) \
-    CDSUNIT_DEFINE_StripedMap_boost_container( IMPL, C ) \
-    CDSUNIT_DEFINE_StripedMap_boost_flat_container( IMPL, C )
+
 #define CDSUNIT_TEST_StripedMap \
     CDSUNIT_TEST_StripedMap_common \
     CDSUNIT_TEST_StripedMap_boost_container \
@@ -628,15 +613,11 @@
 // RefinableMap
 
 #define CDSUNIT_DECLARE_RefinableMap_common \
-    CDSUNIT_DECLARE_TEST(RefinableMap_list) \
-    CDSUNIT_DECLARE_TEST(RefinableMap_map) \
-    CDSUNIT_DECLARE_TEST(RefinableMap_hashmap) \
-    CDSUNIT_DECLARE_TEST(RefinableMap_boost_unordered_map)
-#define CDSUNIT_DEFINE_RefinableMap_common( IMPL, C ) \
-    TEST_MAP(IMPL, C, RefinableMap_list) \
-    TEST_MAP(IMPL, C, RefinableMap_map) \
-    TEST_MAP(IMPL, C, RefinableMap_hashmap) \
-    TEST_MAP(IMPL, C, RefinableMap_boost_unordered_map)
+    TEST_CASE(tag_StripedMap, RefinableMap_list) \
+    TEST_CASE(tag_StripedMap, RefinableMap_map) \
+    TEST_CASE(tag_StripedMap, RefinableMap_hashmap) \
+    TEST_CASE(tag_StripedMap, RefinableMap_boost_unordered_map)
+
 #define CDSUNIT_TEST_RefinableMap_common \
     CPPUNIT_TEST(RefinableMap_list) \
     CPPUNIT_TEST(RefinableMap_map) \
@@ -645,33 +626,27 @@
 
 #if BOOST_VERSION >= 104800
 #   define CDSUNIT_DECLARE_RefinableMap_boost_container \
-        CDSUNIT_DECLARE_TEST(RefinableMap_boost_list) \
-        CDSUNIT_DECLARE_TEST(RefinableMap_slist) \
-        CDSUNIT_DECLARE_TEST(RefinableMap_boost_map)
-#   define CDSUNIT_DEFINE_RefinableMap_boost_container( IMPL, C ) \
-        TEST_MAP(IMPL, C, RefinableMap_boost_list) \
-        TEST_MAP(IMPL, C, RefinableMap_slist) \
-        TEST_MAP(IMPL, C, RefinableMap_boost_map)
+        TEST_CASE(tag_StripedMap, RefinableMap_boost_list) \
+        TEST_CASE(tag_StripedMap, RefinableMap_slist) \
+        TEST_CASE(tag_StripedMap, RefinableMap_boost_map)
+
 #   define CDSUNIT_TEST_RefinableMap_boost_container \
         CPPUNIT_TEST(RefinableMap_boost_list) \
         CPPUNIT_TEST(RefinableMap_slist) \
         CPPUNIT_TEST(RefinableMap_boost_map)
 #else
 #   define CDSUNIT_DECLARE_RefinableMap_boost_container
-#   define CDSUNIT_DEFINE_RefinableMap_boost_container( IMPL, C )
 #   define CDSUNIT_TEST_RefinableMap_boost_container
 #endif
 
 #if BOOST_VERSION >= 104800 && defined(CDS_UNIT_MAP_TYPES_ENABLE_BOOST_FLAT_CONTAINERS)
 #   define CDSUNIT_DECLARE_RefinableMap_boost_flat_container \
-        CDSUNIT_DECLARE_TEST(RefinableMap_boost_flat_map)
-#   define CDSUNIT_DEFINE_RefinableMap_boost_flat_container( IMPL, C ) \
-        TEST_MAP( IMPL, C, RefinableMap_boost_flat_map)
+        TEST_CASE(tag_StripedMap, RefinableMap_boost_flat_map)
+
 #   define CDSUNIT_TEST_RefinableMap_boost_flat_container \
         CPPUNIT_TEST(RefinableMap_boost_flat_map)
 #else
 #   define CDSUNIT_DECLARE_RefinableMap_boost_flat_container
-#   define CDSUNIT_DEFINE_RefinableMap_boost_flat_container( IMPL, C )
 #   define CDSUNIT_TEST_RefinableMap_boost_flat_container
 #endif
 
@@ -679,10 +654,7 @@
     CDSUNIT_DECLARE_RefinableMap_common \
     CDSUNIT_DECLARE_RefinableMap_boost_container \
     CDSUNIT_DECLARE_RefinableMap_boost_flat_container
-#define CDSUNIT_DEFINE_RefinableMap( IMPL, C ) \
-    CDSUNIT_DEFINE_RefinableMap_common( IMPL, C ) \
-    CDSUNIT_DEFINE_RefinableMap_boost_container( IMPL, C ) \
-    CDSUNIT_DEFINE_RefinableMap_boost_flat_container( IMPL, C )
+
 #define CDSUNIT_TEST_RefinableMap \
     CDSUNIT_TEST_RefinableMap_common \
     CDSUNIT_TEST_RefinableMap_boost_container \

@@ -716,6 +716,7 @@ namespace map2 {
             //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
         CPPUNIT_TEST_SUITE_END();
 
+        // Not implemented yet
         ////CDSUNIT_DECLARE_StripedMap
         ////CDSUNIT_DECLARE_RefinableMap
         ////CDSUNIT_DECLARE_StdMap

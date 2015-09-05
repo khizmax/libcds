@@ -68,19 +68,19 @@ namespace cds { namespace container {
         among \p Options template arguments.
 
         The \p Options are:
-            - \p opt::mutex_policy - concurrent access policy.
-                Available policies: \p intrusive::striped_set::striping, \p intrusive::striped_set::refinable.
-                Default is %striped_set::striping.
-            - \p opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector<opt::none> </tt>
+            - \p cds::opt::mutex_policy - concurrent access policy.
+                Available policies: \p striped_set::striping, \p striped_set::refinable.
+                Default is \p %striped_set::striping.
+            - \p cds::opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector<opt::none> </tt>
                 which selects default hash functor for your compiler.
-            - \p opt::compare - key comparison functor. No default functor is provided.
+            - \p cds::opt::compare - key comparison functor. No default functor is provided.
                 If the option is not specified, the \p %opt::less is used.
-            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            - \p opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
+            - \p cds::opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p cds::opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
                 without locks. Note that item counting is an essential part of the map algorithm, so dummy counter
                 like as \p atomicity::empty_item_counter is not suitable.
-            - \p opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
-            - \p opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash map.
+            - \p cds::opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p cds::opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash map.
                 Default option value depends on bucket container type:
                     for sequential containers like \p std::list, \p std::vector the resizing policy is <tt>striped_set::load_factor_resizing<4> </tt>;
                     for other type of containers like \p std::map, \p std::unordered_map the resizing policy is \p striped_set::no_resizing.
@@ -90,7 +90,7 @@ namespace cds { namespace container {
                 significantly improve performance.
                 For other, non-sequential types of \p Container (like a \p std::map)
                 the resizing policy is not so important.
-            - \p opt::copy_policy - the copy policy which is used to copy items from the old map to the new one when resizing.
+            - \p cds::opt::copy_policy - the copy policy which is used to copy items from the old map to the new one when resizing.
                 The policy can be optionally used in adapted bucket container for performance reasons of resizing.
                 The detail of copy algorithm depends on type of bucket container and explains below.
 
@@ -491,9 +491,6 @@ template <class Container, typename... Options>
         typedef typename base_class::allocator_type     allocator_type  ; ///< allocator type specified in options.
         typedef typename base_class::mutex_policy       mutex_policy    ; ///< Mutex policy
 
-        //@cond
-        typedef cds::container::striped_set::implementation_tag implementation_tag;
-        //@endcond
     protected:
         //@cond
         typedef typename base_class::scoped_cell_lock   scoped_cell_lock;

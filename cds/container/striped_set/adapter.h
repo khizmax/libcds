@@ -9,7 +9,6 @@
 namespace cds { namespace container {
     /// Striped hash set related definitions
     namespace striped_set {
-        using cds::intrusive::striped_set::implementation_tag;
 
         //@cond
         struct copy_item    ;   // copy_item_policy tag
@@ -178,15 +177,34 @@ namespace cds { namespace container {
         //@cond
         using cds::intrusive::striped_set::adapted_sequential_container;
         using cds::intrusive::striped_set::adapted_container;
-
-        using cds::intrusive::striped_set::load_factor_resizing;
-        using cds::intrusive::striped_set::rational_load_factor_resizing;
-        using cds::intrusive::striped_set::single_bucket_size_threshold;
-        using cds::intrusive::striped_set::no_resizing;
-
-        using cds::intrusive::striped_set::striping;
-        using cds::intrusive::striped_set::refinable;
         //@endcond
+
+        ///@copydoc cds::intrusive::striped_set::load_factor_resizing
+        template <size_t LoadFactor>
+        using load_factor_resizing = cds::intrusive::striped_set::load_factor_resizing<LoadFactor>;
+
+        ///@copydoc cds::intrusive::striped_set::rational_load_factor_resizing
+        template <size_t Numerator, size_t Denominator = 1>
+        using rational_load_factor_resizing = cds::intrusive::striped_set::rational_load_factor_resizing<Numerator, Denominator>;
+
+        ///@copydoc cds::intrusive::striped_set::single_bucket_size_threshold
+        template <size_t Threshold>
+        using single_bucket_size_threshold = cds::intrusive::striped_set::single_bucket_size_threshold<Threshold>;
+
+        ///@copydoc cds::intrusive::striped_set::no_resizing
+        typedef cds::intrusive::striped_set::no_resizing no_resizing;
+
+        ///@copydoc cds::intrusive::striped_set::striping
+        template <class Lock = std::mutex, class Alloc = CDS_DEFAULT_ALLOCATOR >
+        using striping = cds::intrusive::striped_set::striping<Lock, Alloc>;
+
+        ///@copydoc cds::intrusive::striped_set::refinable
+        template <
+            class RecursiveLock = std::recursive_mutex,
+            typename BackOff = cds::backoff::yield,
+            class Alloc = CDS_DEFAULT_ALLOCATOR
+        > 
+        using refinable = cds::intrusive::striped_set::refinable<RecursiveLock, BackOff, Alloc >;
 
         //@cond
         namespace details {

@@ -47,7 +47,6 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_int_ellentree.cpp
     map_insdel_int_bronsonavltree.cpp
     map_insdel_int_striped.cpp
-    map_insdel_int_refinable.cpp
     map_insdel_int_cuckoo.cpp
     map_insdel_item_int.cpp
     map_insdel_item_int_michael.cpp
