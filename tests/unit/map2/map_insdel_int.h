@@ -17,9 +17,13 @@ namespace map2 {
         size_t c_nDeleteThreadCount = 4;  // count of deletion thread
         size_t c_nThreadPassCount = 4;    // pass count for each thread
         size_t c_nMaxLoadFactor = 8;      // maximum load factor
-        size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooMap
-        size_t  c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
-        size_t  c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
+
+        size_t c_nCuckooInitialSize = 1024;// initial size for CuckooMap
+        size_t c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
+
+        size_t c_nMultiLevelMap_HeadBits = 10;
+        size_t c_nMultiLevelMap_ArrayBits = 4;
 
         bool   c_bPrintGCState = true;
 
@@ -248,6 +252,7 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
+        CDSUNIT_DECLARE_MultiLevelHashMap
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
@@ -259,6 +264,7 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_MultiLevelHashMap
             CDSUNIT_TEST_CuckooMap
             CDSUNIT_TEST_StripedMap
             CDSUNIT_TEST_RefinableMap

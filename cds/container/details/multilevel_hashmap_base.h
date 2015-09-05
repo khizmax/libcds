@@ -85,7 +85,7 @@ namespace cds { namespace container {
             */
             typedef empty_stat stat;
 
-            /// RCU deadlock checking policy (only for \ref cds_container_MultilevelHashSet_rcu "RCU-based MultilevelHashSet")
+            /// RCU deadlock checking policy (only for \ref cds_container_MultilevelHashMap_rcu "RCU-based MultilevelHashMap")
             /**
                 @copydetails cds::intrusive::multilevel_hashset::traits::rcu_check_deadlock
             */
