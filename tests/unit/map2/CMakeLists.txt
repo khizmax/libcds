@@ -32,14 +32,14 @@ set(CDSUNIT_MAP_SOURCES
     map_insfind_int_refinable.cpp
     map_insfind_int_std.cpp
     map_insdel_func.cpp
-    map_insdel_func_michael.cpp
-    map_insdel_func_split.cpp
-    map_insdel_func_skip.cpp
-    map_insdel_func_ellentree.cpp
     map_insdel_func_bronsonavltree.cpp
-    map_insdel_func_striped.cpp
-    map_insdel_func_refinable.cpp
     map_insdel_func_cuckoo.cpp
+    map_insdel_func_ellentree.cpp
+    map_insdel_func_michael.cpp
+    map_insdel_func_multilevelhashmap.cpp
+    map_insdel_func_skip.cpp
+    map_insdel_func_split.cpp
+    map_insdel_func_striped.cpp
     map_insdel_int.cpp
     map_insdel_int_bronsonavltree.cpp
     map_insdel_int_cuckoo.cpp

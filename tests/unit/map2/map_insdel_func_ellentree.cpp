@@ -3,11 +3,10 @@
 #include "map2/map_insdel_func.h"
 #include "map2/map_type_ellen_bintree.h"
 
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_InsDel_func::X() { run_test<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
+
 namespace map2 {
-    CDSUNIT_DEFINE_EllenBinTreeMap( cc::ellen_bintree::implementation_tag, Map_InsDel_func)
-
-    CPPUNIT_TEST_SUITE_PART( Map_InsDel_func, run_EllenBinTreeMap )
-        CDSUNIT_TEST_EllenBinTreeMap
-    CPPUNIT_TEST_SUITE_END_PART()
+    CDSUNIT_DECLARE_EllenBinTreeMap
 } // namespace map2
-

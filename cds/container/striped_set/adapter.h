@@ -73,12 +73,12 @@ namespace cds { namespace container {
                 variadic template and move semantics
             <hr>
 
-            <b>Ensures that the \p item exists in the container</b>
-            \code template <typename Q, typename Func> std::pair<bool, bool> ensure( const Q& val, Func func ) \endcode
+            <b>Updates \p item</b>
+            \code template <typename Q, typename Func> std::pair<bool, bool> update( const Q& val, Func func, bool bAllowInsert ) \endcode
                 The operation performs inserting or changing data.
 
                 If the \p val key not found in the container, then the new item created from \p val
-                is inserted. Otherwise, the functor \p func is called with the item found.
+                is inserted iff \p bAllowInsert is \p true. Otherwise, the functor \p func is called with the item found.
                 The \p Func functor has interface:
                 \code
                     void func( bool bNew, value_type& item, const Q& val );
@@ -93,7 +93,7 @@ namespace cds { namespace container {
                 where arguments are:
                 - \p bNew - \p true if the item has been inserted, \p false otherwise
                 - \p item - container's item
-                - \p val - argument \p val passed into the \p ensure function
+                - \p val - argument \p val passed into the \p update() function
 
                 The functor can change non-key fields of the \p item.
 
@@ -429,11 +429,20 @@ namespace cds { namespace container {
                 }
 
                 template <typename Q, typename Func>
-                std::pair<bool, bool> ensure( const Q& val, Func func )
+                std::pair<bool, bool> update( const Q& key, Func func, bool bAllowInsert )
                 {
-                    std::pair<iterator, bool> res = m_Map.insert( value_type( val, mapped_type() ));
-                    func( res.second, *res.first );
-                    return std::make_pair( true, res.second );
+                    if ( bAllowInsert ) {
+                        std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ));
+                        func( res.second, *res.first );
+                        return std::make_pair( true, res.second );
+                    }
+                    else {
+                        auto it = m_Map.find(key_type( key ));
+                        if ( it == end() )
+                            return std::make_pair( false, false );
+                        func( false, *it );
+                        return std::make_pair( true, false );
+                    }
                 }
 
                 template <typename Q, typename Func>
