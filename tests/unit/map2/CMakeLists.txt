@@ -16,10 +16,10 @@ set(CDSUNIT_MAP_SOURCES
     map_find_string_cuckoo.cpp
     map_find_string_ellentree.cpp
     map_find_string_michael.cpp
+    map_find_string_multilevelhashmap.cpp
     map_find_string_skip.cpp
     map_find_string_split.cpp
     map_find_string_striped.cpp
-    map_find_string_refinable.cpp
     map_find_string_std.cpp
     map_insfind_int.cpp
     map_insfind_int_bronsonavltree.cpp
