@@ -16,9 +16,6 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_michael.cpp">
       <Filter>map_find_int</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_refinable.cpp">
-      <Filter>map_find_int</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_skip.cpp">
       <Filter>map_find_int</Filter>
     </ClCompile>
@@ -90,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_striped.cpp">
       <Filter>map_insfind_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_multilevelhashmap.cpp">
+      <Filter>map_find_int</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

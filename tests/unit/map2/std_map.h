@@ -28,7 +28,7 @@ namespace map2 {
         StdMap( Config const& )
         {}
 
-        bool find( const Key& key )
+        bool contains( const Key& key )
         {
             scoped_lock al( m_lock );
             return base_class::find( key ) != base_class::end();

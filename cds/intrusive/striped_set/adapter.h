@@ -52,11 +52,11 @@ namespace cds { namespace intrusive {
                 The user-defined functor \p f is called only if the inserting is success.
                 <hr>
 
-            <b>Ensures that the \p item exists in the container</b>
-            \code template <typename Func> std::pair<bool, bool> ensure( value_type& val, Func f ) \endcode
+            <b>Updates the item in the container</b>
+            \code template <typename Func> std::pair<bool, bool> update( value_type& val, Func f, bool bAllowInsert = true ) \endcode
                 The operation performs inserting or changing data.
 
-                If the \p val key not found in the container, then \p val is inserted.
+                If the \p val key not found in the container, then \p val is inserted iff \p bAllowInsert is \p true.
                 Otherwise, the functor \p f is called with the item found.
 
                 The \p Func functor has the following interface:
@@ -73,7 +73,7 @@ namespace cds { namespace intrusive {
                 where arguments are:
                 - \p bNew - \p true if the item has been inserted, \p false otherwise
                 - \p item - container's item
-                - \p val - argument \p val passed into the \p ensure function
+                - \p val - argument \p val passed into the \p update() function
 
                 If \p val has been inserted (i.e. <tt>bNew == true</tt>) then \p item and \p val
                 are the same element: <tt>&item == &val</tt>. Otherwise, they are different.
@@ -223,11 +223,20 @@ namespace cds { namespace intrusive {
                 }
 
                 template <typename Func>
-                std::pair<bool, bool> ensure( value_type& val, Func f )
+                std::pair<bool, bool> update( value_type& val, Func f, bool bAllowInsert )
                 {
-                    std::pair<iterator, bool> res = m_Set.insert( val );
-                    f( res.second, *res.first, val );
-                    return std::make_pair( true, res.second );
+                    if ( bAllowInsert ) {
+                        std::pair<iterator, bool> res = m_Set.insert( val );
+                        f( res.second, *res.first, val );
+                        return std::make_pair( true, res.second );
+                    }
+                    else {
+                        auto it = m_Set.find( val );
+                        if ( it == m_Set.end() )
+                            return std::make_pair( false, false );
+                        f( false, *it, val );
+                        return std::make_pair( true, false );
+                    }
                 }
 
                 bool unlink( value_type& val )

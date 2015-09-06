@@ -164,11 +164,14 @@ namespace cds { namespace intrusive { namespace striped_set {
             }
 
             template <typename Q, typename Func>
-            std::pair<bool, bool> ensure( const Q& val, Func func )
+            std::pair<bool, bool> update( const Q& val, Func func, bool bAllowInsert )
             {
                 std::pair< iterator, bool > pos = find_prev_item( val );
                 if ( !pos.second ) {
                     // insert new
+                    if ( !bAllowInsert )
+                        return std::make_pair( false, false );
+
                     value_type newItem( val );
                     pos.first = m_List.insert_after( pos.first, newItem );
                     func( true, *pos.first, val );

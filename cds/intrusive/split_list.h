@@ -708,7 +708,7 @@ namespace cds { namespace intrusive {
             The functor may change non-key fields of the \p item.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
-            \p second is \p true if new item has been added or \p false if the item with \p key
+            \p second is \p true if new item has been added or \p false if the item with \p val
             already is in the list.
 
             @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".

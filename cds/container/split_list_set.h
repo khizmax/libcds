@@ -447,7 +447,6 @@ namespace cds { namespace container {
                     void operator()( bool bNew, value_type& item, const Q& val );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set

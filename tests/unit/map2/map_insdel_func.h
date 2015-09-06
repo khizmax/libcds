@@ -10,12 +10,7 @@
 
 namespace map2 {
 
-#   define TEST_CASE(TAG, X)  void X();
-
-//#   define TEST_MAP(IMPL, C, X)          void C::X() { test<map_type<IMPL, key_type, value_type>::X >()    ; }
-//#   define TEST_MAP_EXTRACT(IMPL, C, X)  TEST_MAP(IMPL, C, X)
-//#   define TEST_MAP_NOLF(IMPL, C, X)     void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >()    ; }
-//#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) TEST_MAP_NOLF(IMPL, C, X)
+#define TEST_CASE(TAG, X)  void X();
 
     class Map_InsDel_func: public CppUnitMini::TestCase
     {
@@ -531,7 +526,7 @@ namespace map2 {
                 );
 
             if ( Map::c_bLoadFactorDepended ) {
-                for ( size_t c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
                     CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
                     Map  testMap( *this );
                     do_test( testMap );

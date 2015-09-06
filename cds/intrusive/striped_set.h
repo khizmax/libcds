@@ -517,11 +517,12 @@ namespace cds { namespace intrusive {
             return bOk;
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val not found in the set, then \p val is inserted into the set.
+            If the item \p val is not found in the set, then \p val is inserted
+            iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
@@ -530,18 +531,18 @@ namespace cds { namespace intrusive {
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
             The functor may change non-key fields of the \p item.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
-            \p second is \p true if new item has been added or \p false if the item with \p key
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            \p second is \p true if new item has been added or \p false if the item with \p val
             already is in the set.
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
         {
             std::pair<bool, bool> result;
             bool bResize;
@@ -551,7 +552,7 @@ namespace cds { namespace intrusive {
                 scoped_cell_lock sl( m_MutexPolicy, nHash );
                 pBucket = bucket( nHash );
 
-                result = pBucket->ensure( val, func );
+                result = pBucket->update( val, func, bAllowInsert );
                 bResize = result.first && result.second && m_ResizingPolicy( ++m_ItemCounter, *this, *pBucket );
             }
 
@@ -559,6 +560,13 @@ namespace cds { namespace intrusive {
                 resize();
             return result;
         }
+        //@cond
+        template <typename Func>
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Unlink the item \p val from the set
         /**
@@ -742,32 +750,48 @@ namespace cds { namespace intrusive {
             return find_with_( val, pred, f );
         }
 
-        /// Find the key \p val
-        /** \anchor cds_intrusive_StripedSet_find_val
-            The function searches the item with key equal to \p val
+        /// Checks whether the set contains \p key
+        /**
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Otherwise, you may use \p contains( Q const&, Less pred ) functions with explicit predicate for key comparing.
         */
         template <typename Q>
+        bool contains( Q const& key )
+        {
+            return find( key, [](value_type&, Q const& ) {} );
+        }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("use contains()")
         bool find( Q const& val )
         {
-            return find( val, [](value_type&, Q const& ) {} );
+            return contains( val ;)
         }
+        //@endcond
 
-        /// Find the key \p val using \p pred predicate
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_StripedSet_find_val "find(Q const&)"
-            but \p pred is used for key comparing
-            \p Less has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
+        bool contains( Q const& key, Less pred )
+        {
+            return find_with( key, pred, [](value_type& , Q const& ) {} );
+        }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("use contains()")
         bool find_with( Q const& val, Less pred )
         {
-            return find_with( val, pred, [](value_type& , Q const& ) {} );
+            return contains( val, pred );
         }
+        //@endcond
 
         /// Clears the set
         /**

@@ -292,11 +292,20 @@ namespace cds { namespace container {
                 }
 
                 template <typename Q, typename Func>
-                std::pair<bool, bool> ensure( const Q& val, Func func )
+                std::pair<bool, bool> update( const Q& val, Func func, bool bAllowInsert )
                 {
-                    std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
-                    func( res.second, const_cast<value_type&>(*res.first), val );
-                    return std::make_pair( true, res.second );
+                    if ( bAllowInsert ) {
+                        std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
+                        func( res.second, const_cast<value_type&>(*res.first), val );
+                        return std::make_pair( true, res.second );
+                    }
+                    else {
+                        auto it = m_Set.find( val );
+                        if ( it == m_Set.end() )
+                            return std::make_pair( false, false );
+                        func( false, *it, val );
+                        return std::make_pair( true, false );
+                    }
                 }
 
                 template <typename Q, typename Func>

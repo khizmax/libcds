@@ -8,13 +8,6 @@
 namespace map2 {
     CPPUNIT_TEST_SUITE_REGISTRATION( Map_find_int );
 
-    size_t Map_find_int::c_nThreadCount = 8      ;  // thread count
-    size_t Map_find_int::c_nMapSize = 20000000   ;  // map size (count of searching item)
-    size_t Map_find_int::c_nPercentExists = 50   ;  // percent of existing keys in searching sequence
-    size_t Map_find_int::c_nPassCount = 2;
-    size_t Map_find_int::c_nMaxLoadFactor = 8    ;  // maximum load factor
-    bool   Map_find_int::c_bPrintGCState = true;
-
     void Map_find_int::generateSequence()
     {
         size_t nPercent = c_nPercentExists;
@@ -36,18 +29,6 @@ namespace map2 {
         shuffle( m_Arr.begin(), m_Arr.end() );
     }
 
-    void Map_find_int::initTestSequence()
-    {
-        CPPUNIT_MSG( "Generating test data...");
-        cds::OS::Timer    timer;
-        generateSequence();
-        CPPUNIT_MSG( "   Duration=" << timer.duration() );
-        CPPUNIT_MSG( "Map size=" << m_nRealMapSize << " find key loop=" << m_Arr.size() << " (" << c_nPercentExists << "% success)" );
-        CPPUNIT_MSG( "Thread count=" << c_nThreadCount << " Pass count=" << c_nPassCount );
-
-        m_bSequenceInitialized = true;
-    }
-
     void Map_find_int::setUpParams( const CppUnitMini::TestCfg& cfg )
     {
         c_nThreadCount = cfg.getSizeT("ThreadCount", c_nThreadCount );
@@ -56,23 +37,22 @@ namespace map2 {
         c_nPassCount = cfg.getSizeT("PassCount", c_nPassCount);
         c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor);
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );
+
+        c_nCuckooInitialSize = cfg.getSizeT("CuckooInitialSize", c_nCuckooInitialSize);
+        c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize);
+        c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold);
+
+        c_nMultiLevelMap_HeadBits = cfg.getSizeT("MultiLevelMapHeadBits", c_nMultiLevelMap_HeadBits);
+        c_nMultiLevelMap_ArrayBits = cfg.getSizeT("MultiLevelMapArrayBits", c_nMultiLevelMap_ArrayBits);
+
+        if ( c_nThreadCount == 0 )
+            c_nThreadCount = std::thread::hardware_concurrency();
+
+        CPPUNIT_MSG( "Generating test data...");
+        cds::OS::Timer    timer;
+        generateSequence();
+        CPPUNIT_MSG( "   Duration=" << timer.duration() );
+        CPPUNIT_MSG( "Map size=" << m_nRealMapSize << " find key loop=" << m_Arr.size() << " (" << c_nPercentExists << "% success)" );
+        CPPUNIT_MSG( "Thread count=" << c_nThreadCount << " Pass count=" << c_nPassCount );
     }
-
-    void Map_find_int::myRun(const char *in_name, bool invert /*= false*/)
-    {
-        setUpParams( m_Cfg.get( "Map_find_int" ));
-
-        run_MichaelMap(in_name, invert);
-        run_SplitList(in_name, invert);
-        run_SkipListMap(in_name, invert);
-        run_EllenBinTreeMap(in_name, invert);
-        run_BronsonAVLTreeMap(in_name, invert);
-        run_StripedMap(in_name, invert);
-        run_RefinableMap(in_name, invert);
-        run_CuckooMap(in_name, invert);
-        run_StdMap(in_name, invert);
-
-        endTestCase();
-    }
-
 } // namespace map

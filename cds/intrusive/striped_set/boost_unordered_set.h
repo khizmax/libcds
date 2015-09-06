@@ -83,11 +83,20 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
 
                 template <typename Func>
-                std::pair<bool, bool> ensure( value_type& val, Func f )
+                std::pair<bool, bool> update( value_type& val, Func f, bool bAllowInsert )
                 {
-                    std::pair<iterator, bool> res = m_Set.insert( val );
-                    f( res.second, *res.first, val );
-                    return std::make_pair( true, res.second );
+                    if ( bAllowInsert ) {
+                        std::pair<iterator, bool> res = m_Set.insert( val );
+                        f( res.second, *res.first, val );
+                        return std::make_pair( true, res.second );
+                    }
+                    else {
+                        auto it = m_Set.find( val );
+                        if ( it == m_Set.end() )
+                            return std::make_pair( false, false );
+                        f( false, *it, val );
+                        return std::make_pair( true, false );
+                    }
                 }
 
                 bool unlink( value_type& val )

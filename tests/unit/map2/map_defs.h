@@ -12,6 +12,14 @@
     CPPUNIT_TEST(StdMap_Mutex) \
     CPPUNIT_TEST(StdHashMap_Mutex) \
 
+#define CDSUNIT_DECLARE_StdMap_NoLock \
+    TEST_CASE(tag_StdMap, StdMap_NoLock) \
+    TEST_CASE(tag_StdMap, StdHashMap_NoLock) \
+
+#define CDSUNIT_TEST_StdMap_NoLock \
+    CPPUNIT_TEST(StdMap_NoLock) \
+    CPPUNIT_TEST(StdHashMap_NoLock) \
+
 
 // **************************************************************************************
 // MichaelMap
