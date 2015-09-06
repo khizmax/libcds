@@ -85,11 +85,11 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_multilevelhashmap.cpp">
       <Filter>map_find_int</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_refinable.cpp">
-      <Filter>map_insfind_int</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_multilevelhashmap.cpp">
       <Filter>map_find_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_multilevelhashmap.cpp">
+      <Filter>map_insfind_int</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -68,7 +68,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_multilevelhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_std.cpp" />

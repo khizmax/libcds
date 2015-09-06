@@ -190,8 +190,8 @@ namespace map2 {
         void run_test()
         {
             if ( Map::c_bLoadFactorDepended ) {
-                for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                    CPPUNIT_MSG( "Load factor=" << nLoadFactor );
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
                     Map testMap( *this );
                     find_string_test( testMap );
                     if ( c_bPrintGCState )
