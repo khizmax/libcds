@@ -126,7 +126,7 @@ namespace hashing {
             {
                 if ( lhs.first != rhs.first )
                     return lhs.second < rhs.second;
-                return lhs.first < rhs.second;
+                return lhs.first < rhs.first;
             }
         };
     };
