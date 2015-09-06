@@ -82,6 +82,7 @@ namespace map2 {
         struct traits_MultiLevelHashMap_city64 : public cc::multilevel_hashmap::traits
         {
             typedef ::hashing::city64 hash;
+            typedef ::hashing::city64::less less;
         };
         typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_city64 >    MultiLevelHashMap_hp_city64;
         typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_city64 >    MultiLevelHashMap_dhp_city64;
@@ -96,6 +97,7 @@ namespace map2 {
         struct traits_MultiLevelHashMap_city128 : public cc::multilevel_hashmap::traits
         {
             typedef ::hashing::city128 hash;
+            typedef ::hashing::city128::less less;
         };
         typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_city128 >    MultiLevelHashMap_hp_city128;
         typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_city128 >    MultiLevelHashMap_dhp_city128;

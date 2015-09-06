@@ -61,6 +61,14 @@ namespace hashing {
         {
             return CityHash32( reinterpret_cast<char const *>( &s ), sizeof(s));
         }
+
+        struct less
+        {
+            bool operator()( hash_type lhs, hash_type rhs ) const
+            {
+                return lhs < rhs;
+            }
+        };
     };
 
     class city64 {
@@ -82,6 +90,14 @@ namespace hashing {
         {
             return CityHash64( reinterpret_cast<char const *>( &s ), sizeof(s));
         }
+
+        struct less
+        {
+            bool operator()( hash_type lhs, hash_type rhs ) const
+            {
+                return lhs < rhs;
+            }
+        };
     };
 
     class city128 {
@@ -103,6 +119,16 @@ namespace hashing {
         {
             return CityHash128( reinterpret_cast<char const *>( &s ), sizeof(s));
         }
+
+        struct less
+        {
+            bool operator()( hash_type const& lhs, hash_type const& rhs ) const
+            {
+                if ( lhs.first != rhs.first )
+                    return lhs.second < rhs.second;
+                return lhs.first < rhs.second;
+            }
+        };
     };
 
 } // namespace hashing
