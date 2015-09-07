@@ -57,7 +57,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_multilevelhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_striped.cpp" />

@@ -12,14 +12,14 @@ namespace map2 {
     class Map_InsDel_Item_int: public CppUnitMini::TestCase
     {
     public:
-        size_t  c_nMapSize = 1000000;        // map size
-        size_t  c_nThreadCount = 4;    // thread count
+        size_t  c_nMapSize = 1000000;       // map size
+        size_t  c_nThreadCount = 4;         // thread count
         size_t  c_nAttemptCount = 100000;   // count of SUCCESS insert/delete for each thread
-        size_t  c_nMaxLoadFactor = 8;  // maximum load factor
+        size_t  c_nMaxLoadFactor = 8;       // maximum load factor
         bool    c_bPrintGCState = true;
 
-        size_t c_nCuckooInitialSize = 1024;// initial size for CuckooMap
-        size_t c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t c_nCuckooInitialSize = 1024; // initial size for CuckooMap
+        size_t c_nCuckooProbesetSize = 16;  // CuckooMap probeset size (only for list-based probeset)
         size_t c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
 
         size_t c_nMultiLevelMap_HeadBits = 10;
@@ -253,8 +253,8 @@ namespace map2 {
         void run_test()
         {
             if ( Map::c_bLoadFactorDepended ) {
-                for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                    CPPUNIT_MSG( "Load factor=" << nLoadFactor );
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
                     Map testMap( *this );
                     do_test( testMap );
                     if ( c_bPrintGCState )
@@ -283,7 +283,7 @@ namespace map2 {
         CDSUNIT_DECLARE_CuckooMap
         // CDSUNIT_DECLARE_StdMap // very slow!!
 
-        CPPUNIT_TEST_SUITE(Map_InsDel_int)
+        CPPUNIT_TEST_SUITE(Map_InsDel_Item_int)
             CDSUNIT_TEST_MichaelMap
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListMap

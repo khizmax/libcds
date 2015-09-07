@@ -60,14 +60,13 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_item_int_split.cpp
     map_insdel_item_int_striped.cpp
     map_insdel_item_string.cpp
-    map_insdel_item_string_michael.cpp
-    map_insdel_item_string_split.cpp
-    map_insdel_item_string_skip.cpp
-    map_insdel_item_string_ellentree.cpp
     map_insdel_item_string_bronsonavltree.cpp
-    map_insdel_item_string_striped.cpp
-    map_insdel_item_string_refinable.cpp
     map_insdel_item_string_cuckoo.cpp
+    map_insdel_item_string_ellentree.cpp
+    map_insdel_item_string_michael.cpp
+    map_insdel_item_string_skip.cpp
+    map_insdel_item_string_split.cpp
+    map_insdel_item_string_striped.cpp
     map_insdel_string.cpp
     map_insdel_string_bronsonavltree.cpp
     map_insdel_string_cuckoo.cpp

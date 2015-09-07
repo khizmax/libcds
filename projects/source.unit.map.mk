@@ -66,7 +66,6 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_item_string_skip.cpp \
     tests/unit/map2/map_insdel_item_string_split.cpp \
     tests/unit/map2/map_insdel_item_string_striped.cpp \
-    tests/unit/map2/map_insdel_item_string_refinable.cpp \
     tests/unit/map2/map_insdel_string.cpp \
     tests/unit/map2/map_insdel_string_bronsonavltree.cpp \
     tests/unit/map2/map_insdel_string_cuckoo.cpp \
