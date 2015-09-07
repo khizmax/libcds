@@ -77,14 +77,14 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_string_striped.cpp \
     tests/unit/map2/map_insdel_string_std.cpp \
     tests/unit/map2/map_insdelfind.cpp \
-    tests/unit/map2/map_insdelfind_michael.cpp \
-    tests/unit/map2/map_insdelfind_split.cpp \
-    tests/unit/map2/map_insdelfind_skip.cpp \
-    tests/unit/map2/map_insdelfind_ellentree.cpp \
     tests/unit/map2/map_insdelfind_bronsonavltree.cpp \
-    tests/unit/map2/map_insdelfind_striped.cpp \
-    tests/unit/map2/map_insdelfind_refinable.cpp \
     tests/unit/map2/map_insdelfind_cuckoo.cpp \
+    tests/unit/map2/map_insdelfind_ellentree.cpp \
+    tests/unit/map2/map_insdelfind_michael.cpp \
+    tests/unit/map2/map_insdelfind_multilevelhashmap.cpp \
+    tests/unit/map2/map_insdelfind_skip.cpp \
+    tests/unit/map2/map_insdelfind_split.cpp \
+    tests/unit/map2/map_insdelfind_striped.cpp \
     tests/unit/map2/map_insdelfind_std.cpp \
     tests/unit/map2/map_delodd.cpp \
     tests/unit/map2/map_delodd_michael.cpp \

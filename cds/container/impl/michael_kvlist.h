@@ -783,7 +783,7 @@ namespace cds { namespace container {
             scoped_node_ptr pNode( alloc_node( key ));
 
             std::pair<bool, bool> ret = base_class::update_at( refHead, *pNode,
-                [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); }, 
+                [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); },
                 bAllowInsert );
             if ( ret.first && ret.second )
                 pNode.release();
