@@ -3,10 +3,10 @@
 #include "map2/map_insdel_item_int.h"
 #include "map2/map_type_split_list.h"
 
-namespace map2 {
-    CDSUNIT_DEFINE_SplitList( cc::split_list::implementation_tag, Map_InsDel_Item_int )
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_InsDel_Item_int::X() { run_test<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Map_InsDel_Item_int, run_SplitList )
-        CDSUNIT_TEST_SplitList
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace map2 {
+    CDSUNIT_DECLARE_SplitList
 } // namespace map2
