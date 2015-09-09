@@ -5,10 +5,7 @@
 
 namespace set2 {
 
-#    define TEST_SET(IMPL, C, X)         void C::X() { test<set_type<IMPL, key_type, value_type>::X >(); }
-#    define TEST_SET_EXTRACT(IMPL, C, X) void C::X() { test_extract<set_type<IMPL, key_type, value_type>::X >(); }
-#    define TEST_SET_NOLF(IMPL, C, X)    void C::X() { test_nolf<set_type<IMPL, key_type, value_type>::X >(); }
-#    define TEST_SET_NOLF_EXTRACT(IMPL, C, X) void C::X() { test_nolf_extract<set_type<IMPL, key_type, value_type>::X >(); }
+#define TEST_CASE(TAG, X)  void X();
 
     namespace {
         struct key_thread
@@ -119,13 +116,19 @@ namespace set2 {
 
     class Set_DelOdd: public CppUnitMini::TestCase
     {
-        static size_t  c_nSetSize;          // max set size
-        static size_t  c_nInsThreadCount;   // insert thread count
-        static size_t  c_nDelThreadCount;   // delete thread count
-        static size_t  c_nExtractThreadCount;  // extract thread count
-        static size_t  c_nMaxLoadFactor;    // maximum load factor
-        static bool    c_bPrintGCState;
+    public:
+        size_t  c_nSetSize =1000000;          // max set size
+        size_t  c_nInsThreadCount = 4;   // insert thread count
+        size_t  c_nDelThreadCount = 4;   // delete thread count
+        size_t  c_nExtractThreadCount = 4;  // extract thread count
+        size_t  c_nMaxLoadFactor = 8;    // maximum load factor
+        bool    c_bPrintGCState = true;
 
+        size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooSet
+        size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
+        size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
+
+        size_t c_nLoadFactor = 2;
         std::vector<size_t>     m_arrData;
 
     protected:
@@ -146,7 +149,7 @@ namespace set2 {
                 return new InsertThread( *this );
             }
 
-            struct ensure_func
+            struct update_functor
             {
                 template <typename Q>
                 void operator()( bool /*bNew*/, key_value_pair const&, Q const& )
@@ -189,10 +192,10 @@ namespace set2 {
                         ++m_nInsertFailed;
                 }
 
-                ensure_func f;
+                update_functor f;
                 for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                     if ( arrData[i] & 1 ) {
-                        rSet.ensure( key_type( arrData[i], m_nThreadNo ), f );
+                        rSet.update( key_type( arrData[i], m_nThreadNo ), f, true );
                     }
                 }
 
@@ -311,9 +314,11 @@ namespace set2 {
                 m_nDeleteSuccess =
                     m_nDeleteFailed = 0;
 
+                size_t const nInsThreadCount = getTest().c_nInsThreadCount;
                 std::vector<size_t>& arrData = getTest().m_arrData;
+
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = 0; i < arrData.size(); ++i ) {
                             if ( arrData[i] & 1 ) {
                                 if ( rSet.erase_with( arrData[i], key_less() ))
@@ -327,7 +332,7 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                             if ( arrData[i] & 1 ) {
                                 if ( rSet.erase_with( arrData[i], key_less() ))
@@ -385,8 +390,10 @@ namespace set2 {
                 typename Set::guarded_ptr gp;
 
                 std::vector<size_t>& arrData = getTest().m_arrData;
+                size_t const nInsThreadCount = getTest().c_nInsThreadCount;
+
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = 0; i < arrData.size(); ++i ) {
                             if ( arrData[i] & 1 ) {
                                 gp = rSet.extract_with( arrData[i], key_less());
@@ -402,7 +409,7 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                             if ( arrData[i] & 1 ) {
                                 gp = rSet.extract_with( arrData[i], key_less());
@@ -461,8 +468,10 @@ namespace set2 {
                 typename Set::exempt_ptr xp;
 
                 std::vector<size_t>& arrData = getTest().m_arrData;
+                size_t const nInsThreadCount = getTest().c_nInsThreadCount;
+
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = 0; i < arrData.size(); ++i ) {
                             if ( arrData[i] & 1 ) {
                                 if ( Set::c_bExtractLockExternal ) {
@@ -488,7 +497,7 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                             if ( arrData[i] & 1 ) {
                                 if ( Set::c_bExtractLockExternal ) {
@@ -637,7 +646,7 @@ namespace set2 {
                 size_t nErrorCount = 0;
                 for ( size_t n = 0; n < c_nSetSize; n +=2 ) {
                     for ( size_t i = 0; i < c_nInsThreadCount; ++i ) {
-                        if ( !testSet.find( key_type(n, i) ) ) {
+                        if ( !testSet.contains( key_type(n, i) ) ) {
                             if ( ++nErrorCount < 10 ) {
                                 CPPUNIT_MSG( "key " << n << "-" << i << " is not found!");
                             }
@@ -661,91 +670,87 @@ namespace set2 {
         }
 
         template <class Set>
-        void test()
+        void run_test()
         {
+            static_assert( !Set::c_bExtractSupported, "Set class must not support extract() method" );
+
             CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
                 << " delete thread count=" << c_nDelThreadCount
                 << " set size=" << c_nSetSize
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                do_test<Set>( nLoadFactor );
+            if ( Set::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+
+                    Set  testSet( *this );
+                    do_test_with( testSet );
+                    analyze( testSet );
+
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Set  testSet( *this );
+                do_test_with( testSet );
+                analyze( testSet );
+
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
         }
 
         template <class Set>
-        void test_extract()
+        void run_test_extract()
         {
+            static_assert( Set::c_bExtractSupported, "Set class must support extract() method" );
+
             CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
                 << " delete thread count=" << c_nDelThreadCount
                 << " extract thread count=" << c_nExtractThreadCount
                 << " set size=" << c_nSetSize
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                do_test_extract<Set>( nLoadFactor );
+            if ( Set::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+
+                    Set  testSet( *this );
+                    do_test_extract_with( testSet );
+                    analyze( testSet );
+
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Set  testSet( *this );
+                do_test_extract_with( testSet );
+                analyze( testSet );
+
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
-        }
-
-        template <class Set>
-        void test_nolf()
-        {
-            CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
-                << " delete thread count=" << c_nDelThreadCount
-                << " set size=" << c_nSetSize
-                );
-
-            {
-                Set s;
-                do_test_with( s );
-                analyze( s );
-            }
-
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
-        template <class Set>
-        void test_nolf_extract()
-        {
-            CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
-                << " delete thread count=" << c_nDelThreadCount
-                << " extract thread count=" << c_nExtractThreadCount
-                << " set size=" << c_nSetSize
-                );
-
-            {
-                Set s;
-                do_test_extract_with( s );
-                analyze( s );
-            }
-
-            if ( c_bPrintGCState )
-                print_gc_state();
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
 
-        void run_MichaelSet(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_CuckooSet(const char *in_name, bool invert = false);
-        void run_SkipListSet(const char *in_name, bool invert = false);
-        void run_EllenBinTreeSet(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
-
-
 #   include "set2/set_defs.h"
         CDSUNIT_DECLARE_MichaelSet
         CDSUNIT_DECLARE_SplitList
-        CDSUNIT_DECLARE_CuckooSet
         CDSUNIT_DECLARE_SkipListSet
         CDSUNIT_DECLARE_EllenBinTreeSet
+        CDSUNIT_DECLARE_CuckooSet
+
+        CPPUNIT_TEST_SUITE(Set_DelOdd)
+            CDSUNIT_TEST_MichaelSet
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SkipListSet
+            CDSUNIT_TEST_EllenBinTreeSet
+            CDSUNIT_TEST_CuckooSet
+
+            //CDSUNIT_TEST_MultiLevelHashSet // the test is not suitable
+        CPPUNIT_TEST_SUITE_END();
     };
 } // namespace set2

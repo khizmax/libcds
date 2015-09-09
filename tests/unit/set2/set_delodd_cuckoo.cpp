@@ -3,11 +3,10 @@
 #include "set2/set_delodd.h"
 #include "set2/set_type_cuckoo.h"
 
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Set_DelOdd::X() { run_test<typename set_type< TAG, key_type, value_type>::X>(); }
+#include "set2/set_defs.h"
+
 namespace set2 {
-    CDSUNIT_DEFINE_CuckooSet( cc::cuckoo::implementation_tag, Set_DelOdd )
-
-    CPPUNIT_TEST_SUITE_PART( Set_DelOdd, run_CuckooSet )
-        CDSUNIT_TEST_CuckooSet
-    CPPUNIT_TEST_SUITE_END_PART()
-
+    CDSUNIT_DECLARE_CuckooSet
 } // namespace set2

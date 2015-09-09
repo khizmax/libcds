@@ -396,8 +396,8 @@ namespace cds { namespace container {
             return update_at( head(), key, func, bAllowInsert );
         }
         //@cond
-        // Deprecated, use update()
         template <typename Q, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( Q const& key, Func func )
         {
             return update( key, func );

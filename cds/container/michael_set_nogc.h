@@ -224,68 +224,94 @@ namespace cds { namespace container {
             return end();
         }
 
-        /// Ensures that the item \p val exists in the set
+        /// Updates the element
         /**
-            The operation inserts new item if the key \p val is not found in the set.
-            Otherwise, the function returns an iterator that points to item found.
+            The operation performs inserting or changing data with lock-free manner.
+
+            If the item \p val not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
 
             Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
-            already is in the set.
+            item found or inserted, or \p end() if \p bAllowInsert is \p false, 
+            \p second is true if new item has been added or \p false if the item is already in the set.
 
-            @warning For \ref cds_nonintrusive_MichaelList_nogc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_nonintrusive_LazyList_nogc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename Q>
-        std::pair<iterator, bool> ensure( const Q& val )
+        std::pair<iterator, bool> update( Q const& val, bool bAllowInsert = true )
         {
             bucket_type& refBucket = bucket( val );
-            std::pair<bucket_iterator, bool> ret = refBucket.ensure( val );
+            std::pair<bucket_iterator, bool> ret = refBucket.update( val, bAllowInsert );
 
             if ( ret.first != refBucket.end() ) {
                 if ( ret.second )
                     ++m_ItemCounter;
                 return std::make_pair( iterator( ret.first, &refBucket, m_Buckets + bucket_count() ), ret.second );
             }
-
             return std::make_pair( end(), ret.second );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<iterator, bool> ensure( Q const& val )
+        {
+            return update( val, true );
+        }
+        //@endcond
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_MichealSet_nogc_find
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise
+            or \ref end() otherwise.
+
+            Note the hash functor specified for class \p Traits template parameter
+            should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        iterator find( Q const& key )
+        iterator contains( Q const& key )
         {
             bucket_type& refBucket = bucket( key );
-            bucket_iterator it = refBucket.find( key );
+            bucket_iterator it = refBucket.contains( key );
             if ( it != refBucket.end() )
                 return iterator( it, &refBucket, m_Buckets + bucket_count() );
 
             return end();
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("use contains()")
+        iterator find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichealSet_nogc_find "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        iterator find_with( Q const& key, Less pred )
+        iterator contains( Q const& key, Less pred )
         {
             bucket_type& refBucket = bucket( key );
-            bucket_iterator it = refBucket.find_with( key, pred );
+            bucket_iterator it = refBucket.contains( key, pred );
             if ( it != refBucket.end() )
                 return iterator( it, &refBucket, m_Buckets + bucket_count() );
 
             return end();
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("use contains()")
+        iterator find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Clears the set (not atomic)
         void clear()

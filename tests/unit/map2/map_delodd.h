@@ -122,7 +122,7 @@ namespace map2 {
         size_t  c_nMaxLoadFactor = 8;       // maximum load factor
         size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooMap
         size_t  c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
-        size_t  c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
+        size_t  c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (0 - use default)
 
         bool    c_bPrintGCState = true;
 

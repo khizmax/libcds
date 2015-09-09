@@ -251,8 +251,8 @@ namespace cds { namespace container {
             return bRes;
         }
         //@cond
-        // Deprecated, use update()
         template <typename Q, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( const Q& val, Func func )
         {
             return update( val, func, true );

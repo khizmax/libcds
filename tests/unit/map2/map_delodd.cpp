@@ -6,16 +6,16 @@ namespace map2 {
     CPPUNIT_TEST_SUITE_REGISTRATION( Map_DelOdd );
 
     void Map_DelOdd::setUpParams( const CppUnitMini::TestCfg& cfg ) {
-        c_nMapSize = cfg.getULong("MapSize", static_cast<unsigned long>(c_nMapSize) );
-        c_nInsThreadCount = cfg.getULong("InsThreadCount", static_cast<unsigned long>(c_nInsThreadCount) );
-        c_nDelThreadCount = cfg.getULong("DelThreadCount", static_cast<unsigned long>(c_nDelThreadCount) );
-        c_nExtractThreadCount = cfg.getULong("ExtractThreadCount", static_cast<unsigned long>(c_nExtractThreadCount) );
-        c_nMaxLoadFactor = cfg.getULong("MaxLoadFactor", static_cast<unsigned long>(c_nMaxLoadFactor) );
+        c_nMapSize = cfg.getSizeT("MapSize", c_nMapSize );
+        c_nInsThreadCount = cfg.getSizeT("InsThreadCount", c_nInsThreadCount );
+        c_nDelThreadCount = cfg.getSizeT("DelThreadCount", c_nDelThreadCount );
+        c_nExtractThreadCount = cfg.getSizeT("ExtractThreadCount", c_nExtractThreadCount );
+        c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor );
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", true );
 
-        c_nCuckooInitialSize = cfg.getULong("CuckooInitialSize", static_cast<unsigned long>(c_nCuckooInitialSize) );
-        c_nCuckooProbesetSize = cfg.getULong("CuckooProbesetSize", static_cast<unsigned long>(c_nCuckooProbesetSize) );
-        c_nCuckooProbesetThreshold = cfg.getULong("CuckooProbesetThreshold", static_cast<unsigned long>(c_nCuckooProbesetThreshold) );
+        c_nCuckooInitialSize = cfg.getSizeT("CuckooInitialSize", c_nCuckooInitialSize );
+        c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize );
+        c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold );
 
 
         if ( c_nInsThreadCount == 0 )
