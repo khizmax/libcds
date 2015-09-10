@@ -743,7 +743,7 @@ namespace set2 {
         CDSUNIT_DECLARE_EllenBinTreeSet
         CDSUNIT_DECLARE_CuckooSet
 
-        CPPUNIT_TEST_SUITE(Set_DelOdd)
+        CPPUNIT_TEST_SUITE_(Set_DelOdd, "Map_DelOdd")
             CDSUNIT_TEST_MichaelSet
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListSet

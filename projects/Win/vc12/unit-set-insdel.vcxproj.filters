@@ -10,9 +10,6 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_ellentree.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_refinable.cpp">
-      <Filter>set_insdel_func</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_skip.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
@@ -48,6 +45,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_striped.cpp">
       <Filter>set_insdel_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_michael.cpp">
+      <Filter>set_insdel_func</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

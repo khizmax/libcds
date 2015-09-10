@@ -46,7 +46,7 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_ellentree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_michael.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_striped.cpp" />

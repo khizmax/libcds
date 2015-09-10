@@ -110,10 +110,10 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
                 else {
                     auto it = m_Set.find( value_type(val));
-                    if ( it = m_Set.end() )
+                    if ( it == m_Set.end() )
                         return std::make_pair( false, false );
 
-                    func( false, *it, val );
+                    func( false, const_cast<value_type&>(*it), val );
                     return std::make_pair( true, false );
                 }
             }

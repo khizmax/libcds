@@ -4,7 +4,7 @@ set(CDSUNIT_SET_SOURCES
     set_insdel_func.cpp
     set_insdel_func_cuckoo.cpp
     set_insdel_func_ellentree.cpp
-    set_insdel_func_refinable.cpp
+    set_insdel_func_michael.cpp
     set_insdel_func_skip.cpp
     set_insdel_func_split.cpp
     set_insdel_func_striped.cpp

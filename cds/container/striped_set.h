@@ -492,13 +492,14 @@ namespace cds { namespace container {
     public:
         /// Default ctor. The initial capacity is 16.
         StripedSet()
-        : base_class()
+            : base_class()
         {}
 
         /// Ctor with initial capacity specified
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
-        ) : base_class( nCapacity )
+        ) 
+            : base_class( nCapacity )
         {}
 
         /// Ctor with resizing policy (copy semantics)
@@ -508,7 +509,8 @@ namespace cds { namespace container {
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy const& resizingPolicy  ///< Resizing policy
-        ) : base_class( nCapacity, resizingPolicy )
+        ) 
+            : base_class( nCapacity, resizingPolicy )
         {}
 
         /// Ctor with resizing policy (move semantics)
@@ -519,7 +521,8 @@ namespace cds { namespace container {
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy&& resizingPolicy  ///< Resizing policy
-            ) : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
+        ) 
+            : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
         {}
 
         /// Destructor destroys internal data
