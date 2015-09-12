@@ -515,6 +515,7 @@ namespace set2 {
 
             if ( Set::c_bLoadFactorDepended ) {
                 for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG("  LoadFactor = " << c_nLoadFactor );
                     Set s( *this );
                     do_test( s );
                     if ( c_bPrintGCState )

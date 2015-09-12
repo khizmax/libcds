@@ -4,12 +4,17 @@
 #define CDSUNIT_SET_DEFS_H
 
 #define CDSUNIT_DECLARE_StdSet \
-    TEST_CASE(StdSet_Spin) \
-    TEST_CASE(StdHashSet_Spin)
+    TEST_CASE( tag_StdSet, StdSet_Spin) \
+    TEST_CASE( tag_StdSet, StdSet_Mutex) \
+    TEST_CASE( tag_StdSet, StdHashSet_Spin)
 
 #define CDSUNIT_TEST_StdSet \
     CPPUNIT_TEST(StdSet_Spin) \
+    CPPUNIT_TEST(StdSet_Mutex) \
     CPPUNIT_TEST(StdHashSet_Spin)
+
+//********************************************************************
+// MichaelHashSet
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_MichaelSet_RCU_signal  \
@@ -83,6 +88,8 @@
     CPPUNIT_TEST(MichaelSet_Lazy_RCU_GPT_less_michaelAlloc) \
     CDSUNIT_TEST_MichaelSet_RCU_signal
 
+//********************************************************************
+// SplitListSet
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_SplitList_RCU_signal  \
@@ -268,6 +275,8 @@
     CPPUNIT_TEST(SplitList_Lazy_RCU_GPT_st_less_stat)\
     CDSUNIT_TEST_SplitList_RCU_signal
 
+//********************************************************************
+// CuckooSet
 
 #define CDSUNIT_DECLARE_CuckooSet \
     TEST_CASE(tag_CuckooSet, CuckooStripedSet_list_unord)\
@@ -321,7 +330,8 @@
     CPPUNIT_TEST(CuckooRefinableSet_vector_ord_stat) \
     CPPUNIT_TEST(CuckooRefinableSet_vector_ord_storehash)
 
-
+//********************************************************************
+// SkipListSet
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_SkipListSet_RCU_signal \
@@ -395,6 +405,8 @@
     CPPUNIT_TEST(SkipListSet_rcu_gpt_cmp_xorshift_stat)\
     CDSUNIT_TEST_SkipListSet_RCU_signal
 
+//********************************************************************
+// EllenBinTreeSet
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_EllenBinTreeSet_RCU_signal \
@@ -445,7 +457,8 @@
     CPPUNIT_TEST(EllenBinTreeSet_rcu_gpt_stat)\
     CDSUNIT_TEST_EllenBinTreeSet_RCU_signal
 
-
+//********************************************************************
+// StripedSet
 
 #define CDSUNIT_DECLARE_StripedSet_common \
     TEST_CASE( tag_StripedSet, StripedSet_list) \
@@ -535,6 +548,10 @@
     TEST_CASE( tag_StripedSet, RefinableSet_rational_set) \
     TEST_CASE( tag_StripedSet, RefinableSet_rational_hashset) \
     TEST_CASE( tag_StripedSet, RefinableSet_rational_boost_unordered_set)
+
+
+//********************************************************************
+// RefinableSet
 
 #define CDSUNIT_TEST_RefinableSet_common \
     CPPUNIT_TEST(RefinableSet_list) \
