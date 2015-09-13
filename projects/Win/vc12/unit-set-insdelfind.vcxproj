@@ -47,7 +47,7 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_multilevelhashset.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdelfind_std.cpp" />

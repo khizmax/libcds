@@ -425,7 +425,18 @@
     <ClInclude Include="..\..\..\tests\cppunit\thread.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\hashing\city.cpp" />
+    <ClCompile Include="..\..\..\tests\hashing\city.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
+    </ClCompile>
     <ClCompile Include="..\..\..\tests\hashing\md5.cpp" />
     <ClCompile Include="..\..\..\tests\hashing\sha256.cpp" />
     <ClCompile Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.cpp" />

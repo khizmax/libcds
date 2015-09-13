@@ -42,6 +42,12 @@ namespace set2 {
             return base_class::extract( hasher()(key) );
         }
 
+        template <typename Q>
+        bool contains( Q const& key )
+        {
+            return base_class::contains( hasher()(key) );
+        }
+
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;

@@ -5,20 +5,24 @@
 
 namespace set2 {
 
-#   define TEST_SET(IMPL, C, X)          void C::X() { test<set_type<IMPL, key_type, value_type>::X >()    ; }
-#   define TEST_SET_EXTRACT(IMPL, C, X)  TEST_SET(IMPL, C, X)
-#   define TEST_SET_NOLF(IMPL, C, X)     void C::X() { test_nolf<set_type<IMPL, key_type, value_type>::X >()    ; }
-#   define TEST_SET_NOLF_EXTRACT(IMPL, C, X) TEST_SET_NOLF(IMPL, C, X)
+#define TEST_CASE(TAG, X)  void X();
 
     class Set_InsDelFind: public CppUnitMini::TestCase
     {
-        static size_t c_nInitialMapSize;    // initial map size
-        static size_t c_nThreadCount;       // thread count
-        static size_t c_nMaxLoadFactor;     // maximum load factor
-        static unsigned int c_nInsertPercentage;
-        static unsigned int c_nDeletePercentage;
-        static unsigned int c_nDuration;    // test duration, seconds
-        static bool c_bPrintGCState;
+    public:
+        size_t c_nSetSize = 500000;      // initial set size
+        size_t c_nThreadCount = 8;       // thread count
+        size_t c_nMaxLoadFactor = 8;     // maximum load factor
+        unsigned int c_nInsertPercentage = 5;
+        unsigned int c_nDeletePercentage = 5;
+        unsigned int c_nDuration = 30;   // test duration, seconds
+        bool c_bPrintGCState = true;
+
+        size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooSet
+        size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
+        size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
+
+        size_t c_nLoadFactor = 2;
 
     public:
         enum actions
@@ -83,7 +87,7 @@ namespace set2 {
 
                 actions * pAct = getTest().m_arrShuffle;
                 unsigned int i = 0;
-                size_t const nNormalize = size_t(-1) / (c_nInitialMapSize * 2);
+                size_t const nNormalize = size_t(-1) / ( getTest().c_nSetSize * 2);
 
                 size_t nRand = 0;
                 while ( !time_elapsed() ) {
@@ -91,7 +95,7 @@ namespace set2 {
                     size_t n = nRand / nNormalize;
                     switch ( pAct[i] ) {
                     case do_find:
-                        if ( rMap.find( n ))
+                        if ( rMap.contains( n ))
                             ++m_nFindSuccess;
                         else
                             ++m_nFindFailed;
@@ -118,24 +122,15 @@ namespace set2 {
 
     protected:
         template <class Set>
-        void do_test( size_t nLoadFactor )
-        {
-            CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-
-            Set  testSet( c_nInitialMapSize, nLoadFactor );
-            do_test_with( testSet );
-        }
-
-        template <class Set>
-        void do_test_with( Set& testSet )
+        void do_test( Set& testSet )
         {
             typedef WorkThread<Set> work_thread;
 
             // fill map - only odd number
             {
-                size_t * pInitArr = new size_t[ c_nInitialMapSize ];
-                size_t * pEnd = pInitArr + c_nInitialMapSize;
-                for ( size_t i = 0; i < c_nInitialMapSize; ++i )
+                size_t * pInitArr = new size_t[ c_nSetSize ];
+                size_t * pEnd = pInitArr + c_nSetSize;
+                for ( size_t i = 0; i < c_nSetSize; ++i )
                     pInitArr[i] = i * 2 + 1;
                 shuffle( pInitArr, pEnd );
                 for ( size_t * p = pInitArr; p < pEnd; ++p )
@@ -193,51 +188,33 @@ namespace set2 {
         }
 
         template <class Set>
-        void test()
+        void run_test()
         {
             CPPUNIT_MSG( "Thread count=" << c_nThreadCount
-                << " initial map size=" << c_nInitialMapSize
+                << " initial map size=" << c_nSetSize
                 << " insert=" << c_nInsertPercentage << '%'
                 << " delete=" << c_nDeletePercentage << '%'
                 << " duration=" << c_nDuration << "s"
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                do_test<Set>( nLoadFactor );
+            if ( Set::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG("  LoadFactor = " << c_nLoadFactor );
+                    Set s( *this );
+                    do_test( s );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Set s( *this );
+                do_test( s );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
         }
 
-        template <class Set>
-        void test_nolf()
-        {
-            CPPUNIT_MSG( "Thread count=" << c_nThreadCount
-                << " initial map size=" << c_nInitialMapSize
-                << " insert=" << c_nInsertPercentage << '%'
-                << " delete=" << c_nDeletePercentage << '%'
-                << " duration=" << c_nDuration << "s"
-                );
-
-            Set s;
-            do_test_with( s );
-            //CPPUNIT_MSG( s.statistics() );
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
         void setUpParams( const CppUnitMini::TestCfg& cfg );
-
-        void run_MichaelSet(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_SkipListSet(const char *in_name, bool invert = false);
-        void run_CuckooSet(const char *in_name, bool invert = false);
-        void run_StripedSet(const char *in_name, bool invert = false);
-        void run_RefinableSet(const char *in_name, bool invert = false);
-        void run_EllenBinTreeSet(const char *in_name, bool invert = false);
-        void run_StdSet(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
 
 #   include "set2/set_defs.h"
         CDSUNIT_DECLARE_MichaelSet
@@ -247,6 +224,20 @@ namespace set2 {
         CDSUNIT_DECLARE_CuckooSet
         CDSUNIT_DECLARE_SkipListSet
         CDSUNIT_DECLARE_EllenBinTreeSet
+        CDSUNIT_DECLARE_MultiLevelHashSet
         CDSUNIT_DECLARE_StdSet
+
+        CPPUNIT_TEST_SUITE_(Set_InsDelFind, "Map_InsDelFind")
+            CDSUNIT_TEST_MichaelSet
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SkipListSet
+            CDSUNIT_TEST_MultiLevelHashSet
+            CDSUNIT_TEST_EllenBinTreeSet
+            CDSUNIT_TEST_StripedSet
+            CDSUNIT_TEST_RefinableSet
+            CDSUNIT_TEST_CuckooSet
+            CDSUNIT_TEST_StdSet
+        CPPUNIT_TEST_SUITE_END();
+
     };
 } // namespace set2

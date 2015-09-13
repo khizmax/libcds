@@ -42,7 +42,7 @@ namespace set2 {
         {}
 
         template <typename Key>
-        bool find( const Key& key )
+        bool contains( const Key& key )
         {
             scoped_lock al( m_lock );
             return base_class::find( value_type(key) ) != base_class::end();
@@ -125,7 +125,7 @@ namespace set2 {
         {}
 
         template <typename Key>
-        bool find( const Key& key )
+        bool contains( const Key& key )
         {
             value_type v( key );
             scoped_lock al( m_lock );
