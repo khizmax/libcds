@@ -247,8 +247,8 @@ namespace cds { namespace container {
             return base_class::update( std::make_pair( key, mapped_type() ), bInsert );
         }
         //@cond
-        // Deprecated, use update()
         template <typename K>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<iterator, bool> ensure( K const& key )
         {
             return update( key, true );
@@ -267,8 +267,8 @@ namespace cds { namespace container {
             return base_class::contains( key );
         }
         //@cond 
-        // Deprecated, use contains()
         template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find( K const& key )
         {
             return contains( key );
@@ -287,8 +287,8 @@ namespace cds { namespace container {
             return base_class::contains( key, pred );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find_with( K const& key, Less pred ) const
         {
             return contains( key, pred );

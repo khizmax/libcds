@@ -1154,8 +1154,8 @@ namespace cds { namespace intrusive {
             }
         }
         //@cond
-        // Deprecated, use update() instead
         template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
             return update( val, func, true );
@@ -1472,8 +1472,8 @@ namespace cds { namespace intrusive {
             return find_with_( key, key_comparator(), [](value_type& , Q const& ) {} );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( Q const& key )
         {
             return contains( key );
@@ -1493,8 +1493,8 @@ namespace cds { namespace intrusive {
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find_with( Q const& key, Less pred )
         {
             return contains( key, pred );

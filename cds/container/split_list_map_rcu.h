@@ -389,8 +389,8 @@ namespace cds { namespace container {
                 bAllowInsert );
         }
         //@cond
-        // Deprecated, use update()
         template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
             return update( key, func, true );
@@ -572,8 +572,8 @@ namespace cds { namespace container {
             return base_class::contains( key );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( K const& key )
         {
             return base_class::find( key );
@@ -593,8 +593,8 @@ namespace cds { namespace container {
             return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find_with( K const& key, Less pred )
         {
             return contains( key, pred );

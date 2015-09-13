@@ -332,8 +332,8 @@ namespace cds { namespace intrusive {
             return update_at( m_pHead, val, func, bAllowInsert );
         }
         //@cond
-        // Deprecated, use update()
         template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
             return update( val, func );
@@ -404,8 +404,8 @@ namespace cds { namespace intrusive {
             return find_at( m_pHead, key, key_comparator() );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         value_type * find( Q const& key )
         {
             return contains( key );
@@ -425,8 +425,8 @@ namespace cds { namespace intrusive {
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         value_type * find_with( Q const& key, Less pred )
         {
             return contains( key, pred );

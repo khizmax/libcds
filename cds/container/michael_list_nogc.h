@@ -309,8 +309,8 @@ namespace cds { namespace container {
             return std::make_pair( node_to_iterator( ret.first ), ret.second );
         }
         //@cond
-        // Deprecated, use update()
         template <typename Q>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<iterator, bool> ensure( const Q& val )
         {
             return update( val, true );
@@ -339,8 +339,8 @@ namespace cds { namespace container {
             return node_to_iterator( find_at( head(), key, intrusive_key_comparator() ));
         }
         //@cond
-        // Deprecated, ue contains()
         template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find( Q const& key )
         {
             return contains( key );
@@ -360,8 +360,8 @@ namespace cds { namespace container {
             return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ) );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find_with( Q const& key, Less pred )
         {
             return contains( key, pred );

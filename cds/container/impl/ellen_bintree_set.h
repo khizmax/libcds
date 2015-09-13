@@ -490,8 +490,8 @@ namespace cds { namespace container {
             return base_class::contains( key );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( Q const & key )
         {
             return contains( key );
@@ -511,8 +511,8 @@ namespace cds { namespace container {
             return base_class::contains( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find_with( Q const& key, Less pred )
         {
             return contains( key, pred );

@@ -439,8 +439,8 @@ namespace cds { namespace container {
             return bRet;
         }
         //@cond
-        // Deprecated
         template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
             std::pair<bool, bool> bRet = bucket( key ).ensure( key, func );
@@ -656,8 +656,8 @@ namespace cds { namespace container {
             return bucket( key ).contains( key );
         }
         //@cond
-        // Deprecated
         template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( K const& key )
         {
             return bucket( key ).contains( key );
@@ -676,8 +676,8 @@ namespace cds { namespace container {
             return bucket( key ).contains( key, pred );
         }
         //@cond
-        // Deprecated
         template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find_with( K const& key, Less pred )
         {
             return bucket( key ).contains( key, pred );

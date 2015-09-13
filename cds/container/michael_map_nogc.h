@@ -417,8 +417,8 @@ namespace cds { namespace container {
             return std::make_pair( iterator( ret.first, &refBucket, m_Buckets + bucket_count() ), ret.second );
         }
         //@cond
-        // Deprecated, use update()
         template <typename K>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<iterator, bool> ensure( K const& key )
         {
             return update( key, true );
@@ -442,8 +442,8 @@ namespace cds { namespace container {
             return end();
         }
         //@cond
-        // Deprecated, use contains()
         template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find( K const& key )
         {
             return contains( key );
@@ -468,8 +468,8 @@ namespace cds { namespace container {
             return end();
         }
         //@cond
-        // Deprecated, use contains()
         template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find_with( K const& key, Less pred )
         {
             return contains( key, pred );

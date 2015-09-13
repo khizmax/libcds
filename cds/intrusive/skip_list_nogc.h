@@ -754,8 +754,8 @@ namespace cds { namespace intrusive {
             }
         }
         //@cond
-        // Deprecated, use update() instead
         template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
             return update( val, func, true );
@@ -835,8 +835,8 @@ namespace cds { namespace intrusive {
             return nullptr;
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         value_type * find( Q const& key ) const
         {
             return contains( key );
@@ -859,8 +859,8 @@ namespace cds { namespace intrusive {
             return nullptr;
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         value_type * find_with( Q const& key, Less pred ) const
         {
             return contains( key, pred );

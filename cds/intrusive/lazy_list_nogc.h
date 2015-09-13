@@ -376,8 +376,8 @@ namespace cds { namespace intrusive {
             return update_at( &m_Head, val, func, bAllowInsert );
         }
         //@cond
-        // Deprecated, use update()
         template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
             return update( val, func, true );
@@ -467,8 +467,8 @@ namespace cds { namespace intrusive {
             return find_at( &m_Head, key, key_comparator() );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         value_type * find( Q const& key )
         {
             return contains( key );
@@ -488,8 +488,8 @@ namespace cds { namespace intrusive {
             return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q, typename Less, bool Sort = c_bSort>
+        CDS_DEPRECATED("deprecated, use contains()")
         typename std::enable_if<Sort, value_type *>::type find_with( Q const& key, Less pred )
         {
             return contains( key, pred );
@@ -507,8 +507,8 @@ namespace cds { namespace intrusive {
             return find_at( &m_Head, key, equal );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q, typename Equal, bool Sort = c_bSort>
+        CDS_DEPRECATED("deprecated, use contains()")
         typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal equal )
         {
             return contains( key, equal );

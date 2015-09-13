@@ -425,8 +425,8 @@ namespace cds { namespace container {
             return update_at( head(), key, func, bAllowInsert );
         }
         //@cond
-        // Deprecated, use update()
         template <typename Q, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( Q const& key, Func f )
         {
             return update( key, f, true );
@@ -589,8 +589,8 @@ namespace cds { namespace container {
             return find_at( head(), key, intrusive_key_comparator() );
         }
         //@cond
-        // Deprecated, use contains()
         template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( Q const& key )
         {
             return contains( key );
