@@ -204,7 +204,7 @@ namespace tree {
             }
         };
 
-        struct ensure_functor {
+        struct update_functor {
             template <typename T>
             void operator()( bool bNew, T& dest, T& src) const
             {
@@ -285,73 +285,80 @@ namespace tree {
                 value_type v4( 25, 250 );
                 value_type v5( -50, -500 );
 
-                // insert/ensure
+                // insert/update
                 CPPUNIT_ASSERT( t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 0 ));
-                CPPUNIT_CHECK( !t.find( v1.nKey ));
-                CPPUNIT_CHECK( !t.find( v1 ));
-                CPPUNIT_CHECK( !t.find( v2.nKey ));
-                CPPUNIT_CHECK( !t.find( v2 ));
-                CPPUNIT_CHECK( !t.find( v3.nKey ));
-                CPPUNIT_CHECK( !t.find( v3 ));
-                CPPUNIT_CHECK( !t.find( v4.nKey ));
-                CPPUNIT_CHECK( !t.find( v4 ));
-                CPPUNIT_CHECK( !t.find( v5.nKey ));
-                CPPUNIT_CHECK( !t.find( v5 ));
+                CPPUNIT_CHECK( !t.contains( v1.nKey ));
+                CPPUNIT_CHECK( !t.contains( v1 ));
+                CPPUNIT_CHECK( !t.contains( v2.nKey ));
+                CPPUNIT_CHECK( !t.contains( v2 ));
+                CPPUNIT_CHECK( !t.contains( v3.nKey ));
+                CPPUNIT_CHECK( !t.contains( v3 ));
+                CPPUNIT_CHECK( !t.contains( v4.nKey ));
+                CPPUNIT_CHECK( !t.contains( v4 ));
+                CPPUNIT_CHECK( !t.contains( v5.nKey ));
+                CPPUNIT_CHECK( !t.contains( v5 ));
 
                 CPPUNIT_ASSERT( t.insert( v1 ));
                 CPPUNIT_ASSERT( t.check_consistency() );
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 1 ));
-                CPPUNIT_CHECK( t.find( v1.nKey ));
-                CPPUNIT_CHECK( t.find( v1 ));
-                CPPUNIT_CHECK( !t.find( v2.nKey ));
-                CPPUNIT_CHECK( !t.find( v2 ));
-                CPPUNIT_CHECK( !t.find( v3.nKey ));
-                CPPUNIT_CHECK( !t.find( v3 ));
-                CPPUNIT_CHECK( !t.find( v4.nKey ));
-                CPPUNIT_CHECK( !t.find( v4 ));
-                CPPUNIT_CHECK( !t.find( v5.nKey ));
-                CPPUNIT_CHECK( !t.find( v5 ));
+                CPPUNIT_CHECK( t.contains( v1.nKey ));
+                CPPUNIT_CHECK( t.contains( v1 ));
+                CPPUNIT_CHECK( !t.contains( v2.nKey ));
+                CPPUNIT_CHECK( !t.contains( v2 ));
+                CPPUNIT_CHECK( !t.contains( v3.nKey ));
+                CPPUNIT_CHECK( !t.contains( v3 ));
+                CPPUNIT_CHECK( !t.contains( v4.nKey ));
+                CPPUNIT_CHECK( !t.contains( v4 ));
+                CPPUNIT_CHECK( !t.contains( v5.nKey ));
+                CPPUNIT_CHECK( !t.contains( v5 ));
 
                 CPPUNIT_ASSERT( v2.stat.nInsertFuncCall == 0 );
                 CPPUNIT_ASSERT( t.insert( v2, insert_functor() ));
                 CPPUNIT_ASSERT( t.check_consistency() );
                 CPPUNIT_ASSERT( v2.stat.nInsertFuncCall == 1 );
-                CPPUNIT_ASSERT( t.find( v1.nKey ));
-                CPPUNIT_ASSERT( t.find( v1 ));
-                CPPUNIT_ASSERT( t.find( v2.nKey ));
-                CPPUNIT_ASSERT( t.find( v2 ));
-                CPPUNIT_ASSERT( !t.find( v3.nKey ));
-                CPPUNIT_ASSERT( !t.find( v3 ));
-                CPPUNIT_ASSERT( !t.find( v4.nKey ));
-                CPPUNIT_ASSERT( !t.find( v4 ));
-                CPPUNIT_ASSERT( !t.find( v5.nKey ));
-                CPPUNIT_ASSERT( !t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( t.contains( v1 ));
+                CPPUNIT_ASSERT( t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( t.contains( v2 ));
+                CPPUNIT_ASSERT( !t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v3 ));
+                CPPUNIT_ASSERT( !t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v4 ));
+                CPPUNIT_ASSERT( !t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 2 ));
 
+                std::pair<bool, bool> updateResult;
                 CPPUNIT_ASSERT( v3.stat.nEnsureNewFuncCall == 0 );
                 CPPUNIT_ASSERT( v3.stat.nEnsureExistFuncCall == 0 );
-                CPPUNIT_ASSERT( t.ensure( v3, ensure_functor() ).second );
+                updateResult = t.update( v3, update_functor(), false );
+                CPPUNIT_ASSERT( !updateResult.first && !updateResult.second );
+                CPPUNIT_ASSERT( v3.stat.nEnsureNewFuncCall == 0 );
+                CPPUNIT_ASSERT( v3.stat.nEnsureExistFuncCall == 0 );
+                updateResult = t.update( v3, update_functor(), true );
+                CPPUNIT_ASSERT( updateResult.first && updateResult.second );
                 CPPUNIT_ASSERT( t.check_consistency() );
                 CPPUNIT_ASSERT( v3.stat.nEnsureNewFuncCall == 1 );
                 CPPUNIT_ASSERT( v3.stat.nEnsureExistFuncCall == 0 );
                 CPPUNIT_ASSERT( v3.nValue == 300 );
-                CPPUNIT_ASSERT( !t.ensure( v3, ensure_functor() ).second );
+                updateResult = t.update( v3, update_functor(), false );
+                CPPUNIT_ASSERT( updateResult.first && !updateResult.second );
                 CPPUNIT_ASSERT( v3.stat.nEnsureNewFuncCall == 1 );
                 CPPUNIT_ASSERT( v3.stat.nEnsureExistFuncCall == 1 );
                 CPPUNIT_ASSERT( v3.nValue == 600 );
-                CPPUNIT_ASSERT( t.find( v1.nKey ));
-                CPPUNIT_ASSERT( t.find( v1 ));
-                CPPUNIT_ASSERT( t.find( v2.nKey ));
-                CPPUNIT_ASSERT( t.find( v2 ));
-                CPPUNIT_ASSERT( t.find( v3.nKey ));
-                CPPUNIT_ASSERT( t.find( v3 ));
-                CPPUNIT_ASSERT( !t.find( v4.nKey ));
-                CPPUNIT_ASSERT( !t.find( v4 ));
-                CPPUNIT_ASSERT( !t.find( v5.nKey ));
-                CPPUNIT_ASSERT( !t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( t.contains( v1 ));
+                CPPUNIT_ASSERT( t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( t.contains( v2 ));
+                CPPUNIT_ASSERT( t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( t.contains( v3 ));
+                CPPUNIT_ASSERT( !t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v4 ));
+                CPPUNIT_ASSERT( !t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 3 ));
 
@@ -361,7 +368,7 @@ namespace tree {
                     CPPUNIT_ASSERT( v3.stat.nEnsureNewFuncCall == 1 );
                     CPPUNIT_ASSERT( v3.stat.nEnsureExistFuncCall == 1 );
                     CPPUNIT_ASSERT( v3.nValue == 600 );
-                    CPPUNIT_ASSERT( !t.ensure( v, ensure_functor() ).second );
+                    CPPUNIT_ASSERT( !t.update( v, update_functor() ).second );
                     CPPUNIT_ASSERT( v3.stat.nEnsureNewFuncCall == 1 );
                     CPPUNIT_ASSERT( v.stat.nEnsureExistFuncCall == 1 );
                     CPPUNIT_ASSERT( v3.nValue == 1200 );
@@ -372,31 +379,31 @@ namespace tree {
 
                 CPPUNIT_ASSERT( t.insert( v4 ));
                 CPPUNIT_ASSERT( t.check_consistency() );
-                CPPUNIT_ASSERT( t.find( v1.nKey ));
-                CPPUNIT_ASSERT( t.find( v1 ));
-                CPPUNIT_ASSERT( t.find( v2.nKey ));
-                CPPUNIT_ASSERT( t.find( v2 ));
-                CPPUNIT_ASSERT( t.find( v3.nKey ));
-                CPPUNIT_ASSERT( t.find( v3 ));
-                CPPUNIT_ASSERT( t.find( v4.nKey ));
-                CPPUNIT_ASSERT( t.find( v4 ));
-                CPPUNIT_ASSERT( !t.find( v5.nKey ));
-                CPPUNIT_ASSERT( !t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( t.contains( v1 ));
+                CPPUNIT_ASSERT( t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( t.contains( v2 ));
+                CPPUNIT_ASSERT( t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( t.contains( v3 ));
+                CPPUNIT_ASSERT( t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( t.contains( v4 ));
+                CPPUNIT_ASSERT( !t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 4 ));
 
                 CPPUNIT_ASSERT( t.insert( v5 ));
                 CPPUNIT_ASSERT( t.check_consistency() );
-                CPPUNIT_ASSERT( t.find( v1.nKey ));
-                CPPUNIT_ASSERT( t.find( v1 ));
-                CPPUNIT_ASSERT( t.find( v2.nKey ));
-                CPPUNIT_ASSERT( t.find( v2 ));
-                CPPUNIT_ASSERT( t.find( v3.nKey ));
-                CPPUNIT_ASSERT( t.find( v3 ));
-                CPPUNIT_ASSERT( t.find( v4.nKey ));
-                CPPUNIT_ASSERT( t.find( v4 ));
-                CPPUNIT_ASSERT( t.find( v5.nKey ));
-                CPPUNIT_ASSERT( t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( t.contains( v1 ));
+                CPPUNIT_ASSERT( t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( t.contains( v2 ));
+                CPPUNIT_ASSERT( t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( t.contains( v3 ));
+                CPPUNIT_ASSERT( t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( t.contains( v4 ));
+                CPPUNIT_ASSERT( t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 5 ));
 
@@ -404,51 +411,51 @@ namespace tree {
                 ++v1.stat.nWaitingDispCount;
                 CPPUNIT_ASSERT( t.unlink(v1));
                 CPPUNIT_ASSERT( t.check_consistency() );
-                CPPUNIT_ASSERT( !t.find( v1.nKey ));
-                CPPUNIT_ASSERT( !t.find( v1 ));
+                CPPUNIT_ASSERT( !t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v1 ));
                 CPPUNIT_ASSERT( !t.unlink(v1));
-                CPPUNIT_ASSERT( t.find( v2.nKey ));
-                CPPUNIT_ASSERT( t.find( v2 ));
-                CPPUNIT_ASSERT( t.find( v3.nKey ));
-                CPPUNIT_ASSERT( t.find( v3 ));
-                CPPUNIT_ASSERT( t.find( v4.nKey ));
-                CPPUNIT_ASSERT( t.find( v4 ));
-                CPPUNIT_ASSERT( t.find( v5.nKey ));
-                CPPUNIT_ASSERT( t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( t.contains( v2 ));
+                CPPUNIT_ASSERT( t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( t.contains( v3 ));
+                CPPUNIT_ASSERT( t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( t.contains( v4 ));
+                CPPUNIT_ASSERT( t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 4 ));
 
                 ++v2.stat.nWaitingDispCount;
                 CPPUNIT_ASSERT( t.erase( v2.nKey ));
                 CPPUNIT_ASSERT( t.check_consistency() );
-                CPPUNIT_ASSERT( !t.find( v1.nKey ));
-                CPPUNIT_ASSERT( !t.find( v1 ));
-                CPPUNIT_ASSERT( !t.find( v2.nKey ));
-                CPPUNIT_ASSERT( !t.find( v2 ));
+                CPPUNIT_ASSERT( !t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v1 ));
+                CPPUNIT_ASSERT( !t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v2 ));
                 CPPUNIT_ASSERT( !t.erase(v2));
-                CPPUNIT_ASSERT( t.find( v3.nKey ));
-                CPPUNIT_ASSERT( t.find( v3 ));
-                CPPUNIT_ASSERT( t.find( v4.nKey ));
-                CPPUNIT_ASSERT( t.find( v4 ));
-                CPPUNIT_ASSERT( t.find( v5.nKey ));
-                CPPUNIT_ASSERT( t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( t.contains( v3 ));
+                CPPUNIT_ASSERT( t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( t.contains( v4 ));
+                CPPUNIT_ASSERT( t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 3 ));
 
                 ++v3.stat.nWaitingDispCount;
                 CPPUNIT_ASSERT( t.erase_with( v3.nKey, less<value_type>() ));
                 CPPUNIT_ASSERT( t.check_consistency() );
-                CPPUNIT_ASSERT( !t.find( v1.nKey ));
-                CPPUNIT_ASSERT( !t.find( v1 ));
-                CPPUNIT_ASSERT( !t.find( v2.nKey ));
-                CPPUNIT_ASSERT( !t.find( v2 ));
-                CPPUNIT_ASSERT( !t.find( v3.nKey ));
-                CPPUNIT_ASSERT( !t.find( v3 ));
+                CPPUNIT_ASSERT( !t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v1 ));
+                CPPUNIT_ASSERT( !t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v2 ));
+                CPPUNIT_ASSERT( !t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v3 ));
                 CPPUNIT_ASSERT( !t.erase_with(v3, less<value_type>() ));
-                CPPUNIT_ASSERT( t.find( v4.nKey ));
-                CPPUNIT_ASSERT( t.find( v4 ));
-                CPPUNIT_ASSERT( t.find( v5.nKey ));
-                CPPUNIT_ASSERT( t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( t.contains( v4 ));
+                CPPUNIT_ASSERT( t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 2 ));
 
@@ -457,18 +464,18 @@ namespace tree {
                 CPPUNIT_ASSERT( t.erase( v4.nKey, erase_functor() ));
                 CPPUNIT_ASSERT( t.check_consistency() );
                 CPPUNIT_ASSERT( v4.stat.nEraseFuncCall == 1 );
-                CPPUNIT_ASSERT( !t.find( v1.nKey ));
-                CPPUNIT_ASSERT( !t.find( v1 ));
-                CPPUNIT_ASSERT( !t.find( v2.nKey ));
-                CPPUNIT_ASSERT( !t.find( v2 ));
-                CPPUNIT_ASSERT( !t.find( v3.nKey ));
-                CPPUNIT_ASSERT( !t.find( v3 ));
-                CPPUNIT_ASSERT( !t.find( v4.nKey ));
-                CPPUNIT_ASSERT( !t.find( v4 ));
+                CPPUNIT_ASSERT( !t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v1 ));
+                CPPUNIT_ASSERT( !t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v2 ));
+                CPPUNIT_ASSERT( !t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v3 ));
+                CPPUNIT_ASSERT( !t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v4 ));
                 CPPUNIT_ASSERT( !t.erase( v4.nKey, erase_functor() ));
                 CPPUNIT_ASSERT( v4.stat.nEraseFuncCall == 1 );
-                CPPUNIT_ASSERT( t.find( v5.nKey ));
-                CPPUNIT_ASSERT( t.find( v5 ));
+                CPPUNIT_ASSERT( t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( t.contains( v5 ));
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 1 ));
 
@@ -476,23 +483,23 @@ namespace tree {
                 CPPUNIT_ASSERT( t.erase_with( v5.nKey, less<value_type>(), erase_functor() ));
                 CPPUNIT_ASSERT( t.check_consistency() );
                 CPPUNIT_ASSERT( v5.stat.nEraseFuncCall == 1 );
-                CPPUNIT_ASSERT( !t.find( v1.nKey ));
-                CPPUNIT_ASSERT( !t.find( v1 ));
-                CPPUNIT_ASSERT( !t.find( v2.nKey ));
-                CPPUNIT_ASSERT( !t.find( v2 ));
-                CPPUNIT_ASSERT( !t.find( v3.nKey ));
-                CPPUNIT_ASSERT( !t.find( v3 ));
+                CPPUNIT_ASSERT( !t.contains( v1.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v1 ));
+                CPPUNIT_ASSERT( !t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v2 ));
+                CPPUNIT_ASSERT( !t.contains( v3.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v3 ));
                 CPPUNIT_ASSERT( !t.erase_with(v5, less<value_type>(), erase_functor() ));
-                CPPUNIT_ASSERT( !t.find( v4.nKey ));
-                CPPUNIT_ASSERT( !t.find( v4 ));
-                CPPUNIT_ASSERT( !t.find( v5.nKey ));
-                CPPUNIT_ASSERT( !t.find( v5 ));
+                CPPUNIT_ASSERT( !t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v4 ));
+                CPPUNIT_ASSERT( !t.contains( v5.nKey ));
+                CPPUNIT_ASSERT( !t.contains( v5 ));
                 CPPUNIT_ASSERT( t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 0 ));
 
                 tree_type::gc::force_dispose();
 
-                // find
+                // contains
                 CPPUNIT_ASSERT( t.insert( v1 ));
                 CPPUNIT_ASSERT( t.insert( v2 ));
                 CPPUNIT_ASSERT( t.insert( v3 ));
@@ -502,22 +509,22 @@ namespace tree {
                 CPPUNIT_ASSERT( !t.empty() );
                 CPPUNIT_ASSERT( misc::check_size( t, 5 ));
 
-                CPPUNIT_ASSERT( t.find( 10 ));
-                CPPUNIT_ASSERT( !t.find( 11 ));
-                CPPUNIT_ASSERT( t.find( v1 ));
-                CPPUNIT_ASSERT( t.find( v2.nKey ));
-                CPPUNIT_ASSERT( t.find( v3 ));
-                CPPUNIT_ASSERT( t.find( v4.nKey ));
-                CPPUNIT_ASSERT( t.find( v5.nKey ));
+                CPPUNIT_ASSERT( t.contains( 10 ));
+                CPPUNIT_ASSERT( !t.contains( 11 ));
+                CPPUNIT_ASSERT( t.contains( v1 ));
+                CPPUNIT_ASSERT( t.contains( v2.nKey ));
+                CPPUNIT_ASSERT( t.contains( v3 ));
+                CPPUNIT_ASSERT( t.contains( v4.nKey ));
+                CPPUNIT_ASSERT( t.contains( v5.nKey ));
 
-                // find_with
-                CPPUNIT_ASSERT( t.find_with( 10, less<value_type>() ));
-                CPPUNIT_ASSERT( !t.find_with( wrapped_int(11), wrapped_less<value_type>() ));
-                CPPUNIT_ASSERT( t.find_with( v1, less<value_type>() ));
-                CPPUNIT_ASSERT( t.find_with( wrapped_int(v2.nKey), wrapped_less<value_type>() ));
-                CPPUNIT_ASSERT( t.find_with( v3, less<value_type>() ));
-                CPPUNIT_ASSERT( t.find_with( v4.nKey, less<value_type>() ));
-                CPPUNIT_ASSERT( t.find_with( v5.nKey, less<value_type>() ));
+                // contains
+                CPPUNIT_ASSERT( t.contains( 10, less<value_type>() ));
+                CPPUNIT_ASSERT( !t.contains( wrapped_int(11), wrapped_less<value_type>() ));
+                CPPUNIT_ASSERT( t.contains( v1, less<value_type>() ));
+                CPPUNIT_ASSERT( t.contains( wrapped_int(v2.nKey), wrapped_less<value_type>() ));
+                CPPUNIT_ASSERT( t.contains( v3, less<value_type>() ));
+                CPPUNIT_ASSERT( t.contains( v4.nKey, less<value_type>() ));
+                CPPUNIT_ASSERT( t.contains( v5.nKey, less<value_type>() ));
 
                 // find<Func>
                 CPPUNIT_ASSERT( v1.stat.nFindFuncCall == 0 );
@@ -626,14 +633,14 @@ namespace tree {
                 CPPUNIT_ASSERT( t.check_consistency() );
 
                 for ( int n = 0; n < (int) c_nItemCount; ++n ) {
-                    CPPUNIT_ASSERT_MSG( t.find( n ), n );
+                    CPPUNIT_ASSERT_MSG( t.contains( n ), n );
                 }
                 for ( value_type * p = pFirst; p != pLast; ++p ) {
-                    CPPUNIT_ASSERT( t.find( *p ));
-                    CPPUNIT_ASSERT( t.find( p->nKey ));
+                    CPPUNIT_ASSERT( t.contains( *p ));
+                    CPPUNIT_ASSERT( t.contains( p->nKey ));
                     CPPUNIT_ASSERT( t.unlink( *p ) );
                     CPPUNIT_ASSERT( !t.unlink( *p ) );
-                    CPPUNIT_ASSERT( !t.find( p->nKey ));
+                    CPPUNIT_ASSERT( !t.contains( p->nKey ));
                 }
 
                 tree_type::gc::force_dispose();
@@ -792,7 +799,7 @@ namespace tree {
                 value_type * pLast  = arr.end();
 
                 for ( value_type * p = pFirst; p != pLast; ++p ) {
-                    CPPUNIT_ASSERT( t.ensure( *p, ensure_functor()).second );
+                    CPPUNIT_ASSERT( t.update( *p, update_functor()).second );
                 }
                 for ( int n = 0; n < (int) c_nItemCount; ++n ) {
                     typename tree_type::guarded_ptr gp( t.extract_min() );
