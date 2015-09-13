@@ -978,7 +978,7 @@ namespace cds { namespace opt {
     /// Metafunction to find opt::type_traits option in \p Options list
     /** @headerfile cds/opt/options.h
 
-        If \p Options contains opt::type_traits option then it is the metafunction result.
+        If \p Options contains \p opt::type_traits option then it is the metafunction result.
         Otherwise the result is \p DefaultOptons.
     */
     template <typename DefaultOptions, typename... Options>

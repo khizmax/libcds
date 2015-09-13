@@ -47,6 +47,7 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_multilevelhashset.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_striped.cpp" />
@@ -54,6 +55,7 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_multilevelhashset.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_std.cpp" />

@@ -1,8 +1,5 @@
 //$$CDS-header$$
 
-#ifndef CDSUNIT_SET_DEFS_H
-#define CDSUNIT_SET_DEFS_H
-
 #define CDSUNIT_DECLARE_StdSet \
     TEST_CASE( tag_StdSet, StdSet_Spin) \
     TEST_CASE( tag_StdSet, StdSet_Mutex) \
@@ -617,4 +614,54 @@
     CDSUNIT_TEST_RefinableSet_boost_container \
     CDSUNIT_TEST_RefinableSet_boost_flat_container
 
-#endif // #ifndef CDSUNIT_SET_DEFS_H
+
+//***********************************************
+// MultiLevelHashSet
+
+#undef CDSUNIT_DECLARE_MultiLevelHashSet
+#define CDSUNIT_DECLARE_MultiLevelHashSet  \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_stdhash) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_stdhash) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_md5) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_md5_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_md5) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_md5_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_sha256) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_sha256_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_sha256) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_sha256_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_city64) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_city64_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_city64) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_city64_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_city128) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_city128_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_city128) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_city128_stat)
+
+
+#undef CDSUNIT_TEST_MultiLevelHashSet
+#define CDSUNIT_TEST_MultiLevelHashSet  \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_stdhash) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_stdhash_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_stdhash) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_stdhash_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_md5) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_md5_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_md5) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_md5_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_sha256) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_sha256_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_sha256) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_sha256_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_city64) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_city64_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_city64) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_city64_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_city128) \
+    CPPUNIT_TEST(MultiLevelHashSet_hp_city128_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_city128) \
+    CPPUNIT_TEST(MultiLevelHashSet_dhp_city128_stat)
+

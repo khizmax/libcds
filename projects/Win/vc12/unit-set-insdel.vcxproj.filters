@@ -46,6 +46,12 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_michael.cpp">
       <Filter>set_insdel_func</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_multilevelhashset.cpp">
+      <Filter>set_insdel_func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_multilevelhashset.cpp">
+      <Filter>set_insdel_string</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="set_insdel_func">

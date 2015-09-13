@@ -207,6 +207,12 @@ namespace set2 {
                         ++nModified;
                     }
                 }
+
+                void operator()( keyval_type& cur, keyval_type * old )
+                {
+                    operator()( old == nullptr, cur, 0 );
+                }
+
             private:
                 update_functor(const update_functor& );
             };
@@ -540,17 +546,17 @@ namespace set2 {
     CDSUNIT_DECLARE_RefinableSet
     CDSUNIT_DECLARE_CuckooSet
     CDSUNIT_DECLARE_EllenBinTreeSet
+    CDSUNIT_DECLARE_MultiLevelHashSet
 
     CPPUNIT_TEST_SUITE_(Set_InsDel_func, "Map_InsDel_func")
         CDSUNIT_TEST_MichaelSet
         CDSUNIT_TEST_SplitList
         CDSUNIT_TEST_SkipListSet
+        CDSUNIT_TEST_MultiLevelHashSet
         CDSUNIT_TEST_EllenBinTreeSet
         CDSUNIT_TEST_StripedSet
         CDSUNIT_TEST_RefinableSet
         CDSUNIT_TEST_CuckooSet
-
-        //CDSUNIT_TEST_MultiLevelHashSet // the test is not suitable
     CPPUNIT_TEST_SUITE_END();
 
     };

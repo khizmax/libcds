@@ -98,6 +98,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "set", "set", "{A64449B7-90F
 		..\..\..\tests\unit\set2\set_type_lazy_list.h = ..\..\..\tests\unit\set2\set_type_lazy_list.h
 		..\..\..\tests\unit\set2\set_type_michael.h = ..\..\..\tests\unit\set2\set_type_michael.h
 		..\..\..\tests\unit\set2\set_type_michael_list.h = ..\..\..\tests\unit\set2\set_type_michael_list.h
+		..\..\..\tests\unit\set2\set_type_multilevel_hashset.h = ..\..\..\tests\unit\set2\set_type_multilevel_hashset.h
 		..\..\..\tests\unit\set2\set_type_skip_list.h = ..\..\..\tests\unit\set2\set_type_skip_list.h
 		..\..\..\tests\unit\set2\set_type_split_list.h = ..\..\..\tests\unit\set2\set_type_split_list.h
 		..\..\..\tests\unit\set2\set_type_std.h = ..\..\..\tests\unit\set2\set_type_std.h

@@ -58,8 +58,14 @@
 
 // Attributes
 #if CDS_COMPILER_VERSION >= 40900
-#   define CDS_DEPRECATED( reason ) [[deprecated(reason)]]
-else
+#   if __cplusplus < 201103
+#       define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
+#   elif __cplusplus == 201103 // C++11
+#       define CDS_DEPRECATED( reason ) [[gnu::deprecated(reason)]]
+#   else  // C++14
+#       define CDS_DEPRECATED( reason ) [[deprecated(reason)]]
+#   endif
+#else
 #   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
 #endif
 

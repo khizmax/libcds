@@ -425,7 +425,7 @@
     <ClInclude Include="..\..\..\tests\cppunit\thread.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\hashing\city.cc" />
+    <ClCompile Include="..\..\..\tests\hashing\city.cpp" />
     <ClCompile Include="..\..\..\tests\hashing\md5.cpp" />
     <ClCompile Include="..\..\..\tests\hashing\sha256.cpp" />
     <ClCompile Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.cpp" />
