@@ -22,6 +22,9 @@ namespace set2 {
         size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
         size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
 
+        size_t c_nMultiLevelSet_HeadBits = 10;
+        size_t c_nMultiLevelSet_ArrayBits = 4;
+
         size_t c_nLoadFactor = 2;
 
     public:

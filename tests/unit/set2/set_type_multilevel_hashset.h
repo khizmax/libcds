@@ -21,7 +21,7 @@ namespace set2 {
 
         template <class Config>
         MultiLevelHashSet( Config const& cfg )
-            : base_class( cfg.c_nSetSize, cfg.c_nLoadFactor )
+            : base_class( cfg.c_nMultiLevelSet_HeadBits, cfg.c_nMultiLevelSet_ArrayBits )
         {}
 
         template <typename Q>
