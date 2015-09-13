@@ -258,10 +258,6 @@ namespace cds { namespace container {
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
 
-        //@cond
-        typedef cds::container::split_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename maker::cxx_node_allocator    cxx_node_allocator;

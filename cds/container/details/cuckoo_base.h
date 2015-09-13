@@ -11,8 +11,6 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace cuckoo {
-        using cds::intrusive::cuckoo::implementation_tag;
-
 #ifdef CDS_DOXYGEN_INVOKED
         /// Lock striping concurrent access policy. This is typedef for intrusive::cuckoo::striping template
         class striping

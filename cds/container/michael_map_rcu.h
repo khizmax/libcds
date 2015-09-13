@@ -77,10 +77,6 @@ namespace cds { namespace container {
         /// Type of \p get() member function return value
         typedef typename bucket_type::raw_ptr raw_ptr;
 
-        //@cond
-        typedef cds::container::michael_map::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         item_counter    m_ItemCounter; ///< Item counter
         hash            m_HashFunctor; ///< Hash functor

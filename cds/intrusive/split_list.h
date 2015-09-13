@@ -196,10 +196,6 @@ namespace cds { namespace intrusive {
         typedef GC     gc;     ///< Garbage collector
         typedef Traits traits; ///< Set traits
 
-        //@cond
-        typedef cds::intrusive::split_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;

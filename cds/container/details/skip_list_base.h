@@ -12,8 +12,6 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace skip_list {
-        using cds::intrusive::skip_list::implementation_tag;
-
         /// Option specifying random level generator
         template <typename Type>
         using random_level_generator = cds::intrusive::skip_list::random_level_generator<Type>;

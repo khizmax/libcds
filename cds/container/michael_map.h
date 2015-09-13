@@ -178,10 +178,6 @@ namespace cds { namespace container {
         typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
         typedef typename bucket_type::guarded_ptr  guarded_ptr; ///< Guarded pointer
 
-        //@cond
-        typedef cds::container::michael_map::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         item_counter    m_ItemCounter; ///< Item counter
         hash            m_HashFunctor; ///< Hash functor

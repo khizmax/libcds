@@ -98,10 +98,6 @@ namespace cds { namespace container {
         typedef typename base_class::node_allocator         node_allocator;   ///< Internal node allocator
         typedef typename base_class::update_desc_allocator  update_desc_allocator; ///< Update descriptor allocator
 
-        //@cond
-        typedef cds::container::ellen_bintree::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::value_type         leaf_node;

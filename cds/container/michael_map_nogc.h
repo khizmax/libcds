@@ -46,10 +46,6 @@ namespace cds { namespace container {
         /// Bucket table allocator
         typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
 
-        //@cond
-        typedef cds::container::michael_map::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename bucket_type::iterator       bucket_iterator;

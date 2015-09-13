@@ -120,10 +120,6 @@ namespace cds { namespace intrusive {
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
-        //@cond
-        typedef cds::intrusive::ellen_bintree::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef ellen_bintree::base_node< gc >            tree_node; ///< Base type of tree node

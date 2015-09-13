@@ -171,10 +171,6 @@ namespace cds { namespace container {
         typedef typename traits::stat              stat            ;   ///< internal statistics type
         typedef typename traits::rcu_check_deadlock    rcu_check_deadlock ; ///< Deadlock checking policy
 
-        //@cond
-        typedef cds::container::skip_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename maker::node_type           node_type;

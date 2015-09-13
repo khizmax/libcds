@@ -11,10 +11,6 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace multilevel_hashset {
-        //@cond
-        using cds::intrusive::multilevel_hashset::implementation_tag;
-        //@endcond
-
         /// Hash accessor option
         /**
             @copydetails cds::intrusive::multilevel_hashset::traits::hash_accessor

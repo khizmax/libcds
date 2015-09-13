@@ -19,10 +19,6 @@ namespace cds { namespace intrusive {
     /** @ingroup cds_intrusive_helper
     */
     namespace multilevel_hashset {
-        //@cond
-        struct implementation_tag;
-        //@endcond
-
         /// Hash accessor option
         /**
             @copydetails traits::hash_accessor

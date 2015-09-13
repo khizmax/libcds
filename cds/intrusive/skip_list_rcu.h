@@ -549,7 +549,6 @@ namespace cds { namespace intrusive {
 
         //@cond
         static unsigned int const c_nMinHeight = 5;
-        typedef cds::intrusive::skip_list::implementation_tag implementation_tag;
         //@endcond
 
     protected:

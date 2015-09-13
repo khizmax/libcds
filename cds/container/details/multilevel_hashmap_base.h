@@ -12,10 +12,6 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace multilevel_hashmap {
-        //@cond
-        using cds::intrusive::multilevel_hashset::implementation_tag;
-        //@endcond
-
         /// \p MultiLevelHashMap internal statistics, see cds::intrusive::multilevel_hashset::stat
         template <typename EventCounter = cds::atomicity::event_counter>
         using stat = cds::intrusive::multilevel_hashset::stat< EventCounter >;

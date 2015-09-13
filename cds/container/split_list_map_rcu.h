@@ -180,10 +180,6 @@ namespace cds { namespace container {
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
         typedef typename base_class::raw_ptr        raw_ptr;    ///< type of \p get() return value
 
-        //@cond
-        typedef cds::container::split_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::maker::traits::key_accessor key_accessor;
