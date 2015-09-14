@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="container">
+      <UniqueIdentifier>{dec34594-a06a-4ed8-9792-fbc6b2a251f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="intrusive">
+      <UniqueIdentifier>{a13910ed-6cb1-46bc-a137-7da531e65e3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container\ellen-bintree-set">
+      <UniqueIdentifier>{e2f66f2f-4770-4533-86f0-75fe68a263ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container\bronson-avltree-map">
+      <UniqueIdentifier>{36cb9dc5-7022-42bd-a68d-db247368092f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container\ellen-bintree-map">
+      <UniqueIdentifier>{c47142c5-b407-4938-94f6-49f43f192890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="intrusive\ellen-bintree-set">
+      <UniqueIdentifier>{af39cad7-51ab-4d41-ae94-d02f650314da}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map.h">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set.h">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map.h">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_bintree.h">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_dhp.h">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_hp.h">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_pool_rcu.h">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_tree_reg.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpb_pool_monitor.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpi_pool_monitor.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_gpt_pool_monitor.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_shb_pool_monitor.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_bronson_avltree_map_rcu_sht_pool_monitor.cpp">
+      <Filter>container\bronson-avltree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_dhp.cpp">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_hp.cpp">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_gpb.cpp">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_gpi.cpp">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_gpt.cpp">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_shb.cpp">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_set_rcu_sht.cpp">
+      <Filter>container\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_dhp.cpp">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_hp.cpp">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpb.cpp">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpi.cpp">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_gpt.cpp">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_shb.cpp">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_ellenbintree_map_rcu_sht.cpp">
+      <Filter>container\ellen-bintree-map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_dhp_member.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_hp.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_hp_member.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpb.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpb_member.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpi.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpi_member.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpt.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_gpt_member.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_shb.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_shb_member.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_sht.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\tree\hdr_intrusive_ellen_bintree_rcu_sht_member.cpp">
+      <Filter>intrusive\ellen-bintree-set</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
