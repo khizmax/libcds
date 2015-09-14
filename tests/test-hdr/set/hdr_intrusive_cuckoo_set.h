@@ -196,7 +196,7 @@ namespace set {
             }
         };
 
-        struct ensure_functor {
+        struct update_functor {
             template <typename Item>
             void operator()( bool bNew, Item& e, Item& arg )
             {
@@ -309,16 +309,16 @@ namespace set {
             CPPUNIT_ASSERT( s.empty() );
             CPPUNIT_ASSERT( s.size() == 0 );
 
-            CPPUNIT_ASSERT( !s.find(k1));
-            CPPUNIT_ASSERT( !s.find_with(k2, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type() ));
-            CPPUNIT_ASSERT( !s.find(k3));
+            CPPUNIT_ASSERT( !s.contains(k1));
+            CPPUNIT_ASSERT( !s.contains(k2, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type() ));
+            CPPUNIT_ASSERT( !s.contains(k3));
 
             CPPUNIT_ASSERT( s.insert(e1));
-            CPPUNIT_ASSERT( s.find(e1));
-            CPPUNIT_ASSERT( s.find(k1));
-            CPPUNIT_ASSERT( s.find_with(k1, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type()));
-            CPPUNIT_ASSERT( !s.find(e2));
-            CPPUNIT_ASSERT( !s.find(e3));
+            CPPUNIT_ASSERT( s.contains(e1));
+            CPPUNIT_ASSERT( s.contains(k1));
+            CPPUNIT_ASSERT( s.contains(k1, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type()));
+            CPPUNIT_ASSERT( !s.contains(e2));
+            CPPUNIT_ASSERT( !s.contains(e3));
 
             CPPUNIT_ASSERT( e2.nInsertCount == 0 );
             CPPUNIT_ASSERT( s.insert(e2, insert_functor() ));
@@ -346,7 +346,10 @@ namespace set {
 
             CPPUNIT_ASSERT( e3.nEnsureNewCount == 0 );
             CPPUNIT_ASSERT( e3.nEnsureCount == 0 );
-            CPPUNIT_ASSERT( s.ensure( e3, ensure_functor() ) == std::make_pair(true, true));
+            CPPUNIT_ASSERT(s.update(e3, update_functor(), false) == std::make_pair(false, false));
+            CPPUNIT_ASSERT(e3.nEnsureNewCount == 0);
+            CPPUNIT_ASSERT(e3.nEnsureCount == 0);
+            CPPUNIT_ASSERT( s.update( e3, update_functor() ) == std::make_pair(true, true));
             CPPUNIT_ASSERT( e3.nEnsureNewCount == 1 );
             CPPUNIT_ASSERT( e3.nEnsureCount == 0 );
             CPPUNIT_ASSERT( s.find_with(find_key(k1), typename std::conditional<Set::c_isSorted, less2, equal_to2>::type(), find_functor() ));
@@ -358,10 +361,10 @@ namespace set {
             CPPUNIT_ASSERT( s.find_with(k2, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type(), find_functor() ));
             CPPUNIT_ASSERT( e2.nFindCount == s2.nFindCount + 1 );
             CPPUNIT_ASSERT( e2.nFindArgCount == s2.nFindArgCount );
-            CPPUNIT_ASSERT( s.find_with(find_key(k2), typename std::conditional<Set::c_isSorted, less2, equal_to2>::type() ));
+            CPPUNIT_ASSERT( s.contains(find_key(k2), typename std::conditional<Set::c_isSorted, less2, equal_to2>::type() ));
             CPPUNIT_ASSERT( e2.nFindCount == s2.nFindCount + 1 )        ;   // unchanged, no find_functor
             CPPUNIT_ASSERT( e2.nFindArgCount == s2.nFindArgCount );
-            CPPUNIT_ASSERT( s.find_with(k3, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type() ));
+            CPPUNIT_ASSERT( s.contains(k3, typename std::conditional<Set::c_isSorted, less2, equal_to2>::type() ));
             CPPUNIT_ASSERT( e3.nFindCount == s3.nFindCount )            ;   // unchanged, no find_functor
             CPPUNIT_ASSERT( e3.nFindArgCount == s3.nFindArgCount );
             CPPUNIT_ASSERT( s.find_with(find_key(k3), typename std::conditional<Set::c_isSorted, less2, equal_to2>::type(), find_functor() ));
@@ -377,7 +380,7 @@ namespace set {
                 CPPUNIT_ASSERT( !s.insert( eu, insert_functor() ));
                 CPPUNIT_ASSERT( e2.nInsertCount == s2.nInsertCount );
 
-                CPPUNIT_ASSERT( s.ensure( eu, ensure_functor()) == std::make_pair(true, false));
+                CPPUNIT_ASSERT( s.update( eu, update_functor()) == std::make_pair(true, false));
                 CPPUNIT_ASSERT( e2.nInsertCount == s2.nInsertCount );
                 CPPUNIT_ASSERT( e2.nEnsureCount == s2.nEnsureCount + 1 );
                 CPPUNIT_ASSERT( e2.nEnsureNewCount == s2.nEnsureNewCount  );
@@ -447,14 +450,14 @@ namespace set {
                 CPPUNIT_ASSERT_EX( s.insert( *p, insert_functor() ), "i=" << i );
                 CPPUNIT_ASSERT_EX( p->nInsertCount == 1, "i=" << i );
                 //for ( size_t j = 0; j <= i; ++j ) {
-                //    if ( !s.find((int) j) ) {
+                //    if ( !s.contains((int) j) ) {
                 //        CPPUNIT_MSG( "Key " << j << " is not found after inserting key " << i );
                 //    }
                 //}
             }
 
             for ( size_t i = 0; i < nSize; ++i )
-                CPPUNIT_ASSERT_EX( s.find((int) i), "Key " << i << " is not found" );
+                CPPUNIT_ASSERT_EX( s.contains((int) i), "Key " << i << " is not found" );
 
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( s.size() == nSize );

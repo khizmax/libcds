@@ -20,12 +20,15 @@
 #if _MSC_VER == 1800
 #   define  CDS_COMPILER__NAME  "MS Visual C++ 2013"
 #   define  CDS_COMPILER__NICK  "vc12"
+#   define  CDS_COMPILER_LIBCDS_SUFFIX "vc12"
 #elif _MSC_VER == 1900
 #   define  CDS_COMPILER__NAME  "MS Visual C++ 2015"
 #   define  CDS_COMPILER__NICK  "vc14"
+#   define  CDS_COMPILER_LIBCDS_SUFFIX "vcv140"
 #else
 #   define  CDS_COMPILER__NAME  "MS Visual C++"
 #   define  CDS_COMPILER__NICK  "msvc"
+#   define  CDS_COMPILER_LIBCDS_SUFFIX "vc"
 #endif
 
 // OS interface

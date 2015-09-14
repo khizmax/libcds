@@ -13,11 +13,6 @@ namespace set {
         };
 
         typedef cc::CuckooSet< item, set_traits > set_t;
-        //     cc::cuckoo::make_traits<
-        //        co::equal_to< equal< item > >
-        //        ,co::hash< std::tuple< hash1, hash2 > >
-        //    >::type
-        //> set_t;
 
         test_int<set_t, equal< item > >();
     }
