@@ -125,7 +125,11 @@
 #define CDS_CLASS_ALIGNMENT(n)    __declspec( align(n) )
 
 // Attributes
-#define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
+#if CDS_COMPILER_VERSION >= CDS_COMPILER_MSVC14
+#   define CDS_DEPRECATED( reason ) [[deprecated( reason )]]
+#else
+#   define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
+#endif
 
 #include <cds/compiler/vc/compiler_barriers.h>
 
