@@ -546,10 +546,10 @@ namespace cds { namespace container {
             std::pair<bool, bool> ret = base_class::update_at( &refHead, *pNode,
                 [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; },
                 bAllowInsert );
-            if ( ret.first && ret.second )
+
+            if ( ret.second )
                 pNode.release();
 
-            assert( pItemFound != nullptr );
             return std::make_pair( pItemFound, ret.second );
         }
 
