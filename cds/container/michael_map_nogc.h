@@ -413,7 +413,8 @@ namespace cds { namespace container {
 
             if ( ret.second  )
                 ++m_ItemCounter;
-
+            else if ( ret.first == refBucket.end() )
+                return std::make_pair( end(), false );
             return std::make_pair( iterator( ret.first, &refBucket, m_Buckets + bucket_count() ), ret.second );
         }
         //@cond

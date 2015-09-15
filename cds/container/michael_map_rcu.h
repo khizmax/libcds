@@ -433,8 +433,8 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
-            std::pair<bool, bool> bRet = bucket( key ).update( key, func );
-            if ( bRet.first && bRet.second )
+            std::pair<bool, bool> bRet = bucket( key ).update( key, func, bAllowInsert );
+            if ( bRet.second )
                 ++m_ItemCounter;
             return bRet;
         }
@@ -443,10 +443,7 @@ namespace cds { namespace container {
         CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
-            std::pair<bool, bool> bRet = bucket( key ).ensure( key, func );
-            if ( bRet.first && bRet.second )
-                ++m_ItemCounter;
-            return bRet;
+            return update( key, func, true );
         }
         //@endcond
 
