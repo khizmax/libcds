@@ -120,7 +120,7 @@ namespace map {
                 item.second.m_val = item.first * 3;
             }
 
-            // ensure ftor
+            // update() ftor
             void operator()( bool bNew, pair_type& item )
             {
                 if ( bNew )
@@ -212,49 +212,53 @@ namespace map {
         template <class Map>
         void test_int_with( Map& m )
         {
-            std::pair<bool, bool> ensureResult;
+            std::pair<bool, bool> updateResult;
             typedef typename std::conditional< Map::c_isSorted, less, equal >::type predicate;
 
             // insert
             CPPUNIT_ASSERT( m.empty() );
             CPPUNIT_ASSERT( check_size( m, 0 ));
-            CPPUNIT_ASSERT( !m.find(25) );
+            CPPUNIT_ASSERT( !m.contains(25) );
             CPPUNIT_ASSERT( m.insert( 25 ) )    ;   // value = 0
-            CPPUNIT_ASSERT( m.find(25) );
+            CPPUNIT_ASSERT( m.contains(25) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 1 ));
-            CPPUNIT_ASSERT( m.find(25) );
+            CPPUNIT_ASSERT( m.contains(25) );
 
             CPPUNIT_ASSERT( !m.insert( 25 ) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 1 ));
 
-            CPPUNIT_ASSERT( !m.find_with(10, predicate()) );
+            CPPUNIT_ASSERT( !m.contains(10, predicate()) );
             CPPUNIT_ASSERT( m.insert( 10, 10 ) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 2 ));
-            CPPUNIT_ASSERT( m.find_with(10, predicate()) );
+            CPPUNIT_ASSERT( m.contains(10, predicate()) );
 
             CPPUNIT_ASSERT( !m.insert( 10, 20 ) );
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 2 ));
 
-            CPPUNIT_ASSERT( !m.find(30) );
+            CPPUNIT_ASSERT( !m.contains(30) );
             CPPUNIT_ASSERT( m.insert_with( 30, insert_functor<Map>() ) )    ; // value = 90
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
-            CPPUNIT_ASSERT( m.find(30) );
+            CPPUNIT_ASSERT( m.contains(30) );
 
             CPPUNIT_ASSERT( !m.insert_with( 10, insert_functor<Map>() ) );
             CPPUNIT_ASSERT( !m.insert_with( 25, insert_functor<Map>() ) );
             CPPUNIT_ASSERT( !m.insert_with( 30, insert_functor<Map>() ) );
 
-            // ensure (new key)
-            CPPUNIT_ASSERT( !m.find(27) );
-            ensureResult = m.ensure( 27, insert_functor<Map>() ) ;   // value = 54
-            CPPUNIT_ASSERT( ensureResult.first );
-            CPPUNIT_ASSERT( ensureResult.second );
-            CPPUNIT_ASSERT( m.find(27) );
+            // update (new key)
+            CPPUNIT_ASSERT( !m.contains(27) );
+            updateResult = m.update(27, insert_functor<Map>(), false);
+            CPPUNIT_ASSERT(!updateResult.first);
+            CPPUNIT_ASSERT(!updateResult.second);
+            CPPUNIT_ASSERT(!m.contains(27));
+            updateResult = m.update( 27, insert_functor<Map>() ) ;   // value = 54
+            CPPUNIT_ASSERT( updateResult.first );
+            CPPUNIT_ASSERT( updateResult.second );
+            CPPUNIT_ASSERT( m.contains(27) );
 
             // find test
             check_value chk(10);
@@ -266,39 +270,39 @@ namespace map {
             chk.m_nExpected = 54;
             CPPUNIT_ASSERT( m.find( 27, std::ref(chk) ));
 
-            ensureResult = m.ensure( 10, insert_functor<Map>() ) ;   // value = 50
-            CPPUNIT_ASSERT( ensureResult.first );
-            CPPUNIT_ASSERT( !ensureResult.second );
+            updateResult = m.update( 10, insert_functor<Map>() ) ;   // value = 50
+            CPPUNIT_ASSERT( updateResult.first );
+            CPPUNIT_ASSERT( !updateResult.second );
             chk.m_nExpected = 50;
             CPPUNIT_ASSERT( m.find( 10, std::ref(chk) ));
 
             // erase test
-            CPPUNIT_ASSERT( !m.find(100) );
+            CPPUNIT_ASSERT( !m.contains(100) );
             CPPUNIT_ASSERT( !m.erase( 100 )) ;  // not found
 
-            CPPUNIT_ASSERT( m.find(25) );
+            CPPUNIT_ASSERT( m.contains(25) );
             CPPUNIT_ASSERT( check_size( m, 4 ));
             CPPUNIT_ASSERT( m.erase( 25 ));
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
-            CPPUNIT_ASSERT( !m.find(25) );
+            CPPUNIT_ASSERT( !m.contains(25) );
             CPPUNIT_ASSERT( !m.erase( 25 ));
 
-            CPPUNIT_ASSERT( !m.find(258) );
+            CPPUNIT_ASSERT( !m.contains(258) );
             CPPUNIT_ASSERT( m.insert(258))
             CPPUNIT_ASSERT( check_size( m, 4 ));
-            CPPUNIT_ASSERT( m.find_with(258, predicate()) );
+            CPPUNIT_ASSERT( m.contains(258, predicate()) );
             CPPUNIT_ASSERT( m.erase_with( 258, predicate() ));
             CPPUNIT_ASSERT( !m.empty() );
             CPPUNIT_ASSERT( check_size( m, 3 ));
-            CPPUNIT_ASSERT( !m.find(258) );
+            CPPUNIT_ASSERT( !m.contains(258) );
             CPPUNIT_ASSERT( !m.erase_with( 258, predicate() ));
 
             int nVal;
             extract_functor ext;
             ext.m_pVal = &nVal;
 
-            CPPUNIT_ASSERT( !m.find(29) );
+            CPPUNIT_ASSERT( !m.contains(29) );
             CPPUNIT_ASSERT( m.insert(29, 290))
             CPPUNIT_ASSERT( m.erase_with( 29, predicate(), std::ref(ext)));
             CPPUNIT_ASSERT( !m.empty() );

@@ -42,7 +42,7 @@ namespace map {
                 rcu_lock sl;
                 for ( set_iterator it = m.begin(), itEnd = m.end(); it != itEnd; ++it ) {
                     CPPUNIT_ASSERT( (*it).first == it->second.m_val );
-                    CPPUNIT_ASSERT( m.find( it->first ));
+                    CPPUNIT_ASSERT( m.contains( it->first ));
                     it->second.m_val = (*it).first * 2;
                     ++nCount;
                     if ( it != m.begin() ) {
@@ -82,7 +82,7 @@ namespace map {
                 rcu_lock sl;
                 for ( set_iterator it = m.begin(), itEnd = m.end(); it != itEnd; ++it ) {
                     CPPUNIT_ASSERT( (*it).first * 2 == it->second.m_val );
-                    CPPUNIT_ASSERT( m.find( it->first ));
+                    CPPUNIT_ASSERT( m.contains( it->first ));
                     it->second.m_val = (*it).first;
                     ++nCount;
                     if ( it != m.begin() ) {
@@ -129,7 +129,7 @@ namespace map {
                 rcu_lock sl;
                 for ( set_iterator it = m.begin(), itEnd = m.end(); it != itEnd; ++it ) {
                     CPPUNIT_ASSERT( (*it).first == it->second.m_val );
-                    CPPUNIT_ASSERT( m.find( it->first ));
+                    CPPUNIT_ASSERT( m.contains( it->first ));
                     it->second.m_val = (*it).first * 2;
                     ++nCount;
                     if ( it != m.begin() ) {
