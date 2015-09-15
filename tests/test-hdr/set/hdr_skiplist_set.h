@@ -58,7 +58,7 @@ namespace set {
             nPrevKey = 0;
             for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                 CPPUNIT_ASSERT( (*it).nKey == it->nVal );
-                CPPUNIT_ASSERT( s.find( it->nKey ));
+                CPPUNIT_ASSERT( s.contains( it->nKey ));
                 it->nVal = (*it).nKey * 2;
                 ++nCount;
                 if ( it != s.begin() ) {
@@ -112,7 +112,7 @@ namespace set {
             nPrevKey = 0;
             for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                 CPPUNIT_ASSERT( (*it).nKey * 2 == it->nVal );
-                CPPUNIT_ASSERT( s.find( it->nKey ));
+                CPPUNIT_ASSERT( s.contains( it->nKey ));
                 it->nVal = (*it).nKey;
                 ++nCount;
                 if ( it != s.begin() ) {
@@ -146,7 +146,7 @@ namespace set {
             nPrevKey = 0;
             for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                 CPPUNIT_ASSERT( (*it).nKey == it->nVal );
-                CPPUNIT_ASSERT( s.find( it->nKey ));
+                CPPUNIT_ASSERT( s.contains( it->nKey ));
                 it->nVal = (*it).nKey * 2;
                 ++nCount;
                 if ( it != s.begin() ) {
@@ -294,53 +294,58 @@ namespace set {
             CPPUNIT_ASSERT( check_size( s, 2 ));
             CPPUNIT_ASSERT( s.insert( 50 ) == s.end() );
 
-            // ensure
-            std::pair< iterator, bool>  ensureResult;
-            ensureResult = s.ensure( 20 );
-            CPPUNIT_ASSERT( ensureResult.first != s.end() );
-            CPPUNIT_ASSERT( ensureResult.second  );
-            CPPUNIT_ASSERT( ensureResult.first->key() == 20 );
-            CPPUNIT_ASSERT( ensureResult.first->val() == 20 );
+            // update
+            std::pair< iterator, bool>  updateResult;
+            updateResult = s.update(20, false);
+            CPPUNIT_ASSERT(updateResult.first == s.end());
+            CPPUNIT_ASSERT(!updateResult.second);
+            CPPUNIT_ASSERT(check_size(s, 2));
+
+            updateResult = s.update( 20 );
+            CPPUNIT_ASSERT( updateResult.first != s.end() );
+            CPPUNIT_ASSERT( updateResult.second  );
+            CPPUNIT_ASSERT( updateResult.first->key() == 20 );
+            CPPUNIT_ASSERT( updateResult.first->val() == 20 );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
-            ensureResult = s.ensure( std::make_pair( 20, 200 ));
-            CPPUNIT_ASSERT( ensureResult.first != s.end() );
-            CPPUNIT_ASSERT( !ensureResult.second  );
-            CPPUNIT_ASSERT( ensureResult.first->key() == 20 );
-            CPPUNIT_ASSERT( ensureResult.first->val() == 20 );
+            updateResult = s.update( std::make_pair( 20, 200 ));
+            CPPUNIT_ASSERT( updateResult.first != s.end() );
+            CPPUNIT_ASSERT( !updateResult.second  );
+            CPPUNIT_ASSERT( updateResult.first->key() == 20 );
+            CPPUNIT_ASSERT( updateResult.first->val() == 20 );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ));
-            ensureResult.first->nVal = 22;
+            updateResult.first->nVal = 22;
 
-            ensureResult = s.ensure( std::make_pair( 30, 33 ));
-            CPPUNIT_ASSERT( ensureResult.first != s.end() );
-            CPPUNIT_ASSERT( ensureResult.second  );
-            CPPUNIT_ASSERT( ensureResult.first->key() == 30 );
-            CPPUNIT_ASSERT( ensureResult.first->val() == 33 );
+            updateResult = s.update( std::make_pair( 30, 33 ));
+            CPPUNIT_ASSERT( updateResult.first != s.end() );
+            CPPUNIT_ASSERT( updateResult.second  );
+            CPPUNIT_ASSERT( updateResult.first->key() == 30 );
+            CPPUNIT_ASSERT( updateResult.first->val() == 33 );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 4 ));
 
             // find
-            it = s.find( 10 );
+            it = s.contains( 10 );
             CPPUNIT_ASSERT( it != s.end() );
             CPPUNIT_ASSERT( it->key() == 10 );
             CPPUNIT_ASSERT( it->val() == 10 );
 
-            it = s.find( 20 );
+            it = s.contains( 20 );
             CPPUNIT_ASSERT( it != s.end() );
             CPPUNIT_ASSERT( it->key() == 20 );
             CPPUNIT_ASSERT( it->val() == 22 );
 
-            it = s.find_with( 30, base_class::less<value_type>() );
+            it = s.contains( 30, base_class::less<value_type>() );
             CPPUNIT_ASSERT( it != s.end() );
             CPPUNIT_ASSERT( it->key() == 30 );
             CPPUNIT_ASSERT( it->val() == 33 );
 
-            it = s.find( 40 );
+            it = s.contains( 40 );
             CPPUNIT_ASSERT( it == s.end() );
 
-            it = s.find( 50 );
+            it = s.contains( 50 );
             CPPUNIT_ASSERT( it != s.end() );
             CPPUNIT_ASSERT( it->key() == 50 );
             CPPUNIT_ASSERT( it->val() == 25 );
@@ -361,17 +366,17 @@ namespace set {
             CPPUNIT_ASSERT( it->key() == 190 );
             CPPUNIT_ASSERT( it->val() == 91 );
 
-            it = s.find( 174 );
+            it = s.contains( 174 );
             CPPUNIT_ASSERT( it != s.end() );
             CPPUNIT_ASSERT( it->key() == 174 );
             CPPUNIT_ASSERT( it->val() == 471 );
 
-            it = s.find( 190 );
+            it = s.contains( 190 );
             CPPUNIT_ASSERT( it != s.end() );
             CPPUNIT_ASSERT( it->key() == 190 );
             CPPUNIT_ASSERT( it->val() == 91 );
 
-            it = s.find( 151 );
+            it = s.contains( 151 );
             CPPUNIT_ASSERT( it != s.end() );
             CPPUNIT_ASSERT( it->key() == 151 );
             CPPUNIT_ASSERT( it->val() == 151 );
