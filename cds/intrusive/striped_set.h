@@ -765,7 +765,7 @@ namespace cds { namespace intrusive {
         CDS_DEPRECATED("use contains()")
         bool find( Q const& val )
         {
-            return contains( val ;)
+            return contains( val );
         }
         //@endcond
 
