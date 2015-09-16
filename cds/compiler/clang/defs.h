@@ -26,6 +26,20 @@
 #   define CDS_USE_LIBCDS_ATOMIC
 #endif
 
+// clang for Windows
+#if defined( _MSC_VER )
+#   define CDS_OS_INTERFACE     CDS_OSI_WINDOWS
+#   if defined(_WIN64)
+#       define CDS_OS_TYPE      CDS_OS_WIN64
+#       define CDS_OS__NAME     "Win64"
+#       define CDS_OS__NICK     "Win64"
+#   elif defined(_WIN32)
+#       define CDS_OS_TYPE      CDS_OS_WIN32
+#       define CDS_OS__NAME     "Win32"
+#       define CDS_OS__NICK     "Win32"
+#   endif
+#endif
+
 #include <cds/compiler/gcc/compiler_macro.h>
 
 #define alignof __alignof__

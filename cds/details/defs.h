@@ -302,6 +302,8 @@ namespace cds {}
 #if defined(_MSC_VER)
 #   if defined(__ICL) || defined(__INTEL_COMPILER)
 #       define CDS_COMPILER CDS_COMPILER_INTEL
+#   elif defined(__clang__)
+#       define CDS_COMPILER CDS_COMPILER_CLANG
 #   else
 #       define CDS_COMPILER CDS_COMPILER_MSVC
 #   endif
