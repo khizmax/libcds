@@ -520,7 +520,7 @@ namespace cds { namespace container {
         CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
-            return update( key, func, true ;)
+            return update( key, func, true );
         }
         //@endcond
 
