@@ -29,7 +29,6 @@
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSUNIT_DECLARE_MichaelMap_RCU_signal \
     TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHB_cmp_stdAlloc) \
-    TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHB_cmp_stdAlloc) \
     TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHB_less_michaelAlloc) \
     TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHT_cmp_stdAlloc) \
     TEST_CASE(tag_MichaelHashMap, MichaelMap_RCU_SHT_less_michaelAlloc) \
