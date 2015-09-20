@@ -4,7 +4,7 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds.vcxproj", "{408FE9BC-44F0-4E6A-89FA-D6F952584239}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit-test", "unit-test", "{B30CA283-1796-4763-92C3-2E4848D443F7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "multi-threaded test", "multi-threaded test", "{B30CA283-1796-4763-92C3-2E4848D443F7}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\tests\unit\print_bronsonavltree_stat.h = ..\..\..\tests\unit\print_bronsonavltree_stat.h
 		..\..\..\tests\unit\print_cuckoo_stat.h = ..\..\..\tests\unit\print_cuckoo_stat.h
@@ -41,7 +41,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-stack", "unit-stack.vc
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hdr-test", "hdr-test", "{B8C24D26-A3BF-4DA6-B64C-142CBA4BFE75}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "single-threaded test", "single-threaded test", "{B8C24D26-A3BF-4DA6-B64C-142CBA4BFE75}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\tests\test-hdr\size_check.h = ..\..\..\tests\test-hdr\size_check.h
 	EndProjectSection

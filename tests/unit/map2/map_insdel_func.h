@@ -542,7 +542,6 @@ namespace map2 {
             }
         }
 
-        typedef CppUnitMini::TestCase Base;
         void setUpParams( const CppUnitMini::TestCfg& cfg );
 
 #   include "map2/map_defs.h"

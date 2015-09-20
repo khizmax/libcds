@@ -132,7 +132,6 @@ namespace set2 {
         std::vector<size_t>     m_arrData;
 
     protected:
-        typedef CppUnitMini::TestCase Base;
         typedef key_thread  key_type;
         typedef size_t      value_type;
 

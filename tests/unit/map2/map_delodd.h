@@ -133,8 +133,6 @@ namespace map2 {
         std::vector<size_t>     m_arrRemove;
 
     protected:
-        typedef CppUnitMini::TestCase Base;
-
         typedef key_thread  key_type;
         typedef size_t      value_type;
         typedef std::pair<key_type const, value_type> pair_type;

@@ -63,6 +63,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_item_string_cuckoo.cpp \
     tests/unit/map2/map_insdel_item_string_ellentree.cpp \
     tests/unit/map2/map_insdel_item_string_michael.cpp \
+    tests/unit/map2/map_insdel_item_string_multilevelhashmap.cpp \
     tests/unit/map2/map_insdel_item_string_skip.cpp \
     tests/unit/map2/map_insdel_item_string_split.cpp \
     tests/unit/map2/map_insdel_item_string_striped.cpp \
@@ -71,6 +72,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_string_cuckoo.cpp \
     tests/unit/map2/map_insdel_string_ellentree.cpp \
     tests/unit/map2/map_insdel_string_michael.cpp \
+    tests/unit/map2/map_insdel_string_multilevelhashmap.cpp \
     tests/unit/map2/map_insdel_string_skip.cpp \
     tests/unit/map2/map_insdel_string_split.cpp \
     tests/unit/map2/map_insdel_string_striped.cpp \

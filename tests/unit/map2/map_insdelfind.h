@@ -39,7 +39,6 @@ namespace map2 {
         actions m_arrShuffle[c_nShuffleSize];
 
     protected:
-        typedef CppUnitMini::TestCase Base;
         typedef size_t  key_type;
         typedef size_t  value_type;
 

@@ -1,7 +1,5 @@
 //$$CDS-header$$
 
-// defines concurrent access to map::nonconcurrent_iterator::Sequence::TValue::nAccess field
-
 #include "map2/map_find_int.h"
 
 // find int test in map<int> in mutithreaded mode

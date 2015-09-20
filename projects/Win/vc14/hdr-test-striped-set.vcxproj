@@ -100,7 +100,6 @@
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_striped_set.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_striped_set.h" />
     <ClInclude Include="..\..\..\tests\test-hdr\set\intrusive_cuckoo_set_common.h" />
-    <ClInclude Include="..\..\..\tests\test-hdr\size_check.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A38E5597-6916-4480-A343-C9846EF544E4}</ProjectGuid>

@@ -352,7 +352,7 @@ namespace set {
                 CPPUNIT_ASSERT( ret.first );
                 CPPUNIT_ASSERT( !ret.second );
                 CPPUNIT_ASSERT( v1.nUpdateNewCount == 1 );
-                CPPUNIT_ASSERT( v1.nUpdateCount == 1 );
+                CPPUNIT_ASSERT( v1.nUpdateCount == 2 );
                 CPPUNIT_ASSERT( check_size( s, 3 ));
 
                 ret = s.update( v2, f );
@@ -743,7 +743,7 @@ namespace set {
                     CPPUNIT_ASSERT( ret.first );
                     CPPUNIT_ASSERT( !ret.second );
                     CPPUNIT_ASSERT( v1.nUpdateNewCount == 1 );
-                    CPPUNIT_ASSERT( v1.nUpdateCount == 1 );
+                    CPPUNIT_ASSERT( v1.nUpdateCount == 2 );
                     CPPUNIT_ASSERT( check_size( s, 3 ));
 
                     ret = s.update( v2, f );
@@ -901,7 +901,7 @@ namespace set {
                 CPPUNIT_ASSERT( ret.first );
                 CPPUNIT_ASSERT( !ret.second );
                 CPPUNIT_ASSERT( v1.nUpdateNewCount == 1 );
-                CPPUNIT_ASSERT( v1.nUpdateCount == 1 );
+                CPPUNIT_ASSERT( v1.nUpdateCount == 2 );
                 CPPUNIT_ASSERT( check_size( s, 3 ));
 
                 ret = s.update( v2, f );

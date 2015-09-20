@@ -14,7 +14,7 @@
 
 namespace map2 {
 
-    template <class GC, typename Key, typename T, typename Traits = cc::split_list::traits >
+    template <class GC, typename Key, typename T, typename Traits = cc::skip_list::traits >
     class SkipListMap : public cc::SkipListMap< GC, Key, T, Traits >
     {
         typedef cc::SkipListMap< GC, Key, T, Traits > base_class;

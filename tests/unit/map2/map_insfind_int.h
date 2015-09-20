@@ -28,7 +28,6 @@ namespace map2 {
         size_t  c_nLoadFactor = 2;  // current load factor
 
     private:
-        typedef CppUnitMini::TestCase Base;
         typedef size_t  key_type;
         typedef size_t  value_type;
 

@@ -64,6 +64,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_item_string_cuckoo.cpp
     map_insdel_item_string_ellentree.cpp
     map_insdel_item_string_michael.cpp
+    map_insdel_item_string_multilevelhashmap.cpp
     map_insdel_item_string_skip.cpp
     map_insdel_item_string_split.cpp
     map_insdel_item_string_striped.cpp
@@ -72,6 +73,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_string_cuckoo.cpp
     map_insdel_string_ellentree.cpp
     map_insdel_string_michael.cpp
+    map_insdel_string_multilevelhashmap.cpp
     map_insdel_string_skip.cpp
     map_insdel_string_split.cpp
     map_insdel_string_striped.cpp

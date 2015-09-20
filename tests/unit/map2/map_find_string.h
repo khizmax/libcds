@@ -29,7 +29,6 @@ namespace map2 {
         size_t  c_nLoadFactor;  // current load factor
 
     private:
-        typedef CppUnitMini::TestCase Base;
         typedef std::string  key_type;
         struct value_type {
             std::string const * pKey;
@@ -204,17 +203,6 @@ namespace map2 {
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
-        }
-
-        template <class Map>
-        void test_nolf()
-        {
-            initTestSequence();
-
-            Map testMap;
-            find_string_test( testMap );
-            if ( c_bPrintGCState )
-                print_gc_state();
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
