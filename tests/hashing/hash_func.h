@@ -3,9 +3,13 @@
 #ifndef CDSUNIT_HASH_FUNC_H
 #define CDSUNIT_HASH_FUNC_H
 
+#include <cds/details/defs.h>
+
 #include "hashing/sha256.h"
 #include "hashing/md5.h"
-#include "hashing/city.h"
+#if CDS_BUILD_BITS == 64
+#   include "hashing/city.h"
+#endif
 
 namespace hashing {
 
@@ -42,6 +46,7 @@ namespace hashing {
     typedef hasher<SHA256> sha256;
     typedef hasher<MD5> md5;
 
+#if CDS_BUILD_BITS == 64
     class city32 {
     public:
         typedef uint32_t hash_type;
@@ -130,6 +135,8 @@ namespace hashing {
             }
         };
     };
+#endif // #if CDS_BUILD_BITS == 64
+
 
 } // namespace hashing
 

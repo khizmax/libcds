@@ -729,6 +729,21 @@
 // **************************************************************************************
 // MultiLevelHashMap
 
+#undef CDSUNIT_DECLARE_MultiLevelHashMap64
+#if CDS_BUILD_BITS == 64
+#   define CDSUNIT_DECLARE_MultiLevelHashMap64  \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city64) \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city64_stat) \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city64) \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city64_stat) \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city128) \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city128_stat) \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city128) \
+        TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city128_stat)
+#else
+#   define CDSUNIT_DECLARE_MultiLevelHashMap64
+#endif
+
 #undef CDSUNIT_DECLARE_MultiLevelHashMap
 #define CDSUNIT_DECLARE_MultiLevelHashMap  \
     TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_stdhash) \
@@ -743,15 +758,23 @@
     TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_sha256_stat) \
     TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_sha256) \
     TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_sha256_stat) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city64) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city64_stat) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city64) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city64_stat) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city128) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_hp_city128_stat) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city128) \
-    TEST_CASE(tag_MultiLevelHashMap, MultiLevelHashMap_dhp_city128_stat) \
+    CDSUNIT_DECLARE_MultiLevelHashMap64
 
+
+#undef CDSUNIT_TEST_MultiLevelHashMap64
+#if CDS_BUILD_BITS == 64
+#   define CDSUNIT_TEST_MultiLevelHashMap64  \
+        CPPUNIT_TEST(MultiLevelHashMap_hp_city64) \
+        CPPUNIT_TEST(MultiLevelHashMap_hp_city64_stat) \
+        CPPUNIT_TEST(MultiLevelHashMap_dhp_city64) \
+        CPPUNIT_TEST(MultiLevelHashMap_dhp_city64_stat) \
+        CPPUNIT_TEST(MultiLevelHashMap_hp_city128) \
+        CPPUNIT_TEST(MultiLevelHashMap_hp_city128_stat) \
+        CPPUNIT_TEST(MultiLevelHashMap_dhp_city128) \
+        CPPUNIT_TEST(MultiLevelHashMap_dhp_city128_stat)
+#else
+#   define CDSUNIT_TEST_MultiLevelHashMap64
+#endif
 
 #undef CDSUNIT_TEST_MultiLevelHashMap
 #define CDSUNIT_TEST_MultiLevelHashMap  \
@@ -767,12 +790,5 @@
     CPPUNIT_TEST(MultiLevelHashMap_hp_sha256_stat) \
     CPPUNIT_TEST(MultiLevelHashMap_dhp_sha256) \
     CPPUNIT_TEST(MultiLevelHashMap_dhp_sha256_stat) \
-    CPPUNIT_TEST(MultiLevelHashMap_hp_city64) \
-    CPPUNIT_TEST(MultiLevelHashMap_hp_city64_stat) \
-    CPPUNIT_TEST(MultiLevelHashMap_dhp_city64) \
-    CPPUNIT_TEST(MultiLevelHashMap_dhp_city64_stat) \
-    CPPUNIT_TEST(MultiLevelHashMap_hp_city128) \
-    CPPUNIT_TEST(MultiLevelHashMap_hp_city128_stat) \
-    CPPUNIT_TEST(MultiLevelHashMap_dhp_city128) \
-    CPPUNIT_TEST(MultiLevelHashMap_dhp_city128_stat) \
+    CDSUNIT_TEST_MultiLevelHashMap64
 

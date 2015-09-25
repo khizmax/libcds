@@ -29,6 +29,7 @@
 
 //#include "config.h"
 #include "city.h"
+#if CDS_BUILD_BITS == 64
 
 #include <algorithm>
 #include <string.h>  // for memcpy and memset
@@ -626,3 +627,4 @@ uint128 CityHashCrc128(const char *s, size_t len) {
 }
 
 #endif
+#endif // #if CDS_BUILD_BITS == 64

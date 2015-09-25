@@ -144,6 +144,7 @@ namespace set2 {
         typedef MultiLevelHashSet< cds::gc::DHP, key_val<::hashing::md5>, traits_MultiLevelHashSet_md5_stat >    MultiLevelHashSet_dhp_md5_stat;
 
         // CityHash
+#if CDS_BUILD_BITS == 64
         struct traits_MultiLevelHashSet_city64 : public default_traits
         {
             typedef ::hashing::city64::less less;
@@ -171,6 +172,7 @@ namespace set2 {
         };
         typedef MultiLevelHashSet< cds::gc::HP,  key_val<::hashing::city128>, traits_MultiLevelHashSet_city128_stat >    MultiLevelHashSet_hp_city128_stat;
         typedef MultiLevelHashSet< cds::gc::DHP, key_val<::hashing::city128>, traits_MultiLevelHashSet_city128_stat >    MultiLevelHashSet_dhp_city128_stat;
+#endif // #if CDS_BUILD_BITS == 64
     };
 
     template <typename GC, typename T, typename Traits >

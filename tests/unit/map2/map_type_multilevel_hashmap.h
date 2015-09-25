@@ -79,6 +79,7 @@ namespace map2 {
         typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_md5_stat >    MultiLevelHashMap_dhp_md5_stat;
 
         // CityHash
+#if CDS_BUILD_BITS == 64
         struct traits_MultiLevelHashMap_city64 : public cc::multilevel_hashmap::traits
         {
             typedef ::hashing::city64 hash;
@@ -108,7 +109,7 @@ namespace map2 {
         };
         typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_city128_stat >    MultiLevelHashMap_hp_city128_stat;
         typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_city128_stat >    MultiLevelHashMap_dhp_city128_stat;
-
+#endif // CDS_BUILD_BITS == 64
     };
 
     template <typename GC, typename K, typename T, typename Traits >

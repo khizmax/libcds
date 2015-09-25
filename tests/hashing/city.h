@@ -62,6 +62,9 @@
 #ifndef CITY_HASH_H_
 #define CITY_HASH_H_
 
+#include <cds/details/defs.h>
+#if CDS_BUILD_BITS == 64
+
 #include <stdlib.h>  // for size_t.
 #include <stdint.h>
 #include <utility>
@@ -109,4 +112,5 @@ inline uint64 Hash128to64(const uint128& x) {
   return b;
 }
 
+#endif // #if CDS_BUILD_BITS == 64
 #endif  // CITY_HASH_H_
