@@ -176,7 +176,7 @@ namespace set2 {
     };
 
     template <typename GC, typename T, typename Traits >
-    static inline void print_stat( cc::MultiLevelHashSet< GC, T, Traits > const& s )
+    static inline void print_stat( MultiLevelHashSet< GC, T, Traits > const& s )
     {
         CPPUNIT_MSG( s.statistics() );
     }

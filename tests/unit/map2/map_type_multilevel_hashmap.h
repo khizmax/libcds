@@ -113,7 +113,7 @@ namespace map2 {
     };
 
     template <typename GC, typename K, typename T, typename Traits >
-    static inline void print_stat( cc::MultiLevelHashMap< GC, K, T, Traits > const& m )
+    static inline void print_stat( MultiLevelHashMap< GC, K, T, Traits > const& m )
     {
         CPPUNIT_MSG( m.statistics() );
     }
