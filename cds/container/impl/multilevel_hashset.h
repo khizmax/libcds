@@ -75,7 +75,7 @@ namespace cds { namespace container {
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
         - <tt><cds/container/multilevel_hashset_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/container/multilevel_hashset_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/container/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type". RCU specialization
+        - <tt><cds/container/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultilevelHashSet_rcu "RCU type". RCU specialization
             has a slightly different interface.
     */
     template <
@@ -461,6 +461,14 @@ namespace cds { namespace container {
                 does not entail <tt> &(*it1) == &(*it2) </tt>
             - helper member function \p release() that clears internal hazard pointer.
                 After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+
+            During iteration you may safely erase any item from the set;
+            @ref erase_at() function call doesn't invalidate any iterator.
+            If some iterator points to the item to be erased, that item is not deleted immediately
+            but only after that iterator will be advanced forward or backward.
+
+            @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
+            in array node that is being splitted.
         */
     ///@{
 

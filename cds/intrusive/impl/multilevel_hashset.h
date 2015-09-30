@@ -77,7 +77,7 @@ namespace cds { namespace intrusive {
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
         - <tt><cds/intrusive/multilevel_hashset_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/intrusive/multilevel_hashset_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type". RCU specialization
+        - <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultilevelHashSet_rcu "RCU type". RCU specialization
             has a slightly different interface.
     */
     template <
@@ -161,13 +161,6 @@ namespace cds { namespace intrusive {
         typedef cds::details::Allocator< array_node, node_allocator > cxx_array_node_allocator;
 
         typedef multilevel_hashset::details::hash_splitter< hash_type > hash_splitter;
-
-        struct metrics {
-            size_t  head_node_size;     // power-of-two
-            size_t  head_node_size_log; // log2( head_node_size )
-            size_t  array_node_size;    // power-of-two
-            size_t  array_node_size_log;// log2( array_node_size )
-        };
         //@endcond
 
     protected:
@@ -564,7 +557,7 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
-        metrics const     m_Metrics;     ///< Metrics
+        multilevel_hashset::details::metrics const m_Metrics;     ///< Metrics
         array_node *      m_Head;        ///< Head array
         item_counter      m_ItemCounter; ///< Item counter
         stat              m_Stat;        ///< Internal statistics
@@ -583,7 +576,7 @@ namespace cds { namespace intrusive {
             where \p N is multi-level array depth.
         */
         MultiLevelHashSet( size_t head_bits = 8, size_t array_bits = 4 )
-            : m_Metrics(make_metrics( head_bits, array_bits ))
+            : m_Metrics( multilevel_hashset::details::metrics::make( head_bits, array_bits, sizeof(hash_type)))
             , m_Head( alloc_head_node())
         {}
 
@@ -638,6 +631,7 @@ namespace cds { namespace intrusive {
             array_node * pArr = m_Head;
             size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
             assert( nSlot < m_Metrics.head_node_size );
+            size_t nHeight = 1;
 
             while ( true ) {
                 node_ptr slot = pArr->nodes[nSlot].load( memory_model::memory_order_acquire );
@@ -648,6 +642,7 @@ namespace cds { namespace intrusive {
                     assert( nSlot < m_Metrics.array_node_size );
                     pArr = to_array( slot.ptr() );
                     nOffset += m_Metrics.array_node_size_log;
+                    ++nHeight;
                 }
                 else if ( slot.bits() == flag_array_converting ) {
                     // the slot is converting to array node right now
@@ -682,6 +677,7 @@ namespace cds { namespace intrusive {
                             f( val );
                             ++m_ItemCounter;
                             m_Stat.onInsertSuccess();
+                            m_Stat.height( nHeight );
                             return true;
                         }
 
@@ -972,6 +968,14 @@ namespace cds { namespace intrusive {
                 does not entail <tt> &(*it1) == &(*it2) </tt>: welcome to concurrent containers
             - helper member function \p release() that clears internal hazard pointer.
                 After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+
+            During iteration you may safely erase any item from the set;
+            @ref erase_at() function call doesn't invalidate any iterator.
+            If some iterator points to the item to be erased, that item is not deleted immediately
+            but only after that iterator will be advanced forward or backward.
+
+            @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
+            in array node that is being splitted.
         */
     ///@{
 
@@ -1062,28 +1066,6 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
-        static metrics make_metrics( size_t head_bits, size_t array_bits )
-        {
-            size_t const hash_bits = sizeof( hash_type ) * 8;
-
-            if ( array_bits < 2 )
-                array_bits = 2;
-            if ( head_bits < 4 )
-                head_bits = 4;
-            if ( head_bits > hash_bits )
-                head_bits = hash_bits;
-            if ( (hash_bits - head_bits) % array_bits != 0 )
-                head_bits += (hash_bits - head_bits) % array_bits;
-
-            assert( (hash_bits - head_bits) % array_bits == 0 );
-
-            metrics m;
-            m.head_node_size_log = head_bits;
-            m.head_node_size = size_t(1) << head_bits;
-            m.array_node_size_log = array_bits;
-            m.array_node_size = size_t(1) << array_bits;
-            return m;
-        }
 
         array_node * alloc_head_node() const
         {
@@ -1218,6 +1200,7 @@ namespace cds { namespace intrusive {
                 slot.compare_exchange_strong( cur, node_ptr( to_node( pArr ), flag_array_node ), memory_model::memory_order_release, atomics::memory_order_relaxed )
             );
 
+            m_Stat.onExpandNodeSuccess();
             m_Stat.onArrayNodeCreated();
             return true;
         }
@@ -1367,6 +1350,7 @@ namespace cds { namespace intrusive {
             size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
             assert( nSlot < m_Metrics.head_node_size );
             size_t nOffset = m_Metrics.head_node_size_log;
+            size_t nHeight = 1;
 
             guards.assign( 1, &val );
 
@@ -1379,6 +1363,7 @@ namespace cds { namespace intrusive {
                     assert( nSlot < m_Metrics.array_node_size );
                     pArr = to_array( slot.ptr() );
                     nOffset += m_Metrics.array_node_size_log;
+                    ++nHeight;
                 }
                 else if ( slot.bits() == flag_array_converting ) {
                     // the slot is converting to array node right now
@@ -1428,6 +1413,7 @@ namespace cds { namespace intrusive {
                                 f( val, nullptr );
                                 ++m_ItemCounter;
                                 m_Stat.onUpdateNew();
+                                m_Stat.height( nHeight );
                                 return std::make_pair( true, true );
                             }
                         }

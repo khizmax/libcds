@@ -57,6 +57,7 @@ namespace cds { namespace intrusive {
             event_counter   m_nSlotConverting;  ///< Number of events when we encounter a slot while it is converting to array node
 
             event_counter   m_nArrayNodeCount;  ///< Number of array nodes
+            event_counter   m_nHeight;          ///< Current height of the tree
 
             //@cond
             void onInsertSuccess()              { ++m_nInsertSuccess;       }
@@ -77,6 +78,7 @@ namespace cds { namespace intrusive {
             void onSlotChanged()                { ++m_nSlotChanged;         }
             void onSlotConverting()             { ++m_nSlotConverting;      }
             void onArrayNodeCreated()           { ++m_nArrayNodeCount;      }
+            void height( size_t h )             { if (m_nHeight < h ) m_nHeight = h; }
             //@endcond
         };
 
@@ -101,6 +103,7 @@ namespace cds { namespace intrusive {
             void onSlotChanged()                const {}
             void onSlotConverting()             const {}
             void onArrayNodeCreated()           const {}
+            void height(size_t)                 const {}
             //@endcond
         };
 
@@ -251,9 +254,39 @@ namespace cds { namespace intrusive {
         namespace details {
             template <typename HashType, typename UInt = size_t >
             using hash_splitter = cds::algo::split_bitstring< HashType, UInt >;
+
+            struct metrics {
+                size_t  head_node_size;     // power-of-two
+                size_t  head_node_size_log; // log2( head_node_size )
+                size_t  array_node_size;    // power-of-two
+                size_t  array_node_size_log;// log2( array_node_size )
+
+                static metrics make(size_t head_bits, size_t array_bits, size_t hash_size )
+                {
+                    size_t const hash_bits = hash_size * 8;
+
+                    if (array_bits < 2)
+                        array_bits = 2;
+                    if (head_bits < 4)
+                        head_bits = 4;
+                    if (head_bits > hash_bits)
+                        head_bits = hash_bits;
+                    if ((hash_bits - head_bits) % array_bits != 0)
+                        head_bits += (hash_bits - head_bits) % array_bits;
+
+                    assert((hash_bits - head_bits) % array_bits == 0);
+
+                    metrics m;
+                    m.head_node_size_log = head_bits;
+                    m.head_node_size = size_t(1) << head_bits;
+                    m.array_node_size_log = array_bits;
+                    m.array_node_size = size_t(1) << array_bits;
+                    return m;
+                }
+            };
+
         } // namespace details
         //@endcond
-
     } // namespace multilevel_hashset
 
     //@cond

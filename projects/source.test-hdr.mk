@@ -133,6 +133,11 @@ CDS_TESTHDR_QUEUE := \
 CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_intrusive_multilevel_hashset_hp.cpp \
     tests/test-hdr/set/hdr_intrusive_multilevel_hashset_dhp.cpp \
+    tests/test-hdr/set/hdr_intrusive_multilevel_hashset_rcu_gpi.cpp \
+    tests/test-hdr/set/hdr_intrusive_multilevel_hashset_rcu_gpb.cpp \
+    tests/test-hdr/set/hdr_intrusive_multilevel_hashset_rcu_gpt.cpp \
+    tests/test-hdr/set/hdr_intrusive_multilevel_hashset_rcu_shb.cpp \
+    tests/test-hdr/set/hdr_intrusive_multilevel_hashset_rcu_sht.cpp \
     tests/test-hdr/set/hdr_intrusive_refinable_hashset_avlset.cpp \
     tests/test-hdr/set/hdr_intrusive_refinable_hashset_list.cpp \
     tests/test-hdr/set/hdr_intrusive_refinable_hashset_set.cpp \

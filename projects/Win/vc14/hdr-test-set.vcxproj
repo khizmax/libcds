@@ -668,6 +668,11 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_michael_set_rcu_sht_lazy.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_dhp_member.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_skiplist_hp.cpp" />

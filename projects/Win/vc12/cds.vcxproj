@@ -781,6 +781,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\mspriority_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_hp.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\options.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h" />

@@ -1217,5 +1217,8 @@
     <ClInclude Include="..\..\..\cds\container\multilevel_hashmap_hp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

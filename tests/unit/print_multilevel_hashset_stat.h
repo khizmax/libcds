@@ -28,7 +28,8 @@ namespace std {
             << "\t\t       m_nExpandNodeFailed: " << s.m_nExpandNodeFailed.get()        << "\n"
             << "\t\t            m_nSlotChanged: " << s.m_nSlotChanged.get()             << "\n"
             << "\t\t         m_nSlotConverting: " << s.m_nSlotConverting.get()          << "\n"
-            << "\t\t         m_nArrayNodeCount: " << s.m_nArrayNodeCount.get()          << "\n";
+            << "\t\t         m_nArrayNodeCount: " << s.m_nArrayNodeCount.get()          << "\n"
+            << "\t\t                 m_nHeight: " << s.m_nHeight.get()                  << "\n";
     }
 
     static inline ostream& operator <<( ostream& o, cds::intrusive::multilevel_hashset::empty_stat const& /*s*/ )

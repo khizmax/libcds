@@ -135,6 +135,11 @@ set(CDS_TESTHDR_QUEUE
 set(CDS_TESTHDR_SET
     set/hdr_intrusive_multilevel_hashset_hp.cpp
     set/hdr_intrusive_multilevel_hashset_dhp.cpp
+    set/hdr_intrusive_multilevel_hashset_rcu_gpi.cpp
+    set/hdr_intrusive_multilevel_hashset_rcu_gpb.cpp
+    set/hdr_intrusive_multilevel_hashset_rcu_gpt.cpp
+    set/hdr_intrusive_multilevel_hashset_rcu_shb.cpp
+    set/hdr_intrusive_multilevel_hashset_rcu_sht.cpp
     set/hdr_intrusive_refinable_hashset_avlset.cpp
     set/hdr_intrusive_refinable_hashset_list.cpp
     set/hdr_intrusive_refinable_hashset_set.cpp
