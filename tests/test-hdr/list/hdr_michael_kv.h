@@ -67,7 +67,7 @@ namespace ordlist {
             }
         };
 
-        struct ensure_functor {
+        struct update_functor {
             template <typename T>
             void operator()( bool /*bNew*/, T& pair )
             {
@@ -115,18 +115,18 @@ namespace ordlist {
 
             CPPUNIT_ASSERT( l.empty() );
 
-            // insert / find test
-            CPPUNIT_ASSERT( !l.find( 100 ));
+            // insert / contains test
+            CPPUNIT_ASSERT( !l.contains( 100 ));
             CPPUNIT_ASSERT( l.insert( 100 ));
             CPPUNIT_ASSERT( !l.empty() );
-            CPPUNIT_ASSERT( l.find( 100 ));
+            CPPUNIT_ASSERT( l.contains( 100 ));
 
             check_value chk(0);
             CPPUNIT_ASSERT( l.find( 100, std::ref( chk ) ) );
 
-            CPPUNIT_ASSERT( !l.find_with( 50, lt<key_type>() ));
+            CPPUNIT_ASSERT( !l.contains( 50, lt<key_type>() ));
             CPPUNIT_ASSERT( l.insert( 50, 500 ));
-            CPPUNIT_ASSERT( l.find_with( 50, lt<key_type>() ));
+            CPPUNIT_ASSERT( l.contains( 50, lt<key_type>() ));
             CPPUNIT_ASSERT( !l.insert( 50, 5 ));
             chk.m_nExpected = 500;
             CPPUNIT_ASSERT( l.find_with( 50, lt<key_type>(), std::ref( chk ) ) );
@@ -134,9 +134,9 @@ namespace ordlist {
             CPPUNIT_ASSERT( l.find_with( 100, lt<key_type>(), std::ref( chk ) ) );
             CPPUNIT_ASSERT( !l.empty() );
 
-            CPPUNIT_ASSERT( !l.find( 150 ));
+            CPPUNIT_ASSERT( !l.contains( 150 ));
             CPPUNIT_ASSERT( l.insert_with( 150, insert_functor() ));
-            CPPUNIT_ASSERT( l.find( 150 ));
+            CPPUNIT_ASSERT( l.contains( 150 ));
             chk.m_nExpected = 1500;
             CPPUNIT_ASSERT( l.find( 150, std::ref( chk ) ) );
             chk.m_nExpected = 0;
@@ -150,29 +150,29 @@ namespace ordlist {
             CPPUNIT_ASSERT( !l.erase( 500 ));
             CPPUNIT_ASSERT( !l.empty() );
 
-            CPPUNIT_ASSERT( l.find( 50 ));
+            CPPUNIT_ASSERT( l.contains( 50 ));
             {
                 erase_functor ef;
                 l.erase( 50, std::ref( ef ) );
                 CPPUNIT_ASSERT( ef.nKey == 50 );
                 CPPUNIT_ASSERT( ef.nVal == 500 );
             }
-            CPPUNIT_ASSERT( !l.find( 50 ));
+            CPPUNIT_ASSERT( !l.contains( 50 ));
 
-            // ensure test
-            std::pair<bool, bool> bEnsureResult;
-            bEnsureResult = l.ensure( 100, ensure_functor() );
-            CPPUNIT_ASSERT( bEnsureResult.first );
-            CPPUNIT_ASSERT( !bEnsureResult.second );
+            // update test
+            std::pair<bool, bool> bupdateResult;
+            bupdateResult = l.update( 100, update_functor() );
+            CPPUNIT_ASSERT( bupdateResult.first );
+            CPPUNIT_ASSERT( !bupdateResult.second );
             chk.m_nExpected = 5000;
             CPPUNIT_ASSERT( l.find( 100, std::ref( chk ) ) );
 
             {
-                ensure_functor ef;
-                bEnsureResult = l.ensure( 50, std::ref( ef ) );
+                update_functor ef;
+                bupdateResult = l.update( 50, std::ref( ef ) );
             }
-            CPPUNIT_ASSERT( bEnsureResult.first );
-            CPPUNIT_ASSERT( bEnsureResult.second );
+            CPPUNIT_ASSERT( bupdateResult.first );
+            CPPUNIT_ASSERT( bupdateResult.second );
             chk.m_nExpected = 2500;
             CPPUNIT_ASSERT( l.find( 50, std::ref( chk ) ) );
 
@@ -487,73 +487,73 @@ namespace ordlist {
                 CPPUNIT_ASSERT( l.empty() );
 
                 // insert / find test
-                CPPUNIT_ASSERT( l.find( 100 ) == l.end() );
+                CPPUNIT_ASSERT( l.contains( 100 ) == l.end() );
                 CPPUNIT_ASSERT( l.insert( 100 ) != l.end() );
                 CPPUNIT_ASSERT( !l.empty() );
-                it = l.find_with( 100, lt<key_type>() );
+                it = l.contains( 100, lt<key_type>() );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 100 );
                 CPPUNIT_ASSERT( it.val().m_val == 0 );
 
-                CPPUNIT_ASSERT( l.find_with( 50, lt<key_type>() ) == l.end() );
+                CPPUNIT_ASSERT( l.contains( 50, lt<key_type>() ) == l.end() );
                 CPPUNIT_ASSERT( l.insert( 50, 500 ) != l.end());
-                it = l.find( 50 );
+                it = l.contains( 50 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 50 );
                 CPPUNIT_ASSERT( it.val().m_val == 500 );
 
                 CPPUNIT_ASSERT( l.insert( 50, 5 ) == l.end() );
-                it = l.find( 50 );
+                it = l.contains( 50 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 50 );
                 CPPUNIT_ASSERT( it.val().m_val == 500 );
                 CPPUNIT_ASSERT( !l.empty() );
 
-                CPPUNIT_ASSERT( l.find( 150 ) == l.end() );
+                CPPUNIT_ASSERT( l.contains( 150 ) == l.end() );
                 CPPUNIT_ASSERT( l.insert_with( 150, insert_functor() ) != l.end() );
-                it = l.find( 150 );
+                it = l.contains( 150 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 150 );
                 CPPUNIT_ASSERT( it.val().m_val == 1500 );
-                it = l.find( 100 );
+                it = l.contains( 100 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 100 );
                 CPPUNIT_ASSERT( it.val().m_val == 0 );
-                it = l.find( 50 );
+                it = l.contains( 50 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 50 );
                 CPPUNIT_ASSERT( it.val().m_val == 500 );
                 it.val().m_val = 25;
-                it = l.find( 50 );
+                it = l.contains( 50 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 50 );
                 CPPUNIT_ASSERT( it.val().m_val == 25 );
                 CPPUNIT_ASSERT( !l.empty() );
 
-                // ensure existing item
-                std::pair<iterator, bool> ensureResult;
-                ensureResult = l.ensure( 100 );
-                CPPUNIT_ASSERT( !ensureResult.second );
-                CPPUNIT_ASSERT( ensureResult.first.key() == 100 );
-                CPPUNIT_ASSERT( ensureResult.first.val().m_val == 0   );
-                ensureResult.first.val().m_val = 5;
-                it = l.find( 100 );
+                // update existing item
+                std::pair<iterator, bool> updateResult;
+                updateResult = l.update( 100 );
+                CPPUNIT_ASSERT( !updateResult.second );
+                CPPUNIT_ASSERT( updateResult.first.key() == 100 );
+                CPPUNIT_ASSERT( updateResult.first.val().m_val == 0   );
+                updateResult.first.val().m_val = 5;
+                it = l.contains( 100 );
                 CPPUNIT_ASSERT( it != l.end() );
                 CPPUNIT_ASSERT( it.key() == 100 );
                 CPPUNIT_ASSERT( it.val().m_val == 5 );
 
                 CPPUNIT_ASSERT( !l.empty() );
 
-                // ensure new item
-                ensureResult = l.ensure( 1000 );
-                CPPUNIT_ASSERT( ensureResult.second );
-                CPPUNIT_ASSERT( ensureResult.first.key() == 1000 );
-                CPPUNIT_ASSERT( ensureResult.first.val().m_val == 0   );
-                ensureResult.first.val().m_val = 33;
-                ensureResult = l.ensure( 1000 );
-                CPPUNIT_ASSERT( !ensureResult.second );
-                CPPUNIT_ASSERT( ensureResult.first.key() == 1000 );
-                CPPUNIT_ASSERT( ensureResult.first.val().m_val == 33   );
+                // update new item
+                updateResult = l.update( 1000 );
+                CPPUNIT_ASSERT( updateResult.second );
+                CPPUNIT_ASSERT( updateResult.first.key() == 1000 );
+                CPPUNIT_ASSERT( updateResult.first.val().m_val == 0   );
+                updateResult.first.val().m_val = 33;
+                updateResult = l.update( 1000 );
+                CPPUNIT_ASSERT( !updateResult.second );
+                CPPUNIT_ASSERT( updateResult.first.key() == 1000 );
+                CPPUNIT_ASSERT( updateResult.first.val().m_val == 33   );
 
                 // clear test
                 l.clear();
@@ -567,12 +567,12 @@ namespace ordlist {
                 CPPUNIT_ASSERT( l.emplace( 501, 2 ) == l.end());
                 CPPUNIT_ASSERT( l.emplace( 251, 10) == l.end());
 
-                it = l.find( 501 );
+                it = l.contains( 501 );
                 CPPUNIT_ASSERT( it != l.end());
                 CPPUNIT_ASSERT( it.key() == 501 );
                 CPPUNIT_ASSERT( it.val().m_val == 0 );
 
-                it = l.find( 251 );
+                it = l.contains( 251 );
                 CPPUNIT_ASSERT( it != l.end());
                 CPPUNIT_ASSERT( it.key() == 251 );
                 CPPUNIT_ASSERT( it.val().m_val == 152 );
@@ -623,7 +623,7 @@ namespace ordlist {
 
                     // Check that we have visited all items
                     for ( int i = 0; i < nCount; ++i ) {
-                        it = l.find( i );
+                        it = l.contains( i );
                         CPPUNIT_ASSERT( it != l.end() );
                         CPPUNIT_ASSERT( it.key() == i );
                         CPPUNIT_ASSERT( it.val().m_val == i * 3 );

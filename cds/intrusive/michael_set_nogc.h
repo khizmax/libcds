@@ -46,10 +46,6 @@ namespace cds { namespace intrusive {
         /// Bucket table allocator
         typedef cds::details::Allocator< bucket_type, typename traits::allocator > bucket_table_allocator;
 
-        //@cond
-        typedef cds::intrusive::michael_set::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         item_counter    m_ItemCounter; ///< Item counter
         hash            m_HashFunctor; ///< Hash functor
@@ -182,68 +178,93 @@ namespace cds { namespace intrusive {
             return bRet;
         }
 
-        /// Ensures that the \p item exists in the set
+        /// Updates the element
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val not found in the set, then \p val is inserted into the set.
+            If the item \p val not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
-                void func( bool bNew, value_type& item, value_type& val );
+                struct functor {
+                    void operator()( bool bNew, value_type& item, value_type& val );
+                };
             \endcode
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
-            The functor can change non-key fields of the \p item.
+            The functor may change non-key fields of the \p item.
 
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
 
             @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_intrusive_LazyList_nogc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
         {
-            std::pair<bool, bool> bRet = bucket( val ).ensure( val, func );
-            if ( bRet.first && bRet.second )
+            std::pair<bool, bool> bRet = bucket( val ).update( val, func, bAllowInsert );
+            if ( bRet.second )
                 ++m_ItemCounter;
             return bRet;
         }
+        //@cond
+        template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_intrusive_MichaelHashSet_nogc_find_val
+        /// Checks whether the set contains \p key
+        /** 
             The function searches the item with key equal to \p key
-            and returns pointer to item found, otherwise \p nullptr.
+            and returns the pointer to an element found or \p nullptr.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
+        value_type * contains( Q const& key )
+        {
+            return bucket( key ).contains( key );
+        }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("use contains()")
         value_type * find( Q const& key )
         {
-            return bucket( key ).find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelHashSet_nogc_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
+        value_type * contains( Q const& key, Less pred )
+        {
+            return bucket( key ).contains( key, pred );
+        }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("use contains()")
         value_type * find_with( Q const& key, Less pred )
         {
-            return bucket( key ).find_with( key, pred );
+            return contains( key );
         }
+        //@endcond
 
         /// Finds the key \p key
         /** \anchor cds_intrusive_MichaelHashSet_nogc_find_func

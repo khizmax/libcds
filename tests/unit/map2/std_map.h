@@ -21,10 +21,14 @@ namespace map2 {
         typedef typename base_class::value_type  pair_type;
         typedef size_t      item_counter;
 
-        StdMap( size_t /*nMapSize*/, size_t /*nLoadFactor*/ )
+        StdMap()
         {}
 
-        bool find( const Key& key )
+        template <class Config>
+        StdMap( Config const& )
+        {}
+
+        bool contains( const Key& key )
         {
             scoped_lock al( m_lock );
             return base_class::find( key ) != base_class::end();
@@ -49,7 +53,7 @@ namespace map2 {
         }
 
         template <typename T, typename Func>
-        std::pair<bool, bool> ensure( const T& key, Func func )
+        std::pair<bool, bool> update( const T& key, Func func, bool /*bAllowInsert*/ = true )
         {
             scoped_lock al( m_lock );
             std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type(key, Value() ));
@@ -83,6 +87,11 @@ namespace map2 {
         }
 
         std::ostream& dump( std::ostream& stm ) { return stm; }
+
+
+        // for testing
+        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
     };
 }   // namespace map
 

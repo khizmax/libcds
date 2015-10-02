@@ -4,34 +4,42 @@
 #define CDSUNIT_MAP_TYPE_CUCKOO_H
 
 #include "map2/map_type.h"
-
 #include <cds/container/cuckoo_map.h>
-
 #include "print_cuckoo_stat.h"
 
 namespace map2 {
 
     template <typename K, typename V, typename Traits>
-    class CuckooMap :
-        public cc::CuckooMap< K, V, Traits >
+    class CuckooMap: public cc::CuckooMap< K, V, Traits >
     {
     public:
-        typedef cc::CuckooMap< K, V, Traits > cuckoo_base_class;
+        typedef cc::CuckooMap< K, V, Traits > base_class;
 
     public:
-        CuckooMap( size_t nCapacity, size_t nLoadFactor )
-            : cuckoo_base_class( nCapacity / (nLoadFactor * 16), (unsigned int) 4 )
+        template <typename Config>
+        CuckooMap( Config const& cfg )
+            : base_class( 
+                cfg.c_nCuckooInitialSize,
+                static_cast<unsigned int>( cfg.c_nCuckooProbesetSize ),
+                static_cast<unsigned int>( cfg.c_nCuckooProbesetThreshold )
+            )
         {}
 
         template <typename Q, typename Pred>
         bool erase_with( Q const& key, Pred /*pred*/ )
         {
-            return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
+            return base_class::erase_with( key, typename std::conditional< base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
         }
+
+        // for testing
+        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
     };
 
+    struct tag_CuckooMap;
+
     template <typename Key, typename Value>
-    struct map_type< cds::intrusive::cuckoo::implementation_tag, Key, Value >: public map_type_base< Key, Value >
+    struct map_type< tag_CuckooMap, Key, Value >: public map_type_base< Key, Value >
     {
         typedef map_type_base< Key, Value > base_class;
         typedef typename base_class::compare    compare;
@@ -160,7 +168,7 @@ namespace map2 {
     static inline void print_stat( CuckooMap< K, V, Traits > const& m )
     {
         typedef CuckooMap< K, V, Traits > map_type;
-        print_stat( static_cast<typename map_type::cuckoo_base_class const&>(m) );
+        print_stat( static_cast<typename map_type::base_class const&>(m) );
     }
 
 }   // namespace map2

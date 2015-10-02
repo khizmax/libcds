@@ -267,13 +267,13 @@ namespace cds { namespace container {
         /// Enqueues data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
         template <typename... Args>
         bool emplace( Args&&... args )
-        {   
+        {
 #if (CDS_COMPILER == CDS_COMPILER_GCC) && (CDS_COMPILER_VERSION < 40900)
-            //work around unsupported feature in g++ 4.8 for forwarding parameter packs to lambda. 
-            return enqueue_with ( std::bind([]( value_type& dest,Args ... args ){ new ( &dest ) value_type( std::forward<Args>(args)... );}, std::placeholders::_1 ,args...));        
-#else            
-            return enqueue_with( [&args ...]( value_type& dest ){ new ( &dest ) value_type( std::forward<Args>(args)... ); });            
-#endif        
+            //work around unsupported feature in g++ 4.8 for forwarding parameter packs to lambda.
+            return enqueue_with ( std::bind([]( value_type& dest,Args ... args ){ new ( &dest ) value_type( std::forward<Args>(args)... );}, std::placeholders::_1 ,args...));
+#else
+            return enqueue_with( [&args ...]( value_type& dest ){ new ( &dest ) value_type( std::forward<Args>(args)... ); });
+#endif
         }
 
         /// Dequeues a value using a functor

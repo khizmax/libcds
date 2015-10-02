@@ -549,7 +549,6 @@ namespace cds { namespace intrusive {
 
         //@cond
         static unsigned int const c_nMinHeight = 5;
-        typedef cds::intrusive::skip_list::implementation_tag implementation_tag;
         //@endcond
 
     protected:
@@ -1528,10 +1527,9 @@ namespace cds { namespace intrusive {
 
             return bRet;
         }
-
         //@cond
-        // Deprecated, use update().
         template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
             return update( val, func, true );
@@ -1833,32 +1831,47 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds \p key
-        /** @anchor cds_intrusive_SkipListSet_rcu_find_val
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             The function applies RCU lock internally.
         */
         template <typename Q>
-        bool find( Q const& key )
+        bool contains( Q const& key )
         {
             return do_find_with( key, key_comparator(), [](value_type& , Q const& ) {} );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds \p key with comparing functor \p pred
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_SkipListSet_rcu_find_val "find(Q const&)"
-            but \p pred is used for key compare.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return do_find_with( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds \p key and return the item found
         /** \anchor cds_intrusive_SkipListSet_rcu_get

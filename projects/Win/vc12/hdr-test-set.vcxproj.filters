@@ -22,6 +22,9 @@
     <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset.h">
       <Filter>intrusive\multilevel_hashset</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset.h">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="intrusive">
@@ -50,6 +53,9 @@
     </Filter>
     <Filter Include="intrusive\multilevel_hashset">
       <UniqueIdentifier>{a878aed0-83c9-4ca7-95bb-74f10aad8bde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="container\multilevel_hashset">
+      <UniqueIdentifier>{5268f225-1474-413e-a1cb-5f00b8df5e1e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -321,6 +327,27 @@
       <Filter>intrusive\multilevel_hashset</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_dhp.cpp">
+      <Filter>intrusive\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_hp.cpp">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_dhp.cpp">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_gpb.cpp">
+      <Filter>intrusive\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_gpi.cpp">
+      <Filter>intrusive\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_gpt.cpp">
+      <Filter>intrusive\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_shb.cpp">
+      <Filter>intrusive\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_sht.cpp">
       <Filter>intrusive\multilevel_hashset</Filter>
     </ClCompile>
   </ItemGroup>

@@ -579,7 +579,7 @@ namespace cds { namespace gc {
             \par Parameters
             - \p nLiberateThreshold - \p scan() threshold. When count of retired pointers reaches this value,
                 the \p scan() member function would be called for freeing retired pointers.
-            - \p nInitialThreadGuardCount - initial count of guard allocated for each thread. 
+            - \p nInitialThreadGuardCount - initial count of guard allocated for each thread.
                 When a thread is initialized the GC allocates local guard pool for the thread from common guard pool.
                 By perforce the local thread's guard pool is grown automatically from common pool.
                 When the thread terminated its guard pool is backed to common GC's pool.

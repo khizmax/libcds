@@ -7,21 +7,28 @@
 
 namespace set2 {
 
-#   define TEST_SET(IMPL, C, X)          void C::X() { test<set_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_SET_EXTRACT(IMPL, C, X)  void C::X() { test_extract<set_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_SET_NOLF(IMPL, C, X)     void C::X() { test_nolf<set_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_SET_NOLF_EXTRACT(IMPL, C, X) void C::X() { test_nolf_extract<set_type<IMPL, key_type, value_type>::X >(); }
+#define TEST_CASE(TAG, X)  void X();
 
     class Set_InsDel_string: public CppUnitMini::TestCase
     {
-        static size_t  c_nMapSize;            // set size
-        static size_t  c_nInsertThreadCount;  // count of insertion thread
-        static size_t  c_nDeleteThreadCount;  // count of deletion thread
-        static size_t  c_nThreadPassCount;    // pass count for each thread
-        static size_t  c_nMaxLoadFactor;      // maximum load factor
-        static bool    c_bPrintGCState;
+    public:
+        size_t c_nSetSize = 1000000;            // set size
+        size_t c_nInsertThreadCount = 4;  // count of insertion thread
+        size_t c_nDeleteThreadCount = 4;  // count of deletion thread
+        size_t c_nThreadPassCount = 4;    // pass count for each thread
+        size_t c_nMaxLoadFactor = 8;      // maximum load factor
+        bool   c_bPrintGCState = true;
 
-        typedef CppUnitMini::TestCase Base;
+        size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooSet
+        size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
+        size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
+
+        size_t c_nMultiLevelSet_HeadBits = 10;
+        size_t c_nMultiLevelSet_ArrayBits = 4;
+
+        size_t c_nLoadFactor = 2;
+
+    private:
         typedef std::string key_type;
         typedef size_t      value_type;
 
@@ -68,10 +75,12 @@ namespace set2 {
 
                 const std::vector<std::string>& arrString = *getTest().m_parrString;
                 size_t nArrSize = arrString.size();
+                size_t const nSetSize = getTest().c_nSetSize;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = 0; nItem < nSetSize; ++nItem ) {
                             if ( rSet.insert( keyval_type(arrString[nItem % nArrSize], nItem * 8) ) )
                                 ++m_nInsertSuccess;
                             else
@@ -80,8 +89,8 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = c_nMapSize; nItem > 0; --nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = nSetSize; nItem > 0; --nItem ) {
                             if ( rSet.insert( keyval_type( arrString[nItem % nArrSize], nItem * 8) ) )
                                 ++m_nInsertSuccess;
                             else
@@ -132,10 +141,12 @@ namespace set2 {
 
                 const std::vector<std::string>& arrString = *getTest().m_parrString;
                 size_t nArrSize = arrString.size();
+                size_t const nSetSize = getTest().c_nSetSize;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = 0; nItem < nSetSize; ++nItem ) {
                             if ( rSet.erase( arrString[nItem % nArrSize] ) )
                                 ++m_nDeleteSuccess;
                             else
@@ -144,8 +155,8 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = c_nMapSize; nItem > 0; --nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = nSetSize; nItem > 0; --nItem ) {
                             if ( rSet.erase( arrString[nItem % nArrSize] ) )
                                 ++m_nDeleteSuccess;
                             else
@@ -198,10 +209,12 @@ namespace set2 {
 
                 const std::vector<std::string>& arrString = *getTest().m_parrString;
                 size_t nArrSize = arrString.size();
+                size_t const nSetSize = getTest().c_nSetSize;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = 0; nItem < nSetSize; ++nItem ) {
                             gp = rSet.extract( arrString[nItem % nArrSize]);
                             if (  gp )
                                 ++m_nDeleteSuccess;
@@ -212,8 +225,8 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = c_nMapSize; nItem > 0; --nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = nSetSize; nItem > 0; --nItem ) {
                             gp = rSet.extract( arrString[nItem % nArrSize]);
                             if ( gp )
                                 ++m_nDeleteSuccess;
@@ -268,10 +281,12 @@ namespace set2 {
 
                 const std::vector<std::string>& arrString = *getTest().m_parrString;
                 size_t nArrSize = arrString.size();
+                size_t const nSetSize = getTest().c_nSetSize;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = 0; nItem < nSetSize; ++nItem ) {
                             if ( Set::c_bExtractLockExternal ) {
                                 {
                                     typename Set::rcu_lock l;
@@ -294,8 +309,8 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
-                        for ( size_t nItem = c_nMapSize; nItem > 0; --nItem ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
+                        for ( size_t nItem = nSetSize; nItem > 0; --nItem ) {
                             if ( Set::c_bExtractLockExternal ) {
                                 {
                                     typename Set::rcu_lock l;
@@ -321,27 +336,8 @@ namespace set2 {
         };
 
     protected:
-
         template <class Set>
-        void do_test( size_t nLoadFactor )
-        {
-            CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-
-            Set  testSet( c_nMapSize, nLoadFactor );
-            do_test_with( testSet );
-        }
-
-        template <class Set>
-        void do_test_extract( size_t nLoadFactor )
-        {
-            CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-
-            Set  testSet( c_nMapSize, nLoadFactor );
-            do_test_extract_with( testSet );
-        }
-
-        template <class Set>
-        void do_test_with( Set& testSet )
+        void do_test( Set& testSet )
         {
             typedef Inserter<Set>       InserterThread;
             typedef Deleter<Set>        DeleterThread;
@@ -391,7 +387,7 @@ namespace set2 {
         }
 
         template <class Set>
-        void do_test_extract_with( Set& testSet )
+        void do_test_extract( Set& testSet )
         {
             typedef Inserter<Set>       InserterThread;
             typedef Deleter<Set>        DeleterThread;
@@ -456,87 +452,62 @@ namespace set2 {
         }
 
         template <class Set>
-        void test()
+        void run_test()
         {
             m_parrString = &CppUnitMini::TestCase::getTestStrings();
 
             CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
                 << " delete=" << c_nDeleteThreadCount
                 << " pass count=" << c_nThreadPassCount
-                << " set size=" << c_nMapSize
+                << " set size=" << c_nSetSize
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                do_test<Set>( nLoadFactor );
+            if ( Set::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG("  LoadFactor = " << c_nLoadFactor );
+                    Set s( *this );
+                    do_test( s );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Set s( *this );
+                do_test( s );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
         }
 
         template <class Set>
-        void test_extract()
+        void run_test_extract()
         {
             m_parrString = &CppUnitMini::TestCase::getTestStrings();
 
             CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
                 << " delete=" << c_nDeleteThreadCount
                 << " pass count=" << c_nThreadPassCount
-                << " set size=" << c_nMapSize
+                << " set size=" << c_nSetSize
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                do_test_extract<Set>( nLoadFactor );
+            if ( Set::c_bLoadFactorDepended ) {
+                for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG("  LoadFactor = " << c_nLoadFactor );
+                    Set s( *this );
+                    do_test_extract( s );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Set s( *this );
+                do_test_extract( s );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
-        }
-
-        template <class Set>
-        void test_nolf()
-        {
-            m_parrString = &CppUnitMini::TestCase::getTestStrings();
-
-            CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
-                << " delete=" << c_nDeleteThreadCount
-                << " pass count=" << c_nThreadPassCount
-                << " set size=" << c_nMapSize
-                );
-
-            Set s;
-            do_test_with( s );
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
-        template <class Set>
-        void test_nolf_extract()
-        {
-            m_parrString = &CppUnitMini::TestCase::getTestStrings();
-
-            CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
-                << " delete=" << c_nDeleteThreadCount
-                << " pass count=" << c_nThreadPassCount
-                << " set size=" << c_nMapSize
-                );
-
-            Set s;
-            do_test_extract_with( s );
-            if ( c_bPrintGCState )
-                print_gc_state();
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
-
-        void run_MichaelSet(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_SkipListSet(const char *in_name, bool invert = false);
-        void run_CuckooSet(const char *in_name, bool invert = false);
-        void run_StripedSet(const char *in_name, bool invert = false);
-        void run_RefinableSet(const char *in_name, bool invert = false);
-        void run_EllenBinTreeSet(const char *in_name, bool invert = false);
-        void run_StdSet(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
 
 #   include "set2/set_defs.h"
         CDSUNIT_DECLARE_MichaelSet
@@ -546,6 +517,19 @@ namespace set2 {
         CDSUNIT_DECLARE_CuckooSet
         CDSUNIT_DECLARE_SkipListSet
         CDSUNIT_DECLARE_EllenBinTreeSet
+        CDSUNIT_DECLARE_MultiLevelHashSet
         CDSUNIT_DECLARE_StdSet
+
+        CPPUNIT_TEST_SUITE_(Set_InsDel_string, "Map_InsDel_func")
+            CDSUNIT_TEST_MichaelSet
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SkipListSet
+            CDSUNIT_TEST_MultiLevelHashSet
+            CDSUNIT_TEST_EllenBinTreeSet
+            CDSUNIT_TEST_StripedSet
+            CDSUNIT_TEST_RefinableSet
+            CDSUNIT_TEST_CuckooSet
+            CDSUNIT_TEST_StdSet
+        CPPUNIT_TEST_SUITE_END();
     };
 } // namespace set2

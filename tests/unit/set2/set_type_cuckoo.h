@@ -17,8 +17,13 @@ namespace set2 {
         typedef cc::CuckooSet< V, Traits > cuckoo_base_class;
 
     public:
-        CuckooSet( size_t nCapacity, size_t nLoadFactor )
-            : cuckoo_base_class( nCapacity / (nLoadFactor * 16), (unsigned int)4 )
+        template <typename Config>
+        CuckooSet( Config const& cfg )
+            : cuckoo_base_class( 
+                cfg.c_nCuckooInitialSize,
+                static_cast<unsigned int>( cfg.c_nCuckooProbesetSize ),
+                static_cast<unsigned int>( cfg.c_nCuckooProbesetThreshold )
+            )
         {}
 
         template <typename Q, typename Pred>
@@ -26,11 +31,17 @@ namespace set2 {
         {
             return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
         }
+
+        // for testing
+        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+
     };
 
+    struct tag_CuckooSet;
 
     template <typename Key, typename Val>
-    struct set_type< cds::intrusive::cuckoo::implementation_tag, Key, Val >: public set_type_base< Key, Val >
+    struct set_type< tag_CuckooSet, Key, Val >: public set_type_base< Key, Val >
     {
         typedef set_type_base< Key, Val > base_class;
         typedef typename base_class::key_val key_val;

@@ -195,10 +195,6 @@ namespace cds { namespace container {
 
         typedef typename bucket_type::guarded_ptr  guarded_ptr; ///< Guarded pointer
 
-        //@cond
-        typedef cds::container::michael_set::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         item_counter    m_ItemCounter; ///< Item counter
         hash            m_HashFunctor; ///< Hash functor
@@ -368,42 +364,49 @@ namespace cds { namespace container {
             return bRet;
         }
 
-        /// Ensures that the item exists in the set
+        /// Updates the element
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the \p val key not found in the set, then the new item created from \p val
-            is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func signature is:
+            If the item \p val not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
+            Otherwise, the functor \p func is called with item found.
+            The functor signature is:
             \code
-                struct my_functor {
-                    void operator()( bool bNew, value_type& item, const Q& val );
+                struct functor {
+                    void operator()( bool bNew, value_type& item, Q const& val );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p key passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %update() function
 
             The functor may change non-key fields of the \p item.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
 
-            @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            @ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
-            */
+        */
         template <typename Q, typename Func>
-        std::pair<bool, bool> ensure( const Q& val, Func func )
+        std::pair<bool, bool> update( const Q& val, Func func, bool bAllowUpdate = true )
         {
-            std::pair<bool, bool> bRet = bucket( val ).ensure( val, func );
-            if ( bRet.first && bRet.second )
+            std::pair<bool, bool> bRet = bucket( val ).update( val, func, bAllowUpdate );
+            if ( bRet.second )
                 ++m_ItemCounter;
             return bRet;
         }
+        //@cond
+        template <typename Q, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( const Q& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Inserts data of type \p value_type constructed from \p args
         /**
@@ -610,32 +613,47 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_nonintrusive_MichaelSet_find_val
+        /// Checks whether the set contains \p key
+        /** 
             The function searches the item with key equal to \p key
-            and returns \p true if it is found, and \p false otherwise.
+            and returns \p true if the key is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \ref value_type.
+            should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
+        bool contains( Q const& key )
+        {
+            return bucket( key ).contains( key );
+        }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("use contains()")
         bool find( Q const& key )
         {
-            return bucket( key ).find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelSet_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
+        bool contains( Q const& key, Less pred )
+        {
+            return bucket( key ).contains( key, pred );
+        }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("use contains()")
         bool find_with( Q const& key, Less pred )
         {
-            return bucket( key ).find_with( key, pred );
+            return contains( key, pred );
         }
+        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelHashSet_hp_get

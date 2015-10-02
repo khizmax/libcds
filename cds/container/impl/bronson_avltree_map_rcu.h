@@ -295,13 +295,6 @@ namespace cds { namespace container {
             return std::make_pair( result != 0, (result & update_flags::result_inserted) != 0 );
         }
 
-        //@cond
-        template <typename K>
-        std::pair<bool, bool> ensure( K const& key, mapped_type pVal )
-        {
-            return update( key, pVal, true );
-        }
-
         //@endcond
 
         /// Delete \p key from the map
@@ -621,7 +614,7 @@ namespace cds { namespace container {
             );
         }
 
-        /// Find the key \p key
+        /// Checks whether the map contains \p key
         /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
@@ -629,20 +622,19 @@ namespace cds { namespace container {
             The function applies RCU lock internally.
         */
         template <typename K>
-        bool find( K const& key )
+        bool contains( K const& key )
         {
             return do_find( key, key_comparator(), []( node_type * ) -> bool { return true; });
         }
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \p find(K const&)
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the map.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename K, typename Less>
-        bool find_with( K const& key, Less pred )
+        bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return do_find( key, cds::opt::details::make_comparator_from_less<Less>(), []( node_type * ) -> bool { return true; } );
@@ -1487,8 +1479,8 @@ namespace cds { namespace container {
             if ( !pNode->is_valued( memory_model::memory_order_acquire ) )
                 return update_flags::failed;
 
-            if ( child( pNode, left_child, memory_model::memory_order_acquire ) == nullptr 
-              || child( pNode, right_child, memory_model::memory_order_acquire ) == nullptr ) 
+            if ( child( pNode, left_child, memory_model::memory_order_acquire ) == nullptr
+              || child( pNode, right_child, memory_model::memory_order_acquire ) == nullptr )
             {
                 // pNode can be replaced with its child
 
@@ -1682,7 +1674,7 @@ namespace cds { namespace container {
                 }
             }
 
-            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode 
+            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode
                  || child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
 
             int h = height( pNode, memory_model::memory_order_acquire );
@@ -1708,7 +1700,7 @@ namespace cds { namespace container {
         node_type * rebalance_to_right_locked( node_type * pParent, node_type * pNode, node_type * pLeft, int hR )
         {
             assert( parent( pNode, memory_model::memory_order_relaxed ) == pParent );
-            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode 
+            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode
                  || child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
 
             // pParent and pNode is locked yet
@@ -1762,7 +1754,7 @@ namespace cds { namespace container {
         node_type * rebalance_to_left_locked( node_type * pParent, node_type * pNode, node_type * pRight, int hL )
         {
             assert( parent( pNode, memory_model::memory_order_relaxed ) == pParent );
-            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode 
+            assert( child( pParent, left_child, memory_model::memory_order_relaxed ) == pNode
                  || child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
 
             // pParent and pNode is locked yet

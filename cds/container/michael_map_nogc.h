@@ -46,10 +46,6 @@ namespace cds { namespace container {
         /// Bucket table allocator
         typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
 
-        //@cond
-        typedef cds::container::michael_map::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename bucket_type::iterator       bucket_iterator;
@@ -395,68 +391,91 @@ namespace cds { namespace container {
             return end();
         }
 
-        /// Ensures that the key \p key exists in the map
+        /// Updates the item
         /**
-            The operation inserts new item if the key \p key is not found in the map.
-            Otherwise, the function returns an iterator that points to item found.
+            If \p key is not in the map and \p bAllowInsert is \p true, the function inserts a new item.
+            Otherwise, the function returns an iterator pointing to the item found.
 
-            Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
-            already is in the list.
+            Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
+            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()), 
+            \p second is true if new item has been added or \p false if the item
+            already is in the map.
 
             @warning For \ref cds_nonintrusive_MichaelKVList_nogc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_nogc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename K>
-        std::pair<iterator, bool> ensure( const K& key )
+        std::pair<iterator, bool> update( const K& key, bool bAllowInsert = true )
         {
             bucket_type& refBucket = bucket( key );
-            std::pair<bucket_iterator, bool> ret = refBucket.ensure( key );
+            std::pair<bucket_iterator, bool> ret = refBucket.update( key, bAllowInsert );
 
             if ( ret.second  )
                 ++m_ItemCounter;
-
+            else if ( ret.first == refBucket.end() )
+                return std::make_pair( end(), false );
             return std::make_pair( iterator( ret.first, &refBucket, m_Buckets + bucket_count() ), ret.second );
         }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<iterator, bool> ensure( K const& key )
+        {
+            return update( key, true );
+        }
+        //@endcond
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_MichaelMap_nogc_find
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise
+            and returns an iterator pointed to item found and \ref end() otherwise
         */
         template <typename K>
-        iterator find( const K& key )
+        iterator contains( K const& key )
         {
             bucket_type& refBucket = bucket( key );
-            bucket_iterator it = refBucket.find( key );
+            bucket_iterator it = refBucket.contains( key );
 
             if ( it != refBucket.end() )
                 return iterator( it, &refBucket, m_Buckets + bucket_count() );
 
             return end();
         }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
+        iterator find( K const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelMap_nogc_find "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the map.
+            \p pred must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        iterator find_with( const K& key, Less pred )
+        iterator contains( K const& key, Less pred )
         {
             bucket_type& refBucket = bucket( key );
-            bucket_iterator it = refBucket.find_with( key, pred );
+            bucket_iterator it = refBucket.contains( key, pred );
 
             if ( it != refBucket.end() )
                 return iterator( it, &refBucket, m_Buckets + bucket_count() );
 
             return end();
         }
+        //@cond
+        template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        iterator find_with( K const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Clears the map (not atomic)
         void clear()

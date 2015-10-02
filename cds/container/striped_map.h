@@ -68,19 +68,19 @@ namespace cds { namespace container {
         among \p Options template arguments.
 
         The \p Options are:
-            - \p opt::mutex_policy - concurrent access policy.
-                Available policies: \p intrusive::striped_set::striping, \p intrusive::striped_set::refinable.
-                Default is %striped_set::striping.
-            - \p opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector<opt::none> </tt>
+            - \p cds::opt::mutex_policy - concurrent access policy.
+                Available policies: \p striped_set::striping, \p striped_set::refinable.
+                Default is \p %striped_set::striping.
+            - \p cds::opt::hash - hash functor. Default option value see <tt>opt::v::hash_selector<opt::none> </tt>
                 which selects default hash functor for your compiler.
-            - \p opt::compare - key comparison functor. No default functor is provided.
+            - \p cds::opt::compare - key comparison functor. No default functor is provided.
                 If the option is not specified, the \p %opt::less is used.
-            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            - \p opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
+            - \p cds::opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p cds::opt::item_counter - item counter type. Default is \p atomicity::item_counter since some operation on the counter is performed
                 without locks. Note that item counting is an essential part of the map algorithm, so dummy counter
                 like as \p atomicity::empty_item_counter is not suitable.
-            - \p opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
-            - \p opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash map.
+            - \p cds::opt::allocator - the allocator type using for memory allocation of bucket table and lock array. Default is \ref CDS_DEFAULT_ALLOCATOR.
+            - \p cds::opt::resizing_policy - the resizing policy that is a functor that decides when to resize the hash map.
                 Default option value depends on bucket container type:
                     for sequential containers like \p std::list, \p std::vector the resizing policy is <tt>striped_set::load_factor_resizing<4> </tt>;
                     for other type of containers like \p std::map, \p std::unordered_map the resizing policy is \p striped_set::no_resizing.
@@ -90,7 +90,7 @@ namespace cds { namespace container {
                 significantly improve performance.
                 For other, non-sequential types of \p Container (like a \p std::map)
                 the resizing policy is not so important.
-            - \p opt::copy_policy - the copy policy which is used to copy items from the old map to the new one when resizing.
+            - \p cds::opt::copy_policy - the copy policy which is used to copy items from the old map to the new one when resizing.
                 The policy can be optionally used in adapted bucket container for performance reasons of resizing.
                 The detail of copy algorithm depends on type of bucket container and explains below.
 
@@ -491,9 +491,6 @@ template <class Container, typename... Options>
         typedef typename base_class::allocator_type     allocator_type  ; ///< allocator type specified in options.
         typedef typename base_class::mutex_policy       mutex_policy    ; ///< Mutex policy
 
-        //@cond
-        typedef cds::container::striped_set::implementation_tag implementation_tag;
-        //@endcond
     protected:
         //@cond
         typedef typename base_class::scoped_cell_lock   scoped_cell_lock;
@@ -639,37 +636,29 @@ template <class Container, typename... Options>
             return bOk;
         }
 
-        /// Ensures that the \p key exists in the map
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \p key_type should be
-            constructible from type \p K).
+            If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+
+            The functor signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
-
-            The functor may change any fields of the \p item.second that is \p mapped_type.
+            - \p item - item of the map
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
-            already is in the list.
+            already is in the map.
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
+        std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             std::pair<bool, bool> result;
             bool bResize;
@@ -679,13 +668,20 @@ template <class Container, typename... Options>
                 scoped_cell_lock sl( base_class::m_MutexPolicy, nHash );
                 pBucket = base_class::bucket( nHash );
 
-                result = pBucket->ensure( key, func );
+                result = pBucket->update( key, func, bAllowInsert );
                 bResize = result.first && result.second && base_class::m_ResizingPolicy( ++base_class::m_ItemCounter, *this, *pBucket );
             }
 
             if ( bResize )
                 base_class::resize();
             return result;
+        }
+        //@cond
+        template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update() instead")
+        std::pair<bool, bool> ensure( K const& key, Func func )
+        {
+            return update( key, func, true );
         }
 
         /// Delete \p key from the map
@@ -799,36 +795,51 @@ template <class Container, typename... Options>
                 [&f]( value_type& pair, K const& ) mutable { f(pair); } );
         }
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_StripedMap_find_val
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
         */
         template <typename K>
+        bool contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("use contains()")
         bool find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Find the key \p val using \p pred predicate
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_StripedMap_find_val "find(K const&)"
-            but \p pred is used for key comparing
-            \p Less has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the set.
 
             @note This function is enabled if the compiler supports C++11
             default template arguments for function template <b>and</b> the underlying container
-            supports \p %find_with feature.
+            supports \p %contains() feature.
         */
         template <typename K, typename Less
             ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_find_with >::type >
-        bool find_with( K const& key, Less pred )
+        bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >() );
+            return base_class::contains( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >() );
         }
+        //@cond
+        template <typename K, typename Less
+            ,typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_find_with >::type >
+        CDS_DEPRECATED("use contains()")
+        bool find_with( K const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Clears the map
         void clear()

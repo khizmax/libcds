@@ -48,7 +48,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_multilevelhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_std.cpp" />
@@ -58,7 +58,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_multilevelhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_std.cpp" />
@@ -68,7 +68,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_refinable.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_multilevelhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_std.cpp" />

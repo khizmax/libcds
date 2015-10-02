@@ -605,7 +605,7 @@ namespace cds { namespace gc {
         /// Terminates GC singleton
         /**
             The destructor destroys %HP global object. After calling of this function you may \b NOT
-            use CDS data structures based on \p %cds::gc::HP. 
+            use CDS data structures based on \p %cds::gc::HP.
             Usually, %HP object is destroyed at the end of your \p main().
         */
         ~HP()

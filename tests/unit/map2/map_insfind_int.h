@@ -8,19 +8,26 @@
 
 namespace map2 {
 
-#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_EXTRACT(IMPL, C, X)  TEST_MAP(IMPL, C, X)
-#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) TEST_MAP_NOLF(IMPL, C, X)
+#define TEST_CASE(TAG, X)  void X();
 
     class Map_InsFind_int: public CppUnitMini::TestCase
     {
-        static size_t  c_nMapSize;       // map size
-        static size_t  c_nThreadCount;   // count of insertion thread
-        static size_t  c_nMaxLoadFactor; // maximum load factor
-        static bool    c_bPrintGCState;
+    public:
+        size_t c_nThreadCount = 8;     // thread count
+        size_t c_nMapSize = 5000;      // map size (count of searching item)
+        size_t c_nMaxLoadFactor = 8;   // maximum load factor
+        bool   c_bPrintGCState = true;
 
-        typedef CppUnitMini::TestCase Base;
+        size_t c_nCuckooInitialSize = 1024;// initial size for CuckooMap
+        size_t c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
+
+        size_t c_nMultiLevelMap_HeadBits = 10;
+        size_t c_nMultiLevelMap_ArrayBits = 4;
+
+        size_t  c_nLoadFactor = 2;  // current load factor
+
+    private:
         typedef size_t  key_type;
         typedef size_t  value_type;
 
@@ -48,10 +55,11 @@ namespace map2 {
 
             void make_array()
             {
-                size_t const nSize = c_nMapSize / c_nThreadCount + 1;
+                size_t const nThreadCount = getTest().c_nThreadCount;
+                size_t const nSize = getTest().c_nMapSize / nThreadCount + 1;
                 m_arrVal.resize( nSize );
                 size_t nItem = m_nThreadNo;
-                for ( size_t i = 0; i < nSize; nItem += c_nThreadCount, ++i )
+                for ( size_t i = 0; i < nSize; nItem += nThreadCount, ++i )
                     m_arrVal[i] = nItem;
                 shuffle( m_arrVal.begin(), m_arrVal.end() );
             }
@@ -101,7 +109,7 @@ namespace map2 {
                         ++m_nInsertFailed;
 
                     for ( size_t k = 0; k <= i; ++k ) {
-                        if ( check_result( rMap.find( m_arrVal[k] ), rMap ))
+                        if ( check_result( rMap.contains( m_arrVal[k] ), rMap ))
                             ++m_nFindSuccess;
                         else
                             ++m_nFindFail;
@@ -152,7 +160,7 @@ namespace map2 {
         }
 
         template <class Map>
-        void test()
+        void run_test()
         {
             static_assert( (!std::is_same< typename Map::item_counter, cds::atomicity::empty_item_counter >::value),
                 "Empty item counter is not suitable for this test");
@@ -161,44 +169,24 @@ namespace map2 {
                 << " map size=" << c_nMapSize
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                Map  testMap( c_nMapSize, nLoadFactor );
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+                    Map  testMap( *this );
+                    do_test( testMap );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Map testMap( *this );
                 do_test( testMap );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
         }
 
-        template <class Map>
-        void test_nolf()
-        {
-            static_assert( (!std::is_same< typename Map::item_counter, cds::atomicity::empty_item_counter >::value),
-                "Empty item counter is not suitable for this test");
-
-            CPPUNIT_MSG( "Thread count: " << c_nThreadCount
-                << " map size=" << c_nMapSize
-                );
-
-            Map testMap;
-            do_test( testMap );
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
         void setUpParams( const CppUnitMini::TestCfg& cfg );
-
-        void run_MichaelMap(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_StripedMap(const char *in_name, bool invert = false);
-        void run_RefinableMap(const char *in_name, bool invert = false);
-        void run_CuckooMap(const char *in_name, bool invert = false);
-        void run_SkipListMap(const char *in_name, bool invert = false);
-        void run_EllenBinTreeMap(const char *in_name, bool invert = false);
-        void run_BronsonAVLTreeMap(const char *in_name, bool invert = false);
-        void run_StdMap(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
 
 #   include "map2/map_defs.h"
         CDSUNIT_DECLARE_MichaelMap
@@ -209,9 +197,28 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap_nogc
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
+        CDSUNIT_DECLARE_MultiLevelHashMap
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_StdMap
+        CDSUNIT_DECLARE_StdMap_NoLock
+
+        CPPUNIT_TEST_SUITE(Map_InsFind_int)
+            CDSUNIT_TEST_MichaelMap
+            CDSUNIT_TEST_MichaelMap_nogc
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SplitList_nogc
+            CDSUNIT_TEST_SkipListMap
+            CDSUNIT_TEST_SkipListMap_nogc
+            CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_MultiLevelHashMap
+            CDSUNIT_TEST_CuckooMap
+            CDSUNIT_TEST_StripedMap
+            CDSUNIT_TEST_RefinableMap
+            CDSUNIT_TEST_StdMap
+            CDSUNIT_TEST_StdMap_NoLock
+        CPPUNIT_TEST_SUITE_END();
     };
 } // namespace map2

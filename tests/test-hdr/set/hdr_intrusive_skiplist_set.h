@@ -97,7 +97,7 @@ namespace set {
             nPrevKey = 0;
             for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                 CPPUNIT_ASSERT( (*it).nKey * 2 == it->nVal );
-                CPPUNIT_ASSERT( s.find( it->nKey ));
+                CPPUNIT_ASSERT( s.contains( it->nKey ));
                 it->nVal = (*it).nKey;
                 ++nCount;
                 if ( it != s.begin() ) {
@@ -122,7 +122,7 @@ namespace set {
 
             for ( size_t i = 0; i < sizeof(v)/sizeof(v[0]); ++i ) {
                 CPPUNIT_ASSERT( v[i].nKey == v[i].nVal );
-                CPPUNIT_ASSERT( s.find_with( v[i].nKey, less() ));
+                CPPUNIT_ASSERT( s.contains( v[i].nKey, less() ));
             }
 
             s.clear();
@@ -363,13 +363,13 @@ namespace set {
             CPPUNIT_ASSERT( check_size( s, 0 ));
 
             // insert/find test
-            CPPUNIT_ASSERT( s.find( v1.key() ) == nullptr );
+            CPPUNIT_ASSERT( s.contains( v1.key() ) == nullptr );
             CPPUNIT_ASSERT( s.insert( v1 ));
-            CPPUNIT_ASSERT( s.find( v1.key() ) == &v1 );
+            CPPUNIT_ASSERT( s.contains( v1.key() ) == &v1 );
             CPPUNIT_ASSERT( check_size( s, 1 ));
             CPPUNIT_ASSERT( !s.empty() );
 
-            CPPUNIT_ASSERT( s.find_with( v2.key(), less() ) == nullptr );
+            CPPUNIT_ASSERT( s.contains( v2.key(), less() ) == nullptr );
             CPPUNIT_ASSERT( s.insert( v2 ));
             CPPUNIT_ASSERT( v2.nFindCount == 0 );
             CPPUNIT_ASSERT( s.find_with( key = v2.key(), less(), find_functor() ));
@@ -380,7 +380,7 @@ namespace set {
 
             {
                 find_functor    ff;
-                CPPUNIT_ASSERT( s.find( v3 ) == nullptr );
+                CPPUNIT_ASSERT( s.contains( v3 ) == nullptr );
                 CPPUNIT_ASSERT( s.insert( v3 ));
                 CPPUNIT_ASSERT( v3.nFindCount == 0 );
                 CPPUNIT_ASSERT( s.find( v3, std::ref(ff) ));
@@ -396,70 +396,68 @@ namespace set {
             CPPUNIT_ASSERT( check_size( s, 0 ));
             //CPPUNIT_MSG( PrintStat()(s, "Insert test") );
 
-            ensure_functor f;
+            update_functor f;
             std::pair<bool, bool> ret = s.update( v1, f, true );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( ret.second );
-            CPPUNIT_ASSERT( v1.nEnsureNewCount == 1 );
-            CPPUNIT_ASSERT( v1.nEnsureCount == 0 );
+            CPPUNIT_ASSERT( v1.nUpdateNewCount == 1 );
+            CPPUNIT_ASSERT( v1.nUpdateCount == 0 );
             CPPUNIT_ASSERT( check_size( s, 1 ));
 
             ret = s.update( v2, f, false );
             CPPUNIT_ASSERT( !ret.first );
             CPPUNIT_ASSERT( !ret.second );
-            CPPUNIT_ASSERT( v2.nEnsureNewCount == 0 );
-            CPPUNIT_ASSERT( v2.nEnsureCount == 0 );
+            CPPUNIT_ASSERT( v2.nUpdateNewCount == 0 );
+            CPPUNIT_ASSERT( v2.nUpdateCount == 0 );
             CPPUNIT_ASSERT( check_size( s, 1 ));
 
             ret = s.update( v2, f );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( ret.second );
-            CPPUNIT_ASSERT( v2.nEnsureNewCount == 1 );
-            CPPUNIT_ASSERT( v2.nEnsureCount == 0 );
+            CPPUNIT_ASSERT( v2.nUpdateNewCount == 1 );
+            CPPUNIT_ASSERT( v2.nUpdateCount == 0 );
             CPPUNIT_ASSERT( check_size( s, 2 ));
 
             ret = s.update( v3, f, true );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( ret.second );
-            CPPUNIT_ASSERT( v3.nEnsureNewCount == 1 );
-            CPPUNIT_ASSERT( v3.nEnsureCount == 0 );
+            CPPUNIT_ASSERT( v3.nUpdateNewCount == 1 );
+            CPPUNIT_ASSERT( v3.nUpdateCount == 0 );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
-            CPPUNIT_ASSERT( s.find( v1 ) == &v1 );
-            CPPUNIT_ASSERT( s.find_with( v2, base_class::less<value_type>() ) == &v2 );
-            CPPUNIT_ASSERT( s.find( v3 ) == &v3 );
+            CPPUNIT_ASSERT( s.contains( v1 ) == &v1 );
+            CPPUNIT_ASSERT( s.contains( v2, base_class::less<value_type>() ) == &v2 );
+            CPPUNIT_ASSERT( s.contains( v3 ) == &v3 );
 
             ret = s.update( v1, f, true );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( !ret.second );
-            CPPUNIT_ASSERT( v1.nEnsureNewCount == 1 );
-            CPPUNIT_ASSERT( v1.nEnsureCount == 1 );
+            CPPUNIT_ASSERT( v1.nUpdateNewCount == 1 );
+            CPPUNIT_ASSERT( v1.nUpdateCount == 1 );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
             ret = s.update( v2, f, false );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( !ret.second );
-            CPPUNIT_ASSERT( v2.nEnsureNewCount == 1 );
-            CPPUNIT_ASSERT( v2.nEnsureCount == 1 );
+            CPPUNIT_ASSERT( v2.nUpdateNewCount == 1 );
+            CPPUNIT_ASSERT( v2.nUpdateCount == 1 );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
             ret = s.update( v3, f );
             CPPUNIT_ASSERT( ret.first );
             CPPUNIT_ASSERT( !ret.second );
-            CPPUNIT_ASSERT( v3.nEnsureNewCount == 1 );
-            CPPUNIT_ASSERT( v3.nEnsureCount == 1 );
+            CPPUNIT_ASSERT( v3.nUpdateNewCount == 1 );
+            CPPUNIT_ASSERT( v3.nUpdateCount == 1 );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
-            CPPUNIT_ASSERT( s.find( v1 ) == &v1 );
-            CPPUNIT_ASSERT( s.find( v2 ) == &v2 );
-            CPPUNIT_ASSERT( s.find( v3 ) == &v3 );
+            CPPUNIT_ASSERT( s.contains( v1 ) == &v1 );
+            CPPUNIT_ASSERT( s.contains( v2 ) == &v2 );
+            CPPUNIT_ASSERT( s.contains( v3 ) == &v3 );
 
             CPPUNIT_ASSERT( !s.empty() );
             s.clear();
             CPPUNIT_ASSERT( s.empty() );
             CPPUNIT_ASSERT( check_size( s, 0 ));
-
-            //CPPUNIT_MSG( PrintStat()(s, "Ensure test") );
 
             // get_min test
             CPPUNIT_CHECK( s.get_min() == nullptr );

@@ -345,9 +345,6 @@ namespace cds { namespace intrusive {
         typedef typename traits::back_off      back_off;   ///< Back-off strategy
         typedef typename traits::stat          stat;       ///< internal statistics type
 
-        //@cond
-        typedef cds::intrusive::skip_list::implementation_tag implementation_tag;
-        //@endcond
     public:
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
@@ -1156,10 +1153,9 @@ namespace cds { namespace intrusive {
                 return std::make_pair( true, true );
             }
         }
-
         //@cond
-        // Deprecated, use update() instead
         template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
             return update( val, func, true );
@@ -1465,34 +1461,45 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds \p key
-        /** \anchor cds_intrusive_SkipListSet_hp_find_val
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
-
-            Note the compare functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool find( Q const& key )
+        bool contains( Q const& key )
         {
             return find_with_( key, key_comparator(), [](value_type& , Q const& ) {} );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds \p key with comparing functor \p pred
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_SkipListSet_hp_find_val "find(Q const&)"
-            but \p pred is used for comparing the keys.
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
-            in any order.
-            \p pred must imply the same element order as the comparator used for building the set.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds \p key and return the item found
         /** \anchor cds_intrusive_SkipListSet_hp_get

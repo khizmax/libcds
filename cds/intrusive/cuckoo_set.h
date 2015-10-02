@@ -19,10 +19,6 @@ namespace cds { namespace intrusive {
 
     /// CuckooSet-related definitions
     namespace cuckoo {
-        //@cond
-        struct implementation_tag;
-        //@endcond
-
         /// Option to define probeset type
         /**
             The option specifies probeset type for the CuckooSet.
@@ -79,14 +75,17 @@ namespace cds { namespace intrusive {
         //@endcond
 
         //@cond
-        // Probeset type declarations.
+        /// List probeset type
         struct list;
+        //@endcond
+
+        /// Vector probeset type
         template <unsigned int Capacity>
         struct vector
         {
+            /// Vector capacity
             static unsigned int const c_nCapacity = Capacity;
         };
-        //@endcond
 
         /// CuckooSet node
         /**
@@ -172,7 +171,6 @@ namespace cds { namespace intrusive {
             {
                 m_pNext = nullptr;
             }
-
         };
 
         template <unsigned int VectorSize, typename Tag>
@@ -986,11 +984,11 @@ namespace cds { namespace intrusive {
             counter_type    m_nInsertRelocateCount  ;   ///< Count of \p relocate function call from \p insert
             counter_type    m_nInsertRelocateFault  ;   ///< Count of failed \p relocate function call from \p insert
 
-            counter_type    m_nEnsureExistCount     ;   ///< Count of call \p ensure function for existing node
-            counter_type    m_nEnsureSuccessCount   ;   ///< Count of successfull \p insert function call for new node
-            counter_type    m_nEnsureResizeCount    ;   ///< Count of \p resize function call from \p ensure
-            counter_type    m_nEnsureRelocateCount  ;   ///< Count of \p relocate function call from \p ensure
-            counter_type    m_nEnsureRelocateFault  ;   ///< Count of failed \p relocate function call from \p ensure
+            counter_type    m_nUpdateExistCount     ;   ///< Count of call \p update() function for existing node
+            counter_type    m_nUpdateSuccessCount   ;   ///< Count of successfull \p insert function call for new node
+            counter_type    m_nUpdateResizeCount    ;   ///< Count of \p resize function call from \p update()
+            counter_type    m_nUpdateRelocateCount  ;   ///< Count of \p relocate function call from \p update()
+            counter_type    m_nUpdateRelocateFault  ;   ///< Count of failed \p relocate function call from \p update()
 
             counter_type    m_nUnlinkSuccess        ;   ///< Count of success \p unlink function call
             counter_type    m_nUnlinkFailed         ;   ///< Count of failed \p unlink function call
@@ -1026,11 +1024,11 @@ namespace cds { namespace intrusive {
             void    onInsertRelocate()      { ++m_nInsertRelocateCount; }
             void    onInsertRelocateFault() { ++m_nInsertRelocateFault; }
 
-            void    onEnsureExist()         { ++m_nEnsureExistCount; }
-            void    onEnsureSuccess()       { ++m_nEnsureSuccessCount; }
-            void    onEnsureResize()        { ++m_nEnsureResizeCount; }
-            void    onEnsureRelocate()      { ++m_nEnsureRelocateCount; }
-            void    onEnsureRelocateFault() { ++m_nEnsureRelocateFault; }
+            void    onUpdateExist()         { ++m_nUpdateExistCount; }
+            void    onUpdateSuccess()       { ++m_nUpdateSuccessCount; }
+            void    onUpdateResize()        { ++m_nUpdateResizeCount; }
+            void    onUpdateRelocate()      { ++m_nUpdateRelocateCount; }
+            void    onUpdateRelocateFault() { ++m_nUpdateRelocateFault; }
 
             void    onUnlinkSuccess()       { ++m_nUnlinkSuccess; }
             void    onUnlinkFailed()        { ++m_nUnlinkFailed; }
@@ -1067,11 +1065,11 @@ namespace cds { namespace intrusive {
             void    onInsertRelocate()      const {}
             void    onInsertRelocateFault() const {}
 
-            void    onEnsureExist()         const {}
-            void    onEnsureSuccess()       const {}
-            void    onEnsureResize()        const {}
-            void    onEnsureRelocate()      const {}
-            void    onEnsureRelocateFault() const {}
+            void    onUpdateExist()         const {}
+            void    onUpdateSuccess()       const {}
+            void    onUpdateResize()        const {}
+            void    onUpdateRelocate()      const {}
+            void    onUpdateRelocateFault() const {}
 
             void    onUnlinkSuccess()       const {}
             void    onUnlinkFailed()        const {}
@@ -1891,9 +1889,6 @@ namespace cds { namespace intrusive {
         /// node disposer
         typedef typename traits::disposer      disposer;
 
-        //@cond
-        typedef cds::intrusive::cuckoo::implementation_tag implementation_tag;
-        //@endcond
     protected:
         //@cond
         typedef typename node_type::probeset_class  probeset_class;
@@ -1984,7 +1979,6 @@ namespace cds { namespace intrusive {
         static void store_hash( node_type * pNode, size_t * pHashes )
         {
             cuckoo::details::hash_ops< node_type, c_nNodeHashArraySize >::store( pNode, pHashes );
-            //memcpy( pNode->m_arrHash, pHashes, sizeof(size_t) * c_nArity );
         }
 
         static bool equal_hash( node_type& node, unsigned int nTable, size_t nHash )
@@ -2015,7 +2009,7 @@ namespace cds { namespace intrusive {
             free_bucket_tables( m_BucketTable, m_nBucketMask + 1 );
         }
 
-        static unsigned int const c_nUndefTable = (unsigned int) -1;
+        static CDS_CONSTEXPR unsigned int const c_nUndefTable = (unsigned int) -1;
         template <typename Q, typename Predicate >
         unsigned int contains( position * arrPos, size_t * arrHash, Q const& val, Predicate pred )
         {
@@ -2436,31 +2430,33 @@ namespace cds { namespace intrusive {
             return true;
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val not found in the set, then \p val is inserted into the set.
+            If the item \p val is not found in the set, then \p val is inserted into the set
+            iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor signature is:
+            The functor \p func signature is:
             \code
                 void func( bool bNew, value_type& item, value_type& val );
             \endcode
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p %update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
-            refers to the same thing.
+            refer to the same thing.
 
             The functor may change non-key fields of the \p item.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            i.e. the node has been inserted or updated,
             \p second is \p true if new item has been added or \p false if the item with \p key
-            already is in the set.
+            already exists.
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
         {
             hash_array arrHash;
             position arrPos[ c_nArity ];
@@ -2477,12 +2473,15 @@ namespace cds { namespace intrusive {
                     unsigned int nTable = contains( arrPos, arrHash, val, key_predicate() );
                     if ( nTable != c_nUndefTable ) {
                         func( false, *node_traits::to_value_ptr( *arrPos[nTable].itFound ), val );
-                        m_Stat.onEnsureExist();
+                        m_Stat.onUpdateExist();
                         return std::make_pair( true, false );
                     }
 
-                    node_type * pNode = node_traits::to_node_ptr( val );
-                    store_hash( pNode, arrHash );
+                    if ( !bAllowInsert )
+                        return std::make_pair( false, false );
+
+                    //node_type * pNode = node_traits::to_node_ptr( val );
+                    //store_hash( pNode, arrHash );
 
                     for ( unsigned int i = 0; i < c_nArity; ++i ) {
                         bucket_entry& refBucket = bucket( i, arrHash[i] );
@@ -2490,7 +2489,7 @@ namespace cds { namespace intrusive {
                             refBucket.insert_after( arrPos[i].itPrev, pNode );
                             func( true, val, val );
                             ++m_ItemCounter;
-                            m_Stat.onEnsureSuccess();
+                            m_Stat.onUpdateSuccess();
                             return std::make_pair( true, true );
                         }
                     }
@@ -2509,21 +2508,29 @@ namespace cds { namespace intrusive {
                     }
                 }
 
-                m_Stat.onEnsureResize();
+                m_Stat.onUpdateResize();
                 resize();
             }
 
         do_relocate:
-            m_Stat.onEnsureRelocate();
+            m_Stat.onUpdateRelocate();
             if ( !relocate( nGoalTable, arrHash )) {
-                m_Stat.onEnsureRelocateFault();
-                m_Stat.onEnsureResize();
+                m_Stat.onUpdateRelocateFault();
+                m_Stat.onUpdateResize();
                 resize();
             }
 
-            m_Stat.onEnsureSuccess();
+            m_Stat.onUpdateSuccess();
             return std::make_pair( true, true );
         }
+        //@cond
+        template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Unlink the item \p val from the set
         /**
@@ -2649,6 +2656,13 @@ namespace cds { namespace intrusive {
         {
             return find_( val, key_predicate(), f );
         }
+        //@cond
+        template <typename Q, typename Func>
+        bool find( Q const& val, Func f )
+        {
+            return find_( val, key_predicate(), f );
+        }
+        //@endcond
 
         /// Find the key \p val using \p pred predicate for comparing
         /**
@@ -2664,74 +2678,54 @@ namespace cds { namespace intrusive {
             CDS_UNUSED( pred );
             return find_( val, typename predicate_wrapper<Predicate>::type(), f );
         }
-
-        /// Find the key \p val
-        /** \anchor cds_intrusive_CuckooSet_find_cfunc
-            The function searches the item with key equal to \p val and calls the functor \p f for item found.
-            The interface of \p Func functor is:
-            \code
-            struct functor {
-                void operator()( value_type& item, Q const& val );
-            };
-            \endcode
-            where \p item is the item found, \p val is the <tt>find</tt> function argument.
-
-            The functor may change non-key fields of \p item.
-
-            The \p val argument is non-const since it can be used as \p f functor destination i.e., the functor
-            may modify both arguments.
-
-            The function returns \p true if \p val is found, \p false otherwise.
-        */
-        template <typename Q, typename Func>
-        bool find( Q const& val, Func f )
-        {
-            return find_( val, key_predicate(), f );
-        }
-
-        /// Find the key \p val using \p pred predicate for comparing
-        /**
-            The function is an analog of \ref cds_intrusive_CuckooSet_find_cfunc "find(Q const&, Func)"
-            but \p pred is used for key comparison.
-            If you use ordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::less.
-            If you use unordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::equal_to.
-            \p pred must imply the same element order as the comparator used for building the set.
-        */
+        //@cond
         template <typename Q, typename Predicate, typename Func>
         bool find_with( Q const& val, Predicate pred, Func f )
         {
             CDS_UNUSED( pred );
             return find_( val, typename predicate_wrapper<Predicate>::type(), f );
         }
+        //@endcond
 
-        /// Find the key \p val
-        /** \anchor cds_intrusive_CuckooSet_find_val
-            The function searches the item with key equal to \p val
+        /// Checks whether the set contains \p key
+        /**
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        bool find( Q const& val )
+        bool contains( Q const& key )
         {
-            return find( val, [](value_type&, Q const& ) {} );
+            return find( key, [](value_type&, Q const& ) {} );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Find the key \p val using \p pred predicate for comparing
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_CuckooSet_find_val "find(Q const&)"
-            but \p pred is used for key comparison.
-            If you use ordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::less.
-            If you use unordered cuckoo set, then \p Predicate should have the interface and semantics like \p std::equal_to.
-            \p pred must imply the same element order as the comparator used for building the set.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Predicate>
-        bool find_with( Q const& val, Predicate pred )
+        bool contains( Q const& key, Predicate pred )
         {
             CDS_UNUSED( pred );
-            return find_with( val, typename predicate_wrapper<Predicate>::type(), [](value_type& , Q const& ) {} );
+            return find_with( key, typename predicate_wrapper<Predicate>::type(), [](value_type& , Q const& ) {} );
         }
+        //@cond
+        template <typename Q, typename Predicate>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Predicate pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Clears the set
         /**

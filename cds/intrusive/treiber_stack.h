@@ -745,7 +745,7 @@ namespace cds { namespace intrusive {
             }
 
             while ( true ) {
-                node_type * t = guard.protect( m_Top, 
+                node_type * t = guard.protect( m_Top,
                     []( node_type * p ) -> value_type * {
                         return node_traits::to_value_ptr( p );
                     });

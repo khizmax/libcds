@@ -185,11 +185,11 @@ namespace cds { namespace opt {
 
 
         template <typename T, typename Traits, bool Forced = true >
-        using make_comparator = make_comparator_from< T, Traits, 
-            typename std::conditional< 
-                Forced, 
-                make_comparator_from_less< std::less<T>>, 
-                opt::none 
+        using make_comparator = make_comparator_from< T, Traits,
+            typename std::conditional<
+                Forced,
+                make_comparator_from_less< std::less<T>>,
+                opt::none
             >::type >;
 
         template <typename T, typename... Options>
@@ -297,7 +297,7 @@ namespace cds { namespace opt {
                             opt::none >::type,
                         make_equal_to_from_less< less > >::type,
                     make_equal_to_from_compare< compare > >::type,
-                equal_to 
+                equal_to
             >::type type;
         };
     }

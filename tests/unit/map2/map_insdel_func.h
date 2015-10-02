@@ -10,26 +10,34 @@
 
 namespace map2 {
 
-#   define TEST_MAP(IMPL, C, X)          void C::X() { test<map_type<IMPL, key_type, value_type>::X >()    ; }
-#   define TEST_MAP_EXTRACT(IMPL, C, X)  TEST_MAP(IMPL, C, X)
-#   define TEST_MAP_NOLF(IMPL, C, X)     void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >()    ; }
-#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) TEST_MAP_NOLF(IMPL, C, X)
+#define TEST_CASE(TAG, X)  void X();
 
     class Map_InsDel_func: public CppUnitMini::TestCase
     {
-        static size_t  c_nMapSize;            // map size
-        static size_t  c_nInsertThreadCount;  // count of insertion thread
-        static size_t  c_nDeleteThreadCount;  // count of deletion thread
-        static size_t  c_nEnsureThreadCount;  // count of ensure thread
-        static size_t  c_nThreadPassCount;    // pass count for each thread
-        static size_t  c_nMaxLoadFactor;      // maximum load factor
-        static bool    c_bPrintGCState;
+    public:
+        size_t c_nMapSize = 1000000;      // map size
+        size_t c_nInsertThreadCount = 4;  // count of insertion thread
+        size_t c_nDeleteThreadCount = 4;  // count of deletion thread
+        size_t c_nUpdateThreadCount = 4;  // count of updating thread
+        size_t c_nThreadPassCount   = 4;  // pass count for each thread
+        size_t c_nMaxLoadFactor = 8;      // maximum load factor
+        bool   c_bPrintGCState = true;
 
+        size_t c_nCuckooInitialSize = 1024;// initial size for CuckooMap
+        size_t c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
+
+        size_t c_nMultiLevelMap_HeadBits = 10;
+        size_t c_nMultiLevelMap_ArrayBits = 4;
+
+        size_t  c_nLoadFactor;  // current load factor
+
+    private:
         typedef size_t  key_type;
         struct value_type {
             size_t      nKey;
             size_t      nData;
-            atomics::atomic<size_t> nEnsureCall;
+            atomics::atomic<size_t> nUpdateCall;
             atomics::atomic<bool>   bInitialized;
             cds::OS::ThreadId          threadId     ;   // insert thread id
 
@@ -39,7 +47,7 @@ namespace map2 {
             value_type()
                 : nKey(0)
                 , nData(0)
-                , nEnsureCall(0)
+                , nUpdateCall(0)
                 , bInitialized( false )
                 , threadId( cds::OS::get_current_thread_id() )
             {}
@@ -47,7 +55,7 @@ namespace map2 {
             value_type( value_type const& s )
                 : nKey(s.nKey)
                 , nData(s.nData)
-                , nEnsureCall(s.nEnsureCall.load(atomics::memory_order_relaxed))
+                , nUpdateCall(s.nUpdateCall.load(atomics::memory_order_relaxed))
                 , bInitialized( s.bInitialized.load(atomics::memory_order_relaxed) )
                 , threadId( cds::OS::get_current_thread_id() )
             {}
@@ -57,7 +65,7 @@ namespace map2 {
             {
                 nKey = v.nKey;
                 nData = v.nData;
-                nEnsureCall.store( v.nEnsureCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
+                nUpdateCall.store( v.nUpdateCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
                 bInitialized.store(v.bInitialized.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed);
 
                 return *this;
@@ -138,9 +146,10 @@ namespace map2 {
                 // func is passed by reference
                 insert_functor  func;
                 key_array const& arr = getTest().m_arrValues;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
                             if ( rMap.insert_with( *it, std::ref(func) ) )
                                 ++m_nInsertSuccess;
@@ -150,7 +159,7 @@ namespace map2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
                             if ( rMap.insert_with( *it, std::ref(func) ) )
                                 ++m_nInsertSuccess;
@@ -165,20 +174,20 @@ namespace map2 {
         };
 
         template <class Map>
-        class Ensurer: public CppUnitMini::TestThread
+        class Updater: public CppUnitMini::TestThread
         {
             Map&     m_Map;
 
-            virtual Ensurer *    clone()
+            virtual Updater *    clone()
             {
-                return new Ensurer( *this );
+                return new Updater( *this );
             }
 
-            struct ensure_functor {
+            struct update_functor {
                 size_t  nCreated;
                 size_t  nModified;
 
-                ensure_functor()
+                update_functor()
                     : nCreated(0)
                     , nModified(0)
                 {}
@@ -194,7 +203,7 @@ namespace map2 {
                         v.bInitialized.store( true, atomics::memory_order_relaxed);
                     }
                     else {
-                        v.nEnsureCall.fetch_add( 1, atomics::memory_order_relaxed );
+                        v.nUpdateCall.fetch_add( 1, atomics::memory_order_relaxed );
                         ++nModified;
                     }
                 }
@@ -204,23 +213,31 @@ namespace map2 {
                 {
                     operator()( bNew, val.first, val.second );
                 }
+
+                // For MultiLevelHashMap
+                template <typename Val>
+                void operator()( Val& cur, Val * old )
+                {
+                    operator()( old != nullptr, cur.first, cur.second );
+                }
+
             private:
-                ensure_functor(const ensure_functor& );
+                update_functor(const update_functor& ) = delete;
             };
 
         public:
-            size_t  m_nEnsureFailed;
-            size_t  m_nEnsureCreated;
-            size_t  m_nEnsureExisted;
+            size_t  m_nUpdateFailed;
+            size_t  m_nUpdateCreated;
+            size_t  m_nUpdateExisted;
             size_t  m_nFunctorCreated;
             size_t  m_nFunctorModified;
 
         public:
-            Ensurer( CppUnitMini::ThreadPool& pool, Map& rMap )
+            Updater( CppUnitMini::ThreadPool& pool, Map& rMap )
                 : CppUnitMini::TestThread( pool )
                 , m_Map( rMap )
             {}
-            Ensurer( Ensurer& src )
+            Updater( Updater& src )
                 : CppUnitMini::TestThread( src )
                 , m_Map( src.m_Map )
             {}
@@ -237,42 +254,43 @@ namespace map2 {
             {
                 Map& rMap = m_Map;
 
-                m_nEnsureCreated =
-                    m_nEnsureExisted =
-                    m_nEnsureFailed = 0;
+                m_nUpdateCreated =
+                    m_nUpdateExisted =
+                    m_nUpdateFailed = 0;
 
-                ensure_functor func;
+                update_functor func;
 
                 key_array const& arr = getTest().m_arrValues;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
                         //for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
-                            std::pair<bool, bool> ret = rMap.ensure( *it, std::ref( func ) );
+                            std::pair<bool, bool> ret = rMap.update( *it, std::ref( func ) );
                             if ( ret.first  ) {
                                 if ( ret.second )
-                                    ++m_nEnsureCreated;
+                                    ++m_nUpdateCreated;
                                 else
-                                    ++m_nEnsureExisted;
+                                    ++m_nUpdateExisted;
                             }
                             else
-                                ++m_nEnsureFailed;
+                                ++m_nUpdateFailed;
                         }
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                            std::pair<bool, bool> ret = rMap.ensure( *it, std::ref( func ) );
+                            std::pair<bool, bool> ret = rMap.update( *it, std::ref( func ) );
                             if ( ret.first  ) {
                                 if ( ret.second )
-                                    ++m_nEnsureCreated;
+                                    ++m_nUpdateCreated;
                                 else
-                                    ++m_nEnsureExisted;
+                                    ++m_nUpdateExisted;
                             }
                             else
-                                ++m_nEnsureFailed;
+                                ++m_nUpdateFailed;
                         }
                     }
                 }
@@ -370,9 +388,10 @@ namespace map2 {
 
                 erase_functor   func;
                 key_array const& arr = getTest().m_arrValues;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
                             func.m_cnt.nKeyExpected = *it;
                             if ( rMap.erase( *it, std::ref(func) ))
@@ -383,7 +402,7 @@ namespace map2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
                             func.m_cnt.nKeyExpected = *it;
                             if ( rMap.erase( *it, std::ref(func) ))
@@ -406,7 +425,7 @@ namespace map2 {
         {
             typedef Inserter<Map>       InserterThread;
             typedef Deleter<Map>        DeleterThread;
-            typedef Ensurer<Map>        EnsurerThread;
+            typedef Updater<Map>        UpdaterThread;
             cds::OS::Timer    timer;
 
             m_arrValues.clear();
@@ -418,7 +437,7 @@ namespace map2 {
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new InserterThread( pool, testMap ), c_nInsertThreadCount );
             pool.add( new DeleterThread( pool, testMap ), c_nDeleteThreadCount );
-            pool.add( new EnsurerThread( pool, testMap ), c_nEnsureThreadCount );
+            pool.add( new UpdaterThread( pool, testMap ), c_nUpdateThreadCount );
             pool.run();
             CPPUNIT_MSG( "   Duration=" << pool.avgDuration() );
 
@@ -428,9 +447,9 @@ namespace map2 {
             size_t nDeleteFailed = 0;
             size_t nDelValueSuccess = 0;
             size_t nDelValueFailed = 0;
-            size_t nEnsureFailed = 0;
-            size_t nEnsureCreated = 0;
-            size_t nEnsureModified = 0;
+            size_t nUpdateFailed = 0;
+            size_t nUpdateCreated = 0;
+            size_t nUpdateModified = 0;
             size_t nEnsFuncCreated = 0;
             size_t nEnsFuncModified = 0;
             size_t nTestFunctorRef = 0;
@@ -451,10 +470,10 @@ namespace map2 {
                         nDelValueFailed += p->m_nValueFailed;
                     }
                     else {
-                        EnsurerThread * pEns = static_cast<EnsurerThread *>( *it );
-                        nEnsureCreated += pEns->m_nEnsureCreated;
-                        nEnsureModified += pEns->m_nEnsureExisted;
-                        nEnsureFailed += pEns->m_nEnsureFailed;
+                        UpdaterThread * pEns = static_cast<UpdaterThread *>( *it );
+                        nUpdateCreated += pEns->m_nUpdateCreated;
+                        nUpdateModified += pEns->m_nUpdateExisted;
+                        nUpdateFailed += pEns->m_nUpdateFailed;
                         nEnsFuncCreated += pEns->m_nFunctorCreated;
                         nEnsFuncModified += pEns->m_nFunctorModified;
                     }
@@ -465,18 +484,18 @@ namespace map2 {
                 << " Del succ=" << nDeleteSuccess << "\n"
                 << "          : Ins fail=" << nInsertFailed
                 << " Del fail=" << nDeleteFailed << "\n"
-                << "          : Ensure succ=" << (nEnsureCreated + nEnsureModified) << " fail=" << nEnsureFailed
-                << " create=" << nEnsureCreated << " modify=" << nEnsureModified << "\n"
+                << "          : Update succ=" << (nUpdateCreated + nUpdateModified) << " fail=" << nUpdateFailed
+                << " create=" << nUpdateCreated << " modify=" << nUpdateModified << "\n"
                 << "          Map size=" << testMap.size()
                 );
 
             CPPUNIT_CHECK_EX( nDelValueFailed == 0, "Functor del failed=" << nDelValueFailed );
             CPPUNIT_CHECK_EX( nDelValueSuccess == nDeleteSuccess,  "Delete success=" << nDeleteSuccess << " functor=" << nDelValueSuccess );
 
-            CPPUNIT_CHECK( nEnsureFailed == 0 );
+            CPPUNIT_CHECK( nUpdateFailed == 0 );
 
-            CPPUNIT_CHECK_EX( nEnsureCreated == nEnsFuncCreated, "Ensure created=" << nEnsureCreated << " functor=" << nEnsFuncCreated );
-            CPPUNIT_CHECK_EX( nEnsureModified == nEnsFuncModified, "Ensure modified=" << nEnsureModified << " functor=" << nEnsFuncModified );
+            CPPUNIT_CHECK_EX( nUpdateCreated == nEnsFuncCreated, "Update created=" << nUpdateCreated << " functor=" << nEnsFuncCreated );
+            CPPUNIT_CHECK_EX( nUpdateModified == nEnsFuncModified, "Update modified=" << nUpdateModified << " functor=" << nEnsFuncModified );
 
             // nTestFunctorRef is call count of insert functor
             CPPUNIT_CHECK_EX( nTestFunctorRef == nInsertSuccess, "nInsertSuccess=" << nInsertSuccess << " functor nTestFunctorRef=" << nTestFunctorRef );
@@ -497,63 +516,56 @@ namespace map2 {
         }
 
         template <class Map>
-        void test()
+        void run_test()
         {
             CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
                 << " delete=" << c_nDeleteThreadCount
-                << " ensure=" << c_nEnsureThreadCount
+                << " update=" << c_nUpdateThreadCount
                 << " pass count=" << c_nThreadPassCount
                 << " map size=" << c_nMapSize
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                Map  testMap( c_nMapSize, nLoadFactor );
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+                    Map  testMap( *this );
+                    do_test( testMap );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Map testMap( *this );
                 do_test( testMap );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
-
         }
 
-        template <class Map>
-        void test_nolf()
-        {
-            CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
-                << " delete=" << c_nDeleteThreadCount
-                << " ensure=" << c_nEnsureThreadCount
-                << " pass count=" << c_nThreadPassCount
-                << " map size=" << c_nMapSize
-                );
-
-            Map testMap;
-            do_test( testMap );
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
-        typedef CppUnitMini::TestCase Base;
         void setUpParams( const CppUnitMini::TestCfg& cfg );
 
-        void run_MichaelMap(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_StripedMap(const char *in_name, bool invert = false);
-        void run_RefinableMap(const char *in_name, bool invert = false);
-        void run_CuckooMap(const char *in_name, bool invert = false);
-        void run_SkipListMap(const char *in_name, bool invert = false);
-        void run_EllenBinTreeMap(const char *in_name, bool invert = false);
-        void run_BronsonAVLTreeMap(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
-
 #   include "map2/map_defs.h"
-    CDSUNIT_DECLARE_MichaelMap
-    CDSUNIT_DECLARE_SplitList
-    CDSUNIT_DECLARE_SkipListMap
-    CDSUNIT_DECLARE_EllenBinTreeMap
-    CDSUNIT_DECLARE_BronsonAVLTreeMap
-    CDSUNIT_DECLARE_StripedMap
-    CDSUNIT_DECLARE_RefinableMap
-    CDSUNIT_DECLARE_CuckooMap
+        CDSUNIT_DECLARE_MichaelMap
+        CDSUNIT_DECLARE_SplitList
+        CDSUNIT_DECLARE_SkipListMap
+        CDSUNIT_DECLARE_EllenBinTreeMap
+        CDSUNIT_DECLARE_BronsonAVLTreeMap
+        CDSUNIT_DECLARE_MultiLevelHashMap
+        CDSUNIT_DECLARE_StripedMap
+        CDSUNIT_DECLARE_RefinableMap
+        CDSUNIT_DECLARE_CuckooMap
+
+        CPPUNIT_TEST_SUITE(Map_InsDel_func)
+            CDSUNIT_TEST_MichaelMap
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SkipListMap
+            CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_MultiLevelHashMap
+            CDSUNIT_TEST_CuckooMap
+            CDSUNIT_TEST_StripedMap
+            CDSUNIT_TEST_RefinableMap
+        CPPUNIT_TEST_SUITE_END();
+
     };
 } // namespace map2

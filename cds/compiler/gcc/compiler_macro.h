@@ -4,57 +4,59 @@
 #define CDSLIB_COMPILER_GCC_COMPILER_MACRO_H
 
 // OS interface && OS name
-#if defined( __linux__ )
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_LINUX
-#   define CDS_OS__NAME         "linux"
-#   define CDS_OS__NICK         "linux"
-#elif defined( __sun__ )
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_SUN_SOLARIS
-#   define CDS_OS__NAME         "Sun Solaris"
-#   define CDS_OS__NICK         "sun"
-#elif defined( __hpux__ )
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_HPUX
-#   define CDS_OS__NAME         "HP-UX"
-#   define CDS_OS__NICK         "hpux"
-#elif defined( _AIX )
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_AIX
-#   define CDS_OS__NAME         "AIX"
-#   define CDS_OS__NICK         "aix"
-#elif defined( __FreeBSD__ )
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_FREE_BSD
-#   define CDS_OS__NAME         "FreeBSD"
-#   define CDS_OS__NICK         "freebsd"
-#elif defined( __OpenBSD__ )
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_OPEN_BSD
-#   define CDS_OS__NAME         "OpenBSD"
-#   define CDS_OS__NICK         "openbsd"
-#elif defined( __NetBSD__ )
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_NET_BSD
-#   define CDS_OS__NAME         "NetBSD"
-#   define CDS_OS__NICK         "netbsd"
-#elif defined(__MINGW32__) || defined( __MINGW64__)
-#   define CDS_OS_INTERFACE     CDS_OSI_WINDOWS
-#   define CDS_OS_TYPE          CDS_OS_MINGW
-#   define CDS_OS__NAME         "MinGW"
-#   define CDS_OS__NICK         "mingw"
-#elif defined(__MACH__)
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_OSX
-#   define CDS_OS__NAME         "OS X"
-#   define CDS_OS__NICK         "osx"
-#else
-#   define CDS_OS_INTERFACE     CDS_OSI_UNIX
-#   define CDS_OS_TYPE          CDS_OS_PTHREAD
-#   define CDS_OS__NAME         "pthread"
-#   define CDS_OS__NICK         "pthread"
-#endif
+#ifndef CDS_OS_TYPE
+#   if defined( __linux__ )
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_LINUX
+#       define CDS_OS__NAME         "linux"
+#       define CDS_OS__NICK         "linux"
+#   elif defined( __sun__ )
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_SUN_SOLARIS
+#       define CDS_OS__NAME         "Sun Solaris"
+#       define CDS_OS__NICK         "sun"
+#   elif defined( __hpux__ )
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_HPUX
+#       define CDS_OS__NAME         "HP-UX"
+#       define CDS_OS__NICK         "hpux"
+#   elif defined( _AIX )
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_AIX
+#       define CDS_OS__NAME         "AIX"
+#       define CDS_OS__NICK         "aix"
+#   elif defined( __FreeBSD__ )
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_FREE_BSD
+#       define CDS_OS__NAME         "FreeBSD"
+#       define CDS_OS__NICK         "freebsd"
+#   elif defined( __OpenBSD__ )
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_OPEN_BSD
+#       define CDS_OS__NAME         "OpenBSD"
+#       define CDS_OS__NICK         "openbsd"
+#   elif defined( __NetBSD__ )
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_NET_BSD
+#       define CDS_OS__NAME         "NetBSD"
+#       define CDS_OS__NICK         "netbsd"
+#   elif defined(__MINGW32__) || defined( __MINGW64__)
+#       define CDS_OS_INTERFACE     CDS_OSI_WINDOWS
+#       define CDS_OS_TYPE          CDS_OS_MINGW
+#       define CDS_OS__NAME         "MinGW"
+#       define CDS_OS__NICK         "mingw"
+#   elif defined(__MACH__)
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_OSX
+#       define CDS_OS__NAME         "OS X"
+#       define CDS_OS__NICK         "osx"
+#   else
+#       define CDS_OS_INTERFACE     CDS_OSI_UNIX
+#       define CDS_OS_TYPE          CDS_OS_PTHREAD
+#       define CDS_OS__NAME         "pthread"
+#       define CDS_OS__NICK         "pthread"
+#   endif
+#endif // #ifndef CDS_OS_TYPE
 
 // Processor architecture
 

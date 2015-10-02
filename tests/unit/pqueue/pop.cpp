@@ -209,7 +209,7 @@ namespace pqueue {
                     nTotalFailed += pThread->m_nPopFailed;
                 }
 
-                CPPUNIT_MSG( "   Total: popped=" << nTotalPopped << ", empty pop=" << nTotalFailed 
+                CPPUNIT_MSG( "   Total: popped=" << nTotalPopped << ", empty pop=" << nTotalFailed
                              << "\n  Errors: pop equal=" << nTotalErrorEq << ", priority violation=" << nTotalError
                              );
                 CPPUNIT_CHECK( nTotalPopped == nThreadItemCount * s_nThreadCount );

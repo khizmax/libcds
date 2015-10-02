@@ -44,12 +44,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tests\unit\map2\map_delodd.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_bronsonavltree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_cuckoo.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_ellentree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_skip.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_split.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_bronsonavltree.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_cuckoo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_ellentree.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_michael.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_skip.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_delodd_split.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\unit\map2\map_delodd.h" />

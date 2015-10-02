@@ -24,9 +24,6 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_michael.cpp">
       <Filter>map_insdel_item_int</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_refinable.cpp">
-      <Filter>map_insdel_item_int</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_skip.cpp">
       <Filter>map_insdel_item_int</Filter>
     </ClCompile>
@@ -51,9 +48,6 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_michael.cpp">
       <Filter>map_insdel_item_string</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_refinable.cpp">
-      <Filter>map_insdel_item_string</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_skip.cpp">
       <Filter>map_insdel_item_string</Filter>
     </ClCompile>
@@ -61,6 +55,12 @@
       <Filter>map_insdel_item_string</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_striped.cpp">
+      <Filter>map_insdel_item_string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_multilevelhashmap.cpp">
+      <Filter>map_insdel_item_int</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_multilevelhashmap.cpp">
       <Filter>map_insdel_item_string</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,26 +10,34 @@
 
 namespace set2 {
 
-#   define TEST_SET(IMPL, C, X)          void C::X() { test<set_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_SET_EXTRACT(IMPL, C, X)  TEST_SET(IMPL, C, X)
-#   define TEST_SET_NOLF(IMPL, C, X)     void C::X() { test_nolf<set_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_SET_NOLF_EXTRACT(IMPL, C, X) TEST_SET_NOLF(IMPL, C, X)
+#define TEST_CASE(TAG, X)  void X();
 
     class Set_InsDel_func: public CppUnitMini::TestCase
     {
-        static size_t  c_nMapSize           ;  // map size
-        static size_t  c_nInsertThreadCount ;  // count of insertion thread
-        static size_t  c_nDeleteThreadCount ;  // count of deletion thread
-        static size_t  c_nEnsureThreadCount ;  // count of ensure thread
-        static size_t  c_nThreadPassCount   ;  // pass count for each thread
-        static size_t  c_nMaxLoadFactor     ;  // maximum load factor
-        static bool    c_bPrintGCState;
+    public:
+        size_t  c_nSetSize = 1000000;      // set size
+        size_t  c_nInsertThreadCount = 4;  // count of insertion thread
+        size_t  c_nDeleteThreadCount = 4;  // count of deletion thread
+        size_t  c_nUpdateThreadCount = 4;  // count of ensure thread
+        size_t  c_nThreadPassCount = 4;    // pass count for each thread
+        size_t  c_nMaxLoadFactor = 8;      // maximum load factor
+        bool    c_bPrintGCState;
 
+        size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooSet
+        size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
+        size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
+
+        size_t c_nMultiLevelSet_HeadBits = 10;
+        size_t c_nMultiLevelSet_ArrayBits = 4;
+
+        size_t c_nLoadFactor = 2;
+
+    private:
         typedef size_t  key_type;
         struct value_type {
             size_t      nKey;
             size_t      nData;
-            atomics::atomic<size_t> nEnsureCall;
+            atomics::atomic<size_t> nUpdateCall;
             bool volatile   bInitialized;
             cds::OS::ThreadId          threadId     ;   // insert thread id
 
@@ -39,7 +47,7 @@ namespace set2 {
             value_type()
                 : nKey(0)
                 , nData(0)
-                , nEnsureCall(0)
+                , nUpdateCall(0)
                 , bInitialized( false )
                 , threadId( cds::OS::get_current_thread_id() )
             {}
@@ -47,7 +55,7 @@ namespace set2 {
             value_type( value_type const& s )
                 : nKey(s.nKey)
                 , nData(s.nData)
-                , nEnsureCall(s.nEnsureCall.load(atomics::memory_order_relaxed))
+                , nUpdateCall(s.nUpdateCall.load(atomics::memory_order_relaxed))
                 , bInitialized( s.bInitialized )
                 , threadId( cds::OS::get_current_thread_id() )
             {}
@@ -57,7 +65,7 @@ namespace set2 {
             {
                 nKey = v.nKey;
                 nData = v.nData;
-                nEnsureCall.store( v.nEnsureCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
+                nUpdateCall.store( v.nUpdateCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
                 bInitialized = v.bInitialized;
 
                 return *this;
@@ -134,12 +142,13 @@ namespace set2 {
 
                 size_t * pKeyFirst = getTest().m_pKeyFirst;
                 size_t * pKeyLast = getTest().m_pKeyLast;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 // func is passed by reference
                 insert_functor  func;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( size_t * p = pKeyFirst; p < pKeyLast; ++p ) {
                             if ( rSet.insert( *p, std::ref(func) ) )
                                 ++m_nInsertSuccess;
@@ -149,7 +158,7 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( size_t * p = pKeyLast - 1; p >= pKeyFirst; --p ) {
                             if ( rSet.insert( *p, std::ref(func) ) )
                                 ++m_nInsertSuccess;
@@ -164,21 +173,21 @@ namespace set2 {
         };
 
         template <class Set>
-        class Ensurer: public CppUnitMini::TestThread
+        class Updater: public CppUnitMini::TestThread
         {
             Set&     m_Set;
             typedef typename Set::value_type keyval_type;
 
-            virtual Ensurer *    clone()
+            virtual Updater *    clone()
             {
-                return new Ensurer( *this );
+                return new Updater( *this );
             }
 
-            struct ensure_functor {
+            struct update_functor {
                 size_t  nCreated;
                 size_t  nModified;
 
-                ensure_functor()
+                update_functor()
                     : nCreated(0)
                     , nModified(0)
                 {}
@@ -197,27 +206,33 @@ namespace set2 {
                         ++nCreated;
                     }
                     else {
-                        val.val.nEnsureCall.fetch_add( 1, atomics::memory_order_relaxed );
+                        val.val.nUpdateCall.fetch_add( 1, atomics::memory_order_relaxed );
                         ++nModified;
                     }
                 }
+
+                void operator()( keyval_type& cur, keyval_type * old )
+                {
+                    operator()( old == nullptr, cur, 0 );
+                }
+
             private:
-                ensure_functor(const ensure_functor& );
+                update_functor(const update_functor& );
             };
 
         public:
-            size_t  m_nEnsureFailed;
-            size_t  m_nEnsureCreated;
-            size_t  m_nEnsureExisted;
+            size_t  m_nUpdateFailed;
+            size_t  m_nUpdateCreated;
+            size_t  m_nUpdateExisted;
             size_t  m_nFunctorCreated;
             size_t  m_nFunctorModified;
 
         public:
-            Ensurer( CppUnitMini::ThreadPool& pool, Set& rSet )
+            Updater( CppUnitMini::ThreadPool& pool, Set& rSet )
                 : CppUnitMini::TestThread( pool )
                 , m_Set( rSet )
             {}
-            Ensurer( Ensurer& src )
+            Updater( Updater& src )
                 : CppUnitMini::TestThread( src )
                 , m_Set( src.m_Set )
             {}
@@ -234,42 +249,43 @@ namespace set2 {
             {
                 Set& rSet = m_Set;
 
-                m_nEnsureCreated =
-                    m_nEnsureExisted =
-                    m_nEnsureFailed = 0;
+                m_nUpdateCreated =
+                    m_nUpdateExisted =
+                    m_nUpdateFailed = 0;
 
                 size_t * pKeyFirst = getTest().m_pKeyFirst;
                 size_t * pKeyLast = getTest().m_pKeyLast;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
-                ensure_functor func;
+                update_functor func;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( size_t * p = pKeyFirst; p < pKeyLast; ++p ) {
-                            std::pair<bool, bool> ret = rSet.ensure( *p, std::ref( func ) );
+                            std::pair<bool, bool> ret = rSet.update( *p, std::ref( func ), true );
                             if ( ret.first  ) {
                                 if ( ret.second )
-                                    ++m_nEnsureCreated;
+                                    ++m_nUpdateCreated;
                                 else
-                                    ++m_nEnsureExisted;
+                                    ++m_nUpdateExisted;
                             }
                             else
-                                ++m_nEnsureFailed;
+                                ++m_nUpdateFailed;
                         }
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( size_t * p = pKeyLast - 1 ; p >= pKeyFirst; --p ) {
-                            std::pair<bool, bool> ret = rSet.ensure( *p, std::ref( func ) );
+                            std::pair<bool, bool> ret = rSet.update( *p, std::ref( func ), true );
                             if ( ret.first  ) {
                                 if ( ret.second )
-                                    ++m_nEnsureCreated;
+                                    ++m_nUpdateCreated;
                                 else
-                                    ++m_nEnsureExisted;
+                                    ++m_nUpdateExisted;
                             }
                             else
-                                ++m_nEnsureFailed;
+                                ++m_nUpdateFailed;
                         }
                     }
                 }
@@ -312,7 +328,7 @@ namespace set2 {
                     while ( true ) {
                         bool bBkoff = false;
                         {
-                            std::unique_lock< typename value_type::lock_type>    ac( item.val.m_access );
+                            std::unique_lock< typename value_type::lock_type> ac( item.val.m_access );
                             if ( item.val.bInitialized ) {
                                 if ( m_cnt.nKeyExpected == item.val.nKey && m_cnt.nKeyExpected * 8 == item.val.nData )
                                     ++m_cnt.nSuccessItem;
@@ -365,11 +381,12 @@ namespace set2 {
 
                 size_t * pKeyFirst = getTest().m_pKeyFirst;
                 size_t * pKeyLast = getTest().m_pKeyLast;
+                size_t const nPassCount = getTest().c_nThreadPassCount;
 
                 erase_functor   func;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( size_t * p = pKeyFirst; p < pKeyLast; ++p ) {
                             func.m_cnt.nKeyExpected = *p;
                             if ( rSet.erase( *p, std::ref(func) ))
@@ -380,7 +397,7 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t nPass = 0; nPass < c_nThreadPassCount; ++nPass ) {
+                    for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( size_t * p = pKeyLast - 1; p >= pKeyFirst; --p ) {
                             func.m_cnt.nKeyExpected = *p;
                             if ( rSet.erase( *p, std::ref(func) ))
@@ -397,26 +414,18 @@ namespace set2 {
         };
 
     protected:
-        template <class Set>
-        void do_test( size_t nLoadFactor )
-        {
-            CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-
-            Set  testSet( c_nMapSize, nLoadFactor );
-            do_test_with( testSet );
-        }
 
         template <class Set>
-        void do_test_with( Set& testSet )
+        void do_test( Set& testSet )
         {
             typedef Inserter<Set>       InserterThread;
             typedef Deleter<Set>        DeleterThread;
-            typedef Ensurer<Set>        EnsurerThread;
+            typedef Updater<Set>        UpdaterThread;
 
-            m_pKeyArr = new size_t[ c_nMapSize ];
+            m_pKeyArr = new size_t[ c_nSetSize ];
             m_pKeyFirst = m_pKeyArr;
-            m_pKeyLast = m_pKeyFirst + c_nMapSize;
-            for ( size_t i = 0; i < c_nMapSize; ++i )
+            m_pKeyLast = m_pKeyFirst + c_nSetSize;
+            for ( size_t i = 0; i < c_nSetSize; ++i )
                 m_pKeyArr[i] = i;
             shuffle( m_pKeyFirst, m_pKeyLast );
 
@@ -425,7 +434,7 @@ namespace set2 {
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new InserterThread( pool, testSet ), c_nInsertThreadCount );
             pool.add( new DeleterThread( pool, testSet ), c_nDeleteThreadCount );
-            pool.add( new EnsurerThread( pool, testSet ), c_nEnsureThreadCount );
+            pool.add( new UpdaterThread( pool, testSet ), c_nUpdateThreadCount );
             pool.run();
             CPPUNIT_MSG( "   Duration=" << pool.avgDuration() );
 
@@ -437,9 +446,9 @@ namespace set2 {
             size_t nDeleteFailed = 0;
             size_t nDelValueSuccess = 0;
             size_t nDelValueFailed = 0;
-            size_t nEnsureFailed = 0;
-            size_t nEnsureCreated = 0;
-            size_t nEnsureModified = 0;
+            size_t nUpdateFailed = 0;
+            size_t nUpdateCreated = 0;
+            size_t nUpdateModified = 0;
             size_t nEnsFuncCreated = 0;
             size_t nEnsFuncModified = 0;
             size_t nTestFunctorRef = 0;
@@ -460,10 +469,10 @@ namespace set2 {
                         nDelValueFailed += p->m_nValueFailed;
                     }
                     else {
-                        EnsurerThread * pEns = static_cast<EnsurerThread *>( *it );
-                        nEnsureCreated += pEns->m_nEnsureCreated;
-                        nEnsureModified += pEns->m_nEnsureExisted;
-                        nEnsureFailed += pEns->m_nEnsureFailed;
+                        UpdaterThread * pEns = static_cast<UpdaterThread *>( *it );
+                        nUpdateCreated += pEns->m_nUpdateCreated;
+                        nUpdateModified += pEns->m_nUpdateExisted;
+                        nUpdateFailed += pEns->m_nUpdateFailed;
                         nEnsFuncCreated += pEns->m_nFunctorCreated;
                         nEnsFuncModified += pEns->m_nFunctorModified;
                     }
@@ -475,18 +484,18 @@ namespace set2 {
                 << " Del succ=" << nDeleteSuccess << "\n"
                 << "          : Ins fail=" << nInsertFailed
                 << " Del fail=" << nDeleteFailed << "\n"
-                << "          : Ensure succ=" << (nEnsureCreated + nEnsureModified) << " fail=" << nEnsureFailed
-                << " create=" << nEnsureCreated << " modify=" << nEnsureModified << "\n"
+                << "          : Update succ=" << (nUpdateCreated + nUpdateModified) << " fail=" << nUpdateFailed
+                << " create=" << nUpdateCreated << " modify=" << nUpdateModified << "\n"
                 << "          Set size=" << testSet.size()
                 );
 
             CPPUNIT_CHECK_EX( nDelValueFailed == 0, "Functor del failed=" << nDelValueFailed );
             CPPUNIT_CHECK_EX( nDelValueSuccess == nDeleteSuccess,  "Delete success=" << nDeleteSuccess << " functor=" << nDelValueSuccess );
 
-            CPPUNIT_CHECK( nEnsureFailed == 0 );
+            CPPUNIT_CHECK( nUpdateFailed == 0 );
 
-            CPPUNIT_CHECK_EX( nEnsureCreated == nEnsFuncCreated, "Ensure created=" << nEnsureCreated << " functor=" << nEnsFuncCreated );
-            CPPUNIT_CHECK_EX( nEnsureModified == nEnsFuncModified, "Ensure modified=" << nEnsureModified << " functor=" << nEnsFuncModified );
+            CPPUNIT_CHECK_EX( nUpdateCreated == nEnsFuncCreated, "Update created=" << nUpdateCreated << " functor=" << nEnsFuncCreated );
+            CPPUNIT_CHECK_EX( nUpdateModified == nEnsFuncModified, "Update modified=" << nUpdateModified << " functor=" << nEnsFuncModified );
 
             // nTestFunctorRef is call count of insert functor
             CPPUNIT_CHECK_EX( nTestFunctorRef == nInsertSuccess, "nInsertSuccess=" << nInsertSuccess << " functor nTestFunctorRef=" << nTestFunctorRef );
@@ -504,81 +513,54 @@ namespace set2 {
         }
 
         template <class Set>
-        void test()
+        void run_test()
         {
             CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
                 << " delete=" << c_nDeleteThreadCount
-                << " ensure=" << c_nEnsureThreadCount
+                << " ensure=" << c_nUpdateThreadCount
                 << " pass count=" << c_nThreadPassCount
-                << " map size=" << c_nMapSize
+                << " set size=" << c_nSetSize
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                do_test<Set>( nLoadFactor );
+            if ( Set::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG("  LoadFactor = " << c_nLoadFactor );
+                    Set s( *this );
+                    do_test( s );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Set s( *this );
+                do_test( s );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
         }
 
-        template <class Set>
-        void test_nolf()
-        {
-            CPPUNIT_MSG( "Thread count: insert=" << c_nInsertThreadCount
-                << " delete=" << c_nDeleteThreadCount
-                << " ensure=" << c_nEnsureThreadCount
-                << " pass count=" << c_nThreadPassCount
-                << " map size=" << c_nMapSize
-                );
-
-            Set s;
-            do_test_with( s );
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
-        void setUpParams( const CppUnitMini::TestCfg& cfg ) {
-            c_nInsertThreadCount = cfg.getULong("InsertThreadCount", 4 );
-            c_nDeleteThreadCount = cfg.getULong("DeleteThreadCount", 4 );
-            c_nEnsureThreadCount = cfg.getULong("EnsureThreadCount", 4 );
-            c_nThreadPassCount = cfg.getULong("ThreadPassCount", 4 );
-            c_nMapSize = cfg.getULong("MapSize", 1000000 );
-            c_nMaxLoadFactor = cfg.getULong("MaxLoadFactor", 8 );
-            c_bPrintGCState = cfg.getBool("PrintGCStateFlag", true );
-        }
-
-        void run_MichaelSet(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_StripedSet(const char *in_name, bool invert = false);
-        void run_RefinableSet(const char *in_name, bool invert = false);
-        void run_CuckooSet(const char *in_name, bool invert = false);
-        void run_SkipListSet(const char *in_name, bool invert = false);
-        void run_EllenBinTreeSet(const char *in_name, bool invert = false);
-
-        typedef CppUnitMini::TestCase Base;
-        virtual void myRun(const char *in_name, bool invert = false)
-        {
-            setUpParams( m_Cfg.get( "Map_InsDel_func" ));
-
-            run_MichaelSet(in_name, invert);
-            run_SplitList(in_name, invert);
-            run_SkipListSet(in_name, invert);
-            run_EllenBinTreeSet(in_name, invert);
-            run_StripedSet(in_name, invert);
-            run_RefinableSet(in_name, invert);
-            run_CuckooSet(in_name, invert);
-
-            endTestCase();
-        }
-
+        void setUpParams( const CppUnitMini::TestCfg& cfg );
 
 #   include "set2/set_defs.h"
     CDSUNIT_DECLARE_MichaelSet
+    CDSUNIT_DECLARE_SkipListSet
     CDSUNIT_DECLARE_SplitList
     CDSUNIT_DECLARE_StripedSet
     CDSUNIT_DECLARE_RefinableSet
     CDSUNIT_DECLARE_CuckooSet
-    CDSUNIT_DECLARE_SkipListSet
     CDSUNIT_DECLARE_EllenBinTreeSet
+    CDSUNIT_DECLARE_MultiLevelHashSet
+
+    CPPUNIT_TEST_SUITE_(Set_InsDel_func, "Map_InsDel_func")
+        CDSUNIT_TEST_MichaelSet
+        CDSUNIT_TEST_SplitList
+        CDSUNIT_TEST_SkipListSet
+        CDSUNIT_TEST_MultiLevelHashSet
+        CDSUNIT_TEST_EllenBinTreeSet
+        CDSUNIT_TEST_StripedSet
+        CDSUNIT_TEST_RefinableSet
+        CDSUNIT_TEST_CuckooSet
+    CPPUNIT_TEST_SUITE_END();
 
     };
 } // namespace set2

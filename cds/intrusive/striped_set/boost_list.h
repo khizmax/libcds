@@ -87,11 +87,14 @@ namespace cds { namespace intrusive { namespace striped_set {
                 }
 
                 template <typename Func>
-                std::pair<bool, bool> ensure( value_type& val, Func f )
+                std::pair<bool, bool> update( value_type& val, Func f, bool bAllowInsert )
                 {
                     iterator it = find_key( val, find_predicate() );
                     if ( it == m_List.end() || key_comparator()(val, *it) != 0 ) {
                         // insert new
+                        if ( !bAllowInsert )
+                            return std::make_pair( false, false );
+
                         m_List.insert( it, val );
                         f( true, val, val );
                         return std::make_pair( true, true );

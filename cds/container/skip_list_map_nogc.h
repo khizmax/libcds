@@ -77,10 +77,6 @@ namespace cds { namespace container {
         typedef typename base_class::stat           stat;           ///< internal statistics type
         typedef typename base_class::random_level_generator random_level_generator; ///< random level generator
 
-        //@cond
-        typedef cds::container::skip_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::node_type      node_type;
@@ -241,7 +237,7 @@ namespace cds { namespace container {
             Otherwise, if \p key is found, the function returns an iterator that points to item found.
 
             Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
-            item found or inserted or \p end() if \p key is not found and insertion is not allowed (\p bInsert is \p false),  
+            item found or inserted or \p end() if \p key is not found and insertion is not allowed (\p bInsert is \p false),
             \p second is \p true if new item has been added or \p false if the item already exists.
         */
         template <typename K>
@@ -250,41 +246,54 @@ namespace cds { namespace container {
             //TODO: pass arguments by reference (make_pair makes copy)
             return base_class::update( std::make_pair( key, mapped_type() ), bInsert );
         }
-
         //@cond
-        // Deprecated, use update()
         template <typename K>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<iterator, bool> ensure( K const& key )
         {
             return update( key, true );
         }
         //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_nonintrusive_SkipListMap_nogc_find_val
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
             and \ref end() otherwise
         */
         template <typename K>
+        iterator contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond 
+        template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p key with comparing functor \p cmp
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListMap_nogc_find_val "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
+            \p Less must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
+        iterator contains( K const& key, Less pred ) const
+        {
+            return base_class::contains( key, pred );
+        }
+        //@cond
+        template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find_with( K const& key, Less pred ) const
         {
-            return base_class::find_with( key, pred );
+            return contains( key, pred );
         }
+        //@endcond
 
         /// Gets minimum key from the map
         /**

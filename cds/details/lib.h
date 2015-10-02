@@ -15,7 +15,7 @@
 #endif
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
-#   pragma comment( lib, "libcds-" CDS_PROCESSOR__NICK "-" CDS_COMPILER__NICK CDS_LIB_DEBUG_SUFFIX )
+#   pragma comment( lib, "libcds-" CDS_PROCESSOR__NICK "-" CDS_COMPILER_LIBCDS_SUFFIX CDS_LIB_DEBUG_SUFFIX )
 #elif CDS_COMPILER == CDS_COMPILER_INTEL
 #   pragma comment( lib, "libcds-" CDS_PROCESSOR__NICK "-" CDS_COMPILER__NICK CDS_LIB_DEBUG_SUFFIX )
 #endif

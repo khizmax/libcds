@@ -5,14 +5,7 @@
 namespace map2 {
     CPPUNIT_TEST_SUITE_REGISTRATION( Map_InsDel_string );
 
-    size_t Map_InsDel_string::c_nMapSize = 1000000;
-    size_t Map_InsDel_string::c_nInsertThreadCount = 4;
-    size_t Map_InsDel_string::c_nDeleteThreadCount = 4;
-    size_t Map_InsDel_string::c_nThreadPassCount = 4;
-    size_t Map_InsDel_string::c_nMaxLoadFactor = 8;
-    bool   Map_InsDel_string::c_bPrintGCState = true;
-
-    void Map_InsDel_string::setUpParams( const CppUnitMini::TestCfg& cfg ) 
+    void Map_InsDel_string::setUpParams( const CppUnitMini::TestCfg& cfg )
     {
         c_nInsertThreadCount = cfg.getSizeT("InsertThreadCount", c_nInsertThreadCount );
         c_nDeleteThreadCount = cfg.getSizeT("DeleteThreadCount", c_nDeleteThreadCount );
@@ -20,22 +13,17 @@ namespace map2 {
         c_nMapSize = cfg.getSizeT("MapSize", c_nMapSize );
         c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor );
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );
-    }
 
-    void Map_InsDel_string::myRun(const char *in_name, bool invert /*= false*/)
-    {
-        setUpParams( m_Cfg.get( "Map_InsDel_string" ));
+        c_nCuckooInitialSize = cfg.getSizeT("CuckooInitialSize", c_nCuckooInitialSize);
+        c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize);
+        c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold);
 
-        run_MichaelMap(in_name, invert);
-        run_SplitList(in_name, invert);
-        run_SkipListMap(in_name, invert);
-        run_EllenBinTreeMap(in_name, invert);
-        run_BronsonAVLTreeMap(in_name, invert);
-        run_StripedMap(in_name, invert);
-        run_RefinableMap(in_name, invert);
-        run_CuckooMap(in_name, invert);
-        run_StdMap(in_name, invert);
+        c_nMultiLevelMap_HeadBits = cfg.getSizeT("MultiLevelMapHeadBits", c_nMultiLevelMap_HeadBits);
+        c_nMultiLevelMap_ArrayBits = cfg.getSizeT("MultiLevelMapArrayBits", c_nMultiLevelMap_ArrayBits);
 
-        endTestCase();
+        if ( c_nInsertThreadCount == 0 )
+            c_nInsertThreadCount = std::thread::hardware_concurrency();
+        if ( c_nDeleteThreadCount == 0 )
+            c_nDeleteThreadCount = std::thread::hardware_concurrency();
     }
 } // namespace map2

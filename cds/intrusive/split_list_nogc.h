@@ -39,10 +39,6 @@ namespace cds { namespace intrusive {
         /// Hash functor for \p value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type   hash;
 
-        //@cond
-        typedef cds::intrusive::split_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;
@@ -106,11 +102,11 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Func>
-            std::pair<list_iterator, bool> ensure_at_( dummy_node_type * pHead, value_type& val, Func func )
+            std::pair<list_iterator, bool> update_at_( dummy_node_type * pHead, value_type& val, Func func, bool bAllowInsert )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
-                return base_class::ensure_at_( h, val, func );
+                return base_class::update_at_( h, val, func, bAllowInsert );
             }
 
             template <typename Q, typename Compare, typename Func>
@@ -275,7 +271,7 @@ namespace cds { namespace intrusive {
                 if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
                     return; // someone already have updated m_nBucketCountLog2, so stop here
 
-                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ), 
+                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),
                                                          memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
                 m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
             }
@@ -324,74 +320,97 @@ namespace cds { namespace intrusive {
             return insert_( val ) != end();
         }
 
-        /// Ensures that the \p item exists in the set
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val not found in the set, then \p val is inserted into the set.
+            If the item \p val is not found in the set, then \p val is inserted
+            iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
             The functor signature is:
             \code
-            struct ensure_functor {
-                void operator()( bool bNew, value_type& item, value_type& val );
-            };
+                void func( bool bNew, value_type& item, value_type& val );
             \endcode
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the set
-            - \p val - argument \p val passed into the \p ensure function
+            - \p val - argument \p val passed into the \p update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refers to the same thing.
 
-            The functor can change non-key fields of the \p item.
+            The functor may change non-key fields of the \p item.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
-            \p second is \p true if new item has been added or \p false if the item with given key
-            already is in the set.
+            \p second is \p true if new item has been added or \p false if the item with \p key
+            already is in the list.
 
-            @warning For \ref cds_intrusive_MichaelList_nogc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_intrusive_LazyList_nogc "LazyList" provides exclusive access to inserted item and does not require any node-level
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
         {
-            std::pair<iterator, bool> ret = ensure_( val, func );
+            std::pair<iterator, bool> ret = update_( val, func, bAllowInsert );
             return std::make_pair( ret.first != end(), ret.second );
         }
+        //@cond
+        template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_intrusive_SplitListSet_nogc_find_val
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns pointer to item found or , and \p nullptr otherwise.
+            and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Otherwise, you may use \p contains( Q const&, Less pred ) functions with explicit predicate for key comparing.
         */
         template <typename Q>
-        value_type * find( Q const& key )
+        value_type * contains( Q const& key )
         {
             iterator it = find_( key );
             if ( it == end() )
                 return nullptr;
             return &*it;
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        value_type * find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p key with \p pred predicate for comparing
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_SplitListSet_nogc_find_val "find(Q const&)"
-            but \p cmp is used for key compare.
-            \p Less has the interface like \p std::less.
-            \p cmp must imply the same element order as the comparator used for building the set.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        value_type * find_with( Q const& key, Less pred )
+        value_type * contains( Q const& key, Less pred )
         {
             iterator it = find_with_( key, pred );
             if ( it == end() )
                 return nullptr;
             return &*it;
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        value_type * find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds the key \p key
         /** \anchor cds_intrusive_SplitListSet_nogc_find_func
@@ -574,7 +593,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        std::pair<iterator, bool> ensure_( value_type& val, Func func )
+        std::pair<iterator, bool> update_( value_type& val, Func func, bool bAllowInsert )
         {
             size_t nHash = hash_value( val );
             dummy_node_type * pHead = get_bucket( nHash );
@@ -582,7 +601,7 @@ namespace cds { namespace intrusive {
 
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
 
-            std::pair<list_iterator, bool> ret = m_List.ensure_at_( pHead, val, func );
+            std::pair<list_iterator, bool> ret = m_List.update_at_( pHead, val, func, bAllowInsert );
             if ( ret.first != m_List.end() ) {
                 if ( ret.second ) {
                     inc_item_count();

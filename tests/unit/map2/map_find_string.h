@@ -7,21 +7,28 @@
 
 namespace map2 {
 
-#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_EXTRACT(IMPL, C, X)  TEST_MAP(IMPL, C, X)
-#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) TEST_MAP_NOLF(IMPL, C, X)
+#define TEST_CASE(TAG, X)  void X();
 
     class Map_find_string: public CppUnitMini::TestCase
     {
-        static size_t  c_nThreadCount;      // thread count
-        static size_t  c_nMapSize;          // map size (count of searching item)
-        static size_t  c_nPercentExists;    // percent of existing keys in searching sequence
-        static size_t  c_nPassCount;
-        static size_t  c_nMaxLoadFactor;    // maximum load factor
-        static bool    c_bPrintGCState;
+    public:
+        size_t c_nThreadCount = 8;     // thread count
+        size_t c_nMapSize = 10000000;  // map size (count of searching item)
+        size_t c_nPercentExists = 50;  // percent of existing keys in searching sequence
+        size_t c_nPassCount = 2;
+        size_t c_nMaxLoadFactor = 8;   // maximum load factor
+        bool   c_bPrintGCState = true;
 
-        typedef CppUnitMini::TestCase Base;
+        size_t c_nCuckooInitialSize = 1024;// initial size for CuckooMap
+        size_t c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
+
+        size_t c_nMultiLevelMap_HeadBits = 10;
+        size_t c_nMultiLevelMap_ArrayBits = 4;
+
+        size_t  c_nLoadFactor;  // current load factor
+
+    private:
         typedef std::string  key_type;
         struct value_type {
             std::string const * pKey;
@@ -30,8 +37,6 @@ namespace map2 {
 
         typedef std::vector<value_type> ValueVector;
         ValueVector             m_Arr;
-        size_t                  m_nRealMapSize;
-        bool                    m_bSeqInit;
 
         template <typename Iterator, typename Map>
         static bool check_result( Iterator const& it, Map const& map )
@@ -44,10 +49,10 @@ namespace map2 {
             return b;
         }
 
-        template <class MAP>
+        template <class Map>
         class TestThread: public CppUnitMini::TestThread
         {
-            MAP&     m_Map;
+            Map&     m_Map;
 
             virtual TestThread *    clone()
             {
@@ -68,7 +73,7 @@ namespace map2 {
             Stat    m_KeyNotExists;
 
         public:
-            TestThread( CppUnitMini::ThreadPool& pool, MAP& rMap )
+            TestThread( CppUnitMini::ThreadPool& pool, Map& rMap )
                 : CppUnitMini::TestThread( pool )
                 , m_Map( rMap )
             {}
@@ -88,14 +93,14 @@ namespace map2 {
             virtual void test()
             {
                 ValueVector& arr = getTest().m_Arr;
-                //size_t nSize = arr.size();
+                size_t const nPassCount = getTest().c_nPassCount;
 
-                MAP& rMap = m_Map;
-                for ( size_t nPass = 0; nPass < c_nPassCount; ++nPass ) {
+                Map& rMap = m_Map;
+                for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                     if ( m_nThreadNo & 1 ) {
                         ValueVector::const_iterator itEnd = arr.end();
                         for ( ValueVector::const_iterator it = arr.begin(); it != itEnd; ++it ) {
-                            auto bFound = rMap.find( *(it->pKey) );
+                            auto bFound = rMap.contains( *(it->pKey) );
                             if ( it->bExists ) {
                                 if ( check_result(bFound, rMap))
                                     ++m_KeyExists.nSuccess;
@@ -113,7 +118,7 @@ namespace map2 {
                     else {
                         ValueVector::const_reverse_iterator itEnd = arr.rend();
                         for ( ValueVector::const_reverse_iterator it = arr.rbegin(); it != itEnd; ++it ) {
-                            auto bFound = rMap.find( *(it->pKey) );
+                            auto bFound = rMap.contains( *(it->pKey) );
                             if ( it->bExists ) {
                                 if ( check_result(bFound, rMap))
                                     ++m_KeyExists.nSuccess;
@@ -134,17 +139,17 @@ namespace map2 {
 
     public:
         Map_find_string()
-            : m_bSeqInit( false )
+            : c_nLoadFactor( 2 )
         {}
 
     protected:
 
         void generateSequence();
 
-        template <class MAP>
-        void find_string_test( MAP& testMap )
+        template <class Map>
+        void find_string_test( Map& testMap )
         {
-            typedef TestThread<MAP>     Thread;
+            typedef TestThread<Map>     Thread;
             cds::OS::Timer    timer;
 
             // Fill the map
@@ -166,9 +171,9 @@ namespace map2 {
             // Postcondition: the number of success searching == the number of map item
             for ( CppUnitMini::ThreadPool::iterator it = pool.begin(); it != pool.end(); ++it ) {
                 Thread * pThread = static_cast<Thread *>( *it );
-                CPPUNIT_CHECK( pThread->m_KeyExists.nSuccess == m_nRealMapSize * c_nPassCount );
+                CPPUNIT_CHECK( pThread->m_KeyExists.nSuccess == c_nMapSize * c_nPassCount );
                 CPPUNIT_CHECK( pThread->m_KeyExists.nFailed == 0 );
-                CPPUNIT_CHECK( pThread->m_KeyNotExists.nSuccess == (m_Arr.size() - m_nRealMapSize) * c_nPassCount );
+                CPPUNIT_CHECK( pThread->m_KeyNotExists.nSuccess == (m_Arr.size() - c_nMapSize) * c_nPassCount );
                 CPPUNIT_CHECK( pThread->m_KeyNotExists.nFailed == 0 );
             }
 
@@ -180,47 +185,27 @@ namespace map2 {
             additional_cleanup( testMap );
         }
 
-        void initTestSequence();
-
-        template <class MAP>
-        void test()
+        template <class Map>
+        void run_test()
         {
-            initTestSequence();
-
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                MAP  testMap( m_Arr.size(), nLoadFactor );
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+                    Map testMap( *this );
+                    find_string_test( testMap );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Map testMap( *this );
                 find_string_test( testMap );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
         }
 
-        template <class MAP>
-        void test_nolf()
-        {
-            initTestSequence();
-
-            MAP testMap;
-            find_string_test( testMap );
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
         void setUpParams( const CppUnitMini::TestCfg& cfg );
-
-        void run_MichaelMap(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_StripedMap(const char *in_name, bool invert = false);
-        void run_RefinableMap(const char *in_name, bool invert = false);
-        void run_CuckooMap(const char *in_name, bool invert = false);
-        void run_SkipListMap(const char *in_name, bool invert = false);
-        void run_EllenBinTreeMap(const char *in_name, bool invert = false);
-        void run_BronsonAVLTreeMap(const char *in_name, bool invert = false);
-        void run_StdMap(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
-
 
 #   include "map2/map_defs.h"
         CDSUNIT_DECLARE_MichaelMap
@@ -231,9 +216,28 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap_nogc
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
+        CDSUNIT_DECLARE_MultiLevelHashMap
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_StdMap
+        CDSUNIT_DECLARE_StdMap_NoLock
+
+        CPPUNIT_TEST_SUITE(Map_find_string)
+            CDSUNIT_TEST_MichaelMap
+            CDSUNIT_TEST_MichaelMap_nogc
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SplitList_nogc
+            CDSUNIT_TEST_SkipListMap
+            CDSUNIT_TEST_SkipListMap_nogc
+            CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_MultiLevelHashMap
+            CDSUNIT_TEST_CuckooMap
+            CDSUNIT_TEST_StripedMap
+            CDSUNIT_TEST_RefinableMap
+            CDSUNIT_TEST_StdMap
+            CDSUNIT_TEST_StdMap_NoLock
+        CPPUNIT_TEST_SUITE_END();
     };
 } // namespace map2

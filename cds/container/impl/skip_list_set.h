@@ -124,10 +124,6 @@ namespace cds { namespace container {
         typedef typename traits::random_level_generator random_level_generator; ///< random level generator
         typedef typename traits::stat             stat;           ///< internal statistics type
 
-        //@cond
-        typedef cds::container::skip_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename maker::node_type           node_type;
@@ -255,7 +251,7 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p val key not found in the set, then the new item created from \p val
-            will be inserted into the set iff \p bInsert is \p true. 
+            will be inserted into the set iff \p bInsert is \p true.
             Otherwise, if \p val is found, the functor \p func will be called with the item found.
 
             The functor \p Func signature:
@@ -284,16 +280,15 @@ namespace cds { namespace container {
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
             std::pair<bool, bool> bRes = base_class::update( *sp,
-                [&func, &val](bool bNew, node_type& node, node_type&){ func( bNew, node.m_Value, val ); }, 
+                [&func, &val](bool bNew, node_type& node, node_type&){ func( bNew, node.m_Value, val ); },
                 bInsert );
             if ( bRes.first && bRes.second )
                 sp.release();
             return bRes;
         }
-
         //@cond
-        // Deprecated, use update()
         template <typename Q, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( const Q& val, Func func )
         {
             return update( val, func, true );
@@ -559,34 +554,45 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Find \p key
-        /** \anchor cds_nonintrusive_SkipListSet_find_val
-
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that may be not the same as \ref value_type.
         */
         template <typename Q>
+        bool contains( Q const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( Q const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds \p key using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListSet_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
+            return base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_SkipListSet_hp_get

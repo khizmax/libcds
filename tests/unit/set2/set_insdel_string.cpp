@@ -5,36 +5,25 @@
 namespace set2 {
     CPPUNIT_TEST_SUITE_REGISTRATION( Set_InsDel_string );
 
-    size_t Set_InsDel_string::c_nMapSize = 1000000;
-    size_t Set_InsDel_string::c_nInsertThreadCount = 4;
-    size_t Set_InsDel_string::c_nDeleteThreadCount = 4;
-    size_t Set_InsDel_string::c_nThreadPassCount = 4;
-    size_t Set_InsDel_string::c_nMaxLoadFactor = 8;
-    bool   Set_InsDel_string::c_bPrintGCState = true;
-
     void Set_InsDel_string::setUpParams( const CppUnitMini::TestCfg& cfg )
     {
+        c_nSetSize = cfg.getSizeT("MapSize", c_nSetSize );
         c_nInsertThreadCount = cfg.getSizeT("InsertThreadCount", c_nInsertThreadCount );
         c_nDeleteThreadCount = cfg.getSizeT("DeleteThreadCount", c_nDeleteThreadCount );
         c_nThreadPassCount = cfg.getSizeT("ThreadPassCount", c_nThreadPassCount );
-        c_nMapSize = cfg.getSizeT("MapSize", c_nMapSize );
         c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor );
-        c_bPrintGCState = cfg.getBool("PrintGCStateFlag", true );
-    }
+        c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );
 
-    void Set_InsDel_string::myRun(const char *in_name, bool invert /*= false*/)
-    {
-        setUpParams( m_Cfg.get( "Map_InsDel_string" ));
+        c_nCuckooInitialSize = cfg.getSizeT("CuckooInitialSize", c_nCuckooInitialSize );
+        c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize );
+        c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold );
 
-        run_MichaelSet(in_name, invert);
-        run_SplitList(in_name, invert);
-        run_SkipListSet(in_name, invert);
-        run_EllenBinTreeSet(in_name, invert);
-        run_StripedSet(in_name, invert);
-        run_RefinableSet(in_name, invert);
-        run_CuckooSet(in_name, invert);
-        run_StdSet(in_name, invert);
+        c_nMultiLevelSet_HeadBits = cfg.getSizeT("MultiLevelMapHeadBits", c_nMultiLevelSet_HeadBits);
+        c_nMultiLevelSet_ArrayBits = cfg.getSizeT("MultiLevelMapArrayBits", c_nMultiLevelSet_ArrayBits);
 
-        endTestCase();
+        if ( c_nInsertThreadCount == 0 )
+            c_nInsertThreadCount = std::thread::hardware_concurrency();
+        if ( c_nDeleteThreadCount == 0 )
+            c_nDeleteThreadCount = std::thread::hardware_concurrency();
     }
 } // namespace set2

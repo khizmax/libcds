@@ -375,21 +375,30 @@ namespace cds { namespace container {
             return node_to_iterator( insert_with_at( head(), key, func ));
         }
 
-        /// Ensures that the key \p key exists in the list
+        /// Updates the item
         /**
-            The operation inserts new item if the key \p key is not found in the list.
-            Otherwise, the function returns an iterator that points to item found.
+            If \p key is not in the list and \p bAllowInsert is \p true, 
+            the function inserts a new item.
+            Otherwise, the function returns an iterator pointing to the item found.
 
             Returns <tt> std::pair<iterator, bool>  </tt> where \p first is an iterator pointing to
             item found or inserted, \p second is true if new item has been added or \p false if the item
             already is in the list.
         */
         template <typename K>
-        std::pair<iterator, bool> ensure( const K& key )
+        std::pair<iterator, bool> update( const K& key, bool bAllowInsert = true )
         {
-            std::pair< node_type *, bool > ret = ensure_at( head(), key );
+            std::pair< node_type *, bool > ret = update_at( head(), key, bAllowInsert );
             return std::make_pair( node_to_iterator( ret.first ), ret.second );
         }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<iterator, bool> ensure( const K& key )
+        {
+            return update( key, true );
+        }
+        //@endcond
 
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
@@ -401,44 +410,66 @@ namespace cds { namespace container {
             return node_to_iterator( emplace_at( head(), std::forward<Args>(args)... ));
         }
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_LazyKVList_nogc_find
+        /// Checks whether the list contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns an iterator pointed to item found if the key is found,
             and \ref end() otherwise
         */
         template <typename Q>
-        iterator find( Q const& key )
+        iterator contains( Q const& key )
         {
             return node_to_iterator( find_at( head(), key, intrusive_key_comparator() ) );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        iterator find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching (for ordered list only)
+        /// Checks whether the map contains \p key using \p pred predicate for searching (ordered list version)
         /**
-            The function is an analog of \ref cds_nonintrusive_LazyKVList_nogc_find "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
+            \p Less must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, bool Sort = c_bSort>
-        typename std::enable_if<Sort, iterator>::type find_with( Q const& key, Less pred )
+        typename std::enable_if<Sort, iterator>::type contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ) );
         }
+        //@cond
+        template <typename Q, typename Less, bool Sort = c_bSort>
+        CDS_DEPRECATED("deprecated, use contains()")
+        typename std::enable_if<Sort, iterator>::type find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p equal predicate for searching (for unordered list only)
+        /// Finds the key \p val using \p equal predicate for searching (unordered list version)
         /**
-            The function is an analog of \ref cds_nonintrusive_LazyKVList_nogc_find "find(Q const&)"
-            but \p equal is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p equal is used for key comparing.
             \p Equal functor has the interface like \p std::equal_to.
         */
         template <typename Q, typename Equal, bool Sort = c_bSort>
-        typename std::enable_if<!Sort, iterator>::type find_with( Q const& key, Equal equal )
+        typename std::enable_if<!Sort, iterator>::type contains( Q const& key, Equal equal )
         {
             CDS_UNUSED( equal );
             return node_to_iterator( find_at( head(), key, typename maker::template equal_to_wrapper<Equal>::type() ) );
         }
+        //@cond
+        template <typename Q, typename Equal, bool Sort = c_bSort>
+        CDS_DEPRECATED("deprecated, use contains()")
+        typename std::enable_if<!Sort, iterator>::type find_with( Q const& key, Equal equal )
+        {
+            return contains( key, equal );
+        }
+        //@endcond
 
         /// Check if the list is empty
         bool empty() const
@@ -507,16 +538,18 @@ namespace cds { namespace container {
 
 
         template <typename K>
-        std::pair< node_type *, bool > ensure_at( head_type& refHead, const K& key )
+        std::pair< node_type *, bool > update_at( head_type& refHead, const K& key, bool bAllowInsert )
         {
             scoped_node_ptr pNode( alloc_node( key ));
             node_type * pItemFound = nullptr;
 
-            std::pair<bool, bool> ret = base_class::ensure_at( &refHead, *pNode, [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; } );
-            if ( ret.first && ret.second )
+            std::pair<bool, bool> ret = base_class::update_at( &refHead, *pNode,
+                [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; },
+                bAllowInsert );
+
+            if ( ret.second )
                 pNode.release();
 
-            assert( pItemFound != nullptr );
             return std::make_pair( pItemFound, ret.second );
         }
 

@@ -482,10 +482,6 @@ namespace cds { namespace container {
         typedef typename base_class::allocator_type     allocator_type  ; ///< allocator type specified in options.
         typedef typename base_class::mutex_policy       mutex_policy    ; ///< Mutex policy
 
-        //@cond
-        typedef cds::container::striped_set::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::scoped_cell_lock   scoped_cell_lock;
@@ -496,13 +492,14 @@ namespace cds { namespace container {
     public:
         /// Default ctor. The initial capacity is 16.
         StripedSet()
-        : base_class()
+            : base_class()
         {}
 
         /// Ctor with initial capacity specified
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
-        ) : base_class( nCapacity )
+        ) 
+            : base_class( nCapacity )
         {}
 
         /// Ctor with resizing policy (copy semantics)
@@ -512,7 +509,8 @@ namespace cds { namespace container {
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy const& resizingPolicy  ///< Resizing policy
-        ) : base_class( nCapacity, resizingPolicy )
+        ) 
+            : base_class( nCapacity, resizingPolicy )
         {}
 
         /// Ctor with resizing policy (move semantics)
@@ -523,7 +521,8 @@ namespace cds { namespace container {
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy&& resizingPolicy  ///< Resizing policy
-            ) : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
+        ) 
+            : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
         {}
 
         /// Destructor destroys internal data
@@ -609,36 +608,32 @@ namespace cds { namespace container {
             return bOk;
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates the node
         /**
-            The operation performs inserting or changing data.
+            The operation performs inserting or changing data with lock-free manner.
 
-            If the \p val key not found in the set, then the new item created from \p val
-            is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func should be a function with signature:
-            \code
-                void func( bool bNew, value_type& item, const Q& val );
-            \endcode
-            or a functor:
+            If \p key is not found in the set, then \p key is inserted iff \p bAllowInsert is \p true.
+            Otherwise, the functor \p func is called with item found.
+
+            The functor signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item, const Q& val );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
-            - \p val - argument \p val passed into the \p ensure function
+            - \p item - item of the set
+            - \p val - argument \p val passed into the \p %update() function
 
-            The functor can change non-key fields of the \p item.
+            The functor may change non-key fields of the \p item.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p val key
-            already exists.
+            \p second is true if new item has been added or \p false if the item with \p key
+            already is in the map.
         */
         template <typename Q, typename Func>
-        std::pair<bool, bool> ensure( Q const& val, Func func )
+        std::pair<bool, bool> update( Q const& val, Func func, bool bAllowInsert = true )
         {
             std::pair<bool, bool> result;
             bool bResize;
@@ -648,7 +643,7 @@ namespace cds { namespace container {
                 scoped_cell_lock sl( base_class::m_MutexPolicy, nHash );
                 pBucket = base_class::bucket( nHash );
 
-                result = pBucket->ensure( val, func );
+                result = pBucket->update( val, func, bAllowInsert );
                 bResize = result.first && result.second && base_class::m_ResizingPolicy( ++base_class::m_ItemCounter, *this, *pBucket );
             }
 
@@ -656,6 +651,14 @@ namespace cds { namespace container {
                 base_class::resize();
             return result;
         }
+        //@cond
+        template <typename Q, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( Q const& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Delete \p key from the set
         /** \anchor cds_nonintrusive_StripedSet_erase
@@ -836,38 +839,50 @@ namespace cds { namespace container {
             return base_class::find_with( val, pred, f );
         }
 
-        /// Find the key \p val
-        /** \anchor cds_nonintrusive_StripedSet_find_val
-
-            The function searches the item with key equal to \p val
+        /// Checks whether the set contains \p key
+        /**
+            The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Otherwise, you may use \p contains( Q const&, Less pred ) functions with explicit predicate for key comparing.
         */
         template <typename Q>
-        bool find( Q const& val )
+        bool contains( Q const& key )
         {
-            return base_class::find( val );
+            return base_class::contains( key );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("use contains()")
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Find the key \p val using \p pred predicate
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_StripedSet_find_val "find(Q const&)"
-            but \p pred is used for key comparing
-            \p Less has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-
-            @note This function is enabled if the compiler supports C++11
-            default template arguments for function template <b>and</b> the underlying container
-            supports \p %find_with feature.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less
             , typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_find_with >::type >
+        bool contains( Q const& key, Less pred )
+        {
+            return base_class::contains( key, pred );
+        }
+        //@cond
+        template <typename Q, typename Less
+            , typename Bucket = bucket_type, typename = typename std::enable_if< Bucket::has_find_with >::type >
+        CDS_DEPRECATED("use contains()")
         bool find_with( Q const& val, Less pred )
         {
-            return base_class::find_with( val, pred );
+            return contains( val, pred );
         }
+        //@endcond
 
         /// Clears the set
         /**

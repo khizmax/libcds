@@ -23,7 +23,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_less()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,cc::bronson_avltree::relaxed_insert< false >
@@ -35,7 +35,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_less_stat()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::stat< cc::bronson_avltree::stat<> >
@@ -48,7 +48,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_cmp()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
             >::type
@@ -59,7 +59,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_cmp_stat()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::stat< cc::bronson_avltree::stat<> >
@@ -71,7 +71,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_cmpless()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::less< std::less<key_type> >
@@ -83,7 +83,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_less_ic()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -95,7 +95,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_cmp_ic()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -107,7 +107,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_cmp_ic_stat()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -120,7 +120,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_cmp_ic_stat_yield()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -134,7 +134,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_less_relaxed_insert()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,cc::bronson_avltree::relaxed_insert< true >
@@ -146,7 +146,7 @@ namespace tree {
 
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_gpt_less_relaxed_insert_stat()
     {
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::stat< cc::bronson_avltree::stat<> >

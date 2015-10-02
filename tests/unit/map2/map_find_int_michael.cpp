@@ -3,12 +3,11 @@
 #include "map2/map_find_int.h"
 #include "map2/map_type_michael.h"
 
-namespace map2 {
-    CDSUNIT_DEFINE_MichaelMap( cc::michael_map::implementation_tag, Map_find_int )
-    CDSUNIT_DEFINE_MichaelMap_nogc( cc::michael_map::implementation_tag, Map_find_int )
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_find_int::X() { run_test<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Map_find_int, run_MichaelMap )
-        CDSUNIT_TEST_MichaelMap
-        CDSUNIT_TEST_MichaelMap_nogc
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace map2 {
+    CDSUNIT_DECLARE_MichaelMap
+    CDSUNIT_DECLARE_MichaelMap_nogc
 } // namespace map2

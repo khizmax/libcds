@@ -6,10 +6,7 @@
 
 namespace map2 {
 
-#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_EXTRACT(IMPL, C, X) void C::X() { test_extract<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) void C::X() { test_nolf_extract<map_type<IMPL, key_type, value_type>::X >(); }
+#   define TEST_CASE(TAG, X)  void X();
 
     namespace {
         struct key_thread
@@ -25,8 +22,6 @@ namespace map2 {
             key_thread()
             {}
         };
-
-        //typedef MapTypes<key_thread, size_t>::key_val     key_value_pair;
     }
 
     template <>
@@ -119,19 +114,25 @@ namespace map2 {
 
     class Map_DelOdd: public CppUnitMini::TestCase
     {
-        static size_t  c_nMapSize;          // max map size
-        static size_t  c_nInsThreadCount;   // insert thread count
-        static size_t  c_nDelThreadCount;   // delete thread count
-        static size_t  c_nExtractThreadCount;  // extract thread count
-        static size_t  c_nMaxLoadFactor;    // maximum load factor
-        static bool    c_bPrintGCState;
+    public:
+        size_t  c_nInsThreadCount = 4;      // insert thread count
+        size_t  c_nDelThreadCount = 4;      // delete thread count
+        size_t  c_nExtractThreadCount = 4;  // extract thread count
+        size_t  c_nMapSize = 1000000;       // max map size
+        size_t  c_nMaxLoadFactor = 8;       // maximum load factor
+        size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooMap
+        size_t  c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t  c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (0 - use default)
 
+        bool    c_bPrintGCState = true;
+
+        size_t  c_nLoadFactor;  // current load factor
+
+    private:
         std::vector<size_t>     m_arrInsert;
         std::vector<size_t>     m_arrRemove;
 
     protected:
-        typedef CppUnitMini::TestCase Base;
-
         typedef key_thread  key_type;
         typedef size_t      value_type;
         typedef std::pair<key_type const, value_type> pair_type;
@@ -156,6 +157,11 @@ namespace map2 {
                 {}
                 template <typename Q, typename V>
                 void operator()( bool /*bNew*/, Q const&, V& )
+                {}
+
+                // MultiLevelHashMap
+                template <typename Q>
+                void operator()( Q&, Q*)
                 {}
             };
         public:
@@ -198,7 +204,7 @@ namespace map2 {
                 ensure_func f;
                 for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                     if ( arrData[i] & 1 ) {
-                        rMap.ensure( key_type( arrData[i], m_nThreadNo ), f );
+                        rMap.update( key_type( arrData[i], m_nThreadNo ), f );
                     }
                 }
 
@@ -277,10 +283,12 @@ namespace map2 {
                 m_nDeleteSuccess =
                     m_nDeleteFailed = 0;
 
+                size_t const nInsThreadCount = getTest().c_nInsThreadCount;
+
                 for ( size_t pass = 0; pass < 2; pass++ ) {
                     std::vector<size_t>& arrData = getTest().m_arrRemove;
                     if ( m_nThreadNo & 1 ) {
-                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
                                 if ( arrData[i] & 1 ) {
                                     if ( rMap.erase_with( arrData[i], key_less() ))
@@ -294,7 +302,7 @@ namespace map2 {
                         }
                     }
                     else {
-                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                                 if ( arrData[i] & 1 ) {
                                     if ( rMap.erase_with( arrData[i], key_less() ))
@@ -351,11 +359,12 @@ namespace map2 {
                     m_nDeleteFailed = 0;
 
                 typename Map::guarded_ptr gp;
+                size_t const nInsThreadCount = getTest().c_nInsThreadCount;
 
                 for ( size_t pass = 0; pass < 2; ++pass ) {
                     std::vector<size_t>& arrData = getTest().m_arrRemove;
                     if ( m_nThreadNo & 1 ) {
-                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
                                 if ( arrData[i] & 1 ) {
                                     gp = rMap.extract_with( arrData[i], key_less());
@@ -371,7 +380,7 @@ namespace map2 {
                         }
                     }
                     else {
-                        for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                                 if ( arrData[i] & 1 ) {
                                     gp = rMap.extract_with( arrData[i], key_less());
@@ -429,10 +438,11 @@ namespace map2 {
                     m_nDeleteFailed = 0;
 
                 typename Map::exempt_ptr xp;
+                size_t const nInsThreadCount = getTest().c_nInsThreadCount;
 
                 std::vector<size_t>& arrData = getTest().m_arrRemove;
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = 0; i < arrData.size(); ++i ) {
                             if ( arrData[i] & 1 ) {
                                 if ( Map::c_bExtractLockExternal ) {
@@ -460,7 +470,7 @@ namespace map2 {
                     }
                 }
                 else {
-                    for ( size_t k = 0; k < c_nInsThreadCount; ++k ) {
+                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                         for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                             if ( arrData[i] & 1 ) {
                                 if ( Map::c_bExtractLockExternal ) {
@@ -492,16 +502,16 @@ namespace map2 {
 
     protected:
         template <class Map>
-        void do_test( size_t nLoadFactor )
+        void do_test()
         {
-            Map  testMap( c_nMapSize, nLoadFactor );
+            Map  testMap( *this );
             do_test_with( testMap );
         }
 
         template <class Map>
-        void do_test_extract( size_t nLoadFactor )
+        void do_test_extract()
         {
-            Map  testMap( c_nMapSize, nLoadFactor );
+            Map  testMap( *this );
             do_test_extract_with( testMap );
         }
 
@@ -613,7 +623,7 @@ namespace map2 {
                 CPPUNIT_MSG( "  Check even keys..." );
                 for ( size_t n = 0; n < c_nMapSize; n +=2 ) {
                     for ( size_t i = 0; i < c_nInsThreadCount; ++i ) {
-                        if ( !testMap.find( key_type(n, i) ) ) {
+                        if ( !testMap.contains( key_type(n, i) ) ) {
                             if ( ++nErrorCount < 10 ) {
                                 CPPUNIT_MSG( "key " << n << "-" << i << " is not found!");
                             }
@@ -638,90 +648,75 @@ namespace map2 {
         }
 
         template <class Map>
-        void test()
+        void run_test()
         {
-            CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
-                << " delete thread count=" << c_nDelThreadCount
-                << " set size=" << c_nMapSize
-                );
+            static_assert( Map::c_bExtractSupported, "Map class must support extract() method" );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                do_test<Map>( nLoadFactor );
-                if ( c_bPrintGCState )
-                    print_gc_state();
-            }
-        }
-
-        template <class Map>
-        void test_extract()
-        {
             CPPUNIT_MSG( "Thread count: insert=" << c_nInsThreadCount
                 << ", delete=" << c_nDelThreadCount
                 << ", extract=" << c_nExtractThreadCount
                 << "; set size=" << c_nMapSize
                 );
-
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                do_test_extract<Map>( nLoadFactor );
-                if ( c_bPrintGCState )
-                    print_gc_state();
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+                    do_test_extract<Map>();
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
             }
+            else
+                do_test_extract<Map>();
         }
 
         template <class Map>
-        void test_nolf()
+        void run_test_no_extract()
         {
+            static_assert( !Map::c_bExtractSupported, "Map class must not support extract() method" );
+
             CPPUNIT_MSG( "Insert thread count=" << c_nInsThreadCount
                 << " delete thread count=" << c_nDelThreadCount
                 << " set size=" << c_nMapSize
                 );
-
-            Map s;
-            do_test_with( s );
-            if ( c_bPrintGCState )
-                print_gc_state();
-        }
-
-        template <class Map>
-        void test_nolf_extract()
-        {
-            CPPUNIT_MSG( "Thread count: insert=" << c_nInsThreadCount
-                << ", delete=" << c_nDelThreadCount
-                << ", extract=" << c_nExtractThreadCount
-                << "; set size=" << c_nMapSize
-                );
-
-            Map s;
-            do_test_extract_with( s );
-            if ( c_bPrintGCState )
-                print_gc_state();
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+                    do_test<Map>();
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else
+                do_test<Map>();
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
 
-        void run_MichaelMap(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        //void run_StripedMap(const char *in_name, bool invert = false);
-        //void run_RefinableMap(const char *in_name, bool invert = false);
-        void run_CuckooMap(const char *in_name, bool invert = false);
-        void run_SkipListMap(const char *in_name, bool invert = false);
-        void run_EllenBinTreeMap(const char *in_name, bool invert = false);
-        void run_BronsonAVLTreeMap(const char *in_name, bool invert = false);
-        //void run_StdMap(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
-
 #   include "map2/map_defs.h"
         CDSUNIT_DECLARE_MichaelMap
         CDSUNIT_DECLARE_SplitList
-        //CDSUNIT_DECLARE_StripedMap
-        //CDSUNIT_DECLARE_RefinableMap
-        CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
-        //CDSUNIT_DECLARE_StdMap
+        CDSUNIT_DECLARE_CuckooMap
+
+        // This test is not suitable for MultiLevelHashMap
+        //CDSUNIT_DECLARE_MultiLevelHashMap
+
+        CPPUNIT_TEST_SUITE(Map_DelOdd)
+            CDSUNIT_TEST_MichaelMap
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SkipListMap
+            CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_CuckooMap
+
+            //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
+        CPPUNIT_TEST_SUITE_END();
+
+        // Not implemented yet
+        ////CDSUNIT_DECLARE_StripedMap
+        ////CDSUNIT_DECLARE_RefinableMap
+        ////CDSUNIT_DECLARE_StdMap
     };
 } // namespace map2

@@ -1,24 +1,32 @@
 //$$CDS-header$$
 
 #include "set2/set_insdel_func.h"
-#include "set2/set_type_michael.h"
 
 namespace set2 {
-
     CPPUNIT_TEST_SUITE_REGISTRATION( Set_InsDel_func );
 
-    size_t  Set_InsDel_func::c_nMapSize = 1000000    ;  // map size
-    size_t  Set_InsDel_func::c_nInsertThreadCount = 4;  // count of insertion thread
-    size_t  Set_InsDel_func::c_nDeleteThreadCount = 4;  // count of deletion thread
-    size_t  Set_InsDel_func::c_nEnsureThreadCount = 4;  // count of ensure thread
-    size_t  Set_InsDel_func::c_nThreadPassCount = 4  ;  // pass count for each thread
-    size_t  Set_InsDel_func::c_nMaxLoadFactor = 8    ;  // maximum load factor
-    bool    Set_InsDel_func::c_bPrintGCState = true;
+    void Set_InsDel_func::setUpParams( const CppUnitMini::TestCfg& cfg )
+    {
+        c_nSetSize = cfg.getSizeT("MapSize", c_nSetSize );
+        c_nInsertThreadCount = cfg.getSizeT("InsertThreadCount", c_nInsertThreadCount );
+        c_nDeleteThreadCount = cfg.getSizeT("DeleteThreadCount", c_nDeleteThreadCount );
+        c_nUpdateThreadCount = cfg.getSizeT("EnsureThreadCount", c_nUpdateThreadCount );
+        c_nThreadPassCount = cfg.getSizeT("ThreadPassCount", c_nThreadPassCount );
+        c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor );
+        c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );
 
-    CDSUNIT_DEFINE_MichaelSet( cc::michael_set::implementation_tag, Set_InsDel_func )
+        c_nCuckooInitialSize = cfg.getSizeT("CuckooInitialSize", c_nCuckooInitialSize );
+        c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize );
+        c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold );
 
-    CPPUNIT_TEST_SUITE_PART( Set_InsDel_func, run_MichaelSet )
-        CDSUNIT_TEST_MichaelSet
-    CPPUNIT_TEST_SUITE_END_PART()
+        c_nMultiLevelSet_HeadBits = cfg.getSizeT("MultiLevelMapHeadBits", c_nMultiLevelSet_HeadBits);
+        c_nMultiLevelSet_ArrayBits = cfg.getSizeT("MultiLevelMapArrayBits", c_nMultiLevelSet_ArrayBits);
 
+        if ( c_nInsertThreadCount == 0 )
+            c_nInsertThreadCount = std::thread::hardware_concurrency();
+        if ( c_nDeleteThreadCount == 0 )
+            c_nDeleteThreadCount = std::thread::hardware_concurrency();
+        if ( c_nUpdateThreadCount == 0 )
+            c_nUpdateThreadCount = std::thread::hardware_concurrency();
+    }
 } // namespace set2

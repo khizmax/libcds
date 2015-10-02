@@ -48,7 +48,7 @@ namespace set {
                 rcu_lock l;
                 for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                     CPPUNIT_ASSERT( (*it).nKey == it->nVal );
-                    CPPUNIT_ASSERT( s.find( it->nKey ));
+                    CPPUNIT_ASSERT( s.contains( it->nKey ));
                     it->nVal = (*it).nKey * 2;
                     ++nCount;
                     if ( it != s.begin() ) {
@@ -88,7 +88,7 @@ namespace set {
                 rcu_lock l;
                 for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                     CPPUNIT_ASSERT( (*it).nKey * 2 == it->nVal );
-                    CPPUNIT_ASSERT( s.find( it->nKey ));
+                    CPPUNIT_ASSERT( s.contains( it->nKey ));
                     it->nVal = (*it).nKey;
                     ++nCount;
                     if ( it != s.begin() ) {
@@ -129,7 +129,7 @@ namespace set {
                 rcu_lock l;
                 for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                     CPPUNIT_ASSERT( (*it).nKey == it->nVal );
-                    CPPUNIT_ASSERT( s.find( it->nKey ));
+                    CPPUNIT_ASSERT( s.contains( it->nKey ));
                     it->nVal = (*it).nKey * 2;
                     ++nCount;
                     if ( it != s.begin() ) {
@@ -229,7 +229,7 @@ namespace set {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == i );
                     CPPUNIT_CHECK( ep->nVal == i );
-                    CPPUNIT_CHECK( !s.find(i) );
+                    CPPUNIT_CHECK( !s.contains(i) );
                     ep.release();
                 }
                 CPPUNIT_CHECK( s.empty());
@@ -244,7 +244,7 @@ namespace set {
                     CPPUNIT_ASSERT( !ep.empty() );
                     CPPUNIT_CHECK( ep->nKey == i );
                     CPPUNIT_CHECK( ep->nVal == i );
-                    CPPUNIT_CHECK( !s.find(i) );
+                    CPPUNIT_CHECK( !s.contains(i) );
                     ep.release();
                 }
                 CPPUNIT_CHECK( s.empty());

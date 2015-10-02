@@ -267,10 +267,6 @@ namespace cds { namespace container {
         /// item counter type
         typedef typename traits::item_counter  item_counter;
 
-        //@cond
-        typedef cds::container::cuckoo::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::scoped_cell_lock   scoped_cell_lock;
@@ -486,46 +482,47 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Ensures that the \p key exists in the map
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
-            constructible from type \p K).
+            If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            The functor \p func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
                 };
             \endcode
-
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
+            - \p item - an item of the map for \p key
 
-            The functor may change any fields of the \p item.second that is \ref value_type.
-
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
-            already is in the list.
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            i.e. the node has been inserted or updated,
+            \p second is \p true if new item has been added or \p false if the item with \p key
+            already exists.
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
+        std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             scoped_node_ptr pNode( alloc_node( key ));
-            std::pair<bool, bool> res = base_class::ensure( *pNode,
-                [&func](bool bNew, node_type& item, node_type const& ){ func( bNew, item.m_val ); }
+            std::pair<bool, bool> res = base_class::update( *pNode,
+                [&func](bool bNew, node_type& item, node_type const& ){ func( bNew, item.m_val ); },
+                bAllowInsert
             );
             if ( res.first && res.second )
                 pNode.release();
             return res;
         }
+        //@cond
+        template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( K const& key, Func func )
+        {
+            return update( key, func, true );
+        }
+        //@endcond
 
         /// Delete \p key from the map
         /** \anchor cds_nonintrusive_CuckooMap_erase_val
@@ -651,32 +648,45 @@ namespace cds { namespace container {
                 [&f](node_type& item, K const& ) { f( item.m_val );});
         }
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_CuckooMap_find_val
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
         */
         template <typename K>
+        bool contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("the function is deprecated, use contains()")
         bool find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Find the key \p val using \p pred predicate for comparing
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_CuckooMap_find_val "find(K const&)"
-            but \p pred is used for key comparison.
-            If you use ordered cuckoo map, then \p Predicate should have the interface and semantics like \p std::less.
-            If you use unordered cuckoo map, then \p Predicate should have the interface and semantics like \p std::equal_to.
-            \p pred must imply the same element order as the comparator used for building the map.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p Less must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Predicate>
-        bool find_with( K const& key, Predicate pred )
+        bool contains( K const& key, Predicate pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>() );
+            return base_class::contains( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>() );
         }
+        //@cond
+        template <typename K, typename Predicate>
+        CDS_DEPRECATED("the function is deprecated, use contains()")
+        bool find_with( K const& key, Predicate pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Clears the map
         void clear()

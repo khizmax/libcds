@@ -43,7 +43,7 @@ namespace cds { namespace sync {
 
             //@cond
             void onLock()
-            { 
+            {
                 ++m_nLockCount;
                 int nDiff = static_cast<int>( m_nLockCount.get() - m_nUnlockCount.get());
                 if ( nDiff > 0 && m_nMaxLocked.get() < static_cast<typename event_counter::value_type>( nDiff ))
@@ -53,8 +53,8 @@ namespace cds { namespace sync {
             void onLockContention()     { ++m_nLockContention;  }
             void onUnlockContention()   { ++m_nUnlockContention;}
             void onLockAllocation()
-            { 
-                ++m_nLockAllocation;  
+            {
+                ++m_nLockAllocation;
                 int nDiff = static_cast<int>( m_nLockAllocation.get() - m_nLockDeallocation.get());
                 if ( nDiff > 0 && m_nMaxAllocated.get() < static_cast<typename event_counter::value_type>( nDiff ) )
                     m_nMaxAllocated = static_cast<typename event_counter::value_type>( nDiff );
@@ -70,7 +70,7 @@ namespace cds { namespace sync {
         The monitor is intended for reducing the number of system mutexes for
         huge containers like a tree. The monitor allocates the mutex from the pool \p LockPool
         only when container's node should be locked. Lifetime of node's mutex is managed by
-        reference counter. When the reference counter to node's mutex becomes zero, 
+        reference counter. When the reference counter to node's mutex becomes zero,
         the mutex is given back to the pool.
 
         The monitor is blocked: the access to node's mutex is performed under the spin-lock.
@@ -94,18 +94,18 @@ namespace cds { namespace sync {
     public:
         typedef LockPool pool_type; ///< Pool type
         typedef typename pool_type::value_type lock_type; ///< node lock type
-        typedef typename std::conditional< 
-            std::is_same< BackOff, cds::opt::none >::value, 
+        typedef typename std::conditional<
+            std::is_same< BackOff, cds::opt::none >::value,
             cds::backoff::yield,
             BackOff
         >::type  back_off;  ///< back-off strategy for spinning
         typedef uint32_t refspin_type;  ///< Reference counter + spin-lock bit
 
         /// Internal statistics
-        typedef typename std::conditional< 
-            Stat, 
-            typename pool_monitor_traits::stat<>, 
-            typename pool_monitor_traits::empty_stat 
+        typedef typename std::conditional<
+            Stat,
+            typename pool_monitor_traits::stat<>,
+            typename pool_monitor_traits::empty_stat
         >::type internal_stat;
 
         /// Pool's default capacity
@@ -167,7 +167,7 @@ namespace cds { namespace sync {
             // try lock spin and increment reference counter
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
-                atomics::memory_order_acquire, atomics::memory_order_relaxed ) ) 
+                atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
             {
                 back_off bkoff;
                 do {
@@ -208,7 +208,7 @@ namespace cds { namespace sync {
             // try lock spin
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur | c_nSpinBit,
-                atomics::memory_order_acquire, atomics::memory_order_relaxed ) ) 
+                atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
             {
                 back_off bkoff;
                 do {
@@ -245,7 +245,7 @@ namespace cds { namespace sync {
         /**
             If class' template argument \p Stat is \p false,
             the function returns \ref pool_monitor_traits::empty_stat "dummy statistics".
-            Otherwise, it returns the reference to monitor's internal statistics 
+            Otherwise, it returns the reference to monitor's internal statistics
             of type \ref pool_monitor_traits::stat.
         */
         internal_stat const& statistics() const

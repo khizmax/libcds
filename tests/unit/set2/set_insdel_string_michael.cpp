@@ -3,10 +3,10 @@
 #include "set2/set_insdel_string.h"
 #include "set2/set_type_michael.h"
 
-namespace set2 {
-    CDSUNIT_DEFINE_MichaelSet( cc::michael_set::implementation_tag, Set_InsDel_string )
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Set_InsDel_string::X() { run_test_extract<typename set_type< TAG, key_type, value_type>::X>(); }
+#include "set2/set_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Set_InsDel_string, run_MichaelSet )
-        CDSUNIT_TEST_MichaelSet
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace set2 {
+    CDSUNIT_DECLARE_MichaelSet
 } // namespace set2

@@ -258,10 +258,6 @@ namespace cds { namespace container {
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
 
-        //@cond
-        typedef cds::container::split_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename maker::cxx_node_allocator    cxx_node_allocator;
@@ -580,19 +576,58 @@ namespace cds { namespace container {
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the set.
         */
+        /// Updates the node
+        /**
+            The operation performs inserting or changing data with lock-free manner.
+
+            If \p key is not found in the set, then \p key is inserted iff \p bAllowInsert is \p true.
+            Otherwise, the functor \p func is called with item found.
+
+            The functor signature is:
+            \code
+                struct my_functor {
+                    void operator()( bool bNew, value_type& item, const Q& val );
+                };
+            \endcode
+
+            with arguments:
+            - \p bNew - \p true if the item has been inserted, \p false otherwise
+            - \p item - item of the set
+            - \p val - argument \p val passed into the \p %update() function
+
+            The functor may change non-key fields of the \p item.
+
+            The function applies RCU lock internally.
+
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
+            \p second is true if new item has been added or \p false if the item with \p key
+            already is in the map.
+
+            @warning For \ref cds_intrusive_MichaelList_rcu "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_intrusive_LazyList_rcu "LazyList" provides exclusive access to inserted item and does not require any node-level
+            synchronization.
+        */
         template <typename Q, typename Func>
-        std::pair<bool, bool> ensure( Q const& val, Func func )
+        std::pair<bool, bool> update( Q const& val, Func func, bool bAllowInsert = true )
         {
             scoped_node_ptr pNode( alloc_node( val ));
 
-            std::pair<bool, bool> bRet = base_class::ensure( *pNode,
+            std::pair<bool, bool> bRet = base_class::update( *pNode,
                 [&func, &val]( bool bNew, node_type& item,  node_type const& /*val*/ ) {
                     func( bNew, item.m_Value, val );
-                } );
+                }, bAllowInsert );
             if ( bRet.first && bRet.second )
                 pNode.release();
             return bRet;
         }
+        //@cond
+        // Dprecated, use update()
+        template <typename Q, typename Func>
+        std::pair<bool, bool> ensure( Q const& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Deletes \p key from the set
         /** \anchor cds_nonintrusive_SplitListSet_rcu_erase_val
@@ -779,36 +814,51 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Finds the key \p key
-        /** \anchor cds_nonintrusive_SplitListSet_rcu_find_val
-
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
 
             Note the hash functor specified for class \p Traits template parameter
             should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Otherwise, you may use \p contains( Q const&, Less pred ) functions with explicit predicate for key comparing.
 
-            The function makes RCU lock internally.
+            The function applies RCU lock internally.
         */
         template <typename Q>
+        bool contains( Q const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( Q const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListSet_rcu_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
+            \p Less must imply the same element order as the comparator used for building the map.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, typename maker::template predicate_wrapper<Less>::type() );
+            return base_class::contains( key, typename maker::template predicate_wrapper<Less>::type() );
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SplitListSet_rcu_get

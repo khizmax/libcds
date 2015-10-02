@@ -58,7 +58,7 @@ namespace cds { namespace intrusive {
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
         - all keys must be fixed-size. It means that you cannot use \p std::string as a key for \p %MultiLevelHashSet.
           Instead, for the strings you should use well-known hashing algorithms like <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
-          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a> 
+          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
           or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
           converts variable-length strings to fixed-length bit-strings, and use that hash as a key in \p %MultiLevelHashSet.
         - \p %MultiLevelHashSet uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
@@ -71,13 +71,13 @@ namespace cds { namespace intrusive {
         - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
         - \p T - a value type to be stored in the set
         - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction.
-            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor" 
+            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor"
             to hash value of \p T. The set algorithm does not calculate that hash value.
 
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
         - <tt><cds/intrusive/multilevel_hashset_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/intrusive/multilevel_hashset_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type". RCU specialization
+        - <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultilevelHashSet_rcu "RCU type". RCU specialization
             has a slightly different interface.
     */
     template <
@@ -100,7 +100,7 @@ namespace cds { namespace intrusive {
         static_assert(!std::is_same< hash_accessor, cds::opt::none >::value, "hash_accessor functor must be specified" );
 
         /// Hash type deduced from \p hash_accessor return type
-        typedef typename std::decay< 
+        typedef typename std::decay<
             typename std::remove_reference<
                 decltype( hash_accessor()( std::declval<T>()) )
             >::type
@@ -113,7 +113,7 @@ namespace cds { namespace intrusive {
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined hash_comparator  ;    ///< hash compare functor based on opt::compare and opt::less option setter
 #   else
-        typedef typename cds::opt::details::make_comparator_from< 
+        typedef typename cds::opt::details::make_comparator_from<
             hash_type,
             traits,
             multilevel_hashset::bitwise_compare< hash_type >
@@ -129,7 +129,7 @@ namespace cds { namespace intrusive {
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
         /// Count of hazard pointers required
-        static CDS_CONSTEXPR size_t const c_nHazardPtrCount = 1;
+        static CDS_CONSTEXPR size_t const c_nHazardPtrCount = 2;
 
         /// Node marked poiter
         typedef cds::details::marked_ptr< value_type, 3 > node_ptr;
@@ -161,43 +161,28 @@ namespace cds { namespace intrusive {
         typedef cds::details::Allocator< array_node, node_allocator > cxx_array_node_allocator;
 
         typedef multilevel_hashset::details::hash_splitter< hash_type > hash_splitter;
-
-        struct metrics {
-            size_t  head_node_size;     // power-of-two
-            size_t  head_node_size_log; // log2( head_node_size )
-            size_t  array_node_size;    // power-of-two
-            size_t  array_node_size_log;// log2( array_node_size )
-        };
         //@endcond
 
     protected:
         //@cond
-        /// Bidirectional iterator class
-        template <bool IsConst>
-        class bidirectional_iterator
+        class iterator_base
         {
             friend class MultiLevelHashSet;
 
+        protected:
             array_node *        m_pNode;    ///< current array node
             size_t              m_idx;      ///< current position in m_pNode
             typename gc::Guard  m_guard;    ///< HP guard
             MultiLevelHashSet const*  m_set;    ///< Hash set
 
-        protected:
-            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
-
         public:
-            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
-            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
-
-        public:
-            bidirectional_iterator() CDS_NOEXCEPT
+            iterator_base() CDS_NOEXCEPT
                 : m_pNode( nullptr )
                 , m_idx( 0 )
                 , m_set( nullptr )
             {}
 
-            bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+            iterator_base( iterator_base const& rhs ) CDS_NOEXCEPT
                 : m_pNode( rhs.m_pNode )
                 , m_idx( rhs.m_idx )
                 , m_set( rhs.m_set )
@@ -205,7 +190,7 @@ namespace cds { namespace intrusive {
                 m_guard.copy( rhs.m_guard );
             }
 
-            bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            iterator_base& operator=(iterator_base const& rhs) CDS_NOEXCEPT
             {
                 m_pNode = rhs.m_pNode;
                 m_idx = rhs.m_idx;
@@ -214,28 +199,16 @@ namespace cds { namespace intrusive {
                 return *this;
             }
 
-            bidirectional_iterator& operator++()
+            iterator_base& operator++()
             {
                 forward();
                 return *this;
             }
 
-            bidirectional_iterator& operator--()
+            iterator_base& operator--()
             {
                 backward();
                 return *this;
-            }
-
-            value_ptr operator ->() const CDS_NOEXCEPT
-            {
-                return pointer();
-            }
-
-            value_ref operator *() const CDS_NOEXCEPT
-            {
-                value_ptr p = pointer();
-                assert( p );
-                return *p;
             }
 
             void release()
@@ -243,26 +216,24 @@ namespace cds { namespace intrusive {
                 m_guard.clear();
             }
 
-            template <bool IsConst2>
-            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator ==(iterator_base const& rhs) const CDS_NOEXCEPT
             {
                 return m_pNode == rhs.m_pNode && m_idx == rhs.m_idx && m_set == rhs.m_set;
             }
 
-            template <bool IsConst2>
-            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator !=(iterator_base const& rhs) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
 
         protected:
-            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool )
+            iterator_base( MultiLevelHashSet const& set, array_node * pNode, size_t idx, bool )
                 : m_pNode( pNode )
                 , m_idx( idx )
                 , m_set( &set )
             {}
 
-            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
+            iterator_base( MultiLevelHashSet const& set, array_node * pNode, size_t idx )
                 : m_pNode( pNode )
                 , m_idx( idx )
                 , m_set( &set )
@@ -270,7 +241,7 @@ namespace cds { namespace intrusive {
                 forward();
             }
 
-            value_ptr pointer() const CDS_NOEXCEPT
+            value_type * pointer() const CDS_NOEXCEPT
             {
                 return m_guard.template get<value_type>();
             }
@@ -390,63 +361,166 @@ namespace cds { namespace intrusive {
             }
         };
 
-        /// Reverse bidirectional iterator
-        template <bool IsConst>
-        class reverse_bidirectional_iterator : protected bidirectional_iterator<IsConst>
+        template <class Iterator>
+        Iterator init_begin() const
         {
-            typedef bidirectional_iterator<IsConst> base_class;
+            return Iterator( *this, m_Head, size_t(0) - 1 );
+        }
+
+        template <class Iterator>
+        Iterator init_end() const
+        {
+            return Iterator( *this, m_Head, head_size(), false );
+        }
+
+        template <class Iterator>
+        Iterator init_rbegin() const
+        {
+            return Iterator( *this, m_Head, head_size() );
+        }
+
+        template <class Iterator>
+        Iterator init_rend() const
+        {
+            return Iterator( *this, m_Head, size_t(0) - 1, false );
+        }
+
+        /// Bidirectional iterator class
+        template <bool IsConst>
+        class bidirectional_iterator: protected iterator_base
+        {
             friend class MultiLevelHashSet;
 
-        public:
-            typedef typename base_class::value_ptr value_ptr;
-            typedef typename base_class::value_ref value_ref;
+        protected:
+            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
 
         public:
-            reverse_bidirectional_iterator() CDS_NOEXCEPT
-                : base_class()
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
+
+        public:
+            bidirectional_iterator() CDS_NOEXCEPT
             {}
 
-            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) CDS_NOEXCEPT
-                : base_class( rhs )
+            bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+                : iterator_base( rhs )
             {}
 
-            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
             {
-                base_class::operator=( rhs );
+                iterator_base::operator=( rhs );
                 return *this;
             }
 
-            reverse_bidirectional_iterator& operator++()
+            bidirectional_iterator& operator++()
             {
-                base_class::backward();
+                iterator_base::operator++();
                 return *this;
             }
 
-            reverse_bidirectional_iterator& operator--()
+            bidirectional_iterator& operator--()
             {
-                base_class::forward();
+                iterator_base::operator--();
                 return *this;
             }
 
             value_ptr operator ->() const CDS_NOEXCEPT
             {
-                return base_class::operator->();
+                return iterator_base::pointer();
             }
 
             value_ref operator *() const CDS_NOEXCEPT
             {
-                return base_class::operator*();
+                value_ptr p = iterator_base::pointer();
+                assert( p );
+                return *p;
             }
 
             void release()
             {
-                base_class::release();
+                iterator_base::release();
+            }
+
+            template <bool IsConst2>
+            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            {
+                return iterator_base::operator==( rhs );
+            }
+
+            template <bool IsConst2>
+            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            {
+                return !( *this == rhs );
+            }
+
+        protected:
+            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool )
+                : iterator_base( set, pNode, idx, false )
+            {}
+
+            bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
+                : iterator_base( set, pNode, idx )
+            {}
+        };
+
+        /// Reverse bidirectional iterator
+        template <bool IsConst>
+        class reverse_bidirectional_iterator : public iterator_base
+        {
+            friend class MultiLevelHashSet;
+
+        public:
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
+
+        public:
+            reverse_bidirectional_iterator() CDS_NOEXCEPT
+                : iterator_base()
+            {}
+
+            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+                : iterator_base( rhs )
+            {}
+
+            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            {
+                iterator_base::operator=( rhs );
+                return *this;
+            }
+
+            reverse_bidirectional_iterator& operator++()
+            {
+                iterator_base::operator--();
+                return *this;
+            }
+
+            reverse_bidirectional_iterator& operator--()
+            {
+                iterator_base::operator++();
+                return *this;
+            }
+
+            value_ptr operator ->() const CDS_NOEXCEPT
+            {
+                return iterator_base::pointer();
+            }
+
+            value_ref operator *() const CDS_NOEXCEPT
+            {
+                value_ptr p = iterator_base::pointer();
+                assert( p );
+                return *p;
+            }
+
+            void release()
+            {
+                iterator_base::release();
             }
 
             template <bool IsConst2>
             bool operator ==(reverse_bidirectional_iterator<IsConst2> const& rhs) const
             {
-                return base_class::operator==( rhs );
+                return iterator_base::operator==( rhs );
             }
 
             template <bool IsConst2>
@@ -456,10 +530,14 @@ namespace cds { namespace intrusive {
             }
 
         private:
+            reverse_bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx, bool )
+                : iterator_base( set, pNode, idx, false )
+            {}
+
             reverse_bidirectional_iterator( MultiLevelHashSet& set, array_node * pNode, size_t idx )
-                : base_class( set, pNode, idx, false )
+                : iterator_base( set, pNode, idx, false )
             {
-                base_class::backward();
+                iterator_base::backward();
             }
         };
         //@endcond
@@ -479,7 +557,7 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
-        metrics const     m_Metrics;     ///< Metrics
+        multilevel_hashset::details::metrics const m_Metrics;     ///< Metrics
         array_node *      m_Head;        ///< Head array
         item_counter      m_ItemCounter; ///< Item counter
         stat              m_Stat;        ///< Internal statistics
@@ -498,7 +576,7 @@ namespace cds { namespace intrusive {
             where \p N is multi-level array depth.
         */
         MultiLevelHashSet( size_t head_bits = 8, size_t array_bits = 4 )
-            : m_Metrics(make_metrics( head_bits, array_bits ))
+            : m_Metrics( multilevel_hashset::details::metrics::make( head_bits, array_bits, sizeof(hash_type)))
             , m_Head( alloc_head_node())
         {}
 
@@ -511,7 +589,7 @@ namespace cds { namespace intrusive {
 
         /// Inserts new node
         /**
-            The function inserts \p val in the set if it does not contain 
+            The function inserts \p val in the set if it does not contain
             an item with that hash.
 
             Returns \p true if \p val is placed into the set, \p false otherwise.
@@ -553,6 +631,7 @@ namespace cds { namespace intrusive {
             array_node * pArr = m_Head;
             size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
             assert( nSlot < m_Metrics.head_node_size );
+            size_t nHeight = 1;
 
             while ( true ) {
                 node_ptr slot = pArr->nodes[nSlot].load( memory_model::memory_order_acquire );
@@ -563,6 +642,7 @@ namespace cds { namespace intrusive {
                     assert( nSlot < m_Metrics.array_node_size );
                     pArr = to_array( slot.ptr() );
                     nOffset += m_Metrics.array_node_size_log;
+                    ++nHeight;
                 }
                 else if ( slot.bits() == flag_array_converting ) {
                     // the slot is converting to array node right now
@@ -597,6 +677,7 @@ namespace cds { namespace intrusive {
                             f( val );
                             ++m_ItemCounter;
                             m_Stat.onInsertSuccess();
+                            m_Stat.height( nHeight );
                             return true;
                         }
 
@@ -625,7 +706,7 @@ namespace cds { namespace intrusive {
         */
         std::pair<bool, bool> update( value_type& val, bool bInsert = true )
         {
-            return do_update(val, [](bool, value_type&) {}, bInsert );
+            return do_update(val, [](value_type&, value_type *) {}, bInsert );
         }
 
         /// Unlinks the item \p val from the set
@@ -644,7 +725,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the set
-        /** 
+        /**
             The function searches \p hash in the set,
             unlinks the item found, and returns \p true.
             If that item is not found the function returns \p false.
@@ -694,31 +775,17 @@ namespace cds { namespace intrusive {
         */
         bool erase_at( iterator const& iter )
         {
-            if ( iter.m_set != this )
-                return false;
-            if ( iter.m_pNode == m_Head && iter.m_idx >= head_size())
-                return false;
-            if ( iter.m_idx >= array_node_size() )
-                return false;
-
-            for (;;) {
-                node_ptr slot = iter.m_pNode->nodes[iter.m_idx].load( memory_model::memory_order_acquire );
-                if ( slot.bits() == 0 && slot.ptr() == iter.pointer() ) {
-                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
-                        // the item is guarded by iterator, so we may retire it safely
-                        gc::template retire<disposer>( slot.ptr() );
-                        --m_ItemCounter;
-                        m_Stat.onEraseSuccess();
-                        return true;
-                    }
-                }
-                else
-                    return false;
-            }
+            return do_erase_at( iter );
         }
+        //@cond
+        bool erase_at( reverse_iterator const& iter )
+        {
+            return do_erase_at( iter );
+        }
+        //@endcond
 
         /// Extracts the item with specified \p hash
-        /** 
+        /**
             The function searches \p hash in the set,
             unlinks it from the set, and returns an guarded pointer to the item extracted.
             If \p hash is not found the function returns an empty guarded pointer.
@@ -897,10 +964,18 @@ namespace cds { namespace intrusive {
             - pre-increment and pre-decrement. Post-operators is not supported
             - equality operators <tt>==</tt> and <tt>!=</tt>.
                 Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
                 does not entail <tt> &(*it1) == &(*it2) </tt>: welcome to concurrent containers
             - helper member function \p release() that clears internal hazard pointer.
-                After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+                After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+
+            During iteration you may safely erase any item from the set;
+            @ref erase_at() function call doesn't invalidate any iterator.
+            If some iterator points to the item to be erased, that item is not deleted immediately
+            but only after that iterator will be advanced forward or backward.
+
+            @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
+            in array node that is being splitted.
         */
     ///@{
 
@@ -922,22 +997,22 @@ namespace cds { namespace intrusive {
             return const_iterator( *this, m_Head, size_t(0) - 1 );
         }
 
-        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         iterator end()
         {
-            return iterator( *this, m_Head, head_size() - 1 );
+            return iterator( *this, m_Head, head_size(), false );
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator end() const
         {
-            return const_iterator( *this, m_Head, head_size() - 1 );
+            return const_iterator( *this, m_Head, head_size(), false );
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator cend()
         {
-            return const_iterator( *this, m_Head, head_size() - 1 );
+            return const_iterator( *this, m_Head, head_size(), false );
         }
 
         /// Returns a reverse iterator to the first element of the reversed set
@@ -960,59 +1035,37 @@ namespace cds { namespace intrusive {
 
         /// Returns a reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         reverse_iterator rend()
         {
-            return reverse_iterator( *this, m_Head, 0 );
+            return reverse_iterator( *this, m_Head, size_t(0) - 1, false );
         }
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator( *this, m_Head, 0 );
+            return const_reverse_iterator( *this, m_Head, size_t(0) - 1, false );
         }
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator crend()
         {
-            return const_reverse_iterator( *this, m_Head, 0 );
+            return const_reverse_iterator( *this, m_Head, size_t(0) - 1, false );
         }
     ///@}
 
     private:
         //@cond
-        static metrics make_metrics( size_t head_bits, size_t array_bits )
-        {
-            size_t const hash_bits = sizeof( hash_type ) * 8;
-
-            if ( array_bits < 2 )
-                array_bits = 2;
-            if ( head_bits < 4 )
-                head_bits = 4;
-            if ( head_bits > hash_bits )
-                head_bits = hash_bits;
-            if ( (hash_bits - head_bits) % array_bits != 0 )
-                head_bits += (hash_bits - head_bits) % array_bits;
-
-            assert( (hash_bits - head_bits) % array_bits == 0 );
-
-            metrics m;
-            m.head_node_size_log = head_bits;
-            m.head_node_size = size_t(1) << head_bits;
-            m.array_node_size_log = array_bits;
-            m.array_node_size = size_t(1) << array_bits;
-            return m;
-        }
 
         array_node * alloc_head_node() const
         {
@@ -1133,7 +1186,7 @@ namespace cds { namespace intrusive {
 
             node_ptr cur(current.ptr());
             atomic_node_ptr& slot = pParent->nodes[idxParent];
-            if ( !slot.compare_exchange_strong( cur, cur | flag_array_converting, memory_model::memory_order_release, atomics::memory_order_relaxed )) 
+            if ( !slot.compare_exchange_strong( cur, cur | flag_array_converting, memory_model::memory_order_release, atomics::memory_order_relaxed ))
             {
                 m_Stat.onExpandNodeFailed();
                 free_array_node( pArr );
@@ -1143,10 +1196,11 @@ namespace cds { namespace intrusive {
             pArr->nodes[idx].store( current, memory_model::memory_order_release );
 
             cur = cur | flag_array_converting;
-            CDS_VERIFY( 
+            CDS_VERIFY(
                 slot.compare_exchange_strong( cur, node_ptr( to_node( pArr ), flag_array_node ), memory_model::memory_order_release, atomics::memory_order_relaxed )
             );
 
+            m_Stat.onExpandNodeSuccess();
             m_Stat.onArrayNodeCreated();
             return true;
         }
@@ -1258,19 +1312,47 @@ namespace cds { namespace intrusive {
             } // while
         }
 
+        bool do_erase_at( iterator_base const& iter )
+        {
+            if ( iter.m_set != this )
+                return false;
+            if ( iter.m_pNode == m_Head && iter.m_idx >= head_size())
+                return false;
+            if ( iter.m_idx >= array_node_size() )
+                return false;
+
+            for (;;) {
+                node_ptr slot = iter.m_pNode->nodes[iter.m_idx].load( memory_model::memory_order_acquire );
+                if ( slot.bits() == 0 && slot.ptr() == iter.pointer() ) {
+                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                        // the item is guarded by iterator, so we may retire it safely
+                        gc::template retire<disposer>( slot.ptr() );
+                        --m_ItemCounter;
+                        m_Stat.onEraseSuccess();
+                        return true;
+                    }
+                }
+                else
+                    return false;
+            }
+        }
+
         template <typename Func>
         std::pair<bool, bool> do_update( value_type& val, Func f, bool bInsert = true )
         {
             hash_type const& hash = hash_accessor()( val );
             hash_splitter splitter( hash );
             hash_comparator cmp;
-            typename gc::Guard guard;
+            typename gc::template GuardArray<2> guards;
             back_off bkoff;
 
             array_node * pArr = m_Head;
             size_t nSlot = splitter.cut( m_Metrics.head_node_size_log );
             assert( nSlot < m_Metrics.head_node_size );
             size_t nOffset = m_Metrics.head_node_size_log;
+            size_t nHeight = 1;
+
+            guards.assign( 1, &val );
 
             while ( true ) {
                 node_ptr slot = pArr->nodes[nSlot].load( memory_model::memory_order_acquire );
@@ -1281,6 +1363,7 @@ namespace cds { namespace intrusive {
                     assert( nSlot < m_Metrics.array_node_size );
                     pArr = to_array( slot.ptr() );
                     nOffset += m_Metrics.array_node_size_log;
+                    ++nHeight;
                 }
                 else if ( slot.bits() == flag_array_converting ) {
                     // the slot is converting to array node right now
@@ -1292,7 +1375,7 @@ namespace cds { namespace intrusive {
                     assert(slot.bits() == 0 );
 
                     // protect data node by hazard pointer
-                    if ( guard.protect( pArr->nodes[nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
+                    if ( guards.protect( 0, pArr->nodes[nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
                         // slot value has been changed - retry
                         m_Stat.onSlotChanged();
                     }
@@ -1307,7 +1390,7 @@ namespace cds { namespace intrusive {
 
                             if ( pArr->nodes[nSlot].compare_exchange_strong( slot, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                                 // slot can be disposed
-                                f( false, val );
+                                f( val, slot.ptr() );
                                 gc::template retire<disposer>( slot.ptr() );
                                 m_Stat.onUpdateExisting();
                                 return std::make_pair( true, false );
@@ -1327,9 +1410,10 @@ namespace cds { namespace intrusive {
                             if ( pArr->nodes[nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             {
                                 // the new data node has been inserted
-                                f( true, val );
+                                f( val, nullptr );
                                 ++m_ItemCounter;
                                 m_Stat.onUpdateNew();
+                                m_Stat.height( nHeight );
                                 return std::make_pair( true, true );
                             }
                         }

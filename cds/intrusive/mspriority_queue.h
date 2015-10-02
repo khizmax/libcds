@@ -235,7 +235,7 @@ namespace cds { namespace intrusive {
             no item has been added.
             Otherwise, the function inserts the pointer to \p val into the heap
             and returns \p true.
-            
+
             The function does not make a copy of \p val.
         */
         bool push( value_type& val )

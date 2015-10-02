@@ -3,10 +3,10 @@
 #include "map2/map_insdel_item_string.h"
 #include "map2/map_type_bronson_avltree.h"
 
-namespace map2 {
-    CDSUNIT_DEFINE_BronsonAVLTreeMap( cc::bronson_avltree::implementation_tag, Map_InsDel_Item_string)
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_InsDel_Item_string::X() { run_test<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Map_InsDel_Item_string, run_BronsonAVLTreeMap )
-        CDSUNIT_TEST_BronsonAVLTreeMap
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace map2 {
+    CDSUNIT_DECLARE_BronsonAVLTreeMap
 } // namespace map2

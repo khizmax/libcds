@@ -6,20 +6,27 @@
 
 namespace map2 {
 
-#   define TEST_MAP(IMPL, C, X)         void C::X() { test<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_NOLF(IMPL, C, X)    void C::X() { test_nolf<map_type<IMPL, key_type, value_type>::X >(); }
-#   define TEST_MAP_EXTRACT(IMPL, C, X)  TEST_MAP(IMPL, C, X)
-#   define TEST_MAP_NOLF_EXTRACT(IMPL, C, X) TEST_MAP_NOLF(IMPL, C, X)
+#define TEST_CASE(TAG, X)  void X();
 
     class Map_InsDelFind: public CppUnitMini::TestCase
     {
-        static size_t  c_nInitialMapSize;   // initial map size
-        static size_t  c_nThreadCount;      // thread count
-        static size_t  c_nMaxLoadFactor;    // maximum load factor
-        static unsigned int c_nInsertPercentage;
-        static unsigned int c_nDeletePercentage;
-        static unsigned int c_nDuration;    // test duration, seconds
-        static bool    c_bPrintGCState;
+    public:
+        size_t  c_nMapSize = 500000;          // initial map size
+        size_t  c_nThreadCount = 8;      // thread count
+        size_t  c_nMaxLoadFactor = 8;    // maximum load factor
+        unsigned int c_nInsertPercentage = 5;
+        unsigned int c_nDeletePercentage = 5;
+        unsigned int c_nDuration = 30;    // test duration, seconds
+        bool    c_bPrintGCState = true;
+
+        size_t c_nCuckooInitialSize = 1024;// initial size for CuckooMap
+        size_t c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
+        size_t c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (o - use default)
+
+        size_t c_nMultiLevelMap_HeadBits = 10;
+        size_t c_nMultiLevelMap_ArrayBits = 4;
+
+        size_t  c_nLoadFactor = 2;  // current load factor
 
     public:
         enum actions
@@ -32,14 +39,13 @@ namespace map2 {
         actions m_arrShuffle[c_nShuffleSize];
 
     protected:
-        typedef CppUnitMini::TestCase Base;
         typedef size_t  key_type;
         typedef size_t  value_type;
 
-        template <class MAP>
+        template <class Map>
         class WorkThread: public CppUnitMini::TestThread
         {
-            MAP&     m_Map;
+            Map&     m_Map;
 
             virtual WorkThread *    clone()
             {
@@ -54,7 +60,7 @@ namespace map2 {
             size_t  m_nFindFailed;
 
         public:
-            WorkThread( CppUnitMini::ThreadPool& pool, MAP& rMap )
+            WorkThread( CppUnitMini::ThreadPool& pool, Map& rMap )
                 : CppUnitMini::TestThread( pool )
                 , m_Map( rMap )
             {}
@@ -71,9 +77,29 @@ namespace map2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
+            typedef std::pair< key_type const, value_type > map_value_type;
+
+            struct update_functor {
+                template <typename Q>
+                void operator()( bool /*bNew*/, map_value_type& /*cur*/, Q const& /*val*/ )
+                {}
+
+                // MultiLevelHashMap
+                void operator()( map_value_type& /*cur*/, map_value_type * /*old*/)
+                {}
+
+                // MichaelMap
+                void operator()( bool /*bNew*/, map_value_type& /*cur*/ )
+                {}
+
+                // BronsonAVLTreeMap
+                void operator()( bool /*bNew*/, key_type /*key*/, value_type& /*val*/ )
+                {}
+            };
+
             virtual void test()
             {
-                MAP& rMap = m_Map;
+                Map& rMap = m_Map;
 
                 m_nInsertSuccess =
                     m_nInsertFailed =
@@ -84,7 +110,7 @@ namespace map2 {
 
                 actions * pAct = getTest().m_arrShuffle;
                 unsigned int i = 0;
-                size_t const nNormalize = size_t(-1) / (c_nInitialMapSize * 2);
+                size_t const nNormalize = size_t(-1) / (getTest().c_nMapSize * 2);
 
                 size_t nRand = 0;
                 while ( !time_elapsed() ) {
@@ -92,16 +118,24 @@ namespace map2 {
                     size_t n = nRand / nNormalize;
                     switch ( pAct[i] ) {
                     case do_find:
-                        if ( rMap.find( n ))
+                        if ( rMap.contains( n ))
                             ++m_nFindSuccess;
                         else
                             ++m_nFindFailed;
                         break;
                     case do_insert:
-                        if ( rMap.insert( n, n ))
-                            ++m_nInsertSuccess;
-                        else
-                            ++m_nInsertFailed;
+                        if ( n % 2 ) {
+                            if ( rMap.insert( n, n ))
+                                ++m_nInsertSuccess;
+                            else
+                                ++m_nInsertFailed;
+                        }
+                        else {
+                            if ( rMap.update(n, update_functor(), true ).first )
+                                ++m_nInsertSuccess;
+                            else
+                                ++m_nInsertFailed;
+                        }
                         break;
                     case do_delete:
                         if ( rMap.erase( n ))
@@ -118,23 +152,23 @@ namespace map2 {
         };
 
     protected:
-        template <class MAP>
-        void do_test( MAP& testMap )
+        template <class Map>
+        void do_test( Map& testMap )
         {
-            typedef WorkThread<MAP> work_thread;
+            typedef WorkThread<Map> work_thread;
             cds::OS::Timer    timer;
 
             // fill map - only odd number
             {
                 std::vector<size_t> arr;
-                arr.reserve( c_nInitialMapSize );
-                for ( size_t i = 0; i < c_nInitialMapSize; ++i )
+                arr.reserve( c_nMapSize );
+                for ( size_t i = 0; i < c_nMapSize; ++i )
                     arr.push_back( i * 2 + 1);
                 shuffle( arr.begin(), arr.end() );
-                for ( size_t i = 0; i < c_nInitialMapSize; ++i )
+                for ( size_t i = 0; i < c_nMapSize; ++i )
                     testMap.insert( arr[i], arr[i] );
             }
-            CPPUNIT_MSG( "   Insert " << c_nInitialMapSize << " items time (single-threaded)=" << timer.duration() );
+            CPPUNIT_MSG( "   Insert " << c_nMapSize << " items time (single-threaded)=" << timer.duration() );
 
             timer.reset();
             CppUnitMini::ThreadPool pool( *this );
@@ -186,55 +220,34 @@ namespace map2 {
             additional_cleanup( testMap );
         }
 
-        template <class MAP>
-        void test()
+        template <class Map>
+        void run_test()
         {
             CPPUNIT_MSG( "Thread count=" << c_nThreadCount
-                << " initial map size=" << c_nInitialMapSize
+                << " initial map size=" << c_nMapSize
                 << " insert=" << c_nInsertPercentage << '%'
                 << " delete=" << c_nDeletePercentage << '%'
                 << " duration=" << c_nDuration << "s"
                 );
 
-            for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
-                CPPUNIT_MSG( "Load factor=" << nLoadFactor );
-                MAP  testMap( c_nInitialMapSize, nLoadFactor );
+            if ( Map::c_bLoadFactorDepended ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
+                    CPPUNIT_MSG( "Load factor=" << c_nLoadFactor );
+                    Map  testMap( *this );
+                    do_test( testMap );
+                    if ( c_bPrintGCState )
+                        print_gc_state();
+                }
+            }
+            else {
+                Map testMap( *this );
                 do_test( testMap );
                 if ( c_bPrintGCState )
                     print_gc_state();
             }
-
-        }
-
-        template <class MAP>
-        void test_nolf()
-        {
-            CPPUNIT_MSG( "Thread count=" << c_nThreadCount
-                << " initial map size=" << c_nInitialMapSize
-                << " insert=" << c_nInsertPercentage << '%'
-                << " delete=" << c_nDeletePercentage << '%'
-                << " duration=" << c_nDuration << "s"
-                );
-
-            MAP testMap;
-            do_test( testMap );
-            if ( c_bPrintGCState )
-                print_gc_state();
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
-
-        void run_MichaelMap(const char *in_name, bool invert = false);
-        void run_SplitList(const char *in_name, bool invert = false);
-        void run_StripedMap(const char *in_name, bool invert = false);
-        void run_RefinableMap(const char *in_name, bool invert = false);
-        void run_CuckooMap(const char *in_name, bool invert = false);
-        void run_SkipListMap(const char *in_name, bool invert = false);
-        void run_EllenBinTreeMap(const char *in_name, bool invert = false);
-        void run_BronsonAVLTreeMap(const char *in_name, bool invert = false);
-        void run_StdMap(const char *in_name, bool invert = false);
-
-        virtual void myRun(const char *in_name, bool invert = false);
 
 #   include "map2/map_defs.h"
         CDSUNIT_DECLARE_MichaelMap
@@ -242,9 +255,23 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
+        CDSUNIT_DECLARE_MultiLevelHashMap
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_StdMap
+
+        CPPUNIT_TEST_SUITE(Map_InsDelFind)
+            CDSUNIT_TEST_MichaelMap
+            CDSUNIT_TEST_SplitList
+            CDSUNIT_TEST_SkipListMap
+            CDSUNIT_TEST_EllenBinTreeMap
+            CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_MultiLevelHashMap
+            CDSUNIT_TEST_CuckooMap
+            CDSUNIT_TEST_StripedMap
+            CDSUNIT_TEST_RefinableMap
+            CDSUNIT_TEST_StdMap
+        CPPUNIT_TEST_SUITE_END();
     };
 } // namespace map2

@@ -12,7 +12,6 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace multilevel_hashmap {
-
         /// \p MultiLevelHashMap internal statistics, see cds::intrusive::multilevel_hashset::stat
         template <typename EventCounter = cds::atomicity::event_counter>
         using stat = cds::intrusive::multilevel_hashset::stat< EventCounter >;
@@ -29,7 +28,7 @@ namespace cds { namespace container {
         {
             /// Hash functor, default is \p std::hash
             /**
-                \p MultiLevelHashMap may use any hash functor converting key to
+                \p MultiLevelHashMap may use any hash functor converting a key to
                 fixed-sized bit-string, for example, <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
                 <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>,
                 <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
@@ -82,7 +81,7 @@ namespace cds { namespace container {
             */
             typedef empty_stat stat;
 
-            /// RCU deadlock checking policy (only for \ref cds_container_MultilevelHashSet_rcu "RCU-based MultilevelHashSet")
+            /// RCU deadlock checking policy (only for \ref cds_container_MultilevelHashMap_rcu "RCU-based MultilevelHashMap")
             /**
                 @copydetails cds::intrusive::multilevel_hashset::traits::rcu_check_deadlock
             */
@@ -100,12 +99,12 @@ namespace cds { namespace container {
                 @copydetails traits::node_allocator
             - \p opt::compare - hash comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
-            - \p opt::less - specifies binary predicate used for hash comparison. 
+            - \p opt::less - specifies binary predicate used for hash comparison.
                 @copydetails cds::container::multilevel_hashmap::traits::less
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature.
                 @copydetails cds::container::multilevel_hashmap::traits::item_counter
-            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)                
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::stat - internal statistics. By default, it is disabled (\p multilevel_hashmap::empty_stat).
                 To enable it use \p multilevel_hashmap::stat
@@ -144,7 +143,7 @@ namespace cds { namespace container {
             typedef Traits  original_traits;
             typedef typename cds::opt::v::hash_selector< typename original_traits::hash >::type hasher;
 
-            typedef typename std::decay< 
+            typedef typename std::decay<
                 typename std::remove_reference<
                     decltype( hasher()( std::declval<key_type>()) )
                 >::type
@@ -152,7 +151,7 @@ namespace cds { namespace container {
             //typedef typename std::result_of< hasher( std::declval<key_type>()) >::type hash_type;
             static_assert( !std::is_pointer<hash_type>::value, "hash functor should return a reference to hash value" );
 
-            struct node_type 
+            struct node_type
             {
                 std::pair< key_type const, mapped_type> m_Value;
                 hash_type const m_hash;
@@ -162,19 +161,19 @@ namespace cds { namespace container {
 
                 template <typename Q>
                 node_type( hasher& h, Q const& key )
-                    : m_Value( std::make_pair( key, mapped_type()))
+                    : m_Value( std::move( std::make_pair( key, mapped_type())))
                     , m_hash( h( m_Value.first ))
                 {}
 
                 template <typename Q, typename U >
                 node_type( hasher& h, Q const& key, U const& val )
-                    : m_Value( std::make_pair( key, val ))
+                    : m_Value( std::move( std::make_pair( key, mapped_type(val))))
                     , m_hash( h( m_Value.first ))
                 {}
 
                 template <typename Q, typename... Args>
                 node_type( hasher& h, Q&& key, Args&&... args )
-                    : m_Value( std::forward<Q>(key), std::move( mapped_type( std::forward<Args>(args)... )))
+                    : m_Value( std::move( std::make_pair( std::forward<Q>(key), std::move( mapped_type( std::forward<Args>(args)... )))))
                     , m_hash( h( m_Value.first ))
                 {}
             };
@@ -199,7 +198,7 @@ namespace cds { namespace container {
 
             struct intrusive_traits: public original_traits
             {
-                typedef get_node_hash hash_accesor;
+                typedef get_node_hash hash_accessor;
                 typedef node_disposer disposer;
             };
 

@@ -29,8 +29,8 @@ namespace set {
         struct stat
         {
             unsigned int nFindCount     ;   // count of find-functor calling
-            unsigned int nEnsureNewCount;
-            unsigned int nEnsureCount;
+            unsigned int nUpdateNewCount;
+            unsigned int nUpdateCount;
 
             stat()
             {
@@ -40,8 +40,8 @@ namespace set {
             void copy( stat const& s )
             {
                 nFindCount = s.nFindCount;
-                nEnsureCount = s.nEnsureCount;
-                nEnsureNewCount = s.nEnsureNewCount;
+                nUpdateCount = s.nUpdateCount;
+                nUpdateNewCount = s.nUpdateNewCount;
             }
         };
 
@@ -306,20 +306,20 @@ namespace set {
         };
 
         template <typename Item, typename Q>
-        static void ensure_func( bool bNew, Item& i, Q& /*val*/ )
+        static void update_func( bool bNew, Item& i, Q& /*val*/ )
         {
             if ( bNew )
-                ++i.nEnsureNewCount;
+                ++i.nUpdateNewCount;
             else
-                ++i.nEnsureCount;
+                ++i.nUpdateCount;
         }
 
-        struct ensure_functor
+        struct update_functor
         {
             template <typename Item, typename Q>
             void operator()( bool bNew, Item& i, Q& val )
             {
-                ensure_func( bNew, i, val );
+                update_func( bNew, i, val );
             }
         };
 
@@ -332,22 +332,22 @@ namespace set {
             int key;
 
             // insert/find test
-            CPPUNIT_ASSERT( !s.find( 10 ) );
+            CPPUNIT_ASSERT( !s.contains( 10 ) );
             CPPUNIT_ASSERT( s.insert( 10 ));
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 1 ));
-            CPPUNIT_ASSERT( s.find( 10 ) );
+            CPPUNIT_ASSERT( s.contains( 10 ) );
 
             CPPUNIT_ASSERT( !s.insert( 10 ));
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 1 ));
 
-            CPPUNIT_ASSERT( !s.find_with( 20, pred ) );
+            CPPUNIT_ASSERT( !s.contains( 20, pred ) );
             CPPUNIT_ASSERT( s.insert( std::make_pair(20, 25) ));
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ));
-            CPPUNIT_ASSERT( s.find_with( 10, pred ) );
-            CPPUNIT_ASSERT( s.find( key = 20 ) );
+            CPPUNIT_ASSERT( s.contains( 10, pred ) );
+            CPPUNIT_ASSERT( s.contains( key = 20 ) );
             CPPUNIT_ASSERT( s.find_with( key, pred, find_functor() ) );
             {
                 copy_found<item> f;
@@ -368,7 +368,7 @@ namespace set {
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ));
 
-            CPPUNIT_ASSERT( !s.find( 25 ) );
+            CPPUNIT_ASSERT( !s.contains( 25 ) );
             CPPUNIT_ASSERT( s.insert( std::make_pair(25, -1), insert_functor() ));
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ));
@@ -380,18 +380,18 @@ namespace set {
                 CPPUNIT_ASSERT( f.m_found.nVal == 2500 );
             }
 
-            // ensure test
+            // update() test
             key = 10;
             {
                 copy_found<item> f;
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 10 );
-                CPPUNIT_ASSERT( f.m_found.nEnsureCount == 0 );
-                CPPUNIT_ASSERT( f.m_found.nEnsureNewCount == 0 );
+                CPPUNIT_ASSERT( f.m_found.nUpdateCount == 0 );
+                CPPUNIT_ASSERT( f.m_found.nUpdateNewCount == 0 );
             }
-            std::pair<bool, bool> ensureResult = s.ensure( key, ensure_functor() );
-            CPPUNIT_ASSERT( ensureResult.first && !ensureResult.second );
+            std::pair<bool, bool> updateResult = s.update( key, update_functor() );
+            CPPUNIT_ASSERT( updateResult.first && !updateResult.second );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ));
             {
@@ -399,12 +399,15 @@ namespace set {
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 10 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 10 );
-                CPPUNIT_ASSERT( f.m_found.nEnsureCount == 1 );
-                CPPUNIT_ASSERT( f.m_found.nEnsureNewCount == 0 );
+                CPPUNIT_ASSERT( f.m_found.nUpdateCount == 1 );
+                CPPUNIT_ASSERT( f.m_found.nUpdateNewCount == 0 );
             }
 
-            ensureResult = s.ensure( std::make_pair(13, 1300), ensure_functor() );
-            CPPUNIT_ASSERT( ensureResult.first && ensureResult.second );
+            updateResult = s.update(std::make_pair(13, 1300), update_functor(), false);
+            CPPUNIT_ASSERT(!updateResult.first && !updateResult.second);
+
+            updateResult = s.update( std::make_pair(13, 1300), update_functor() );
+            CPPUNIT_ASSERT( updateResult.first && updateResult.second );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 4 ));
             {
@@ -413,29 +416,29 @@ namespace set {
                 CPPUNIT_ASSERT( s.find( key, std::ref( f ) ) );
                 CPPUNIT_ASSERT( f.m_found.nKey == 13 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 1300 );
-                CPPUNIT_ASSERT( f.m_found.nEnsureCount == 0 );
-                CPPUNIT_ASSERT( f.m_found.nEnsureNewCount == 1 );
+                CPPUNIT_ASSERT( f.m_found.nUpdateCount == 0 );
+                CPPUNIT_ASSERT( f.m_found.nUpdateNewCount == 1 );
             }
 
             // erase test
             CPPUNIT_ASSERT( s.erase(13) );
-            CPPUNIT_ASSERT( !s.find( 13 ));
+            CPPUNIT_ASSERT( !s.contains( 13 ));
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ));
             CPPUNIT_ASSERT( !s.erase(13) );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
-            CPPUNIT_ASSERT( s.find( 10 ));
+            CPPUNIT_ASSERT( s.contains( 10 ));
             CPPUNIT_ASSERT( s.erase_with( 10, pred ));
-            CPPUNIT_ASSERT( !s.find( 10 ));
+            CPPUNIT_ASSERT( !s.contains( 10 ));
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ));
             CPPUNIT_ASSERT( !s.erase_with(10, pred) );
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 2 ));
 
-            CPPUNIT_ASSERT( s.find(20) );
+            CPPUNIT_ASSERT( s.contains(20) );
             {
                 copy_found<item> f;
                 CPPUNIT_ASSERT( s.erase( 20, std::ref( f ) ) );
@@ -447,7 +450,7 @@ namespace set {
                 CPPUNIT_ASSERT( f.m_found.nKey == 235 );
                 CPPUNIT_ASSERT( f.m_found.nVal == 235 );
             }
-            CPPUNIT_ASSERT( !s.find( 20 ));
+            CPPUNIT_ASSERT( !s.contains( 20 ));
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 1 ));
 
@@ -462,9 +465,9 @@ namespace set {
             CPPUNIT_ASSERT( !s.empty() );
             CPPUNIT_ASSERT( check_size( s, 3 ));
 
-            CPPUNIT_ASSERT( s.find(151));
-            CPPUNIT_ASSERT( s.find_with(174, pred ));
-            CPPUNIT_ASSERT( s.find(190));
+            CPPUNIT_ASSERT( s.contains(151));
+            CPPUNIT_ASSERT( s.contains(174, pred ));
+            CPPUNIT_ASSERT( s.contains(190));
 
             {
                 copy_found<item> f;

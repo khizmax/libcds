@@ -450,11 +450,50 @@ namespace cds { namespace container {
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
+        /// Updates data by \p key
+        /**
+            The operation performs inserting or replacing the element with lock-free manner.
+
+            If the \p key not found in the list, then the new item created from \p key
+            will be inserted iff \p bAllowInsert is \p true.
+            (note that in this case the \ref key_type should be constructible from type \p K).
+            Otherwise, if \p key is found, the functor \p func is called with item found.
+
+            The functor \p Func signature is:
+            \code
+                struct my_functor {
+                    void operator()( bool bNew, value_type& item );
+                };
+            \endcode
+            with arguments:
+            - \p bNew - \p true if the item has been inserted, \p false otherwise
+            - \p item - the item found or inserted
+
+            The functor may change any fields of the \p item.second that is \ref mapped_type;
+            however, \p func must guarantee that during changing no any other modifications
+            could be made on this item by concurrent threads.
+
+            The function applies RCU lock internally.
+
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
+            \p second is true if new item has been added or \p false if the item with \p key
+            already exists.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
+        */
         template <typename K, typename Func>
+        std::pair<bool, bool> update( const K& key, Func func, bool bAllowInsert = true )
+        {
+            return update_at( head(), key, func, bAllowInsert );
+        }
+        //@cond
+        template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( const K& key, Func f )
         {
-            return ensure_at( head(), key, f );
+            return update( key, f, true );
         }
+        //@endcond
 
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
         /**
@@ -540,7 +579,7 @@ namespace cds { namespace container {
             unlinks it from the list, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If \p key is not found the function returns an empty \p exempt_ptr.
 
-            @note The function does NOT dispose the item found. 
+            @note The function does NOT dispose the item found.
             It just excludes the item from the list and returns a pointer to item found.
             You shouldn't lock RCU before calling this function.
 
@@ -591,33 +630,49 @@ namespace cds { namespace container {
             return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type() ));
         }
 
-        /// Finds the key \p key
-        /** \anchor cds_nonintrusive_MichaelKVList_rcu_find_val
-
+        /// Checks whether the list contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns \p true if it is found, and \p false otherwise
+            and returns \p true if it is found, and \p false otherwise.
 
-            The function makes RCU lock internally.
+            The function applies RCU lock internally.
         */
         template <typename Q>
-        bool find( Q const& key )
+        bool contains( Q const& key )
         {
             return find_at( head(), key, intrusive_key_comparator() );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelKVList_rcu_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
+            \p Less must imply the same element order as the comparator used for building the list.
+
+            The function applies RCU lock internally.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds \p key and performs an action with it
         /** \anchor cds_nonintrusive_MichaelKVList_rcu_find_func
@@ -782,12 +837,13 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure_at( head_type& refHead, const K& key, Func f )
+        std::pair<bool, bool> update_at( head_type& refHead, const K& key, Func f, bool bAllowInsert )
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-            std::pair<bool, bool> ret = base_class::ensure_at( refHead, *pNode,
-                [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); });
+            std::pair<bool, bool> ret = base_class::update_at( refHead, *pNode,
+                [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); },
+                bAllowInsert );
             if ( ret.first && ret.second )
                 pNode.release();
 

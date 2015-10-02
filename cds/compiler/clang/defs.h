@@ -26,6 +26,20 @@
 #   define CDS_USE_LIBCDS_ATOMIC
 #endif
 
+// clang for Windows
+#if defined( _MSC_VER )
+#   define CDS_OS_INTERFACE     CDS_OSI_WINDOWS
+#   if defined(_WIN64)
+#       define CDS_OS_TYPE      CDS_OS_WIN64
+#       define CDS_OS__NAME     "Win64"
+#       define CDS_OS__NICK     "Win64"
+#   elif defined(_WIN32)
+#       define CDS_OS_TYPE      CDS_OS_WIN32
+#       define CDS_OS__NAME     "Win32"
+#       define CDS_OS__NICK     "Win32"
+#   endif
+#endif
+
 #include <cds/compiler/gcc/compiler_macro.h>
 
 #define alignof __alignof__
@@ -40,7 +54,7 @@
 
 // C++11 thread_local keyword
 #if !(CDS_OS_TYPE == CDS_OS_OSX && CDS_COMPILER_VERSION < 30600)
-    // OS X error? 
+    // OS X error?
     // See http://stackoverflow.com/questions/23791060/c-thread-local-storage-clang-503-0-40-mac-osx
     // http://stackoverflow.com/questions/28094794/why-does-apple-clang-disallow-c11-thread-local-when-official-clang-supports
     // clang 3.6 ok?..
@@ -53,6 +67,18 @@
 // Inheriting constructors
 #define CDS_CXX11_INHERITING_CTOR
 
+// Attributes
+#if CDS_COMPILER_VERSION >= 30400
+#   if __cplusplus < 201103
+#       define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
+#   elif __cplusplus == 201103 // C++11
+#       define CDS_DEPRECATED( reason ) [[gnu::deprecated(reason)]]
+#   else  // C++14
+#       define CDS_DEPRECATED( reason ) [[deprecated(reason)]]
+#   endif
+#else
+#   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
+#endif
 
 // *************************************************
 // Features

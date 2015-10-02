@@ -452,9 +452,6 @@
     <ClInclude Include="..\..\..\cds\opt\hash.h">
       <Filter>Header Files\cds\opt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\opt\make_options_var.h">
-      <Filter>Header Files\cds\opt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\opt\options.h">
       <Filter>Header Files\cds\opt</Filter>
     </ClInclude>
@@ -1148,9 +1145,6 @@
     <ClInclude Include="..\..\..\cds\algo\atomic.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\bronson_avltree_base.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
@@ -1222,6 +1216,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\multilevel_hashmap_hp.h">
       <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

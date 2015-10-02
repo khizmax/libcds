@@ -24,8 +24,10 @@
 
 namespace set2 {
 
+    struct tag_StripedSet;
+
     template <typename Key, typename Val>
-    struct set_type< cc::striped_set::implementation_tag, Key, Val >: public set_type_base< Key, Val >
+    struct set_type< tag_StripedSet, Key, Val >: public set_type_base< Key, Val >
     {
         typedef set_type_base< Key, Val > base_class;
         typedef typename base_class::key_val key_val;
@@ -57,15 +59,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashSet_seq( size_t nCapacity, size_t nLoadFactor )
-                : base_class( nCapacity / nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor )) )
+            template <class Config>
+            StripedHashSet_seq( Config const& cfg )
+                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nLoadFactor )) )
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         template <class BucketEntry, typename... Options>
@@ -85,15 +94,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashSet_seq_rational( size_t nCapacity, size_t nDenominator ) // LoadFactor = 1 / nDenominator
-                : base_class( nCapacity * nDenominator / 16, *(new(&m_placeHolder) resizing_policy_t( 1, nDenominator )) )
+            template <class Config>
+            StripedHashSet_seq_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
+                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.c_nLoadFactor )) )
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         // for non-sequential ordered containers
@@ -114,15 +130,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashSet_ord( size_t /*nCapacity*/, size_t nLoadFactor )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
+            template <class Config>
+            StripedHashSet_ord( Config const& cfg )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nMaxLoadFactor * 1024 )) )
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
         };
 
         template <class BucketEntry, typename... Options>
@@ -142,15 +165,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            StripedHashSet_ord_rational( size_t /*nCapacity*/, size_t nDenominator ) // LoadFactor = 1 / nDenominator
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, nDenominator )) )
+            template <class Config>
+            StripedHashSet_ord_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.c_nLoadFactor )))
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         typedef StripedHashSet_seq<
@@ -301,15 +331,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashSet_seq( size_t nCapacity, size_t nLoadFactor )
-                : base_class( nCapacity / nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor )) )
+            template <class Config>
+            RefinableHashSet_seq( Config const& cfg )
+                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nLoadFactor )) )
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         template <class BucketEntry, typename... Options>
@@ -329,15 +366,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashSet_seq_rational( size_t nCapacity, size_t nDenominator ) // LoadFactor = 1 / nDenominator
-                : base_class( nCapacity * nDenominator / 16, *(new(&m_placeHolder) resizing_policy_t( 1, nDenominator )) )
+            template <class Config>
+            RefinableHashSet_seq_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
+                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.c_nLoadFactor )))
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         // for non-sequential ordered containers
@@ -358,15 +402,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashSet_ord( size_t /*nCapacity*/, size_t nLoadFactor )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( nLoadFactor * 1024 )) )
+            template <class Config>
+            RefinableHashSet_ord( Config const& cfg )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nMaxLoadFactor * 1024 )) )
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
         };
 
         template <class BucketEntry, typename... Options>
@@ -386,15 +437,22 @@ namespace set2 {
 
             resizing_policy_t   m_placeHolder;
         public:
-            RefinableHashSet_ord_rational( size_t /*nCapacity*/, size_t nDenominator ) // LoadFactor = 1 / nDenominator
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, nDenominator )) )
+            template <class Config>
+            RefinableHashSet_ord_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.c_nLoadFactor )))
             {}
 
+            /*
             template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less /*pred*/ )
+            bool erase_with( Q const& v, Less pred )
             {
                 return base_class::erase( v );
             }
+            */
+
+            // for testing
+            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
         };
 
         typedef RefinableHashSet_seq<

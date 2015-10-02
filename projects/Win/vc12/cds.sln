@@ -4,7 +4,7 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds.vcxproj", "{408FE9BC-44F0-4E6A-89FA-D6F952584239}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit-test", "unit-test", "{B30CA283-1796-4763-92C3-2E4848D443F7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "multi-threaded test", "multi-threaded test", "{B30CA283-1796-4763-92C3-2E4848D443F7}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\tests\unit\print_bronsonavltree_stat.h = ..\..\..\tests\unit\print_bronsonavltree_stat.h
 		..\..\..\tests\unit\print_cuckoo_stat.h = ..\..\..\tests\unit\print_cuckoo_stat.h
@@ -41,7 +41,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-stack", "unit-stack.vc
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hdr-test", "hdr-test", "{B8C24D26-A3BF-4DA6-B64C-142CBA4BFE75}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "single-threaded test", "single-threaded test", "{B8C24D26-A3BF-4DA6-B64C-142CBA4BFE75}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\tests\test-hdr\size_check.h = ..\..\..\tests\test-hdr\size_check.h
 	EndProjectSection
@@ -80,6 +80,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "map", "map", "{6BB7A27F-FC5
 		..\..\..\tests\unit\map2\map_type_lazy_list.h = ..\..\..\tests\unit\map2\map_type_lazy_list.h
 		..\..\..\tests\unit\map2\map_type_michael.h = ..\..\..\tests\unit\map2\map_type_michael.h
 		..\..\..\tests\unit\map2\map_type_michael_list.h = ..\..\..\tests\unit\map2\map_type_michael_list.h
+		..\..\..\tests\unit\map2\map_type_multilevel_hashmap.h = ..\..\..\tests\unit\map2\map_type_multilevel_hashmap.h
 		..\..\..\tests\unit\map2\map_type_skip_list.h = ..\..\..\tests\unit\map2\map_type_skip_list.h
 		..\..\..\tests\unit\map2\map_type_split_list.h = ..\..\..\tests\unit\map2\map_type_split_list.h
 		..\..\..\tests\unit\map2\map_type_std.h = ..\..\..\tests\unit\map2\map_type_std.h
@@ -97,6 +98,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "set", "set", "{A64449B7-90F
 		..\..\..\tests\unit\set2\set_type_lazy_list.h = ..\..\..\tests\unit\set2\set_type_lazy_list.h
 		..\..\..\tests\unit\set2\set_type_michael.h = ..\..\..\tests\unit\set2\set_type_michael.h
 		..\..\..\tests\unit\set2\set_type_michael_list.h = ..\..\..\tests\unit\set2\set_type_michael_list.h
+		..\..\..\tests\unit\set2\set_type_multilevel_hashset.h = ..\..\..\tests\unit\set2\set_type_multilevel_hashset.h
 		..\..\..\tests\unit\set2\set_type_skip_list.h = ..\..\..\tests\unit\set2\set_type_skip_list.h
 		..\..\..\tests\unit\set2\set_type_split_list.h = ..\..\..\tests\unit\set2\set_type_split_list.h
 		..\..\..\tests\unit\set2\set_type_std.h = ..\..\..\tests\unit\set2\set_type_std.h
@@ -414,7 +416,6 @@ Global
 		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
 		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
 		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|x64.Build.0 = DebugVLD|x64
 		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.ICL-Debug|Win32.ActiveCfg = ICL-Debug|Win32
 		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.ICL-Debug|Win32.Build.0 = ICL-Debug|Win32
 		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.ICL-Debug|x64.ActiveCfg = ICL-Debug|x64
@@ -434,7 +435,6 @@ Global
 		{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
 		{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
 		{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
-		{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}.DebugVLD|x64.Build.0 = DebugVLD|x64
 		{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}.ICL-Debug|Win32.ActiveCfg = ICL-Debug|Win32
 		{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}.ICL-Debug|Win32.Build.0 = ICL-Debug|Win32
 		{CA25BDBF-B354-4597-B6D2-220ABBB0D2F4}.ICL-Debug|x64.ActiveCfg = ICL-Debug|x64
@@ -634,7 +634,6 @@ Global
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
-		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.DebugVLD|x64.Build.0 = DebugVLD|x64
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.ICL-Debug|Win32.ActiveCfg = ICL-Debug|Win32
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.ICL-Debug|Win32.Build.0 = ICL-Debug|Win32
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.ICL-Debug|x64.ActiveCfg = ICL-Debug|x64
@@ -654,7 +653,6 @@ Global
 		{CA6F0834-0628-4CD7-8800-AEABCD636360}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
 		{CA6F0834-0628-4CD7-8800-AEABCD636360}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
 		{CA6F0834-0628-4CD7-8800-AEABCD636360}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
-		{CA6F0834-0628-4CD7-8800-AEABCD636360}.DebugVLD|x64.Build.0 = DebugVLD|x64
 		{CA6F0834-0628-4CD7-8800-AEABCD636360}.ICL-Debug|Win32.ActiveCfg = ICL-Debug|Win32
 		{CA6F0834-0628-4CD7-8800-AEABCD636360}.ICL-Debug|Win32.Build.0 = ICL-Debug|Win32
 		{CA6F0834-0628-4CD7-8800-AEABCD636360}.ICL-Debug|x64.ActiveCfg = ICL-Debug|x64

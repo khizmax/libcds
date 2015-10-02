@@ -753,7 +753,6 @@
     <ClInclude Include="..\..\..\cds\gc\impl\hp_decl.h" />
     <ClInclude Include="..\..\..\cds\gc\impl\hp_impl.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h" />
@@ -782,6 +781,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\mspriority_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_hp.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\multilevel_hashset_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\options.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h" />
@@ -922,7 +922,6 @@
     <ClInclude Include="..\..\..\cds\opt\buffer.h" />
     <ClInclude Include="..\..\..\cds\opt\compare.h" />
     <ClInclude Include="..\..\..\cds\opt\hash.h" />
-    <ClInclude Include="..\..\..\cds\opt\make_options_var.h" />
     <ClInclude Include="..\..\..\cds\opt\options.h" />
     <ClInclude Include="..\..\..\cds\opt\permutation.h" />
     <ClInclude Include="..\..\..\cds\opt\value_cleaner.h" />

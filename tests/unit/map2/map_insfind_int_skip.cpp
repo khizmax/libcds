@@ -3,12 +3,11 @@
 #include "map2/map_insfind_int.h"
 #include "map2/map_type_skip_list.h"
 
-namespace map2 {
-    CDSUNIT_DEFINE_SkipListMap( cc::skip_list::implementation_tag, Map_InsFind_int)
-    CDSUNIT_DEFINE_SkipListMap_nogc( cc::skip_list::implementation_tag, Map_InsFind_int)
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_InsFind_int::X() { run_test<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Map_InsFind_int, run_SkipListMap )
-        CDSUNIT_TEST_SkipListMap
-        CDSUNIT_TEST_SkipListMap_nogc
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace map2 {
+    CDSUNIT_DECLARE_SkipListMap
+    CDSUNIT_DECLARE_SkipListMap_nogc
 } // namespace map2

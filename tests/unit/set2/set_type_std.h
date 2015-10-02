@@ -11,7 +11,7 @@
 
 namespace set2 {
 
-    struct std_implementation_tag;
+    struct tag_StdSet;
 
     template <typename Value, typename Hash, typename Less, typename EqualTo, typename Lock,
         class Alloc = typename CDS_DEFAULT_ALLOCATOR::template rebind<Value>::other
@@ -36,13 +36,13 @@ namespace set2 {
 
     public:
         typedef typename base_class::value_type value_type;
-        typedef std_implementation_tag implementation_tag;
 
-        StdHashSet( size_t /*nSetSize*/, size_t /*nLoadFactor*/ )
+        template <class Config>
+        StdHashSet( Config const& )
         {}
 
         template <typename Key>
-        bool find( const Key& key )
+        bool contains( const Key& key )
         {
             scoped_lock al( m_lock );
             return base_class::find( value_type(key) ) != base_class::end();
@@ -103,6 +103,10 @@ namespace set2 {
         }
 
         std::ostream& dump( std::ostream& stm ) { return stm; }
+
+        // for testing
+        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
     };
 
     template <typename Value, typename Less, typename Lock,
@@ -115,13 +119,13 @@ namespace set2 {
         typedef std::set<Value, Less, Alloc> base_class;
     public:
         typedef typename base_class::key_type value_type;
-        typedef std_implementation_tag implementation_tag;
 
-        StdSet( size_t /*nMapSize*/, size_t /*nLoadFactor*/ )
+        template <class Config>
+        StdSet( Config const& )
         {}
 
         template <typename Key>
-        bool find( const Key& key )
+        bool contains( const Key& key )
         {
             value_type v( key );
             scoped_lock al( m_lock );
@@ -183,10 +187,14 @@ namespace set2 {
         }
 
         std::ostream& dump( std::ostream& stm ) { return stm; }
+
+        // for testing
+        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
+        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
     };
 
     template <typename Key, typename Val>
-    struct set_type< std_implementation_tag, Key, Val >: public set_type_base< Key, Val >
+    struct set_type< tag_StdSet, Key, Val >: public set_type_base< Key, Val >
     {
         typedef set_type_base< Key, Val > base_class;
         typedef typename base_class::key_val key_val;
@@ -195,9 +203,11 @@ namespace set2 {
         typedef typename base_class::equal_to equal_to;
 
         typedef StdSet< key_val, less, cds::sync::spin > StdSet_Spin;
+        typedef StdSet< key_val, less, std::mutex > StdSet_Mutex;
         typedef StdSet< key_val, less, lock::NoLock>     StdSet_NoLock;
 
         typedef StdHashSet< key_val, hash, less, equal_to, cds::sync::spin > StdHashSet_Spin;
+        typedef StdHashSet< key_val, hash, less, equal_to, std::mutex > StdHashSet_Mutex;
         typedef StdHashSet< key_val, hash, less, equal_to, lock::NoLock >    StdHashSet_NoLock;
     };
 

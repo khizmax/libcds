@@ -58,10 +58,6 @@ namespace cds { namespace container {
         typedef typename base_class::item_counter   item_counter; ///< Item counter type
         typedef typename base_class::stat           stat; ///< Internal statistics
 
-        //@cond
-        typedef cds::container::split_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename maker::cxx_node_allocator    cxx_node_allocator;
@@ -284,22 +280,29 @@ namespace cds { namespace container {
             return insert_node( alloc_node( std::forward<Args>(args)... ) );
         }
 
-        /// Ensures that the item \p val exists in the set
+        /// Updates the item
         /**
-            The operation inserts new item created from \p val if the key \p val is not found in the set.
-            Otherwise, the function returns an iterator that points to item found.
-            The \p value_type should be constructible from a value of type \p Q.
+            If \p key is not in the set and \p bAllowInsert is \p true, the function inserts a new item.
+            Otherwise, the function returns an iterator pointing to the item found.
 
             Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
-            item found or inserted, \p second is true if new item has been added or \p false if the item
+            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()), 
+            \p second is true if new item has been added or \p false if the item
             already is in the set.
+
+            @warning If the set is based on \ref cds_nonintrusive_MichaelList_nogc "MichaelList", 
+            see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            \ref cds_nonintrusive_LazyList_nogc "LazyList" as the base provides exclusive access to inserted item 
+            and does not require any node-level synchronization.
         */
         template <typename Q>
-        std::pair<iterator, bool> ensure( const Q& val )
+        std::pair<iterator, bool> update( Q const& key, bool bAllowInsert = true )
         {
-            scoped_node_ptr pNode( alloc_node( val ));
+            scoped_node_ptr pNode( alloc_node( key ));
 
-            std::pair<typename base_class::iterator, bool> ret = base_class::ensure_( *pNode, [](bool /*bNew*/, node_type& /*item*/, node_type& /*val*/){} );
+            std::pair<typename base_class::iterator, bool> ret = base_class::update_( *pNode, 
+                [](bool /*bNew*/, node_type& /*item*/, node_type& /*val*/){},
+                bAllowInsert );
             if ( ret.first != base_class::end() && ret.second ) {
                 pNode.release();
                 return std::make_pair( iterator(ret.first), ret.second );
@@ -307,33 +310,54 @@ namespace cds { namespace container {
 
             return std::make_pair( iterator(ret.first), ret.second );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<iterator, bool> ensure( const Q& val )
+        {
+            return update( val, true );
+        }
+        //@endcond
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_SplitListSet_nogc_find
-
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns an iterator pointed to item found if the key is found,
-            and \ref end() otherwise.
+            and returns an iterator pointed to item found and \ref end() otherwise
         */
         template <typename Q>
-        iterator find( Q const& key )
+        iterator contains( Q const& key )
         {
             return iterator( base_class::find_( key ));
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        iterator find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p key using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListSet_nogc_find "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
+            \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
-        iterator find_with( Q const& key, Less pred )
+        iterator contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return iterator( base_class::find_with_( key, typename maker::template predicate_wrapper<Less>::type() ));
         }
+        //@cond
+        // eprecated, use contains()
+        template <typename Q, typename Less>
+        iterator find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Checks if the set is empty
         /**

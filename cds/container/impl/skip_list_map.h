@@ -134,10 +134,6 @@ namespace cds { namespace container {
         typedef typename traits::random_level_generator random_level_generator ; ///< random level generator
         typedef typename traits::stat              stat;           ///< internal statistics type
 
-        //@cond
-        typedef cds::container::skip_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename maker::node_type           node_type;
@@ -332,10 +328,9 @@ namespace cds { namespace container {
                 pNode.release();
             return res;
         }
-
         //@cond
-        // Deprecated, use update()
         template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
             return update( key, func, true );
@@ -558,31 +553,45 @@ namespace cds { namespace container {
                 [&f](node_type& item, K const& ) { f( item.m_Value );});
         }
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_SkipListMap_find_val
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
         */
         template <typename K>
+        bool contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SkipListMap_find_val "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the map.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename K, typename Less>
-        bool find_with( K const& key, Less pred )
+        bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >() );
+            return base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >() );
         }
+        //@cond
+        template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( K const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_SkipListMap_hp_get

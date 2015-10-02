@@ -56,7 +56,7 @@ namespace cds { namespace container {
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
         - all keys must be fixed-size. It means that you cannot use \p std::string as a key for \p %MultiLevelHashSet.
           Instead, for the strings you should use well-known hashing algorithms like <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
-          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a> 
+          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
           or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
           converts variable-length strings to fixed-length bit-strings, and use that hash as a key in \p %MultiLevelHashSet.
         - \p %MultiLevelHashSet uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
@@ -69,13 +69,13 @@ namespace cds { namespace container {
         - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
         - \p T - a value type to be stored in the set
         - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction.
-            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor" 
+            \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor"
             to hash value of \p T. The set algorithm does not calculate that hash value.
 
         There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
         - <tt><cds/container/multilevel_hashset_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/container/multilevel_hashset_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/container/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type". RCU specialization
+        - <tt><cds/container/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultilevelHashSet_rcu "RCU type". RCU specialization
             has a slightly different interface.
     */
     template <
@@ -155,7 +155,7 @@ namespace cds { namespace container {
         /**
             The function creates an element with copy of \p val value and then inserts it into the set.
 
-            The type \p Q should contain as minimum the complete key for the element.
+            The type \p Q should contain as minimum the complete hash for the element.
             The object of \ref value_type should be constructible from a value of type \p Q.
             In trivial case, \p Q is equal to \ref value_type.
 
@@ -200,22 +200,23 @@ namespace cds { namespace container {
 
         /// Updates the element
         /**
-            The operation performs inserting or changing data with lock-free manner.
+            The operation performs inserting or replacing with lock-free manner.
 
             If the \p val key not found in the set, then the new item created from \p val
-            will be inserted into the set iff \p bInsert is \p true. 
-            Otherwise, if \p val is found, the functor \p func will be called with the item found.
+            will be inserted into the set iff \p bInsert is \p true.
+            Otherwise, if \p val is found, it is replaced with new item created from \p val.
+            In both cases \p func functor is called.
 
             The functor \p Func signature:
             \code
                 struct my_functor {
-                    void operator()( bool bNew, value_type& item, const Q& val );
+                    void operator()( value_type& cur, value_type * prev );
                 };
             \endcode
             where:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the set
-            - \p val - argument \p key passed into the \p %update() function
+            - \p cur - current element
+            - \p prev - pointer to previous element with such hash. \p prev is \p nullptr
+                 if \p cur was just inserted.
 
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
@@ -231,8 +232,8 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( const Q& val, Func func, bool bInsert = true )
         {
             scoped_node_ptr sp( cxx_node_allocator().New( val ));
-            std::pair<bool, bool> bRes = base_class::update( *sp, func, bInsert );
-            if ( bRes.first && bRes.second )
+            std::pair<bool, bool> bRes = base_class::do_update( *sp, func, bInsert );
+            if ( bRes.first )
                 sp.release();
             return bRes;
         }
@@ -253,7 +254,7 @@ namespace cds { namespace container {
         }
 
         /// Deletes the item from the set
-        /** 
+        /**
             The function searches \p hash in the set,
             deletes the item found, and returns \p true.
             If that item is not found the function returns \p false.
@@ -293,14 +294,20 @@ namespace cds { namespace container {
         {
             return base_class::erase_at( iter );
         }
+        //@cond
+        bool erase_at( reverse_iterator const& iter )
+        {
+            return base_class::erase_at( iter );
+        }
+        //@endcond
 
         /// Extracts the item with specified \p hash
-        /** 
+        /**
             The function searches \p hash in the set,
             unlinks it from the set, and returns an guarded pointer to the item extracted.
             If \p hash is not found the function returns an empty guarded pointer.
 
-            The item returned is reclaimed by garbage collector \p GC 
+            The item returned is reclaimed by garbage collector \p GC
             when returned \ref guarded_ptr object to be destroyed or released.
             @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
 
@@ -450,10 +457,18 @@ namespace cds { namespace container {
             - pre-increment and pre-decrement. Post-operators is not supported
             - equality operators <tt>==</tt> and <tt>!=</tt>.
                 Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
                 does not entail <tt> &(*it1) == &(*it2) </tt>
             - helper member function \p release() that clears internal hazard pointer.
-                After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+                After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+
+            During iteration you may safely erase any item from the set;
+            @ref erase_at() function call doesn't invalidate any iterator.
+            If some iterator points to the item to be erased, that item is not deleted immediately
+            but only after that iterator will be advanced forward or backward.
+
+            @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
+            in array node that is being splitted.
         */
     ///@{
 
@@ -475,19 +490,19 @@ namespace cds { namespace container {
             return base_class::cbegin();
         }
 
-        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         iterator end()
         {
             return base_class::end();
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator end() const
         {
             return base_class::end();
         }
 
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator cend()
         {
             return base_class::cend();
@@ -513,8 +528,8 @@ namespace cds { namespace container {
 
         /// Returns a reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         reverse_iterator rend()
         {
@@ -523,8 +538,8 @@ namespace cds { namespace container {
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator rend() const
         {
@@ -533,8 +548,8 @@ namespace cds { namespace container {
 
         /// Returns a const reverse iterator to the element following the last element of the reversed set
         /**
-            It corresponds to the element preceding the first element of the non-reversed container. 
-            This element acts as a placeholder, attempting to access it results in undefined behavior. 
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
         */
         const_reverse_iterator crend()
         {

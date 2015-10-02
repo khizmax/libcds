@@ -438,10 +438,6 @@ namespace cds { namespace intrusive {
         typedef typename traits::disposer disposer;   ///< leaf node disposer
         typedef typename traits::back_off back_off;   ///< back-off strategy
 
-        //@cond
-        typedef cds::intrusive::ellen_bintree::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef ellen_bintree::base_node< gc >                      tree_node; ///< Base type of tree node
@@ -777,20 +773,21 @@ namespace cds { namespace intrusive {
             return true;
         }
 
-        /// Ensures that the \p val exists in the tree
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val is not found in the tree, then \p val is inserted into the tree.
+            If the item \p val is not found in the set, then \p val is inserted into the set
+            iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor signature is:
+            The functor \p func signature is:
             \code
                 void func( bool bNew, value_type& item, value_type& val );
             \endcode
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the tree
-            - \p val - argument \p val passed into the \p ensure function
+            - \p item - item of the set
+            - \p val - argument \p val passed into the \p %update() function
             If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
             refer to the same thing.
 
@@ -799,14 +796,15 @@ namespace cds { namespace intrusive {
 
             RCU \p synchronize method can be called. RCU should not be locked.
 
-            Returns <tt>std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            i.e. the node has been inserted or updated,
             \p second is \p true if new item has been added or \p false if the item with \p key
-            already is in the tree.
+            already exists.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
         {
             check_deadlock_policy::check();
 
@@ -830,6 +828,9 @@ namespace cds { namespace intrusive {
                     if ( res.updParent.bits() != update_desc::Clean )
                         help( res.updParent, updRetire );
                     else {
+                        if ( !bAllowInsert )
+                            return std::make_pair( false, false );
+
                         if ( !pNewInternal.get() )
                             pNewInternal.reset( alloc_internal_node() );
 
@@ -850,6 +851,14 @@ namespace cds { namespace intrusive {
 
             return std::make_pair( true, true );
         }
+        //@cond
+        template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( value_type& val, Func func )
+        {
+            return update( val, func, true );
+        }
+        //@endcond
 
         /// Unlinks the item \p val from the tree
         /**
@@ -1041,18 +1050,15 @@ namespace cds { namespace intrusive {
             return exempt_ptr( extract_with_( key, pred ));
         }
 
-        /// Finds the key \p key
-        /** @anchor cds_intrusive_EllenBinTree_rcu_find_val
+        /// Checks whether the set contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
-
-            Note the hash functor specified for class \p Traits template parameter
-            should accept a parameter of type \p Q that can be not the same as \p value_type.
 
             The function applies RCU lock internally.
         */
         template <typename Q>
-        bool find( Q const& key ) const
+        bool contains( Q const& key ) const
         {
             rcu_lock l;
             search_result    res;
@@ -1064,18 +1070,25 @@ namespace cds { namespace intrusive {
             m_Stat.onFindFailed();
             return false;
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find( Q const& key ) const
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p key with comparing functor \p pred
+        /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_EllenBinTree_rcu_find_val "find(Q const&)"
-            but \p pred is used for key compare.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less and should meet \ref cds_intrusive_EllenBinTree_rcu_less
             "Predicate requirements".
-            \p pred must imply the same element order as the comparator used for building the tree.
+            \p Less must imply the same element order as the comparator used for building the set.
             \p pred should accept arguments of type \p Q, \p key_type, \p value_type in any combination.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred ) const
+        bool contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
             typedef ellen_bintree::details::compare<
@@ -1094,6 +1107,14 @@ namespace cds { namespace intrusive {
             m_Stat.onFindFailed();
             return false;
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Less pred ) const
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds the key \p key
         /** @anchor cds_intrusive_EllenBinTree_rcu_find_func

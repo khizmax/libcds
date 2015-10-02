@@ -118,11 +118,20 @@ namespace cds { namespace intrusive { namespace striped_set {
             }
 
             template <typename Q, typename Func>
-            std::pair<bool, bool> ensure( const Q& key, Func func )
+            std::pair<bool, bool> update( const Q& key, Func func, bool bAllowInsert )
             {
-                std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ));
-                func( res.second, *res.first );
-                return std::make_pair( true, res.second );
+                if ( bAllowInsert ) {
+                    std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ));
+                    func( res.second, *res.first );
+                    return std::make_pair( true, res.second );
+                }
+                else {
+                    auto it = m_Map.find(key_type( key ));
+                    if ( it == end() )
+                        return std::make_pair( false, false );
+                    func( false, *it );
+                    return std::make_pair( true, false );
+                }
             }
 
             template <typename Q, typename Func>

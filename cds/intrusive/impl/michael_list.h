@@ -559,8 +559,8 @@ namespace cds { namespace intrusive {
         }
 
         //@cond
-        // Deprecated, use update()
         template <typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( value_type& val, Func func )
         {
             return update( val, func, true );
@@ -751,30 +751,45 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds the \p key
-        /** \anchor cds_intrusive_MichaelList_hp_find_val
+        /// Checks whether the list contains \p key
+        /**
             The function searches the item with key equal to \p key
-            and returns \p true if it is found, and \p false otherwise
+            and returns \p true if it is found, and \p false otherwise.
         */
         template <typename Q>
-        bool find( Q const& key )
+        bool contains( Q const& key )
         {
             return find_at( m_pHead, key, key_comparator() );
         }
+        //@cond
+        template <typename Q>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find( Q const& key )
+        {
+            return contains( key );
+        }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the list contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_find_val "find(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the list.
+            \p Less must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool find_with( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>() );
         }
+        //@cond
+        template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( Q const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds the \p key and return the item found
         /** \anchor cds_intrusive_MichaelList_hp_get
@@ -968,12 +983,6 @@ namespace cds { namespace intrusive {
             }
         }
 
-        template <typename Func>
-        std::pair<bool, bool> ensure_at( atomic_node_ptr& refHead, value_type& val, Func func )
-        {
-            return update_at( refHead, val, func, true );
-        }
-
         bool unlink_at( atomic_node_ptr& refHead, value_type& val )
         {
             position pos;
@@ -1089,7 +1098,7 @@ namespace cds { namespace intrusive {
             pNext = nullptr;
 
             pCur = pos.guards.protect( position::guard_current_item, *pPrev,
-                   [](marked_node_ptr p) -> value_type * 
+                   [](marked_node_ptr p) -> value_type *
                     {
                         return node_traits::to_value_ptr( p.ptr() );
                     });
@@ -1102,8 +1111,8 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                pNext = pos.guards.protect( position::guard_next_item, pCur->m_pNext, 
-                        [](marked_node_ptr p ) -> value_type * 
+                pNext = pos.guards.protect( position::guard_next_item, pCur->m_pNext,
+                        [](marked_node_ptr p ) -> value_type *
                         {
                             return node_traits::to_value_ptr( p.ptr() );
                         });

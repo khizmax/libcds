@@ -9,7 +9,6 @@
 namespace cds { namespace container {
     /// Striped hash set related definitions
     namespace striped_set {
-        using cds::intrusive::striped_set::implementation_tag;
 
         //@cond
         struct copy_item    ;   // copy_item_policy tag
@@ -74,12 +73,12 @@ namespace cds { namespace container {
                 variadic template and move semantics
             <hr>
 
-            <b>Ensures that the \p item exists in the container</b>
-            \code template <typename Q, typename Func> std::pair<bool, bool> ensure( const Q& val, Func func ) \endcode
+            <b>Updates \p item</b>
+            \code template <typename Q, typename Func> std::pair<bool, bool> update( const Q& val, Func func, bool bAllowInsert ) \endcode
                 The operation performs inserting or changing data.
 
                 If the \p val key not found in the container, then the new item created from \p val
-                is inserted. Otherwise, the functor \p func is called with the item found.
+                is inserted iff \p bAllowInsert is \p true. Otherwise, the functor \p func is called with the item found.
                 The \p Func functor has interface:
                 \code
                     void func( bool bNew, value_type& item, const Q& val );
@@ -94,7 +93,7 @@ namespace cds { namespace container {
                 where arguments are:
                 - \p bNew - \p true if the item has been inserted, \p false otherwise
                 - \p item - container's item
-                - \p val - argument \p val passed into the \p ensure function
+                - \p val - argument \p val passed into the \p update() function
 
                 The functor can change non-key fields of the \p item.
 
@@ -178,15 +177,34 @@ namespace cds { namespace container {
         //@cond
         using cds::intrusive::striped_set::adapted_sequential_container;
         using cds::intrusive::striped_set::adapted_container;
-
-        using cds::intrusive::striped_set::load_factor_resizing;
-        using cds::intrusive::striped_set::rational_load_factor_resizing;
-        using cds::intrusive::striped_set::single_bucket_size_threshold;
-        using cds::intrusive::striped_set::no_resizing;
-
-        using cds::intrusive::striped_set::striping;
-        using cds::intrusive::striped_set::refinable;
         //@endcond
+
+        ///@copydoc cds::intrusive::striped_set::load_factor_resizing
+        template <size_t LoadFactor>
+        using load_factor_resizing = cds::intrusive::striped_set::load_factor_resizing<LoadFactor>;
+
+        ///@copydoc cds::intrusive::striped_set::rational_load_factor_resizing
+        template <size_t Numerator, size_t Denominator = 1>
+        using rational_load_factor_resizing = cds::intrusive::striped_set::rational_load_factor_resizing<Numerator, Denominator>;
+
+        ///@copydoc cds::intrusive::striped_set::single_bucket_size_threshold
+        template <size_t Threshold>
+        using single_bucket_size_threshold = cds::intrusive::striped_set::single_bucket_size_threshold<Threshold>;
+
+        ///@copydoc cds::intrusive::striped_set::no_resizing
+        typedef cds::intrusive::striped_set::no_resizing no_resizing;
+
+        ///@copydoc cds::intrusive::striped_set::striping
+        template <class Lock = std::mutex, class Alloc = CDS_DEFAULT_ALLOCATOR >
+        using striping = cds::intrusive::striped_set::striping<Lock, Alloc>;
+
+        ///@copydoc cds::intrusive::striped_set::refinable
+        template <
+            class RecursiveLock = std::recursive_mutex,
+            typename BackOff = cds::backoff::yield,
+            class Alloc = CDS_DEFAULT_ALLOCATOR
+        > 
+        using refinable = cds::intrusive::striped_set::refinable<RecursiveLock, BackOff, Alloc >;
 
         //@cond
         namespace details {
@@ -274,11 +292,20 @@ namespace cds { namespace container {
                 }
 
                 template <typename Q, typename Func>
-                std::pair<bool, bool> ensure( const Q& val, Func func )
+                std::pair<bool, bool> update( const Q& val, Func func, bool bAllowInsert )
                 {
-                    std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
-                    func( res.second, const_cast<value_type&>(*res.first), val );
-                    return std::make_pair( true, res.second );
+                    if ( bAllowInsert ) {
+                        std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
+                        func( res.second, const_cast<value_type&>(*res.first), val );
+                        return std::make_pair( true, res.second );
+                    }
+                    else {
+                        auto it = m_Set.find( val );
+                        if ( it == m_Set.end() )
+                            return std::make_pair( false, false );
+                        func( false, const_cast<value_type&>(*it), val );
+                        return std::make_pair( true, false );
+                    }
                 }
 
                 template <typename Q, typename Func>
@@ -411,11 +438,20 @@ namespace cds { namespace container {
                 }
 
                 template <typename Q, typename Func>
-                std::pair<bool, bool> ensure( const Q& val, Func func )
+                std::pair<bool, bool> update( const Q& key, Func func, bool bAllowInsert )
                 {
-                    std::pair<iterator, bool> res = m_Map.insert( value_type( val, mapped_type() ));
-                    func( res.second, *res.first );
-                    return std::make_pair( true, res.second );
+                    if ( bAllowInsert ) {
+                        std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ));
+                        func( res.second, *res.first );
+                        return std::make_pair( true, res.second );
+                    }
+                    else {
+                        auto it = m_Map.find(key_type( key ));
+                        if ( it == end() )
+                            return std::make_pair( false, false );
+                        func( false, *it );
+                        return std::make_pair( true, false );
+                    }
                 }
 
                 template <typename Q, typename Func>

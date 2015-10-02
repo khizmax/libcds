@@ -24,11 +24,11 @@ namespace cds {
         by calling \p %Initialize() function, see \ref cds_how_to_use "how to use the library".
 
         You can call \p Initialize several times, only first call is significant others will be ignored.
-        To terminate the \p CDS library correctly, each call to \p %Initialize() must be balanced 
+        To terminate the \p CDS library correctly, each call to \p %Initialize() must be balanced
         by a corresponding \p Terminate() call.
 
         Note, that this function does not initialize garbage collectors. To use GC you need you should call
-        GC-specific constructor function to initialize internal structures of GC. 
+        GC-specific constructor function to initialize internal structures of GC.
         See \p cds::gc for details.
     */
     static inline void Initialize(

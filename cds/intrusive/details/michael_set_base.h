@@ -15,11 +15,6 @@ namespace cds { namespace intrusive {
     /** @ingroup cds_intrusive_helper
     */
     namespace michael_set {
-
-        //@cond
-        struct implementation_tag;
-        //@endcond
-
         /// MichaelHashSet traits
         struct traits {
             /// Hash function

@@ -55,11 +55,11 @@ namespace cds { namespace container {
         string</b> and rehash incrementally.
 
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashMap:
-        - all keys is converted to fixed-size bit-string by hash functor provided. 
+        - all keys is converted to fixed-size bit-string by hash functor provided.
           You can use variable-length keys, for example, \p std::string as a key for \p %MultiLevelHashMap,
           but real key in the map will be fixed-ize hash values of your keys.
           For the strings you may use well-known hashing algorithms like <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
-          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a> 
+          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
           or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
           converts variable-length strings to fixed-length bit-strings, and such hash values will be the keys in \p %MultiLevelHashMap.
         - \p %MultiLevelHashMap uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
@@ -77,15 +77,15 @@ namespace cds { namespace container {
         There are several specializations of \p %MultiLevelHashMap for each \p GC. You should include:
         - <tt><cds/container/multilevel_hashmap_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/container/multilevel_hashmap_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/container/multilevel_hashmap_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashSet_rcu "RCU type". RCU specialization
+        - <tt><cds/container/multilevel_hashmap_rcu.h></tt> for \ref cds_intrusive_MultiLevelHashMap_rcu "RCU type". RCU specialization
             has a slightly different interface.
     */
-    template < 
+    template <
         class GC
         ,typename Key
         ,typename T
 #ifdef CDS_DOXYGEN_INVOKED
-        ,class Traits = multilevel_hashmap::traits 
+        ,class Traits = multilevel_hashmap::traits
 #else
         ,class Traits
 #endif
@@ -94,11 +94,11 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGEN_INVOKED
         : protected cds::intrusive::MultiLevelHashSet< GC, std::pair<Key const, T>, Traits >
 #else
-        : protected cds::container::details::make_multilevel_hashmap< GC, Key, T, Hasher, Traits >::type
+        : protected cds::container::details::make_multilevel_hashmap< GC, Key, T, Traits >::type
 #endif
     {
         //@cond
-        typedef cds::container::details::make_multilevel_hashmap< GC, Key, T, Hasher, Traits > maker;
+        typedef cds::container::details::make_multilevel_hashmap< GC, Key, T, Traits > maker;
         typedef typename maker::type base_class;
         //@endcond
     public:
@@ -132,87 +132,165 @@ namespace cds { namespace container {
         typedef typename maker::cxx_node_allocator cxx_node_allocator;
         typedef std::unique_ptr< node_type, typename maker::node_disposer > scoped_node_ptr;
 
-        template <class Iterator>
-        class bidirectional_iterator : protected Iterator
+        template <bool IsConst>
+        class bidirectional_iterator: public base_class::iterator_base
         {
             friend class MultiLevelHashMap;
-            typedef Iterator base_class;
+            typedef typename base_class::iterator_base iterator_base;
+
+        protected:
+            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
+
         public:
-            typedef typename std::conditional< base_class::c_bConstantIterator, value_type const*, value_type*>::type value_ptr; ///< Value pointer
-            typedef typename std::conditional< base_class::c_bConstantIterator, value_type const&, value_type&>::type value_ref; ///< Value reference
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
 
         public:
             bidirectional_iterator() CDS_NOEXCEPT
-                : base_class()
             {}
 
             bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
-                : base_class( rhs )
+                : iterator_base( rhs )
             {}
 
             bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
             {
-                base_class::operator=( rhs );
+                iterator_base::operator=( rhs );
                 return *this;
             }
 
             bidirectional_iterator& operator++()
             {
-                base_class::operator++();
+                iterator_base::operator++();
                 return *this;
             }
 
             bidirectional_iterator& operator--()
             {
-                base_class::operator--();
+                iterator_base::operator--();
                 return *this;
             }
 
             value_ptr operator ->() const CDS_NOEXCEPT
             {
-                return pointer();
+                node_type * p = iterator_base::pointer();
+                return p ? &p->m_Value : nullptr;
             }
 
             value_ref operator *() const CDS_NOEXCEPT
             {
-                value_ptr p = pointer();
+                node_type * p = iterator_base::pointer();
                 assert( p );
-                return *p;
+                return p->m_Value;
             }
 
             void release()
             {
-                base_class::release();
+                iterator_base::release();
             }
 
-            template <class It>
-            bool operator ==(It const& rhs) const CDS_NOEXCEPT
+            template <bool IsConst2>
+            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
             {
-                return base_class::operator==( rhs );
+                return iterator_base::operator==( rhs );
             }
 
-            template <class It>
-            bool operator !=(It const& rhs) const CDS_NOEXCEPT
+            template <bool IsConst2>
+            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
 
-        protected:
-            bidirectional_iterator( base_class&& it ) CDS_NOEXCEPT
-                : base_class( it )
+        public: // for internal use only!
+            bidirectional_iterator( base_class const& set, typename base_class::array_node * pNode, size_t idx, bool )
+                : iterator_base( set, pNode, idx, false )
             {}
 
-            value_ptr pointer() const CDS_NOEXCEPT
+            bidirectional_iterator( base_class const& set, typename base_class::array_node * pNode, size_t idx )
+                : iterator_base( set, pNode, idx )
+            {}
+        };
+
+        /// Reverse bidirectional iterator
+        template <bool IsConst>
+        class reverse_bidirectional_iterator : public base_class::iterator_base
+        {
+            friend class MultiLevelHashMap;
+            typedef typename base_class::iterator_base iterator_base;
+
+        public:
+            typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer
+            typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
+
+        public:
+            reverse_bidirectional_iterator() CDS_NOEXCEPT
+                : iterator_base()
+            {}
+
+            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+                : iterator_base( rhs )
+            {}
+
+            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) CDS_NOEXCEPT
             {
-                typename base_class::value_ptr p = base_class::pointer();
+                iterator_base::operator=( rhs );
+                return *this;
+            }
+
+            reverse_bidirectional_iterator& operator++()
+            {
+                iterator_base::operator--();
+                return *this;
+            }
+
+            reverse_bidirectional_iterator& operator--()
+            {
+                iterator_base::operator++();
+                return *this;
+            }
+
+            value_ptr operator ->() const CDS_NOEXCEPT
+            {
+                node_type * p = iterator_base::pointer();
                 return p ? &p->m_Value : nullptr;
             }
-           
-            node_type * node_pointer() const CDS_NOEXCEPT
+
+            value_ref operator *() const CDS_NOEXCEPT
             {
-                return base_class::pointer();
+                node_type * p = iterator_base::pointer();
+                assert( p );
+                return p->m_Value;
+            }
+
+            void release()
+            {
+                iterator_base::release();
+            }
+
+            template <bool IsConst2>
+            bool operator ==(reverse_bidirectional_iterator<IsConst2> const& rhs) const
+            {
+                return iterator_base::operator==( rhs );
+            }
+
+            template <bool IsConst2>
+            bool operator !=(reverse_bidirectional_iterator<IsConst2> const& rhs)
+            {
+                return !( *this == rhs );
+            }
+
+        public: // for internal use only!
+            reverse_bidirectional_iterator( base_class const& set, typename base_class::array_node * pNode, size_t idx, bool )
+                : iterator_base( set, pNode, idx, false )
+            {}
+
+            reverse_bidirectional_iterator( base_class const& set, typename base_class::array_node * pNode, size_t idx )
+                : iterator_base( set, pNode, idx, false )
+            {
+                iterator_base::backward();
             }
         };
+
         //@endcond
 
     public:
@@ -220,7 +298,7 @@ namespace cds { namespace container {
         /// Guarded pointer
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr;
 #else
-        typedef typename gc::template guarded_ptr< node_type, value_type, cds::details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
+        typedef typename gc::template guarded_ptr< node_type, value_type, cds::container::details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
 #endif
 
 #ifdef CDS_DOXYGEN_INVOKED
@@ -229,10 +307,10 @@ namespace cds { namespace container {
         typedef implementation_defined reverse_iterator;    ///< @ref cds_container_MultilevelHashMap_iterators "bidirectional reverse iterator" type
         typedef implementation_defined const_reverse_iterator; ///< @ref cds_container_MultilevelHashMap_iterators "bidirectional reverse const iterator" type
 #else
-        typedef bidirectional_iterator<typename base_class::iterator>               iterator;
-        typedef bidirectional_iterator<typename base_class::const_iterator>         const_iterator;
-        typedef bidirectional_iterator<typename base_class::reverse_iterator>       reverse_iterator;
-        typedef bidirectional_iterator<typename base_class::const_reverse_iterator> const_reverse_iterator;
+        typedef bidirectional_iterator<false> iterator;
+        typedef bidirectional_iterator<true>  const_iterator;
+        typedef reverse_bidirectional_iterator<false> reverse_iterator;
+        typedef reverse_bidirectional_iterator<true>  const_reverse_iterator;
 #endif
 
     protected:
@@ -272,9 +350,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename K>
-        bool insert( K const& key )
+        bool insert( K&& key )
         {
-            scoped_node_ptr sp( cxx_node_allocator().New( m_Hasher, key ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key) ));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -294,9 +372,9 @@ namespace cds { namespace container {
             Returns \p true if \p val is inserted into the map, \p false otherwise.
         */
         template <typename K, typename V>
-        bool insert( K const& key, V const& val )
+        bool insert( K&& key, V&& val )
         {
-            scoped_node_ptr sp( cxx_node_allocator().New( m_Hasher, key, val ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key), std::forward<V>(val)));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -330,9 +408,9 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename K, typename Func>
-        bool insert_with( K const& key, Func func )
+        bool insert_with( K&& key, Func func )
         {
-            scoped_node_ptr sp( cxx_node_allocator().New( m_Hasher, key ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key)));
             if ( base_class::insert( *sp, [&func]( node_type& item ) { func( item.m_Value ); } )) {
                 sp.release();
                 return true;
@@ -347,7 +425,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            scoped_node_ptr sp( cxx_node_allocator().New( m_Hasher, std::forward<K>(key), std::forward<Args>(args)... ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key), std::forward<Args>(args)... ));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -357,23 +435,24 @@ namespace cds { namespace container {
 
         /// Updates data by \p key
         /**
-            The operation performs inserting or changing data with lock-free manner.
+            The operation performs inserting or replacing the element with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
             will be inserted into the map iff \p bInsert is \p true
             (note that in this case the \ref key_type should be constructible from type \p K).
-            Otherwise, if \p key is found, the functor \p func is called with item found.
+            Otherwise, if \p key is found, it is replaced with a new item created from
+            \p key.
             The functor \p Func signature:
             \code
                 struct my_functor {
-                    void operator()( bool bNew, value_type& item );
+                    void operator()( value_type& item, value_type * old );
                 };
             \endcode
             where:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the map
+            - \p old - old item of the map, if \p nullptr - the new item was inserted
 
-            The functor may change any fields of the \p item.second that is \ref value_type.
+            The functor may change any fields of the \p item.second.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
             \p second is \p true if new item has been added or \p false if \p key already exists.
@@ -381,11 +460,13 @@ namespace cds { namespace container {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> update( K const& key, Func func, bool bInsert = true )
+        std::pair<bool, bool> update( K&& key, Func func, bool bInsert = true )
         {
-            scoped_node_ptr sp( cxx_node_allocator().New( m_Hasher, key ));
-            std::pair<bool, bool> result = base_class::do_update( *sp, [&func]( bool bNew, node_type& node ) { func( bNew, node.m_Value );}, bInsert );
-            if ( !result.first )
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key)));
+            std::pair<bool, bool> result = base_class::do_update( *sp,
+                [&func]( node_type& node, node_type * old ) { func( node.m_Value, old ? &old->m_Value : nullptr );},
+                bInsert );
+            if ( result.first )
                 sp.release();
             return result;
         }
@@ -436,11 +517,17 @@ namespace cds { namespace container {
         */
         bool erase_at( iterator const& iter )
         {
-            return base_class::erase_at( iter );
+            return base_class::do_erase_at( iter );
         }
+        //@cond
+        bool erase_at( reverse_iterator const& iter )
+        {
+            return base_class::do_erase_at( iter );
+        }
+        //@endcond
 
         /// Extracts the item from the map with specified \p key
-        /** 
+        /**
             The function searches an item with key equal to <tt>hash( key_type( key ))</tt> in the map,
             unlinks it from the map, and returns a guarded pointer to the item found.
             If \p key is not found the function returns an empty guarded pointer.
@@ -474,26 +561,6 @@ namespace cds { namespace container {
             // p is guarded by HP
             if ( p )
                 gp.reset( p );
-            return gp;
-        }
-
-        /// Extracts the item pointed by the iterator \p iter
-        /**
-            The item extracted is freed automatically by garbage collector \p GC
-            when returned \p guarded_ptr object will be destroyed or released.
-
-            @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
-
-            Due to concurrent nature of the map the returned guarded pointer may be empty.
-            Check it before dereferencing.
-        */
-        guarded_ptr extract_at( iterator const& iter )
-        {
-            guarded_ptr gp;
-            if ( base_class::erase_at( iter )) {
-                // The element erased is guarded by iter so it is still alive
-                gp.reset( iter.node_pointer());
-            }
             return gp;
         }
 
@@ -632,64 +699,72 @@ namespace cds { namespace container {
             - pre-increment and pre-decrement. Post-operators is not supported
             - equality operators <tt>==</tt> and <tt>!=</tt>.
                 Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt> 
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
                 does not entail <tt> &(*it1) == &(*it2) </tt>
             - helper member function \p release() that clears internal hazard pointer.
-                After \p release() call the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+                After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+
+            During iteration you may safely erase any item from the set;
+            @ref erase_at() function call doesn't invalidate any iterator.
+            If some iterator points to the item to be erased, that item is not deleted immediately
+            but only after that iterator will be advanced forward or backward.
+
+            @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
+            in array node that is being splitted.
         */
     ///@{
         /// Returns an iterator to the beginning of the map
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return base_class::template init_begin<iterator>();
         }
 
         /// Returns an const iterator to the beginning of the map
         const_iterator begin() const
         {
-            return const_iterator( base_class::begin());
+            return base_class::template init_begin<const_iterator>();
         }
 
         /// Returns an const iterator to the beginning of the map
         const_iterator cbegin()
         {
-            return const_iterator( base_class::cbegin());
+            return base_class::template init_begin<const_iterator>();
         }
 
-        /// Returns an iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns an iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior.
         iterator end()
         {
-            return iterator( base_class::end());
+            return base_class::template init_end<iterator>();
         }
 
-        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator end() const
         {
-            return const_iterator( base_class::end());
+            return base_class::template init_end<const_iterator>();
         }
 
-        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior. 
+        /// Returns a const iterator to the element following the last element of the map. This element acts as a placeholder; attempting to access it results in undefined behavior.
         const_iterator cend()
         {
-            return const_iterator( base_class::cend());
+            return base_class::template init_end<const_iterator>();
         }
 
         /// Returns a reverse iterator to the first element of the reversed map
         reverse_iterator rbegin()
         {
-            return reverse_iterator( base_class::rbegin());
+            return base_class::template init_rbegin<reverse_iterator>();
         }
 
         /// Returns a const reverse iterator to the first element of the reversed map
         const_reverse_iterator rbegin() const
         {
-            return const_reverse_iterator( base_class::rbegin());
+            return base_class::template init_rbegin<const_reverse_iterator>();
         }
 
         /// Returns a const reverse iterator to the first element of the reversed map
         const_reverse_iterator crbegin()
         {
-            return const_reverse_iterator( base_class::crbegin());
+            return base_class::template init_rbegin<const_reverse_iterator>();
         }
 
         /// Returns a reverse iterator to the element following the last element of the reversed map
@@ -699,7 +774,7 @@ namespace cds { namespace container {
         */
         reverse_iterator rend()
         {
-            return reverse_iterator( base_class::rend());
+            return base_class::template init_rend<reverse_iterator>();
         }
 
         /// Returns a const reverse iterator to the element following the last element of the reversed map
@@ -709,7 +784,7 @@ namespace cds { namespace container {
         */
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator( base_class::rend());
+            return base_class::template init_rend<const_reverse_iterator>();
         }
 
         /// Returns a const reverse iterator to the element following the last element of the reversed map
@@ -719,7 +794,7 @@ namespace cds { namespace container {
         */
         const_reverse_iterator crend()
         {
-            return const_reverse_iterator( base_class::crend());
+            return base_class::template init_rend<const_reverse_iterator>();
         }
     ///@}
     };

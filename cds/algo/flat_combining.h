@@ -741,8 +741,8 @@ namespace cds { namespace algo {
                 // Thinning publication list
                 publication_record * pPrev = nullptr;
                 for ( publication_record * p = m_pHead; p; ) {
-                    if ( p->nState.load( memory_model::memory_order_acquire ) == active 
-                      && p->nAge.load( memory_model::memory_order_acquire ) + m_nCompactFactor < nCurAge ) 
+                    if ( p->nState.load( memory_model::memory_order_acquire ) == active
+                      && p->nAge.load( memory_model::memory_order_acquire ) + m_nCompactFactor < nCurAge )
                     {
                         if ( pPrev ) {
                             publication_record * pNext = p->pNext.load( memory_model::memory_order_acquire );

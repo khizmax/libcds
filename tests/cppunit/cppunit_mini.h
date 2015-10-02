@@ -83,7 +83,7 @@ namespace CppUnitMini
       unsigned int getUInt( const char * pszParamName, unsigned int nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
       long getLong( const char * pszParamName, long nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
       unsigned long getULong( const char * pszParamName, unsigned long nDefVal = 0 ) const { return get( pszParamName, nDefVal ) ; }
-      size_t getSizeT( const char * pszParamName, size_t nDefVal = 0 ) const 
+      size_t getSizeT( const char * pszParamName, size_t nDefVal = 0 ) const
       {
           return static_cast<size_t>( getULong( pszParamName, static_cast<unsigned long>(nDefVal)));
       }
@@ -136,7 +136,10 @@ namespace CppUnitMini
 
   class TestCase : public TestFixture {
   public:
-    TestCase() { registerTestCase(this); }
+    TestCase()
+    {
+        registerTestCase(this);
+    }
 
     void setUp() { m_failed = false; }
     static int run(Reporter *in_reporter = 0, const char *in_testName = "", bool invert = false);
@@ -159,6 +162,7 @@ namespace CppUnitMini
         m_reporter->error(in_macroName, in_macro, in_file, in_line);
       }
     }
+    virtual char const * test_name() const = 0;
 
     static void message(const char *msg) {
       if (m_reporter) {
@@ -193,13 +197,15 @@ namespace CppUnitMini
 
     static void print_gc_state();
 
-    static std::vector<std::string> const&    getTestStrings();
+    static std::vector<std::string> const&  getTestStrings();
 
     template <typename RandomIt>
     static void shuffle( RandomIt first, RandomIt last )
     {
         std::shuffle( first, last, m_RandomGen );
     }
+
+    static void print_test_list();
 
   protected:
     static std::vector<std::string>  m_arrStrings ;   // array of test strings
@@ -240,15 +246,11 @@ namespace CppUnitMini
 
 #define CPPUNIT_TEST_SUITE_(X, cfgBranchName) \
     typedef CppUnitMini::TestCase Base; \
+    virtual char const * test_name() const { return #X; } \
     virtual void myRun(const char *in_name, bool invert = false) { \
     const char *className = #X; CPPUNIT_MINI_HIDE_UNUSED_VARIABLE(className) \
     bool ignoring = false; CPPUNIT_MINI_HIDE_UNUSED_VARIABLE(ignoring) \
     setUpParams( m_Cfg.get( cfgBranchName ));
-
-#define CPPUNIT_TEST_SUITE_PART(X, func) \
-    void X::func(const char *in_name, bool invert /*= false*/) { \
-    const char *className = #X; CPPUNIT_MINI_HIDE_UNUSED_VARIABLE(className) \
-    bool ignoring = false; CPPUNIT_MINI_HIDE_UNUSED_VARIABLE(ignoring)
 
 #define CPPUNIT_TEST_SUITE(X) CPPUNIT_TEST_SUITE_(X, #X)
 
@@ -300,8 +302,8 @@ namespace CppUnitMini
 #define CPPUNIT_TEST_SUITE_END() endTestCase(); }
 #define CPPUNIT_TEST_SUITE_END_PART() }
 
-#define CPPUNIT_TEST_SUITE_REGISTRATION(X) static X local
 #define CPPUNIT_TEST_SUITE_REGISTRATION_(X, NAME) static X NAME
+#define CPPUNIT_TEST_SUITE_REGISTRATION(X) CPPUNIT_TEST_SUITE_REGISTRATION_(X, local)
 
 #define CPPUNIT_CHECK(X) \
   if (!(X)) { \

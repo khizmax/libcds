@@ -109,7 +109,7 @@ namespace set {
                 rcu_lock l;
                 for ( set_iterator it = s.begin(), itEnd = s.end(); it != itEnd; ++it ) {
                     CPPUNIT_ASSERT( (*it).nKey * 2 == it->nVal );
-                    CPPUNIT_ASSERT( s.find( it->nKey ));
+                    CPPUNIT_ASSERT( s.contains( it->nKey ));
                     it->nVal = (*it).nKey;
                     ++nCount;
                     if ( it != s.begin() ) {
@@ -138,7 +138,7 @@ namespace set {
 
             for ( size_t i = 0; i < sizeof(v)/sizeof(v[0]); ++i ) {
                 CPPUNIT_ASSERT( v[i].nKey == v[i].nVal );
-                CPPUNIT_ASSERT( s.find( v[i].nKey ));
+                CPPUNIT_ASSERT( s.contains( v[i].nKey ));
             }
 
             s.clear();

@@ -34,7 +34,7 @@ namespace tree {
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_shb_pool_monitor_less()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::sync_monitor< cds::sync::pool_monitor<simple_pool> >
@@ -48,7 +48,7 @@ namespace tree {
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_shb_pool_monitor_less_stat()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::stat< cc::bronson_avltree::stat<> >
@@ -64,7 +64,7 @@ namespace tree {
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_shb_pool_monitor_cmp_ic_stat()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -80,7 +80,7 @@ namespace tree {
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_shb_pool_monitor_cmp_ic_stat_yield()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,co::item_counter< cds::atomicity::item_counter >
@@ -97,7 +97,7 @@ namespace tree {
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_shb_pool_monitor_less_relaxed_insert()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,cc::bronson_avltree::relaxed_insert< true >
@@ -112,7 +112,7 @@ namespace tree {
     void BronsonAVLTreeHdrTest::BronsonAVLTree_rcu_shb_pool_monitor_less_relaxed_insert_stat()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        struct traits: public 
+        struct traits: public
             cc::bronson_avltree::make_traits<
                 co::less< std::less<key_type> >
                 ,co::stat< cc::bronson_avltree::stat<> >

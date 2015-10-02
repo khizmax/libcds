@@ -137,10 +137,6 @@ namespace cds { namespace container {
         typedef typename base_class::item_counter   item_counter; ///< Item counter type
         typedef typename base_class::stat           stat;         ///< Internal statistics
 
-        //@cond
-        typedef cds::container::split_list::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::maker::traits::key_accessor key_accessor;
@@ -312,19 +308,14 @@ namespace cds { namespace container {
             return base_class::emplace( std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)));
         }
 
-        /// Ensures that the \p key exists in the map
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
-            constructible from type \p K).
+            If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+
+            The functor signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
@@ -333,25 +324,34 @@ namespace cds { namespace container {
 
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
+            - \p item - item of the map
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
             \p second is true if new item has been added or \p false if the item with \p key
-            already is in the list.
+            already is in the map.
 
             @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" as the ordered list see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
+        std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::ensure( std::make_pair( key, mapped_type() ),
+            return base_class::update( std::make_pair( key, mapped_type() ),
                 [&func](bool bNew, value_type& item, value_type const& /*val*/) {
                     func( bNew, item );
-                } );
+                },
+                bAllowInsert );
         }
+        //@cond
+        template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( K const& key, Func func )
+        {
+            return update( key, func, true );
+        }
+        //@endcond
 
         /// Deletes \p key from the map
         /** \anchor cds_nonintrusive_SplitListMap_erase_val
@@ -506,31 +506,49 @@ namespace cds { namespace container {
                 [&f](value_type& pair, K const&){ f( pair ); } );
         }
 
-        /// Finds the key \p key
-        /** \anchor cds_nonintrusive_SplitListMap_find_val
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
+
+            Note the hash functor specified for class \p Traits template parameter
+            should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Otherwise, you may use \p contains( Q const&, Less pred ) functions with explicit predicate for key comparing.
         */
         template <typename K>
+        bool contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_SplitListMap_find_val "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the map.
         */
         template <typename K, typename Less>
-        bool find_with( K const& key, Less pred )
+        bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
         }
+        //@cond
+        template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( K const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_SplitListMap_hp_get

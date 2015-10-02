@@ -98,10 +98,6 @@ namespace cds { namespace container {
         typedef typename base_class::node_allocator         node_allocator;   ///< Internal node allocator
         typedef typename base_class::update_desc_allocator  update_desc_allocator; ///< Update descriptor allocator
 
-        //@cond
-        typedef cds::container::ellen_bintree::implementation_tag implementation_tag;
-        //@endcond
-
     protected:
         //@cond
         typedef typename base_class::value_type         leaf_node;
@@ -218,19 +214,13 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Ensures that the \p key exists in the map
+        /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the \p key not found in the map, then the new item created from \p key
-            is inserted into the map (note that in this case the \ref key_type should be
-            constructible from type \p K).
+            If the item \p val is not found in the map, then \p val is inserted iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor \p Func may be a function with signature:
-            \code
-                void func( bool bNew, value_type& item );
-            \endcode
-            or a functor:
+            The functor \p func signature is:
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
@@ -239,27 +229,39 @@ namespace cds { namespace container {
 
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
+            - \p item - item of the map
 
-            The functor may change any fields of the \p item.second that is \ref value_type.
+            The functor may change any fields of the \p item.second that is \ref mapped_type;
+            however, \p func must guarantee that during changing no any other modifications
+            could be made on this item by concurrent threads.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
-            already is in the list.
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            i.e. the node has been inserted or updated,
+            \p second is \p true if new item has been added or \p false if the item with \p key
+            already exists.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> ensure( K const& key, Func func )
+        std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             scoped_node_ptr pNode( cxx_leaf_node_allocator().New( key ));
-            std::pair<bool, bool> res = base_class::ensure( *pNode,
-                [&func](bool bNew, leaf_node& item, leaf_node const& ){ func( bNew, item.m_Value ); }
+            std::pair<bool, bool> res = base_class::update( *pNode,
+                [&func](bool bNew, leaf_node& item, leaf_node const& ){ func( bNew, item.m_Value ); },
+                bAllowInsert
             );
             if ( res.first && res.second )
                 pNode.release();
             return res;
         }
+        //@cond
+        template <typename K, typename Func>
+        CDS_DEPRECATED("ensure() is deprecated, use update()")
+        std::pair<bool, bool> ensure( K const& key, Func func )
+        {
+            return update( key, func, true );
+        }
+        //@endcond
 
         /// Delete \p key from the map
         /**\anchor cds_nonintrusive_EllenBinTreeMap_erase_val
@@ -436,31 +438,45 @@ namespace cds { namespace container {
                 [&f](leaf_node& item, K const& ) { f( item.m_Value );});
         }
 
-        /// Find the key \p key
-        /** \anchor cds_nonintrusive_EllenBinTreeMap_find_val
-
+        /// Checks whether the map contains \p key
+        /**
             The function searches the item with key equal to \p key
             and returns \p true if it is found, and \p false otherwise.
         */
         template <typename K>
+        bool contains( K const& key )
+        {
+            return base_class::contains( key );
+        }
+        //@cond
+        template <typename K>
+        CDS_DEPRECATED("deprecated, use contains()")
         bool find( K const& key )
         {
-            return base_class::find( key );
+            return contains( key );
         }
+        //@endcond
 
-        /// Finds the key \p val using \p pred predicate for searching
+        /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_EllenBinTreeMap_find_val "find(K const&)"
-            but \p pred is used for key comparing.
+            The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the map.
+            \p Less must imply the same element order as the comparator used for building the set.
         */
         template <typename K, typename Less>
-        bool find_with( K const& key, Less pred )
+        bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );
+            return base_class::contains( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );
         }
+        //@cond
+        template <typename K, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
+        bool find_with( K const& key, Less pred )
+        {
+            return contains( key, pred );
+        }
+        //@endcond
 
         /// Finds \p key and returns the item found
         /** @anchor cds_nonintrusive_EllenBinTreeMap_get

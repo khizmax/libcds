@@ -324,7 +324,7 @@ namespace cds { namespace gc {
 
                 // TSan can issue a warning here:
                 //  read src.m_nSize in src.end()
-                //  write src.m_nSize in src.clear() 
+                //  write src.m_nSize in src.clear()
                 // This is false positive since we own hprec
                 CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
                 details::retired_vector::iterator itRetiredEnd = src.end();

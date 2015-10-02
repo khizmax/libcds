@@ -5,7 +5,7 @@
 
 #include <cds/algo/base.h>
 
-namespace cds { namespace algo { 
+namespace cds { namespace algo {
 
     /// Cuts a bit sequence from fixed-size bit-string
     /**

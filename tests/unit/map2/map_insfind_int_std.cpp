@@ -3,10 +3,11 @@
 #include "map2/map_insfind_int.h"
 #include "map2/map_type_std.h"
 
-namespace map2 {
-    CDSUNIT_DEFINE_StdMap( map2::std_implementation_tag, Map_InsFind_int)
+#undef TEST_CASE
+#define TEST_CASE(TAG, X)  void Map_InsFind_int::X() { run_test<typename map_type< TAG, key_type, value_type>::X>(); }
+#include "map2/map_defs.h"
 
-    CPPUNIT_TEST_SUITE_PART( Map_InsFind_int, run_StdMap )
-        CDSUNIT_TEST_StdMap
-    CPPUNIT_TEST_SUITE_END_PART()
+namespace map2 {
+    CDSUNIT_DECLARE_StdMap
+    CDSUNIT_DECLARE_StdMap_NoLock
 } // namespace map2

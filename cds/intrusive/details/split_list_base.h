@@ -16,10 +16,6 @@ namespace cds { namespace intrusive {
     /** @ingroup cds_intrusive_helper
     */
     namespace split_list {
-        //@cond
-        struct implementation_tag;
-        //@endcond
-
         /// Split-ordered list node
         /**
             Template parameter:

@@ -11,13 +11,12 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace multilevel_hashset {
-
         /// Hash accessor option
         /**
             @copydetails cds::intrusive::multilevel_hashset::traits::hash_accessor
         */
         template <typename Accessor>
-        using hash_accessor = cds::intrusive::hash_accessor< Accessor >;
+        using hash_accessor = cds::intrusive::multilevel_hashset::hash_accessor< Accessor >;
 
         /// \p MultiLevelHashSet internal statistics, see cds::intrusive::multilevel_hashset::stat
         template <typename EventCounter = cds::atomicity::event_counter>
@@ -102,12 +101,12 @@ namespace cds { namespace container {
                 @copydetails traits::node_allocator
             - \p opt::compare - hash comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
-            - \p opt::less - specifies binary predicate used for hash comparison. 
+            - \p opt::less - specifies binary predicate used for hash comparison.
                 @copydetails cds::container::multilevel_hashset::traits::less
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature.
                 @copydetails cds::intrusive::multilevel_hashset::traits::item_counter
-            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)                
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::stat - internal statistics. By default, it is disabled (\p multilevel_hashset::empty_stat).
                 To enable it use \p multilevel_hashset::stat
@@ -130,7 +129,7 @@ namespace cds { namespace container {
 
     //@cond
     // Forward declaration
-    template < class GC, typename T, class Traits = multilevel_hashset::traits >
+    template < class GC, typename T, class Traits = cds::container::multilevel_hashset::traits >
     class MultiLevelHashSet;
     //@endcond
 

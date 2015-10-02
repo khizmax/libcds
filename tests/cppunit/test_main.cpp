@@ -120,7 +120,7 @@ namespace CppUnitMini
   }
 
   bool TestCase::shouldRunThis(const char *in_desiredTest, const char *in_className, const char *in_functionName,
-                       bool invert, bool explicit_test, bool &do_progress) 
+                       bool invert, bool explicit_test, bool &do_progress)
   {
       if ((in_desiredTest) && (in_desiredTest[0] != '\0')) {
         do_progress = false;
@@ -144,6 +144,7 @@ namespace CppUnitMini
         return !explicit_test && (match == !invert);
       }
       do_progress = true;
+
       return !explicit_test;
   }
 
@@ -155,6 +156,16 @@ namespace CppUnitMini
               cds::gc::hp::GarbageCollector::InternalState stat;
               std::cout << cds::gc::hp::GarbageCollector::instance().getInternalState( stat ) << std::endl;
           }
+      }
+  }
+
+  void TestCase::print_test_list()
+  {
+      TestCase *tmp = m_root;
+      std::cout << "Test list:\n";
+      while (tmp != 0) {
+          std::cout << "\t" << tmp->test_name() << "\n";
+          tmp = tmp->m_next;
       }
   }
 
@@ -220,7 +231,7 @@ namespace CppUnitMini
       s.close();
   }
 
-  std::vector<std::string> const &    TestCase::getTestStrings()
+  std::vector<std::string> const & TestCase::getTestStrings()
   {
       if ( m_arrStrings.empty() ) {
           std::string strTestDir = m_strTestDataDir;
@@ -255,15 +266,17 @@ namespace CppUnitMini
 
 static void usage(const char* name)
 {
-  printf("Usage : %s [-t=<class>[::<test>]] [-x=<class>[::<test>]] [-f=<file>] [-m]\n", name);
-  printf("\t[-t=<class>[::<test>]] : test class or class::test to execute\n");
-  printf("\t[-x=<class>[::<test>]] : test class or class::test to exclude from execution\n");
-  printf("\t[-d=dir] : test data directory (default is .)\n");
-  printf( "\t[-f=<file>] : output file\n" );
-  //printf(";\n\t[-m] : monitor test execution, display time duration for each test\n");
-  printf( "\t[-exact-match] : class::test should be exactly matched to existing test\n" );
-  printf("\t[-gc_state] : print gc state after each test\n");
-  printf("\t[-cfg=<file>] : config file name for tests\n");
+    std::cout << "Usage: " << name << " [options] [-t=<class>[::<test>]] [-x=<class>[::<test>]] [-f=<file>]\n"
+                 "\t[-t=<class>[::<test>]] : test class or class::test to execute\n"
+                 "\t[-d=dir] : test data directory (default is .)\n"
+                 "\t[-f=<file>] : output file\n"
+                 "Options:\n"
+                 "\t-exact-match - class::test should be exactly matched to existing test\n"
+                 "\t-gc_state    - print gc state after each test\n"
+                 "\t-cfg=<file>  - config file name for tests\n"
+                 "\t-list        - list all tests\n"
+                 "\t"
+              << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -321,6 +334,10 @@ int main(int argc, char** argv)
       else if ( strncmp( argv[i], "-exact-match", 12 ) == 0 ) {
           CppUnitMini::TestCase::m_bExactMatch = true;
           continue;
+      }
+      else if (strncmp(argv[i], "-list", 5) == 0) {
+          CppUnitMini::TestCase::print_test_list();
+          return 0;
       }
       else if ( strncmp(argv[i], "-gc_state", 9) == 0 ) {
           CppUnitMini::TestCase::m_bPrintGCState = true;
@@ -394,7 +411,7 @@ int main(int argc, char** argv)
       {
           std::cout
               << "System topology:\n"
-              << "    Logical processor count: " << cds::OS::topology::processor_count() << "\n";
+              << "    Logical processor count: " << std::thread::hardware_concurrency() << "\n";
           std::cout << std::endl;
       }
 

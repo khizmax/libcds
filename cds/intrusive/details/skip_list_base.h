@@ -14,10 +14,6 @@ namespace cds { namespace intrusive {
     /** @ingroup cds_intrusive_helper
     */
     namespace skip_list {
-        //@cond
-        struct implementation_tag;
-        //@endcond
-
         /// The maximum possible height of any skip-list
         static unsigned int const c_nHeightLimit = 32;
 
