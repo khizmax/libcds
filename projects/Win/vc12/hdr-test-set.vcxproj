@@ -624,6 +624,11 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_michael_set_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_hp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_skiplist_set_nogc.cpp" />

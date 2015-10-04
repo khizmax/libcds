@@ -1,57 +1,22 @@
 //$$CDS-header$$
 
-#ifndef CDSLIB_CONTAINER_IMPL_MULTILEVEL_HASHSET_H
-#define CDSLIB_CONTAINER_IMPL_MULTILEVEL_HASHSET_H
+#ifndef CDSLIB_CONTAINER_MULTILEVEL_HASHSET_RCU_H
+#define CDSLIB_CONTAINER_MULTILEVEL_HASHSET_RCU_H
 
-#include <cds/intrusive/impl/multilevel_hashset.h>
+#include <cds/intrusive/multilevel_hashset_rcu.h>
 #include <cds/container/details/multilevel_hashset_base.h>
 
 namespace cds { namespace container {
 
-    /// Hash set based on multi-level array
+    /// Hash set based on multi-level array, \ref cds_urcu_desc "RCU" specialization
     /** @ingroup cds_nonintrusive_set
-        @anchor cds_container_MultilevelHashSet_hp
+        @anchor cds_container_MultilevelHashSet_rcu
 
         Source:
         - [2013] Steven Feldman, Pierre LaBorde, Damian Dechev "Concurrent Multi-level Arrays:
                  Wait-free Extensible Hash Maps"
 
-        [From the paper] The hardest problem encountered while developing a parallel hash map is how to perform
-        a global resize, the process of redistributing the elements in a hash map that occurs when adding new
-        buckets. The negative impact of blocking synchronization is multiplied during a global resize, because all
-        threads will be forced to wait on the thread that is performing the involved process of resizing the hash map
-        and redistributing the elements. \p %MultilevelHashSet implementation avoids global resizes through new array
-        allocation. By allowing concurrent expansion this structure is free from the overhead of an explicit resize,
-        which facilitates concurrent operations.
-
-        The presented design includes dynamic hashing, the use of sub-arrays within the hash map data structure;
-        which, in combination with <b>perfect hashing</b>, means that each element has a unique final, as well as current, position.
-        It is important to note that the perfect hash function required by our hash map is trivial to realize as
-        any hash function that permutes the bits of the key is suitable. This is possible because of our approach
-        to the hash function; we require that it produces hash values that are equal in size to that of the key.
-        We know that if we expand the hash map a fixed number of times there can be no collision as duplicate keys
-        are not provided for in the standard semantics of a hash map.
-
-        \p %MultiLevelHashSet is a multi-level array which has an internal structure similar to a tree:
-        @image html multilevel_hashset.png
-        The multi-level array differs from a tree in that each position on the tree could hold an array of nodes or a single node.
-        A position that holds a single node is a \p dataNode which holds the hash value of a key and the value that is associated
-        with that key; it is a simple struct holding two variables. A \p dataNode in the multi-level array could be marked.
-        A \p markedDataNode refers to a pointer to a \p dataNode that has been bitmarked at the least significant bit (LSB)
-        of the pointer to the node. This signifies that this \p dataNode is contended. An expansion must occur at this node;
-        any thread that sees this \p markedDataNode will try to replace it with an \p arrayNode; which is a position that holds
-        an array of nodes. The pointer to an \p arrayNode is differentiated from that of a pointer to a \p dataNode by a bitmark
-        on the second-least significant bit.
-
-        \p %MultiLevelHashSet multi-level array is similar to a tree in that we keep a pointer to the root, which is a memory array
-        called \p head. The length of the \p head memory array is unique, whereas every other \p arrayNode has a uniform length;
-        a normal \p arrayNode has a fixed power-of-two length equal to the binary logarithm of a variable called \p arrayLength.
-        The maximum depth of the tree, \p maxDepth, is the maximum number of pointers that must be followed to reach any node.
-        We define \p currentDepth as the number of memory arrays that we need to traverse to reach the \p arrayNode on which
-        we need to operate; this is initially one, because of \p head.
-
-        That approach to the structure of the hash set uses an extensible hashing scheme; <b> the hash value is treated as a bit
-        string</b> and rehash incrementally.
+        See algorithm short description @ref cds_intrusive_MultilevelHashSet_RCU "here"
 
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
         - all keys must be fixed-size. It means that you cannot use \p std::string as a key for \p %MultiLevelHashSet.
@@ -66,20 +31,20 @@ namespace cds { namespace container {
         The set supports @ref cds_container_MultilevelHashSet_iterators "bidirectional thread-safe iterators".
 
         Template parameters:
-        - \p GC - safe memory reclamation schema. Can be \p gc::HP, \p gc::DHP or one of \ref cds_urcu_type "RCU type"
+        - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p T - a value type to be stored in the set
         - \p Traits - type traits, the structure based on \p multilevel_hashset::traits or result of \p multilevel_hashset::make_traits metafunction.
             \p Traits is the mandatory argument because it has one mandatory type - an @ref multilevel_hashset::traits::hash_accessor "accessor"
             to hash value of \p T. The set algorithm does not calculate that hash value.
 
-        There are several specializations of \p %MultiLevelHashSet for each \p GC. You should include:
-        - <tt><cds/container/multilevel_hashset_hp.h></tt> for \p gc::HP garbage collector
-        - <tt><cds/container/multilevel_hashset_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/container/multilevel_hashset_rcu.h></tt> for \ref cds_intrusive_MultilevelHashSet_rcu "RCU type". RCU specialization
-            has a slightly different interface.
+            @note Before including <tt><cds/intrusive/multilevel_hashset_rcu.h></tt> you should include appropriate RCU header file,
+            see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
+
+            The set supports @ref cds_container_MultilevelHashSet_rcu_iterators "bidirectional thread-safe iterators"
+            with some restrictions.
     */
     template <
-        class GC
+        class RCU
         , typename T
 #ifdef CDS_DOXYGEN_INVOKED
         , class Traits = multilevel_hashset::traits
@@ -87,20 +52,20 @@ namespace cds { namespace container {
         , class Traits
 #endif
     >
-    class MultiLevelHashSet
+    class MultiLevelHashSet< cds::urcu::gc< RCU >, T, Traits >
 #ifdef CDS_DOXYGEN_INVOKED
-        : protected cds::intrusive::MultiLevelHashSet< GC, T, Traits >
+        : protected cds::intrusive::MultiLevelHashSet< cds::urcu::gc< RCU >, T, Traits >
 #else
-        : protected cds::container::details::make_multilevel_hashset< GC, T, Traits >::type
+        : protected cds::container::details::make_multilevel_hashset< cds::urcu::gc< RCU >, T, Traits >::type
 #endif
     {
         //@cond
-        typedef cds::container::details::make_multilevel_hashset< GC, T, Traits > maker;
+        typedef cds::container::details::make_multilevel_hashset< cds::urcu::gc< RCU >, T, Traits > maker;
         typedef typename maker::type base_class;
         //@endcond
 
     public:
-        typedef GC      gc;         ///< Garbage collector
+        typedef cds::urcu::gc< RCU > gc; ///< RCU garbage collector
         typedef T       value_type; ///< type of value stored in the set
         typedef Traits  traits;     ///< Traits template parameter, see \p multilevel_hashset::traits
 
@@ -114,16 +79,15 @@ namespace cds { namespace container {
         typedef typename traits::memory_model   memory_model;   ///< Memory model
         typedef typename traits::back_off       back_off;       ///< Backoff strategy
         typedef typename traits::stat           stat;           ///< Internal statistics type
+        typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
+        typedef typename gc::scoped_lock       rcu_lock;        ///< RCU scoped lock
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
+        typedef typename base_class::exempt_ptr exempt_ptr; ///< pointer to extracted node
 
-        typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
-
-        /// Count of hazard pointers required
-        static CDS_CONSTEXPR size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount;
-
-        typedef typename base_class::iterator               iterator;       ///< @ref cds_container_MultilevelHashSet_iterators "bidirectional iterator" type
-        typedef typename base_class::const_iterator         const_iterator; ///< @ref cds_container_MultilevelHashSet_iterators "bidirectional const iterator" type
-        typedef typename base_class::reverse_iterator       reverse_iterator;       ///< @ref cds_container_MultilevelHashSet_iterators "bidirectional reverse iterator" type
-        typedef typename base_class::const_reverse_iterator const_reverse_iterator; ///< @ref cds_container_MultilevelHashSet_iterators "bidirectional reverse const iterator" type
+        typedef typename base_class::iterator               iterator;       ///< @ref cds_container_MultilevelHashSet_rcu_iterators "bidirectional iterator" type
+        typedef typename base_class::const_iterator         const_iterator; ///< @ref cds_container_MultilevelHashSet_rcu_iterators "bidirectional const iterator" type
+        typedef typename base_class::reverse_iterator       reverse_iterator;       ///< @ref cds_container_MultilevelHashSet_rcu_iterators "bidirectional reverse iterator" type
+        typedef typename base_class::const_reverse_iterator const_reverse_iterator; ///< @ref cds_container_MultilevelHashSet_rcu_iterators "bidirectional reverse const iterator" type
 
     protected:
         //@cond
@@ -160,6 +124,8 @@ namespace cds { namespace container {
             In trivial case, \p Q is equal to \ref value_type.
 
             Returns \p true if \p val is inserted into the set, \p false otherwise.
+
+            The function locks RCU internally.
         */
         template <typename Q>
         bool insert( Q const& val )
@@ -186,6 +152,8 @@ namespace cds { namespace container {
             where \p val is the item inserted. User-defined functor \p f should guarantee that during changing
             \p val no any other changes could be made on this set's item by concurrent threads.
             The user-defined functor is called only if the inserting is success.
+
+            The function locks RCU internally.
         */
         template <typename Q, typename Func>
         bool insert( Q const& val, Func f )
@@ -283,49 +251,33 @@ namespace cds { namespace container {
             return base_class::erase( hash, f );
         }
 
-        /// Deletes the item pointed by iterator \p iter
-        /**
-            Returns \p true if the operation is successful, \p false otherwise.
-
-            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
-        */
-        bool erase_at( iterator const& iter )
-        {
-            return base_class::erase_at( iter );
-        }
-        //@cond
-        bool erase_at( reverse_iterator const& iter )
-        {
-            return base_class::erase_at( iter );
-        }
-        //@endcond
-
         /// Extracts the item with specified \p hash
         /**
             The function searches \p hash in the set,
-            unlinks it from the set, and returns a guarded pointer to the item extracted.
-            If \p hash is not found the function returns an empty guarded pointer.
+            unlinks it from the set, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
+            If the item with key equal to \p key is not found the function returns an empty \p exempt_ptr.
 
-            The item returned is reclaimed by garbage collector \p GC
-            when returned \ref guarded_ptr object to be destroyed or released.
-            @note Each \p guarded_ptr object uses the GC's guard that can be limited resource.
-
-            Usage:
+            RCU \p synchronize method can be called. RCU should NOT be locked.
+            The function does not call the disposer for the item found.
+            The disposer will be implicitly invoked when the returned object is destroyed or when
+            its \p release() member function is called.
+            Example:
             \code
-            typedef cds::container::MultiLevelHashSet< your_template_args > my_set;
-            my_set theSet;
+            typedef cds::container::MultiLevelHashSet< cds::urcu::gc< cds::urcu::general_buffered<> >, foo, my_traits > set_type;
+            set_type theSet;
             // ...
-            {
-                my_set::guarded_ptr gp( theSet.extract( 5 ));
-                if ( gp ) {
-                    // Deal with gp
-                    // ...
-                }
-                // Destructor of gp releases internal HP guard
+
+            typename set_type::exempt_ptr ep( theSet.extract( 5 ));
+            if ( ep ) {
+                // Deal with ep
+                //...
+
+                // Dispose returned item.
+                ep.release();
             }
             \endcode
         */
-        guarded_ptr extract( hash_type const& hash )
+        exempt_ptr extract( hash_type const& hash )
         {
             return base_class::extract( hash );
         }
@@ -367,10 +319,11 @@ namespace cds { namespace container {
         /// Finds an item by it's \p hash and returns the item found
         /**
             The function searches the item by its \p hash
-            and returns the guarded pointer to the item found.
-            If \p hash is not found the function returns an empty \p guarded_ptr.
+            and returns the pointer to the item found.
+            If \p hash is not found the function returns \p nullptr.
 
-            @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
+            RCU should be locked before the function invocation.
+            Returned pointer is valid only while RCU is locked.
 
             Usage:
             \code
@@ -378,16 +331,18 @@ namespace cds { namespace container {
             my_set theSet;
             // ...
             {
-                my_set::guarded_ptr gp( theSet.get( 5 ));
-                if ( theSet.get( 5 )) {
-                    // Deal with gp
+                // lock RCU
+                my_set::rcu_lock;
+
+                foo * p = theSet.get( 5 );
+                if ( p ) {
+                    // Deal with p
                     //...
                 }
-                // Destructor of guarded_ptr releases internal HP guard
             }
             \endcode
         */
-        guarded_ptr get( hash_type const& hash )
+        value_type * get( hash_type const& hash )
         {
             return base_class::get( hash );
         }
@@ -438,14 +393,50 @@ namespace cds { namespace container {
         }
 
     public:
-    ///@name Thread-safe iterators
-        /** @anchor cds_container_MultilevelHashSet_iterators
-            The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment.
-            It is guaranteed that the iterators will remain valid even if another thread deletes the node the iterator points to:
-            Hazard Pointer embedded into the iterator object protects the node from physical reclamation.
+        ///@name Thread-safe iterators
+        /** @anchor cds_container_MultilevelHashSet_rcu_iterators
+            The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment
+            under explicit RCU lock.
+            RCU lock requirement means that inserting or searching is allowed but you must not erase the items from the set
+            since erasing under RCU lock can lead to a deadlock. However, another thread can call \p erase() safely
+            while your thread is iterating.
 
-            @note Since the iterator object contains hazard pointer that is a thread-local resource,
-            the iterator should not be passed to another thread.
+            A typical example is:
+            \code
+            struct foo {
+                uint32_t    hash;
+                // ... other fields
+                uint32_t    payload; // only for example
+            };
+            struct set_traits: cds::container::multilevel_hashset::traits
+            {
+                struct hash_accessor {
+                    uint32_t operator()( foo const& src ) const
+                    {
+                        retur src.hash;
+                    }
+                };
+            };
+
+            typedef cds::urcu::gc< cds::urcu::general_buffered<>> rcu;
+            typedef cds::container::MultiLevelHashSet< rcu, foo, set_traits > set_type;
+
+            set_type s;
+
+            // ...
+
+            // iterate over the set
+            {
+                // lock the RCU.
+                typename set_type::rcu_lock l; // scoped RCU lock
+
+                // traverse the set
+                for ( auto i = s.begin(); i != s.end(); ++i ) {
+                    // deal with i. Remember, erasing is prohibited here!
+                    i->payload++;
+                }
+            } // at this point RCU lock is released
+            /endcode
 
             Each iterator object supports the common interface:
             - dereference operators:
@@ -456,18 +447,11 @@ namespace cds { namespace container {
             - pre-increment and pre-decrement. Post-operators is not supported
             - equality operators <tt>==</tt> and <tt>!=</tt>.
                 Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
-                does not entail <tt> &(*it1) == &(*it2) </tt>
-            - helper member function \p release() that clears internal hazard pointer.
-                After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
-
-            During iteration you may safely erase any item from the set;
-            @ref erase_at() function call doesn't invalidate any iterator.
-            If some iterator points to the item to be erased, that item is not deleted immediately
-            but only after that iterator will be advanced forward or backward.
+                Note that for two iterators \p it1 and \p it2 the condition <tt> it1 == it2 </tt>
+                does not entail <tt> &(*it1) == &(*it2) </tt>: welcome to concurrent containers
 
             @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
-            in array node that is being splitted.
+            in an array node that is being splitted.
         */
     ///@{
 
@@ -559,4 +543,4 @@ namespace cds { namespace container {
 
 }} // namespace cds::container
 
-#endif // #ifndef CDSLIB_CONTAINER_IMPL_MULTILEVEL_HASHSET_H
+#endif // #ifndef CDSLIB_CONTAINER_MULTILEVEL_HASHSET_RCU_H

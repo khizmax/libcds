@@ -24,6 +24,16 @@ namespace cds { namespace intrusive {
 
         See algorithm short description @ref cds_intrusive_MultilevelHashSet_hp "here"
 
+        @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
+        - all keys must be fixed-size. It means that you cannot use \p std::string as a key for \p %MultiLevelHashSet.
+          Instead, for the strings you should use well-known hashing algorithms like <a href="https://en.wikipedia.org/wiki/Secure_Hash_Algorithm">SHA1, SHA2</a>,
+          <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
+          or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
+          converts variable-length strings to fixed-length bit-strings, and use that hash as a key in \p %MultiLevelHashSet.
+        - \p %MultiLevelHashSet uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
+          have identical hash then you cannot insert both that keys in the set. \p %MultiLevelHashSet does not maintain the key,
+          it maintains its fixed-size hash value.
+
         Template parameters:
         - \p RCU - one of \ref cds_urcu_gc "RCU type"
         - \p T - a value type to be stored in the set
@@ -458,7 +468,7 @@ namespace cds { namespace intrusive {
             // ...
             {
                 // lock RCU
-                my_set::rcu_lock
+                my_set::rcu_lock;
 
                 foo * p = theSet.get( 5 );
                 if ( p ) {

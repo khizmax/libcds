@@ -350,5 +350,20 @@
     <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_intrusive_multilevel_hashset_rcu_sht.cpp">
       <Filter>intrusive\multilevel_hashset</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_gpb.cpp">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_gpi.cpp">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_gpt.cpp">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_shb.cpp">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\set\hdr_multilevel_hashset_rcu_sht.cpp">
+      <Filter>container\multilevel_hashset</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -181,6 +181,11 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_michael_set_lazy_nogc.cpp \
     tests/test-hdr/set/hdr_multilevel_hashset_hp.cpp \
     tests/test-hdr/set/hdr_multilevel_hashset_dhp.cpp \
+    tests/test-hdr/set/hdr_multilevel_hashset_rcu_gpb.cpp \
+    tests/test-hdr/set/hdr_multilevel_hashset_rcu_gpi.cpp \
+    tests/test-hdr/set/hdr_multilevel_hashset_rcu_gpt.cpp \
+    tests/test-hdr/set/hdr_multilevel_hashset_rcu_shb.cpp \
+    tests/test-hdr/set/hdr_multilevel_hashset_rcu_sht.cpp \
     tests/test-hdr/set/hdr_refinable_hashset_hashset_std.cpp \
     tests/test-hdr/set/hdr_refinable_hashset_boost_flat_set.cpp \
     tests/test-hdr/set/hdr_refinable_hashset_boost_list.cpp \
