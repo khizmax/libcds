@@ -181,6 +181,21 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_dhp.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpb.cpp">
+      <Filter>multilvel_hashmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpi.cpp">
+      <Filter>multilvel_hashmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpt.cpp">
+      <Filter>multilvel_hashmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_shb.cpp">
+      <Filter>multilvel_hashmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_sht.cpp">
+      <Filter>multilvel_hashmap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_map.h" />

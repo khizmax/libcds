@@ -17,6 +17,11 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_michael_map_lazy_nogc.cpp \
     tests/test-hdr/map/hdr_multilevel_hashmap_hp.cpp \
     tests/test-hdr/map/hdr_multilevel_hashmap_dhp.cpp \
+    tests/test-hdr/map/hdr_multilevel_hashmap_rcu_gpb.cpp \
+    tests/test-hdr/map/hdr_multilevel_hashmap_rcu_gpi.cpp \
+    tests/test-hdr/map/hdr_multilevel_hashmap_rcu_gpt.cpp \
+    tests/test-hdr/map/hdr_multilevel_hashmap_rcu_shb.cpp \
+    tests/test-hdr/map/hdr_multilevel_hashmap_rcu_sht.cpp \
     tests/test-hdr/map/hdr_refinable_hashmap_hashmap_std.cpp \
     tests/test-hdr/map/hdr_refinable_hashmap_boost_list.cpp \
     tests/test-hdr/map/hdr_refinable_hashmap_list.cpp \

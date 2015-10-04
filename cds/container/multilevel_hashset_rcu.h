@@ -16,7 +16,7 @@ namespace cds { namespace container {
         - [2013] Steven Feldman, Pierre LaBorde, Damian Dechev "Concurrent Multi-level Arrays:
                  Wait-free Extensible Hash Maps"
 
-        See algorithm short description @ref cds_intrusive_MultilevelHashSet_RCU "here"
+        See algorithm short description @ref cds_intrusive_MultilevelHashSet_hp "here"
 
         @note Two important things you should keep in mind when you're using \p %MultiLevelHashSet:
         - all keys must be fixed-size. It means that you cannot use \p std::string as a key for \p %MultiLevelHashSet.
@@ -225,6 +225,8 @@ namespace cds { namespace container {
             The function searches \p hash in the set,
             deletes the item found, and returns \p true.
             If that item is not found the function returns \p false.
+
+            RCU should not be locked. The function locks RCU internally.
         */
         bool erase( hash_type const& hash )
         {
@@ -244,6 +246,8 @@ namespace cds { namespace container {
             \endcode
 
             If \p hash is not found the function returns \p false.
+
+            RCU should not be locked. The function locks RCU internally.
         */
         template <typename Func>
         bool erase( hash_type const& hash, Func f )

@@ -668,6 +668,11 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_michael_map_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_dhp.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_hp.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_flat_map.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_list.cpp" />
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_refinable_hashmap_boost_map.cpp" />
