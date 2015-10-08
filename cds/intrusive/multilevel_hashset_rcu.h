@@ -1285,8 +1285,7 @@ namespace cds { namespace intrusive {
         static array_node * alloc_array_node(size_t nSize, array_node * pParent, size_t idxParent)
         {
             array_node * pNode = cxx_array_node_allocator().NewBlock(sizeof(array_node) + sizeof(atomic_node_ptr) * (nSize - 1), pParent, idxParent);
-            for (atomic_node_ptr * p = pNode->nodes, *pEnd = pNode->nodes + nSize; p < pEnd; ++p)
-                p->store(node_ptr(), memory_model::memory_order_release);
+            new (pNode->nodes) atomic_node_ptr[nSize];
             return pNode;
         }
 
