@@ -36,6 +36,7 @@ namespace map2 {
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+        static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
     };
 
     template <typename Key, typename T, typename Traits >

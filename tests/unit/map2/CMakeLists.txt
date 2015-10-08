@@ -89,12 +89,13 @@ set(CDSUNIT_MAP_SOURCES
     map_insdelfind_striped.cpp
     map_insdelfind_std.cpp
     map_delodd.cpp
-    map_delodd_michael.cpp
     map_delodd_bronsonavltree.cpp
+    map_delodd_cuckoo.cpp
     map_delodd_ellentree.cpp
+    map_delodd_michael.cpp
+    map_delodd_multilevelhashmap.cpp
     map_delodd_split.cpp
     map_delodd_skip.cpp
-    map_delodd_cuckoo.cpp
 )
 
 add_executable(${PACKAGE_NAME} ${CDSUNIT_MAP_SOURCES} $<TARGET_OBJECTS:${TEST_COMMON}>)
