@@ -19,6 +19,11 @@ set(CDS_TESTHDR_MAP
     map/hdr_michael_map_lazy_nogc.cpp
     map/hdr_multilevel_hashmap_hp.cpp
     map/hdr_multilevel_hashmap_dhp.cpp
+    map/hdr_multilevel_hashmap_rcu_gpb.cpp
+    map/hdr_multilevel_hashmap_rcu_gpi.cpp
+    map/hdr_multilevel_hashmap_rcu_gpt.cpp
+    map/hdr_multilevel_hashmap_rcu_shb.cpp
+    map/hdr_multilevel_hashmap_rcu_sht.cpp
     map/hdr_refinable_hashmap_hashmap_std.cpp
     map/hdr_refinable_hashmap_boost_list.cpp
     map/hdr_refinable_hashmap_list.cpp
@@ -183,6 +188,11 @@ set(CDS_TESTHDR_SET
     set/hdr_michael_set_lazy_nogc.cpp
     set/hdr_multilevel_hashset_hp.cpp
     set/hdr_multilevel_hashset_dhp.cpp
+    set/hdr_multilevel_hashset_rcu_gpb.cpp
+    set/hdr_multilevel_hashset_rcu_gpi.cpp
+    set/hdr_multilevel_hashset_rcu_gpt.cpp
+    set/hdr_multilevel_hashset_rcu_shb.cpp
+    set/hdr_multilevel_hashset_rcu_sht.cpp
     set/hdr_refinable_hashset_hashset_std.cpp
     set/hdr_refinable_hashset_boost_flat_set.cpp
     set/hdr_refinable_hashset_boost_list.cpp

@@ -619,6 +619,9 @@
 // MultiLevelHashSet
 
 #undef CDSUNIT_DECLARE_MultiLevelHashSet64
+#undef CDSUNIT_DECLARE_MultiLevelHashSet64_RCU_signal
+#undef CDSUNIT_DECLARE_MultiLevelHashSet_RCU_signal
+
 #if CDS_BUILD_BITS == 64
 #   define CDSUNIT_DECLARE_MultiLevelHashSet64 \
         TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_city64) \
@@ -629,9 +632,44 @@
         TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_city128_stat) \
         TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_city128) \
         TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_city128_stat)
+
+#   ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+#       define CDSUNIT_DECLARE_MultiLevelHashSet64_RCU_signal \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_city64) \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_city64_stat) \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_city64) \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_city64_stat) \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_city128) \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_city128_stat) \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_city128) \
+            TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_city128_stat)
+#   else
+#       define CDSUNIT_DECLARE_MultiLevelHashSet64_RCU_signal
+#   endif
 #else
 #   define CDSUNIT_DECLARE_MultiLevelHashSet64
+#   define CDSUNIT_DECLARE_MultiLevelHashSet64_RCU_signal
 #endif
+
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+#   define CDSUNIT_DECLARE_MultiLevelHashSet_RCU_signal \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_stdhash) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_stdhash) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_md5) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_md5_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_md5) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_md5_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_sha256) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_shb_sha256_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_sha256) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_sht_sha256_stat) 
+#else
+#   define CDSUNIT_DECLARE_MultiLevelHashSet_RCU_signal
+#endif
+
+
 
 #undef CDSUNIT_DECLARE_MultiLevelHashSet
 #define CDSUNIT_DECLARE_MultiLevelHashSet  \
@@ -639,17 +677,41 @@
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_stdhash_stat) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_stdhash) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpi_stdhash) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpi_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpb_stdhash) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpb_stdhash_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpt_stdhash) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpt_stdhash_stat) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_md5) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_md5_stat) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_md5) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_md5_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpi_md5) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpi_md5_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpb_md5) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpb_md5_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpt_md5) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpt_md5_stat) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_sha256) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_hp_sha256_stat) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_sha256) \
     TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_dhp_sha256_stat) \
-    CDSUNIT_DECLARE_MultiLevelHashSet64
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpi_sha256) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpi_sha256_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpb_sha256) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpb_sha256_stat) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpt_sha256) \
+    TEST_CASE(tag_MultiLevelHashSet, MultiLevelHashSet_rcu_gpt_sha256_stat) \
+    CDSUNIT_DECLARE_MultiLevelHashSet_RCU_signal \
+    CDSUNIT_DECLARE_MultiLevelHashSet64 \
+    CDSUNIT_DECLARE_MultiLevelHashSet64_RCU_signal \
+
 
 #undef CDSUNIT_TEST_MultiLevelHashSet64
+#undef CDSUNIT_TEST_MultiLevelHashSet64_RCU_signal
+#undef CDSUNIT_TEST_MultiLevelHashSet_RCU_signal
+
 #if CDS_BUILD_BITS == 64
 #   define CDSUNIT_TEST_MultiLevelHashSet64 \
     CPPUNIT_TEST(MultiLevelHashSet_hp_city64) \
@@ -660,8 +722,42 @@
     CPPUNIT_TEST(MultiLevelHashSet_hp_city128_stat) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_city128) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_city128_stat)
+
+#   ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+#       define CDSUNIT_TEST_MultiLevelHashSet64_RCU_signal \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_city64) \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_city64_stat) \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_city64) \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_city64_stat) \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_city128) \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_city128_stat) \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_city128) \
+            CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_city128_stat)
+#   else
+#       define CDSUNIT_TEST_MultiLevelHashSet64_RCU_signal
+#   endif
+
 #else
 #   define CDSUNIT_TEST_MultiLevelHashSet64
+#   define CDSUNIT_TEST_MultiLevelHashSet64_RCU_signal
+#endif
+
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+#   define CDSUNIT_TEST_MultiLevelHashSet_RCU_signal \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_stdhash) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_stdhash_stat) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_stdhash) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_stdhash_stat) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_md5) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_md5_stat) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_md5) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_md5_stat) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_sha256) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_shb_sha256_stat) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_sha256) \
+        CPPUNIT_TEST(MultiLevelHashSet_rcu_sht_sha256_stat)
+#else
+#   define CDSUNIT_TEST_MultiLevelHashSet_RCU_signal
 #endif
 
 #undef CDSUNIT_TEST_MultiLevelHashSet
@@ -670,12 +766,32 @@
     CPPUNIT_TEST(MultiLevelHashSet_hp_stdhash_stat) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_stdhash) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_stdhash_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpi_stdhash) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpi_stdhash_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpb_stdhash) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpb_stdhash_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpt_stdhash) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpt_stdhash_stat) \
     CPPUNIT_TEST(MultiLevelHashSet_hp_md5) \
     CPPUNIT_TEST(MultiLevelHashSet_hp_md5_stat) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_md5) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_md5_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpi_md5) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpi_md5_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpb_md5) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpb_md5_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpt_md5) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpt_md5_stat) \
     CPPUNIT_TEST(MultiLevelHashSet_hp_sha256) \
     CPPUNIT_TEST(MultiLevelHashSet_hp_sha256_stat) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_sha256) \
     CPPUNIT_TEST(MultiLevelHashSet_dhp_sha256_stat) \
-    CDSUNIT_TEST_MultiLevelHashSet64
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpi_sha256) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpi_sha256_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpb_sha256) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpb_sha256_stat) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpt_sha256) \
+    CPPUNIT_TEST(MultiLevelHashSet_rcu_gpt_sha256_stat) \
+    CDSUNIT_TEST_MultiLevelHashSet_RCU_signal \
+    CDSUNIT_TEST_MultiLevelHashSet64 \
+    CDSUNIT_TEST_MultiLevelHashSet64_RCU_signal

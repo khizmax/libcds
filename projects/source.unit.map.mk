@@ -88,9 +88,10 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdelfind_striped.cpp \
     tests/unit/map2/map_insdelfind_std.cpp \
     tests/unit/map2/map_delodd.cpp \
-    tests/unit/map2/map_delodd_michael.cpp \
     tests/unit/map2/map_delodd_bronsonavltree.cpp \
-    tests/unit/map2/map_delodd_ellentree.cpp \
-    tests/unit/map2/map_delodd_split.cpp \
-    tests/unit/map2/map_delodd_skip.cpp \
     tests/unit/map2/map_delodd_cuckoo.cpp \
+    tests/unit/map2/map_delodd_ellentree.cpp \
+    tests/unit/map2/map_delodd_michael.cpp \
+    tests/unit/map2/map_delodd_multilevelhashmap.cpp \
+    tests/unit/map2/map_delodd_skip.cpp \
+    tests/unit/map2/map_delodd_split.cpp \

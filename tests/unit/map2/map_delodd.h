@@ -120,9 +120,13 @@ namespace map2 {
         size_t  c_nExtractThreadCount = 4;  // extract thread count
         size_t  c_nMapSize = 1000000;       // max map size
         size_t  c_nMaxLoadFactor = 8;       // maximum load factor
+
         size_t  c_nCuckooInitialSize = 1024;// initial size for CuckooMap
         size_t  c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
         size_t  c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (0 - use default)
+
+        size_t c_nMultiLevelMap_HeadBits = 10;
+        size_t c_nMultiLevelMap_ArrayBits = 4;
 
         bool    c_bPrintGCState = true;
 
@@ -276,6 +280,23 @@ namespace map2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
+            template <bool>
+            struct eraser {
+                static bool erase(Map& map, size_t key, size_t /*insThread*/)
+                {
+                    return map.erase_with(key, key_less());
+                }
+            };
+
+            template <>
+            struct eraser<true>
+            {
+                static bool erase(Map& map, size_t key, size_t insThread)
+                {
+                    return map.erase(key_type(key, insThread));
+                }
+            };
+
             virtual void test()
             {
                 Map& rMap = m_Map;
@@ -291,10 +312,20 @@ namespace map2 {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
                                 if ( arrData[i] & 1 ) {
-                                    if ( rMap.erase_with( arrData[i], key_less() ))
-                                        ++m_nDeleteSuccess;
-                                    else
-                                        ++m_nDeleteFailed;
+                                    if ( Map::c_bEraseExactKey ) {
+                                        for (size_t key = 0; key < nInsThreadCount; ++key) {
+                                            if ( eraser<Map::c_bEraseExactKey>::erase( rMap, arrData[i], key ))
+                                                ++m_nDeleteSuccess;
+                                            else
+                                                ++m_nDeleteFailed;
+                                        }
+                                    }
+                                    else {
+                                        if ( eraser<Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0) )
+                                            ++m_nDeleteSuccess;
+                                        else
+                                            ++m_nDeleteFailed;
+                                    }
                                 }
                             }
                             if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
@@ -305,10 +336,20 @@ namespace map2 {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                                 if ( arrData[i] & 1 ) {
-                                    if ( rMap.erase_with( arrData[i], key_less() ))
-                                        ++m_nDeleteSuccess;
-                                    else
-                                        ++m_nDeleteFailed;
+                                    if ( Map::c_bEraseExactKey ) {
+                                        for (size_t key = 0; key < nInsThreadCount; ++key) {
+                                            if (eraser<Map::c_bEraseExactKey>::erase(rMap, arrData[i], key))
+                                                ++m_nDeleteSuccess;
+                                            else
+                                                ++m_nDeleteFailed;
+                                        }
+                                    }
+                                    else {
+                                        if (eraser<Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0))
+                                            ++m_nDeleteSuccess;
+                                        else
+                                            ++m_nDeleteFailed;
+                                    }
                                 }
                             }
                             if ( getTest().m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
@@ -351,6 +392,23 @@ namespace map2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
+            template <bool>
+            struct extractor {
+                static typename Map::guarded_ptr extract(Map& map, size_t key, size_t /*insThread*/)
+                {
+                    return map.extract_with(key, key_less());
+                }
+            };
+
+            template <>
+            struct extractor<true>
+            {
+                static typename Map::guarded_ptr extract(Map& map, size_t key, size_t insThread)
+                {
+                    return map.extract(key_type(key, insThread));
+                }
+            };
+
             virtual void test()
             {
                 Map& rMap = m_Map;
@@ -367,7 +425,7 @@ namespace map2 {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
                                 if ( arrData[i] & 1 ) {
-                                    gp = rMap.extract_with( arrData[i], key_less());
+                                    gp = extractor< Map::c_bEraseExactKey >::extract( rMap, arrData[i], k );
                                     if ( gp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -383,7 +441,7 @@ namespace map2 {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                                 if ( arrData[i] & 1 ) {
-                                    gp = rMap.extract_with( arrData[i], key_less());
+                                    gp = extractor< Map::c_bEraseExactKey >::extract( rMap, arrData[i], k);
                                     if ( gp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -430,6 +488,23 @@ namespace map2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
+            template <bool>
+            struct extractor {
+                static typename Map::exempt_ptr extract( Map& map, size_t key, size_t /*insThread*/ )
+                {
+                    return map.extract_with( key, key_less());
+                }
+            };
+
+            template <>
+            struct extractor<true>
+            {
+                static typename Map::exempt_ptr extract(Map& map, size_t key, size_t insThread)
+                {
+                    return map.extract( key_type(key, insThread));
+                }
+            };
+
             virtual void test()
             {
                 Map& rMap = m_Map;
@@ -448,7 +523,7 @@ namespace map2 {
                                 if ( Map::c_bExtractLockExternal ) {
                                     {
                                         typename Map::rcu_lock l;
-                                        xp = rMap.extract_with( arrData[i], key_less() );
+                                        xp = extractor<Map::c_bEraseExactKey>::extract( rMap, arrData[i], k );
                                         if ( xp )
                                             ++m_nDeleteSuccess;
                                         else
@@ -456,7 +531,7 @@ namespace map2 {
                                     }
                                 }
                                 else {
-                                    xp = rMap.extract_with( arrData[i], key_less() );
+                                    xp = extractor<Map::c_bEraseExactKey>::extract( rMap, arrData[i], k);
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -476,7 +551,7 @@ namespace map2 {
                                 if ( Map::c_bExtractLockExternal ) {
                                     {
                                         typename Map::rcu_lock l;
-                                        xp = rMap.extract_with( arrData[i], key_less() );
+                                        xp = extractor<Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
                                         if ( xp )
                                             ++m_nDeleteSuccess;
                                         else
@@ -484,7 +559,7 @@ namespace map2 {
                                     }
                                 }
                                 else {
-                                    xp = rMap.extract_with( arrData[i], key_less() );
+                                    xp = extractor<Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -698,10 +773,8 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
+        CDSUNIT_DECLARE_MultiLevelHashMap64
         CDSUNIT_DECLARE_CuckooMap
-
-        // This test is not suitable for MultiLevelHashMap
-        //CDSUNIT_DECLARE_MultiLevelHashMap
 
         CPPUNIT_TEST_SUITE(Map_DelOdd)
             CDSUNIT_TEST_MichaelMap
@@ -709,9 +782,8 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
+            CDSUNIT_TEST_MultiLevelHashMap64
             CDSUNIT_TEST_CuckooMap
-
-            //CDSUNIT_TEST_MultiLevelHashMap // the test is not suitable
         CPPUNIT_TEST_SUITE_END();
 
         // Not implemented yet

@@ -704,8 +704,10 @@
     <ClInclude Include="..\..\..\cds\container\mspriority_queue.h" />
     <ClInclude Include="..\..\..\cds\container\multilevel_hashmap_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\multilevel_hashmap_hp.h" />
+    <ClInclude Include="..\..\..\cds\container\multilevel_hashmap_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\multilevel_hashset_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\multilevel_hashset_hp.h" />
+    <ClInclude Include="..\..\..\cds\container\multilevel_hashset_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_hp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_nogc.h" />

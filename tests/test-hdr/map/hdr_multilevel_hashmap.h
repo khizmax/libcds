@@ -359,6 +359,255 @@ namespace map {
             CPPUNIT_MSG( m.statistics() );
         }
 
+        template <typename Map>
+        void test_rcu(size_t nHeadBits, size_t nArrayBits)
+        {
+            typedef typename Map::hash_type hash_type;
+            typedef typename Map::key_type key_type;
+            typedef typename Map::mapped_type mapped_type;
+            typedef typename Map::value_type value_type;
+            typedef typename Map::exempt_ptr exempt_ptr;
+            typedef typename Map::rcu_lock rcu_lock;
+
+            size_t const capacity = 1000;
+
+            Map m(nHeadBits, nArrayBits);
+            CPPUNIT_MSG("Array size: head=" << m.head_size() << ", array_node=" << m.array_node_size());
+            CPPUNIT_ASSERT(m.head_size() >= (size_t(1) << nHeadBits));
+            CPPUNIT_ASSERT(m.array_node_size() == (size_t(1) << nArrayBits));
+
+            CPPUNIT_ASSERT(m.empty());
+            CPPUNIT_ASSERT(m.size() == 0);
+
+            // insert( key )/update()/get()/find()
+            for (size_t i = 0; i < capacity; ++i) {
+                size_t key = i * 57;
+                CPPUNIT_ASSERT(!m.contains(key))
+                CPPUNIT_ASSERT(m.insert(key));
+                CPPUNIT_ASSERT(m.contains(key));
+                CPPUNIT_ASSERT(m.size() == i + 1);
+
+                auto ret = m.update(key, [](value_type& v, value_type * old) {
+                    CPPUNIT_ASSERT_CURRENT(old != nullptr);
+                    ++v.second.nInsertCall;
+                }, false);
+                CPPUNIT_ASSERT(ret.first);
+                CPPUNIT_ASSERT(!ret.second);
+
+                CPPUNIT_ASSERT(m.find(key, [](value_type& v) { ++v.second.nFindCall;}));
+
+                {
+                    rcu_lock l;
+                    value_type* p{ m.get(key) };
+                    CPPUNIT_ASSERT(p);
+                    CPPUNIT_ASSERT(p->first == key);
+                    CPPUNIT_ASSERT(p->second.nInsertCall == 1);
+                    CPPUNIT_ASSERT(p->second.nFindCall == 1);
+                }
+            }
+            CPPUNIT_ASSERT(!m.empty());
+            CPPUNIT_ASSERT(m.size() == capacity);
+
+            // iterator test
+            size_t nCount = 0;
+            {
+                rcu_lock l;
+                for (auto it = m.begin(), itEnd = m.end(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->second.nIteratorCall == 0);
+                    CPPUNIT_ASSERT(it->second.nInsertCall == 1);
+                    CPPUNIT_ASSERT((*it).second.nFindCall == 1);
+                    it->second.nIteratorCall += 1;
+                    ++nCount;
+                }
+            }
+            CPPUNIT_ASSERT(nCount == capacity);
+
+            nCount = 0;
+            {
+                rcu_lock l;
+                for (auto it = m.rbegin(), itEnd = m.rend(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->second.nInsertCall == 1);
+                    CPPUNIT_ASSERT((*it).second.nFindCall == 1);
+                    CPPUNIT_ASSERT(it->second.nIteratorCall == 1);
+                    (*it).second.nIteratorCall += 1;
+                    ++nCount;
+                }
+            }
+            CPPUNIT_ASSERT(nCount == capacity);
+
+            nCount = 0;
+            {
+                rcu_lock l;
+                for (auto it = m.cbegin(), itEnd = m.cend(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->second.nInsertCall == 1);
+                    CPPUNIT_ASSERT((*it).second.nFindCall == 1);
+                    CPPUNIT_ASSERT(it->second.nIteratorCall == 2);
+                    (*it).second.nIteratorCall += 1;
+                    ++nCount;
+                }
+            }
+            CPPUNIT_ASSERT(nCount == capacity);
+
+            nCount = 0;
+            {
+                rcu_lock l;
+                for (auto it = m.crbegin(), itEnd = m.crend(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->second.nInsertCall == 1);
+                    CPPUNIT_ASSERT((*it).second.nFindCall == 1);
+                    CPPUNIT_ASSERT(it->second.nIteratorCall == 3);
+                    (*it).second.nIteratorCall += 1;
+                    ++nCount;
+                }
+            }
+            CPPUNIT_ASSERT(nCount == capacity);
+
+            // find
+            for (size_t i = 0; i < capacity; i++) {
+                size_t key = i * 57;
+                CPPUNIT_ASSERT(m.find(key, [key](value_type& v) {
+                    CPPUNIT_ASSERT_CURRENT(v.first == key);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nInsertCall == 1);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nFindCall == 1);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nIteratorCall == 4);
+                }));
+            }
+
+            // erase
+            for (size_t i = capacity; i > 0; --i) {
+                size_t key = (i - 1) * 57;
+                {
+                    rcu_lock l;
+                    value_type* p = m.get(key);
+                    CPPUNIT_ASSERT(p);
+                    CPPUNIT_ASSERT(p->first == key);
+                    CPPUNIT_ASSERT(p->second.nInsertCall == 1);
+                    CPPUNIT_ASSERT(p->second.nFindCall == 1);
+                    CPPUNIT_ASSERT(p->second.nIteratorCall == 4);
+                }
+
+                CPPUNIT_ASSERT(m.erase(key));
+
+                {
+                    rcu_lock l;
+                    value_type* p = m.get(key);
+                    CPPUNIT_ASSERT(!p);
+                }
+                CPPUNIT_ASSERT(!m.contains(key));
+            }
+            CPPUNIT_ASSERT(m.empty());
+            CPPUNIT_ASSERT(m.size() == 0);
+
+            // Iterators on empty map
+            {
+                rcu_lock l;
+                CPPUNIT_ASSERT(m.begin() == m.end());
+                CPPUNIT_ASSERT(m.cbegin() == m.cend());
+                CPPUNIT_ASSERT(m.rbegin() == m.rend());
+                CPPUNIT_ASSERT(m.crbegin() == m.crend());
+            }
+
+            // insert( key, val )
+            for (size_t i = 0; i < capacity; ++i) {
+                CPPUNIT_ASSERT(!m.contains(i));
+                CPPUNIT_ASSERT(m.insert(i, (unsigned int)i * 100));
+                CPPUNIT_ASSERT(m.contains(i));
+                CPPUNIT_ASSERT(m.find(i, [i](value_type& v) {
+                    CPPUNIT_ASSERT_CURRENT(v.first == i);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nInsertCall == i * 100);
+                }));
+            }
+            CPPUNIT_ASSERT(!m.empty());
+            CPPUNIT_ASSERT(m.size() == capacity);
+
+            // erase( key, func )
+            for (size_t i = 0; i < capacity; ++i) {
+                CPPUNIT_ASSERT(m.contains(i));
+                CPPUNIT_ASSERT(m.erase(i, [i](value_type& v) {
+                    CPPUNIT_ASSERT_CURRENT(v.first == i);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nInsertCall == i * 100);
+                    v.second.nInsertCall = 0;
+                }));
+            }
+            CPPUNIT_ASSERT(m.empty());
+            CPPUNIT_ASSERT(m.size() == 0);
+
+            // insert_with
+            for (size_t i = 0; i < capacity; ++i) {
+                size_t key = i * 121;
+                CPPUNIT_ASSERT(!m.contains(key));
+                CPPUNIT_ASSERT(m.insert_with(key, [key](value_type& v) {
+                    CPPUNIT_ASSERT_CURRENT(v.first == key);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nInsertCall == 0);
+                    v.second.nInsertCall = decltype(v.second.nInsertCall)(key);
+                }));
+                CPPUNIT_ASSERT(m.find(key, [key](value_type& v) {
+                    CPPUNIT_ASSERT_CURRENT(v.first == key);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nInsertCall == key);
+                }));
+                CPPUNIT_ASSERT(m.size() == i + 1);
+            }
+            CPPUNIT_ASSERT(!m.empty());
+            CPPUNIT_ASSERT(m.size() == capacity);
+
+            nCount = 0;
+            {
+                rcu_lock l;
+                for (auto it = m.begin(), itEnd = m.end(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->first == it->second.nInsertCall);
+                    CPPUNIT_ASSERT(it->second.nIteratorCall == 0);
+                    it->second.nIteratorCall += 1;
+                    ++nCount;
+                }
+            }
+            CPPUNIT_ASSERT(nCount == capacity);
+
+            nCount = 0;
+            {
+                rcu_lock l;
+                for (auto it = m.rbegin(), itEnd = m.rend(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->first == it->second.nInsertCall);
+                    CPPUNIT_ASSERT(it->second.nIteratorCall == 1);
+                    it->second.nIteratorCall += 1;
+                    ++nCount;
+                }
+            }
+            CPPUNIT_ASSERT(nCount == capacity);
+
+            // clear()
+            m.clear();
+            CPPUNIT_ASSERT(m.empty());
+            CPPUNIT_ASSERT(m.size() == 0);
+
+            // emplace
+            for (size_t i = 0; i < capacity; ++i) {
+                size_t key = i * 1023;
+                CPPUNIT_ASSERT(!m.contains(key));
+                CPPUNIT_ASSERT(m.emplace(key, static_cast<unsigned int>(i)));
+                CPPUNIT_ASSERT(m.find(key, [key](value_type& v) {
+                    CPPUNIT_ASSERT_CURRENT(v.first == key);
+                    CPPUNIT_ASSERT_CURRENT(v.second.nInsertCall * 1023 == key);
+                }));
+                CPPUNIT_ASSERT(m.size() == i + 1);
+            }
+            CPPUNIT_ASSERT(!m.empty());
+            CPPUNIT_ASSERT(m.size() == capacity);
+
+            // extract
+            for (size_t i = capacity; i > 0; --i) {
+                size_t key = (i - 1) * 1023;
+                exempt_ptr xp{ m.extract(key) };
+                CPPUNIT_ASSERT(xp);
+                CPPUNIT_ASSERT(xp->first == key);
+                CPPUNIT_ASSERT((*xp).second.nInsertCall == static_cast<unsigned int>(i - 1));
+                xp = m.extract(key);
+                CPPUNIT_ASSERT(!xp);
+            }
+            CPPUNIT_ASSERT(m.empty());
+            CPPUNIT_ASSERT(m.size() == 0);
+
+            CPPUNIT_MSG(m.statistics());
+        }
+
         void hp_stdhash();
         void hp_stdhash_stat();
         void hp_stdhash_5_3();
@@ -376,6 +625,51 @@ namespace map {
         void dhp_hash128_stat();
         void dhp_hash128_4_3();
         void dhp_hash128_4_3_stat();
+
+        void rcu_gpb_stdhash();
+        void rcu_gpb_stdhash_stat();
+        void rcu_gpb_stdhash_5_3();
+        void rcu_gpb_stdhash_5_3_stat();
+        void rcu_gpb_hash128();
+        void rcu_gpb_hash128_stat();
+        void rcu_gpb_hash128_4_3();
+        void rcu_gpb_hash128_4_3_stat();
+
+        void rcu_gpi_stdhash();
+        void rcu_gpi_stdhash_stat();
+        void rcu_gpi_stdhash_5_3();
+        void rcu_gpi_stdhash_5_3_stat();
+        void rcu_gpi_hash128();
+        void rcu_gpi_hash128_stat();
+        void rcu_gpi_hash128_4_3();
+        void rcu_gpi_hash128_4_3_stat();
+
+        void rcu_gpt_stdhash();
+        void rcu_gpt_stdhash_stat();
+        void rcu_gpt_stdhash_5_3();
+        void rcu_gpt_stdhash_5_3_stat();
+        void rcu_gpt_hash128();
+        void rcu_gpt_hash128_stat();
+        void rcu_gpt_hash128_4_3();
+        void rcu_gpt_hash128_4_3_stat();
+
+        void rcu_shb_stdhash();
+        void rcu_shb_stdhash_stat();
+        void rcu_shb_stdhash_5_3();
+        void rcu_shb_stdhash_5_3_stat();
+        void rcu_shb_hash128();
+        void rcu_shb_hash128_stat();
+        void rcu_shb_hash128_4_3();
+        void rcu_shb_hash128_4_3_stat();
+
+        void rcu_sht_stdhash();
+        void rcu_sht_stdhash_stat();
+        void rcu_sht_stdhash_5_3();
+        void rcu_sht_stdhash_5_3_stat();
+        void rcu_sht_hash128();
+        void rcu_sht_hash128_stat();
+        void rcu_sht_hash128_4_3();
+        void rcu_sht_hash128_4_3_stat();
 
         CPPUNIT_TEST_SUITE(MultiLevelHashMapHdrTest)
             CPPUNIT_TEST(hp_stdhash)
@@ -395,6 +689,51 @@ namespace map {
             CPPUNIT_TEST(dhp_hash128_stat)
             CPPUNIT_TEST(dhp_hash128_4_3)
             CPPUNIT_TEST(dhp_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_gpb_stdhash)
+            CPPUNIT_TEST(rcu_gpb_stdhash_stat)
+            CPPUNIT_TEST(rcu_gpb_stdhash_5_3)
+            CPPUNIT_TEST(rcu_gpb_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_gpb_hash128)
+            CPPUNIT_TEST(rcu_gpb_hash128_stat)
+            CPPUNIT_TEST(rcu_gpb_hash128_4_3)
+            CPPUNIT_TEST(rcu_gpb_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_gpi_stdhash)
+            CPPUNIT_TEST(rcu_gpi_stdhash_stat)
+            CPPUNIT_TEST(rcu_gpi_stdhash_5_3)
+            CPPUNIT_TEST(rcu_gpi_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_gpi_hash128)
+            CPPUNIT_TEST(rcu_gpi_hash128_stat)
+            CPPUNIT_TEST(rcu_gpi_hash128_4_3)
+            CPPUNIT_TEST(rcu_gpi_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_gpt_stdhash)
+            CPPUNIT_TEST(rcu_gpt_stdhash_stat)
+            CPPUNIT_TEST(rcu_gpt_stdhash_5_3)
+            CPPUNIT_TEST(rcu_gpt_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_gpt_hash128)
+            CPPUNIT_TEST(rcu_gpt_hash128_stat)
+            CPPUNIT_TEST(rcu_gpt_hash128_4_3)
+            CPPUNIT_TEST(rcu_gpt_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_shb_stdhash)
+            CPPUNIT_TEST(rcu_shb_stdhash_stat)
+            CPPUNIT_TEST(rcu_shb_stdhash_5_3)
+            CPPUNIT_TEST(rcu_shb_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_shb_hash128)
+            CPPUNIT_TEST(rcu_shb_hash128_stat)
+            CPPUNIT_TEST(rcu_shb_hash128_4_3)
+            CPPUNIT_TEST(rcu_shb_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_sht_stdhash)
+            CPPUNIT_TEST(rcu_sht_stdhash_stat)
+            CPPUNIT_TEST(rcu_sht_stdhash_5_3)
+            CPPUNIT_TEST(rcu_sht_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_sht_hash128)
+            CPPUNIT_TEST(rcu_sht_hash128_stat)
+            CPPUNIT_TEST(rcu_sht_hash128_4_3)
+            CPPUNIT_TEST(rcu_sht_hash128_4_3_stat)
         CPPUNIT_TEST_SUITE_END()
 
     };

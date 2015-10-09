@@ -387,6 +387,255 @@ namespace set {
             CPPUNIT_MSG( s.statistics() );
         }
 
+        template <typename Set, typename Hasher>
+        void test_rcu(size_t nHeadBits, size_t nArrayBits)
+        {
+            typedef typename Set::hash_type hash_type;
+            typedef typename Set::value_type value_type;
+            typedef Arg<hash_type> arg_type;
+            typedef typename Set::exempt_ptr exempt_ptr;
+            typedef typename Set::rcu_lock rcu_lock;
+
+            Hasher hasher;
+
+            size_t const capacity = 1000;
+
+            Set s(nHeadBits, nArrayBits);
+            CPPUNIT_MSG("Array size: head=" << s.head_size() << ", array_node=" << s.array_node_size());
+            CPPUNIT_ASSERT(s.head_size() >= (size_t(1) << nHeadBits));
+            CPPUNIT_ASSERT(s.array_node_size() == (size_t(1) << nArrayBits));
+
+            CPPUNIT_ASSERT(s.empty());
+            CPPUNIT_ASSERT(s.size() == 0);
+
+            // insert test
+            for (size_t i = 0; i < capacity; ++i) {
+                hash_type h = hasher(i);
+                CPPUNIT_ASSERT(!s.contains(h));
+                CPPUNIT_ASSERT(s.insert(value_type(i, h)));
+                CPPUNIT_ASSERT(s.contains(h));
+
+                CPPUNIT_ASSERT(!s.empty());
+                CPPUNIT_ASSERT(s.size() == i + 1);
+
+                CPPUNIT_ASSERT(!s.insert(arg_type(i, h)));
+                CPPUNIT_ASSERT(s.size() == i + 1);
+            }
+
+            // update existing test
+            for (size_t i = 0; i < capacity; ++i) {
+                hash_type h = hasher(i);
+                CPPUNIT_ASSERT(s.contains(h));
+                std::pair<bool, bool> ret = s.update(arg_type(i, h),
+                    [](value_type& i, value_type * prev) {
+                    CPPUNIT_ASSERT_CURRENT(prev != nullptr);
+                    CPPUNIT_ASSERT_CURRENT(i.key == prev->key);
+                    CPPUNIT_ASSERT_CURRENT(i.hash == prev->hash);
+                    i.nInsertCall += 1;
+                }, false);
+                CPPUNIT_ASSERT(ret.first);
+                CPPUNIT_ASSERT(!ret.second);
+                CPPUNIT_ASSERT(s.contains(h));
+                CPPUNIT_ASSERT(s.size() == capacity);
+
+                {
+                    rcu_lock l;
+                    value_type * p = s.get(h);
+                    CPPUNIT_ASSERT(p);
+                    CPPUNIT_ASSERT(p->nInsertCall == 1);
+                    CPPUNIT_ASSERT(p->key == i);
+                    CPPUNIT_ASSERT(p->hash == h);
+                }
+            }
+
+            // erase test
+            for (size_t i = 0; i < capacity; ++i) {
+                CPPUNIT_ASSERT(!s.empty());
+                CPPUNIT_ASSERT(s.size() == capacity - i);
+                CPPUNIT_ASSERT(s.find(hasher(i), [](value_type &) {}));
+                CPPUNIT_ASSERT(s.erase(hasher(i)));
+                CPPUNIT_ASSERT(!s.find(hasher(i), [](value_type &) {}));
+                CPPUNIT_ASSERT(s.size() == capacity - i - 1);
+            }
+            CPPUNIT_ASSERT(s.empty());
+
+            // Iterators on empty set
+            {
+                rcu_lock l;
+                CPPUNIT_ASSERT(s.begin() == s.end());
+                CPPUNIT_ASSERT(s.cbegin() == s.cend());
+                CPPUNIT_ASSERT(s.rbegin() == s.rend());
+                CPPUNIT_ASSERT(s.crbegin() == s.crend());
+            }
+
+            // insert with functor
+            for (size_t i = capacity; i > 0; --i) {
+                CPPUNIT_ASSERT(s.size() == capacity - i);
+                CPPUNIT_ASSERT(s.insert(arg_type(i, hasher(i)), [](value_type& val) { val.nInsertCall += 1; }));
+                CPPUNIT_ASSERT(s.size() == capacity - i + 1);
+                CPPUNIT_ASSERT(!s.empty());
+
+                CPPUNIT_ASSERT(s.find(hasher(i), [](value_type& val) {
+                    CPPUNIT_ASSERT_CURRENT(val.nInsertCall == 1);
+                    val.nFindCall += 1;
+                }));
+            }
+            CPPUNIT_ASSERT(s.size() == capacity);
+
+            // for-each iterator test
+            {
+                rcu_lock l;
+                for (auto& el : s) {
+                    CPPUNIT_ASSERT(el.nInsertCall == 1);
+                    CPPUNIT_ASSERT(el.nFindCall == 1);
+                    el.nFindCall += 1;
+                }
+            }
+
+            // iterator test
+            {
+                rcu_lock l;
+                for (auto it = s.begin(), itEnd = s.end(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->nInsertCall == 1);
+                    CPPUNIT_ASSERT(it->nFindCall == 2);
+                    it->nFindCall += 1;
+                }
+            }
+
+            // reverse iterator test
+            {
+                rcu_lock l;
+                for (auto it = s.rbegin(), itEnd = s.rend(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->nInsertCall == 1);
+                    CPPUNIT_ASSERT(it->nFindCall == 3);
+                    it->nFindCall += 1;
+                }
+            }
+
+            // const iterator test
+            {
+                rcu_lock l;
+                for (auto it = s.cbegin(), itEnd = s.cend(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->nInsertCall == 1);
+                    CPPUNIT_ASSERT(it->nFindCall == 4);
+                    it->nIteratorCall += 1;
+                }
+            }
+
+            // const reverse iterator test
+            {
+                rcu_lock l;
+                for (auto it = s.rbegin(), itEnd = s.rend(); it != itEnd; ++it) {
+                    CPPUNIT_ASSERT(it->nInsertCall == 1);
+                    CPPUNIT_ASSERT(it->nFindCall == 4);
+                    CPPUNIT_ASSERT(it->nIteratorCall == 1);
+                    it->nIteratorCall += 1;
+                }
+            }
+
+            // check completeness
+            for (size_t i = 1; i <= capacity; ++i) {
+                CPPUNIT_ASSERT(s.find(hasher(i), [](value_type const& el) {
+                    CPPUNIT_ASSERT_CURRENT(el.nInsertCall == 1);
+                    CPPUNIT_ASSERT_CURRENT(el.nFindCall == 4);
+                    CPPUNIT_ASSERT_CURRENT(el.nIteratorCall == 2);
+                }));
+            }
+
+            // erase with functor test
+            {
+                size_t nSum = 0;
+                for (size_t i = 1; i <= capacity; ++i) {
+                    CPPUNIT_ASSERT(s.size() == capacity - i + 1);
+                    CPPUNIT_ASSERT(s.erase(hasher(i), [&nSum](value_type const& val) {
+                        CPPUNIT_ASSERT_CURRENT(val.nInsertCall == 1);
+                        CPPUNIT_ASSERT_CURRENT(val.nFindCall == 4);
+                        CPPUNIT_ASSERT_CURRENT(val.nIteratorCall == 2);
+                        nSum += val.key;
+                    }));
+                    CPPUNIT_ASSERT(s.size() == capacity - i);
+                    CPPUNIT_ASSERT(!s.erase(hasher(i), [&nSum](value_type const& val) { nSum += val.key; }))
+                }
+                CPPUNIT_ASSERT(s.empty());
+                CPPUNIT_ASSERT(nSum == (1 + capacity) * capacity / 2);
+            }
+
+            // update test with insert allowing
+            for (size_t i = 0; i < capacity; ++i) {
+                hash_type h = hasher(i);
+                CPPUNIT_ASSERT(!s.contains(h));
+
+                {
+                    rcu_lock l;
+                    value_type * p = s.get(h);
+                    CPPUNIT_ASSERT(!p);
+                }
+                std::pair<bool, bool> ret = s.update(arg_type(i, h),
+                    [](value_type& i, value_type * prev) {
+                    CPPUNIT_ASSERT_CURRENT(prev == nullptr);
+                    i.nInsertCall += 1;
+                });
+                CPPUNIT_ASSERT(ret.first);
+                CPPUNIT_ASSERT(ret.second);
+                CPPUNIT_ASSERT(s.contains(h));
+                CPPUNIT_ASSERT(s.size() == i + 1);
+
+                {
+                    rcu_lock l;
+                    value_type * p = s.get(h);
+                    CPPUNIT_ASSERT(p);
+                    CPPUNIT_ASSERT(p->nInsertCall == 1);
+                    CPPUNIT_ASSERT(p->key == i);
+                    CPPUNIT_ASSERT(p->hash == h);
+                }
+            }
+            CPPUNIT_ASSERT(!s.empty());
+            CPPUNIT_ASSERT(s.size() == capacity);
+
+            s.clear();
+            CPPUNIT_ASSERT(s.empty());
+            CPPUNIT_ASSERT(s.size() == 0);
+
+            // emplace test
+            for (size_t i = 0; i < capacity; ++i) {
+                hash_type h = hasher(i);
+                CPPUNIT_ASSERT(!s.contains(h));
+                CPPUNIT_ASSERT(s.emplace(i, hasher(i)));
+                CPPUNIT_ASSERT(s.contains(h));
+
+                CPPUNIT_ASSERT(!s.empty());
+                CPPUNIT_ASSERT(s.size() == i + 1);
+
+                CPPUNIT_ASSERT(!s.emplace(arg_type(i, h)));
+                CPPUNIT_ASSERT(s.size() == i + 1);
+            }
+            CPPUNIT_ASSERT(!s.empty());
+            CPPUNIT_ASSERT(s.size() == capacity);
+
+            // extract test
+            for (size_t i = capacity; i != 0; --i) {
+                CPPUNIT_ASSERT(!s.empty());
+                CPPUNIT_ASSERT(s.size() == i);
+
+                exempt_ptr gp{ s.extract(hasher(i - 1)) };
+                CPPUNIT_ASSERT(gp);
+                CPPUNIT_ASSERT(gp->key == i - 1);
+                CPPUNIT_ASSERT(gp->hash == hasher(i - 1));
+                CPPUNIT_ASSERT(!s.contains(hasher(i - 1)));
+
+                {
+                    rcu_lock l;
+                    value_type * p = s.get(hasher(i - 1));
+                    CPPUNIT_ASSERT( p == nullptr );
+                }
+                CPPUNIT_ASSERT(s.size() == i - 1);
+            }
+            CPPUNIT_ASSERT(s.empty());
+            CPPUNIT_ASSERT(s.size() == 0);
+
+            CPPUNIT_MSG(s.statistics());
+        }
+
         void hp_stdhash();
         void hp_stdhash_stat();
         void hp_stdhash_5_3();
@@ -404,6 +653,51 @@ namespace set {
         void dhp_hash128_stat();
         void dhp_hash128_4_3();
         void dhp_hash128_4_3_stat();
+
+        void rcu_gpi_stdhash();
+        void rcu_gpi_stdhash_stat();
+        void rcu_gpi_stdhash_5_3();
+        void rcu_gpi_stdhash_5_3_stat();
+        void rcu_gpi_hash128();
+        void rcu_gpi_hash128_stat();
+        void rcu_gpi_hash128_4_3();
+        void rcu_gpi_hash128_4_3_stat();
+
+        void rcu_gpb_stdhash();
+        void rcu_gpb_stdhash_stat();
+        void rcu_gpb_stdhash_5_3();
+        void rcu_gpb_stdhash_5_3_stat();
+        void rcu_gpb_hash128();
+        void rcu_gpb_hash128_stat();
+        void rcu_gpb_hash128_4_3();
+        void rcu_gpb_hash128_4_3_stat();
+
+        void rcu_gpt_stdhash();
+        void rcu_gpt_stdhash_stat();
+        void rcu_gpt_stdhash_5_3();
+        void rcu_gpt_stdhash_5_3_stat();
+        void rcu_gpt_hash128();
+        void rcu_gpt_hash128_stat();
+        void rcu_gpt_hash128_4_3();
+        void rcu_gpt_hash128_4_3_stat();
+
+        void rcu_shb_stdhash();
+        void rcu_shb_stdhash_stat();
+        void rcu_shb_stdhash_5_3();
+        void rcu_shb_stdhash_5_3_stat();
+        void rcu_shb_hash128();
+        void rcu_shb_hash128_stat();
+        void rcu_shb_hash128_4_3();
+        void rcu_shb_hash128_4_3_stat();
+
+        void rcu_sht_stdhash();
+        void rcu_sht_stdhash_stat();
+        void rcu_sht_stdhash_5_3();
+        void rcu_sht_stdhash_5_3_stat();
+        void rcu_sht_hash128();
+        void rcu_sht_hash128_stat();
+        void rcu_sht_hash128_4_3();
+        void rcu_sht_hash128_4_3_stat();
 
         CPPUNIT_TEST_SUITE(MultiLevelHashSetHdrTest)
             CPPUNIT_TEST(hp_stdhash)
@@ -423,6 +717,51 @@ namespace set {
             CPPUNIT_TEST(dhp_hash128_stat)
             CPPUNIT_TEST(dhp_hash128_4_3)
             CPPUNIT_TEST(dhp_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_gpi_stdhash)
+            CPPUNIT_TEST(rcu_gpi_stdhash_stat)
+            CPPUNIT_TEST(rcu_gpi_stdhash_5_3)
+            CPPUNIT_TEST(rcu_gpi_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_gpi_hash128)
+            CPPUNIT_TEST(rcu_gpi_hash128_stat)
+            CPPUNIT_TEST(rcu_gpi_hash128_4_3)
+            CPPUNIT_TEST(rcu_gpi_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_gpb_stdhash)
+            CPPUNIT_TEST(rcu_gpb_stdhash_stat)
+            CPPUNIT_TEST(rcu_gpb_stdhash_5_3)
+            CPPUNIT_TEST(rcu_gpb_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_gpb_hash128)
+            CPPUNIT_TEST(rcu_gpb_hash128_stat)
+            CPPUNIT_TEST(rcu_gpb_hash128_4_3)
+            CPPUNIT_TEST(rcu_gpb_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_gpt_stdhash)
+            CPPUNIT_TEST(rcu_gpt_stdhash_stat)
+            CPPUNIT_TEST(rcu_gpt_stdhash_5_3)
+            CPPUNIT_TEST(rcu_gpt_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_gpt_hash128)
+            CPPUNIT_TEST(rcu_gpt_hash128_stat)
+            CPPUNIT_TEST(rcu_gpt_hash128_4_3)
+            CPPUNIT_TEST(rcu_gpt_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_shb_stdhash)
+            CPPUNIT_TEST(rcu_shb_stdhash_stat)
+            CPPUNIT_TEST(rcu_shb_stdhash_5_3)
+            CPPUNIT_TEST(rcu_shb_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_shb_hash128)
+            CPPUNIT_TEST(rcu_shb_hash128_stat)
+            CPPUNIT_TEST(rcu_shb_hash128_4_3)
+            CPPUNIT_TEST(rcu_shb_hash128_4_3_stat)
+
+            CPPUNIT_TEST(rcu_sht_stdhash)
+            CPPUNIT_TEST(rcu_sht_stdhash_stat)
+            CPPUNIT_TEST(rcu_sht_stdhash_5_3)
+            CPPUNIT_TEST(rcu_sht_stdhash_5_3_stat)
+            CPPUNIT_TEST(rcu_sht_hash128)
+            CPPUNIT_TEST(rcu_sht_hash128_stat)
+            CPPUNIT_TEST(rcu_sht_hash128_4_3)
+            CPPUNIT_TEST(rcu_sht_hash128_4_3_stat)
         CPPUNIT_TEST_SUITE_END()
     };
 
