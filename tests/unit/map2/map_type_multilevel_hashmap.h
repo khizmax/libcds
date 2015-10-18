@@ -39,29 +39,34 @@ namespace map2 {
         typedef typename base_class::compare    compare;
         typedef typename base_class::less       less;
 
-        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value >    MultiLevelHashMap_hp_stdhash;
-        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value >    MultiLevelHashMap_dhp_stdhash;
-        typedef MultiLevelHashMap< rcu_gpi, Key, Value >    MultiLevelHashMap_rcu_gpi_stdhash;
-        typedef MultiLevelHashMap< rcu_gpb, Key, Value >    MultiLevelHashMap_rcu_gpb_stdhash;
-        typedef MultiLevelHashMap< rcu_gpt, Key, Value >    MultiLevelHashMap_rcu_gpt_stdhash;
+        struct traits_MultiLevelHashMap_stdhash : public cc::multilevel_hashmap::traits
+        {
+            typedef std::hash< Key > hash;
+        };
+
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_stdhash >    MultiLevelHashMap_hp_stdhash;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_stdhash >    MultiLevelHashMap_dhp_stdhash;
+        typedef MultiLevelHashMap< rcu_gpi, Key, Value, traits_MultiLevelHashMap_stdhash >    MultiLevelHashMap_rcu_gpi_stdhash;
+        typedef MultiLevelHashMap< rcu_gpb, Key, Value, traits_MultiLevelHashMap_stdhash >    MultiLevelHashMap_rcu_gpb_stdhash;
+        typedef MultiLevelHashMap< rcu_gpt, Key, Value, traits_MultiLevelHashMap_stdhash >    MultiLevelHashMap_rcu_gpt_stdhash;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MultiLevelHashMap< rcu_shb, Key, Value >    MultiLevelHashMap_rcu_shb_stdhash;
-        typedef MultiLevelHashMap< rcu_sht, Key, Value >    MultiLevelHashMap_rcu_sht_stdhash;
+        typedef MultiLevelHashMap< rcu_shb, Key, Value, traits_MultiLevelHashMap_stdhash >    MultiLevelHashMap_rcu_shb_stdhash;
+        typedef MultiLevelHashMap< rcu_sht, Key, Value, traits_MultiLevelHashMap_stdhash >    MultiLevelHashMap_rcu_sht_stdhash;
 #endif
 
-        struct traits_MultiLevelHashMap_stat: public cc::multilevel_hashmap::make_traits<
-                co::stat< cc::multilevel_hashmap::stat<>>
-            >::type
-        {};
+        struct traits_MultiLevelHashMap_stdhash_stat: traits_MultiLevelHashMap_stdhash
+        {
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
 
-        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_hp_stdhash_stat;
-        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_dhp_stdhash_stat;
-        typedef MultiLevelHashMap< rcu_gpi, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_gpi_stdhash_stat;
-        typedef MultiLevelHashMap< rcu_gpb, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_gpb_stdhash_stat;
-        typedef MultiLevelHashMap< rcu_gpt, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_gpt_stdhash_stat;
+        typedef MultiLevelHashMap< cds::gc::HP,  Key, Value, traits_MultiLevelHashMap_stdhash_stat >    MultiLevelHashMap_hp_stdhash_stat;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_stdhash_stat >    MultiLevelHashMap_dhp_stdhash_stat;
+        typedef MultiLevelHashMap< rcu_gpi, Key, Value, traits_MultiLevelHashMap_stdhash_stat >    MultiLevelHashMap_rcu_gpi_stdhash_stat;
+        typedef MultiLevelHashMap< rcu_gpb, Key, Value, traits_MultiLevelHashMap_stdhash_stat >    MultiLevelHashMap_rcu_gpb_stdhash_stat;
+        typedef MultiLevelHashMap< rcu_gpt, Key, Value, traits_MultiLevelHashMap_stdhash_stat >    MultiLevelHashMap_rcu_gpt_stdhash_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MultiLevelHashMap< rcu_shb, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_shb_stdhash_stat;
-        typedef MultiLevelHashMap< rcu_sht, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_sht_stdhash_stat;
+        typedef MultiLevelHashMap< rcu_shb, Key, Value, traits_MultiLevelHashMap_stdhash_stat >    MultiLevelHashMap_rcu_shb_stdhash_stat;
+        typedef MultiLevelHashMap< rcu_sht, Key, Value, traits_MultiLevelHashMap_stdhash_stat >    MultiLevelHashMap_rcu_sht_stdhash_stat;
 #endif
 
         // SHA256
@@ -182,6 +187,33 @@ namespace map2 {
         typedef MultiLevelHashMap< rcu_sht, Key, Value, traits_MultiLevelHashMap_city128_stat >    MultiLevelHashMap_rcu_sht_city128_stat;
 #endif
 #endif // CDS_BUILD_BITS == 64
+
+
+        // for fixed-sized keys - no hash functor required
+        typedef MultiLevelHashMap< cds::gc::HP, Key, Value >    MultiLevelHashMap_hp_fixed;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value >   MultiLevelHashMap_dhp_fixed;
+        typedef MultiLevelHashMap< rcu_gpi, Key, Value >    MultiLevelHashMap_rcu_gpi_fixed;
+        typedef MultiLevelHashMap< rcu_gpb, Key, Value >    MultiLevelHashMap_rcu_gpb_fixed;
+        typedef MultiLevelHashMap< rcu_gpt, Key, Value >    MultiLevelHashMap_rcu_gpt_fixed;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MultiLevelHashMap< rcu_shb, Key, Value >    MultiLevelHashMap_rcu_shb_fixed;
+        typedef MultiLevelHashMap< rcu_sht, Key, Value >    MultiLevelHashMap_rcu_sht_fixed;
+#endif
+
+        struct traits_MultiLevelHashMap_stat : public cc::multilevel_hashmap::traits
+        {
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
+        typedef MultiLevelHashMap< cds::gc::HP, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_hp_fixed_stat;
+        typedef MultiLevelHashMap< cds::gc::DHP, Key, Value, traits_MultiLevelHashMap_stat >   MultiLevelHashMap_dhp_fixed_stat;
+        typedef MultiLevelHashMap< rcu_gpi, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_gpi_fixed_stat;
+        typedef MultiLevelHashMap< rcu_gpb, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_gpb_fixed_stat;
+        typedef MultiLevelHashMap< rcu_gpt, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_gpt_fixed_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MultiLevelHashMap< rcu_shb, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_shb_fixed_stat;
+        typedef MultiLevelHashMap< rcu_sht, Key, Value, traits_MultiLevelHashMap_stat >    MultiLevelHashMap_rcu_sht_fixed_stat;
+#endif
+
     };
 
     template <typename GC, typename K, typename T, typename Traits >

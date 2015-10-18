@@ -67,6 +67,7 @@ namespace set2 {
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+        static CDS_CONSTEXPR bool const c_bEraseExactKey = true;
     };
 
     struct tag_MultiLevelHashSet;
@@ -260,6 +261,73 @@ namespace set2 {
 #endif
 
 #endif // #if CDS_BUILD_BITS == 64
+
+
+        // for fixed-sized key
+        // No hash function is necessary
+
+        struct fixed_sized_key
+        {
+            typedef typename set_type_base< Key, Val >::key_type key_type;
+            struct key_val : public set_type_base< Key, Val >::key_val
+            {
+                typedef typename set_type_base< Key, Val >::key_val base_class;
+
+                /*explicit*/ key_val(key_type const& k) : base_class(k) {}
+                key_val(key_type const& k, value_type const& v) : base_class(k, v) {}
+
+                template <typename K>
+                /*explicit*/ key_val(K const& k) : base_class(k) {}
+
+                template <typename K, typename T>
+                key_val(K const& k, T const& v) : base_class(k, v) {}
+
+                // mock hasher
+                struct hasher {
+                template <typename Q>
+                    key_type operator()( Q const& k ) const
+                    {
+                        return key_type( k );
+                    }
+                };
+            };
+
+            struct traits : public cc::multilevel_hashset::traits
+            {
+                struct hash_accessor {
+                    key_type operator()(key_val const& kv)
+                    {
+                        return kv.key;
+                    }
+                };
+            };
+
+            struct traits_stat : public traits
+            {
+                typedef cc::multilevel_hashset::stat<> stat;
+            };
+        };
+
+        typedef MultiLevelHashSet< cds::gc::HP, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    MultiLevelHashSet_hp_fixed;
+        typedef MultiLevelHashSet< cds::gc::DHP, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    MultiLevelHashSet_dhp_fixed;
+        typedef MultiLevelHashSet< rcu_gpi, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    MultiLevelHashSet_rcu_gpi_fixed;
+        typedef MultiLevelHashSet< rcu_gpb, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    MultiLevelHashSet_rcu_gpb_fixed;
+        typedef MultiLevelHashSet< rcu_gpt, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    MultiLevelHashSet_rcu_gpt_fixed;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MultiLevelHashSet< rcu_shb, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    MultiLevelHashSet_rcu_shb_fixed;
+        typedef MultiLevelHashSet< rcu_sht, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    MultiLevelHashSet_rcu_sht_fixed;
+#endif
+
+        typedef MultiLevelHashSet< cds::gc::HP, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    MultiLevelHashSet_hp_fixed_stat;
+        typedef MultiLevelHashSet< cds::gc::DHP, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    MultiLevelHashSet_dhp_fixed_stat;
+        typedef MultiLevelHashSet< rcu_gpi, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    MultiLevelHashSet_rcu_gpi_fixed_stat;
+        typedef MultiLevelHashSet< rcu_gpb, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    MultiLevelHashSet_rcu_gpb_fixed_stat;
+        typedef MultiLevelHashSet< rcu_gpt, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    MultiLevelHashSet_rcu_gpt_fixed_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MultiLevelHashSet< rcu_shb, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    MultiLevelHashSet_rcu_shb_fixed_stat;
+        typedef MultiLevelHashSet< rcu_sht, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    MultiLevelHashSet_rcu_sht_fixed_stat;
+#endif
+
     };
 
     template <typename GC, typename T, typename Traits >

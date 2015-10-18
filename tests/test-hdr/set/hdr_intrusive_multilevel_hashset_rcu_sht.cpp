@@ -6,12 +6,37 @@
 #include "unit/print_multilevel_hashset_stat.h"
 
 namespace set {
-
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     namespace {
         typedef cds::urcu::gc<cds::urcu::signal_threaded<>> rcu_type;
     } // namespace
 #endif
+
+    void IntrusiveMultiLevelHashSetHdrTest::rcu_sht_nohash()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef size_t key_type;
+
+        struct traits : public ci::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+            typedef item_disposer disposer;
+        };
+        typedef ci::MultiLevelHashSet< rcu_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!");
+        test_rcu<set_type, nohash<key_type>>(4, 2);
+
+        typedef ci::MultiLevelHashSet<
+            rcu_type,
+            Item<key_type>,
+            typename ci::multilevel_hashset::make_traits<
+                ci::multilevel_hashset::hash_accessor< get_key<key_type>>
+                , ci::opt::disposer< item_disposer >
+            >::type
+        > set_type2;
+        test_rcu<set_type2, nohash<key_type>>(4, 2);
+#endif
+    }
 
     void IntrusiveMultiLevelHashSetHdrTest::rcu_sht_stdhash()
     {
@@ -64,6 +89,34 @@ namespace set {
             >::type
         > set_type2;
         test_rcu<set_type2, hash128::make>(4, 2);
+#endif
+    }
+
+    void IntrusiveMultiLevelHashSetHdrTest::rcu_sht_nohash_stat()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef size_t key_type;
+
+        struct traits : public ci::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+            typedef item_disposer disposer;
+            typedef ci::multilevel_hashset::stat<> stat;
+        };
+        typedef ci::MultiLevelHashSet< rcu_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!");
+        test_rcu<set_type, nohash<key_type>>(4, 2);
+
+        typedef ci::MultiLevelHashSet<
+            rcu_type,
+            Item<key_type>,
+            typename ci::multilevel_hashset::make_traits<
+            ci::multilevel_hashset::hash_accessor< get_key<key_type>>
+            , ci::opt::disposer< item_disposer >
+            , co::stat< ci::multilevel_hashset::stat<>>
+            >::type
+        > set_type2;
+        test_rcu<set_type2, nohash<key_type>>(4, 2);
 #endif
     }
 
@@ -125,6 +178,32 @@ namespace set {
 #endif
     }
 
+    void IntrusiveMultiLevelHashSetHdrTest::rcu_sht_nohash_5_3()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef size_t key_type;
+
+        struct traits : public ci::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+            typedef item_disposer disposer;
+        };
+        typedef ci::MultiLevelHashSet< rcu_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!");
+        test_rcu<set_type, nohash<key_type>>(5, 3);
+
+        typedef ci::MultiLevelHashSet<
+            rcu_type,
+            Item<key_type>,
+            typename ci::multilevel_hashset::make_traits<
+            ci::multilevel_hashset::hash_accessor< get_key<key_type>>
+            , ci::opt::disposer< item_disposer >
+            >::type
+        > set_type2;
+        test_rcu<set_type2, nohash<key_type>>(5, 3);
+#endif
+    }
+
     void IntrusiveMultiLevelHashSetHdrTest::rcu_sht_stdhash_5_3()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
@@ -176,6 +255,34 @@ namespace set {
             >::type
         > set_type2;
         test_rcu<set_type2, hash128::make >(4, 3);
+#endif
+    }
+
+    void IntrusiveMultiLevelHashSetHdrTest::rcu_sht_nohash_5_3_stat()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef size_t key_type;
+
+        struct traits: public ci::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+            typedef item_disposer disposer;
+            typedef ci::multilevel_hashset::stat<> stat;
+        };
+        typedef ci::MultiLevelHashSet< rcu_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!" );
+        test_rcu<set_type, nohash<key_type>>(5, 3);
+
+        typedef ci::MultiLevelHashSet<
+            rcu_type,
+            Item<key_type>,
+            typename ci::multilevel_hashset::make_traits<
+                ci::multilevel_hashset::hash_accessor< get_key<key_type>>
+                , ci::opt::disposer< item_disposer >
+                ,co::stat< ci::multilevel_hashset::stat<>>
+            >::type
+        > set_type2;
+        test_rcu<set_type2, nohash<key_type>>(5, 3);
 #endif
     }
 

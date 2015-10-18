@@ -26,6 +26,7 @@ namespace cds { namespace container {
           <a href="https://en.wikipedia.org/wiki/MurmurHash">MurmurHash</a>, <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
           or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a> and so on, which
           converts variable-length strings to fixed-length bit-strings, and such hash values will be the keys in \p %MultiLevelHashMap.
+          If your key is fixed-sized the hash functor is optional, see \p multilevel_hashmap::traits::hash for explanation and examples.
         - \p %MultiLevelHashMap uses a perfect hashing. It means that if two different keys, for example, of type \p std::string,
           have identical hash then you cannot insert both that keys in the map. \p %MultiLevelHashMap does not maintain the key,
           it maintains its fixed-size hash value.
@@ -91,6 +92,7 @@ namespace cds { namespace container {
         typedef typename maker::node_type node_type;
         typedef typename maker::cxx_node_allocator cxx_node_allocator;
         typedef std::unique_ptr< node_type, typename maker::node_disposer > scoped_node_ptr;
+        typedef typename base_class::check_deadlock_policy check_deadlock_policy;
 
         struct node_cast
         {
@@ -458,8 +460,7 @@ namespace cds { namespace container {
         template <typename K>
         bool erase( K const& key )
         {
-            hash_type h = m_Hasher( key_type( key ));
-            return base_class::erase( h );
+            return base_class::erase(m_Hasher(key_type(key)));
         }
 
         /// Delete \p key from the map
@@ -484,8 +485,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            hash_type h = m_Hasher( key_type( key ));
-            return base_class::erase( h, [&f]( node_type& node) { f( node.m_Value ); } );
+            return base_class::erase(m_Hasher(key_type(key)), [&f]( node_type& node) { f( node.m_Value ); });
         }
 
         /// Extracts the item from the map with specified \p key

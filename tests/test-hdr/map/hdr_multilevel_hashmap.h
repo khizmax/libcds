@@ -608,6 +608,10 @@ namespace map {
             CPPUNIT_MSG(m.statistics());
         }
 
+        void hp_nohash();
+        void hp_nohash_stat();
+        void hp_nohash_5_3();
+        void hp_nohash_5_3_stat();
         void hp_stdhash();
         void hp_stdhash_stat();
         void hp_stdhash_5_3();
@@ -617,6 +621,10 @@ namespace map {
         void hp_hash128_4_3();
         void hp_hash128_4_3_stat();
 
+        void dhp_nohash();
+        void dhp_nohash_stat();
+        void dhp_nohash_5_3();
+        void dhp_nohash_5_3_stat();
         void dhp_stdhash();
         void dhp_stdhash_stat();
         void dhp_stdhash_5_3();
@@ -626,6 +634,10 @@ namespace map {
         void dhp_hash128_4_3();
         void dhp_hash128_4_3_stat();
 
+        void rcu_gpb_nohash();
+        void rcu_gpb_nohash_stat();
+        void rcu_gpb_nohash_5_3();
+        void rcu_gpb_nohash_5_3_stat();
         void rcu_gpb_stdhash();
         void rcu_gpb_stdhash_stat();
         void rcu_gpb_stdhash_5_3();
@@ -635,6 +647,10 @@ namespace map {
         void rcu_gpb_hash128_4_3();
         void rcu_gpb_hash128_4_3_stat();
 
+        void rcu_gpi_nohash();
+        void rcu_gpi_nohash_stat();
+        void rcu_gpi_nohash_5_3();
+        void rcu_gpi_nohash_5_3_stat();
         void rcu_gpi_stdhash();
         void rcu_gpi_stdhash_stat();
         void rcu_gpi_stdhash_5_3();
@@ -644,6 +660,10 @@ namespace map {
         void rcu_gpi_hash128_4_3();
         void rcu_gpi_hash128_4_3_stat();
 
+        void rcu_gpt_nohash();
+        void rcu_gpt_nohash_stat();
+        void rcu_gpt_nohash_5_3();
+        void rcu_gpt_nohash_5_3_stat();
         void rcu_gpt_stdhash();
         void rcu_gpt_stdhash_stat();
         void rcu_gpt_stdhash_5_3();
@@ -653,6 +673,10 @@ namespace map {
         void rcu_gpt_hash128_4_3();
         void rcu_gpt_hash128_4_3_stat();
 
+        void rcu_shb_nohash();
+        void rcu_shb_nohash_stat();
+        void rcu_shb_nohash_5_3();
+        void rcu_shb_nohash_5_3_stat();
         void rcu_shb_stdhash();
         void rcu_shb_stdhash_stat();
         void rcu_shb_stdhash_5_3();
@@ -662,6 +686,10 @@ namespace map {
         void rcu_shb_hash128_4_3();
         void rcu_shb_hash128_4_3_stat();
 
+        void rcu_sht_nohash();
+        void rcu_sht_nohash_stat();
+        void rcu_sht_nohash_5_3();
+        void rcu_sht_nohash_5_3_stat();
         void rcu_sht_stdhash();
         void rcu_sht_stdhash_stat();
         void rcu_sht_stdhash_5_3();
@@ -672,6 +700,10 @@ namespace map {
         void rcu_sht_hash128_4_3_stat();
 
         CPPUNIT_TEST_SUITE(MultiLevelHashMapHdrTest)
+            CPPUNIT_TEST(hp_nohash)
+            CPPUNIT_TEST(hp_nohash_stat)
+            CPPUNIT_TEST(hp_nohash_5_3)
+            CPPUNIT_TEST(hp_nohash_5_3_stat)
             CPPUNIT_TEST(hp_stdhash)
             CPPUNIT_TEST(hp_stdhash_stat)
             CPPUNIT_TEST(hp_stdhash_5_3)
@@ -681,6 +713,10 @@ namespace map {
             CPPUNIT_TEST(hp_hash128_4_3)
             CPPUNIT_TEST(hp_hash128_4_3_stat)
 
+            CPPUNIT_TEST(dhp_nohash)
+            CPPUNIT_TEST(dhp_nohash_stat)
+            CPPUNIT_TEST(dhp_nohash_5_3)
+            CPPUNIT_TEST(dhp_nohash_5_3_stat)
             CPPUNIT_TEST(dhp_stdhash)
             CPPUNIT_TEST(dhp_stdhash_stat)
             CPPUNIT_TEST(dhp_stdhash_5_3)
@@ -690,6 +726,10 @@ namespace map {
             CPPUNIT_TEST(dhp_hash128_4_3)
             CPPUNIT_TEST(dhp_hash128_4_3_stat)
 
+            CPPUNIT_TEST(rcu_gpb_nohash)
+            CPPUNIT_TEST(rcu_gpb_nohash_stat)
+            CPPUNIT_TEST(rcu_gpb_nohash_5_3)
+            CPPUNIT_TEST(rcu_gpb_nohash_5_3_stat)
             CPPUNIT_TEST(rcu_gpb_stdhash)
             CPPUNIT_TEST(rcu_gpb_stdhash_stat)
             CPPUNIT_TEST(rcu_gpb_stdhash_5_3)
@@ -699,6 +739,10 @@ namespace map {
             CPPUNIT_TEST(rcu_gpb_hash128_4_3)
             CPPUNIT_TEST(rcu_gpb_hash128_4_3_stat)
 
+            CPPUNIT_TEST(rcu_gpi_nohash)
+            CPPUNIT_TEST(rcu_gpi_nohash_stat)
+            CPPUNIT_TEST(rcu_gpi_nohash_5_3)
+            CPPUNIT_TEST(rcu_gpi_nohash_5_3_stat)
             CPPUNIT_TEST(rcu_gpi_stdhash)
             CPPUNIT_TEST(rcu_gpi_stdhash_stat)
             CPPUNIT_TEST(rcu_gpi_stdhash_5_3)
@@ -708,6 +752,10 @@ namespace map {
             CPPUNIT_TEST(rcu_gpi_hash128_4_3)
             CPPUNIT_TEST(rcu_gpi_hash128_4_3_stat)
 
+            CPPUNIT_TEST(rcu_gpt_nohash)
+            CPPUNIT_TEST(rcu_gpt_nohash_stat)
+            CPPUNIT_TEST(rcu_gpt_nohash_5_3)
+            CPPUNIT_TEST(rcu_gpt_nohash_5_3_stat)
             CPPUNIT_TEST(rcu_gpt_stdhash)
             CPPUNIT_TEST(rcu_gpt_stdhash_stat)
             CPPUNIT_TEST(rcu_gpt_stdhash_5_3)
@@ -717,6 +765,10 @@ namespace map {
             CPPUNIT_TEST(rcu_gpt_hash128_4_3)
             CPPUNIT_TEST(rcu_gpt_hash128_4_3_stat)
 
+            CPPUNIT_TEST(rcu_shb_nohash)
+            CPPUNIT_TEST(rcu_shb_nohash_stat)
+            CPPUNIT_TEST(rcu_shb_nohash_5_3)
+            CPPUNIT_TEST(rcu_shb_nohash_5_3_stat)
             CPPUNIT_TEST(rcu_shb_stdhash)
             CPPUNIT_TEST(rcu_shb_stdhash_stat)
             CPPUNIT_TEST(rcu_shb_stdhash_5_3)
@@ -726,6 +778,10 @@ namespace map {
             CPPUNIT_TEST(rcu_shb_hash128_4_3)
             CPPUNIT_TEST(rcu_shb_hash128_4_3_stat)
 
+            CPPUNIT_TEST(rcu_sht_nohash)
+            CPPUNIT_TEST(rcu_sht_nohash_stat)
+            CPPUNIT_TEST(rcu_sht_nohash_5_3)
+            CPPUNIT_TEST(rcu_sht_nohash_5_3_stat)
             CPPUNIT_TEST(rcu_sht_stdhash)
             CPPUNIT_TEST(rcu_sht_stdhash_stat)
             CPPUNIT_TEST(rcu_sht_stdhash_5_3)

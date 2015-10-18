@@ -10,9 +10,19 @@ namespace map {
         typedef cds::urcu::gc< cds::urcu::general_buffered<>> rcu_type;
     } // namespace
 
-    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash()
+    void MultiLevelHashMapHdrTest::rcu_gpb_nohash()
     {
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item > map_type;
+
+        test_rcu<map_type>(4, 2);
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash()
+    {
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef std::hash<size_t> hash;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
 
         test_rcu<map_type>(4, 2);
     }
@@ -35,7 +45,7 @@ namespace map {
         test_rcu<map_type2>(4, 2);
     }
 
-    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash_stat()
+    void MultiLevelHashMapHdrTest::rcu_gpb_nohash_stat()
     {
         struct traits : public cc::multilevel_hashmap::traits {
             typedef cc::multilevel_hashmap::stat<> stat;
@@ -45,7 +55,25 @@ namespace map {
 
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
             typename cc::multilevel_hashmap::make_traits<
+            co::stat< cc::multilevel_hashmap::stat<>>
+            >::type
+        > map_type2;
+        test_rcu<map_type2>(4, 2);
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash_stat()
+    {
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef std::hash<size_t> hash;
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
+        test_rcu<map_type>(4, 2);
+
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
+            typename cc::multilevel_hashmap::make_traits<
                 co::stat< cc::multilevel_hashmap::stat<>>
+                ,co::hash<std::hash<size_t>>
             >::type
         > map_type2;
         test_rcu<map_type2>(4, 2);
@@ -71,14 +99,24 @@ namespace map {
         test_rcu<map_type2>(4, 2);
     }
 
-    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash_5_3()
+    void MultiLevelHashMapHdrTest::rcu_gpb_nohash_5_3()
     {
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item > map_type;
 
         test_rcu<map_type>(5, 3);
     }
 
-    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash_5_3_stat()
+    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash_5_3()
+    {
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef std::hash<size_t> hash;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
+
+        test_rcu<map_type>(5, 3);
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_gpb_nohash_5_3_stat()
     {
         struct traits : public cc::multilevel_hashmap::traits {
             typedef cc::multilevel_hashmap::stat<> stat;
@@ -89,8 +127,28 @@ namespace map {
 
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
             typename cc::multilevel_hashmap::make_traits<
+            co::stat< cc::multilevel_hashmap::stat<>>
+            , co::back_off< cds::backoff::empty >
+            >::type
+        > map_type2;
+        test_rcu<map_type2>(5, 3);
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_gpb_stdhash_5_3_stat()
+    {
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef cc::multilevel_hashmap::stat<> stat;
+            typedef cds::backoff::empty back_off;
+            typedef std::hash<size_t> hash;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
+        test_rcu<map_type>(5, 3);
+
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
+            typename cc::multilevel_hashmap::make_traits<
                 co::stat< cc::multilevel_hashmap::stat<>>
                 ,co::back_off< cds::backoff::empty >
+                ,co::hash< std::hash<size_t>>
             >::type
         > map_type2;
         test_rcu<map_type2>(5, 3);

@@ -549,13 +549,15 @@ namespace set2 {
     CDSUNIT_DECLARE_RefinableSet
     CDSUNIT_DECLARE_CuckooSet
     CDSUNIT_DECLARE_EllenBinTreeSet
-    CDSUNIT_DECLARE_MultiLevelHashSet
+    CDSUNIT_DECLARE_MultiLevelHashSet_fixed
+    CDSUNIT_DECLARE_MultiLevelHashSet_city
 
     CPPUNIT_TEST_SUITE_(Set_InsDel_func, "Map_InsDel_func")
         CDSUNIT_TEST_MichaelSet
         CDSUNIT_TEST_SplitList
         CDSUNIT_TEST_SkipListSet
-        CDSUNIT_TEST_MultiLevelHashSet
+        CDSUNIT_TEST_MultiLevelHashSet_fixed
+        CDSUNIT_TEST_MultiLevelHashSet_city
         CDSUNIT_TEST_EllenBinTreeSet
         CDSUNIT_TEST_StripedSet
         CDSUNIT_TEST_RefinableSet

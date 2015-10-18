@@ -9,6 +9,28 @@ namespace set {
         typedef cds::gc::DHP gc_type;
     } // namespace
 
+    void MultiLevelHashSetHdrTest::dhp_nohash()
+    {
+        typedef size_t key_type;
+
+        struct traits : public cc::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+        };
+        typedef cc::MultiLevelHashSet< gc_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!");
+        test_hp<set_type, nohash<key_type>>(4, 2);
+
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<key_type>,
+            typename cc::multilevel_hashset::make_traits<
+                cc::multilevel_hashset::hash_accessor< get_key<key_type>>
+            >::type
+        > set_type2;
+        test_hp<set_type2, nohash<key_type>>(4, 2);
+    }
+
     void MultiLevelHashSetHdrTest::dhp_stdhash()
     {
         typedef size_t hash_type;
@@ -53,6 +75,30 @@ namespace set {
             >::type
         > set_type2;
         test_hp<set_type2, hash128::make>(4, 2);
+    }
+
+    void MultiLevelHashSetHdrTest::dhp_nohash_stat()
+    {
+        typedef size_t key_type;
+
+        struct traits : public cc::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+            typedef cc::multilevel_hashset::stat<> stat;
+        };
+        typedef cc::MultiLevelHashSet< gc_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!");
+        test_hp<set_type, nohash<key_type>>(4, 2);
+
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<key_type>,
+            typename cc::multilevel_hashset::make_traits<
+                cc::multilevel_hashset::hash_accessor< get_key<key_type>>
+                , co::stat< cc::multilevel_hashset::stat<>>
+            >::type
+        > set_type2;
+        test_hp<set_type2, nohash<key_type>>(4, 2);
     }
 
     void MultiLevelHashSetHdrTest::dhp_stdhash_stat()
@@ -105,6 +151,28 @@ namespace set {
         test_hp<set_type2, hash_type::make>(4, 2);
     }
 
+    void MultiLevelHashSetHdrTest::dhp_nohash_5_3()
+    {
+        typedef size_t key_type;
+
+        struct traits: public cc::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+        };
+        typedef cc::MultiLevelHashSet< gc_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!" );
+        test_hp<set_type, nohash<key_type>>(5, 3);
+
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<key_type>,
+            typename cc::multilevel_hashset::make_traits<
+                cc::multilevel_hashset::hash_accessor< get_key<key_type>>
+            >::type
+        > set_type2;
+        test_hp<set_type2, nohash<key_type>>(5, 3);
+    }
+
     void MultiLevelHashSetHdrTest::dhp_stdhash_5_3()
     {
         typedef size_t hash_type;
@@ -149,6 +217,30 @@ namespace set {
             >::type
         > set_type2;
         test_hp<set_type2, hash128::make >(4, 3);
+    }
+
+    void MultiLevelHashSetHdrTest::dhp_nohash_5_3_stat()
+    {
+        typedef size_t key_type;
+
+        struct traits: public cc::multilevel_hashset::traits
+        {
+            typedef get_key<key_type> hash_accessor;
+            typedef cc::multilevel_hashset::stat<> stat;
+        };
+        typedef cc::MultiLevelHashSet< gc_type, Item<key_type>, traits > set_type;
+        static_assert(std::is_same< typename set_type::hash_type, size_t>::value, "set::hash_type != size_t!!!" );
+        test_hp<set_type, nohash<key_type>>(5, 3);
+
+        typedef cc::MultiLevelHashSet<
+            gc_type,
+            Item<key_type>,
+            typename cc::multilevel_hashset::make_traits<
+                cc::multilevel_hashset::hash_accessor< get_key<key_type>>
+                ,co::stat< cc::multilevel_hashset::stat<>>
+            >::type
+        > set_type2;
+        test_hp<set_type2, nohash<key_type>>(5, 3);
     }
 
     void MultiLevelHashSetHdrTest::dhp_stdhash_5_3_stat()
@@ -202,5 +294,6 @@ namespace set {
         > set_type2;
         test_hp<set_type2, hash_type::make>(4, 3);
     }
+
 
 } // namespace set

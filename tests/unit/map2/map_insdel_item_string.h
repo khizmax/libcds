@@ -257,7 +257,9 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
-        CDSUNIT_DECLARE_MultiLevelHashMap
+        CDSUNIT_DECLARE_MultiLevelHashMap_md5
+        CDSUNIT_DECLARE_MultiLevelHashMap_sha256
+        CDSUNIT_DECLARE_MultiLevelHashMap_city
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
@@ -269,7 +271,9 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
-            CDSUNIT_TEST_MultiLevelHashMap
+            CDSUNIT_TEST_MultiLevelHashMap_md5
+            CDSUNIT_TEST_MultiLevelHashMap_sha256
+            CDSUNIT_TEST_MultiLevelHashMap_city
             CDSUNIT_TEST_CuckooMap
             CDSUNIT_TEST_StripedMap
             CDSUNIT_TEST_RefinableMap

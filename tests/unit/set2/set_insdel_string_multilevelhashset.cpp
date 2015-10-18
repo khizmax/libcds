@@ -8,5 +8,8 @@
 #include "set2/set_defs.h"
 
 namespace set2 {
-    CDSUNIT_DECLARE_MultiLevelHashSet
+    CDSUNIT_DECLARE_MultiLevelHashSet_stdhash
+    CDSUNIT_DECLARE_MultiLevelHashSet_md5
+    CDSUNIT_DECLARE_MultiLevelHashSet_sha256
+    CDSUNIT_DECLARE_MultiLevelHashSet_city
 } // namespace set2

@@ -532,7 +532,7 @@ mkdir -p $OBJ_PATH/debug
 
 CXXFLAGS="$compileroptions $cxx_debug_options $EXTRA_CXXFLAGS" \
 CFLAGS="$compileroptions $cxx_debug_options $EXTRA_CFLAGS $debugflag " \
-LDLIBS="$ld_libs" \
+LDLIBS="$LDLIBS $ld_libs" \
 LDFLAGS="$linkeroptions -shared $ld_debug_options $EXTRA_LDFLAGS " \
 $MAKE -f Makefile \
      platform=$OS_FAMILY \
@@ -556,7 +556,7 @@ mkdir -p $OBJ_PATH/release
 CXXFLAGS="$compileroptions $cxx_release_options $EXTRA_CXXFLAGS " \
 CFLAGS="$compileroptions $cxx_release_options $EXTRA_CFLAGS " \
 LDFLAGS="$linkeroptions -shared $ld_resease_options $EXTRA_LDFLAGS " \
-LDLIBS="$ld_libs" \
+LDLIBS="$LDLIBS $ld_libs" \
 $MAKE -f Makefile \
      platform=$OS_FAMILY \
      BIN_PATH=$BIN_PATH \
@@ -572,7 +572,7 @@ if test $MAKE_DEBUG_TEST = '0'; then
     CXXFLAGS="$compileroptions $cxx_release_options $cxx_test_release_options $EXTRA_CXXFLAGS " \
     CFLAGS="$compileroptions $cxx_release_options $EXTRA_CFLAGS " \
     LDFLAGS="$linkeroptions $ld_release_options $ld_test_release_options $EXTRA_TEST_LDFLAGS " \
-    LDLIBS="$ld_libs" \
+    LDLIBS="$LDLIBS $ld_libs" \
     $MAKE -f Makefile -j $makejobs \
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \
@@ -585,15 +585,10 @@ echo ---------------------------------
 echo Make tests debug
 
 if test $MAKE_DEBUG_TEST = '1'; then
-    CXXFLAGS="$compileroptions $cxx_debug_options $cxx_test_release_options $EXTRA_CXXFLAGS "
-    export CXXFLAGS
-    CFLAGS="$compileroptions $cxx_debug_options $EXTRA_CFLAGS "
-    export CFLAGS
-    LDFLAGS="$linkeroptions $ld_debug_options $ld_test_release_options $EXTRA_TEST_LDFLAGS "
-    export LDFLAGS
-    LDLIBS="$ld_libs"
-    export LDLIBS
-
+    CXXFLAGS="$compileroptions $cxx_debug_options $cxx_test_release_options $EXTRA_CXXFLAGS " \
+    CFLAGS="$compileroptions $cxx_debug_options $EXTRA_CFLAGS " \
+    LDFLAGS="$linkeroptions $ld_debug_options $ld_test_release_options $EXTRA_TEST_LDFLAGS " \
+    LDLIBS="$LDLIBS $ld_libs" \
     $MAKE -f Makefile -j $makejobs \
         platform=$OS_FAMILY \
         BIN_PATH=$BIN_PATH \

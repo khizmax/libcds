@@ -280,18 +280,18 @@ namespace map2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
-            template <bool>
+            template <typename MapType, bool>
             struct eraser {
-                static bool erase(Map& map, size_t key, size_t /*insThread*/)
+                static bool erase(MapType& map, size_t key, size_t /*insThread*/)
                 {
                     return map.erase_with(key, key_less());
                 }
             };
 
-            template <>
-            struct eraser<true>
+            template <typename MapType>
+            struct eraser<MapType, true>
             {
-                static bool erase(Map& map, size_t key, size_t insThread)
+                static bool erase(MapType& map, size_t key, size_t insThread)
                 {
                     return map.erase(key_type(key, insThread));
                 }
@@ -314,14 +314,14 @@ namespace map2 {
                                 if ( arrData[i] & 1 ) {
                                     if ( Map::c_bEraseExactKey ) {
                                         for (size_t key = 0; key < nInsThreadCount; ++key) {
-                                            if ( eraser<Map::c_bEraseExactKey>::erase( rMap, arrData[i], key ))
+                                            if ( eraser<Map, Map::c_bEraseExactKey>::erase( rMap, arrData[i], key ))
                                                 ++m_nDeleteSuccess;
                                             else
                                                 ++m_nDeleteFailed;
                                         }
                                     }
                                     else {
-                                        if ( eraser<Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0) )
+                                        if ( eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0) )
                                             ++m_nDeleteSuccess;
                                         else
                                             ++m_nDeleteFailed;
@@ -338,14 +338,14 @@ namespace map2 {
                                 if ( arrData[i] & 1 ) {
                                     if ( Map::c_bEraseExactKey ) {
                                         for (size_t key = 0; key < nInsThreadCount; ++key) {
-                                            if (eraser<Map::c_bEraseExactKey>::erase(rMap, arrData[i], key))
+                                            if (eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], key))
                                                 ++m_nDeleteSuccess;
                                             else
                                                 ++m_nDeleteFailed;
                                         }
                                     }
                                     else {
-                                        if (eraser<Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0))
+                                        if (eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0))
                                             ++m_nDeleteSuccess;
                                         else
                                             ++m_nDeleteFailed;
@@ -392,18 +392,18 @@ namespace map2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
-            template <bool>
+            template <typename MapType, bool>
             struct extractor {
-                static typename Map::guarded_ptr extract(Map& map, size_t key, size_t /*insThread*/)
+                static typename Map::guarded_ptr extract(MapType& map, size_t key, size_t /*insThread*/)
                 {
                     return map.extract_with(key, key_less());
                 }
             };
 
-            template <>
-            struct extractor<true>
+            template <typename MapType>
+            struct extractor<MapType, true>
             {
-                static typename Map::guarded_ptr extract(Map& map, size_t key, size_t insThread)
+                static typename Map::guarded_ptr extract(MapType& map, size_t key, size_t insThread)
                 {
                     return map.extract(key_type(key, insThread));
                 }
@@ -425,7 +425,7 @@ namespace map2 {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = 0; i < arrData.size(); ++i ) {
                                 if ( arrData[i] & 1 ) {
-                                    gp = extractor< Map::c_bEraseExactKey >::extract( rMap, arrData[i], k );
+                                    gp = extractor< Map, Map::c_bEraseExactKey >::extract( rMap, arrData[i], k );
                                     if ( gp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -441,7 +441,7 @@ namespace map2 {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                                 if ( arrData[i] & 1 ) {
-                                    gp = extractor< Map::c_bEraseExactKey >::extract( rMap, arrData[i], k);
+                                    gp = extractor< Map, Map::c_bEraseExactKey >::extract( rMap, arrData[i], k);
                                     if ( gp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -488,18 +488,18 @@ namespace map2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
-            template <bool>
+            template <typename MapType, bool>
             struct extractor {
-                static typename Map::exempt_ptr extract( Map& map, size_t key, size_t /*insThread*/ )
+                static typename Map::exempt_ptr extract( MapType& map, size_t key, size_t /*insThread*/ )
                 {
                     return map.extract_with( key, key_less());
                 }
             };
 
-            template <>
-            struct extractor<true>
+            template <typename MapType>
+            struct extractor<MapType, true>
             {
-                static typename Map::exempt_ptr extract(Map& map, size_t key, size_t insThread)
+                static typename Map::exempt_ptr extract(MapType& map, size_t key, size_t insThread)
                 {
                     return map.extract( key_type(key, insThread));
                 }
@@ -523,7 +523,7 @@ namespace map2 {
                                 if ( Map::c_bExtractLockExternal ) {
                                     {
                                         typename Map::rcu_lock l;
-                                        xp = extractor<Map::c_bEraseExactKey>::extract( rMap, arrData[i], k );
+                                        xp = extractor<Map, Map::c_bEraseExactKey>::extract( rMap, arrData[i], k );
                                         if ( xp )
                                             ++m_nDeleteSuccess;
                                         else
@@ -531,7 +531,7 @@ namespace map2 {
                                     }
                                 }
                                 else {
-                                    xp = extractor<Map::c_bEraseExactKey>::extract( rMap, arrData[i], k);
+                                    xp = extractor<Map, Map::c_bEraseExactKey>::extract( rMap, arrData[i], k);
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -551,7 +551,7 @@ namespace map2 {
                                 if ( Map::c_bExtractLockExternal ) {
                                     {
                                         typename Map::rcu_lock l;
-                                        xp = extractor<Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
+                                        xp = extractor<Map, Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
                                         if ( xp )
                                             ++m_nDeleteSuccess;
                                         else
@@ -559,7 +559,7 @@ namespace map2 {
                                     }
                                 }
                                 else {
-                                    xp = extractor<Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
+                                    xp = extractor<Map, Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -773,7 +773,8 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
-        CDSUNIT_DECLARE_MultiLevelHashMap64
+        CDSUNIT_DECLARE_MultiLevelHashMap_fixed
+        CDSUNIT_DECLARE_MultiLevelHashMap_city
         CDSUNIT_DECLARE_CuckooMap
 
         CPPUNIT_TEST_SUITE(Map_DelOdd)
@@ -782,7 +783,8 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
-            CDSUNIT_TEST_MultiLevelHashMap64
+            CDSUNIT_TEST_MultiLevelHashMap_fixed
+            CDSUNIT_TEST_MultiLevelHashMap_city
             CDSUNIT_TEST_CuckooMap
         CPPUNIT_TEST_SUITE_END();
 

@@ -12,10 +12,22 @@ namespace map {
     } // namespace
 #endif
 
-    void MultiLevelHashMapHdrTest::rcu_sht_stdhash()
+    void MultiLevelHashMapHdrTest::rcu_sht_nohash()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item > map_type;
+
+        test_rcu<map_type>(4, 2);
+#endif
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_sht_stdhash()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef std::hash<size_t> hash;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
 
         test_rcu<map_type>(4, 2);
 #endif
@@ -41,7 +53,7 @@ namespace map {
 #endif
     }
 
-    void MultiLevelHashMapHdrTest::rcu_sht_stdhash_stat()
+    void MultiLevelHashMapHdrTest::rcu_sht_nohash_stat()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         struct traits : public cc::multilevel_hashmap::traits {
@@ -52,14 +64,34 @@ namespace map {
 
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
             typename cc::multilevel_hashmap::make_traits<
-                co::stat< cc::multilevel_hashmap::stat<>>
+            co::stat< cc::multilevel_hashmap::stat<>>
             >::type
         > map_type2;
         test_rcu<map_type2>(4, 2);
 #endif
     }
 
-        void MultiLevelHashMapHdrTest::rcu_sht_hash128_stat()
+    void MultiLevelHashMapHdrTest::rcu_sht_stdhash_stat()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef std::hash<size_t> hash;
+            typedef cc::multilevel_hashmap::stat<> stat;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
+        test_rcu<map_type>(4, 2);
+
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
+            typename cc::multilevel_hashmap::make_traits<
+                co::stat< cc::multilevel_hashmap::stat<>>
+                ,co::hash<std::hash<size_t>>
+            >::type
+        > map_type2;
+        test_rcu<map_type2>(4, 2);
+#endif
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_sht_hash128_stat()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         struct traits : public cc::multilevel_hashmap::traits {
@@ -79,9 +111,9 @@ namespace map {
         > map_type2;
         test_rcu<map_type2>(4, 2);
 #endif
-        }
+    }
 
-    void MultiLevelHashMapHdrTest::rcu_sht_stdhash_5_3()
+    void MultiLevelHashMapHdrTest::rcu_sht_nohash_5_3()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item > map_type;
@@ -90,7 +122,19 @@ namespace map {
 #endif
     }
 
-    void MultiLevelHashMapHdrTest::rcu_sht_stdhash_5_3_stat()
+    void MultiLevelHashMapHdrTest::rcu_sht_stdhash_5_3()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef std::hash<size_t> hash;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
+
+        test_rcu<map_type>(5, 3);
+#endif
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_sht_nohash_5_3_stat()
     {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         struct traits : public cc::multilevel_hashmap::traits {
@@ -102,8 +146,30 @@ namespace map {
 
         typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
             typename cc::multilevel_hashmap::make_traits<
+            co::stat< cc::multilevel_hashmap::stat<>>
+            , co::back_off< cds::backoff::empty >
+            >::type
+        > map_type2;
+        test_rcu<map_type2>(5, 3);
+#endif
+    }
+
+    void MultiLevelHashMapHdrTest::rcu_sht_stdhash_5_3_stat()
+    {
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        struct traits : public cc::multilevel_hashmap::traits {
+            typedef cc::multilevel_hashmap::stat<> stat;
+            typedef cds::backoff::empty back_off;
+            typedef std::hash<size_t> hash;
+        };
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item, traits > map_type;
+        test_rcu<map_type>(5, 3);
+
+        typedef cc::MultiLevelHashMap< rcu_type, size_t, Item,
+            typename cc::multilevel_hashmap::make_traits<
                 co::stat< cc::multilevel_hashmap::stat<>>
                 ,co::back_off< cds::backoff::empty >
+                ,co::hash< std::hash<size_t>>
             >::type
         > map_type2;
         test_rcu<map_type2>(5, 3);

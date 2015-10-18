@@ -8,5 +8,6 @@
 #include "map2/map_defs.h"
 
 namespace map2 {
-    CDSUNIT_DECLARE_MultiLevelHashMap
+    CDSUNIT_DECLARE_MultiLevelHashMap_fixed
+    CDSUNIT_DECLARE_MultiLevelHashMap_city
 } // namespace map2

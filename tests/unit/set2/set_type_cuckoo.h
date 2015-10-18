@@ -35,7 +35,7 @@ namespace set2 {
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = false;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-
+        static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
     };
 
     struct tag_CuckooSet;
