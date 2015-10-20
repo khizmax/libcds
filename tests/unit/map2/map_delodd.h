@@ -125,8 +125,8 @@ namespace map2 {
         size_t  c_nCuckooProbesetSize = 16; // CuckooMap probeset size (only for list-based probeset)
         size_t  c_nCuckooProbesetThreshold = 0; // CUckooMap probeset threshold (0 - use default)
 
-        size_t c_nMultiLevelMap_HeadBits = 10;
-        size_t c_nMultiLevelMap_ArrayBits = 4;
+        size_t c_nFeldmanMap_HeadBits = 10;
+        size_t c_nFeldmanMap_ArrayBits = 4;
 
         bool    c_bPrintGCState = true;
 
@@ -163,7 +163,7 @@ namespace map2 {
                 void operator()( bool /*bNew*/, Q const&, V& )
                 {}
 
-                // MultiLevelHashMap
+                // FeldmanHashMap
                 template <typename Q>
                 void operator()( Q&, Q*)
                 {}
@@ -773,8 +773,8 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
-        CDSUNIT_DECLARE_MultiLevelHashMap_fixed
-        CDSUNIT_DECLARE_MultiLevelHashMap_city
+        CDSUNIT_DECLARE_FeldmanHashMap_fixed
+        CDSUNIT_DECLARE_FeldmanHashMap_city
         CDSUNIT_DECLARE_CuckooMap
 
         CPPUNIT_TEST_SUITE(Map_DelOdd)
@@ -783,8 +783,8 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
-            CDSUNIT_TEST_MultiLevelHashMap_fixed
-            CDSUNIT_TEST_MultiLevelHashMap_city
+            CDSUNIT_TEST_FeldmanHashMap_fixed
+            CDSUNIT_TEST_FeldmanHashMap_city
             CDSUNIT_TEST_CuckooMap
         CPPUNIT_TEST_SUITE_END();
 

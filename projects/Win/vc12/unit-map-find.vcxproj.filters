@@ -82,13 +82,13 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_striped.cpp">
       <Filter>map_insfind_int</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_multilevelhashmap.cpp">
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_int_feldmanhashmap.cpp">
       <Filter>map_find_int</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_multilevelhashmap.cpp">
+    <ClCompile Include="..\..\..\tests\unit\map2\map_find_string_feldmanhashmap.cpp">
       <Filter>map_find_string</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_multilevelhashmap.cpp">
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insfind_int_feldmanhashmap.cpp">
       <Filter>map_insfind_int</Filter>
     </ClCompile>
   </ItemGroup>

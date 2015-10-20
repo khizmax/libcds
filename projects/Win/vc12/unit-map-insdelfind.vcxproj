@@ -48,7 +48,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_multilevelhashmap.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_feldmanhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdelfind_std.cpp" />

@@ -128,8 +128,8 @@ namespace set2 {
         size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
         size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
 
-        size_t c_nMultiLevelSet_HeadBits = 10;
-        size_t c_nMultiLevelSet_ArrayBits = 4;
+        size_t c_nFeldmanSet_HeadBits = 10;
+        size_t c_nFeldmanSet_ArrayBits = 4;
 
         size_t c_nLoadFactor = 2;
         std::vector<size_t>     m_arrData;
@@ -795,16 +795,16 @@ namespace set2 {
         CDSUNIT_DECLARE_SkipListSet
         CDSUNIT_DECLARE_EllenBinTreeSet
         CDSUNIT_DECLARE_CuckooSet
-        CDSUNIT_DECLARE_MultiLevelHashSet_fixed
-        CDSUNIT_DECLARE_MultiLevelHashSet_city
+        CDSUNIT_DECLARE_FeldmanHashSet_fixed
+        CDSUNIT_DECLARE_FeldmanHashSet_city
 
         CPPUNIT_TEST_SUITE_(Set_DelOdd, "Map_DelOdd")
             CDSUNIT_TEST_MichaelSet
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListSet
             CDSUNIT_TEST_EllenBinTreeSet
-            CDSUNIT_TEST_MultiLevelHashSet_fixed
-            CDSUNIT_TEST_MultiLevelHashSet_city
+            CDSUNIT_TEST_FeldmanHashSet_fixed
+            CDSUNIT_TEST_FeldmanHashSet_city
             CDSUNIT_TEST_CuckooSet
         CPPUNIT_TEST_SUITE_END();
     };

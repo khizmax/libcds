@@ -6,7 +6,7 @@ set(CDSUNIT_MAP_SOURCES
     map_find_int_cuckoo.cpp
     map_find_int_ellentree.cpp
     map_find_int_michael.cpp
-    map_find_int_multilevelhashmap.cpp
+    map_find_int_feldmanhashmap.cpp
     map_find_int_skip.cpp
     map_find_int_split.cpp
     map_find_int_striped.cpp
@@ -16,7 +16,7 @@ set(CDSUNIT_MAP_SOURCES
     map_find_string_cuckoo.cpp
     map_find_string_ellentree.cpp
     map_find_string_michael.cpp
-    map_find_string_multilevelhashmap.cpp
+    map_find_string_feldmanhashmap.cpp
     map_find_string_skip.cpp
     map_find_string_split.cpp
     map_find_string_striped.cpp
@@ -36,7 +36,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_func_cuckoo.cpp
     map_insdel_func_ellentree.cpp
     map_insdel_func_michael.cpp
-    map_insdel_func_multilevelhashmap.cpp
+    map_insdel_func_feldmanhashmap.cpp
     map_insdel_func_skip.cpp
     map_insdel_func_split.cpp
     map_insdel_func_striped.cpp
@@ -45,7 +45,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_int_cuckoo.cpp
     map_insdel_int_ellentree.cpp
     map_insdel_int_michael.cpp
-    map_insdel_int_multilevelhashmap.cpp
+    map_insdel_int_feldmanhashmap.cpp
     map_insdel_int_skip.cpp
     map_insdel_int_split.cpp
     map_insdel_int_striped.cpp
@@ -55,7 +55,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_item_int_cuckoo.cpp
     map_insdel_item_int_ellentree.cpp
     map_insdel_item_int_michael.cpp
-    map_insdel_item_int_multilevelhashmap.cpp
+    map_insdel_item_int_feldmanhashmap.cpp
     map_insdel_item_int_skip.cpp
     map_insdel_item_int_split.cpp
     map_insdel_item_int_striped.cpp
@@ -64,7 +64,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_item_string_cuckoo.cpp
     map_insdel_item_string_ellentree.cpp
     map_insdel_item_string_michael.cpp
-    map_insdel_item_string_multilevelhashmap.cpp
+    map_insdel_item_string_feldmanhashmap.cpp
     map_insdel_item_string_skip.cpp
     map_insdel_item_string_split.cpp
     map_insdel_item_string_striped.cpp
@@ -73,7 +73,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdel_string_cuckoo.cpp
     map_insdel_string_ellentree.cpp
     map_insdel_string_michael.cpp
-    map_insdel_string_multilevelhashmap.cpp
+    map_insdel_string_feldmanhashmap.cpp
     map_insdel_string_skip.cpp
     map_insdel_string_split.cpp
     map_insdel_string_striped.cpp
@@ -83,7 +83,7 @@ set(CDSUNIT_MAP_SOURCES
     map_insdelfind_cuckoo.cpp
     map_insdelfind_ellentree.cpp
     map_insdelfind_michael.cpp
-    map_insdelfind_multilevelhashmap.cpp
+    map_insdelfind_feldmanhashmap.cpp
     map_insdelfind_skip.cpp
     map_insdelfind_split.cpp
     map_insdelfind_striped.cpp
@@ -93,7 +93,7 @@ set(CDSUNIT_MAP_SOURCES
     map_delodd_cuckoo.cpp
     map_delodd_ellentree.cpp
     map_delodd_michael.cpp
-    map_delodd_multilevelhashmap.cpp
+    map_delodd_feldmanhashmap.cpp
     map_delodd_split.cpp
     map_delodd_skip.cpp
 )

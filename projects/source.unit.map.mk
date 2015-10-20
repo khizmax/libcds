@@ -5,7 +5,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_find_int_cuckoo.cpp \
     tests/unit/map2/map_find_int_ellentree.cpp \
     tests/unit/map2/map_find_int_michael.cpp \
-    tests/unit/map2/map_find_int_multilevelhashmap.cpp \
+    tests/unit/map2/map_find_int_feldmanhashmap.cpp \
     tests/unit/map2/map_find_int_skip.cpp \
     tests/unit/map2/map_find_int_split.cpp \
     tests/unit/map2/map_find_int_striped.cpp \
@@ -15,7 +15,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_find_string_cuckoo.cpp \
     tests/unit/map2/map_find_string_ellentree.cpp \
     tests/unit/map2/map_find_string_michael.cpp \
-    tests/unit/map2/map_find_string_multilevelhashmap.cpp \
+    tests/unit/map2/map_find_string_feldmanhashmap.cpp \
     tests/unit/map2/map_find_string_skip.cpp \
     tests/unit/map2/map_find_string_split.cpp \
     tests/unit/map2/map_find_string_striped.cpp \
@@ -25,7 +25,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insfind_int_cuckoo.cpp \
     tests/unit/map2/map_insfind_int_ellentree.cpp \
     tests/unit/map2/map_insfind_int_michael.cpp \
-    tests/unit/map2/map_insfind_int_multilevelhashmap.cpp \
+    tests/unit/map2/map_insfind_int_feldmanhashmap.cpp \
     tests/unit/map2/map_insfind_int_skip.cpp \
     tests/unit/map2/map_insfind_int_split.cpp \
     tests/unit/map2/map_insfind_int_striped.cpp \
@@ -35,7 +35,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_func_cuckoo.cpp \
     tests/unit/map2/map_insdel_func_ellentree.cpp \
     tests/unit/map2/map_insdel_func_michael.cpp \
-    tests/unit/map2/map_insdel_func_multilevelhashmap.cpp \
+    tests/unit/map2/map_insdel_func_feldmanhashmap.cpp \
     tests/unit/map2/map_insdel_func_skip.cpp \
     tests/unit/map2/map_insdel_func_split.cpp \
     tests/unit/map2/map_insdel_func_striped.cpp \
@@ -44,7 +44,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_int_cuckoo.cpp \
     tests/unit/map2/map_insdel_int_ellentree.cpp \
     tests/unit/map2/map_insdel_int_michael.cpp \
-    tests/unit/map2/map_insdel_int_multilevelhashmap.cpp \
+    tests/unit/map2/map_insdel_int_feldmanhashmap.cpp \
     tests/unit/map2/map_insdel_int_skip.cpp \
     tests/unit/map2/map_insdel_int_split.cpp \
     tests/unit/map2/map_insdel_int_striped.cpp \
@@ -54,7 +54,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_item_int_cuckoo.cpp \
     tests/unit/map2/map_insdel_item_int_ellentree.cpp \
     tests/unit/map2/map_insdel_item_int_michael.cpp \
-    tests/unit/map2/map_insdel_item_int_multilevelhashmap.cpp \
+    tests/unit/map2/map_insdel_item_int_feldmanhashmap.cpp \
     tests/unit/map2/map_insdel_item_int_skip.cpp \
     tests/unit/map2/map_insdel_item_int_split.cpp \
     tests/unit/map2/map_insdel_item_int_striped.cpp \
@@ -63,7 +63,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_item_string_cuckoo.cpp \
     tests/unit/map2/map_insdel_item_string_ellentree.cpp \
     tests/unit/map2/map_insdel_item_string_michael.cpp \
-    tests/unit/map2/map_insdel_item_string_multilevelhashmap.cpp \
+    tests/unit/map2/map_insdel_item_string_feldmanhashmap.cpp \
     tests/unit/map2/map_insdel_item_string_skip.cpp \
     tests/unit/map2/map_insdel_item_string_split.cpp \
     tests/unit/map2/map_insdel_item_string_striped.cpp \
@@ -72,7 +72,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdel_string_cuckoo.cpp \
     tests/unit/map2/map_insdel_string_ellentree.cpp \
     tests/unit/map2/map_insdel_string_michael.cpp \
-    tests/unit/map2/map_insdel_string_multilevelhashmap.cpp \
+    tests/unit/map2/map_insdel_string_feldmanhashmap.cpp \
     tests/unit/map2/map_insdel_string_skip.cpp \
     tests/unit/map2/map_insdel_string_split.cpp \
     tests/unit/map2/map_insdel_string_striped.cpp \
@@ -82,7 +82,7 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdelfind_cuckoo.cpp \
     tests/unit/map2/map_insdelfind_ellentree.cpp \
     tests/unit/map2/map_insdelfind_michael.cpp \
-    tests/unit/map2/map_insdelfind_multilevelhashmap.cpp \
+    tests/unit/map2/map_insdelfind_feldmanhashmap.cpp \
     tests/unit/map2/map_insdelfind_skip.cpp \
     tests/unit/map2/map_insdelfind_split.cpp \
     tests/unit/map2/map_insdelfind_striped.cpp \
@@ -92,6 +92,6 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_delodd_cuckoo.cpp \
     tests/unit/map2/map_delodd_ellentree.cpp \
     tests/unit/map2/map_delodd_michael.cpp \
-    tests/unit/map2/map_delodd_multilevelhashmap.cpp \
+    tests/unit/map2/map_delodd_feldmanhashmap.cpp \
     tests/unit/map2/map_delodd_skip.cpp \
     tests/unit/map2/map_delodd_split.cpp \

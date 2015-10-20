@@ -23,8 +23,8 @@ namespace set2 {
         size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
         size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
 
-        size_t c_nMultiLevelSet_HeadBits = 10;
-        size_t c_nMultiLevelSet_ArrayBits = 4;
+        size_t c_nFeldmanSet_HeadBits = 10;
+        size_t c_nFeldmanSet_ArrayBits = 4;
 
         size_t c_nLoadFactor = 2;
 
@@ -517,20 +517,20 @@ namespace set2 {
         CDSUNIT_DECLARE_CuckooSet
         CDSUNIT_DECLARE_SkipListSet
         CDSUNIT_DECLARE_EllenBinTreeSet
-        CDSUNIT_DECLARE_MultiLevelHashSet_stdhash
-        CDSUNIT_DECLARE_MultiLevelHashSet_md5
-        CDSUNIT_DECLARE_MultiLevelHashSet_sha256
-        CDSUNIT_DECLARE_MultiLevelHashSet_city
+        CDSUNIT_DECLARE_FeldmanHashSet_stdhash
+        CDSUNIT_DECLARE_FeldmanHashSet_md5
+        CDSUNIT_DECLARE_FeldmanHashSet_sha256
+        CDSUNIT_DECLARE_FeldmanHashSet_city
         CDSUNIT_DECLARE_StdSet
 
         CPPUNIT_TEST_SUITE_(Set_InsDel_string, "Map_InsDel_func")
             CDSUNIT_TEST_MichaelSet
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListSet
-            CDSUNIT_TEST_MultiLevelHashSet_stdhash
-            CDSUNIT_TEST_MultiLevelHashSet_md5
-            CDSUNIT_TEST_MultiLevelHashSet_sha256
-            CDSUNIT_TEST_MultiLevelHashSet_city
+            CDSUNIT_TEST_FeldmanHashSet_stdhash
+            CDSUNIT_TEST_FeldmanHashSet_md5
+            CDSUNIT_TEST_FeldmanHashSet_sha256
+            CDSUNIT_TEST_FeldmanHashSet_city
             CDSUNIT_TEST_EllenBinTreeSet
             CDSUNIT_TEST_StripedSet
             CDSUNIT_TEST_RefinableSet
