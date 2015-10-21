@@ -5,7 +5,7 @@ set(CDSUNIT_SET_SOURCES
     set_insdel_func_cuckoo.cpp
     set_insdel_func_ellentree.cpp
     set_insdel_func_michael.cpp
-    set_insdel_func_multilevelhashset.cpp
+    set_insdel_func_feldmanhashset.cpp
     set_insdel_func_skip.cpp
     set_insdel_func_split.cpp
     set_insdel_func_striped.cpp
@@ -13,7 +13,7 @@ set(CDSUNIT_SET_SOURCES
     set_insdel_string_cuckoo.cpp
     set_insdel_string_ellentree.cpp
     set_insdel_string_michael.cpp
-    set_insdel_string_multilevelhashset.cpp
+    set_insdel_string_feldmanhashset.cpp
     set_insdel_string_skip.cpp
     set_insdel_string_split.cpp
     set_insdel_string_striped.cpp
@@ -22,15 +22,16 @@ set(CDSUNIT_SET_SOURCES
     set_insdelfind_cuckoo.cpp
     set_insdelfind_ellentree.cpp
     set_insdelfind_michael.cpp
-    set_insdelfind_multilevelhashset.cpp
+    set_insdelfind_feldmanhashset.cpp
     set_insdelfind_skip.cpp
     set_insdelfind_split.cpp
     set_insdelfind_striped.cpp
     set_insdelfind_std.cpp
     set_delodd.cpp
     set_delodd_cuckoo.cpp
-    set_delodd_michael.cpp
     set_delodd_ellentree.cpp
+    set_delodd_michael.cpp
+    set_delodd_feldmanhashset.cpp
     set_delodd_skip.cpp
     set_delodd_split.cpp
 )

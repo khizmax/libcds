@@ -175,25 +175,25 @@
     <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_skiplist_map_dhp.cpp">
       <Filter>skip_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_hp.cpp">
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap_hp.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_dhp.cpp">
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap_dhp.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpb.cpp">
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap_rcu_gpb.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpi.cpp">
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap_rcu_gpi.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_gpt.cpp">
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap_rcu_gpt.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_shb.cpp">
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap_rcu_shb.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap_rcu_sht.cpp">
+    <ClCompile Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap_rcu_sht.cpp">
       <Filter>multilvel_hashmap</Filter>
     </ClCompile>
   </ItemGroup>
@@ -212,7 +212,7 @@
     <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_cuckoo_map.h">
       <Filter>cuckoo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_multilevel_hashmap.h">
+    <ClInclude Include="..\..\..\tests\test-hdr\map\hdr_feldman_hashmap.h">
       <Filter>multilvel_hashmap</Filter>
     </ClInclude>
   </ItemGroup>

@@ -55,6 +55,7 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_delodd_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_delodd_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_delodd_michael.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\set2\set_delodd_feldmanhashset.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_delodd_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_delodd_split.cpp" />
   </ItemGroup>

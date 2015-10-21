@@ -56,7 +56,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_multilevelhashmap.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_feldmanhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_func_striped.cpp" />
@@ -65,7 +65,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_multilevelhashmap.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_feldmanhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_int_std.cpp" />
@@ -75,7 +75,7 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_ellentree.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_multilevelhashmap.cpp" />
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_feldmanhashmap.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_skip.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_split.cpp" />
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_string_std.cpp" />

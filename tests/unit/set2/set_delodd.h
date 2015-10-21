@@ -128,6 +128,9 @@ namespace set2 {
         size_t  c_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
         size_t  c_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
 
+        size_t c_nFeldmanSet_HeadBits = 10;
+        size_t c_nFeldmanSet_ArrayBits = 4;
+
         size_t c_nLoadFactor = 2;
         std::vector<size_t>     m_arrData;
 
@@ -152,6 +155,9 @@ namespace set2 {
             {
                 template <typename Q>
                 void operator()( bool /*bNew*/, key_value_pair const&, Q const& )
+                {}
+
+                void operator()(key_value_pair& /*cur*/, key_value_pair * /*prev*/)
                 {}
             };
         public:
@@ -306,6 +312,22 @@ namespace set2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
+            template <typename SetType, bool>
+            struct eraser {
+                static bool erase( SetType& s, size_t key, size_t /*thread*/)
+                {
+                    return s.erase_with( key, key_less() );
+                }
+            };
+
+            template <typename SetType>
+            struct eraser<SetType, true> {
+                static bool erase(SetType& s, size_t key, size_t thread)
+                {
+                    return s.erase( key_type(key, thread));
+                }
+            };
+
             virtual void test()
             {
                 Set& rSet = m_Set;
@@ -317,10 +339,10 @@ namespace set2 {
                 std::vector<size_t>& arrData = getTest().m_arrData;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = 0; i < arrData.size(); ++i ) {
-                            if ( arrData[i] & 1 ) {
-                                if ( rSet.erase_with( arrData[i], key_less() ))
+                    for (size_t i = 0; i < arrData.size(); ++i) {
+                        if (arrData[i] & 1) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                if ( eraser<Set, Set::c_bEraseExactKey>::erase( rSet, arrData[i], k ))
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
@@ -331,10 +353,10 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                            if ( arrData[i] & 1 ) {
-                                if ( rSet.erase_with( arrData[i], key_less() ))
+                    for (size_t i = arrData.size() - 1; i > 0; --i) {
+                        if (arrData[i] & 1) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                if (eraser<Set, Set::c_bEraseExactKey>::erase(rSet, arrData[i], k))
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
@@ -379,6 +401,22 @@ namespace set2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
+            template <typename SetType, bool>
+            struct extractor {
+                static typename SetType::guarded_ptr extract(SetType& s, size_t key, size_t /*thread*/)
+                {
+                    return s.extract_with( key, key_less());
+                }
+            };
+
+            template <typename SetType>
+            struct extractor<SetType, true> {
+                static typename SetType::guarded_ptr extract(SetType& s, size_t key, size_t thread)
+                {
+                    return s.extract( key_type(key, thread));
+                }
+            };
+
             virtual void test()
             {
                 Set& rSet = m_Set;
@@ -392,10 +430,10 @@ namespace set2 {
                 size_t const nInsThreadCount = getTest().c_nInsThreadCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = 0; i < arrData.size(); ++i ) {
-                            if ( arrData[i] & 1 ) {
-                                gp = rSet.extract_with( arrData[i], key_less());
+                    for ( size_t i = 0; i < arrData.size(); ++i ) {
+                        if (arrData[i] & 1) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                gp = extractor<Set, Set::c_bEraseExactKey>::extract( rSet, arrData[i], k );
                                 if ( gp )
                                     ++m_nExtractSuccess;
                                 else
@@ -408,10 +446,10 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                            if ( arrData[i] & 1 ) {
-                                gp = rSet.extract_with( arrData[i], key_less());
+                    for (size_t i = arrData.size() - 1; i > 0; --i) {
+                        if (arrData[i] & 1) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                gp = extractor<Set, Set::c_bEraseExactKey>::extract( rSet, arrData[i], k);
                                 if ( gp )
                                     ++m_nExtractSuccess;
                                 else
@@ -457,6 +495,22 @@ namespace set2 {
             virtual void init() { cds::threading::Manager::attachThread()   ; }
             virtual void fini() { cds::threading::Manager::detachThread()   ; }
 
+            template <typename SetType, bool>
+            struct extractor {
+                static typename SetType::exempt_ptr extract(SetType& s, size_t key, size_t /*thread*/)
+                {
+                    return s.extract_with(key, key_less());
+                }
+            };
+
+            template <typename SetType>
+            struct extractor<SetType, true> {
+                static typename SetType::exempt_ptr extract(SetType& s, size_t key, size_t thread)
+                {
+                    return s.extract(key_type(key, thread));
+                }
+            };
+
             virtual void test()
             {
                 Set& rSet = m_Set;
@@ -470,19 +524,19 @@ namespace set2 {
                 size_t const nInsThreadCount = getTest().c_nInsThreadCount;
 
                 if ( m_nThreadNo & 1 ) {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = 0; i < arrData.size(); ++i ) {
-                            if ( arrData[i] & 1 ) {
+                    for (size_t i = 0; i < arrData.size(); ++i) {
+                        if (arrData[i] & 1) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract( rSet, arrData[i], k);
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract(rSet, arrData[i], k);
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
@@ -496,19 +550,19 @@ namespace set2 {
                     }
                 }
                 else {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                            if ( arrData[i] & 1 ) {
+                    for (size_t i = arrData.size() - 1; i > 0; --i) {
+                        if (arrData[i] & 1) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract(rSet, arrData[i], k);
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    xp = rSet.extract_with( arrData[i], key_less() );
+                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract(rSet, arrData[i], k);
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
@@ -741,15 +795,17 @@ namespace set2 {
         CDSUNIT_DECLARE_SkipListSet
         CDSUNIT_DECLARE_EllenBinTreeSet
         CDSUNIT_DECLARE_CuckooSet
+        CDSUNIT_DECLARE_FeldmanHashSet_fixed
+        CDSUNIT_DECLARE_FeldmanHashSet_city
 
         CPPUNIT_TEST_SUITE_(Set_DelOdd, "Map_DelOdd")
             CDSUNIT_TEST_MichaelSet
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListSet
             CDSUNIT_TEST_EllenBinTreeSet
+            CDSUNIT_TEST_FeldmanHashSet_fixed
+            CDSUNIT_TEST_FeldmanHashSet_city
             CDSUNIT_TEST_CuckooSet
-
-            //CDSUNIT_TEST_MultiLevelHashSet // the test is not suitable
         CPPUNIT_TEST_SUITE_END();
     };
 } // namespace set2

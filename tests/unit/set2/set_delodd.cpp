@@ -18,6 +18,9 @@ namespace set2 {
         c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize );
         c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold );
 
+        c_nFeldmanSet_HeadBits = cfg.getSizeT("FeldmanMapHeadBits", c_nFeldmanSet_HeadBits);
+        c_nFeldmanSet_ArrayBits = cfg.getSizeT("FeldmanMapArrayBits", c_nFeldmanSet_ArrayBits);
+
         if ( c_nInsThreadCount == 0 )
             c_nInsThreadCount = std::thread::hardware_concurrency();
         if ( c_nDelThreadCount == 0 && c_nExtractThreadCount == 0 ) {

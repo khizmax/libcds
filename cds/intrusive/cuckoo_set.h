@@ -401,7 +401,7 @@ namespace cds { namespace intrusive {
 
         protected:
             //@cond
-            lock_array      m_Locks[c_nArity] ;   ///< array of lock_array_type
+            lock_array      m_Locks[c_nArity] ;   ///< array of \p lock_array_type
             statistics_type m_Stat              ; ///< internal statistics
             //@endcond
 
@@ -917,18 +917,6 @@ namespace cds { namespace intrusive {
                 for ( unsigned int i = 0; i < c_nArity; ++i )
                     pNew[i] = create_lock_array( nCapacity );
 
-                /*
-                // Assignment m_arrLocks[i] = pNew[i] may call heavy-weighted dtor for each item of m_arrLocks
-                // that is unacceptable under spin-lock
-                // So, we store copy of m_arrLocks in pOld
-                lock_array_ptr pOld[ c_nArity ];
-                for ( unsigned int i = 0; i < c_nArity; ++i )
-                    pOld[i] = m_arrLocks[i];
-
-                // m_arrLocks assignment will not lead to calling dtor of each item of m_arrLocks
-                // since copy of m_arrLocks locates in pOld and assignment will not be too painful for spin-lock
-                */
-
                 {
                     scoped_spinlock sl(m_access);
                     for ( unsigned int i = 0; i < c_nArity; ++i )
@@ -1364,7 +1352,7 @@ namespace cds { namespace intrusive {
             };
 
             template <typename Node, unsigned int Capacity>
-            class bucket_entry<Node, cuckoo::vector<Capacity> >
+            class bucket_entry<Node, cuckoo::vector<Capacity>>
             {
             public:
                 typedef Node                            node_type;
@@ -1381,22 +1369,14 @@ namespace cds { namespace intrusive {
                 {
                     assert( m_nSize < c_nCapacity );
 
-                    // std alorithm
                     if ( nFrom < m_nSize )
                         std::copy_backward( m_arrNode + nFrom, m_arrNode + m_nSize, m_arrNode + m_nSize + 1 );
-
-                    // alternative: low-level byte copying
-                    //memmove( m_arrNode + nFrom + 1, m_arrNode + nFrom, (m_nSize - nFrom) * sizeof(m_arrNode[0]) );
                 }
 
                 void shift_down( node_type ** pFrom )
                 {
                     assert( m_arrNode <= pFrom && pFrom < m_arrNode + m_nSize);
-                    // std algo
-                    std::copy( pFrom + 1, m_arrNode + m_nSize, pFrom  );
-
-                    // alternative: low-level byte copying
-                    //memmove( pFrom + 1, pFrom, (m_nSize - nFrom - 1) * sizeof(m_arrNode[0]));
+                    std::copy( pFrom + 1, m_arrNode + m_nSize, pFrom );
                 }
             public:
                 class iterator
@@ -1473,8 +1453,8 @@ namespace cds { namespace intrusive {
                     assert( !it.pArr || (m_arrNode <= it.pArr && it.pArr <= m_arrNode + m_nSize));
 
                     if ( it.pArr ) {
-                        shift_up( (unsigned int)(it.pArr - m_arrNode) + 1 );
-                        *(it.pArr + 1) = p;
+                        shift_up( static_cast<unsigned int>(it.pArr - m_arrNode) + 1 );
+                        it.pArr[1] = p;
                     }
                     else {
                         shift_up(0);
@@ -1514,7 +1494,7 @@ namespace cds { namespace intrusive {
             struct hash_ops {
                 static void store( Node * pNode, size_t * pHashes )
                 {
-                    memcpy( pNode->m_arrHash, pHashes, sizeof(size_t) * ArraySize );
+                    memcpy( pNode->m_arrHash, pHashes, sizeof(pHashes[0]) * ArraySize );
                 }
                 static bool equal_to( Node& node, unsigned int nTable, size_t nHash )
                 {
@@ -1911,10 +1891,7 @@ namespace cds { namespace intrusive {
             bucket_iterator     itFound;
         };
 
-        typedef typename std::conditional< c_isSorted
-            , cuckoo::details::contains< node_traits, true >
-            , cuckoo::details::contains< node_traits, false >
-        >::type contains_action;
+        typedef cuckoo::details::contains< node_traits, c_isSorted > contains_action;
 
         template <typename Predicate>
         struct predicate_wrapper {
@@ -2206,10 +2183,11 @@ namespace cds { namespace intrusive {
 
         CDS_CONSTEXPR static unsigned int calc_probeset_size( unsigned int nProbesetSize ) CDS_NOEXCEPT
         {
-            return nProbesetSize
-                ? nProbesetSize
-                : ( node_type::probeset_size ? node_type::probeset_size : c_nDefaultProbesetSize )
-;
+            return std::is_same< probeset_class, cuckoo::vector_probeset_class >::value
+                ? node_type::probeset_size
+                : (nProbesetSize
+                    ? nProbesetSize
+                    : ( node_type::probeset_size ? node_type::probeset_size : c_nDefaultProbesetSize ));
         }
         //@endcond
 
@@ -2238,7 +2216,7 @@ namespace cds { namespace intrusive {
         /// Constructs the set object with given probe set size and threshold
         /**
             If probe set type is <tt> cuckoo::vector<Capacity> </tt> vector
-            then \p nProbesetSize should be equal to vector's \p Capacity.
+            then \p nProbesetSize is ignored since it should be equal to vector's \p Capacity.
         */
         CuckooSet(
             size_t nInitialSize                 ///< Initial set size; if 0 - use default initial size \ref c_nDefaultInitialSize

@@ -18,8 +18,8 @@ namespace map2 {
         c_nCuckooProbesetSize = cfg.getULong("CuckooProbesetSize", static_cast<unsigned long>(c_nCuckooProbesetSize) );
         c_nCuckooProbesetThreshold = cfg.getULong("CuckooProbesetThreshold", static_cast<unsigned long>(c_nCuckooProbesetThreshold) );
 
-        c_nMultiLevelMap_HeadBits = cfg.getULong("MultiLevelMapHeadBits", static_cast<unsigned long>(c_nMultiLevelMap_HeadBits) );
-        c_nMultiLevelMap_ArrayBits = cfg.getULong("MultiLevelMapArrayBits", static_cast<unsigned long>(c_nMultiLevelMap_ArrayBits) );
+        c_nFeldmanMap_HeadBits = cfg.getULong("FeldmanMapHeadBits", static_cast<unsigned long>(c_nFeldmanMap_HeadBits) );
+        c_nFeldmanMap_ArrayBits = cfg.getULong("FeldmanMapArrayBits", static_cast<unsigned long>(c_nFeldmanMap_ArrayBits) );
 
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );
 

@@ -57,10 +57,10 @@
     <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_striped.cpp">
       <Filter>map_insdel_item_string</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_multilevelhashmap.cpp">
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_int_feldmanhashmap.cpp">
       <Filter>map_insdel_item_int</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_multilevelhashmap.cpp">
+    <ClCompile Include="..\..\..\tests\unit\map2\map_insdel_item_string_feldmanhashmap.cpp">
       <Filter>map_insdel_item_string</Filter>
     </ClCompile>
   </ItemGroup>

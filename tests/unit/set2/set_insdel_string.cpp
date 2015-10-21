@@ -18,8 +18,8 @@ namespace set2 {
         c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize );
         c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold );
 
-        c_nMultiLevelSet_HeadBits = cfg.getSizeT("MultiLevelMapHeadBits", c_nMultiLevelSet_HeadBits);
-        c_nMultiLevelSet_ArrayBits = cfg.getSizeT("MultiLevelMapArrayBits", c_nMultiLevelSet_ArrayBits);
+        c_nFeldmanSet_HeadBits = cfg.getSizeT("FeldmanMapHeadBits", c_nFeldmanSet_HeadBits);
+        c_nFeldmanSet_ArrayBits = cfg.getSizeT("FeldmanMapArrayBits", c_nFeldmanSet_ArrayBits);
 
         if ( c_nInsertThreadCount == 0 )
             c_nInsertThreadCount = std::thread::hardware_concurrency();

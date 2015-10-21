@@ -75,6 +75,7 @@ namespace set2 {
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
             static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
         };
 
         template <class BucketEntry, typename... Options>
@@ -110,6 +111,7 @@ namespace set2 {
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
             static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
         };
 
         // for non-sequential ordered containers
@@ -146,6 +148,7 @@ namespace set2 {
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
             static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
         };
 
         template <class BucketEntry, typename... Options>
@@ -181,6 +184,7 @@ namespace set2 {
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
             static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
         };
 
         typedef StripedHashSet_seq<
