@@ -23,6 +23,9 @@ namespace cds { namespace container {
         template <typename T>
         using bitwise_compare = cds::intrusive::feldman_hashset::bitwise_compare< T >;
 
+        /// \p FeldmanHashMap level statistics
+        typedef cds::intrusive::feldman_hashset::level_statistics level_statistics;
+
         /// \p FeldmanHashMap traits
         struct traits
         {

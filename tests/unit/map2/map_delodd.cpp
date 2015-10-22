@@ -37,4 +37,10 @@ namespace map2 {
         shuffle( m_arrRemove.begin(), m_arrRemove.end() );
     }
 
+    void Map_DelOdd::endTestCase()
+    {
+        m_arrInsert.resize(0);
+        m_arrRemove.resize(0);
+    }
+
 } // namespace map2

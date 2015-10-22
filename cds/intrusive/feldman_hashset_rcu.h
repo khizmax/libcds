@@ -5,6 +5,7 @@
 
 #include <functional>   // std::ref
 #include <iterator>     // std::iterator_traits
+#include <vector>
 
 #include <cds/intrusive/details/feldman_hashset_base.h>
 #include <cds/details/allocator.h>
@@ -529,6 +530,15 @@ namespace cds { namespace intrusive {
         size_t array_node_size() const
         {
             return m_Metrics.array_node_size;
+        }
+
+        /// Collects tree level statistics into \p stat
+        /** @copydetails cds::intrusive::FeldmanHashSet::get_level_statistics
+        */
+        void get_level_statistics(std::vector<feldman_hashset::level_statistics>& stat) const
+        {
+            stat.clear();
+            gather_level_statistics(stat, 0, m_Head, head_size());
         }
 
     protected:
@@ -1307,12 +1317,35 @@ namespace cds { namespace intrusive {
         void destroy_array_nodes(array_node * pArr, size_t nSize)
         {
             for (atomic_node_ptr * p = pArr->nodes, *pLast = pArr->nodes + nSize; p != pLast; ++p) {
-                node_ptr slot = p->load(memory_model::memory_order_acquire);
+                node_ptr slot = p->load(memory_model::memory_order_relaxed);
                 if (slot.bits() == flag_array_node) {
                     destroy_array_nodes(to_array(slot.ptr()), array_node_size());
                     free_array_node(to_array(slot.ptr()));
                     p->store(node_ptr(), memory_model::memory_order_relaxed);
                 }
+            }
+        }
+
+        void gather_level_statistics(std::vector<feldman_hashset::level_statistics>& stat, size_t nLevel, array_node * pArr, size_t nSize) const
+        {
+            if (stat.size() <= nLevel) {
+                stat.resize(nLevel + 1);
+                stat[nLevel].node_capacity = nSize;
+            }
+
+            ++stat[nLevel].array_node_count;
+            for (atomic_node_ptr * p = pArr->nodes, *pLast = pArr->nodes + nSize; p != pLast; ++p) {
+                node_ptr slot = p->load(memory_model::memory_order_relaxed);
+                if (slot.bits() == flag_array_node) {
+                    ++stat[nLevel].array_cell_count;
+                    gather_level_statistics(stat, nLevel + 1, to_array(slot.ptr()), array_node_size());
+                }
+                else if (slot.bits() == flag_array_converting)
+                    ++stat[nLevel].array_cell_count;
+                else if (slot.ptr())
+                    ++stat[nLevel].data_cell_count;
+                else
+                    ++stat[nLevel].empty_cell_count;
             }
         }
 

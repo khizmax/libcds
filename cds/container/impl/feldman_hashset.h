@@ -437,6 +437,14 @@ namespace cds { namespace container {
             return base_class::array_node_size();
         }
 
+        /// Collects tree level statistics into \p stat
+        /** @copydetails cds::intrusive::FeldmanHashSet::get_level_statistics
+        */
+        void get_level_statistics(std::vector< feldman_hashset::level_statistics>& stat) const
+        {
+            base_class::get_level_statistics(stat);
+        }
+
     public:
     ///@name Thread-safe iterators
         /** @anchor cds_container_FeldmanHashSet_iterators

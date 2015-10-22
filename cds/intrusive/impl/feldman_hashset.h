@@ -5,6 +5,7 @@
 
 #include <functional>   // std::ref
 #include <iterator>     // std::iterator_traits
+#include <vector>
 
 #include <cds/intrusive/details/feldman_hashset_base.h>
 #include <cds/details/allocator.h>
@@ -945,6 +946,21 @@ namespace cds { namespace intrusive {
             return m_Metrics.array_node_size;
         }
 
+        /// Collects tree level statistics into \p stat
+        /** @anchor cds_intrusive_FeldmanHashSet_hp_get_level_statistics
+            The function traverses the set and collects staistics for each level of the tree
+            into \p feldman_hashset::level_statistics struct. The element of \p stat[i]
+            represents statistics for level \p i, level 0 is head array.
+            The function is thread-safe and may be called in multi-threaded environment.
+
+            Result can be useful for estimating efficiency of hash functor you use.
+        */
+        void get_level_statistics(std::vector< feldman_hashset::level_statistics>& stat) const
+        {
+            stat.clear();
+            gather_level_statistics( stat, 0, m_Head, head_size() );
+        }
+
     public:
     ///@name Thread-safe iterators
         /** @anchor cds_intrusive_FeldmanHashSet_iterators
@@ -1101,13 +1117,35 @@ namespace cds { namespace intrusive {
 
         void destroy_array_nodes( array_node * pArr, size_t nSize )
         {
-            for ( atomic_node_ptr * p = pArr->nodes, *pLast = pArr->nodes + nSize; p != pLast; ++p ) {
-                node_ptr slot = p->load( memory_model::memory_order_acquire );
+            for ( atomic_node_ptr * p = pArr->nodes, *pLast = p + nSize; p != pLast; ++p ) {
+                node_ptr slot = p->load( memory_model::memory_order_relaxed );
                 if ( slot.bits() == flag_array_node ) {
                     destroy_array_nodes(to_array(slot.ptr()), array_node_size());
                     free_array_node( to_array(slot.ptr()));
                     p->store(node_ptr(), memory_model::memory_order_relaxed );
                 }
+            }
+        }
+
+        void gather_level_statistics(std::vector<feldman_hashset::level_statistics>& stat, size_t nLevel, array_node * pArr, size_t nSize) const
+        {
+            if (stat.size() <= nLevel) {
+                stat.resize(nLevel + 1);
+                stat[nLevel].node_capacity = nSize;
+            }
+
+            ++stat[nLevel].array_node_count;
+            for (atomic_node_ptr * p = pArr->nodes, *pLast = p + nSize; p != pLast; ++p) {
+                node_ptr slot = p->load(memory_model::memory_order_relaxed);
+                if ( slot.bits()) {
+                    ++stat[nLevel].array_cell_count;
+                    if ( slot.bits() == flag_array_node )
+                        gather_level_statistics( stat, nLevel + 1, to_array(slot.ptr()), array_node_size());
+                }
+                else if ( slot.ptr())
+                    ++stat[nLevel].data_cell_count;
+                else
+                    ++stat[nLevel].empty_cell_count;
             }
         }
 
