@@ -39,7 +39,7 @@ See online doxygen-generated doc here: http://libcds.sourceforge.net/doc/cds-api
 - *integration* branch is intended for pull-request. Usually, *integration* branch is the same as *master*
 - *dev* branch is intended for main developing. Usually, it contains unstable code
 
-<script type='text/javascript' src='https://www.openhub.net/p/khizmax-libcds/widgets/project_users_logo?format=js'></script>
+[![OpenHub statistics](https://www.openhub.net/p/khizmax-libcds/widgets/project_thin_badge)](https://www.openhub.net/p/khizmax-libcds/widgets/project_thin_badge)
 
 References
 ----------
