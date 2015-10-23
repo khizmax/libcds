@@ -78,7 +78,7 @@ namespace cds { namespace container {
         There are several specializations of \p %FeldmanHashMap for each \p GC. You should include:
         - <tt><cds/container/feldman_hashmap_hp.h></tt> for \p gc::HP garbage collector
         - <tt><cds/container/feldman_hashmap_dhp.h></tt> for \p gc::DHP garbage collector
-        - <tt><cds/container/feldman_hashmap_rcu.h></tt> for \ref cds_intrusive_FeldmanHashMap_rcu "RCU type". RCU specialization
+        - <tt><cds/container/feldman_hashmap_rcu.h></tt> for \ref cds_container_FeldmanHashMap_rcu "RCU type". RCU specialization
             has a slightly different interface.
     */
     template <
@@ -677,6 +677,14 @@ namespace cds { namespace container {
         size_t array_node_size() const
         {
             return base_class::array_node_size();
+        }
+
+        /// Collects tree level statistics into \p stat
+        /** @copydetails cds::intrusive::FeldmanHashSet::get_level_statistics
+        */
+        void get_level_statistics(std::vector< feldman_hashmap::level_statistics>& stat) const
+        {
+            base_class::get_level_statistics( stat );
         }
 
     public:

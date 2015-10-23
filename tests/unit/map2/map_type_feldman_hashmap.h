@@ -220,6 +220,21 @@ namespace map2 {
     static inline void print_stat( FeldmanHashMap< GC, K, T, Traits > const& m )
     {
         CPPUNIT_MSG( m.statistics() );
+
+        std::vector< cds::intrusive::feldman_hashset::level_statistics > level_stat;
+        m.get_level_statistics( level_stat );
+        CPPUNIT_MSG( "Level statistics, height=" << level_stat.size());
+        size_t i = 0;
+        CPPUNIT_MSG( "  i   node_count capacity    data_cell   array_cell   empty_cell" );
+        for (auto it = level_stat.begin(); it != level_stat.end(); ++it, ++i) {
+            CPPUNIT_MSG( std::setw(3)  << i                    << std::setw(0) << " "
+                      << std::setw(12) << it->array_node_count << std::setw(0) << " "
+                      << std::setw(8)  << it->node_capacity    << std::setw(0) << " "
+                      << std::setw(12) << it->data_cell_count  << std::setw(0) << " "
+                      << std::setw(12) << it->array_cell_count << std::setw(0) << " "
+                      << std::setw(12) << it->empty_cell_count << std::setw(0)
+                      );
+        }
     }
 
 }   // namespace map2

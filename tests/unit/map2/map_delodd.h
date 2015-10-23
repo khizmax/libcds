@@ -11,12 +11,12 @@ namespace map2 {
     namespace {
         struct key_thread
         {
-            size_t  nKey;
-            size_t  nThread;
+            uint32_t  nKey;
+            uint32_t  nThread;
 
             key_thread( size_t key, size_t threadNo )
-                : nKey( key )
-                , nThread( threadNo )
+                : nKey( static_cast<uint32_t>(key))
+                , nThread( static_cast<uint32_t>(threadNo))
             {}
 
             key_thread()
@@ -708,6 +708,8 @@ namespace map2 {
                 CPPUNIT_CHECK_EX( nErrorCount == 0, "Totals: " << nErrorCount << " keys is not found");
             }
 
+            print_stat(testMap);
+
             check_before_cleanup( testMap );
 
             CPPUNIT_MSG( "  Clear map (single-threaded)..." );
@@ -766,6 +768,7 @@ namespace map2 {
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
+        virtual void endTestCase();
 
 #   include "map2/map_defs.h"
         CDSUNIT_DECLARE_MichaelMap

@@ -250,6 +250,26 @@ namespace cds { namespace intrusive {
             }
         };
 
+        /// One-level statistics, see \p FeldmanHashSet::get_level_statistics
+        struct level_statistics
+        {
+            size_t array_node_count;    ///< Count of array node at the level
+            size_t node_capacity;       ///< Array capacity
+
+            size_t data_cell_count;     ///< The number of data cells in all array node at this level
+            size_t array_cell_count;    ///< The number of array cells in all array node at this level
+            size_t empty_cell_count;    ///< The number of empty cells in all array node at this level
+
+            //@cond
+            level_statistics()
+                : array_node_count(0)
+                , data_cell_count(0)
+                , array_cell_count(0)
+                , empty_cell_count(0)
+            {}
+            //@endcond
+        };
+
         //@cond
         namespace details {
             template <typename HashType, typename UInt = size_t >
