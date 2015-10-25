@@ -10,12 +10,12 @@ namespace set2 {
     namespace {
         struct key_thread
         {
-            size_t  nKey;
-            size_t  nThread;
+            uint32_t  nKey;
+            uint16_t  nThread;
 
             key_thread( size_t key, size_t threadNo )
-                : nKey( key )
-                , nThread( threadNo )
+                : nKey( static_cast<uint32_t>(key))
+                , nThread( static_cast<uint16_t>(threadNo))
             {}
 
             key_thread()
@@ -788,6 +788,7 @@ namespace set2 {
         }
 
         void setUpParams( const CppUnitMini::TestCfg& cfg );
+        virtual void endTestCase();
 
 #   include "set2/set_defs.h"
         CDSUNIT_DECLARE_MichaelSet

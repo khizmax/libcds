@@ -33,4 +33,10 @@ namespace set2 {
             m_arrData[i] = i;
         shuffle( m_arrData.begin(), m_arrData.end() );
     }
+
+    void Set_DelOdd::endTestCase()
+    {
+        m_arrData.resize( 0 );
+    }
+
 } // namespace set2

@@ -12,11 +12,11 @@ namespace map2 {
         struct key_thread
         {
             uint32_t  nKey;
-            uint32_t  nThread;
+            uint16_t  nThread;
 
             key_thread( size_t key, size_t threadNo )
                 : nKey( static_cast<uint32_t>(key))
-                , nThread( static_cast<uint32_t>(threadNo))
+                , nThread( static_cast<uint16_t>(threadNo))
             {}
 
             key_thread()

@@ -307,6 +307,278 @@ namespace cds { namespace intrusive {
 
         } // namespace details
         //@endcond
+
+        //@cond
+        template <typename T, typename Traits>
+        class multilevel_array
+        {
+        public:
+            typedef T value_type;
+            typedef Traits traits;
+            typedef typename Traits::node_allocator node_allocator;
+            typedef typename traits::memory_model   memory_model;
+            typedef typename traits::back_off       back_off;       ///< Backoff strategy
+            typedef typename traits::stat           stat;           ///< Internal statistics type
+
+            typedef typename traits::hash_accessor hash_accessor;
+            static_assert(!std::is_same< hash_accessor, cds::opt::none >::value, "hash_accessor functor must be specified");
+
+            /// Hash type deduced from \p hash_accessor return type
+            typedef typename std::decay<
+                typename std::remove_reference<
+                decltype(hash_accessor()(std::declval<value_type>()))
+                >::type
+            >::type hash_type;
+            //typedef typename std::result_of< hash_accessor( std::declval<value_type>()) >::type hash_type;
+            static_assert(!std::is_pointer<hash_type>::value, "hash_accessor should return a reference to hash value");
+
+            typedef typename cds::opt::details::make_comparator_from<
+                hash_type,
+                traits,
+                feldman_hashset::bitwise_compare< hash_type >
+            >::type hash_comparator;
+
+            typedef feldman_hashset::details::hash_splitter< hash_type > hash_splitter;
+
+        protected:
+            enum node_flags {
+                flag_array_converting = 1,   ///< the cell is converting from data node to an array node
+                flag_array_node = 2          ///< the cell is a pointer to an array node
+            };
+
+            typedef cds::details::marked_ptr< value_type, 3 > node_ptr;
+            typedef atomics::atomic< node_ptr > atomic_node_ptr;
+
+            struct array_node {
+                array_node * const  pParent;    ///< parent array node
+                size_t const        idxParent;  ///< index in parent array node
+                atomic_node_ptr     nodes[1];   ///< node array
+
+                array_node(array_node * parent, size_t idx)
+                    : pParent(parent)
+                    , idxParent(idx)
+                {}
+
+                array_node() = delete;
+                array_node(array_node const&) = delete;
+                array_node(array_node&&) = delete;
+            };
+
+            typedef cds::details::Allocator< array_node, node_allocator > cxx_array_node_allocator;
+
+            struct traverse_data {
+                hash_splitter splitter;
+                array_node * pArr;
+                size_t nOffset;
+                size_t nSlot;
+                size_t nHeight;
+
+                traverse_data( hash_type const& hash, multilevel_array& arr )
+                    : splitter( hash )
+                    , pArr( arr.head() )
+                    , nOffset( arr.metrics().head_node_size_log )
+                    , nSlot(splitter.cut(arr.metrics().head_node_size_log))
+                    , nHeight( 1 )
+                {}
+            };
+
+        protected:
+            feldman_hashset::details::metrics const m_Metrics;
+            array_node *      m_Head;
+            mutable stat      m_Stat;
+
+        public:
+            multilevel_array(size_t head_bits, size_t array_bits )
+                : m_Metrics(feldman_hashset::details::metrics::make(head_bits, array_bits, sizeof(hash_type)))
+                , m_Head( alloc_head_node())
+            {}
+
+            ~multilevel_array()
+            {
+                destroy_tree();
+                free_array_node(m_Head);
+            }
+
+            node_ptr traverse(traverse_data& pos)
+            {
+                back_off bkoff;
+                while (true) {
+                    node_ptr slot = pos.pArr->nodes[pos.nSlot].load(memory_model::memory_order_acquire);
+                    if (slot.bits() == flag_array_node) {
+                        // array node, go down the tree
+                        assert(slot.ptr() != nullptr);
+                        pos.nSlot = pos.splitter.cut( metrics().array_node_size_log );
+                        assert( pos.nSlot < metrics().array_node_size );
+                        pos.pArr = to_array(slot.ptr());
+                        pos.nOffset += metrics().array_node_size_log;
+                        ++pos.nHeight;
+                    }
+                    else if (slot.bits() == flag_array_converting) {
+                        // the slot is converting to array node right now
+                        bkoff();
+                        stats().onSlotConverting();
+                    }
+                    else {
+                        // data node
+                        assert(slot.bits() == 0);
+                        return slot;
+                    }
+                } // while
+            }
+
+            size_t head_size() const
+            {
+                return m_Metrics.head_node_size;
+            }
+
+            size_t array_node_size() const
+            {
+                return m_Metrics.array_node_size;
+            }
+
+            void get_level_statistics(std::vector< feldman_hashset::level_statistics>& stat) const
+            {
+                stat.clear();
+                gather_level_statistics(stat, 0, m_Head, head_size());
+            }
+
+        protected:
+            array_node * head() const
+            {
+                return m_Head;
+            }
+
+            stat& stats() const
+            {
+                return m_Stat;
+            }
+
+            feldman_hashset::details::metrics const& metrics() const
+            {
+                return m_Metrics;
+            }
+
+            void destroy_tree()
+            {
+                // The function is not thread-safe. For use in dtor only
+                // Destroy all array nodes
+                destroy_array_nodes(m_Head, head_size());
+            }
+
+            void destroy_array_nodes(array_node * pArr, size_t nSize)
+            {
+                for (atomic_node_ptr * p = pArr->nodes, *pLast = p + nSize; p != pLast; ++p) {
+                    node_ptr slot = p->load(memory_model::memory_order_relaxed);
+                    if (slot.bits() == flag_array_node) {
+                        destroy_array_nodes(to_array(slot.ptr()), array_node_size());
+                        free_array_node(to_array(slot.ptr()));
+                        p->store(node_ptr(), memory_model::memory_order_relaxed);
+                    }
+                }
+            }
+
+            static array_node * alloc_array_node(size_t nSize, array_node * pParent, size_t idxParent)
+            {
+                array_node * pNode = cxx_array_node_allocator().NewBlock(sizeof(array_node) + sizeof(atomic_node_ptr) * (nSize - 1), pParent, idxParent);
+                new (pNode->nodes) atomic_node_ptr[nSize];
+                return pNode;
+            }
+
+            array_node * alloc_head_node() const
+            {
+                return alloc_array_node(head_size(), nullptr, 0);
+            }
+
+            array_node * alloc_array_node(array_node * pParent, size_t idxParent) const
+            {
+                return alloc_array_node(array_node_size(), pParent, idxParent);
+            }
+
+            static void free_array_node(array_node * parr)
+            {
+                cxx_array_node_allocator().Delete(parr);
+            }
+
+            union converter {
+                value_type * pData;
+                array_node * pArr;
+
+                converter(value_type * p)
+                    : pData(p)
+                {}
+
+                converter(array_node * p)
+                    : pArr(p)
+                {}
+            };
+
+            static array_node * to_array(value_type * p)
+            {
+                return converter(p).pArr;
+            }
+            static value_type * to_node(array_node * p)
+            {
+                return converter(p).pData;
+            }
+
+            void gather_level_statistics(std::vector<feldman_hashset::level_statistics>& stat, size_t nLevel, array_node * pArr, size_t nSize) const
+            {
+                if (stat.size() <= nLevel) {
+                    stat.resize(nLevel + 1);
+                    stat[nLevel].node_capacity = nSize;
+                }
+
+                ++stat[nLevel].array_node_count;
+                for (atomic_node_ptr * p = pArr->nodes, *pLast = p + nSize; p != pLast; ++p) {
+                    node_ptr slot = p->load(memory_model::memory_order_relaxed);
+                    if (slot.bits()) {
+                        ++stat[nLevel].array_cell_count;
+                        if (slot.bits() == flag_array_node)
+                            gather_level_statistics(stat, nLevel + 1, to_array(slot.ptr()), array_node_size());
+                    }
+                    else if (slot.ptr())
+                        ++stat[nLevel].data_cell_count;
+                    else
+                        ++stat[nLevel].empty_cell_count;
+                }
+            }
+
+            bool expand_slot( traverse_data& pos, node_ptr current)
+            {
+                return expand_slot( pos.pArr, pos.nSlot, current, pos.nOffset );
+            }
+
+            bool expand_slot(array_node * pParent, size_t idxParent, node_ptr current, size_t nOffset)
+            {
+                assert(current.bits() == 0);
+                assert(current.ptr());
+
+                size_t idx = hash_splitter(hash_accessor()(*current.ptr()), nOffset).cut(m_Metrics.array_node_size_log);
+                array_node * pArr = alloc_array_node(pParent, idxParent);
+
+                node_ptr cur(current.ptr());
+                atomic_node_ptr& slot = pParent->nodes[idxParent];
+                if (!slot.compare_exchange_strong(cur, cur | flag_array_converting, memory_model::memory_order_release, atomics::memory_order_relaxed))
+                {
+                    stats().onExpandNodeFailed();
+                    free_array_node(pArr);
+                    return false;
+                }
+
+                pArr->nodes[idx].store(current, memory_model::memory_order_release);
+
+                cur = cur | flag_array_converting;
+                CDS_VERIFY(
+                    slot.compare_exchange_strong(cur, node_ptr(to_node(pArr), flag_array_node), memory_model::memory_order_release, atomics::memory_order_relaxed)
+                    );
+
+                stats().onExpandNodeSuccess();
+                stats().onArrayNodeCreated();
+                return true;
+            }
+
+        };
+        //@endcond
     } // namespace feldman_hashset
 
     //@cond
