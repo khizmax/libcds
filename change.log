@@ -1,4 +1,7 @@
 2.1.0
+    - Added: FeldmanHashSet/Map - an interesting hash map algorithm
+      based on multi-level array, requires perfect hashing or fixed-sized keys.
+      Supports thread-safe bidirectional iterators.
     - Added: BronsonAVLTreeMap - Bronson's et al AVL tree implementation
     - Added: CMake build script, thanks to Eugeny Kalishenko
     - Changed: SplitList performance improving, thanks to Mike Krinkin

@@ -85,6 +85,9 @@ References
   - *StripedMap*, *StripedSet*: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
   - *CuckooMap*, *CuckooSet*: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
   - *SkipListMap*, *SkipListSet*: [2008] Maurice Herlihy, Nir Shavit "The Art of Multiprocessor Programming"
+  - *FeldmanHashMap*, *FeldmanHashSet*: [2013] Steven Feldman, Pierre LaBorde, Damian Dechev "Concurrent Multi-level Arrays:
+        Wait-free Extensible Hash Maps". Supports **thread-safe bidirectional iterators**
+        [pdf](http://samos-conference.com/Resources_Samos_Websites/Proceedings_Repository_SAMOS/2013/Files/2013-IC-20.pdf)
         
 *Ordered single-linked list*
   - *LazyList*: [2005] Steve Heller, Maurice Herlihy, Victor Luchangco, Mark Moir, William N. Scherer III, and Nir Shavit "A Lazy Concurrent List-Based Set Algorithm"
