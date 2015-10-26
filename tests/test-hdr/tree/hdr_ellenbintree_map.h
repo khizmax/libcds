@@ -260,7 +260,7 @@ namespace tree {
             CPPUNIT_ASSERT( !updateResult.first );
             CPPUNIT_ASSERT( !updateResult.second );
             CPPUNIT_ASSERT( !m.contains(27) );
-            updateResult = m.update( 27, insert_functor<Map>(), false ) ;   // value = 54
+            updateResult = m.update( 27, insert_functor<Map>(), true ) ;   // value = 54
             CPPUNIT_ASSERT( updateResult.first );
             CPPUNIT_ASSERT( updateResult.second );
             CPPUNIT_ASSERT( m.contains(27) );
