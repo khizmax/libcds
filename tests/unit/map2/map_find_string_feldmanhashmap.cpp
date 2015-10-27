@@ -9,6 +9,5 @@
 
 namespace map2 {
     CDSUNIT_DECLARE_FeldmanHashMap_md5
-    CDSUNIT_DECLARE_FeldmanHashMap_sha256
     CDSUNIT_DECLARE_FeldmanHashMap_city
 } // namespace map2

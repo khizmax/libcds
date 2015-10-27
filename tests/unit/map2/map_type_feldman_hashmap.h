@@ -69,35 +69,6 @@ namespace map2 {
         typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_stdhash_stat >    FeldmanHashMap_rcu_sht_stdhash_stat;
 #endif
 
-        // SHA256
-        struct traits_FeldmanHashMap_sha256 : public cc::feldman_hashmap::traits
-        {
-            typedef ::hashing::sha256 hash;
-        };
-        typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_sha256 >    FeldmanHashMap_hp_sha256;
-        typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_sha256 >    FeldmanHashMap_dhp_sha256;
-        typedef FeldmanHashMap< rcu_gpi, Key, Value, traits_FeldmanHashMap_sha256 >    FeldmanHashMap_rcu_gpi_sha256;
-        typedef FeldmanHashMap< rcu_gpb, Key, Value, traits_FeldmanHashMap_sha256 >    FeldmanHashMap_rcu_gpb_sha256;
-        typedef FeldmanHashMap< rcu_gpt, Key, Value, traits_FeldmanHashMap_sha256 >    FeldmanHashMap_rcu_gpt_sha256;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashMap< rcu_shb, Key, Value, traits_FeldmanHashMap_sha256 >    FeldmanHashMap_rcu_shb_sha256;
-        typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_sha256 >    FeldmanHashMap_rcu_sht_sha256;
-#endif
-
-        struct traits_FeldmanHashMap_sha256_stat : public traits_FeldmanHashMap_sha256
-        {
-            typedef cc::feldman_hashmap::stat<> stat;
-        };
-        typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_sha256_stat >    FeldmanHashMap_hp_sha256_stat;
-        typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_sha256_stat >    FeldmanHashMap_dhp_sha256_stat;
-        typedef FeldmanHashMap< rcu_gpi, Key, Value, traits_FeldmanHashMap_sha256_stat >    FeldmanHashMap_rcu_gpi_sha256_stat;
-        typedef FeldmanHashMap< rcu_gpb, Key, Value, traits_FeldmanHashMap_sha256_stat >    FeldmanHashMap_rcu_gpb_sha256_stat;
-        typedef FeldmanHashMap< rcu_gpt, Key, Value, traits_FeldmanHashMap_sha256_stat >    FeldmanHashMap_rcu_gpt_sha256_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashMap< rcu_shb, Key, Value, traits_FeldmanHashMap_sha256_stat >    FeldmanHashMap_rcu_shb_sha256_stat;
-        typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_sha256_stat >    FeldmanHashMap_rcu_sht_sha256_stat;
-#endif
-
         //MD5
         struct traits_FeldmanHashMap_md5 : public cc::feldman_hashmap::traits
         {

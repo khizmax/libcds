@@ -5,7 +5,6 @@
 
 #include <cds/details/defs.h>
 
-#include "hashing/sha256.h"
 #include "hashing/md5.h"
 #if CDS_BUILD_BITS == 64
 #   include "hashing/city.h"
@@ -43,7 +42,6 @@ namespace hashing {
         }
     };
 
-    typedef hasher<SHA256> sha256;
     typedef hasher<MD5> md5;
 
 #if CDS_BUILD_BITS == 64

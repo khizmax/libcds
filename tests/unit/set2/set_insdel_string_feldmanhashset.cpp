@@ -10,6 +10,5 @@
 namespace set2 {
     CDSUNIT_DECLARE_FeldmanHashSet_stdhash
     CDSUNIT_DECLARE_FeldmanHashSet_md5
-    CDSUNIT_DECLARE_FeldmanHashSet_sha256
     CDSUNIT_DECLARE_FeldmanHashSet_city
 } // namespace set2

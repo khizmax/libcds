@@ -262,7 +262,7 @@ namespace cds { namespace intrusive {
         CDS_DEPRECATED("use contains()")
         value_type * find_with( Q const& key, Less pred )
         {
-            return contains( key );
+            return contains( key, pred );
         }
         //@endcond
 

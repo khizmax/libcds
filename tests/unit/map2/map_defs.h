@@ -886,57 +886,6 @@
     CPPUNIT_TEST(FeldmanHashMap_rcu_gpt_md5_stat) \
     CDSUNIT_TEST_FeldmanHashMap_md5_RCU_Signal
 
-// SHA256
-
-#undef CDSUNIT_DECLARE_FeldmanHashMap_sha256
-#undef CDSUNIT_DECLARE_FeldmanHashMap_sha256_RCU_Signal
-#undef CDSUNIT_TEST_FeldmanHashMap_sha256
-#undef CDSUNIT_TEST_FeldmanHashMap_sha256_RCU_Signal
-
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-#   define CDSUNIT_DECLARE_FeldmanHashMap_sha256_RCU_Signal \
-        TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_shb_sha256) \
-        TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_shb_sha256_stat) \
-        TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_sht_sha256) \
-        TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_sht_sha256_stat) \
-
-#   define CDSUNIT_TEST_FeldmanHashMap_sha256_RCU_Signal \
-        CPPUNIT_TEST(FeldmanHashMap_rcu_shb_sha256) \
-        CPPUNIT_TEST(FeldmanHashMap_rcu_shb_sha256_stat) \
-        CPPUNIT_TEST(FeldmanHashMap_rcu_sht_sha256) \
-        CPPUNIT_TEST(FeldmanHashMap_rcu_sht_sha256_stat) \
-
-#else
-#   define CDSUNIT_DECLARE_FeldmanHashMap_sha256_RCU_Signal
-#   define CDSUNIT_TEST_FeldmanHashMap_sha256_RCU_Signal
-#endif
-
-
-#define CDSUNIT_DECLARE_FeldmanHashMap_sha256 \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_hp_sha256) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_hp_sha256_stat) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_dhp_sha256) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_dhp_sha256_stat) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_gpi_sha256) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_gpi_sha256_stat) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_gpb_sha256) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_gpb_sha256_stat) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_gpt_sha256) \
-    TEST_CASE(tag_FeldmanHashMap, FeldmanHashMap_rcu_gpt_sha256_stat) \
-    CDSUNIT_DECLARE_FeldmanHashMap_sha256_RCU_Signal
-
-#define CDSUNIT_TEST_FeldmanHashMap_sha256 \
-    CPPUNIT_TEST(FeldmanHashMap_hp_sha256) \
-    CPPUNIT_TEST(FeldmanHashMap_hp_sha256_stat) \
-    CPPUNIT_TEST(FeldmanHashMap_dhp_sha256) \
-    CPPUNIT_TEST(FeldmanHashMap_dhp_sha256_stat) \
-    CPPUNIT_TEST(FeldmanHashMap_rcu_gpi_sha256) \
-    CPPUNIT_TEST(FeldmanHashMap_rcu_gpi_sha256_stat) \
-    CPPUNIT_TEST(FeldmanHashMap_rcu_gpb_sha256) \
-    CPPUNIT_TEST(FeldmanHashMap_rcu_gpb_sha256_stat) \
-    CPPUNIT_TEST(FeldmanHashMap_rcu_gpt_sha256) \
-    CPPUNIT_TEST(FeldmanHashMap_rcu_gpt_sha256_stat) \
-    CDSUNIT_TEST_FeldmanHashMap_sha256_RCU_Signal
 
 // CityHash - only for 64bit
 
@@ -1065,13 +1014,11 @@
     CDSUNIT_DECLARE_FeldmanHashMap_fixed \
     CDSUNIT_DECLARE_FeldmanHashMap_stdhash \
     CDSUNIT_DECLARE_FeldmanHashMap_md5 \
-    CDSUNIT_DECLARE_FeldmanHashMap_sha256 \
     CDSUNIT_DECLARE_FeldmanHashMap_city \
 
 #define CDSUNIT_TEST_FeldmanHashMap \
     CDSUNIT_TEST_FeldmanHashMap_fixed \
     CDSUNIT_TEST_FeldmanHashMap_stdhash \
     CDSUNIT_TEST_FeldmanHashMap_md5 \
-    CDSUNIT_TEST_FeldmanHashMap_sha256 \
     CDSUNIT_TEST_FeldmanHashMap_city
 
