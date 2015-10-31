@@ -140,10 +140,11 @@ namespace cds { namespace gc { namespace dhp {
     void CDS_STDCALL GarbageCollector::Construct(
         size_t nLiberateThreshold
         , size_t nInitialThreadGuardCount
+        , size_t nEpochCount
     )
     {
         if ( !m_pManager ) {
-            m_pManager = new GarbageCollector( nLiberateThreshold, nInitialThreadGuardCount );
+            m_pManager = new GarbageCollector( nLiberateThreshold, nInitialThreadGuardCount, nEpochCount );
         }
     }
 
@@ -153,9 +154,10 @@ namespace cds { namespace gc { namespace dhp {
         m_pManager = nullptr;
     }
 
-    GarbageCollector::GarbageCollector( size_t nLiberateThreshold, size_t nInitialThreadGuardCount )
+    GarbageCollector::GarbageCollector( size_t nLiberateThreshold, size_t nInitialThreadGuardCount, size_t nEpochCount )
         : m_nLiberateThreshold( nLiberateThreshold ? nLiberateThreshold : 1024 )
         , m_nInitialThreadGuardCount( nInitialThreadGuardCount ? nInitialThreadGuardCount : 8 )
+        , m_RetiredAllocator( static_cast<unsigned int>(nEpochCount))
         , m_bStatEnabled( false )
         //, m_nInLiberate(0)
     {
@@ -172,7 +174,7 @@ namespace cds { namespace gc { namespace dhp {
         if ( retiredList.first ) {
 
             size_t nLiberateThreshold = m_nLiberateThreshold.load(atomics::memory_order_relaxed);
-            details::liberate_set set( beans::ceil2( retiredList.second > nLiberateThreshold ? retiredList.second : nLiberateThreshold ) );
+            details::liberate_set set( beans::ceil2( retiredList.second > nLiberateThreshold ? retiredList.second : nLiberateThreshold ));
 
             // Get list of retired pointers
             size_t nRetiredCount = 0;

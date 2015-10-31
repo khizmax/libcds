@@ -5,6 +5,7 @@
 
 #include <mutex>        // unique_lock
 #include <cds/algo/atomic.h>
+#include <cds/algo/int_algo.h>
 #include <cds/gc/details/retired_ptr.h>
 #include <cds/details/aligned_allocator.h>
 #include <cds/details/allocator.h>
@@ -284,14 +285,14 @@ namespace cds { namespace gc {
                     return m_nItemCount.fetch_add( nSize, atomics::memory_order_relaxed ) + 1;
                 }
 
-                /// Result of \ref dhp_gc_privatve "privatize" function.
+                /// Result of \ref dhp_gc_privatize "privatize" function.
                 /**
                     The \p privatize function returns retired node list as \p first and the size of that list as \p second.
                 */
                 typedef std::pair<retired_ptr_node *, size_t> privatize_result;
 
                 /// Gets current list of retired pointer and clears the list
-                /**@anchor dhp_gc_privatve
+                /**@anchor dhp_gc_privatize
                 */
                 privatize_result privatize() CDS_NOEXCEPT
                 {
@@ -333,18 +334,19 @@ namespace cds { namespace gc {
                 atomics::atomic<block *> m_pBlockListHead;   ///< head of of allocated block list
 
                 // To solve ABA problem we use epoch-based approach
-                static const unsigned int c_nEpochCount = 4;    ///< Max epoch count
+                unsigned int const m_nEpochBitmask;             ///< Epoch bitmask (log2( m_nEpochCount))
                 atomics::atomic<unsigned int> m_nCurEpoch;      ///< Current epoch
-                atomics::atomic<item *>  m_pEpochFree[c_nEpochCount];   ///< List of free item per epoch
+                atomics::atomic<item *>* m_pEpochFree;          ///< List of free item per epoch
                 atomics::atomic<item *>  m_pGlobalFreeHead;     ///< Head of unallocated item list
 
-                cds::details::Allocator< block, Alloc > m_BlockAllocator    ;   ///< block allocator
+                typedef cds::details::Allocator< block, Alloc > block_allocator;
+                typedef cds::details::Allocator< atomics::atomic<item *>, Alloc > epoch_array_alloc;
 
             private:
                 void allocNewBlock()
                 {
                     // allocate new block
-                    block * pNew = m_BlockAllocator.New();
+                    block * pNew = block_allocator().New();
 
                     // link items within the block
                     item * pLastItem = pNew->items + m_nItemPerBlock - 1;
@@ -374,21 +376,24 @@ namespace cds { namespace gc {
 
                 unsigned int current_epoch() const CDS_NOEXCEPT
                 {
-                    return m_nCurEpoch.load(atomics::memory_order_acquire) & (c_nEpochCount - 1);
+                    return m_nCurEpoch.load(atomics::memory_order_acquire) & m_nEpochBitmask;
                 }
 
                 unsigned int next_epoch() const CDS_NOEXCEPT
                 {
-                    return (m_nCurEpoch.load(atomics::memory_order_acquire) - 1) & (c_nEpochCount - 1);
+                    return (m_nCurEpoch.load(atomics::memory_order_acquire) - 1) & m_nEpochBitmask;
                 }
 
             public:
-                retired_ptr_pool()
+                retired_ptr_pool( unsigned int nEpochCount = 8 )
                     : m_pBlockListHead( nullptr )
+                    , m_nEpochBitmask( static_cast<unsigned int>(beans::ceil2(nEpochCount)) - 1 )
                     , m_nCurEpoch(0)
+                    , m_pEpochFree( epoch_array_alloc().NewArray( m_nEpochBitmask + 1))
                     , m_pGlobalFreeHead( nullptr )
                 {
-                    for (unsigned int i = 0; i < sizeof(m_pEpochFree)/sizeof(m_pEpochFree[0]); ++i )
+                    
+                    for (unsigned int i = 0; i <= m_nEpochBitmask; ++i )
                         m_pEpochFree[i].store( nullptr, atomics::memory_order_relaxed );
 
                     allocNewBlock();
@@ -396,11 +401,14 @@ namespace cds { namespace gc {
 
                 ~retired_ptr_pool()
                 {
+                    block_allocator a;
                     block * p;
                     for ( block * pBlock = m_pBlockListHead.load(atomics::memory_order_relaxed); pBlock; pBlock = p ) {
                         p = pBlock->pNext.load( atomics::memory_order_relaxed );
-                        m_BlockAllocator.Delete( pBlock );
+                        a.Delete( pBlock );
                     }
+
+                    epoch_array_alloc().Delete( m_pEpochFree, m_nEpochBitmask + 1 );
                 }
 
                 /// Increments current epoch
@@ -746,18 +754,23 @@ namespace cds { namespace gc {
                 After calling of this function you may use CDS data structures based on cds::gc::DHP.
 
                 \par Parameters
-                \li \p nLiberateThreshold - \p scan() threshold. When count of retired pointers reaches this value,
+                - \p nLiberateThreshold - \p scan() threshold. When count of retired pointers reaches this value,
                     the \ref dhp_gc_liberate "scan()" member function would be called for freeing retired pointers.
                     If \p nLiberateThreshold <= 1, \p scan() would called after each \ref dhp_gc_retirePtr "retirePtr" call.
-                \li \p nInitialThreadGuardCount - initial count of guard allocated for ThreadGC. When a thread
+                - \p nInitialThreadGuardCount - initial count of guard allocated for ThreadGC. When a thread
                     is initialized the GC allocates local guard pool for the thread from common guard pool.
                     By perforce the local thread's guard pool is grown automatically from common pool.
                     When the thread terminated its guard pool is backed to common GC's pool.
+                - \p nEpochCount: internally, DHP memory manager uses epoch-based schema to solve
+                    ABA problem for internal data. \p nEpochCount specifies the epoch count, 
+                    i.e. the count of simultaneously working threads that remove the elements
+                    of DHP-based concurrent data structure. Default value is 8.
 
             */
             static void CDS_STDCALL Construct(
                 size_t nLiberateThreshold = 1024
                 , size_t nInitialThreadGuardCount = 8
+                , size_t nEpochCount = 8
             );
 
             /// Destroys DHP memory manager
@@ -860,7 +873,7 @@ namespace cds { namespace gc {
             }
 
         private:
-            GarbageCollector( size_t nLiberateThreshold, size_t nInitialThreadGuardCount );
+            GarbageCollector( size_t nLiberateThreshold, size_t nInitialThreadGuardCount, size_t nEpochCount );
             ~GarbageCollector();
         };
 
