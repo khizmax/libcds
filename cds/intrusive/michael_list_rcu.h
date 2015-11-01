@@ -957,18 +957,21 @@ namespace cds { namespace intrusive {
             back_off bkoff;
             check_deadlock_policy::check();
 
+            node_type * pDel;
             for (;;) {
                 {
                     rcu_lock l;
                     if ( !search( pos.refHead, val, pos, cmp ) )
                         return false;
+                    // store pCur since it may be changed by unlink_node() slow path
+                    pDel = pos.pCur;
                     if ( !unlink_node( pos, erase_mask )) {
                         bkoff();
                         continue;
                     }
                 }
-
-                f( *node_traits::to_value_ptr( *pos.pCur ) );
+                assert( pDel );
+                f( *node_traits::to_value_ptr( pDel ) );
                 --m_ItemCounter;
                 return true;
             }
