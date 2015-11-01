@@ -159,9 +159,7 @@ namespace cds { namespace gc { namespace dhp {
         , m_nInitialThreadGuardCount( nInitialThreadGuardCount ? nInitialThreadGuardCount : 8 )
         , m_RetiredAllocator( static_cast<unsigned int>(nEpochCount))
         , m_bStatEnabled( false )
-        //, m_nInLiberate(0)
-    {
-    }
+    {}
 
     GarbageCollector::~GarbageCollector()
     {
