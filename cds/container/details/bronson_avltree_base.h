@@ -340,7 +340,7 @@ namespace cds { namespace container {
             that can lead to lock contention.
 
             When this option is enabled, the new node is created before locking the parent node.
-            After that, the parent is locked and checked whether the new node may be attached to the parent.
+            After that, the parent is locked and checked whether the new node can be attached to the parent.
             In this case, false node creating can be performed, but locked section can be significantly small.
         */
         template <bool Enable>

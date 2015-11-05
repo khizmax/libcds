@@ -1462,6 +1462,7 @@ namespace cds { namespace container {
             }
 
             if ( bInserted ) {
+                ++m_ItemCounter;
                 m_stat.onInsertSuccess();
                 return update_flags::result_inserted;
             }

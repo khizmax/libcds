@@ -210,7 +210,8 @@ namespace map2 {
                 testMap.erase( nItem );
             }
             CPPUNIT_MSG( "   Duration=" << timer.duration() );
-            CPPUNIT_ASSERT_EX( testMap.empty(), ((long long) testMap.size()) );
+            CPPUNIT_CHECK( testMap.empty());
+            CPPUNIT_CHECK_EX( testMap.size() == 0, "size() == " << testMap.size() );
 
             additional_check( testMap );
             print_stat( testMap );

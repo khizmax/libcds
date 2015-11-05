@@ -214,6 +214,7 @@ namespace map2 {
                 testMap.erase( (*m_parrString)[i] );
             CPPUNIT_MSG( "   Duration=" << timer.duration() );
             CPPUNIT_CHECK( testMap.empty() );
+            CPPUNIT_CHECK_EX( testMap.size() == 0, "size() == " << testMap.size() );
 
             additional_check( testMap );
             print_stat( testMap );
