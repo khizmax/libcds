@@ -18,6 +18,8 @@
       are moved to cds::sync with new names (for example, cds::lock::SpinLock is renamed to
       cds::sync::spin_lock). cds::lock namespace and its contents is deprecated, it is kept 
       for backward compatibility.
+    - The library has been checked by ThreadSanitizer, a lot of bugs has been fixed
+    - Added support for clang 3.7 with libc++
 
 2.0.0 30.12.2014
     General release
