@@ -15,7 +15,8 @@ The coverity dataset is about 4G of size and about 1G in compressed state so it 
 The Concurrent Data Structures (CDS) library is a collection of concurrent containers
 that don't require external (manual) synchronization for shared access, and safe memory reclamation (SMR) 
 algorithms like [Hazard Pointer](http://en.wikipedia.org/wiki/Hazard_pointer) 
-and user-space [RCU](http://en.wikipedia.org/wiki/Read-copy-update). 
+and user-space [RCU](http://en.wikipedia.org/wiki/Read-copy-update) that is used as an epoch-based SMR.
+
 CDS is mostly header-only template library. Only SMR core implementation is segregated to .so/.dll file.
 
 The library contains the implementations of the following containers:
@@ -25,9 +26,12 @@ The library contains the implementations of the following containers:
   - several implementation of unordered set/map - lock-free and fine-grained lock-based
   - [flat-combining] (http://mcg.cs.tau.ac.il/projects/projects/flat-combining) technique
   - lock-free [skip-list](http://en.wikipedia.org/wiki/Skip_list)
+  - lock-free FeldmanHashMap/Set [Multi-Level Array Hash](http://samos-conference.com/Resources_Samos_Websites/Proceedings_Repository_SAMOS/2013/Files/2013-IC-20.pdf)
+    with thread-safe bidirectional iterator support
+  - Bronson's et al algorithm for fine-grained lock-based AVL tree
   
 Generally, each container has an intrusive and non-intrusive (STL-like) version belonging to 
-*cds::intrusive* and *cds::container* namespace respectively.
+*cds::intrusive* and *cds::container* namespace respectively. 
 
 Version 2.x of the library is written on C++11 and can be compiled by GCC 4.8+, clang 3.3+, Intel C++ 15+, 
 and MS VC++ 12 (2013) Update 4.
