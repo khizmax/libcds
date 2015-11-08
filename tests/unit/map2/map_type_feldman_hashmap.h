@@ -69,35 +69,6 @@ namespace map2 {
         typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_stdhash_stat >    FeldmanHashMap_rcu_sht_stdhash_stat;
 #endif
 
-        //MD5
-        struct traits_FeldmanHashMap_md5 : public cc::feldman_hashmap::traits
-        {
-            typedef ::hashing::md5 hash;
-        };
-        typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_md5 >    FeldmanHashMap_hp_md5;
-        typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_md5 >    FeldmanHashMap_dhp_md5;
-        typedef FeldmanHashMap< rcu_gpi, Key, Value, traits_FeldmanHashMap_md5 >    FeldmanHashMap_rcu_gpi_md5;
-        typedef FeldmanHashMap< rcu_gpb, Key, Value, traits_FeldmanHashMap_md5 >    FeldmanHashMap_rcu_gpb_md5;
-        typedef FeldmanHashMap< rcu_gpt, Key, Value, traits_FeldmanHashMap_md5 >    FeldmanHashMap_rcu_gpt_md5;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashMap< rcu_shb, Key, Value, traits_FeldmanHashMap_md5 >    FeldmanHashMap_rcu_shb_md5;
-        typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_md5 >    FeldmanHashMap_rcu_sht_md5;
-#endif
-
-        struct traits_FeldmanHashMap_md5_stat : public traits_FeldmanHashMap_md5
-        {
-            typedef cc::feldman_hashmap::stat<> stat;
-        };
-        typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_md5_stat >    FeldmanHashMap_hp_md5_stat;
-        typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_md5_stat >    FeldmanHashMap_dhp_md5_stat;
-        typedef FeldmanHashMap< rcu_gpi, Key, Value, traits_FeldmanHashMap_md5_stat >    FeldmanHashMap_rcu_gpi_md5_stat;
-        typedef FeldmanHashMap< rcu_gpb, Key, Value, traits_FeldmanHashMap_md5_stat >    FeldmanHashMap_rcu_gpb_md5_stat;
-        typedef FeldmanHashMap< rcu_gpt, Key, Value, traits_FeldmanHashMap_md5_stat >    FeldmanHashMap_rcu_gpt_md5_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashMap< rcu_shb, Key, Value, traits_FeldmanHashMap_md5_stat >    FeldmanHashMap_rcu_shb_md5_stat;
-        typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_md5_stat >    FeldmanHashMap_rcu_sht_md5_stat;
-#endif
-
         // CityHash
 #if CDS_BUILD_BITS == 64
         struct traits_FeldmanHashMap_city64 : public cc::feldman_hashmap::traits

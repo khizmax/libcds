@@ -494,7 +494,6 @@
     <ClInclude Include="..\..\..\tests\cppunit\file_reporter.h" />
     <ClInclude Include="..\..\..\tests\hashing\city.h" />
     <ClInclude Include="..\..\..\tests\hashing\hash_func.h" />
-    <ClInclude Include="..\..\..\tests\hashing\md5.h" />
     <ClInclude Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.h" />
     <ClInclude Include="..\..\..\tests\unit\michael_alloc.h" />
     <ClInclude Include="..\..\..\tests\cppunit\test_beans.h" />
@@ -515,7 +514,6 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\hashing\md5.cpp" />
     <ClCompile Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.cpp" />
     <ClCompile Include="..\..\..\tests\unit\michael_alloc.cpp" />
     <ClCompile Include="..\..\..\tests\cppunit\test_main.cpp">

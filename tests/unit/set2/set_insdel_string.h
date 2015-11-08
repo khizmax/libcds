@@ -518,7 +518,6 @@ namespace set2 {
         CDSUNIT_DECLARE_SkipListSet
         CDSUNIT_DECLARE_EllenBinTreeSet
         CDSUNIT_DECLARE_FeldmanHashSet_stdhash
-        CDSUNIT_DECLARE_FeldmanHashSet_md5
         CDSUNIT_DECLARE_FeldmanHashSet_city
         CDSUNIT_DECLARE_StdSet
 
@@ -527,7 +526,6 @@ namespace set2 {
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListSet
             CDSUNIT_TEST_FeldmanHashSet_stdhash
-            CDSUNIT_TEST_FeldmanHashSet_md5
             CDSUNIT_TEST_FeldmanHashSet_city
             CDSUNIT_TEST_EllenBinTreeSet
             CDSUNIT_TEST_StripedSet

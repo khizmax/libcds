@@ -216,7 +216,6 @@ namespace map2 {
         CDSUNIT_DECLARE_SkipListMap_nogc
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
-        CDSUNIT_DECLARE_FeldmanHashMap_md5
         CDSUNIT_DECLARE_FeldmanHashMap_city
         CDSUNIT_DECLARE_StripedMap
         CDSUNIT_DECLARE_RefinableMap
@@ -233,7 +232,6 @@ namespace map2 {
             CDSUNIT_TEST_SkipListMap_nogc
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
-            CDSUNIT_TEST_FeldmanHashMap_md5
             CDSUNIT_TEST_FeldmanHashMap_city
             CDSUNIT_TEST_CuckooMap
             CDSUNIT_TEST_StripedMap

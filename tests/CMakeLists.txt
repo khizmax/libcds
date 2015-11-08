@@ -6,8 +6,7 @@ set(SOURCES cppunit/test_main.cpp
             cppunit/thread.cpp
             unit/michael_alloc.cpp
             unit/ellen_bintree_update_desc_pool.cpp
-            hashing/city.cpp
-            hashing/md5.cpp)
+            hashing/city.cpp)
 
 add_library(${TEST_COMMON} OBJECT ${SOURCES})
 

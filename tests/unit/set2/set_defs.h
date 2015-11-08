@@ -720,57 +720,6 @@
     CDSUNIT_TEST_FeldmanHashSet_stdhash_RCU_signal
 
 
-// MD5
-#undef CDSUNIT_DECLARE_FeldmanHashSet_md5
-#undef CDSUNIT_DECLARE_FeldmanHashSet_md5_RCU_signal
-#undef CDSUNIT_TEST_FeldmanHashSet_md5
-#undef CDSUNIT_TEST_FeldmanHashSet_md5_RCU_signal
-
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-#   define CDSUNIT_DECLARE_FeldmanHashSet_md5_RCU_signal  \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_shb_md5) \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_shb_md5_stat) \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_sht_md5) \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_sht_md5_stat) \
-
-#   define CDSUNIT_TEST_FeldmanHashSet_md5_RCU_signal \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_shb_md5) \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_shb_md5_stat) \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_sht_md5) \
-        TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_sht_md5_stat) \
-
-#else
-#   define CDSUNIT_DECLARE_FeldmanHashSet_md5_RCU_signal
-#   define CDSUNIT_TEST_FeldmanHashSet_md5_RCU_signal
-#endif
-
-#define CDSUNIT_DECLARE_FeldmanHashSet_md5  \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_hp_md5) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_hp_md5_stat) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_dhp_md5) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_dhp_md5_stat) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_gpi_md5) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_gpi_md5_stat) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_gpb_md5) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_gpb_md5_stat) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_gpt_md5) \
-    TEST_CASE(tag_FeldmanHashSet, FeldmanHashSet_rcu_gpt_md5_stat) \
-    CDSUNIT_DECLARE_FeldmanHashSet_md5_RCU_signal
-
-#define CDSUNIT_TEST_FeldmanHashSet_md5  \
-    CPPUNIT_TEST(FeldmanHashSet_hp_md5) \
-    CPPUNIT_TEST(FeldmanHashSet_hp_md5_stat) \
-    CPPUNIT_TEST(FeldmanHashSet_dhp_md5) \
-    CPPUNIT_TEST(FeldmanHashSet_dhp_md5_stat) \
-    CPPUNIT_TEST(FeldmanHashSet_rcu_gpi_md5) \
-    CPPUNIT_TEST(FeldmanHashSet_rcu_gpi_md5_stat) \
-    CPPUNIT_TEST(FeldmanHashSet_rcu_gpb_md5) \
-    CPPUNIT_TEST(FeldmanHashSet_rcu_gpb_md5_stat) \
-    CPPUNIT_TEST(FeldmanHashSet_rcu_gpt_md5) \
-    CPPUNIT_TEST(FeldmanHashSet_rcu_gpt_md5_stat) \
-    CDSUNIT_TEST_FeldmanHashSet_md5_RCU_signal
-
-
 // CityHash -only for 64bit 
 #undef CDSUNIT_DECLARE_FeldmanHashSet_city
 #undef CDSUNIT_DECLARE_FeldmanHashSet_city_RCU_signal
@@ -863,11 +812,9 @@
 #define CDSUNIT_DECLARE_FeldmanHashSet \
     CDSUNIT_DECLARE_FeldmanHashSet_fixed \
     CDSUNIT_DECLARE_FeldmanHashSet_stdhash \
-    CDSUNIT_DECLARE_FeldmanHashSet_md5 \
     CDSUNIT_DECLARE_FeldmanHashSet_city
 
 #define CDSUNIT_TEST_FeldmanHashSet \
     CDSUNIT_TEST_FeldmanHashSet_fixed \
     CDSUNIT_TEST_FeldmanHashSet_stdhash \
-    CDSUNIT_TEST_FeldmanHashSet_md5 \
     CDSUNIT_TEST_FeldmanHashSet_city

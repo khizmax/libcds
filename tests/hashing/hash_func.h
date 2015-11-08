@@ -5,44 +5,11 @@
 
 #include <cds/details/defs.h>
 
-#include "hashing/md5.h"
 #if CDS_BUILD_BITS == 64
 #   include "hashing/city.h"
 #endif
 
 namespace hashing {
-
-    template <class Hasher>
-    class hasher {
-        typedef Hasher hasher_type;
-        hasher_type m_hasher;
-    public:
-        struct hash_type {
-            uint8_t h[hasher_type::HashBytes];
-        };
-
-        hash_type operator()( void const * pBuf, size_t len )
-        {
-            m_hasher.reset();
-            m_hasher.add(pBuf, len);
-            hash_type result;
-            m_hasher.getHash( result.h );
-            return result;
-        }
-
-        hash_type operator()( std::string const& s )
-        {
-            return operator()( reinterpret_cast<void const *>(s.c_str()), s.length());
-        }
-
-        template <typename T>
-        hash_type operator()( T const& s )
-        {
-            return operator()( reinterpret_cast<void const *>(&s), sizeof(s));
-        }
-    };
-
-    typedef hasher<MD5> md5;
 
 #if CDS_BUILD_BITS == 64
     class city32 {

@@ -152,31 +152,6 @@ namespace set2 {
         typedef FeldmanHashSet< rcu_sht, key_val<std::hash<key_type>>, traits_FeldmanHashSet_stat >    FeldmanHashSet_rcu_sht_stdhash_stat;
 #endif
 
-        //MD5
-        typedef FeldmanHashSet< cds::gc::HP,  key_val<::hashing::md5>, default_traits >    FeldmanHashSet_hp_md5;
-        typedef FeldmanHashSet< cds::gc::DHP, key_val<::hashing::md5>, default_traits >    FeldmanHashSet_dhp_md5;
-        typedef FeldmanHashSet< rcu_gpi, key_val<::hashing::md5>, default_traits >    FeldmanHashSet_rcu_gpi_md5;
-        typedef FeldmanHashSet< rcu_gpb, key_val<::hashing::md5>, default_traits >    FeldmanHashSet_rcu_gpb_md5;
-        typedef FeldmanHashSet< rcu_gpt, key_val<::hashing::md5>, default_traits >    FeldmanHashSet_rcu_gpt_md5;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashSet< rcu_shb, key_val<::hashing::md5>, default_traits >    FeldmanHashSet_rcu_shb_md5;
-        typedef FeldmanHashSet< rcu_sht, key_val<::hashing::md5>, default_traits >    FeldmanHashSet_rcu_sht_md5;
-#endif
-
-        struct traits_FeldmanHashSet_md5_stat : public default_traits
-        {
-            typedef cc::feldman_hashset::stat<> stat;
-        };
-        typedef FeldmanHashSet< cds::gc::HP,  key_val<::hashing::md5>, traits_FeldmanHashSet_md5_stat >    FeldmanHashSet_hp_md5_stat;
-        typedef FeldmanHashSet< cds::gc::DHP, key_val<::hashing::md5>, traits_FeldmanHashSet_md5_stat >    FeldmanHashSet_dhp_md5_stat;
-        typedef FeldmanHashSet< rcu_gpi, key_val<::hashing::md5>, traits_FeldmanHashSet_md5_stat >    FeldmanHashSet_rcu_gpi_md5_stat;
-        typedef FeldmanHashSet< rcu_gpb, key_val<::hashing::md5>, traits_FeldmanHashSet_md5_stat >    FeldmanHashSet_rcu_gpb_md5_stat;
-        typedef FeldmanHashSet< rcu_gpt, key_val<::hashing::md5>, traits_FeldmanHashSet_md5_stat >    FeldmanHashSet_rcu_gpt_md5_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashSet< rcu_shb, key_val<::hashing::md5>, traits_FeldmanHashSet_md5_stat >    FeldmanHashSet_rcu_shb_md5_stat;
-        typedef FeldmanHashSet< rcu_sht, key_val<::hashing::md5>, traits_FeldmanHashSet_md5_stat >    FeldmanHashSet_rcu_sht_md5_stat;
-#endif
-
         // CityHash
 #if CDS_BUILD_BITS == 64
         struct traits_FeldmanHashSet_city64 : public default_traits
