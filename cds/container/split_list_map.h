@@ -237,7 +237,7 @@ namespace cds { namespace container {
         bool insert( K const& key )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, mapped_type() ) );
+            return base_class::insert( std::make_pair( key, mapped_type()));
         }
 
         /// Inserts new node
@@ -255,7 +255,7 @@ namespace cds { namespace container {
         bool insert( K const& key, V const& val )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair(key, val) );
+            return base_class::insert( std::make_pair(key, val));
         }
 
         /// Inserts new node and initialize it by a functor
@@ -293,7 +293,7 @@ namespace cds { namespace container {
         bool insert_with( K const& key, Func func )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, mapped_type() ), func );
+            return base_class::insert( std::make_pair( key, mapped_type()), func );
         }
 
         /// For key \p key inserts data of type \p mapped_type created from \p args
@@ -338,7 +338,7 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::update( std::make_pair( key, mapped_type() ),
+            return base_class::update( std::make_pair( key, mapped_type()),
                 [&func](bool bNew, value_type& item, value_type const& /*val*/) {
                     func( bNew, item );
                 },
@@ -375,7 +375,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 
         /// Deletes \p key from the map
@@ -461,7 +461,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             guarded_ptr gp;
-            base_class::extract_with_( gp.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            base_class::extract_with_( gp.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
             return gp;
         }
 
@@ -539,7 +539,7 @@ namespace cds { namespace container {
         bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
         //@cond
         template <typename K, typename Less>
@@ -598,7 +598,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             guarded_ptr gp;
-            base_class::get_with_( gp.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            base_class::get_with_( gp.guard(), key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
             return gp;
         }
 

@@ -59,7 +59,10 @@ namespace cds { namespace intrusive {
     >
     class FeldmanHashSet< cds::urcu::gc< RCU >, T, Traits >: protected feldman_hashset::multilevel_array<T, Traits>
     {
+        //@cond
         typedef feldman_hashset::multilevel_array<T, Traits> base_class;
+        //@endcond
+
     public:
         typedef cds::urcu::gc< RCU > gc; ///< RCU garbage collector
         typedef T       value_type;      ///< type of value stored in the set
@@ -431,7 +434,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear_array( head(), head_size() );
+            clear_array( head(), head_size());
         }
 
         /// Checks if the set is empty
@@ -1018,7 +1021,7 @@ namespace cds { namespace intrusive {
                     rcu_lock rcuLock;
 
                     if ( pos.pArr->nodes[pos.nSlot].load(memory_model::memory_order_acquire) == slot) {
-                        if ( slot.ptr() ) {
+                        if ( slot.ptr()) {
                             if ( cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
                                 // the item with that hash value already exists
                                 // Replace it with val
@@ -1097,10 +1100,10 @@ namespace cds { namespace intrusive {
                 assert( slot.bits() == 0 );
 
                 if ( pos.pArr->nodes[pos.nSlot].load( memory_model::memory_order_acquire ) == slot ) {
-                    if ( slot.ptr() ) {
-                        if ( cmp( hash, hash_accessor()(*slot.ptr()) ) == 0 && pred( *slot.ptr() ) ) {
+                    if ( slot.ptr()) {
+                        if ( cmp( hash, hash_accessor()(*slot.ptr())) == 0 && pred( *slot.ptr())) {
                             // item found - replace it with nullptr
-                            if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong( slot, node_ptr( nullptr ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                            if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong( slot, node_ptr( nullptr ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                                 --m_ItemCounter;
                                 stats().onEraseSuccess();
 
@@ -1125,7 +1128,7 @@ namespace cds { namespace intrusive {
 
         value_type * search(hash_type const& hash )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
             traverse_data pos( hash, *this );
             hash_comparator cmp;
 
@@ -1137,7 +1140,7 @@ namespace cds { namespace intrusive {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
                 }
-                else if ( slot.ptr() && cmp( hash, hash_accessor()(*slot.ptr()) ) == 0 ) {
+                else if ( slot.ptr() && cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
                     // item found
                     stats().onFindSuccess();
                     return slot.ptr();

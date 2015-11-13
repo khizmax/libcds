@@ -49,15 +49,15 @@ namespace map2 {
                 , nData(0)
                 , nUpdateCall(0)
                 , bInitialized( false )
-                , threadId( cds::OS::get_current_thread_id() )
+                , threadId( cds::OS::get_current_thread_id())
             {}
 
             value_type( value_type const& s )
                 : nKey(s.nKey)
                 , nData(s.nData)
                 , nUpdateCall(s.nUpdateCall.load(atomics::memory_order_relaxed))
-                , bInitialized( s.bInitialized.load(atomics::memory_order_relaxed) )
-                , threadId( cds::OS::get_current_thread_id() )
+                , bInitialized( s.bInitialized.load(atomics::memory_order_relaxed))
+                , threadId( cds::OS::get_current_thread_id())
             {}
 
             // boost::container::flat_map requires operator =
@@ -151,7 +151,7 @@ namespace map2 {
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
-                            if ( rMap.insert_with( *it, std::ref(func) ) )
+                            if ( rMap.insert_with( *it, std::ref(func)))
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -161,7 +161,7 @@ namespace map2 {
                 else {
                     for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                            if ( rMap.insert_with( *it, std::ref(func) ) )
+                            if ( rMap.insert_with( *it, std::ref(func)))
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -195,7 +195,7 @@ namespace map2 {
                 template <typename Key, typename Val>
                 void operator()( bool bNew, Key const& key, Val& v )
                 {
-                    std::unique_lock<typename value_type::lock_type>    ac( v.m_access );
+                    std::unique_lock<typename value_type::lock_type> ac( v.m_access );
                     if ( bNew ) {
                         ++nCreated;
                         v.nKey = key;
@@ -266,8 +266,7 @@ namespace map2 {
                 if ( m_nThreadNo & 1 ) {
                     for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
-                        //for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
-                            std::pair<bool, bool> ret = rMap.update( *it, std::ref( func ) );
+                            std::pair<bool, bool> ret = rMap.update( *it, std::ref( func ));
                             if ( ret.first  ) {
                                 if ( ret.second )
                                     ++m_nUpdateCreated;
@@ -282,7 +281,7 @@ namespace map2 {
                 else {
                     for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
-                            std::pair<bool, bool> ret = rMap.update( *it, std::ref( func ) );
+                            std::pair<bool, bool> ret = rMap.update( *it, std::ref( func ));
                             if ( ret.first  ) {
                                 if ( ret.second )
                                     ++m_nUpdateCreated;
@@ -394,7 +393,7 @@ namespace map2 {
                     for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = arr.begin(), itEnd = arr.end(); it != itEnd; ++it ) {
                             func.m_cnt.nKeyExpected = *it;
-                            if ( rMap.erase( *it, std::ref(func) ))
+                            if ( rMap.erase( *it, std::ref(func)))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
@@ -405,7 +404,7 @@ namespace map2 {
                     for ( size_t nPass = 0; nPass < nPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = arr.rbegin(), itEnd = arr.rend(); it != itEnd; ++it ) {
                             func.m_cnt.nKeyExpected = *it;
-                            if ( rMap.erase( *it, std::ref(func) ))
+                            if ( rMap.erase( *it, std::ref(func)))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
@@ -432,14 +431,14 @@ namespace map2 {
             m_arrValues.reserve( c_nMapSize );
             for ( size_t i = 0; i < c_nMapSize; ++i )
                 m_arrValues.push_back( i );
-            shuffle( m_arrValues.begin(), m_arrValues.end() );
+            shuffle( m_arrValues.begin(), m_arrValues.end());
 
             CppUnitMini::ThreadPool pool( *this );
             pool.add( new InserterThread( pool, testMap ), c_nInsertThreadCount );
             pool.add( new DeleterThread( pool, testMap ), c_nDeleteThreadCount );
             pool.add( new UpdaterThread( pool, testMap ), c_nUpdateThreadCount );
             pool.run();
-            CPPUNIT_MSG( "   Duration=" << pool.avgDuration() );
+            CPPUNIT_MSG( "   Duration=" << pool.avgDuration());
 
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
@@ -507,8 +506,8 @@ namespace map2 {
             for ( size_t nItem = 0; nItem < c_nMapSize; ++nItem ) {
                 testMap.erase( nItem );
             }
-            CPPUNIT_MSG( "   Duration=" << timer.duration() );
-            CPPUNIT_CHECK( testMap.empty() );
+            CPPUNIT_MSG( "   Duration=" << timer.duration());
+            CPPUNIT_CHECK( testMap.empty());
 
             additional_check( testMap );
             print_stat( testMap );

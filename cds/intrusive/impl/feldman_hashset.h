@@ -92,7 +92,9 @@ namespace cds { namespace intrusive {
     >
     class FeldmanHashSet: protected feldman_hashset::multilevel_array<T, Traits>
     {
+        //@cond
         typedef feldman_hashset::multilevel_array<T, Traits> base_class;
+        //@endcond
 
     public:
         typedef GC      gc;         ///< Garbage collector
@@ -229,7 +231,7 @@ namespace cds { namespace intrusive {
                         if ( slot.bits() == base_class::flag_array_node ) {
                             // array node, go down the tree
                             assert( slot.ptr() != nullptr );
-                            pNode = to_array( slot.ptr() );
+                            pNode = to_array( slot.ptr());
                             idx = 0;
                             nodeSize = arrayNodeSize;
                         }
@@ -258,7 +260,7 @@ namespace cds { namespace intrusive {
                         }
                         else {
                             // end()
-                            assert( pNode == m_set->head() );
+                            assert( pNode == m_set->head());
                             assert( idx == headSize );
                             m_pNode = pNode;
                             m_idx = idx;
@@ -287,7 +289,7 @@ namespace cds { namespace intrusive {
                         if ( slot.bits() == base_class::flag_array_node ) {
                             // array node, go down the tree
                             assert( slot.ptr() != nullptr );
-                            pNode = to_array( slot.ptr() );
+                            pNode = to_array( slot.ptr());
                             nodeSize = arrayNodeSize;
                             idx = nodeSize - 1;
                         }
@@ -316,7 +318,7 @@ namespace cds { namespace intrusive {
                         }
                         else {
                             // rend()
-                            assert( pNode == m_set->head() );
+                            assert( pNode == m_set->head());
                             assert( idx == endIdx );
                             m_pNode = pNode;
                             m_idx = idx;
@@ -342,7 +344,7 @@ namespace cds { namespace intrusive {
         template <class Iterator>
         Iterator init_rbegin() const
         {
-            return Iterator( *this, head(), head_size() );
+            return Iterator( *this, head(), head_size());
         }
 
         template <class Iterator>
@@ -846,7 +848,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear_array( head(), head_size() );
+            clear_array( head(), head_size());
         }
 
         /// Checks if the set is empty
@@ -964,19 +966,19 @@ namespace cds { namespace intrusive {
         /// Returns a reverse iterator to the first element of the reversed set
         reverse_iterator rbegin()
         {
-            return reverse_iterator( *this, head(), head_size() );
+            return reverse_iterator( *this, head(), head_size());
         }
 
         /// Returns a const reverse iterator to the first element of the reversed set
         const_reverse_iterator rbegin() const
         {
-            return const_reverse_iterator( *this, head(), head_size() );
+            return const_reverse_iterator( *this, head(), head_size());
         }
 
         /// Returns a const reverse iterator to the first element of the reversed set
         const_reverse_iterator crbegin()
         {
-            return const_reverse_iterator( *this, head(), head_size() );
+            return const_reverse_iterator( *this, head(), head_size());
         }
 
         /// Returns a reverse iterator to the element following the last element of the reversed set
@@ -1022,7 +1024,7 @@ namespace cds { namespace intrusive {
                     if ( slot.bits() == base_class::flag_array_node ) {
                         // array node, go down the tree
                         assert( slot.ptr() != nullptr );
-                        clear_array( to_array( slot.ptr()), array_node_size() );
+                        clear_array( to_array( slot.ptr()), array_node_size());
                         break;
                     }
                     else if ( slot.bits() == base_class::flag_array_converting ) {
@@ -1035,14 +1037,14 @@ namespace cds { namespace intrusive {
 
                         assert( slot.ptr() != nullptr );
                         assert( slot.bits() == base_class::flag_array_node );
-                        clear_array( to_array( slot.ptr()), array_node_size() );
+                        clear_array( to_array( slot.ptr()), array_node_size());
                         break;
                     }
                     else {
                         // data node
                         if ( pArr->compare_exchange_strong( slot, node_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
-                            if ( slot.ptr() ) {
-                                gc::template retire<disposer>( slot.ptr() );
+                            if ( slot.ptr()) {
+                                gc::template retire<disposer>( slot.ptr());
                                 --m_ItemCounter;
                                 stats().onEraseSuccess();
                             }
@@ -1125,15 +1127,15 @@ namespace cds { namespace intrusive {
                 return false;
             if ( iter.m_pNode == head() && iter.m_idx >= head_size())
                 return false;
-            if ( iter.m_idx >= array_node_size() )
+            if ( iter.m_idx >= array_node_size())
                 return false;
 
             for (;;) {
                 node_ptr slot = iter.m_pNode->nodes[iter.m_idx].load( memory_model::memory_order_acquire );
-                if ( slot.bits() == 0 && slot.ptr() == iter.pointer() ) {
-                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed) ) {
+                if ( slot.bits() == 0 && slot.ptr() == iter.pointer()) {
+                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed)) {
                         // the item is guarded by iterator, so we may retire it safely
-                        gc::template retire<disposer>( slot.ptr() );
+                        gc::template retire<disposer>( slot.ptr());
                         --m_ItemCounter;
                         stats().onEraseSuccess();
                         return true;

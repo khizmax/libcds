@@ -451,7 +451,7 @@ namespace cds { namespace container {
         /// Delete \p key from the map
         /**
             \p key_type must be constructible from value of type \p K.
-            The function deeltes the element with hash value equal to <tt>hash( key_type( key ))</tt>
+            The function deletes the element with hash value equal to <tt>hash( key_type( key ))</tt>
 
             Return \p true if \p key is found and deleted, \p false otherwise.
 

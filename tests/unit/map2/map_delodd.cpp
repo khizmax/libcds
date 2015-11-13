@@ -33,8 +33,8 @@ namespace map2 {
             m_arrInsert[i] = i;
             m_arrRemove[i] = i;
         }
-        shuffle( m_arrInsert.begin(), m_arrInsert.end() );
-        shuffle( m_arrRemove.begin(), m_arrRemove.end() );
+        shuffle( m_arrInsert.begin(), m_arrInsert.end());
+        shuffle( m_arrRemove.begin(), m_arrRemove.end());
     }
 
     void Map_DelOdd::endTestCase()

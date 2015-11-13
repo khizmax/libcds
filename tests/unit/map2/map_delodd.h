@@ -321,7 +321,7 @@ namespace map2 {
                                         }
                                     }
                                     else {
-                                        if ( eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0) )
+                                        if ( eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0))
                                             ++m_nDeleteSuccess;
                                         else
                                             ++m_nDeleteFailed;
@@ -602,7 +602,7 @@ namespace map2 {
             pool.add( new insert_thread( pool, testMap ), c_nInsThreadCount );
             pool.add( new delete_thread( pool, testMap ), c_nDelThreadCount ? c_nDelThreadCount : cds::OS::topology::processor_count());
             pool.run();
-            CPPUNIT_MSG( "   Duration=" << pool.avgDuration() );
+            CPPUNIT_MSG( "   Duration=" << pool.avgDuration());
 
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
@@ -647,7 +647,7 @@ namespace map2 {
             if ( c_nExtractThreadCount )
                 pool.add( new extract_thread( pool, testMap ), c_nExtractThreadCount );
             pool.run();
-            CPPUNIT_MSG( "   Duration=" << pool.avgDuration() );
+            CPPUNIT_MSG( "   Duration=" << pool.avgDuration());
 
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
@@ -698,7 +698,7 @@ namespace map2 {
                 CPPUNIT_MSG( "  Check even keys..." );
                 for ( size_t n = 0; n < c_nMapSize; n +=2 ) {
                     for ( size_t i = 0; i < c_nInsThreadCount; ++i ) {
-                        if ( !testMap.contains( key_type(n, i) ) ) {
+                        if ( !testMap.contains( key_type(n, i))) {
                             if ( ++nErrorCount < 10 ) {
                                 CPPUNIT_MSG( "key " << n << "-" << i << " is not found!");
                             }
@@ -715,8 +715,8 @@ namespace map2 {
             CPPUNIT_MSG( "  Clear map (single-threaded)..." );
             timer.reset();
             testMap.clear();
-            CPPUNIT_MSG( "   Duration=" << timer.duration() );
-            CPPUNIT_CHECK_EX( testMap.empty(), ((long long) testMap.size()) );
+            CPPUNIT_MSG( "   Duration=" << timer.duration());
+            CPPUNIT_CHECK_EX( testMap.empty(), ((long long) testMap.size()));
 
             additional_check( testMap );
             print_stat( testMap );

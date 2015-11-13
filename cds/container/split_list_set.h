@@ -208,7 +208,7 @@ namespace cds { namespace container {
             assert( pNode != nullptr );
             scoped_node_ptr p(pNode);
 
-            if ( base_class::insert( *pNode ) ) {
+            if ( base_class::insert( *pNode )) {
                 p.release();
                 return true;
             }
@@ -335,7 +335,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return iterator( base_class::begin());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a set
@@ -346,7 +346,7 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( base_class::end() );
+            return iterator( base_class::end());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -357,7 +357,7 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
@@ -368,7 +368,7 @@ namespace cds { namespace container {
         /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
-            return const_iterator( base_class::cend() );
+            return const_iterator( base_class::cend());
         }
 
     public:
@@ -386,7 +386,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool insert( Q const& val )
         {
-            return insert_node( alloc_node( val ) );
+            return insert_node( alloc_node( val ));
         }
 
         /// Inserts new node
@@ -506,7 +506,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, typename maker::template predicate_wrapper<Less>::type() );
+            return base_class::erase_with( key, typename maker::template predicate_wrapper<Less>::type());
         }
 
         /// Deletes \p key from the set
@@ -692,7 +692,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, typename maker::template predicate_wrapper<Less>::type() );
+            return base_class::contains( key, typename maker::template predicate_wrapper<Less>::type());
         }
         //@cond
         template <typename Q, typename Less>
@@ -791,14 +791,14 @@ namespace cds { namespace container {
         bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::extract_with_( guard, key, typename maker::template predicate_wrapper<Less>::type() );
+            return base_class::extract_with_( guard, key, typename maker::template predicate_wrapper<Less>::type());
         }
 
         template <typename Q, typename Less>
         bool get_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::get_with_( guard, key, typename maker::template predicate_wrapper<Less>::type() );
+            return base_class::get_with_( guard, key, typename maker::template predicate_wrapper<Less>::type());
         }
 
         //@endcond
