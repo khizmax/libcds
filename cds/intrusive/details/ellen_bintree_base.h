@@ -221,6 +221,11 @@ namespace cds { namespace intrusive {
             {
                 return update_ptr( reinterpret_cast<update_desc_type *>( (++m_nEmptyUpdate << 2) & 0xFFFF ) );
             }
+
+            base_class * get_child( bool bRight, atomics::memory_order mo ) const
+            {
+                return bRight ? m_pRight.load( mo ) : m_pLeft.load( mo );
+            }
             //@endcond
         };
 
@@ -397,33 +402,33 @@ namespace cds { namespace intrusive {
         /// EllenBinTree empty statistics
         struct empty_stat {
             //@cond
-            void    onInternalNodeCreated()         {}
-            void    onInternalNodeDeleted()         {}
-            void    onUpdateDescCreated()           {}
-            void    onUpdateDescDeleted()           {}
-            void    onInsertSuccess()               {}
-            void    onInsertFailed()                {}
-            void    onInsertRetry()                 {}
-            void    onEnsureExist()                 {}
-            void    onEnsureNew()                   {}
-            void    onEnsureRetry()                 {}
-            void    onEraseSuccess()                {}
-            void    onEraseFailed()                 {}
-            void    onEraseRetry()                  {}
-            void    onExtractMinSuccess()           {}
-            void    onExtractMinFailed()            {}
-            void    onExtractMinRetry()             {}
-            void    onExtractMaxSuccess()           {}
-            void    onExtractMaxFailed()            {}
-            void    onExtractMaxRetry()             {}
-            void    onFindSuccess()                 {}
-            void    onFindFailed()                  {}
-            void    onSearchRetry()                 {}
-            void    onHelpInsert()                  {}
-            void    onHelpDelete()                  {}
-            void    onHelpMark()                    {}
-            void    onHelpGuardSuccess()            {}
-            void    onHelpGuardFailed()             {}
+            void    onInternalNodeCreated()         const {}
+            void    onInternalNodeDeleted()         const {}
+            void    onUpdateDescCreated()           const {}
+            void    onUpdateDescDeleted()           const {}
+            void    onInsertSuccess()               const {}
+            void    onInsertFailed()                const {}
+            void    onInsertRetry()                 const {}
+            void    onEnsureExist()                 const {}
+            void    onEnsureNew()                   const {}
+            void    onEnsureRetry()                 const {}
+            void    onEraseSuccess()                const {}
+            void    onEraseFailed()                 const {}
+            void    onEraseRetry()                  const {}
+            void    onExtractMinSuccess()           const {}
+            void    onExtractMinFailed()            const {}
+            void    onExtractMinRetry()             const {}
+            void    onExtractMaxSuccess()           const {}
+            void    onExtractMaxFailed()            const {}
+            void    onExtractMaxRetry()             const {}
+            void    onFindSuccess()                 const {}
+            void    onFindFailed()                  const {}
+            void    onSearchRetry()                 const {}
+            void    onHelpInsert()                  const {}
+            void    onHelpDelete()                  const {}
+            void    onHelpMark()                    const {}
+            void    onHelpGuardSuccess()            const {}
+            void    onHelpGuardFailed()             const {}
             //@endcond
         };
 
