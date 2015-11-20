@@ -3,10 +3,11 @@
 #ifndef CDSLIB_URCU_DETAILS_SIG_THREADED_H
 #define CDSLIB_URCU_DETAILS_SIG_THREADED_H
 
-#include <mutex>    //unique_lock
 #include <cds/urcu/details/sh.h>
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 
+#include <mutex>    //unique_lock
+#include <limits>
 #include <cds/urcu/dispose_thread.h>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
@@ -150,7 +151,7 @@ namespace cds { namespace urcu {
                 if ( bDetachAll )
                     pThis->m_ThreadList.detach_all();
 
-                pThis->m_DisposerThread.stop( pThis->m_Buffer, pThis->m_nCurEpoch.load( atomics::memory_order_acquire ));
+                pThis->m_DisposerThread.stop( pThis->m_Buffer, std::numeric_limits< uint64_t >::max());
 
                 delete pThis;
                 singleton_ptr::s_pRCU = nullptr;

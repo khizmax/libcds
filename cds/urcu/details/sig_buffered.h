@@ -7,6 +7,7 @@
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 
 #include <mutex>
+#include <limits>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
 
@@ -97,7 +98,7 @@ namespace cds { namespace urcu {
 
         ~signal_buffered()
         {
-            clear_buffer( (uint64_t) -1 );
+            clear_buffer( std::numeric_limits< uint64_t >::max() );
         }
 
         void clear_buffer( uint64_t nEpoch )
@@ -145,7 +146,7 @@ namespace cds { namespace urcu {
         static void Destruct( bool bDetachAll = false )
         {
             if ( isUsed() ) {
-                instance()->clear_buffer( (uint64_t) -1 );
+                instance()->clear_buffer( std::numeric_limits< uint64_t >::max());
                 if ( bDetachAll )
                     instance()->m_ThreadList.detach_all();
                 delete instance();

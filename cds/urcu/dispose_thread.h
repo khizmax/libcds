@@ -72,6 +72,8 @@ namespace cds { namespace urcu {
             uint64_t        nCurEpoch;
             bool            bQuit = false;
 
+            epoch_retired_ptr rest;
+
             while ( !bQuit ) {
                 {
                     unique_lock lock( m_Mutex );
@@ -93,23 +95,30 @@ namespace cds { namespace urcu {
                     m_pBuffer = nullptr;
                 }
 
+                if ( rest.m_p ) {
+                    assert( rest.m_nEpoch < nCurEpoch );
+                    rest.free();
+                }
+
                 if ( pBuffer )
-                    dispose_buffer( pBuffer, nCurEpoch );
+                    rest = dispose_buffer( pBuffer, nCurEpoch );
             }
         }
 
-        void dispose_buffer( buffer_type * pBuf, uint64_t nCurEpoch )
+        epoch_retired_ptr dispose_buffer( buffer_type * pBuf, uint64_t nCurEpoch )
         {
             epoch_retired_ptr p;
-            while ( pBuf->pop( p ) ) {
+            while ( pBuf->pop( p )) {
                 if ( p.m_nEpoch <= nCurEpoch ) {
                     p.free();
                 }
                 else {
-                    pBuf->push( p );
+                    if ( !pBuf->push( p ))
+                        return p;
                     break;
                 }
             }
+            return epoch_retired_ptr();
         }
         //@endcond
 

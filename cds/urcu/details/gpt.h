@@ -4,6 +4,7 @@
 #define CDSLIB_URCU_DETAILS_GPT_H
 
 #include <mutex>    //unique_lock
+#include <limits>
 #include <cds/urcu/details/gp.h>
 #include <cds/urcu/dispose_thread.h>
 #include <cds/algo/backoff_strategy.h>
@@ -74,11 +75,11 @@ namespace cds { namespace urcu {
 
     protected:
         //@cond
-        buffer_type                     m_Buffer;
-        atomics::atomic<uint64_t>    m_nCurEpoch;
-        lock_type                       m_Lock;
-        size_t const                    m_nCapacity;
-        disposer_thread                 m_DisposerThread;
+        buffer_type               m_Buffer;
+        atomics::atomic<uint64_t> m_nCurEpoch;
+        lock_type                 m_Lock;
+        size_t const              m_nCapacity;
+        disposer_thread           m_DisposerThread;
         //@endcond
 
     public:
@@ -151,7 +152,7 @@ namespace cds { namespace urcu {
                 if ( bDetachAll )
                     pThis->m_ThreadList.detach_all();
 
-                pThis->m_DisposerThread.stop( pThis->m_Buffer, pThis->m_nCurEpoch.load( atomics::memory_order_acquire ));
+                pThis->m_DisposerThread.stop( pThis->m_Buffer, std::numeric_limits< uint64_t >::max());
 
                 delete pThis;
                 singleton_ptr::s_pRCU = nullptr;
@@ -176,7 +177,7 @@ namespace cds { namespace urcu {
         template <typename ForwardIterator>
         void batch_retire( ForwardIterator itFirst, ForwardIterator itLast )
         {
-            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
+            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_acquire );
             while ( itFirst != itLast ) {
                 epoch_retired_ptr ep( *itFirst, nEpoch );
                 ++itFirst;
@@ -188,7 +189,7 @@ namespace cds { namespace urcu {
         template <typename Func>
         void batch_retire( Func e )
         {
-            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_relaxed );
+            uint64_t nEpoch = m_nCurEpoch.load( atomics::memory_order_acquire );
             for ( retired_ptr p{ e() }; p.m_p; ) {
                 epoch_retired_ptr ep( p, nEpoch );
                 p = e();
@@ -208,15 +209,13 @@ namespace cds { namespace urcu {
         {
             uint64_t nPrevEpoch = m_nCurEpoch.fetch_add( 1, atomics::memory_order_release );
 
-            atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
                 std::unique_lock<lock_type> sl( m_Lock );
                 flip_and_wait();
                 flip_and_wait();
-
-                m_DisposerThread.dispose( m_Buffer, nPrevEpoch, bSync );
             }
-            atomics::atomic_thread_fence( atomics::memory_order_release );
+
+            m_DisposerThread.dispose( m_Buffer, nPrevEpoch, bSync );
         }
         void force_dispose()
         {

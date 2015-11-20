@@ -4,6 +4,7 @@
 #define CDSLIB_URCU_DETAILS_GPB_H
 
 #include <mutex>
+#include <limits>
 #include <cds/urcu/details/gp.h>
 #include <cds/algo/backoff_strategy.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
@@ -94,7 +95,7 @@ namespace cds { namespace urcu {
 
         ~general_buffered()
         {
-            clear_buffer( (uint64_t) -1 );
+            clear_buffer( std::numeric_limits< uint64_t >::max());
         }
 
         void flip_and_wait()
@@ -147,7 +148,7 @@ namespace cds { namespace urcu {
         static void Destruct( bool bDetachAll = false )
         {
             if ( isUsed() ) {
-                instance()->clear_buffer( (uint64_t) -1 );
+                instance()->clear_buffer( std::numeric_limits< uint64_t >::max());
                 if ( bDetachAll )
                     instance()->m_ThreadList.detach_all();
                 delete instance();
