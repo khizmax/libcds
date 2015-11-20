@@ -460,13 +460,13 @@ namespace cds { namespace intrusive {
         {
             static internal_node const& to_internal_node( tree_node const& n )
             {
-                assert( n.is_internal() );
+                assert( n.is_internal());
                 return static_cast<internal_node const&>( n );
             }
 
             static leaf_node const& to_leaf_node( tree_node const& n )
             {
-                assert( n.is_leaf() );
+                assert( n.is_leaf());
                 return static_cast<leaf_node const&>( n );
             }
         };
@@ -589,20 +589,20 @@ namespace cds { namespace intrusive {
                 {
                     if ( m_pUpdate ) {
                         return cds::urcu::retired_ptr( reinterpret_cast<void *>( m_pUpdate ),
-                            reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_update_desc ) );
+                            reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_update_desc ));
                     }
                     if ( m_pNode ) {
-                        if ( m_pNode->is_leaf() ) {
+                        if ( m_pNode->is_leaf()) {
                             return cds::urcu::retired_ptr( reinterpret_cast<void *>( node_traits::to_value_ptr( static_cast<leaf_node *>( m_pNode ))),
-                                reinterpret_cast< cds::urcu::free_retired_ptr_func>( free_leaf_node ) );
+                                reinterpret_cast< cds::urcu::free_retired_ptr_func>( free_leaf_node ));
                         }
                         else {
-                            return cds::urcu::retired_ptr( reinterpret_cast<void *>( static_cast<internal_node *>( m_pNode ) ),
-                                reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_internal_node ) );
+                            return cds::urcu::retired_ptr( reinterpret_cast<void *>( static_cast<internal_node *>( m_pNode )),
+                                reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_internal_node ));
                         }
                     }
                     return cds::urcu::retired_ptr( nullptr,
-                        reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_update_desc ) );
+                        reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_update_desc ));
                 }
 
                 void operator ++()
@@ -633,7 +633,7 @@ namespace cds { namespace intrusive {
 
             ~retired_list()
             {
-                gc::batch_retire( forward_iterator(*this), forward_iterator() );
+                gc::batch_retire( forward_iterator(*this), forward_iterator());
             }
 
             void push( update_desc * p )
@@ -651,7 +651,7 @@ namespace cds { namespace intrusive {
 
         void retire_node( tree_node * pNode, retired_list& rl ) const
         {
-            if ( pNode->is_leaf() ) {
+            if ( pNode->is_leaf()) {
                 assert( static_cast<leaf_node *>( pNode ) != &m_LeafInf1 );
                 assert( static_cast<leaf_node *>( pNode ) != &m_LeafInf2 );
             }
@@ -742,18 +742,16 @@ namespace cds { namespace intrusive {
 
                 search_result res;
                 for ( ;; ) {
-                    if ( search( res, val, node_compare() )) {
-                        if ( pNewInternal.get() )
+                    if ( search( res, val, node_compare())) {
+                        if ( pNewInternal.get())
                             m_Stat.onInternalNodeDeleted() ;    // unique_internal_node_ptr deletes internal node
                         m_Stat.onInsertFailed();
                         return false;
                     }
 
-                    if ( res.updParent.bits() != update_desc::Clean )
-                        help( res.updParent, updRetire );
-                    else {
-                        if ( !pNewInternal.get() )
-                            pNewInternal.reset( alloc_internal_node() );
+                    if ( res.updGrandParent.bits() == update_desc::Clean && res.updParent.bits() == update_desc::Clean ) {
+                        if ( !pNewInternal.get())
+                            pNewInternal.reset( alloc_internal_node());
 
                         if ( try_insert( val, pNewInternal.get(), res, updRetire )) {
                             f( val );
@@ -761,6 +759,8 @@ namespace cds { namespace intrusive {
                             break;
                         }
                     }
+                    else
+                        help( res.updParent, updRetire );
 
                     bkoff();
                     m_Stat.onInsertRetry();
@@ -817,22 +817,20 @@ namespace cds { namespace intrusive {
 
                 search_result res;
                 for ( ;; ) {
-                    if ( search( res, val, node_compare() )) {
+                    if ( search( res, val, node_compare())) {
                         func( false, *node_traits::to_value_ptr( res.pLeaf ), val );
-                        if ( pNewInternal.get() )
+                        if ( pNewInternal.get())
                             m_Stat.onInternalNodeDeleted() ;    // unique_internal_node_ptr deletes internal node
                         m_Stat.onEnsureExist();
                         return std::make_pair( true, false );
                     }
 
-                    if ( res.updParent.bits() != update_desc::Clean )
-                        help( res.updParent, updRetire );
-                    else {
+                    if ( res.updGrandParent.bits() == update_desc::Clean && res.updParent.bits() == update_desc::Clean ) {
                         if ( !bAllowInsert )
                             return std::make_pair( false, false );
 
-                        if ( !pNewInternal.get() )
-                            pNewInternal.reset( alloc_internal_node() );
+                        if ( !pNewInternal.get())
+                            pNewInternal.reset( alloc_internal_node());
 
                         if ( try_insert( val, pNewInternal.get(), res, updRetire )) {
                             func( true, val, val );
@@ -840,6 +838,8 @@ namespace cds { namespace intrusive {
                             break;
                         }
                     }
+                    else
+                        help( res.updParent, updRetire );
 
                     bkoff();
                     m_Stat.onEnsureRetry();
@@ -996,7 +996,7 @@ namespace cds { namespace intrusive {
         */
         exempt_ptr extract_min()
         {
-            return exempt_ptr( extract_min_() );
+            return exempt_ptr( extract_min_());
         }
 
         /// Extracts an item with maximal key from the tree
@@ -1017,7 +1017,7 @@ namespace cds { namespace intrusive {
         */
         exempt_ptr extract_max()
         {
-            return exempt_ptr( extract_max_() );
+            return exempt_ptr( extract_max_());
         }
 
         /// Extracts an item from the tree
@@ -1034,7 +1034,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            return exempt_ptr( extract_( key, node_compare() ));
+            return exempt_ptr( extract_( key, node_compare()));
         }
 
         /// Extracts an item from the set using \p pred for searching
@@ -1062,7 +1062,7 @@ namespace cds { namespace intrusive {
         {
             rcu_lock l;
             search_result    res;
-            if ( search( res, key, node_compare() )) {
+            if ( search( res, key, node_compare())) {
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -1100,7 +1100,7 @@ namespace cds { namespace intrusive {
 
             rcu_lock l;
             search_result    res;
-            if ( search( res, key, compare_functor() )) {
+            if ( search( res, key, compare_functor())) {
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -1181,7 +1181,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * get( Q const& key ) const
         {
-            return get_( key, node_compare() );
+            return get_( key, node_compare());
         }
 
         /// Finds \p key with \p pred predicate and return the item found
@@ -1220,7 +1220,7 @@ namespace cds { namespace intrusive {
             this sequence
             \code
             set.clear();
-            assert( set.empty() );
+            assert( set.empty());
             \endcode
             the assertion could be raised.
 
@@ -1230,7 +1230,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            for ( exempt_ptr ep = extract_min(); !ep.empty(); ep = extract_min() )
+            for ( exempt_ptr ep = extract_min(); !ep.empty(); ep = extract_min())
                 ep.release();
         }
 
@@ -1249,7 +1249,7 @@ namespace cds { namespace intrusive {
                 tree_node *     pLeaf = const_cast<internal_node *>( &m_Root );
 
                 // Get leftmost leaf
-                while ( pLeaf->is_internal() ) {
+                while ( pLeaf->is_internal()) {
                     pGrandParent = pParent;
                     pParent = static_cast<internal_node *>( pLeaf );
                     pLeaf = pParent->m_pLeft.load( memory_model::memory_order_relaxed );
@@ -1263,10 +1263,10 @@ namespace cds { namespace intrusive {
                 // Remove leftmost leaf and its parent node
                 assert( pGrandParent );
                 assert( pParent );
-                assert( pLeaf->is_leaf() );
+                assert( pLeaf->is_leaf());
 
                 pGrandParent->m_pLeft.store( pParent->m_pRight.load( memory_model::memory_order_relaxed ), memory_model::memory_order_relaxed );
-                free_leaf_node( node_traits::to_value_ptr( static_cast<leaf_node *>( pLeaf ) ) );
+                free_leaf_node( node_traits::to_value_ptr( static_cast<leaf_node *>( pLeaf )));
                 free_internal_node( pParent );
             }
         }
@@ -1316,11 +1316,11 @@ namespace cds { namespace intrusive {
                 && node_compare()( *pLeft, *pRight ) < 0 )
             {
                 bool bRet = true;
-                if ( pLeft->is_internal() )
-                    bRet = check_consistency( static_cast<internal_node *>( pLeft ) );
+                if ( pLeft->is_internal())
+                    bRet = check_consistency( static_cast<internal_node *>( pLeft ));
                 assert( bRet );
 
-                if ( bRet && pRight->is_internal() )
+                if ( bRet && pRight->is_internal())
                     bRet = bRet && check_consistency( static_cast<internal_node *>( pRight ));
                 assert( bRet );
 
@@ -1332,9 +1332,9 @@ namespace cds { namespace intrusive {
         void help( update_ptr /*pUpdate*/, retired_list& /*rl*/ )
         {
             /*
-            switch ( pUpdate.bits() ) {
+            switch ( pUpdate.bits()) {
                 case update_desc::IFlag:
-                    help_insert( pUpdate.ptr() );
+                    help_insert( pUpdate.ptr());
                     m_Stat.onHelpInsert();
                     break;
                 case update_desc::DFlag:
@@ -1342,7 +1342,7 @@ namespace cds { namespace intrusive {
                     //m_Stat.onHelpDelete();
                     break;
                 case update_desc::Mark:
-                    //help_marked( pUpdate.ptr() );
+                    //help_marked( pUpdate.ptr());
                     //m_Stat.onHelpMark();
                     break;
             }
@@ -1351,16 +1351,16 @@ namespace cds { namespace intrusive {
 
         void help_insert( update_desc * pOp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             tree_node * pLeaf = static_cast<tree_node *>( pOp->iInfo.pLeaf );
             if ( pOp->iInfo.bRightLeaf ) {
                 pOp->iInfo.pParent->m_pRight.compare_exchange_strong( pLeaf, static_cast<tree_node *>( pOp->iInfo.pNew ),
-                    memory_model::memory_order_release, atomics::memory_order_relaxed );
+                    memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
             }
             else {
                 pOp->iInfo.pParent->m_pLeft.compare_exchange_strong( pLeaf, static_cast<tree_node *>( pOp->iInfo.pNew ),
-                    memory_model::memory_order_release, atomics::memory_order_relaxed );
+                    memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
             }
 
             update_ptr cur( pOp, update_desc::IFlag );
@@ -1373,20 +1373,13 @@ namespace cds { namespace intrusive {
             assert( res.pGrandParent != nullptr );
 
             return
-                static_cast<internal_node *>( res.bRightParent
-                    ? res.pGrandParent->m_pRight.load(memory_model::memory_order_relaxed)
-                    : res.pGrandParent->m_pLeft.load(memory_model::memory_order_relaxed)
-                ) == res.pParent
-                &&
-                static_cast<leaf_node *>( res.bRightLeaf
-                    ? res.pParent->m_pRight.load(memory_model::memory_order_relaxed)
-                    : res.pParent->m_pLeft.load(memory_model::memory_order_relaxed)
-                ) == res.pLeaf;
+                static_cast<internal_node *>( res.pGrandParent->get_child( res.bRightParent, memory_model::memory_order_relaxed )) == res.pParent
+             && static_cast<leaf_node *>( res.pParent->get_child( res.bRightLeaf, memory_model::memory_order_relaxed )) == res.pLeaf;
         }
 
         bool help_delete( update_desc * pOp, retired_list& rl )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             update_ptr pUpdate( pOp->dInfo.pUpdateParent );
             update_ptr pMark( pOp, update_desc::Mark );
@@ -1425,21 +1418,17 @@ namespace cds { namespace intrusive {
 
         void help_marked( update_desc * pOp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             tree_node * p = pOp->dInfo.pParent;
             if ( pOp->dInfo.bRightParent ) {
                 pOp->dInfo.pGrandParent->m_pRight.compare_exchange_strong( p,
-                    pOp->dInfo.bRightLeaf
-                        ? pOp->dInfo.pParent->m_pLeft.load( memory_model::memory_order_acquire )
-                        : pOp->dInfo.pParent->m_pRight.load( memory_model::memory_order_acquire ),
+                    pOp->dInfo.pParent->get_child( !pOp->dInfo.bRightLeaf, memory_model::memory_order_acquire ),
                     memory_model::memory_order_release, atomics::memory_order_relaxed );
             }
             else {
                 pOp->dInfo.pGrandParent->m_pLeft.compare_exchange_strong( p,
-                    pOp->dInfo.bRightLeaf
-                        ? pOp->dInfo.pParent->m_pLeft.load( memory_model::memory_order_acquire )
-                        : pOp->dInfo.pParent->m_pRight.load( memory_model::memory_order_acquire ),
+                    pOp->dInfo.pParent->get_child( !pOp->dInfo.bRightLeaf, memory_model::memory_order_acquire ),
                     memory_model::memory_order_release, atomics::memory_order_relaxed );
             }
 
@@ -1451,7 +1440,7 @@ namespace cds { namespace intrusive {
         template <typename KeyValue, typename Compare>
         bool search( search_result& res, KeyValue const& key, Compare cmp ) const
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             internal_node * pParent;
             internal_node * pGrandParent = nullptr;
@@ -1468,14 +1457,14 @@ namespace cds { namespace intrusive {
             pLeaf = const_cast<internal_node *>( &m_Root );
             updParent = nullptr;
             bRightLeaf = false;
-            while ( pLeaf->is_internal() ) {
+            while ( pLeaf->is_internal()) {
                 pGrandParent = pParent;
                 pParent = static_cast<internal_node *>( pLeaf );
                 bRightParent = bRightLeaf;
                 updGrandParent = updParent;
                 updParent = pParent->m_pUpdate.load( memory_model::memory_order_acquire );
 
-                switch ( updParent.bits() ) {
+                switch ( updParent.bits()) {
                     case update_desc::DFlag:
                     case update_desc::Mark:
                         m_Stat.onSearchRetry();
@@ -1484,12 +1473,11 @@ namespace cds { namespace intrusive {
 
                 nCmp = cmp( key, *pParent );
                 bRightLeaf = nCmp >= 0;
-                pLeaf = nCmp < 0 ? pParent->m_pLeft.load( memory_model::memory_order_acquire )
-                                 : pParent->m_pRight.load( memory_model::memory_order_acquire );
+                pLeaf = pParent->get_child( nCmp >= 0, memory_model::memory_order_acquire );
             }
 
-            assert( pLeaf->is_leaf() );
-            nCmp = cmp( key, *static_cast<leaf_node *>(pLeaf) );
+            assert( pLeaf->is_leaf());
+            nCmp = cmp( key, *static_cast<leaf_node *>(pLeaf));
 
             res.pGrandParent    = pGrandParent;
             res.pParent         = pParent;
@@ -1504,7 +1492,7 @@ namespace cds { namespace intrusive {
 
         bool search_min( search_result& res ) const
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             internal_node * pParent;
             internal_node * pGrandParent = nullptr;
@@ -1515,13 +1503,13 @@ namespace cds { namespace intrusive {
         retry:
             pParent = nullptr;
             pLeaf = const_cast<internal_node *>( &m_Root );
-            while ( pLeaf->is_internal() ) {
+            while ( pLeaf->is_internal()) {
                 pGrandParent = pParent;
                 pParent = static_cast<internal_node *>( pLeaf );
                 updGrandParent = updParent;
                 updParent = pParent->m_pUpdate.load( memory_model::memory_order_acquire );
 
-                switch ( updParent.bits() ) {
+                switch ( updParent.bits()) {
                     case update_desc::DFlag:
                     case update_desc::Mark:
                         m_Stat.onSearchRetry();
@@ -1536,7 +1524,7 @@ namespace cds { namespace intrusive {
 
             res.pGrandParent    = pGrandParent;
             res.pParent         = pParent;
-            assert( pLeaf->is_leaf() );
+            assert( pLeaf->is_leaf());
             res.pLeaf           = static_cast<leaf_node *>( pLeaf );
             res.updParent       = updParent;
             res.updGrandParent  = updGrandParent;
@@ -1548,7 +1536,7 @@ namespace cds { namespace intrusive {
 
         bool search_max( search_result& res ) const
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             internal_node * pParent;
             internal_node * pGrandParent = nullptr;
@@ -1562,28 +1550,22 @@ namespace cds { namespace intrusive {
             pParent = nullptr;
             pLeaf = const_cast<internal_node *>( &m_Root );
             bRightLeaf = false;
-            while ( pLeaf->is_internal() ) {
+            while ( pLeaf->is_internal()) {
                 pGrandParent = pParent;
                 pParent = static_cast<internal_node *>( pLeaf );
                 bRightParent = bRightLeaf;
                 updGrandParent = updParent;
                 updParent = pParent->m_pUpdate.load( memory_model::memory_order_acquire );
 
-                switch ( updParent.bits() ) {
+                switch ( updParent.bits()) {
                     case update_desc::DFlag:
                     case update_desc::Mark:
                         m_Stat.onSearchRetry();
                         goto retry;
                 }
 
-                if ( pParent->infinite_key()) {
-                    pLeaf = pParent->m_pLeft.load( memory_model::memory_order_acquire );
-                    bRightLeaf = false;
-                }
-                else {
-                    pLeaf = pParent->m_pRight.load( memory_model::memory_order_acquire );
-                    bRightLeaf = true;
-                }
+                bRightLeaf = !pParent->infinite_key();
+                pLeaf = pParent->get_child( bRightLeaf, memory_model::memory_order_acquire );
             }
 
             if ( pLeaf->infinite_key())
@@ -1591,7 +1573,7 @@ namespace cds { namespace intrusive {
 
             res.pGrandParent    = pGrandParent;
             res.pParent         = pParent;
-            assert( pLeaf->is_leaf() );
+            assert( pLeaf->is_leaf());
             res.pLeaf           = static_cast<leaf_node *>( pLeaf );
             res.updParent       = updParent;
             res.updGrandParent  = updGrandParent;
@@ -1614,7 +1596,7 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock l;
                 for ( ;; ) {
-                    if ( !search( res, val, cmp ) || !eq( val, *res.pLeaf ) ) {
+                    if ( !search( res, val, cmp ) || !eq( val, *res.pLeaf )) {
                         if ( pOp )
                             retire_update_desc( pOp, updRetire, false );
                         m_Stat.onEraseFailed();
@@ -1628,7 +1610,7 @@ namespace cds { namespace intrusive {
                     else {
                         if ( !pOp )
                             pOp = alloc_update_desc();
-                        if ( check_delete_precondition( res ) ) {
+                        if ( check_delete_precondition( res )) {
                             pOp->dInfo.pGrandParent = res.pGrandParent;
                             pOp->dInfo.pParent = res.pParent;
                             pOp->dInfo.pLeaf = res.pLeaf;
@@ -1637,7 +1619,7 @@ namespace cds { namespace intrusive {
                             pOp->dInfo.bRightParent = res.bRightParent;
                             pOp->dInfo.bRightLeaf = res.bRightLeaf;
 
-                            update_ptr updGP( res.updGrandParent.ptr() );
+                            update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
@@ -1675,7 +1657,7 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-            return extract_( val, compare_functor() );
+            return extract_( val, compare_functor());
         }
 
         template <typename Q, typename Compare>
@@ -1692,7 +1674,7 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock l;
                 for ( ;; ) {
-                    if ( !search( res, val, cmp ) ) {
+                    if ( !search( res, val, cmp )) {
                         if ( pOp )
                             retire_update_desc( pOp, updRetire, false );
                         m_Stat.onEraseFailed();
@@ -1715,7 +1697,7 @@ namespace cds { namespace intrusive {
                             pOp->dInfo.bRightParent = res.bRightParent;
                             pOp->dInfo.bRightLeaf = res.bRightLeaf;
 
-                            update_ptr updGP( res.updGrandParent.ptr() );
+                            update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
@@ -1771,7 +1753,7 @@ namespace cds { namespace intrusive {
                     else {
                         if ( !pOp )
                             pOp = alloc_update_desc();
-                        if ( check_delete_precondition( res ) ) {
+                        if ( check_delete_precondition( res )) {
                             pOp->dInfo.pGrandParent = res.pGrandParent;
                             pOp->dInfo.pParent = res.pParent;
                             pOp->dInfo.pLeaf = res.pLeaf;
@@ -1780,7 +1762,7 @@ namespace cds { namespace intrusive {
                             pOp->dInfo.bRightParent = res.bRightParent;
                             pOp->dInfo.bRightLeaf = res.bRightLeaf;
 
-                            update_ptr updGP( res.updGrandParent.ptr() );
+                            update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
@@ -1835,7 +1817,7 @@ namespace cds { namespace intrusive {
                     else {
                         if ( !pOp )
                             pOp = alloc_update_desc();
-                        if ( check_delete_precondition( res ) ) {
+                        if ( check_delete_precondition( res )) {
                             pOp->dInfo.pGrandParent = res.pGrandParent;
                             pOp->dInfo.pParent = res.pParent;
                             pOp->dInfo.pLeaf = res.pLeaf;
@@ -1844,7 +1826,7 @@ namespace cds { namespace intrusive {
                             pOp->dInfo.bRightParent = res.bRightParent;
                             pOp->dInfo.bRightLeaf = res.bRightLeaf;
 
-                            update_ptr updGP( res.updGrandParent.ptr() );
+                            update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
@@ -1883,7 +1865,7 @@ namespace cds { namespace intrusive {
 
             rcu_lock l;
             search_result    res;
-            if ( search( res, val, compare_functor() )) {
+            if ( search( res, val, compare_functor())) {
                 assert( res.pLeaf );
                 f( *node_traits::to_value_ptr( res.pLeaf ), val );
 
@@ -1900,7 +1882,7 @@ namespace cds { namespace intrusive {
         {
             rcu_lock l;
             search_result    res;
-            if ( search( res, key, node_compare() )) {
+            if ( search( res, key, node_compare())) {
                 assert( res.pLeaf );
                 f( *node_traits::to_value_ptr( res.pLeaf ), key );
 
@@ -1930,22 +1912,19 @@ namespace cds { namespace intrusive {
 
         bool try_insert( value_type& val, internal_node * pNewInternal, search_result& res, retired_list& updRetire )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
             assert( res.updParent.bits() == update_desc::Clean );
 
             // check search result
-            if ( static_cast<leaf_node *>( res.bRightLeaf
-                ? res.pParent->m_pRight.load( memory_model::memory_order_relaxed )
-                : res.pParent->m_pLeft.load( memory_model::memory_order_relaxed ) ) == res.pLeaf )
-            {
+            if ( static_cast<leaf_node *>( res.pParent->get_child( res.bRightLeaf, memory_model::memory_order_relaxed )) == res.pLeaf ) {
                 leaf_node * pNewLeaf = node_traits::to_node_ptr( val );
 
                 int nCmp = node_compare()( val, *res.pLeaf );
                 if ( nCmp < 0 ) {
                     if ( res.pGrandParent ) {
                         pNewInternal->infinite_key( 0 );
-                        key_extractor()( pNewInternal->m_Key, *node_traits::to_value_ptr( res.pLeaf ) );
-                        assert( !res.pLeaf->infinite_key() );
+                        key_extractor()( pNewInternal->m_Key, *node_traits::to_value_ptr( res.pLeaf ));
+                        assert( !res.pLeaf->infinite_key());
                     }
                     else {
                         assert( res.pLeaf->infinite_key() == tree_node::key_infinite1 );
@@ -1955,7 +1934,7 @@ namespace cds { namespace intrusive {
                     pNewInternal->m_pRight.store( static_cast<tree_node *>(res.pLeaf), memory_model::memory_order_release );
                 }
                 else {
-                    assert( !res.pLeaf->is_internal() );
+                    assert( !res.pLeaf->is_internal());
                     pNewInternal->infinite_key( 0 );
 
                     key_extractor()( pNewInternal->m_Key, val );
@@ -1971,7 +1950,7 @@ namespace cds { namespace intrusive {
                 pOp->iInfo.pLeaf = res.pLeaf;
                 pOp->iInfo.bRightLeaf = res.bRightLeaf;
 
-                update_ptr updCur( res.updParent.ptr() );
+                update_ptr updCur( res.updParent.ptr());
                 if ( res.pParent->m_pUpdate.compare_exchange_strong( updCur, update_ptr( pOp, update_desc::IFlag ),
                     memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                 {
