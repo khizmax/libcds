@@ -27,9 +27,6 @@ namespace cds {
 */
 namespace opt {
 
-    /// Predefined options value (generally, for the options that determine the data types)
-    namespace v {}
-
     /// Type indicates that an option is not specified and the default one should be used
     struct none
     {
@@ -299,78 +296,6 @@ namespace opt {
         //@endcond
     };
 
-    namespace v {
-        /// Sequential non-atomic item counter
-        /**
-            This type of item counter is not intended for concurrent containers
-            and may be used only if it is explicitly noted.
-        */
-        class sequential_item_counter
-        {
-        public:
-            typedef size_t counter_type    ;  ///< Counter type
-        protected:
-            counter_type  m_nCounter ;      ///< Counter
-
-        public:
-            sequential_item_counter()
-                : m_nCounter(0)
-            {}
-
-            /// Returns current value of the counter
-            counter_type    value() const
-            {
-                return m_nCounter;
-            }
-
-            /// Same as \ref value() with relaxed memory ordering
-            operator counter_type() const
-            {
-                return value();
-            }
-
-            /// Increments the counter. Semantics: postincrement
-            counter_type inc()
-            {
-                return m_nCounter++;
-            }
-
-            /// Decrements the counter. Semantics: postdecrement
-            counter_type dec()
-            {
-                return m_nCounter--;
-            }
-
-            /// Preincrement
-            counter_type operator ++()
-            {
-                return inc() + 1;
-            }
-            /// Postincrement
-            counter_type operator ++(int)
-            {
-                return inc();
-            }
-
-            /// Predecrement
-            counter_type operator --()
-            {
-                return dec() - 1;
-            }
-            /// Postdecrement
-            counter_type operator --(int)
-            {
-                return dec();
-            }
-
-            /// Resets count to 0
-            void reset()
-            {
-                m_nCounter = 0;
-            }
-        };
-    } // namespace v
-
     /// Special alignment constants for \ref cds::opt::alignment option
     enum special_alignment {
         no_special_alignment = 0,   ///< no special alignment
@@ -583,62 +508,6 @@ namespace opt {
         //@endcond
     };
 
-    namespace v {
-        /// Relaxed memory ordering model
-        /**
-            In this memory model the memory constraints are defined according to C++ Memory Model specification:
-            each constraint is mapped to \p std::memory_order constraints one-to-one
-
-            See \p opt::memory_model for explanations
-        */
-        struct relaxed_ordering {
-            //@cond
-            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
-            static const atomics::memory_order memory_order_consume    = atomics::memory_order_consume;
-            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_acquire;
-            static const atomics::memory_order memory_order_release    = atomics::memory_order_release;
-            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_acq_rel;
-            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_seq_cst;
-            //@endcond
-        };
-
-        /// Sequential consistent memory ordering model
-        /**
-            In this memory model any memory constraint is equivalent to \p memory_order_seq_cst.
-
-            See \p opt::memory_model for explanations
-        */
-        struct sequential_consistent {
-            //@cond
-            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_seq_cst;
-            static const atomics::memory_order memory_order_consume    = atomics::memory_order_seq_cst;
-            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_seq_cst;
-            static const atomics::memory_order memory_order_release    = atomics::memory_order_seq_cst;
-            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_seq_cst;
-            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_seq_cst;
-            //@endcond
-        };
-
-        //@cond
-        /// Totally relaxed memory ordering model (do not use!)
-        /**
-            In this memory model any memory constraint is equivalent to \p memory_order_relaxed.
-            @warning Do not use this model! It intended for testing purposes only
-            to verify debugging instruments like Thread Sanitizer.
-
-            See \p opt::memory_model for explanations
-        */
-        struct total_relaxed_ordering {
-            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
-            static const atomics::memory_order memory_order_consume    = atomics::memory_order_relaxed;
-            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_relaxed;
-            static const atomics::memory_order memory_order_release    = atomics::memory_order_relaxed;
-            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_relaxed;
-            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_relaxed;
-        };
-        //@endcond
-    } // namespace v
-
     /// [type-option] Base type traits option setter
     /**
         This option setter is intended generally for internal use for type rebinding.
@@ -711,22 +580,6 @@ namespace opt {
         //@endcond
     };
 
-    namespace v {
-
-        /// Default swap policy (see opt::swap_policy option)
-        /**
-            The default swap policy is wrappr around \p std::swap algorithm.
-        */
-        struct default_swap_policy {
-            /// Performs swapping of \p v1 and \p v2 using \p std::swap algo
-            template <typename T>
-            void operator()( T& v1, T& v2 ) const
-            {
-                std::swap( v1, v2 );
-            }
-        };
-    } // namespace v
-
     /// Move policy option
     /**
         The move policy specifies an algorithm for moving object content.
@@ -754,19 +607,6 @@ namespace opt {
         };
         //@endcond
     };
-
-    namespace v {
-        /// \ref opt::move_policy "Move policy" based on assignment operator
-        struct assignment_move_policy
-        {
-            /// <tt> dest = src </tt>
-            template <typename T>
-            void operator()( T& dest, T const& src ) const
-            {
-                dest = src;
-            }
-        };
-    } // namespace v
 
     /// [value-option] Enable sorting
     /**
@@ -807,7 +647,7 @@ namespace opt {
         \p Random can be any STL random number generator producing
         unsigned integer: \p std::linear_congruential_engine,
         \p std::mersenne_twister_engine, \p std::subtract_with_carry_engine
-        and so on, or opt::v::c_rand.
+        and so on, or \p opt::v::c_rand.
 
     */
     template <typename Random>
@@ -819,28 +659,6 @@ namespace opt {
         };
         //@endcond
     };
-
-    namespace v {
-        /// \p rand() -base random number generator
-        /**
-            This generator returns a pseudorandom integer in the range 0 to \p RAND_MAX (32767).
-        */
-        struct c_rand {
-            typedef unsigned int result_type; ///< Result type
-
-            /// Constructor initializes object calling \p srand()
-            c_rand()
-            {
-                srand(1);
-            }
-
-            /// Returns next random number calling \p rand()
-            result_type operator()()
-            {
-                return (result_type) rand();
-            }
-        };
-    } // namespace v
 
     //@cond
     // For internal use
@@ -864,6 +682,181 @@ namespace opt {
 
 }}  // namespace cds::opt
 
+
+// ****************************************************
+// Options predefined types and values
+
+namespace cds { namespace opt {
+
+    /// Predefined options value
+    namespace v {
+
+        /// Sequential non-atomic item counter
+        /**
+            This type of \p opt::item_counter option is not intended for concurrent containers
+            and may be used only if it is explicitly noted.
+        */
+        class sequential_item_counter
+        {
+        public:
+            typedef size_t counter_type    ;  ///< Counter type
+        protected:
+            counter_type  m_nCounter ;      ///< Counter
+
+        public:
+            sequential_item_counter()
+                : m_nCounter(0)
+            {}
+
+            /// Returns current value of the counter
+            counter_type    value() const
+            {
+                return m_nCounter;
+            }
+
+            /// Same as \ref value() with relaxed memory ordering
+            operator counter_type() const
+            {
+                return value();
+            }
+
+            /// Increments the counter. Semantics: postincrement
+            counter_type inc()
+            {
+                return m_nCounter++;
+            }
+
+            /// Decrements the counter. Semantics: postdecrement
+            counter_type dec()
+            {
+                return m_nCounter--;
+            }
+
+            /// Preincrement
+            counter_type operator ++()
+            {
+                return inc() + 1;
+            }
+            /// Postincrement
+            counter_type operator ++(int)
+            {
+                return inc();
+            }
+
+            /// Predecrement
+            counter_type operator --()
+            {
+                return dec() - 1;
+            }
+            /// Postdecrement
+            counter_type operator --(int)
+            {
+                return dec();
+            }
+
+            /// Resets count to 0
+            void reset()
+            {
+                m_nCounter = 0;
+            }
+        };
+
+        /// Relaxed memory ordering \p opt::memory_model
+        /**
+            In this ordering the memory constraints are defined according to C++ Memory Model specification:
+            each constraint is mapped to \p std::memory_order constraints one-to-one
+        */
+        struct relaxed_ordering {
+            //@cond
+            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_consume    = atomics::memory_order_consume;
+            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_acquire;
+            static const atomics::memory_order memory_order_release    = atomics::memory_order_release;
+            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_acq_rel;
+            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_seq_cst;
+            //@endcond
+        };
+
+        /// Sequential consistent \p opt::memory_memory ordering
+        /**
+            In this memory model any memory constraint is equivalent to \p std::memory_order_seq_cst.
+        */
+        struct sequential_consistent {
+            //@cond
+            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_consume    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_release    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_seq_cst;
+            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_seq_cst;
+            //@endcond
+        };
+
+        //@cond
+        /// Totally relaxed \p opt::memory_model ordering (do not use!)
+        /**
+            In this memory model any memory constraint is equivalent to \p std::memory_order_relaxed.
+            @warning Do not use this model! It intended for testing purposes only
+            to verify debugging instruments like Thread Sanitizer.
+        */
+        struct total_relaxed_ordering {
+            static const atomics::memory_order memory_order_relaxed    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_consume    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_acquire    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_release    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_acq_rel    = atomics::memory_order_relaxed;
+            static const atomics::memory_order memory_order_seq_cst    = atomics::memory_order_relaxed;
+        };
+        //@endcond
+
+
+        /// Default swap policy for \p opt::swap_policy option
+        /**
+            The default swap policy is wrappr around \p std::swap algorithm.
+        */
+        struct default_swap_policy {
+            /// Performs swapping of \p v1 and \p v2 using \p std::swap algo
+            template <typename T>
+            void operator()( T& v1, T& v2 ) const
+            {
+                std::swap( v1, v2 );
+            }
+        };
+
+        /// \p opt::move_policy based on assignment operator
+        struct assignment_move_policy
+        {
+            /// <tt> dest = src </tt>
+            template <typename T>
+            void operator()( T& dest, T const& src ) const
+            {
+                dest = src;
+            }
+        };
+
+        /// \p rand() -base random number generator for \p opt::random_engine
+        /**
+            This generator returns a pseudorandom integer in the range 0 to \p RAND_MAX (32767).
+        */
+        struct c_rand {
+            typedef unsigned int result_type; ///< Result type
+
+            /// Constructor initializes object calling \p srand()
+            c_rand()
+            {
+                srand(1);
+            }
+
+            /// Returns next random number calling \p rand()
+            result_type operator()()
+            {
+                return (result_type) rand();
+            }
+        };
+
+    } // namespace v
+
+}} // namespace cds::opt
 
 
 // ****************************************************
