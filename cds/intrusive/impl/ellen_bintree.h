@@ -33,11 +33,11 @@ namespace cds { namespace intrusive {
         the priority value plus some uniformly distributed random value.
 
         @note In the current implementation we do not use helping technique described in the original paper.
-        In Hazard Pointer schema helping is too complicated and does not give any observable benefits.
+        In Hazard Pointer schema the helping is too complicated and does not give any observable benefits.
         Instead of helping, when a thread encounters a concurrent operation it just spins waiting for
-        the operation done. Such solution allows greatly simplify the implementation of tree.
+        the operation done. Such solution allows greatly simplify implementation of the tree.
 
-        @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
+        @attention Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
         for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
 
         @note Do not include <tt><cds/intrusive/impl/ellen_bintree.h></tt> header file explicitly.

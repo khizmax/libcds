@@ -54,11 +54,10 @@ namespace cds { namespace intrusive {
         a <i>priority queue</i>. In this case you should provide unique compound key, for example,
         the priority value plus some uniformly distributed random value.
 
-        @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
+        @attention Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
         for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
 
         @note In the current implementation we do not use helping technique described in the original paper.
-        In Hazard Pointer schema helping is too complicated and does not give any observable benefits.
         Instead of helping, when a thread encounters a concurrent operation it just spins waiting for
         the operation done. Such solution allows greatly simplify the implementation of tree.
 
@@ -71,6 +70,9 @@ namespace cds { namespace intrusive {
         - \p Traits - tree traits, default is \p ellen_bintree::traits
             It is possible to declare option-based tree with \p ellen_bintree::make_traits metafunction
             instead of \p Traits template argument.
+
+        @note Before including <tt><cds/intrusive/ellen_bintree_rcu.h></tt> you should include appropriate RCU header file,
+        see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
 
         @anchor cds_intrusive_EllenBinTree_rcu_less
         <b>Predicate requirements</b>
@@ -109,9 +111,6 @@ namespace cds { namespace intrusive {
             { return v.m_strKey.compare(p) > 0; }
         };
         \endcode
-
-        @note Before including <tt><cds/intrusive/ellen_bintree_rcu.h></tt> you should include appropriate RCU header file,
-        see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
 
         @anchor cds_intrusive_EllenBinTree_usage
         <b>Usage</b>
