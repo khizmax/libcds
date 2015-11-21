@@ -34,7 +34,8 @@ namespace cds { namespace opt {
         };
         \endcode
 
-        Usage example:
+        <b>Usage example</b>
+
         The permutation generator is intended for <tt>do {} while</tt> loop:
         \code
         permutation_generator gen( 16 );
@@ -53,10 +54,10 @@ namespace cds { namespace opt {
         \endcode
 
         The following \p Generator defined:
-        - opt::v::random_permutation
-        - opt::v::random2_permutation
-        - opt::v::random_shuffle_permutation
-        - opt::v::skew_permutation
+        - \p opt::v::random_permutation
+        - \p opt::v::random2_permutation
+        - \p opt::v::random_shuffle_permutation
+        - \p opt::v::skew_permutation
     */
     template <typename Generator>
     struct permutation_generator {

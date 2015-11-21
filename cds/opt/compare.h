@@ -19,9 +19,9 @@ namespace cds { namespace opt {
     /**
         The option sets a type of a functor to compare keys.
         For comparing two keys \p k1 and \p k2 the functor must return:
-        - 1 if k1 > k2
-        - 0 if k1 == k2
-        - -1 if k1 < k2
+        - 1 if <tt> k1 > k2 </tt>
+        - 0 if <tt> k1 == k2 </tt>
+        - -1 if <tt> k1 < k2 </tt>
 
         \p Functor is a functor with following interface:
         \code
@@ -36,12 +36,12 @@ namespace cds { namespace opt {
         Note that the functor must return \p int, not a \p bool value.
 
         There are predefined type for \p Functor:
-        - the functor v::less_comparator that implements comparing functor through \p std::less predicate.
-        - the specialization of v::less_comparator functor intended for the string comparison
+        - the functor \p opt::v::less_comparator that implements comparing functor through \p std::less predicate.
+        - the specialization of \p opt::v::less_comparator functor intended for the string comparison
 
         You may implement your own comparing functor that satisfies \p Functor interface.
 
-        About relation between \ref opt::less and \ref opt::compare option setters see opt::less description.
+        About relation between \p %opt::less and \p %opt::compare option setters see \p opt::less description.
     */
     template <typename Functor>
     struct compare {
@@ -75,7 +75,7 @@ namespace cds { namespace opt {
 
         /// Comparator specialization for \p std::string
         /**
-            This functor uses \p std::string::compare method instead of \p std::less predicate.
+            This functor uses \p std::string::compare() method instead of \p std::less predicate.
         */
         template <typename T, typename Traits, typename Alloc>
         struct less_comparator< std::basic_string<T, Traits, Alloc> >
@@ -121,11 +121,11 @@ namespace cds { namespace opt {
 
         Generally, the default type for \p Functor is \p std::less but it depends on the container used.
 
-        \par Relation between \p opt::less and opt::compare option setters
-        Unless otherwise specified, \p compare option setter has high priority. If opt::compare and opt::less options are specified
-        for a container, the opt::compare option is used:
+        \par Relation between opt::less and opt::compare option setters
+        Unless otherwise specified, \p opt::compare option setter has high priority.
+        If \p %opt::compare and \p %opt::less options are specified for a container, the \p %opt::compare option is used:
         \code
-        // Suppose, hypothetical map_type allows to specify
+        // Suppose, a hypothetical map_type allows to specify
         // cds::opt::less and cds::opt::compare options
 
         typedef map_type< std::string, int,
@@ -210,7 +210,7 @@ namespace cds { namespace opt {
     }   // namespace details
     //@endcond
 
-    /// [type-option] Option setter for \p equal_to predicate
+    /// [type-option] Option setter for \p opt::equal_to predicate
     /**
         The option sets a binary predicate that tests whether a value of a specified type is equal to another value of that type.
         \p Functor interface is similar to \p std::equal_to predicate interface.

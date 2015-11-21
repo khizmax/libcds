@@ -42,7 +42,7 @@ namespace cds { namespace opt {
 
         /// Empty cleaner
         /**
-            One of available type for opt::value_cleaner option.
+            One of available type for \p opt::value_cleaner option.
             This cleaner is empty, i.e. it does not do any cleaning.
         */
         struct empty_cleaner
@@ -56,7 +56,7 @@ namespace cds { namespace opt {
 
         /// Cleaner that calls destructor of type \p T
         /**
-            One of available type for opt::value_cleaner option.
+            One of available type for \p opt::value_cleaner option.
         */
         struct destruct_cleaner
         {

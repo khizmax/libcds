@@ -111,7 +111,7 @@ namespace cds { namespace opt {
     template <typename Functor> struct hash< std::tuple<Functor> >;
     //@endcond
 
-    /// Multi-functor hash option setter - specialization for std::tuple
+    /// Multi-functor hash option setter - specialization for \p std::tuple
     template <typename... Functors>
     struct hash< std::tuple<Functors...> >
     {

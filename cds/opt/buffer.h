@@ -19,8 +19,8 @@ namespace cds { namespace opt {
         The template parameter \p Type should be rebindable.
 
         Implementations:
-            - opt::v::static_buffer
-            - opt::v::dynamic_buffer
+            - \p opt::v::static_buffer
+            - \p opt::v::dynamic_buffer
     */
     template <typename Type>
     struct buffer {
@@ -34,9 +34,9 @@ namespace cds { namespace opt {
 
     namespace v {
 
-        /// Static buffer (see \p cds::opt::buffer option)
+        /// Static buffer
         /**
-            One of available type for opt::buffer type-option.
+            One of available type for \p opt::buffer option.
 
             This buffer maintains static array. No dynamic memory allocation performed.
 
@@ -60,29 +60,30 @@ namespace cds { namespace opt {
             struct rebind {
                 typedef static_buffer<Q, Capacity2, Exp22> other   ;   ///< Rebind result type
             };
+
+            // Capacity must be power of 2
+            static_assert(!c_bExp2 || (c_nCapacity & (c_nCapacity - 1)) == 0, "Capacity must be power of two");
+
         private:
             //@cond
             value_type  m_buffer[c_nCapacity];
             //@endcond
         public:
             /// Construct static buffer
-            static_buffer()
-            {
-                // Capacity must be power of 2
-                static_assert( !c_bExp2 || (c_nCapacity & (c_nCapacity - 1)) == 0, "Capacity must be power of two" );
-            }
+            static_buffer() CDS_NOEXCEPT
+            {}
             /// Construct buffer of given capacity
             /**
                 This ctor ignores \p nCapacity argument. The capacity of static buffer
                 is defined by template argument \p Capacity
             */
-            static_buffer( size_t nCapacity )
+            static_buffer( size_t nCapacity ) CDS_NOEXCEPT
             {
                 CDS_UNUSED( nCapacity );
-                // Capacity must be power of 2
-                static_assert( !c_bExp2 || (c_nCapacity & (c_nCapacity - 1)) == 0,  "Capacity must be power of two");
-                //assert( c_nCapacity == nCapacity );
             }
+
+            static_buffer( const static_buffer& ) = delete;
+            static_buffer& operator =( const static_buffer& ) = delete;
 
             /// Get item \p i
             value_type& operator []( size_t i )
@@ -111,29 +112,22 @@ namespace cds { namespace opt {
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer()
+            value_type * buffer() CDS_NOEXCEPT
             {
                 return m_buffer;
             }
 
-            /// Returns pointer to buffer array (const version)
-            value_type * buffer() const
+            /// Returns pointer to buffer array
+            value_type * buffer() const CDS_NOEXCEPT
             {
                 return m_buffer;
             }
-
-        private:
-            //@cond
-            // non-copyable
-            static_buffer(const static_buffer&);
-            void operator =(const static_buffer&);
-            //@endcond
         };
 
 
         /// Dynamically allocated buffer
         /**
-            One of available \p cds::opt::buffer type-option.
+            One of available type for \p opt::buffer option.
 
             This buffer maintains dynamically allocated array.
             Allocation is performed at construction time.
@@ -191,6 +185,9 @@ namespace cds { namespace opt {
                 a.Delete( m_buffer, m_nCapacity );
             }
 
+            dynamic_buffer( const dynamic_buffer& ) = delete;
+            dynamic_buffer& operator =( const dynamic_buffer& ) = delete;
+
             /// Get item \p i
             value_type& operator []( size_t i )
             {
@@ -218,23 +215,16 @@ namespace cds { namespace opt {
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer()
+            value_type * buffer() CDS_NOEXCEPT
             {
                 return m_buffer;
             }
 
-            /// Returns pointer to buffer array (const version)
-            value_type * buffer() const
+            /// Returns pointer to buffer array
+            value_type * buffer() const CDS_NOEXCEPT
             {
                 return m_buffer;
             }
-
-        private:
-            //@cond
-            // non-copyable
-            dynamic_buffer(const dynamic_buffer&);
-            void operator =(const dynamic_buffer&);
-            //@endcond
         };
 
     }   // namespace v
