@@ -178,12 +178,12 @@
     CPPUNIT_TEST(RWQueue_mutex)
 
 // TsigasCycleQueue
-#define CDSUNIT_DECLARE_TsigasCysleQueue( ITEM_TYPE ) \
+#define CDSUNIT_DECLARE_TsigasCycleQueue( ITEM_TYPE ) \
     TEST_BOUNDED(TsigasCycleQueue_dyn, ITEM_TYPE) \
     TEST_BOUNDED(TsigasCycleQueue_dyn_michaelAlloc, ITEM_TYPE) \
     TEST_BOUNDED(TsigasCycleQueue_dyn_ic, ITEM_TYPE)
 
-#define CDSUNIT_TEST_TsigasCysleQueue \
+#define CDSUNIT_TEST_TsigasCycleQueue \
     CPPUNIT_TEST(TsigasCycleQueue_dyn) \
     CPPUNIT_TEST(TsigasCycleQueue_dyn_michaelAlloc) \
     CPPUNIT_TEST(TsigasCycleQueue_dyn_ic)
