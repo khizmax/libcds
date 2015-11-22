@@ -475,13 +475,13 @@ namespace cds { namespace intrusive {
             marked_ptr pNext;
 
             while ( true ) {
-                h = res.guards.protect( 0, m_pHead, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
-                t = res.guards.protect( 1, m_pTail, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
-                pNext = res.guards.protect( 2, h->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                h = res.guards.protect( 0, m_pHead, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
+                t = res.guards.protect( 1, m_pTail, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
+                pNext = res.guards.protect( 2, h->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
 
-                if ( h == m_pHead.load( memory_model::memory_order_acquire ) ) {
-                    if ( h.ptr() == t.ptr() ) {
-                        if ( !pNext.ptr() ) {
+                if ( h == m_pHead.load( memory_model::memory_order_acquire )) {
+                    if ( h.ptr() == t.ptr()) {
+                        if ( !pNext.ptr()) {
                             m_Stat.onEmptyDequeue();
                             return false;
                         }
@@ -489,7 +489,7 @@ namespace cds { namespace intrusive {
                         {
                             typename gc::Guard g;
                             while ( pNext->m_pNext.load(memory_model::memory_order_relaxed).ptr() && m_pTail.load(memory_model::memory_order_relaxed) == t ) {
-                                pNext = g.protect( pNext->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                                pNext = g.protect( pNext->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
                                 res.guards.copy( 2, g );
                             }
                         }
@@ -504,20 +504,20 @@ namespace cds { namespace intrusive {
 
                         while ( pNext.ptr() && pNext.bits() && iter.ptr() != t.ptr() && m_pHead.load(memory_model::memory_order_relaxed) == h ) {
                             iter = pNext;
-                            g.assign( res.guards.template get<value_type>(2) );
-                            pNext = res.guards.protect( 2, pNext->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                            g.assign( res.guards.template get<value_type>(2));
+                            pNext = res.guards.protect( 2, pNext->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
                             ++hops;
                         }
 
                         if ( m_pHead.load(memory_model::memory_order_relaxed) != h )
                             continue;
 
-                        if ( iter.ptr() == t.ptr() )
+                        if ( iter.ptr() == t.ptr())
                             free_chain( h, iter );
                         else if ( bDeque ) {
                             res.pNext = pNext.ptr();
 
-                            if ( iter->m_pNext.compare_exchange_weak( pNext, marked_ptr( pNext.ptr(), 1 ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                            if ( iter->m_pNext.compare_exchange_weak( pNext, marked_ptr( pNext.ptr(), 1 ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                                 if ( hops >= m_nMaxHops )
                                     free_chain( h, pNext );
                                 break;
@@ -548,11 +548,11 @@ namespace cds { namespace intrusive {
             if ( m_pHead.compare_exchange_strong( head, marked_ptr(newHead.ptr()), memory_model::memory_order_release, atomics::memory_order_relaxed ))
             {
                 typename gc::template GuardArray<2> guards;
-                guards.assign( 0, node_traits::to_value_ptr(head.ptr()) );
-                while ( head.ptr() != newHead.ptr() ) {
-                    marked_ptr pNext = guards.protect( 1, head->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                guards.assign( 0, node_traits::to_value_ptr(head.ptr()));
+                while ( head.ptr() != newHead.ptr()) {
+                    marked_ptr pNext = guards.protect( 1, head->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
                     assert( pNext.bits() != 0 );
-                    dispose_node( head.ptr() );
+                    dispose_node( head.ptr());
                     guards.copy( 0, 1 );
                     head = pNext;
                 }
@@ -572,11 +572,11 @@ namespace cds { namespace intrusive {
                     void operator()( value_type * p )
                     {
                         assert( p != nullptr );
-                        BasketQueue::clear_links( node_traits::to_node_ptr( p ) );
+                        BasketQueue::clear_links( node_traits::to_node_ptr( p ));
                         disposer()(p);
                     }
                 };
-                gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
+                gc::template retire<internal_disposer>( node_traits::to_value_ptr(p));
             }
         }
         //@endcond
@@ -633,13 +633,13 @@ namespace cds { namespace intrusive {
 
             marked_ptr t;
             while ( true ) {
-                t = guard.protect( m_pTail, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                t = guard.protect( m_pTail, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
 
                 marked_ptr pNext = t->m_pNext.load(memory_model::memory_order_acquire );
 
                 if ( pNext.ptr() == nullptr ) {
                     pNew->m_pNext.store( marked_ptr(), memory_model::memory_order_release );
-                    if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
+                    if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                         if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             m_Stat.onAdvanceTailFailed();
                         break;
@@ -652,15 +652,15 @@ namespace cds { namespace intrusive {
                     typename gc::Guard gNext;
 
                 try_again:
-                    pNext = gNext.protect( t->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr() );});
+                    pNext = gNext.protect( t->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
 
                     // add to the basket
-                    if ( m_pTail.load(memory_model::memory_order_relaxed) == t
+                    if ( m_pTail.load(memory_model::memory_order_acquire) == t
                          && t->m_pNext.load( memory_model::memory_order_relaxed) == pNext
-                         && !pNext.bits()  )
+                         && !pNext.bits())
                     {
                         bkoff();
-                        pNew->m_pNext.store( pNext, memory_model::memory_order_release );
+                        pNew->m_pNext.store( pNext, memory_model::memory_order_relaxed );
                         if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr( pNew ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                             m_Stat.onAddBasket();
                             break;
@@ -672,8 +672,10 @@ namespace cds { namespace intrusive {
                     // Tail is misplaced, advance it
 
                     typename gc::template GuardArray<2> g;
-                    g.assign( 0, node_traits::to_value_ptr( pNext.ptr() ) );
-                    if ( t->m_pNext.load( memory_model::memory_order_relaxed ) != pNext ) {
+                    g.assign( 0, node_traits::to_value_ptr( pNext.ptr()));
+                    if ( m_pTail.load( memory_model::memory_order_acquire ) != t 
+                      || t->m_pNext.load( memory_model::memory_order_relaxed ) != pNext ) 
+                    {
                         m_Stat.onEnqueueRace();
                         bkoff();
                         continue;
@@ -683,17 +685,17 @@ namespace cds { namespace intrusive {
                     bool bTailOk = true;
                     while ( (p = pNext->m_pNext.load( memory_model::memory_order_relaxed )).ptr() != nullptr )
                     {
-                        bTailOk = m_pTail.load( memory_model::memory_order_relaxed ) == t;
+                        bTailOk = m_pTail.load( memory_model::memory_order_acquire ) == t;
                         if ( !bTailOk )
                             break;
 
-                        g.assign( 1, node_traits::to_value_ptr( p.ptr() ));
-                        if ( pNext->m_pNext.load(memory_model::memory_order_relaxed) != p )
+                        g.assign( 1, node_traits::to_value_ptr( p.ptr()));
+                        if ( pNext->m_pNext.load(memory_model::memory_order_acquire) != p )
                             continue;
                         pNext = p;
-                        g.assign( 0, g.template get<value_type>( 1 ) );
+                        g.assign( 0, g.template get<value_type>( 1 ));
                     }
-                    if ( !bTailOk || !m_pTail.compare_exchange_weak( t, marked_ptr( pNext.ptr() ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                    if ( !bTailOk || !m_pTail.compare_exchange_weak( t, marked_ptr( pNext.ptr()), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         m_Stat.onAdvanceTailFailed();
 
                     m_Stat.onBadTail();
@@ -755,7 +757,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            while ( dequeue() );
+            while ( dequeue());
         }
 
         /// Returns queue's item count
