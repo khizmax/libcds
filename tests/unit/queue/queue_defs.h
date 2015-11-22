@@ -193,12 +193,13 @@
 #define CDSUNIT_DECLARE_VyukovMPMCCycleQueue( ITEM_TYPE ) \
     TEST_BOUNDED(VyukovMPMCCycleQueue_dyn, ITEM_TYPE) \
     TEST_BOUNDED(VyukovMPMCCycleQueue_dyn_michaelAlloc, ITEM_TYPE) \
-    TEST_BOUNDED(VyukovMPMCCycleQueue_dyn_ic, ITEM_TYPE)
+    TEST_BOUNDED(VyukovMPMCCycleQueue_dyn_ic, ITEM_TYPE) \
+
 
 #define CDSUNIT_TEST_VyukovMPMCCycleQueue \
     CPPUNIT_TEST(VyukovMPMCCycleQueue_dyn) \
     CPPUNIT_TEST(VyukovMPMCCycleQueue_dyn_michaelAlloc) \
-    CPPUNIT_TEST(VyukovMPMCCycleQueue_dyn_ic)
+    CPPUNIT_TEST(VyukovMPMCCycleQueue_dyn_ic) \
 
 // SegmentedQueue
 #define CDSUNIT_DECLARE_SegmentedQueue( ITEM_TYPE ) \

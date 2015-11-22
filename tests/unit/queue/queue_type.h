@@ -334,6 +334,7 @@ namespace queue {
             }
         };
 
+
         // BasketQueue
 
         typedef cds::container::BasketQueue< cds::gc::HP , Value > BasketQueue_HP;
