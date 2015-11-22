@@ -1,5 +1,6 @@
 
 CDSUNIT_QUEUE_SOURCES := \
+    tests/unit/queue/bounded_queue_fulness.cpp \
     tests/unit/queue/queue_pop.cpp \
     tests/unit/queue/queue_push.cpp \
     tests/unit/queue/queue_random.cpp \

@@ -581,6 +581,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\tests\unit\queue\bounded_queue_fulness.cpp" />
     <ClCompile Include="..\..\..\tests\unit\queue\intrusive_queue_reader_writer.cpp" />
     <ClCompile Include="..\..\..\tests\unit\queue\queue_pop.cpp" />
     <ClCompile Include="..\..\..\tests\unit\queue\queue_push.cpp" />

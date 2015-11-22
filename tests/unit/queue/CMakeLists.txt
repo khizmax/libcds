@@ -1,6 +1,7 @@
 set(PACKAGE_NAME cdsu-queue)
 
 set(CDSUNIT_QUEUE_SOURCES
+    bounded_queue_fulness.cpp
     queue_pop.cpp
     queue_push.cpp
     queue_random.cpp
