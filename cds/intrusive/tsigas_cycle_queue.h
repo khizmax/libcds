@@ -184,7 +184,7 @@ namespace cds { namespace intrusive {
 
         static bool is_free( const value_type * p ) CDS_NOEXCEPT
         {
-            return p == reinterpret_cast<value_type *>(free0) || p == reinterpret_cast<value_type *>(free1);
+            return (reinterpret_cast<intptr_t>(p) & ~intptr_t(1)) == 0;
         }
 
         size_t CDS_CONSTEXPR buffer_capacity() const CDS_NOEXCEPT
@@ -248,7 +248,7 @@ namespace cds { namespace intrusive {
                     temp = (temp + 1) & nModulo;
                 }
 
-                if ( te != m_nTail.load(memory_model::memory_order_relaxed) )
+                if ( te != m_nTail.load(memory_model::memory_order_acquire) )
                     continue;
 
                 // Check whether queue is full
@@ -266,7 +266,7 @@ namespace cds { namespace intrusive {
 
                 if ( tt == reinterpret_cast<value_type *>(free1) )
                     pNewNode = reinterpret_cast<value_type *>(reinterpret_cast<intptr_t>( pNewNode ) | 1);
-                if ( te != m_nTail.load(memory_model::memory_order_relaxed) )
+                if ( te != m_nTail.load(memory_model::memory_order_acquire) )
                     continue;
 
                 // get actual tail and try to enqueue new node
