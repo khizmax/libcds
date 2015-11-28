@@ -297,11 +297,13 @@ namespace cds { namespace gc {
                 privatize_result privatize() CDS_NOEXCEPT
                 {
                     privatize_result res;
-                    res.first = m_pHead.exchange( nullptr, atomics::memory_order_acq_rel );
 
                     // Item counter is needed only as a threshold for \p scan() function
                     // So, we may clear the item counter without synchronization with m_pHead
                     res.second = m_nItemCount.exchange( 0, atomics::memory_order_relaxed );
+
+                    res.first = m_pHead.exchange( nullptr, atomics::memory_order_acq_rel );
+
                     return res;
                 }
 

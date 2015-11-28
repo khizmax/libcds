@@ -19,11 +19,11 @@ namespace cds { namespace gc { namespace dhp {
             size_t const m_nBucketCount;
             item_type *  m_Buckets;
 
-            item_type&  bucket( retired_ptr_node& node )
+            item_type&  bucket( retired_ptr_node& node ) const
             {
                 return bucket( node.m_ptr.m_p );
             }
-            item_type&  bucket( guard_data::guarded_ptr p )
+            item_type&  bucket( guard_data::guarded_ptr p ) const
             {
                 return m_Buckets[ std::hash<guard_data::guarded_ptr>()( p ) & (m_nBucketCount - 1)  ];
             }
