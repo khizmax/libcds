@@ -7,11 +7,19 @@ set(PROJECT_VERSION 2.1.0)
 
 # Options
 option(WITH_TESTS "Build unit tests" OFF)
+option(WITH_BOOST_ATOMIC "Use boost atomics (only for boost >= 1.54)" OFF)
 
 find_package(Threads REQUIRED)
-find_package(Boost COMPONENTS system thread REQUIRED)
+find_package(Boost 1.50 COMPONENTS system thread REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
+
+if(WITH_BOOST_ATOMIC)
+  if(${Boost_MINOR_VERSION} GREATER 53)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDS_USE_BOOST_ATOMIC")
+    message(STATUS "Boost version allows using of boost.atomic: activated")
+  endif()
+endif(WITH_BOOST_ATOMIC)
 
 set(CDS_SHARED_LIBRARY ${PROJECT_NAME})
 set(CDS_STATIC_LIBRARY ${PROJECT_NAME}-s)
@@ -22,7 +30,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type to Debug" FORCE)
 endif()
 
