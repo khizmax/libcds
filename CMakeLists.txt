@@ -65,7 +65,7 @@ if(WITH_TESTS)
   add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
 endif(WITH_TESTS)
 
-### FOR PACKAGING in RPM, TGZ...###############################################################################
+### FOR PACKAGING in RPM, TGZ, DEB, NSYS...###############################################################################
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_RELEASE 1)
@@ -82,6 +82,7 @@ set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/build/cmake/post_install_script.sh")
 set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/build/cmake/post_uninstall_script.sh")
 #set(CPACK_RPM_CHANGELOG_FILE ${CHANGELOG_INCLUDE})
+set(CPACK_RPM_PACKAGE_URL https://github.com/khizmax/libcds)
 set(CPACK_RPM_PACKAGE_LICENSE GPL)
 set(CPACK_RPM_PACKAGE_GROUP "System Environment/Base")
 set(CPACK_RPM_PACKAGE_REQUIRES "boost >= 1.50")
@@ -101,5 +102,13 @@ set(CPACK_COMPONENT_${HEADERS_COMPONENT}_DEPENDS ${LIBRARIES_COMPONENT})
 
 set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you'll ever need to develop lock-free oriented software with libcds")
 set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "Only libcds library for runtime")
+
+# NSYS specific
+set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
+set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_NAME}")
+set(CPACK_NSIS_CONTACT "libcds-user@lists.sourceforge.net")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "cds")
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+set(CPACK_NSIS_MODIFY_PATH ON)
 
 include(CPack)
