@@ -25,8 +25,8 @@ set(CDSUNIT_MAP_SOURCES
     map_insfind_int_bronsonavltree.cpp
     map_insfind_int_cuckoo.cpp
     map_insfind_int_ellentree.cpp
+    map_insfind_int_feldmanhashmap.cpp
     map_insfind_int_michael.cpp
-    map_insfind_int_multievelhashmap.cpp
     map_insfind_int_skip.cpp
     map_insfind_int_split.cpp
     map_insfind_int_striped.cpp
@@ -100,4 +100,4 @@ set(CDSUNIT_MAP_SOURCES
 
 add_executable(${PACKAGE_NAME} ${CDSUNIT_MAP_SOURCES} $<TARGET_OBJECTS:${TEST_COMMON}>)
 target_link_libraries(${PACKAGE_NAME} ${CDS_SHARED_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
-add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME})
+add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
