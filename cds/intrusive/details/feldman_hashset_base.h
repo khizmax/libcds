@@ -340,11 +340,12 @@ namespace cds { namespace intrusive {
 
             typedef feldman_hashset::details::hash_splitter< hash_type > hash_splitter;
 
-        protected:
             enum node_flags {
                 flag_array_converting = 1,   ///< the cell is converting from data node to an array node
                 flag_array_node = 2          ///< the cell is a pointer to an array node
             };
+
+        protected:
 
             typedef cds::details::marked_ptr< value_type, 3 > node_ptr;
             typedef atomics::atomic< node_ptr > atomic_node_ptr;
