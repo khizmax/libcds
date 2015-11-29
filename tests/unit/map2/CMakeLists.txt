@@ -26,7 +26,6 @@ set(CDSUNIT_MAP_SOURCES
     map_insfind_int_cuckoo.cpp
     map_insfind_int_ellentree.cpp
     map_insfind_int_michael.cpp
-    map_insfind_int_multievelhashmap.cpp
     map_insfind_int_skip.cpp
     map_insfind_int_split.cpp
     map_insfind_int_striped.cpp
