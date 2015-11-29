@@ -151,11 +151,11 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)-release\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|Win32'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\bin\vc12\$(Platform)-release\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\bin\vc12-icl\$(Platform)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\obj\vc12\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ICL-Release|x64'">$(SolutionDir)..\..\..\obj\vc12-icl\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
@@ -417,7 +417,6 @@
     <ClInclude Include="..\..\..\tests\cppunit\file_reporter.h" />
     <ClInclude Include="..\..\..\tests\hashing\city.h" />
     <ClInclude Include="..\..\..\tests\hashing\hash_func.h" />
-    <ClInclude Include="..\..\..\tests\hashing\md5.h" />
     <ClInclude Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.h" />
     <ClInclude Include="..\..\..\tests\unit\michael_alloc.h" />
     <ClInclude Include="..\..\..\tests\cppunit\test_beans.h" />
@@ -436,7 +435,6 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ICL-Debug|x64'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
     </ClCompile>
-    <ClCompile Include="..\..\..\tests\hashing\md5.cpp" />
     <ClCompile Include="..\..\..\tests\unit\ellen_bintree_update_desc_pool.cpp" />
     <ClCompile Include="..\..\..\tests\unit\michael_alloc.cpp" />
     <ClCompile Include="..\..\..\tests\cppunit\test_main.cpp">
