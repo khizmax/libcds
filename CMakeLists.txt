@@ -68,6 +68,7 @@ endif(WITH_TESTS)
 ### FOR PACKAGING in RPM, TGZ, DEB, NSYS...###############################################################################
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_CONTACT "Max Khizhinsky <libcds-user@lists.sourceforge.net>")
 set(CPACK_PACKAGE_RELEASE 1)
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/build/cmake/description.txt")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Library of concurrent data structures")
@@ -79,9 +80,9 @@ set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 
 # RPM specific
 set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_RPM_PACKAGE_RELEASE ${CPACK_PACKAGE_RELEASE})
 set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/build/cmake/post_install_script.sh")
 set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/build/cmake/post_uninstall_script.sh")
-#set(CPACK_RPM_CHANGELOG_FILE ${CHANGELOG_INCLUDE})
 set(CPACK_RPM_PACKAGE_URL https://github.com/khizmax/libcds)
 set(CPACK_RPM_PACKAGE_LICENSE GPL)
 set(CPACK_RPM_PACKAGE_GROUP "System Environment/Base")
@@ -89,8 +90,12 @@ set(CPACK_RPM_PACKAGE_REQUIRES "boost >= 1.50")
 set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION ${CPACK_PACKAGING_INSTALL_PREFIX})
 set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION /usr/local)
 
+set(CPACK_RPM_devel_PACKAGE_REQUIRES "boost >= 1.50, cds-lib = ${PROJECT_VERSION}")
+
 # DEB specific
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost (>= 1.50)")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/khizmax/libcds")
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/build/cmake/post_install_script.sh;;${CMAKE_SOURCE_DIR}/build/cmake/post_uninstall_script.sh;" )
 
 # Components grouping for Mac OS X and Windows installers
 set(CPACK_COMPONENT_${LIBRARIES_COMPONENT}_GROUP "Runtime")
@@ -106,7 +111,7 @@ set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "Only libcds library for runtime")
 # NSYS specific
 set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_NAME}")
-set(CPACK_NSIS_CONTACT "libcds-user@lists.sourceforge.net")
+set(CPACK_NSIS_CONTACT ${CPACK_PACKAGE_CONTACT})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "cds")
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 set(CPACK_NSIS_MODIFY_PATH ON)
