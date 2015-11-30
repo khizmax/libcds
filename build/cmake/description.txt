@@ -1,1 +1,1 @@
-ПК обработки измерительной информации НАП
+libcds - Concurrent Data Structure C++ library
