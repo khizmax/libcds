@@ -458,7 +458,7 @@ namespace misc {
             }
 
             test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_relaxed );
-            test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_consume );
+            //test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_consume );
             test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_acquire );
             test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_release );
             test_atomic_pointer_for_( a, arr, aSize, atomics::memory_order_acq_rel );
@@ -553,7 +553,7 @@ namespace misc {
             }
 
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_relaxed );
-            do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_consume );
+            //do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_consume );
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_acquire );
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_release );
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_acq_rel );
