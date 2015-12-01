@@ -344,6 +344,7 @@ namespace queue {
         CDSUNIT_DECLARE_RWQueue( Value )
         CDSUNIT_DECLARE_TsigasCycleQueue( Value )
         CDSUNIT_DECLARE_VyukovMPMCCycleQueue( Value )
+		CDSUNIT_DECLARE_WilliamsQueue( Value )
         CDSUNIT_DECLARE_StdQueue( Value )
 
         CPPUNIT_TEST_SUITE(Queue_ReaderWriter)
@@ -357,6 +358,7 @@ namespace queue {
             CDSUNIT_TEST_RWQueue
             CDSUNIT_TEST_TsigasCycleQueue
             CDSUNIT_TEST_VyukovMPMCCycleQueue
+			CDSUNIT_TEST_WilliamsQueue
             CDSUNIT_TEST_StdQueue
         CPPUNIT_TEST_SUITE_END();
     };

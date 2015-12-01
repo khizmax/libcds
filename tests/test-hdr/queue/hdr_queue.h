@@ -351,6 +351,9 @@ namespace queue {
         void VyukovMPMCCycleQueue_dyn();
         void VyukovMPMCCycleQueue_dyn_ic();
 
+		void WilliamsQueue_default();
+		void WilliamsQueue_ic();
+
         CPPUNIT_TEST_SUITE( HdrTestQueue )
             CPPUNIT_TEST(MSQueue_HP);
             CPPUNIT_TEST(MSQueue_HP_relax);
@@ -455,6 +458,9 @@ namespace queue {
             CPPUNIT_TEST( RWQueue_ic )
             CPPUNIT_TEST( RWQueue_ic_mutex )
             CPPUNIT_TEST( RWQueue_padding )
+
+			CPPUNIT_TEST( WilliamsQueue_default )
+			CPPUNIT_TEST( WilliamsQueue_ic )
 
         CPPUNIT_TEST_SUITE_END();
 
