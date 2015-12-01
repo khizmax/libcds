@@ -48,7 +48,7 @@ namespace misc {
             //CPPUNIT_ASSERT( f.m_Flag == 0 );
 
             do_test_atomic_flag_mo( f, atomics::memory_order_relaxed );
-            do_test_atomic_flag_mo( f, atomics::memory_order_consume );
+            //do_test_atomic_flag_mo( f, atomics::memory_order_consume );
             do_test_atomic_flag_mo( f, atomics::memory_order_acquire );
             do_test_atomic_flag_mo( f, atomics::memory_order_release );
             do_test_atomic_flag_mo( f, atomics::memory_order_acq_rel );
@@ -269,7 +269,7 @@ namespace misc {
             do_test_atomic_integral<Atomic, Integral >(a);
 
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_relaxed );
-            do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_consume );
+            //do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_consume );
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_acquire );
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_release );
             do_test_atomic_integral<Atomic, Integral >( a, atomics::memory_order_acq_rel );
@@ -582,7 +582,7 @@ namespace misc {
                 do_test_atomic_bool( a[i] );
 
                 do_test_atomic_bool( a[i], atomics::memory_order_relaxed );
-                do_test_atomic_bool( a[i], atomics::memory_order_consume );
+                //do_test_atomic_bool( a[i], atomics::memory_order_consume );
                 do_test_atomic_bool( a[i], atomics::memory_order_acquire );
                 do_test_atomic_bool( a[i], atomics::memory_order_release );
                 do_test_atomic_bool( a[i], atomics::memory_order_acq_rel );
@@ -640,14 +640,14 @@ namespace misc {
         void test_atomic_fence()
         {
             atomics::atomic_thread_fence(atomics::memory_order_relaxed );
-            atomics::atomic_thread_fence(atomics::memory_order_consume );
+            //atomics::atomic_thread_fence(atomics::memory_order_consume );
             atomics::atomic_thread_fence(atomics::memory_order_acquire );
             atomics::atomic_thread_fence(atomics::memory_order_release );
             atomics::atomic_thread_fence(atomics::memory_order_acq_rel );
             atomics::atomic_thread_fence(atomics::memory_order_seq_cst );
 
             atomics::atomic_signal_fence(atomics::memory_order_relaxed );
-            atomics::atomic_signal_fence(atomics::memory_order_consume );
+            //atomics::atomic_signal_fence(atomics::memory_order_consume );
             atomics::atomic_signal_fence(atomics::memory_order_acquire );
             atomics::atomic_signal_fence(atomics::memory_order_release );
             atomics::atomic_signal_fence(atomics::memory_order_acq_rel );
