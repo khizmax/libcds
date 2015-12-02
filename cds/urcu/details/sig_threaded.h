@@ -77,11 +77,11 @@ namespace cds { namespace urcu {
 
     protected:
         //@cond
-        buffer_type                     m_Buffer;
+        buffer_type                  m_Buffer;
         atomics::atomic<uint64_t>    m_nCurEpoch;
-        lock_type                       m_Lock;
-        size_t const                    m_nCapacity;
-        disposer_thread                 m_DisposerThread;
+        lock_type                    m_Lock;
+        size_t const                 m_nCapacity;
+        disposer_thread              m_DisposerThread;
         //@endcond
 
     public:
@@ -208,7 +208,6 @@ namespace cds { namespace urcu {
         {
             uint64_t nPrevEpoch = m_nCurEpoch.fetch_add( 1, atomics::memory_order_release );
 
-            atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
                 std::unique_lock<lock_type> sl( m_Lock );
 

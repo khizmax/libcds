@@ -96,7 +96,7 @@ namespace cds { namespace urcu {
                 }
 
                 if ( rest.m_p ) {
-                    assert( rest.m_nEpoch < nCurEpoch );
+                    assert( rest.m_nEpoch <= nCurEpoch );
                     rest.free();
                 }
 
@@ -172,7 +172,7 @@ namespace cds { namespace urcu {
         /// Start reclamation cycle
         /**
             This function is called by \ref general_threaded object
-            to notify the reclamation thread about new work.
+            to notify the reclamation thread about a new work.
             \p buf buffer contains retired objects ready to free.
             The reclamation thread should free all \p buf objects
             \p m_nEpoch field of which is no more than \p nCurEpoch.
