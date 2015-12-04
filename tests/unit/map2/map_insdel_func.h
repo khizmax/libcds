@@ -39,7 +39,7 @@ namespace map2 {
             size_t      nData;
             atomics::atomic<size_t> nUpdateCall;
             atomics::atomic<bool>   bInitialized;
-            cds::OS::ThreadId          threadId     ;   // insert thread id
+            cds::OS::ThreadId       threadId;   // inserter thread id
 
             typedef cds::sync::spin_lock< cds::backoff::pause > lock_type;
             mutable lock_type   m_access;
@@ -218,7 +218,7 @@ namespace map2 {
                 template <typename Val>
                 void operator()( Val& cur, Val * old )
                 {
-                    operator()( old != nullptr, cur.first, cur.second );
+                    operator()( old == nullptr, cur.first, cur.second );
                 }
 
             private:
