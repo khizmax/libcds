@@ -18,3 +18,4 @@
 /todo-2.1.txt
 *.log
 /.project
+/projects/Win/vc14/*.opendb

@@ -707,12 +707,10 @@ namespace cds { namespace intrusive {
                     void operator()( value_type * v )
                     {
                         splitlist_node_type * p = static_cast<splitlist_node_type *>( node_traits::to_node_ptr( v ));
-                        if ( p->is_dummy() ) {
+                        if ( p->is_dummy() )
                             dummy_node_disposer<gc, typename traits::allocator>()( p );
-                        }
-                        else {
+                        else
                             native_disposer()( v );
-                        }
                     }
                 };
 

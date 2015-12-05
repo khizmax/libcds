@@ -213,7 +213,7 @@ namespace cds { namespace intrusive {
         {
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
 
-            pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_release );
+            pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_relaxed );
             pPred->m_pNext.store( marked_node_ptr(pNode), memory_model::memory_order_release );
         }
 
@@ -224,7 +224,7 @@ namespace cds { namespace intrusive {
 
             node_type * pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr();
             pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_relaxed ); // logical deletion + back-link for search
-            pPred->m_pNext.store( marked_node_ptr( pNext ), memory_model::memory_order_relaxed); // physically deleting
+            pPred->m_pNext.store( marked_node_ptr( pNext ), memory_model::memory_order_release); // physically deleting
         }
 
         //@endcond
@@ -1035,7 +1035,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_at( node_type * pHead, Q const& val, Compare cmp, Func f, position& pos )
+        bool erase_at( node_type * const pHead, Q const& val, Compare cmp, Func f, position& pos )
         {
             check_deadlock_policy::check();
 
@@ -1086,7 +1086,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        value_type * extract_at( node_type * pHead, Q const& val, Compare cmp )
+        value_type * extract_at( node_type * const pHead, Q const& val, Compare cmp )
         {
             position pos;
             assert( gc::is_locked() ) ; // RCU must be locked!!!
@@ -1170,13 +1170,13 @@ namespace cds { namespace intrusive {
     protected:
         //@cond
         template <typename Q>
-        void search( node_type * pHead, Q const& key, position& pos ) const
+        void search( node_type * const pHead, Q const& key, position& pos ) const
         {
             search( pHead, key, pos, key_comparator() );
         }
 
         template <typename Q, typename Compare>
-        void search( node_type * pHead, Q const& key, position& pos, Compare cmp ) const
+        void search( node_type * const pHead, Q const& key, position& pos, Compare cmp ) const
         {
             // RCU should be locked!!!
             assert( gc::is_locked() );
@@ -1186,7 +1186,7 @@ namespace cds { namespace intrusive {
             marked_node_ptr pCur(pHead);
             marked_node_ptr pPrev(pHead);
 
-            while ( pCur.ptr() != pTail && ( pCur.ptr() == pHead || cmp( *node_traits::to_value_ptr( *pCur.ptr() ), key ) < 0 )) {
+            while ( pCur != pTail && ( pCur == pHead || cmp( *node_traits::to_value_ptr( *pCur.ptr()), key ) < 0 )) {
                 pPrev = pCur;
                 pCur = pCur->m_pNext.load(memory_model::memory_order_acquire);
             }
@@ -1195,7 +1195,7 @@ namespace cds { namespace intrusive {
             pos.pPred = pPrev.ptr();
         }
 
-        static bool validate( node_type * pPred, node_type * pCur )
+        static bool validate( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
         {
             // RCU lock should be locked!!!
             assert( gc::is_locked() );

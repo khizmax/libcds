@@ -193,12 +193,12 @@ namespace cds { namespace memory {
     };
 
 
-    /// Lazy free-list based on bounded lock-free queue cds::intrusive::VyukovMPMCCycleQueue
+    /// Lazy free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
-        - \p Traits - traits for cds::intrusive::VyukovMPMCCycleQueue class plus
-            cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
+        - \p Traits - traits for \p cds::intrusive::VyukovMPMCCycleQueue class plus
+            \p cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
         \b Internals
 
@@ -305,7 +305,7 @@ namespace cds { namespace memory {
             return cxx_allocator().New();
         }
 
-        /// Deallocated the object \p p
+        /// Deallocates the object \p p
         /**
             The pool supports allocation only single object (\p n = 1).
             If \p n > 1 the behaviour is undefined.
@@ -327,12 +327,12 @@ namespace cds { namespace memory {
 
     };
 
-    /// Bounded free-list based on bounded lock-free queue cds::intrusive::VyukovMPMCCycleQueue
+    /// Bounded free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
         - \p T - the type of object maintaining by free-list
-        - \p Traits - traits for cds::intrusive::VyukovMPMCCycleQueue class plus
-            cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
+        - \p Traits - traits for \p cds::intrusive::VyukovMPMCCycleQueue class plus
+            \p cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
         \b Internals
 
@@ -488,12 +488,12 @@ namespace cds { namespace memory {
             return p;
         }
 
-        /// Deallocated the object \p p
+        /// Deallocates the object \p p
         /**
             The pool supports allocation only single object (\p n = 1).
             If \p n > 1 the behaviour is undefined.
 
-            \p should be from preallocated pool.
+            \p p should be from preallocated pool.
         */
         void deallocate( value_type * p, size_t n )
         {

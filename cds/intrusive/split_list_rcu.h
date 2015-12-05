@@ -32,7 +32,7 @@ namespace cds { namespace intrusive {
         - \p Traits - set traits, default isd \p split_list::traits.
             Instead of defining \p Traits struct you may use option-based syntax with \p split_list::make_traits metafunction.
 
-        @note About reqired features of hash functor see \ref cds_SplitList_hash_functor "SplitList general description".
+        @note About required features of hash functor see \ref cds_SplitList_hash_functor "SplitList general description".
 
         \par How to use
         Before including <tt><cds/intrusive/split_list_rcu.h></tt> you should include appropriate RCU header file,
@@ -243,7 +243,7 @@ namespace cds { namespace intrusive {
         atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
         item_counter            m_ItemCounter;      ///< Item counter
         hash                    m_HashFunctor;      ///< Hash functor
-        stat                    m_Stat;             ///< Internal stattistics accumulator
+        stat                    m_Stat;             ///< Internal statistics accumulator
 
     protected:
         //@cond

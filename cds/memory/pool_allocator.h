@@ -17,7 +17,7 @@ namespace cds { namespace memory {
 
         Template arguments:
         - \p T - value type
-        - \p Accessor - a functor to access to pool object. The pool has the following interface:
+        - \p Accessor - a functor to access to the pool object. The pool has the following interface:
             \code
             template <typename T>
             class pool {
@@ -29,7 +29,7 @@ namespace cds { namespace memory {
 
         <b>Usage</b>
 
-            Suppose, we have got a pool with interface above. Usually, the pool is a static object:
+            Suppose, we have a pool with interface above. Usually, the pool is a static object:
             \code
                 static pool<Foo>     thePool;
             \endcode
