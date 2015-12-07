@@ -101,7 +101,7 @@ namespace map2 {
                 template <typename Key, typename Val >
                 void operator()( Key const& key, Val& v )
                 {
-                    std::unique_lock< typename value_type::lock_type>    ac( v.m_access );
+                    std::unique_lock< typename value_type::lock_type> ac( v.m_access );
 
                     v.nKey  = key;
                     v.nData = key * 8;
@@ -203,6 +203,7 @@ namespace map2 {
                         v.bInitialized.store( true, atomics::memory_order_relaxed);
                     }
                     else {
+                        assert( v.bInitialized.load( atomics::memory_order_relaxed ));
                         v.nUpdateCall.fetch_add( 1, atomics::memory_order_relaxed );
                         ++nModified;
                     }
@@ -218,6 +219,8 @@ namespace map2 {
                 template <typename Val>
                 void operator()( Val& cur, Val * old )
                 {
+                    if ( old )
+                        cur.second.bInitialized.store( true, atomics::memory_order_release );
                     operator()( old == nullptr, cur.first, cur.second );
                 }
 
