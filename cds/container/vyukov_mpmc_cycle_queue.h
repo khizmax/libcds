@@ -161,8 +161,8 @@ namespace cds { namespace container {
     protected:
         //@cond
         buffer          m_buffer;
-        typename opt::details::apply_padding< buffer, traits::padding >::padding_type pad1_;
         size_t const    m_nBufferMask;
+        typename opt::details::apply_padding< size_t, traits::padding >::padding_type pad1_;
         sequence_type   m_posEnqueue;
         typename opt::details::apply_padding< sequence_type, traits::padding >::padding_type pad2_;
         sequence_type   m_posDequeue;
