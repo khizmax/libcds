@@ -9,5 +9,4 @@
 
 namespace map2 {
     CDSUNIT_DECLARE_StdMap
-    CDSUNIT_DECLARE_StdMap_NoLock
 } // namespace map2

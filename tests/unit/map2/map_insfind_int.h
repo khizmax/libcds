@@ -203,7 +203,6 @@ namespace map2 {
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_StdMap
-        CDSUNIT_DECLARE_StdMap_NoLock
 
         CPPUNIT_TEST_SUITE(Map_InsFind_int)
             CDSUNIT_TEST_MichaelMap
@@ -220,7 +219,6 @@ namespace map2 {
             CDSUNIT_TEST_StripedMap
             CDSUNIT_TEST_RefinableMap
             CDSUNIT_TEST_StdMap
-            CDSUNIT_TEST_StdMap_NoLock
         CPPUNIT_TEST_SUITE_END();
     };
 } // namespace map2
