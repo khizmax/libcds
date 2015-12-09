@@ -454,14 +454,14 @@ namespace map2 {
             size_t nUpdateModified = 0;
             size_t nEnsFuncCreated = 0;
             size_t nEnsFuncModified = 0;
-            size_t nTestFunctorRef = 0;
+            size_t nInsFuncCalled = 0;
 
             for ( CppUnitMini::ThreadPool::iterator it = pool.begin(); it != pool.end(); ++it ) {
                 InserterThread * pThread = dynamic_cast<InserterThread *>( *it );
                 if ( pThread ) {
                     nInsertSuccess += pThread->m_nInsertSuccess;
                     nInsertFailed += pThread->m_nInsertFailed;
-                    nTestFunctorRef += pThread->m_nTestFunctorRef;
+                    nInsFuncCalled += pThread->m_nTestFunctorRef;
                 }
                 else {
                     DeleterThread * p = dynamic_cast<DeleterThread *>( *it );
@@ -499,8 +499,8 @@ namespace map2 {
             CPPUNIT_CHECK_EX( nUpdateCreated == nEnsFuncCreated, "Update created=" << nUpdateCreated << " functor=" << nEnsFuncCreated );
             CPPUNIT_CHECK_EX( nUpdateModified == nEnsFuncModified, "Update modified=" << nUpdateModified << " functor=" << nEnsFuncModified );
 
-            // nTestFunctorRef is call count of insert functor
-            CPPUNIT_CHECK_EX( nTestFunctorRef == nInsertSuccess, "nInsertSuccess=" << nInsertSuccess << " functor nTestFunctorRef=" << nTestFunctorRef );
+            // nInsFuncCalled is call count of insert functor
+            CPPUNIT_CHECK_EX( nInsFuncCalled == nInsertSuccess, "nInsertSuccess=" << nInsertSuccess << " functor nInsFuncCalled=" << nInsFuncCalled );
 
             check_before_cleanup( testMap );
 

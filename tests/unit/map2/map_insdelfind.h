@@ -213,7 +213,7 @@ namespace map2 {
             timer.reset();
             testMap.clear();
             CPPUNIT_MSG( "   Duration=" << timer.duration() );
-            CPPUNIT_ASSERT_EX( testMap.empty(), ((long long) testMap.size()) );
+            CPPUNIT_CHECK_EX( testMap.empty(), "size=" << ((long long) testMap.size()) );
 
             additional_check( testMap );
             print_stat( testMap );
