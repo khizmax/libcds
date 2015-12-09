@@ -3,8 +3,9 @@
 #ifndef CDSUNIT_PRINT_FELDMAN_HASHSET_STAT_H
 #define CDSUNIT_PRINT_FELDMAN_HASHSET_STAT_H
 
-#include <cds/intrusive/details/feldman_hashset_base.h>
 #include <ostream>
+#include <iomanip>
+#include <cds/intrusive/details/feldman_hashset_base.h>
 
 namespace std {
 
