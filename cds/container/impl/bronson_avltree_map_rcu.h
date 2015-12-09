@@ -1728,8 +1728,7 @@ namespace cds { namespace container {
                     return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
                 }
                 else {
-                    assert( pLRight != nullptr );
-                    {
+                    if ( pLRight ) {
                         node_scoped_lock lr( m_Monitor, *pLRight );
                         if ( pLeft->m_pRight.load( memory_model::memory_order_acquire ) != pLRight )
                             return pNode; // retry
@@ -1745,6 +1744,8 @@ namespace cds { namespace container {
                             return rotate_right_over_left_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLRL );
                         }
                     }
+                    else
+                        return pNode; // retry
 
                     // focus on pLeft, if necessary pNode will be balanced later
                     return rebalance_to_left_locked( pNode, pLeft, pLRight, hLL );
@@ -1776,8 +1777,7 @@ namespace cds { namespace container {
                 if ( hRR > hRL )
                     return rotate_left_locked( pParent, pNode, hL, pRight, pRLeft, hRL, hRR );
 
-                {
-                    assert( pRLeft != nullptr );
+                if ( pRLeft ) {
                     node_scoped_lock lrl( m_Monitor, *pRLeft );
                     if ( pRight->m_pLeft.load( memory_model::memory_order_acquire ) != pRLeft )
                         return pNode; // retry
@@ -1792,6 +1792,8 @@ namespace cds { namespace container {
                     if ( balance >= -1 && balance <= 1 && !((hRR == 0 || hRLR == 0) && !pRight->is_valued( memory_model::memory_order_relaxed )))
                          return rotate_left_over_right_locked( pParent, pNode, hL, pRight, pRLeft, hRR, hRLR );
                 }
+                else
+                    return pNode; // retry
                 return rebalance_to_right_locked( pNode, pRight, pRLeft, hRR );
             }
         }

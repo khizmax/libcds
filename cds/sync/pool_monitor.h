@@ -184,6 +184,7 @@ namespace cds { namespace sync {
             if ( !pLock ) {
                 assert( cur == 0 );
                 pLock = p.m_SyncMonitorInjection.m_pLock = m_Pool.allocate( 1 );
+                assert( pLock != nullptr );
                 m_Stat.onLockAllocation();
             }
 
