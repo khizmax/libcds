@@ -219,8 +219,11 @@ namespace map2 {
                 template <typename Val>
                 void operator()( Val& cur, Val * old )
                 {
-                    if ( old )
+                    if ( old ) {
+                        cur.second.nKey = cur.first;
+                        cur.second.nData = cur.first * 8;
                         cur.second.bInitialized.store( true, atomics::memory_order_release );
+                    }
                     operator()( old == nullptr, cur.first, cur.second );
                 }
 
@@ -334,7 +337,7 @@ namespace map2 {
                 {
                     while ( true ) {
                         if ( v.bInitialized.load( atomics::memory_order_relaxed )) {
-                            std::unique_lock< typename value_type::lock_type>    ac( v.m_access );
+                            std::unique_lock< typename value_type::lock_type> ac( v.m_access );
 
                             if ( m_cnt.nKeyExpected == v.nKey && m_cnt.nKeyExpected * 8 == v.nData )
                                 ++m_cnt.nSuccessItem;

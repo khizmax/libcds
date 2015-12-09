@@ -777,7 +777,7 @@ namespace map2 {
         CDSUNIT_DECLARE_EllenBinTreeMap
         CDSUNIT_DECLARE_BronsonAVLTreeMap
         CDSUNIT_DECLARE_FeldmanHashMap_fixed
-        CDSUNIT_DECLARE_FeldmanHashMap_city
+        //CDSUNIT_DECLARE_FeldmanHashMap_city
         CDSUNIT_DECLARE_CuckooMap
 
         CPPUNIT_TEST_SUITE(Map_DelOdd)
@@ -787,7 +787,7 @@ namespace map2 {
             CDSUNIT_TEST_EllenBinTreeMap
             CDSUNIT_TEST_BronsonAVLTreeMap
             CDSUNIT_TEST_FeldmanHashMap_fixed
-            CDSUNIT_TEST_FeldmanHashMap_city
+            //CDSUNIT_TEST_FeldmanHashMap_city
             CDSUNIT_TEST_CuckooMap
         CPPUNIT_TEST_SUITE_END();
 

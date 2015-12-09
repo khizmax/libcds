@@ -284,6 +284,10 @@ namespace set2 {
     static inline void print_stat( FeldmanHashSet< GC, T, Traits > const& s )
     {
         CPPUNIT_MSG( s.statistics() );
+
+        std::vector< cds::intrusive::feldman_hashset::level_statistics > level_stat;
+        s.get_level_statistics( level_stat );
+        CPPUNIT_MSG( level_stat );
     }
 
 } // namespace set2

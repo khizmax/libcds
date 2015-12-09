@@ -165,6 +165,8 @@ namespace map2 {
 
         std::vector< cds::intrusive::feldman_hashset::level_statistics > level_stat;
         m.get_level_statistics( level_stat );
+        CPPUNIT_MSG( level_stat );
+        /*
         CPPUNIT_MSG( "Level statistics, height=" << level_stat.size());
         size_t i = 0;
         CPPUNIT_MSG( "  i   node_count capacity    data_cell   array_cell   empty_cell" );
@@ -177,6 +179,7 @@ namespace map2 {
                       << std::setw(12) << it->empty_cell_count << std::setw(0)
                       );
         }
+        */
     }
 
 }   // namespace map2

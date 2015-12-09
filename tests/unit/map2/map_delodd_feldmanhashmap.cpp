@@ -9,5 +9,5 @@
 
 namespace map2 {
     CDSUNIT_DECLARE_FeldmanHashMap_fixed
-    CDSUNIT_DECLARE_FeldmanHashMap_city
+    //CDSUNIT_DECLARE_FeldmanHashMap_city
 } // namespace map2

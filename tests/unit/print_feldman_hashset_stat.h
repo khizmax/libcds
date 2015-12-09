@@ -37,6 +37,23 @@ namespace std {
         return o;
     }
 
+    static inline ostream& operator<<( ostream& o, std::vector< cds::intrusive::feldman_hashset::level_statistics > const& level_stat )
+    {
+        o << "Level statistics, height=" << level_stat.size() << "\n";
+        size_t i = 0;
+        o << "  i   node_count capacity    data_cell   array_cell   empty_cell\n";
+        for ( auto it = level_stat.begin(); it != level_stat.end(); ++it, ++i ) {
+            o << std::setw( 3 ) << i << std::setw( 0 ) << " "
+              << std::setw( 12 ) << it->array_node_count << std::setw( 0 ) << " "
+              << std::setw( 8 ) << it->node_capacity << std::setw( 0 ) << " "
+              << std::setw( 12 ) << it->data_cell_count << std::setw( 0 ) << " "
+              << std::setw( 12 ) << it->array_cell_count << std::setw( 0 ) << " "
+              << std::setw( 12 ) << it->empty_cell_count << std::setw( 0 )
+              << "\n";
+        }
+        return o;
+    }
+
 } // namespace std
 
 #endif // #ifndef CDSUNIT_PRINT_FELDMAN_HASHSET_STAT_H
