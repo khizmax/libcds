@@ -152,6 +152,9 @@ namespace map2 {
             typedef TestThread<Map>     Thread;
             cds::OS::Timer    timer;
 
+            CPPUNIT_MSG( "Map size=" << c_nMapSize << " find key loop=" << m_Arr.size() << " (" << c_nPercentExists << "% success)" );
+            CPPUNIT_MSG( "Thread count=" << c_nThreadCount << " Pass count=" << c_nPassCount );
+
             // Fill the map
             CPPUNIT_MSG( "  Fill map...");
             timer.reset();

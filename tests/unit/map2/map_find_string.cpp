@@ -18,13 +18,13 @@ namespace map2 {
         size_t nSize = arrString.size();
         if ( nSize > c_nMapSize )
             nSize = c_nMapSize;
-        m_Arr.resize( nSize );
+        m_Arr.reserve( nSize );
 
         nSize = 0;
-        for ( size_t i = 0; i < nSize; ++i ) {
-            m_Arr[i].pKey = &( arrString[i] );
-            m_Arr[i].bExists = CppUnitMini::Rand( 100 ) <= nPercent;
-            if ( m_Arr[i].bExists )
+        for ( size_t i = 0; i < nSize && i < arrString.size(); ++i ) {
+        bool bExists = CppUnitMini::Rand( 100 ) <= nPercent;
+            m_Arr.push_back( { &arrString.at(i), bExists } );
+            if ( bExists )
                 ++nSize;
         }
         c_nMapSize = nSize;
@@ -49,12 +49,10 @@ namespace map2 {
         if ( c_nThreadCount == 0 )
             c_nThreadCount = std::thread::hardware_concurrency();
 
-        CPPUNIT_MSG( "Generating test data...");
+        CPPUNIT_MSG( "Generating test data...\n");
         cds::OS::Timer    timer;
         generateSequence();
-        CPPUNIT_MSG( "   Duration=" << timer.duration() );
-        CPPUNIT_MSG( "Map size=" << c_nMapSize << " find key loop=" << m_Arr.size() << " (" << c_nPercentExists << "% success)" );
-        CPPUNIT_MSG( "Thread count=" << c_nThreadCount << " Pass count=" << c_nPassCount );
+        CPPUNIT_MSG( "   Duration=" << timer.duration() << "\n" );
 
     }
 } // namespace map2
