@@ -255,7 +255,7 @@ namespace cds {
             {}
 
             /// Construct object for specified state
-            explicit reentrant_spin_lock( bool bLocked ) CDS_NOEXCEPT_( noexcept(lock()))
+            explicit reentrant_spin_lock( bool bLocked )
                 : m_spin(0)
                 , m_OwnerId( OS::c_NullThreadId )
             {
