@@ -264,7 +264,7 @@ namespace cds {
             typedef size_t counter_type    ;  ///< Counter type
         public:
             /// Returns 0
-            counter_type value(atomics::memory_order /*order*/ = atomics::memory_order_relaxed) const
+            static counter_type value(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {
                 return 0;
             }
@@ -276,35 +276,35 @@ namespace cds {
             }
 
             /// Dummy increment. Always returns 0
-            size_t inc(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
+            static size_t inc(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {
                 return 0;
             }
 
             /// Dummy increment. Always returns 0
-            size_t dec(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
+            static size_t dec(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {
                 return 0;
             }
 
             /// Dummy pre-increment. Always returns 0
-            size_t operator ++()
+            size_t operator ++() const
             {
                 return 0;
             }
             /// Dummy post-increment. Always returns 0
-            size_t operator ++(int)
+            size_t operator ++(int) const
             {
                 return 0;
             }
 
             /// Dummy pre-decrement. Always returns 0
-            size_t operator --()
+            size_t operator --() const
             {
                 return 0;
             }
             /// Dummy post-decrement. Always returns 0
-            size_t operator --(int)
+            size_t operator --(int) const
             {
                 return 0;
             }

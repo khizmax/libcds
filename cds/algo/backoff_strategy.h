@@ -65,7 +65,7 @@ namespace cds {
                 return pr();
             }
 
-            void reset() const CDS_NOEXCEPT
+            static void reset() CDS_NOEXCEPT
             {}
             //@endcond
         };
@@ -87,7 +87,7 @@ namespace cds {
                 return false;
             }
 
-            void reset() const CDS_NOEXCEPT
+            static void reset() CDS_NOEXCEPT
             {}
             //@endcond
         };
@@ -115,7 +115,7 @@ namespace cds {
                 return false;
             }
 
-            void reset() const CDS_NOEXCEPT
+            static void reset() CDS_NOEXCEPT
             {}
             //@endcond
         };
@@ -146,7 +146,7 @@ namespace cds {
                 return false;
             }
 
-            void reset() const CDS_NOEXCEPT
+            static void reset() CDS_NOEXCEPT
             {}
         //@endcond
         };

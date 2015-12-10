@@ -242,11 +242,10 @@ namespace queue {
 
             // Test that all items have been popped
             CPPUNIT_MSG( "   Test consistency of popped sequence..." );
-            size_t nErrors = 0;
             for ( size_t nWriter = 0; nWriter < s_nWriterThreadCount; ++nWriter ) {
                 std::vector<size_t> arrData;
                 arrData.reserve( m_nThreadPushCount );
-                nErrors = 0;
+                size_t nErrors = 0;
                 for ( size_t nReader = 0; nReader < arrReaders.size(); ++nReader ) {
                     ReaderIterator it = arrReaders[nReader]->m_WriterData[nWriter].begin();
                     ReaderIterator itEnd = arrReaders[nReader]->m_WriterData[nWriter].end();
@@ -263,6 +262,7 @@ namespace queue {
                     for ( it = arrReaders[nReader]->m_WriterData[nWriter].begin(); it != itEnd; ++it )
                         arrData.push_back( *it );
                 }
+
                 std::sort( arrData.begin(), arrData.end() );
                 nErrors = 0;
                 for ( size_t i=1; i < arrData.size(); ++i ) {
