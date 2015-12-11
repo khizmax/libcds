@@ -22,7 +22,7 @@ namespace map2 {
 
         nSize = 0;
         for ( size_t i = 0; i < nSize && i < arrString.size(); ++i ) {
-        bool bExists = CppUnitMini::Rand( 100 ) <= nPercent;
+            bool bExists = CppUnitMini::Rand( 100 ) <= nPercent;
             m_Arr.push_back( { &arrString.at(i), bExists } );
             if ( bExists )
                 ++nSize;
