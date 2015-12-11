@@ -60,7 +60,7 @@ namespace cds {
             {}
 
             template <typename Predicate>
-            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
             {
                 return pr();
             }
@@ -73,13 +73,13 @@ namespace cds {
         /// Switch to another thread (yield). Good for thread preemption architecture.
         struct yield {
             //@cond
-            void operator ()() CDS_NOEXCEPT
+            void operator ()() const CDS_NOEXCEPT
             {
                 std::this_thread::yield();
             }
 
             template <typename Predicate>
-            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
             {
                 if ( pr() )
                     return true;
@@ -99,7 +99,7 @@ namespace cds {
         */
         struct pause {
             //@cond
-            void operator ()() CDS_NOEXCEPT
+            void operator ()() const CDS_NOEXCEPT
             {
 #            ifdef CDS_backoff_pause_defined
                 platform::backoff_pause();
@@ -107,7 +107,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()(Predicate pr) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
             {
                 if ( pr() )
                     return true;
@@ -128,7 +128,7 @@ namespace cds {
         struct hint
         {
         //@cond
-            void operator ()() CDS_NOEXCEPT
+            void operator ()() const CDS_NOEXCEPT
             {
 #           if defined(CDS_backoff_hint_defined)
                 platform::backoff_hint();
@@ -138,7 +138,7 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()(Predicate pr) CDS_NOEXCEPT_(noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_(noexcept(std::declval<Predicate>()() ))
             {
                 if ( pr() )
                     return true;
@@ -361,7 +361,7 @@ namespace cds {
             {}
 
             /// Initializes timeout from \p nTimeout
-            CDS_CONSTEXPR delay( unsigned int nTimeout ) CDS_NOEXCEPT
+            CDS_CONSTEXPR explicit delay( unsigned int nTimeout ) CDS_NOEXCEPT
                 : m_nTimeout( nTimeout )
             {}
 
@@ -382,7 +382,7 @@ namespace cds {
                 return false;
             }
 
-            void reset() const CDS_NOEXCEPT
+            static void reset() CDS_NOEXCEPT
             {}
             //@endcond
         };

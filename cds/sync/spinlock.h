@@ -59,7 +59,7 @@ namespace cds {
             /**
                 In debug mode: if \p bLocked = true then spin-lock is made owned by current thread
             */
-            spin_lock( bool bLocked ) CDS_NOEXCEPT
+            explicit spin_lock( bool bLocked ) CDS_NOEXCEPT
 #    ifdef CDS_DEBUG
                 : m_dbgOwnerId( bLocked ? cds::OS::get_current_thread_id() : cds::OS::c_NullThreadId )
 #    endif

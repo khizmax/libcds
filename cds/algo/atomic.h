@@ -310,7 +310,7 @@ namespace cds {
             }
 
             /// Dummy function
-            void reset(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
+            static void reset(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {}
         };
     }   // namespace atomicity
