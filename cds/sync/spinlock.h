@@ -287,7 +287,7 @@ namespace cds {
             }
 
             /// Try to lock the object
-            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( try_acquire( nTryCount )))
+            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( std::declval<reentrant_spin_lock>().try_acquire( nTryCount )))
             {
                 thread_id tid = OS::get_current_thread_id();
                 if ( try_taken_lock( tid ) )
@@ -300,7 +300,7 @@ namespace cds {
             }
 
             /// Lock the object waits if it is busy
-            void lock() CDS_NOEXCEPT_( noexcept( acquire()))
+            void lock() CDS_NOEXCEPT_( noexcept( std::declval<reentrant_spin_lock>().acquire()))
             {
                 thread_id tid = OS::get_current_thread_id();
                 if ( !try_taken_lock( tid ) ) {
