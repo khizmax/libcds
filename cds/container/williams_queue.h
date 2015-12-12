@@ -126,27 +126,14 @@ namespace cds { namespace container {
             atomics::atomic< node_counter > m_count;       ///< Internal and external reference counter
             atomics::atomic< counted_node_ptr > m_next;    ///< Pointer to the next node in the queue
 
-            node_type( value_type v ) : node_type( new value_type( v ) )
-            {}
-
-            template <typename... Args>
-            node_type( Args&&... args ) : node_type( value_type( std::forward<Args>( args )... ) )
-            {}
-            
-            node_type() : node_type( (value_type*) nullptr )
-            {}
-
-        private:
-            node_type( value_type * v ) : m_value( v )
+            node_type() : m_value( nullptr )
             {
                 node_counter new_count;
                 new_count.internal_count = 0;
                 new_count.external_counters = 2;
                 m_count.store( new_count );
 
-                counted_node_ptr new_next;
-                new_next.ptr = nullptr;
-                new_next.external_count = 0;
+                counted_node_ptr new_next = { 0 };
                 m_next.store( new_next );
             }
         };
@@ -168,14 +155,26 @@ namespace cds { namespace container {
         {
             return node_allocator().New();
         }
+        static node_type * alloc_node( value_type * const val )
+        {
+            node_type * new_node = alloc_node();
+            new_node->m_value.store( val, atomics::memory_order_relaxed );
+            return new_node;
+        }
         static node_type * alloc_node( value_type const& val )
         {
-            return node_allocator().New( val );
+            scoped_value_ptr new_value( new value_type( val ) );
+            node_type * new_node = alloc_node( new_value.get() );
+            new_value.release();
+            return new_node;
         }
         template <typename... Args>
         static node_type * alloc_node_move( Args&&... args )
         {
-            return node_allocator().MoveNew( std::forward<Args>( args )... );
+            scoped_value_ptr new_value( new value_type(std::forward<Args>(args)...) );
+            node_type * new_node = alloc_node( new_value.get() );
+            new_value.release();
+            return new_node;
         }
         static void free_node( node_type * p )
         {
@@ -254,11 +253,12 @@ namespace cds { namespace container {
         /// Initializes empty queue
         WilliamsQueue()
         {
-            counted_node_ptr new_head;
-            new_head.ptr = new node_type;
-            new_head.external_count = 1;
-            m_Head.store( new_head );
-            m_Tail.store( m_Head.load() );
+            counted_node_ptr dummy_node;
+            dummy_node.ptr = alloc_node();
+            dummy_node.external_count = 1;
+
+            m_Head.store( dummy_node );
+            m_Tail.store( dummy_node );
         }
 
         /// Destructor clears the queue
@@ -386,14 +386,17 @@ namespace cds { namespace container {
                 increase_external_count( m_Head, old_head );
                 node_type * const p = old_head.ptr;
                 if ( p == m_Tail.load().ptr )
+                {
+                    release_ref( p );
                     return false;
+                }
                 counted_node_ptr next = p->m_next.load();
                 if ( m_Head.compare_exchange_strong( old_head, next ) )
                 {
-                    value_type * const res = p->m_value.exchange( nullptr );
-                    free_external_counter( old_head ) ;
+                    scoped_value_ptr res( p->m_value.exchange( nullptr ) );
+                    free_external_counter( old_head );
                     --m_ItemCounter;
-                    f( *res );
+                    f( *res.get() );
                     return true;
                 }
                 release_ref( p );
