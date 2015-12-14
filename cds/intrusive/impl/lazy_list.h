@@ -238,19 +238,7 @@ namespace cds { namespace intrusive {
             }
         };
 
-        class auto_lock_position {
-            position&   m_pos;
-        public:
-            auto_lock_position( position& pos )
-                : m_pos(pos)
-            {
-                pos.lock();
-            }
-            ~auto_lock_position()
-            {
-                m_pos.unlock();
-            }
-        };
+        typedef std::unique_lock< position > scoped_position_lock;
         //@endcond
 
     protected:
@@ -914,7 +902,7 @@ namespace cds { namespace intrusive {
             while ( true ) {
                 search( pHead, val, pos, key_comparator() );
                 {
-                    auto_lock_position alp( pos );
+                    scoped_position_lock alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // failed: key already in list
@@ -940,7 +928,7 @@ namespace cds { namespace intrusive {
             while ( true ) {
                 search( pHead, val, pos, key_comparator() );
                 {
-                    auto_lock_position alp( pos );
+                    scoped_position_lock alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // failed: key already in list
@@ -966,7 +954,7 @@ namespace cds { namespace intrusive {
             while ( true ) {
                 search( pHead, val, pos, key_comparator() );
                 {
-                    auto_lock_position alp( pos );
+                    scoped_position_lock alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // key already in the list
@@ -1001,7 +989,7 @@ namespace cds { namespace intrusive {
                 {
                     int nResult = 0;
                     {
-                        auto_lock_position alp( pos );
+                        scoped_position_lock alp( pos );
                         if ( validate( pos.pPred, pos.pCur ) ) {
                             if ( pos.pCur != &m_Tail
                                 && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0
@@ -1035,7 +1023,7 @@ namespace cds { namespace intrusive {
                 {
                     int nResult = 0;
                     {
-                        auto_lock_position alp( pos );
+                        scoped_position_lock alp( pos );
                         if ( validate( pos.pPred, pos.pCur )) {
                             if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                                 // key found
