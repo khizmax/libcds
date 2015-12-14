@@ -491,7 +491,7 @@ namespace set2 {
                 );
 
             if ( Set::c_bLoadFactorDepended ) {
-                for ( size_t nLoadFactor = 1; nLoadFactor <= c_nMaxLoadFactor; nLoadFactor *= 2 ) {
+                for ( c_nLoadFactor = 1; c_nLoadFactor <= c_nMaxLoadFactor; c_nLoadFactor *= 2 ) {
                     CPPUNIT_MSG("  LoadFactor = " << c_nLoadFactor );
                     Set s( *this );
                     do_test_extract( s );
