@@ -30,6 +30,7 @@ namespace cds { namespace intrusive {
                 This option is used only in \p clear() member function.
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
+            - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
@@ -39,7 +40,7 @@ namespace cds { namespace intrusive {
             typedef cds::intrusive::VyukovMPMCCycleQueue< Foo,
                 typename cds::intrusive::vyukov_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
-                    cds::opt::item_counte< cds::atomicity::item_counter >
+                    cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;
             \endcode
@@ -119,9 +120,10 @@ namespace cds { namespace intrusive {
     public:
         typedef T value_type;   ///< type of data to be stored in the queue
         typedef Traits traits;  ///< Queue traits
-        typedef typename traits::item_counter   item_counter;   ///< Item counter type
-        typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename traits::disposer       disposer;       ///< Item disposer
+        typedef typename traits::item_counter item_counter; ///< Item counter type
+        typedef typename traits::memory_model memory_model; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::disposer     disposer;     ///< Item disposer
+        typedef typename traits::back_off     back_off;     ///< back-off strategy
 
     public:
         /// Rebind template arguments
