@@ -21,52 +21,6 @@ namespace queue {
     }
     using namespace ns_BoundedQueue_Fullness;
 
-    class VyukovMPMCCycleQueue_dyn_fair_ : public Types<size_t>::VyukovMPMCCycleQueue_dyn_ic
-    {
-        typedef Types<size_t>::VyukovMPMCCycleQueue_dyn_ic base_class;
-    public:
-        typedef base_class::value_type value_type;
-
-        VyukovMPMCCycleQueue_dyn_fair_()
-            : base_class()
-        {}
-
-        VyukovMPMCCycleQueue_dyn_fair_( size_t nCapacity )
-            : base_class( nCapacity )
-        {}
-
-        bool enqueue( value_type const& data )
-        {
-            bool ret;
-            do {
-                ret = base_class::enqueue( data );
-            } while ( !ret && size() != capacity() );
-            return ret;
-        }
-
-        bool push( value_type const& data )
-        {
-            return enqueue( data );
-        }
-
-        bool dequeue( value_type& dest )
-        {
-            bool ret;
-            do {
-                ret = base_class::dequeue( dest );
-            } while ( !ret && size() != capacity() );
-            return ret;
-        }
-
-        bool pop( value_type& dest )
-        {
-            return dequeue( dest );
-        }
-
-        size_t size() const { return base_class::size(); }
-        size_t capacity() const { return base_class::capacity(); }
-    };
-
     class BoundedQueue_Fullness: public CppUnitMini::TestCase
     {
         template <class Queue>
@@ -172,15 +126,10 @@ namespace queue {
     protected:
         CDSUNIT_DECLARE_TsigasCycleQueue( size_t )
         CDSUNIT_DECLARE_VyukovMPMCCycleQueue( size_t )
-        void VyukovMPMCCycleQueue_dyn_fair()
-        {
-            test< VyukovMPMCCycleQueue_dyn_fair_ >();
-        }
 
         CPPUNIT_TEST_SUITE( BoundedQueue_Fullness )
             CDSUNIT_TEST_TsigasCycleQueue
             CDSUNIT_TEST_VyukovMPMCCycleQueue
-            CPPUNIT_TEST( VyukovMPMCCycleQueue_dyn_fair_ ) \
         CPPUNIT_TEST_SUITE_END();
     };
 

@@ -28,7 +28,7 @@ namespace cds { namespace urcu {
         that provides unified RCU interface. You should use this wrapper class instead \p %general_threaded
 
         Template arguments:
-        - \p Buffer - buffer type with FIFO semantics. Default is cds::container::VyukovMPMCCycleQueue. See \ref general_buffered
+        - \p Buffer - buffer type with FIFO semantics. Default is \p cds::container::VyukovMPMCCycleQueue. See \ref general_buffered
             for description of buffer's interface. The buffer contains the objects of \ref epoch_retired_ptr
             type that contains additional \p m_nEpoch field. This field specifies an epoch when the object
             has been placed into the buffer. The \p %general_threaded object has a global epoch counter

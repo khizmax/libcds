@@ -15,9 +15,6 @@ namespace cds { namespace memory {
     {
         /// Allocator type
         typedef CDS_DEFAULT_ALLOCATOR allocator;
-
-        /// Back-off stratey
-        typedef cds::backoff::yield   back_off;
     };
 
     /// Free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
