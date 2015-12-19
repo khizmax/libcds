@@ -25,23 +25,23 @@ namespace cds { namespace intrusive {
         [from [2003] Ori Shalev, Nir Shavit "Split-Ordered Lists - Lock-free Resizable Hash Tables"]
 
         The algorithm keeps all the items in one lock-free linked list, and gradually assigns the bucket pointers to
-        the places in the list where a sublist of “correct” items can be found. A bucket is initialized upon first
-        access by assigning it to a new “dummy” node (dashed contour) in the list, preceding all items that should be
-        in that bucket. A newly created bucket splits an older bucket’s chain, reducing the access cost to its items. The
-        table uses a modulo 2**i hash (there are known techniques for “pre-hashing” before a modulo 2**i hash
+        the places in the list where a sublist of 'correct' items can be found. A bucket is initialized upon first
+        access by assigning it to a new 'dummy' node (dashed contour) in the list, preceding all items that should be
+        in that bucket. A newly created bucket splits an older bucket's chain, reducing the access cost to its items. The
+        table uses a modulo 2**i hash (there are known techniques for 'pre-hashing' before a modulo 2**i hash
         to overcome possible binary correlations among values). The table starts at size 2 and repeatedly doubles in size.
 
         Unlike moving an item, the operation of directing a bucket pointer can be done
-        in a single CAS operation, and since items are not moved, they are never “lost”.
+        in a single CAS operation, and since items are not moved, they are never 'lost'.
         However, to make this approach work, one must be able to keep the items in the
-        list sorted in such a way that any bucket’s sublist can be “split” by directing a new
+        list sorted in such a way that any bucket's sublist can be 'split' by directing a new
         bucket pointer within it. This operation must be recursively repeatable, as every
         split bucket may be split again and again as the hash table grows. To achieve this
         goal the authors introduced recursive split-ordering, a new ordering on keys that keeps items
         in a given bucket adjacent in the list throughout the repeated splitting process.
 
         Magically, yet perhaps not surprisingly, recursive split-ordering is achieved by
-        simple binary reversal: reversing the bits of the hash key so that the new key’s
+        simple binary reversal: reversing the bits of the hash key so that the new key's
         most significant bits (MSB) are those that were originally its least significant.
         The split-order keys of regular nodes are exactly the bit-reverse image of the original
         keys after turning on their MSB. For example, items 9 and 13 are in the <tt>1 mod
@@ -50,7 +50,7 @@ namespace cds { namespace intrusive {
 
         To insert (respectively delete or search for) an item in the hash table, hash its
         key to the appropriate bucket using recursive split-ordering, follow the pointer to
-        the appropriate location in the sorted items list, and traverse the list until the key’s
+        the appropriate location in the sorted items list, and traverse the list until the key's
         proper location in the split-ordering (respectively until the key or a key indicating
         the item is not in the list is found). Because of the combinatorial structure induced
         by the split-ordering, this will require traversal of no more than an expected constant number of items.

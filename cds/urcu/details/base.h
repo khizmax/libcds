@@ -75,7 +75,7 @@ namespace cds {
           the best possible read-side performance, but requires that each thread periodically
           calls a function to announce that it is in a quiescent state, thus strongly
           constraining the application design. This type of %RCU is not implemented in \p libcds.
-        - The general-purpose %RCU implementation places almost no constraints on the application’s
+        - The general-purpose %RCU implementation places almost no constraints on the application's
           design, thus being appropriate for use within a general-purpose library, but it has
           relatively higher read-side overhead. The \p libcds contains several implementations of general-purpose
           %RCU: \ref general_instant, \ref general_buffered, \ref general_threaded.
