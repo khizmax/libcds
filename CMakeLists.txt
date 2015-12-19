@@ -7,6 +7,7 @@ set(PROJECT_VERSION 2.1.0)
 
 # Options
 option(WITH_TESTS "Build unit tests" OFF)
+option(WITH_TESTS_COVERAGE "Analyze test coverage using gcov (only for gcc)" OFF)
 option(WITH_BOOST_ATOMIC "Use boost atomics (only for boost >= 1.54)" OFF)
 
 find_package(Threads REQUIRED)
@@ -20,6 +21,17 @@ if(WITH_BOOST_ATOMIC)
     message(STATUS "Boost version allows using of boost.atomic: activated")
   endif()
 endif(WITH_BOOST_ATOMIC)
+
+if(WITH_TESTS_COVERAGE)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+    message(STATUS "Test coverage analysis: activated")
+  else()
+	message(WARNING "Compiler is not GNU gcc! Test coverage couldn't be analyzed")
+  endif()  
+endif(WITH_TESTS_COVERAGE)
 
 set(CDS_SHARED_LIBRARY ${PROJECT_NAME})
 set(CDS_STATIC_LIBRARY ${PROJECT_NAME}-s)
@@ -71,6 +83,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/cds DESTINATION include COMPONENT ${HEADER
 if(WITH_TESTS)
   enable_testing()
   add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
+  message(STATUS "Build tests: activated")
 endif(WITH_TESTS)
 
 ### FOR PACKAGING in RPM, TGZ, DEB, NSYS...###############################################################################

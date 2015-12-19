@@ -19,6 +19,7 @@ Compiling and testing
 After using command *cmake -L <path to the project's root directory with CMakeLists.txt>* one can see some additional variables, that can activate additional features:
 
 - *WITH_TESTS:BOOL=OFF*: if you want to build library with unit testing support use *-DWITH_TESTS=ON* on prepare step. Be careful with this flag, because compile time will dramatically increase
+- *WITH_TESTS_COVERAGE:BOOL=OFF*: Analyze test coverage using gcov (only for gcc)
 - *WITH_BOOST_ATOMIC:BOOL=OFF*: Use boost atomics (only for boost >= 1.54)
 - ...  
 
