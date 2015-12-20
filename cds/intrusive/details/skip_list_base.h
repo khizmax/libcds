@@ -601,7 +601,7 @@ namespace cds { namespace intrusive {
                 an allocator should be provided to maintain variable randomly-calculated height of the node
                 since the node can contain up to 32 next pointers. The allocator option is used to allocate an array of next pointers
                 for nodes which height is more than 1. Default is \ref CDS_DEFAULT_ALLOCATOR.
-            - \p opt::back_off - back-off strategy, default is \ç cds::backoff::Default.
+            - \p opt::back_off - back-off strategy, default is \p cds::backoff::Default.
             - \p opt::stat - internal statistics. By default, it is disabled (\p skip_list::empty_stat).
                 To enable it use \p skip_list::stat
         */

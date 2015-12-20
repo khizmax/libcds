@@ -285,14 +285,14 @@ namespace cds { namespace intrusive {
 
         <b>Key idea</b>
 
-        In the “basket” approach, instead of
+        In the 'basket' approach, instead of
         the traditional ordered list of nodes, the queue consists of an ordered list of groups
         of nodes (logical baskets). The order of nodes in each basket need not be specified, and in
         fact, it is easiest to maintain them in FIFO order. The baskets fulfill the following basic
         rules:
-        - Each basket has a time interval in which all its nodes’ enqueue operations overlap.
+        - Each basket has a time interval in which all its nodes' enqueue operations overlap.
         - The baskets are ordered by the order of their respective time intervals.
-        - For each basket, its nodes’ dequeue operations occur after its time interval.
+        - For each basket, its nodes' dequeue operations occur after its time interval.
         - The dequeue operations are performed according to the order of baskets.
 
         Two properties define the FIFO order of nodes:
@@ -301,7 +301,7 @@ namespace cds { namespace intrusive {
 
         In algorithms such as the MS-queue or optimistic
         queue, threads enqueue items by applying a Compare-and-swap (CAS) operation to the
-        queue’s tail pointer, and all the threads that fail on a particular CAS operation (and also
+        queue's tail pointer, and all the threads that fail on a particular CAS operation (and also
         the winner of that CAS) overlap in time. In particular, they share the time interval of
         the CAS operation itself. Hence, all the threads that fail to CAS on the tail-node of
         the queue may be inserted into the same basket. By integrating the basket-mechanism
@@ -309,7 +309,7 @@ namespace cds { namespace intrusive {
         onto the new tail, can now be utilized to insert the failed operations into the basket,
         allowing enqueues to complete sooner. In the meantime, the next successful CAS operations
         by enqueues allow new baskets to be formed down the list, and these can be
-        filled concurrently. Moreover, the failed operations don’t retry their link attempt on the
+        filled concurrently. Moreover, the failed operations don't retry their link attempt on the
         new tail, lowering the overall contention on it. This leads to a queue
         algorithm that unlike all former concurrent queue algorithms requires virtually no tuning
         of the backoff mechanisms to reduce contention, making the algorithm an attractive
