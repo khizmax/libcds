@@ -717,14 +717,14 @@ namespace cds { namespace intrusive {
                     if ( pSucc.bits() ) {
                         // pCur is marked, i.e. logically deleted.
                         marked_node_ptr p( pCur.ptr() );
+#                   ifdef _DEBUG
+                        if ( nLevel == 0 )
+                            pCur->m_bUnlinked = true;
+#                   endif
                         if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
                              memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         {
                             if ( nLevel == 0 ) {
-#                       ifdef _DEBUG
-                                pCur->m_bUnlinked = true;
-#                       endif
-
                                 if ( !is_extracted( pSucc )) {
                                     // We cannot free the node at this moment since RCU is locked
                                     // Link deleted nodes to a chain to free later
@@ -790,15 +790,15 @@ namespace cds { namespace intrusive {
 
                     if ( pSucc.bits() ) {
                         // pCur is marked, i.e. logically deleted.
+#                   ifdef _DEBUG
+                        if ( nLevel == 0 )
+                            pCur->m_bUnlinked = true;
+#                   endif
                         marked_node_ptr p( pCur.ptr() );
                         if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
                             memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         {
                             if ( nLevel == 0 ) {
-#                       ifdef _DEBUG
-                                pCur->m_bUnlinked = true;
-#                       endif
-
                                 if ( !is_extracted( pSucc )) {
                                     // We cannot free the node at this moment since RCU is locked
                                     // Link deleted nodes to a chain to free later
@@ -854,15 +854,15 @@ namespace cds { namespace intrusive {
 
                     if ( pSucc.bits() ) {
                         // pCur is marked, i.e. logically deleted.
+#                   ifdef _DEBUG
+                        if ( nLevel == 0 )
+                            pCur->m_bUnlinked = true;
+#                   endif
                         marked_node_ptr p( pCur.ptr() );
                         if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
                             memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         {
                             if ( nLevel == 0 ) {
-#                       ifdef _DEBUG
-                                pCur->m_bUnlinked = true;
-#                       endif
-
                                 if ( !is_extracted( pSucc )) {
                                     // We cannot free the node at this moment since RCU is locked
                                     // Link deleted nodes to a chain to free later
