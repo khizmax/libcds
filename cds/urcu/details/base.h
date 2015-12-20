@@ -435,7 +435,7 @@ namespace cds {
         */
         struct epoch_retired_ptr: public retired_ptr
         {
-            uint64_t    m_nEpoch ;  ///< The epoch when the object has been retired
+            uint64_t    m_nEpoch;  ///< The epoch when the object has been retired
 
             //@cond
             epoch_retired_ptr()

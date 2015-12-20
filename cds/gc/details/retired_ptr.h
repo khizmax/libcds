@@ -68,8 +68,20 @@ namespace cds { namespace gc {
                 assert( m_p );
                 m_funcFree( m_p );
 
-                CDS_STRICT_DO( m_p = nullptr );
-                CDS_STRICT_DO( m_funcFree = nullptr );
+                CDS_STRICT_DO( clear() );
+            }
+
+            /// Checks if the retired pointer is not empty
+            explicit operator bool() const CDS_NOEXCEPT
+            {
+                return m_p != nullptr;
+            }
+
+            /// Clears retired pointer without \p free() call
+            void clear()
+            {
+                m_p = nullptr;
+                m_funcFree = nullptr;
             }
         };
 

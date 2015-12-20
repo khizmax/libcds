@@ -1145,7 +1145,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         std::pair<iterator, bool> update_at_locked( position& pos, value_type& val, Func func, bool bInsert )
         {
-            // RCU lock should be locked!!!
+            // RCU should be locked!!!
             assert( gc::is_locked() );
 
             while ( true ) {

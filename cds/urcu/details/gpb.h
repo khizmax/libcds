@@ -21,7 +21,7 @@ namespace cds { namespace urcu {
         i.e. until the RCU quiescent state will come. After that the buffer and all retired objects are freed.
         This synchronization cycle may be called in any thread that calls \p retire_ptr function.
 
-        The \p Buffer contains items of \ref cds_urcu_retired_ptr "retired_ptr" type and it should support a queue interface with
+        The \p Buffer contains items of \ref cds_urcu_retired_ptr "epoch_retired_ptr" type and it should support a queue interface with
         three function:
         - <tt> bool push( retired_ptr& p ) </tt> - places the retired pointer \p p into queue. If the function
             returns \p false it means that the buffer is full and RCU synchronization cycle must be processed.
@@ -29,13 +29,13 @@ namespace cds { namespace urcu {
             this function must return \p false
         - <tt>size_t size()</tt> - returns queue's item count.
 
-        The buffer is considered as full if \p push returns \p false or the buffer size reaches the RCU threshold.
+        The buffer is considered as full if \p push() returns \p false or the buffer size reaches the RCU threshold.
 
         There is a wrapper \ref cds_urcu_general_buffered_gc "gc<general_buffered>" for \p %general_buffered class
         that provides unified RCU interface. You should use this wrapper class instead \p %general_buffered
 
         Template arguments:
-        - \p Buffer - buffer type. Default is cds::container::VyukovMPMCCycleQueue
+        - \p Buffer - buffer type. Default is \p cds::container::VyukovMPMCCycleQueue
         - \p Lock - mutex type, default is \p std::mutex
         - \p Backoff - back-off schema, default is cds::backoff::Default
     */
@@ -67,10 +67,10 @@ namespace cds { namespace urcu {
 
     protected:
         //@cond
-        buffer_type                     m_Buffer;
-        atomics::atomic<uint64_t>    m_nCurEpoch;
-        lock_type                       m_Lock;
-        size_t const                    m_nCapacity;
+        buffer_type                m_Buffer;
+        atomics::atomic<uint64_t>  m_nCurEpoch;
+        lock_type                  m_Lock;
+        size_t const               m_nCapacity;
         //@endcond
 
     public:

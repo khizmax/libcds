@@ -19,27 +19,37 @@ namespace cds { namespace urcu {
         This implementation is similar to \ref general_buffered but separate thread is created
         for deleting the retired objects. Like \p %general_buffered, the class contains an internal buffer
         where retired objects are accumulated. When the buffer becomes full,
-        the RCU \p synchronize function is called that waits until all reader/updater threads end up their read-side critical sections,
-        i.e. until the RCU quiescent state will come. After that the "work ready" message is sent to reclamation tread.
+        the RCU \p synchronize() function is called that waits until all reader/updater threads end up their read-side critical sections,
+        i.e. until the RCU quiescent state will come. After that the "work ready" message is sent to reclamation thread.
         The reclamation thread frees the buffer.
-        This synchronization cycle may be called in any thread that calls \ref retire_ptr function.
+        This synchronization cycle may be called in any thread that calls \p retire_ptr() function.
 
         There is a wrapper \ref cds_urcu_general_threaded_gc "gc<general_threaded>" for \p %general_threaded class
         that provides unified RCU interface. You should use this wrapper class instead \p %general_threaded
 
+        The \p Buffer contains items of \ref cds_urcu_retired_ptr "epoch_retired_ptr" type 
+        and it should support a multiple producer/single consumer queue with the following interface:
+        - <tt> bool push( epoch_retired_ptr& p ) </tt> - places the retired pointer \p p into queue. If the function
+        returns \p false it means that the buffer is full and RCU synchronization cycle must be processed.
+        - <tt>epoch_retired_ptr * front() </tt> - returns a pointer to the top element or \p nullptr if the buffer is empty.
+        - <tt>bool pop_front() </tt> - pops the top element; returns \p false if the buffer is empty.
+        - <tt>size_t size()</tt> - returns queue's item count.
+
+        The buffer is considered as full if \p push() returns \p false or the buffer size reaches the RCU threshold.
+
         Template arguments:
-        - \p Buffer - buffer type with FIFO semantics. Default is \p cds::container::VyukovMPMCCycleQueue. See \ref general_buffered
-            for description of buffer's interface. The buffer contains the objects of \ref epoch_retired_ptr
+        - \p Buffer - MPSC (muliple producer/single consumer) buffer type with FIFO semantics. 
+            Default is \p cds::container::VyukovMPSCCycleQueue. The buffer contains the objects of \ref epoch_retired_ptr
             type that contains additional \p m_nEpoch field. This field specifies an epoch when the object
             has been placed into the buffer. The \p %general_threaded object has a global epoch counter
-            that is incremented on each \p synchronize call. The epoch is used internally to prevent early deletion.
+            that is incremented on each \p synchronize() call. The epoch is used internally to prevent early deletion.
         - \p Lock - mutex type, default is \p std::mutex
         - \p DisposerThread - the reclamation thread class. Default is \ref cds::urcu::dispose_thread,
             see the description of this class for required interface.
         - \p Backoff - back-off schema, default is cds::backoff::Default
     */
     template <
-        class Buffer = cds::container::VyukovMPMCCycleQueue< epoch_retired_ptr >
+        class Buffer = cds::container::VyukovMPSCCycleQueue< epoch_retired_ptr >
         ,class Lock = std::mutex
         ,class DisposerThread = dispose_thread<Buffer>
         ,class Backoff = cds::backoff::Default
@@ -114,9 +124,8 @@ namespace cds { namespace urcu {
             bool bPushed = m_Buffer.push( p );
             if ( !bPushed || m_Buffer.size() >= capacity() ) {
                 synchronize();
-                if ( !bPushed ) {
+                if ( !bPushed )
                     p.free();
-                }
                 return true;
             }
             return false;
@@ -197,7 +206,6 @@ namespace cds { namespace urcu {
             }
         }
 
-
         /// Waits to finish a grace period and calls disposing thread
         void synchronize()
         {
@@ -208,13 +216,11 @@ namespace cds { namespace urcu {
         void synchronize( bool bSync )
         {
             uint64_t nPrevEpoch = m_nCurEpoch.fetch_add( 1, atomics::memory_order_release );
-
             {
                 std::unique_lock<lock_type> sl( m_Lock );
                 flip_and_wait();
                 flip_and_wait();
             }
-
             m_DisposerThread.dispose( m_Buffer, nPrevEpoch, bSync );
         }
         void force_dispose()

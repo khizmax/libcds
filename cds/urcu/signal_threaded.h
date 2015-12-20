@@ -15,8 +15,8 @@ namespace cds { namespace urcu {
         This is a wrapper around \p signal_threaded class.
 
         Template arguments:
-        - \p Buffer - lock-free queue or lock-free bounded queue.
-            Default is \p cds::container::VyukovMPMCCycleQueue< retired_ptr >
+        - \p Buffer - lock-free MPSC (muliple producer/single consumer) queue.
+            Default is \p cds::container::VyukovMPSCCycleQueue< epoch_retired_ptr >
         - \p Lock - mutex type, default is \p std::mutex
         - \p DisposerThread - reclamation thread class, default is \p %general_threaded_dispose_thread
             See \ref cds::urcu::dispose_thread for class interface.
@@ -25,7 +25,7 @@ namespace cds { namespace urcu {
     */
     template <
 #ifdef CDS_DOXGEN_INVOKED
-        class Buffer = cds::container::VyukovMPMCCycleQueue< epoch_retired_ptr >
+        class Buffer = cds::container::VyukovMPSCCycleQueue< epoch_retired_ptr >
         ,class Lock = std::mutex
         ,class DisposerThread = dispose_thread<Buffer>
         ,class Backoff = cds::backoff::Default

@@ -52,6 +52,15 @@ namespace cds { namespace container {
 
             /// Back-off strategy
             typedef cds::backoff::Default           back_off;
+
+            /// Single-consumer version
+            /**
+                For single-consumer version of algorithm some additional functions 
+                (\p front(), \p pop_front()) is available.
+
+                Default is \p false
+            */
+            static CDS_CONSTEXPR bool const single_consumer = false;
         };
 
         /// Metafunction converting option list to \p vyukov_queue::traits
@@ -107,6 +116,9 @@ namespace cds { namespace container {
         No dynamic memory allocation/management during operation. Producers and consumers are separated from each other (as in the two-lock queue),
         i.e. do not touch the same data while queue is not empty.
 
+        There is multiple producer/single consumer version \p cds::container::VyukovMPSCCycleQueue
+        that supports \p front() and \p pop_front() functions.
+
         Source:
             - http://www.1024cores.net/home/lock-free-algorithms/queues/bounded-mpmc-queue
 
@@ -141,6 +153,9 @@ namespace cds { namespace container {
         typedef typename traits::memory_model  memory_model;  ///< Memory ordering. See cds::opt::memory_model option
         typedef typename traits::value_cleaner value_cleaner; ///< Value cleaner, see \p vyukov_queue::traits::value_cleaner
         typedef typename traits::back_off  back_off;          ///< back-off strategy
+
+        /// \p true for single-consumer version, \p false otherwise
+        static CDS_CONSTEXPR bool const c_single_consumer = traits::single_consumer;
 
         /// Rebind template arguments
         template <typename T2, typename Traits2>
@@ -358,6 +373,43 @@ namespace cds { namespace container {
             return dequeue_with( f );
         }
 
+        /// Returns a pointer to top element of the queue or \p nullptr if queue is empty (only for single-consumer version)
+        template <bool SC = c_single_consumer >
+        typename std::enable_if<SC, value_type *>::type front()
+        {
+            static_assert( c_single_consumer, "front() is enabled only if traits::single_consumer is true");
+
+            cell_type * cell;
+            back_off bkoff;
+
+            size_t pos = m_posDequeue.load( memory_model::memory_order_relaxed );
+            for ( ;;)
+            {
+                cell = &m_buffer[pos & m_nBufferMask];
+                size_t seq = cell->sequence.load( memory_model::memory_order_acquire );
+                intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos + 1);
+
+                if ( dif == 0 )
+                    return &cell->data;
+                else if ( dif < 0 ) {
+                    // Queue empty?
+                    if ( pos - m_posEnqueue.load( memory_model::memory_order_relaxed ) == 0 )
+                        return nullptr;   // queue empty
+                    bkoff();
+                    pos = m_posDequeue.load( memory_model::memory_order_relaxed );
+                }
+                else
+                    pos = m_posDequeue.load( memory_model::memory_order_relaxed );
+            }
+        }
+
+        /// Pops top element; returns \p true if queue is not empty, \p false otherwise (only for single-consumer version)
+        template <bool SC = c_single_consumer >
+        typename std::enable_if<SC, bool>::type pop_front()
+        {
+            return dequeue_with( []( value_type& ) {} );
+        }
+
         /// Checks if the queue is empty
         bool empty() const
         {
@@ -405,6 +457,21 @@ namespace cds { namespace container {
             return m_buffer.capacity();
         }
     };
+
+    //@cond
+    namespace vyukov_queue { 
+        template <typename Traits>
+        struct single_consumer_traits : public Traits
+        {
+            static CDS_CONSTEXPR bool const single_consumer = true;
+        };
+    } // namespace vyukov_queue
+    //@endcond
+
+    /// Vyukov's queue multiple producer - single consumer version 
+    template <typename T, typename Traits = vyukov_queue::traits >
+    using VyukovMPSCCycleQueue = VyukovMPMCCycleQueue< T, vyukov_queue::single_consumer_traits<Traits> >;
+
 }}  // namespace cds::container
 
 #endif // #ifndef CDSLIB_CONTAINER_VYUKOV_MPMC_CYCLE_QUEUE_H

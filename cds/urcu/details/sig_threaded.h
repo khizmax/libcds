@@ -30,18 +30,18 @@ namespace cds { namespace urcu {
         that provides unified RCU interface. You should use this wrapper class instead \p %signal_threaded
 
         Template arguments:
-        - \p Buffer - buffer type with FIFO semantics. Default is cds::container::VyukovMPMCCycleQueue. See \ref signal_buffered
+        - \p Buffer - buffer type with FIFO semantics. Default is \p cds::container::VyukovMPSCCycleQueue. See \ref signal_buffered
             for description of buffer's interface. The buffer contains the objects of \ref epoch_retired_ptr
             type that contains additional \p m_nEpoch field. This field specifies an epoch when the object
             has been placed into the buffer. The \p %signal_threaded object has a global epoch counter
-            that is incremented on each \p synchronize call. The epoch is used internally to prevent early deletion.
+            that is incremented on each \p synchronize() call. The epoch is used internally to prevent early deletion.
         - \p Lock - mutex type, default is \p std::mutex
         - \p DisposerThread - the reclamation thread class. Default is \ref cds::urcu::dispose_thread,
             see the description of this class for required interface.
         - \p Backoff - back-off schema, default is cds::backoff::Default
     */
     template <
-        class Buffer = cds::container::VyukovMPMCCycleQueue< epoch_retired_ptr >
+        class Buffer = cds::container::VyukovMPSCCycleQueue< epoch_retired_ptr >
         ,class Lock = std::mutex
         ,class DisposerThread = dispose_thread<Buffer>
         ,class Backoff = cds::backoff::Default
