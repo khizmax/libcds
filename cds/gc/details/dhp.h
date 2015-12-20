@@ -542,7 +542,7 @@ namespace cds { namespace gc {
             public: // for ThreadGC.
                 /*
                     GCC cannot compile code for template versions of ThreadGC::allocGuard/freeGuard,
-                    the compiler produces error: ‘cds::gc::dhp::details::guard_data* cds::gc::dhp::details::guard::m_pGuard’ is protected
+                    the compiler produces error: 'cds::gc::dhp::details::guard_data* cds::gc::dhp::details::guard::m_pGuard' is protected
                     despite the fact that ThreadGC is declared as friend for guard class.
                     Therefore, we have to add set_guard/get_guard public functions
                 */

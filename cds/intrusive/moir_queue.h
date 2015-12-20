@@ -16,12 +16,12 @@ namespace cds { namespace intrusive {
                 "Formal Verification of a practical lock-free queue algorithm"
 
         Cite from this work about difference from Michael & Scott algo:
-        "Our algorithm differs from Michael and Scott’s [MS98] in that we test whether \p Tail points to the header
+        "Our algorithm differs from Michael and Scott's [MS98] in that we test whether \p Tail points to the header
         node only <b>after</b> \p Head has been updated, so a dequeuing process reads \p Tail only once. The dequeue in
         [MS98] performs this test before checking whether the next pointer in the dummy node is null, which
         means that it reads \p Tail every time a dequeuing process loops. Under high load, when operations retry
         frequently, our modification will reduce the number of accesses to global memory. This modification, however,
-        introduces the possibility of \p Head and \p Tail “crossing”."
+        introduces the possibility of \p Head and \p Tail 'crossing'."
 
         Explanation of template arguments see intrusive::MSQueue.
 

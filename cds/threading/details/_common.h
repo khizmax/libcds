@@ -18,7 +18,7 @@ namespace cds {
         The library does not dictate any thread model. To embed the library to your application you should choose
         appropriate implementation of \p cds::threading::Manager interface
         or should provide yourself.
-        The \p %cds::threading::Manager interface manages \p ñds::threading::ThreadData structure that contains GC's thread specific data.
+        The \p %cds::threading::Manager interface manages \p cds::threading::ThreadData structure that contains GC's thread specific data.
 
         Any \p cds::threading::Manager implementation is a singleton and it must be accessible from any thread and from any point of
         your application. Note that you should not mix different implementation of the \p cds::threading::Manager in your application.
