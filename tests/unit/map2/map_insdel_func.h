@@ -37,7 +37,7 @@ namespace map2 {
         struct value_type {
             size_t      nKey;
             size_t      nData;
-            atomics::atomic<size_t> nUpdateCall;
+            size_t      nUpdateCall;
             atomics::atomic<bool>   bInitialized;
             cds::OS::ThreadId       threadId;   // inserter thread id
 
@@ -55,7 +55,7 @@ namespace map2 {
             value_type( value_type const& s )
                 : nKey(s.nKey)
                 , nData(s.nData)
-                , nUpdateCall(s.nUpdateCall.load(atomics::memory_order_relaxed))
+                , nUpdateCall( s.nUpdateCall )
                 , bInitialized( s.bInitialized.load(atomics::memory_order_relaxed))
                 , threadId( cds::OS::get_current_thread_id())
             {}
@@ -65,7 +65,7 @@ namespace map2 {
             {
                 nKey = v.nKey;
                 nData = v.nData;
-                nUpdateCall.store( v.nUpdateCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
+                nUpdateCall = v.nUpdateCall;
                 bInitialized.store(v.bInitialized.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed);
 
                 return *this;
@@ -193,18 +193,17 @@ namespace map2 {
                 {}
 
                 template <typename Key, typename Val>
-                void operator()( bool bNew, Key const& key, Val& v )
+                void operator()( bool /*bNew*/, Key const& key, Val& v )
                 {
                     std::unique_lock<typename value_type::lock_type> ac( v.m_access );
-                    if ( bNew ) {
+                    if ( !v.bInitialized.load( atomics::memory_order_acquire )) {
                         ++nCreated;
                         v.nKey = key;
                         v.nData = key * 8;
                         v.bInitialized.store( true, atomics::memory_order_relaxed);
                     }
                     else {
-                        assert( v.bInitialized.load( atomics::memory_order_relaxed ));
-                        v.nUpdateCall.fetch_add( 1, atomics::memory_order_relaxed );
+                        ++v.nUpdateCall;
                         ++nModified;
                     }
                 }
