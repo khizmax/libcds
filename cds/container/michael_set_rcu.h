@@ -653,6 +653,7 @@ namespace cds { namespace container {
         {
             return contains( key, pred );
         }
+        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelHashSet_rcu_get
