@@ -19,8 +19,7 @@ namespace misc {
             std::stringstream st;
             if ( pszHdr ) {
                 st << "\t\t" << pszHdr << "\n"
-                    << s.statistics()
-;
+                    << s.statistics();
             }
             else {
                 st << s.statistics();

@@ -129,12 +129,10 @@ namespace memory {
                         ALLOC::stat( stEnd );
 
                         std::cout << "\nStatistics:\n"
-                            << stEnd
-;
+                            << stEnd;
                         stEnd -= stBegin;
                         std::cout << "\nDelta statistics:\n"
-                            << stEnd
-;
+                            << stEnd;
                     }
                 }
                 s_nCurBlockSize *= 2;
