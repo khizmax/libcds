@@ -309,8 +309,6 @@ namespace cds { namespace intrusive {
             std::swap( refTop.m_pVal, pVal );
             refTop.m_nTag = tag_type( Available );
 
-            assert( nBottom > 1 );
-
             // refTop will be unlocked inside heapify_after_pop
             heapify_after_pop( 1, &refTop );
 
