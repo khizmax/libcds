@@ -219,6 +219,9 @@ namespace map2 {
                 void operator()( Val& cur, Val * old )
                 {
                     if ( old ) {
+                        // If a key exists, FeldmanHashMap creates a new node too
+                        // We should manually copy important values from old to cur
+                        std::unique_lock<typename value_type::lock_type> ac( cur.second.m_access );
                         cur.second.nKey = cur.first;
                         cur.second.nData = cur.first * 8;
                         cur.second.bInitialized.store( true, atomics::memory_order_release );
@@ -490,6 +493,7 @@ namespace map2 {
                 << " Del fail=" << nDeleteFailed << "\n"
                 << "          : Update succ=" << (nUpdateCreated + nUpdateModified) << " fail=" << nUpdateFailed
                 << " create=" << nUpdateCreated << " modify=" << nUpdateModified << "\n"
+                << "          : update functor: create=" << nEnsFuncCreated << " modify=" << nEnsFuncModified << "\n"
                 << "          Map size=" << testMap.size()
                 );
 
@@ -497,9 +501,7 @@ namespace map2 {
             CPPUNIT_CHECK_EX( nDelValueSuccess == nDeleteSuccess,  "Delete success=" << nDeleteSuccess << " functor=" << nDelValueSuccess );
 
             CPPUNIT_CHECK( nUpdateFailed == 0 );
-
-            CPPUNIT_CHECK_EX( nUpdateCreated == nEnsFuncCreated, "Update created=" << nUpdateCreated << " functor=" << nEnsFuncCreated );
-            CPPUNIT_CHECK_EX( nUpdateModified == nEnsFuncModified, "Update modified=" << nUpdateModified << " functor=" << nEnsFuncModified );
+            CPPUNIT_CHECK( nUpdateCreated + nUpdateModified == nEnsFuncCreated + nEnsFuncModified );
 
             // nInsFuncCalled is call count of insert functor
             CPPUNIT_CHECK_EX( nInsFuncCalled == nInsertSuccess, "nInsertSuccess=" << nInsertSuccess << " functor nInsFuncCalled=" << nInsFuncCalled );
