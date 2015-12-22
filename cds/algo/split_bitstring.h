@@ -45,9 +45,9 @@ namespace cds { namespace algo {
         split_bitstring( bitstring const& h, size_t nBitOffset )
             : m_ptr( reinterpret_cast<uint_type const*>( &h ) + nBitOffset / c_nBitPerInt )
             , m_pos( nBitOffset % c_nBitPerInt )
-            , m_first( m_ptr )
+            , m_first( reinterpret_cast<uint_type const*>(&h))
 #   ifdef _DEBUG
-            , m_last( m_ptr + c_nHashSize )
+            , m_last( m_first + c_nHashSize )
 #   endif
         {}
 
