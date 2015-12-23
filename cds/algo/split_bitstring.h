@@ -133,6 +133,12 @@ namespace cds { namespace algo {
             m_pos = 0;
         }
 
+        // Returns pointer to source bitstring
+        bitstring const * source() const
+        {
+            return reinterpret_cast<bitstring const *>( m_first );
+        }
+
     private:
         //@cond
         uint_type const* m_ptr;  ///< current position in the hash

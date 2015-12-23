@@ -408,6 +408,7 @@ namespace cds { namespace intrusive {
                     if (slot.bits() == flag_array_node) {
                         // array node, go down the tree
                         assert(slot.ptr() != nullptr);
+                        assert( !pos.splitter.eos());
                         pos.nSlot = pos.splitter.cut( metrics().array_node_size_log );
                         assert( pos.nSlot < metrics().array_node_size );
                         pos.pArr = to_array(slot.ptr());
@@ -544,7 +545,7 @@ namespace cds { namespace intrusive {
                 }
             }
 
-            bool expand_slot( traverse_data& pos, node_ptr current)
+            bool expand_slot( traverse_data const& pos, node_ptr current)
             {
                 return expand_slot( pos.pArr, pos.nSlot, current, pos.nOffset );
             }
