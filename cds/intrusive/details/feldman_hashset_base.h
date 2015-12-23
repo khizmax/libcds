@@ -370,7 +370,6 @@ namespace cds { namespace intrusive {
             struct traverse_data {
                 hash_splitter splitter;
                 array_node * pArr;
-                size_t nOffset;
                 size_t nSlot;
                 size_t nHeight;
 
@@ -384,7 +383,6 @@ namespace cds { namespace intrusive {
                 {
                     splitter.reset();
                     pArr = arr.head();
-                    nOffset = arr.metrics().head_node_size_log;
                     nSlot = splitter.cut( arr.metrics().head_node_size_log );
                     nHeight = 1;
                 }
@@ -419,7 +417,6 @@ namespace cds { namespace intrusive {
                         pos.nSlot = pos.splitter.cut( metrics().array_node_size_log );
                         assert( pos.nSlot < metrics().array_node_size );
                         pos.pArr = to_array(slot.ptr());
-                        pos.nOffset += metrics().array_node_size_log;
                         ++pos.nHeight;
                     }
                     else if (slot.bits() == flag_array_converting) {
@@ -554,9 +551,7 @@ namespace cds { namespace intrusive {
 
             bool expand_slot( traverse_data& pos, node_ptr current)
             {
-                bool bRet = expand_slot( pos.pArr, pos.nSlot, current, pos.nOffset );
-                //pos.reset( *this );
-                return bRet;
+                return expand_slot( pos.pArr, pos.nSlot, current, pos.splitter.bit_offset());
             }
 
         private:

@@ -44,7 +44,7 @@ namespace cds { namespace algo {
         /// Initializises the splitter with reference to \p h and start bit offset \p nBitOffset
         split_bitstring( bitstring const& h, size_t nBitOffset )
             : m_ptr( reinterpret_cast<uint_type const*>( &h ) + nBitOffset / c_nBitPerInt )
-            , m_pos( nBitOffset % c_nBitPerInt )
+            , m_pos( nBitOffset )
             , m_first( reinterpret_cast<uint_type const*>(&h))
 #   ifdef _DEBUG
             , m_last( m_first + c_nHashSize )
@@ -90,6 +90,7 @@ namespace cds { namespace algo {
             else if ( nBits == nRest ) {
                 result = *m_ptr >> ( c_nBitPerInt - nRest );
                 ++m_ptr;
+                assert( m_pos % c_nBitPerInt == 0 );
             }
             else {
                 uint_type const lsb = *m_ptr >> ( c_nBitPerInt - nRest );
@@ -137,6 +138,12 @@ namespace cds { namespace algo {
         bitstring const * source() const
         {
             return reinterpret_cast<bitstring const *>( m_first );
+        }
+
+        /// Returns current bit offset from beginning of bit-string
+        size_t bit_offset() const
+        {
+            return m_pos;
         }
 
     private:

@@ -1072,6 +1072,7 @@ namespace cds { namespace intrusive {
                 if (guard.protect( pos.pArr->nodes[pos.nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot) {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
+                    continue;
                 }
                 else if (slot.ptr() && cmp(hash, hash_accessor()(*slot.ptr())) == 0) {
                     // item found
@@ -1098,7 +1099,7 @@ namespace cds { namespace intrusive {
                     stats().onSlotChanged();
                 }
                 else if (slot.ptr()) {
-                    if (cmp(hash, hash_accessor()(*slot.ptr())) == 0 && pred(*slot.ptr())) {
+                    if ( cmp(hash, hash_accessor()(*slot.ptr())) == 0 && pred(*slot.ptr())) {
                         // item found - replace it with nullptr
                         if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed)) {
                             // slot is guarded by HP

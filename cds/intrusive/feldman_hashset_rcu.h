@@ -1139,6 +1139,7 @@ namespace cds { namespace intrusive {
                 if ( pos.pArr->nodes[pos.nSlot].load( memory_model::memory_order_acquire ) != slot ) {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
+                    continue;
                 }
                 else if ( slot.ptr() && cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
                     // item found
