@@ -376,11 +376,18 @@ namespace cds { namespace intrusive {
 
                 traverse_data( hash_type const& hash, multilevel_array& arr )
                     : splitter( hash )
-                    , pArr( arr.head() )
-                    , nOffset( arr.metrics().head_node_size_log )
-                    , nSlot(splitter.cut(arr.metrics().head_node_size_log))
-                    , nHeight( 1 )
-                {}
+                {
+                    reset( arr );
+                }
+
+                void reset( multilevel_array& arr )
+                {
+                    splitter.reset();
+                    pArr = arr.head();
+                    nOffset = arr.metrics().head_node_size_log;
+                    nSlot = splitter.cut( arr.metrics().head_node_size_log );
+                    nHeight = 1;
+                }
             };
 
         protected:
@@ -545,17 +552,19 @@ namespace cds { namespace intrusive {
                 }
             }
 
-            bool expand_slot( traverse_data const& pos, node_ptr current)
+            bool expand_slot( traverse_data& pos, node_ptr current)
             {
-                return expand_slot( pos.pArr, pos.nSlot, current, pos.nOffset );
+                bool bRet = expand_slot( pos.pArr, pos.nSlot, current, pos.nOffset );
+                //pos.reset( *this );
+                return bRet;
             }
 
+        private:
             bool expand_slot(array_node * pParent, size_t idxParent, node_ptr current, size_t nOffset)
             {
                 assert(current.bits() == 0);
                 assert(current.ptr());
 
-                size_t idx = hash_splitter(hash_accessor()(*current.ptr()), nOffset).cut(m_Metrics.array_node_size_log);
                 array_node * pArr = alloc_array_node(pParent, idxParent);
 
                 node_ptr cur(current.ptr());
@@ -567,6 +576,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
+                size_t idx = hash_splitter( hash_accessor()(*current.ptr()), nOffset ).cut( m_Metrics.array_node_size_log );
                 pArr->nodes[idx].store(current, memory_model::memory_order_release);
 
                 cur = cur | flag_array_converting;
@@ -578,7 +588,6 @@ namespace cds { namespace intrusive {
                 stats().onArrayNodeCreated();
                 return true;
             }
-
         };
         //@endcond
     } // namespace feldman_hashset

@@ -127,7 +127,7 @@ namespace cds { namespace algo {
         }
 
         /// Resets the splitter
-        void reset()
+        void reset() CDS_NOEXCEPT
         {
             m_ptr = m_first;
             m_pos = 0;
