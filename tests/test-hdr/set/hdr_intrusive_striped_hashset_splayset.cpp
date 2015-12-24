@@ -43,7 +43,7 @@ namespace set {
     {
         typedef ci::StripedSet<
             bi::splay_set<base_item_type
-                , bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>> 
+                , bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>>
                 CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
             >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
@@ -57,7 +57,7 @@ namespace set {
     {
         typedef ci::StripedSet<
             bi::splay_set<base_item_type
-                , bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>> 
+                , bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>>
                 CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
             >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
@@ -71,7 +71,7 @@ namespace set {
     {
         typedef ci::StripedSet<
             bi::splay_set<base_item_type
-                , bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>> 
+                , bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>>
                 CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
             >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >

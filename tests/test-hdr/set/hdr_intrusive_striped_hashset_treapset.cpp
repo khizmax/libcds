@@ -59,7 +59,7 @@ namespace set {
     void IntrusiveStripedSetHdrTest::Striped_treap_set_basehook_bucket_threshold()
     {
         typedef ci::StripedSet<
-            bi::treap_set<base_item_type, 
+            bi::treap_set<base_item_type,
                 bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type> >,
                 bi::priority<priority_cmp<base_item_type>>
                 CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
@@ -74,8 +74,8 @@ namespace set {
     void IntrusiveStripedSetHdrTest::Striped_treap_set_basehook_bucket_threshold_rt()
     {
         typedef ci::StripedSet<
-            bi::treap_set<base_item_type, 
-                bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>>, 
+            bi::treap_set<base_item_type,
+                bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>>,
                 bi::priority<priority_cmp<base_item_type>>
                 CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
             >

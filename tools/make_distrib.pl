@@ -17,7 +17,7 @@ print "Distrib dir: $DistrDir\n";
 my $GitBranch = get_git_branch();
 my $GitRepo = get_git_repo();
 print "Clone git: repo=$GitRepo, branch=$GitBranch\n";
-`git clone -b $GitBranch $GitRepo $DistrDir` or die "Error cloning branch $GitBranch to $DistrDir\n";
+`git clone -b $GitBranch $GitRepo $DistrDir`; # or die "Error cloning branch $GitBranch to $DistrDir\n";
 print "Remove $DistrDir/.git directory\n";
 `rm -fr $DistrDir/.git`;
 `rm -f $DistrDir/.gitignore $DistrDir/tools/brush_cds.pl $DistrDir/tools/make_distrib.pl $DistrDir/tools/make_distrib.bat $DistrDir/doxygen/images.odp`;

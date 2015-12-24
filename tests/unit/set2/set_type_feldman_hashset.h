@@ -32,7 +32,7 @@ namespace set2 {
         };
 
     public:
-        typedef typename T::hasher hasher ;
+        typedef typename T::hasher hasher;
         typedef typename get_extracted_ptr<GC>::extracted_ptr extracted_ptr;
 
         template <class Config>
