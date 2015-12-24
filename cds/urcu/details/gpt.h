@@ -27,7 +27,8 @@ namespace cds { namespace urcu {
         There is a wrapper \ref cds_urcu_general_threaded_gc "gc<general_threaded>" for \p %general_threaded class
         that provides unified RCU interface. You should use this wrapper class instead \p %general_threaded
 
-        The \p Buffer contains items of \ref cds_urcu_retired_ptr "epoch_retired_ptr" type 
+        The \p Buffer contains items of \ref cds_urcu_retired_ptr "epoch_retired_ptr" type
+
         and it should support a multiple producer/single consumer queue with the following interface:
         - <tt> bool push( epoch_retired_ptr& p ) </tt> - places the retired pointer \p p into queue. If the function
         returns \p false it means that the buffer is full and RCU synchronization cycle must be processed.
@@ -38,7 +39,8 @@ namespace cds { namespace urcu {
         The buffer is considered as full if \p push() returns \p false or the buffer size reaches the RCU threshold.
 
         Template arguments:
-        - \p Buffer - MPSC (muliple producer/single consumer) buffer type with FIFO semantics. 
+        - \p Buffer - MPSC (muliple producer/single consumer) buffer type with FIFO semantics.
+
             Default is \p cds::container::VyukovMPSCCycleQueue. The buffer contains the objects of \ref epoch_retired_ptr
             type that contains additional \p m_nEpoch field. This field specifies an epoch when the object
             has been placed into the buffer. The \p %general_threaded object has a global epoch counter

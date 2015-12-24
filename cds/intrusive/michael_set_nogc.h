@@ -225,7 +225,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
         /// Checks whether the set contains \p key
-        /** 
+        /**
+
             The function searches the item with key equal to \p key
             and returns the pointer to an element found or \p nullptr.
 

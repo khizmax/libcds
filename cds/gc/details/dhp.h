@@ -394,7 +394,8 @@ namespace cds { namespace gc {
                     , m_pEpochFree( epoch_array_alloc().NewArray( m_nEpochBitmask + 1))
                     , m_pGlobalFreeHead( nullptr )
                 {
-                    
+
+
                     for (unsigned int i = 0; i <= m_nEpochBitmask; ++i )
                         m_pEpochFree[i].store( nullptr, atomics::memory_order_relaxed );
 
@@ -764,7 +765,8 @@ namespace cds { namespace gc {
                     By perforce the local thread's guard pool is grown automatically from common pool.
                     When the thread terminated its guard pool is backed to common GC's pool.
                 - \p nEpochCount: internally, DHP memory manager uses epoch-based schema to solve
-                    ABA problem for internal data. \p nEpochCount specifies the epoch count, 
+                    ABA problem for internal data. \p nEpochCount specifies the epoch count,
+
                     i.e. the count of simultaneously working threads that remove the elements
                     of DHP-based concurrent data structure. Default value is 8.
 

@@ -614,7 +614,8 @@ namespace cds { namespace container {
         //@endcond
 
         /// Checks whether the set contains \p key
-        /** 
+        /**
+
             The function searches the item with key equal to \p key
             and returns \p true if the key is found, and \p false otherwise.
 

@@ -266,7 +266,8 @@ namespace cds { namespace container {
         {
             return base_class::contains( key );
         }
-        //@cond 
+        //@cond
+
         template <typename K>
         CDS_DEPRECATED("deprecated, use contains()")
         iterator find( K const& key )

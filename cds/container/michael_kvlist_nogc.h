@@ -393,7 +393,8 @@ namespace cds { namespace container {
 
         /// Updates the item
         /**
-            If \p key is not in the list and \p bAllowInsert is \p true, 
+            If \p key is not in the list and \p bAllowInsert is \p true,
+
             the function inserts a new item.
             Otherwise, the function returns an iterator pointing to the item found.
 
@@ -532,7 +533,8 @@ namespace cds { namespace container {
             scoped_node_ptr pNode( alloc_node( key ));
             node_type * pItemFound = nullptr;
 
-            std::pair<bool, bool> ret = base_class::update_at( refHead, *pNode, 
+            std::pair<bool, bool> ret = base_class::update_at( refHead, *pNode,
+
                 [&pItemFound](bool, node_type& item, node_type&){ pItemFound = &item; },
                 bAllowInsert );
 

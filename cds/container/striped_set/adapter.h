@@ -203,7 +203,7 @@ namespace cds { namespace container {
             class RecursiveLock = std::recursive_mutex,
             typename BackOff = cds::backoff::yield,
             class Alloc = CDS_DEFAULT_ALLOCATOR
-        > 
+        >
         using refinable = cds::intrusive::striped_set::refinable<RecursiveLock, BackOff, Alloc >;
 
         //@cond

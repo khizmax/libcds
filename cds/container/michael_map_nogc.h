@@ -397,7 +397,8 @@ namespace cds { namespace container {
             Otherwise, the function returns an iterator pointing to the item found.
 
             Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
-            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()), 
+            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()),
+
             \p second is true if new item has been added or \p false if the item
             already is in the map.
 

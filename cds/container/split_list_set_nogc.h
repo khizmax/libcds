@@ -286,13 +286,16 @@ namespace cds { namespace container {
             Otherwise, the function returns an iterator pointing to the item found.
 
             Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
-            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()), 
+            item found or inserted (if inserting is not allowed and \p key is not found, the iterator will be \p end()),
+
             \p second is true if new item has been added or \p false if the item
             already is in the set.
 
-            @warning If the set is based on \ref cds_nonintrusive_MichaelList_nogc "MichaelList", 
+            @warning If the set is based on \ref cds_nonintrusive_MichaelList_nogc "MichaelList",
+
             see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_nonintrusive_LazyList_nogc "LazyList" as the base provides exclusive access to inserted item 
+            \ref cds_nonintrusive_LazyList_nogc "LazyList" as the base provides exclusive access to inserted item
+
             and does not require any node-level synchronization.
         */
         template <typename Q>
@@ -300,7 +303,8 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
-            std::pair<typename base_class::iterator, bool> ret = base_class::update_( *pNode, 
+            std::pair<typename base_class::iterator, bool> ret = base_class::update_( *pNode,
+
                 [](bool /*bNew*/, node_type& /*item*/, node_type& /*val*/){},
                 bAllowInsert );
             if ( ret.first != base_class::end() && ret.second ) {

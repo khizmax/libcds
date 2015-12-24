@@ -18,7 +18,8 @@ namespace map2 {
     public:
         template <typename Config>
         CuckooMap( Config const& cfg )
-            : base_class( 
+            : base_class(
+
                 cfg.c_nCuckooInitialSize,
                 static_cast<unsigned int>( cfg.c_nCuckooProbesetSize ),
                 static_cast<unsigned int>( cfg.c_nCuckooProbesetThreshold )

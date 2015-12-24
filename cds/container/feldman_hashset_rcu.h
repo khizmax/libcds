@@ -448,7 +448,7 @@ namespace cds { namespace container {
                     i->payload++;
                 }
             } // at this point RCU lock is released
-            /endcode
+            \endcode
 
             Each iterator object supports the common interface:
             - dereference operators:

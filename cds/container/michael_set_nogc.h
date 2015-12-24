@@ -227,7 +227,8 @@ namespace cds { namespace container {
             If the item \p val not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
 
             Returns <tt> std::pair<iterator, bool> </tt> where \p first is an iterator pointing to
-            item found or inserted, or \p end() if \p bAllowInsert is \p false, 
+            item found or inserted, or \p end() if \p bAllowInsert is \p false,
+
             \p second is true if new item has been added or \p false if the item is already in the set.
 
             @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".

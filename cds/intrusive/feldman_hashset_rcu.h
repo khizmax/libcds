@@ -45,7 +45,8 @@ namespace cds { namespace intrusive {
         @note Before including <tt><cds/intrusive/feldman_hashset_rcu.h></tt> you should include appropriate RCU header file,
         see \ref cds_urcu_gc "RCU type" for list of existing RCU class and corresponding header files.
 
-        The set supports @ref cds_intrusive_FeldmanHashSet_rcu_iterators "bidirectional thread-safe iterators" 
+        The set supports @ref cds_intrusive_FeldmanHashSet_rcu_iterators "bidirectional thread-safe iterators"
+
         with some restrictions.
     */
     template <
@@ -898,7 +899,7 @@ namespace cds { namespace intrusive {
                     i->payload++;
                 }
             } // at this point RCU lock is released
-            /endcode
+            \endcode
 
             Each iterator object supports the common interface:
             - dereference operators:

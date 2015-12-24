@@ -720,7 +720,8 @@
     CDSUNIT_TEST_FeldmanHashSet_stdhash_RCU_signal
 
 
-// CityHash -only for 64bit 
+// CityHash -only for 64bit
+
 #undef CDSUNIT_DECLARE_FeldmanHashSet_city
 #undef CDSUNIT_DECLARE_FeldmanHashSet_city_RCU_signal
 #undef CDSUNIT_TEST_FeldmanHashSet_city
@@ -808,7 +809,8 @@
 #endif // CDS_BUILD_BITS == 64
 
 
-// All 
+// All
+
 #define CDSUNIT_DECLARE_FeldmanHashSet \
     CDSUNIT_DECLARE_FeldmanHashSet_fixed \
     CDSUNIT_DECLARE_FeldmanHashSet_stdhash \

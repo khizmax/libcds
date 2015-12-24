@@ -55,7 +55,8 @@ namespace cds { namespace container {
 
             /// Single-consumer version
             /**
-                For single-consumer version of algorithm some additional functions 
+                For single-consumer version of algorithm some additional functions
+
                 (\p front(), \p pop_front()) is available.
 
                 Default is \p false
@@ -459,7 +460,8 @@ namespace cds { namespace container {
     };
 
     //@cond
-    namespace vyukov_queue { 
+    namespace vyukov_queue {
+
         template <typename Traits>
         struct single_consumer_traits : public Traits
         {
@@ -468,7 +470,8 @@ namespace cds { namespace container {
     } // namespace vyukov_queue
     //@endcond
 
-    /// Vyukov's queue multiple producer - single consumer version 
+    /// Vyukov's queue multiple producer - single consumer version
+
     template <typename T, typename Traits = vyukov_queue::traits >
     using VyukovMPSCCycleQueue = VyukovMPMCCycleQueue< T, vyukov_queue::single_consumer_traits<Traits> >;
 

@@ -14,7 +14,7 @@ namespace cds { namespace algo {
         and keeps the position inside bit-string for the next call.
 
         The splitter stores a const reference to bit-string, not a copy.
-        The maximum count of bits that can be cut for single call is <tt> sizeof(UInt) * 8 </tt>
+        The maximum count of bits that can be cut in a single call is <tt> sizeof(UInt) * 8 </tt>
     */
     template <typename BitString, typename UInt = size_t >
     class split_bitstring
@@ -34,7 +34,7 @@ namespace cds { namespace algo {
         /// Initializises the splitter with reference to \p h and zero start bit offset
         explicit split_bitstring( bitstring const& h )
             : m_ptr(reinterpret_cast<uint_type const*>( &h ))
-            , m_pos(0)
+            , m_offset(0)
             , m_first( m_ptr )
 #   ifdef _DEBUG
             , m_last( m_ptr + c_nHashSize )
@@ -44,7 +44,7 @@ namespace cds { namespace algo {
         /// Initializises the splitter with reference to \p h and start bit offset \p nBitOffset
         split_bitstring( bitstring const& h, size_t nBitOffset )
             : m_ptr( reinterpret_cast<uint_type const*>( &h ) + nBitOffset / c_nBitPerInt )
-            , m_pos( nBitOffset )
+            , m_offset( nBitOffset )
             , m_first( reinterpret_cast<uint_type const*>(&h))
 #   ifdef _DEBUG
             , m_last( m_first + c_nHashSize )
@@ -61,7 +61,7 @@ namespace cds { namespace algo {
         /// Returns \p true if end-of-stream encountered
         bool eos() const
         {
-            return m_pos >= c_nBitPerHash;
+            return m_offset >= c_nBitPerHash;
         }
 
         /// Cuts next \p nBits from bit-string
@@ -75,14 +75,14 @@ namespace cds { namespace algo {
         {
             assert( !eos() );
             assert( nBits <= c_nBitPerInt );
-            assert( m_pos + nBits <= c_nBitPerHash );
+            assert( m_offset + nBits <= c_nBitPerHash );
 #   ifdef _DEBUG
             assert( m_ptr < m_last );
 #   endif
             uint_type result;
 
-            uint_type const nRest = c_nBitPerInt - m_pos % c_nBitPerInt;
-            m_pos += nBits;
+            uint_type const nRest = c_nBitPerInt - m_offset % c_nBitPerInt;
+            m_offset += nBits;
             if ( nBits < nRest ) {
                 result = *m_ptr << ( nRest - nBits );
                 result = result >> ( c_nBitPerInt - nBits );
@@ -90,7 +90,7 @@ namespace cds { namespace algo {
             else if ( nBits == nRest ) {
                 result = *m_ptr >> ( c_nBitPerInt - nRest );
                 ++m_ptr;
-                assert( m_pos % c_nBitPerInt == 0 );
+                assert( m_offset % c_nBitPerInt == 0 );
             }
             else {
                 uint_type const lsb = *m_ptr >> ( c_nBitPerInt - nRest );
@@ -102,7 +102,7 @@ namespace cds { namespace algo {
                 result = (result << nRest) + lsb;
             }
 
-            assert( m_pos <= c_nBitPerHash );
+            assert( m_offset <= c_nBitPerHash );
 #   ifdef _DEBUG
             assert( m_ptr <= m_last );
 #   endif
@@ -122,8 +122,8 @@ namespace cds { namespace algo {
 
             assert( nBits <= sizeof(uint_type) * c_nBitPerByte );
 
-            if ( m_pos + nBits > c_nBitPerHash )
-                nBits = c_nBitPerHash - m_pos;
+            if ( m_offset + nBits > c_nBitPerHash )
+                nBits = c_nBitPerHash - m_offset;
             return nBits ? cut( nBits ) : 0;
         }
 
@@ -131,10 +131,10 @@ namespace cds { namespace algo {
         void reset() CDS_NOEXCEPT
         {
             m_ptr = m_first;
-            m_pos = 0;
+            m_offset = 0;
         }
 
-        // Returns pointer to source bitstring
+        /// Returns pointer to source bitstring
         bitstring const * source() const
         {
             return reinterpret_cast<bitstring const *>( m_first );
@@ -143,16 +143,16 @@ namespace cds { namespace algo {
         /// Returns current bit offset from beginning of bit-string
         size_t bit_offset() const
         {
-            return m_pos;
+            return m_offset;
         }
 
     private:
         //@cond
-        uint_type const* m_ptr;  ///< current position in the hash
-        size_t           m_pos;  ///< current position in bits
-        uint_type const* m_first; ///< first position
+        uint_type const* m_ptr;     ///< current position in the hash
+        size_t           m_offset;  ///< current bit offset in bit-string
+        uint_type const* m_first;   ///< first position
 #   ifdef _DEBUG
-        uint_type const* m_last;  ///< last position
+        uint_type const* m_last;    ///< last position
 #   endif
         //@endcond
     };

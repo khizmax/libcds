@@ -19,7 +19,8 @@ namespace set2 {
     public:
         template <typename Config>
         CuckooSet( Config const& cfg )
-            : cuckoo_base_class( 
+            : cuckoo_base_class(
+
                 cfg.c_nCuckooInitialSize,
                 static_cast<unsigned int>( cfg.c_nCuckooProbesetSize ),
                 static_cast<unsigned int>( cfg.c_nCuckooProbesetThreshold )

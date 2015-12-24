@@ -109,7 +109,8 @@ namespace queue {
             for ( size_t i = 0; i < nSize; ++i )
                 testQueue.push( i );
 
-            CPPUNIT_MSG( "   Thread count=" << s_nThreadCount << ", push/pop pairs=" << s_nPassCount 
+            CPPUNIT_MSG( "   Thread count=" << s_nThreadCount << ", push/pop pairs=" << s_nPassCount
+
                          << ", queue capacity=" << testQueue.capacity() << " ...");
             pool.run();
 

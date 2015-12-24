@@ -673,8 +673,10 @@ namespace cds { namespace intrusive {
 
                     typename gc::template GuardArray<2> g;
                     g.assign( 0, node_traits::to_value_ptr( pNext.ptr()));
-                    if ( m_pTail.load( memory_model::memory_order_acquire ) != t 
-                      || t->m_pNext.load( memory_model::memory_order_relaxed ) != pNext ) 
+                    if ( m_pTail.load( memory_model::memory_order_acquire ) != t
+
+                      || t->m_pNext.load( memory_model::memory_order_relaxed ) != pNext )
+
                     {
                         m_Stat.onEnqueueRace();
                         bkoff();

@@ -498,7 +498,8 @@ namespace cds { namespace container {
         /// Ctor with initial capacity specified
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
-        ) 
+        )
+
             : base_class( nCapacity )
         {}
 
@@ -509,7 +510,8 @@ namespace cds { namespace container {
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy const& resizingPolicy  ///< Resizing policy
-        ) 
+        )
+
             : base_class( nCapacity, resizingPolicy )
         {}
 
@@ -521,7 +523,8 @@ namespace cds { namespace container {
         StripedSet(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy&& resizingPolicy  ///< Resizing policy
-        ) 
+        )
+
             : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
         {}
 

@@ -281,7 +281,7 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the \p key not found in the map, then the new item created from \p key
-            will be inserted into the map iff \p bAllowInsert is \p true 
+            will be inserted into the map iff \p bAllowInsert is \p true
             (note that in this case the \ref key_type should be constructible from type \p K).
             Otherwise, the functor \p func is called with item found.
             The functor \p Func signature is:

@@ -298,7 +298,8 @@ namespace cds { namespace container {
 
         /// Updates the item
         /**
-            If \p key is not in the list and \p bAllowInsert is \p true, 
+            If \p key is not in the list and \p bAllowInsert is \p true,
+
             the function inserts a new item.
             Otherwise, the function returns an iterator pointing to the item found.
 
