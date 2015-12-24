@@ -47,6 +47,11 @@ namespace set {
             item()
             {}
 
+            explicit item( int key )
+                : nKey( key )
+                , nVal(0)
+            {}
+
             item(int key, int val)
                 : nKey( key )
                 , nVal(val)
@@ -78,6 +83,10 @@ namespace set {
             base_item()
             {}
 
+            explicit base_item( int key )
+                : item( key )
+            {}
+
             base_item(int key, int val)
                 : item( key, val )
             {}
@@ -86,6 +95,11 @@ namespace set {
                 : item( static_cast<item const&>(v) )
                 , stat()
             {}
+
+            operator int() const
+            {
+                return key();
+            }
         };
 
         template <typename Hook>
@@ -98,6 +112,10 @@ namespace set {
             member_item()
             {}
 
+            explicit member_item( int key )
+                : item( key )
+            {}
+
             member_item(int key, int val)
                 : item( key, val )
             {}
@@ -106,6 +124,11 @@ namespace set {
                 : item( static_cast<item const&>(v))
                 , stat()
             {}
+
+            operator int() const
+            {
+                return key();
+            }
         };
 
         struct find_key {
@@ -150,6 +173,11 @@ namespace set {
             bool operator ()(const Q& v1, const T& v2 ) const
             {
                 return v1 < v2.key();
+            }
+
+            bool operator()( int i1, int i2 ) const
+            {
+                return i1 < i2;
             }
         };
 
@@ -232,26 +260,39 @@ namespace set {
             }
         };
 
+        template <typename T>
+        struct get_int_key
+        {
+            int operator()( T const & v ) const
+            {
+                return v.key();
+            }
+        };
+
+        template <>
+        struct get_int_key<int>
+        {
+            int operator()( int i ) const
+            {
+                return i;
+            }
+        };
+
         struct less2 {
             template <typename Item>
             bool operator()( Item const& e, find_key const& k ) const
             {
-                return e.key() < k.nKey;
+                return get_int_key<Item>()(e) < k.nKey;
             }
             template <typename Item>
             bool operator()( find_key const& k, Item const& e ) const
             {
-                return k.nKey < e.key();
+                return k.nKey < get_int_key<Item>()(e);
             }
-            template <typename Item>
-            bool operator()( Item const& e, int k ) const
+            template <typename Item1, typename Item2>
+            bool operator()( Item1 const& e, Item2 const& k ) const
             {
-                return e.key() < k;
-            }
-            template <typename Item>
-            bool operator()( int k, Item const& e ) const
-            {
-                return k < e.key();
+                return get_int_key<Item1>()(e) < get_int_key<Item2>()(k);
             }
         };
 

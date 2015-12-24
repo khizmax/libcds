@@ -22,12 +22,33 @@ namespace set {
                 return base_class::operator()( b, a );
             }
         };
+
+        template <typename T, typename Node>
+        struct get_key
+        {
+            typedef T type;
+
+            type const& operator()( Node const& v ) const
+            {
+                return v.nKey;
+            }
+        };
     }
+
+#if BOOST_VERSION >= 105900
+#   define CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( type ) ,bi::key_of_value< get_key< int, type>>
+#else
+#   define CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( type )
+#endif
 
     void IntrusiveStripedSetHdrTest::Striped_treap_set_basehook()
     {
         typedef ci::StripedSet<
-            bi::treap_set<base_item_type, bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type> >, bi::priority<priority_cmp<base_item_type> >  >
+            bi::treap_set < base_item_type,
+                bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>>,
+                bi::priority<priority_cmp<base_item_type>>
+                CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
+            >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
             ,co::mutex_policy< ci::striped_set::striping<> >
         > set_type;
@@ -38,7 +59,11 @@ namespace set {
     void IntrusiveStripedSetHdrTest::Striped_treap_set_basehook_bucket_threshold()
     {
         typedef ci::StripedSet<
-            bi::treap_set<base_item_type, bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type> >, bi::priority<priority_cmp<base_item_type> > >
+            bi::treap_set<base_item_type, 
+                bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type> >,
+                bi::priority<priority_cmp<base_item_type>>
+                CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
+            >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
             ,co::resizing_policy< ci::striped_set::single_bucket_size_threshold<64> >
         > set_type;
@@ -49,7 +74,11 @@ namespace set {
     void IntrusiveStripedSetHdrTest::Striped_treap_set_basehook_bucket_threshold_rt()
     {
         typedef ci::StripedSet<
-            bi::treap_set<base_item_type, bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type> >, bi::priority<priority_cmp<base_item_type> > >
+            bi::treap_set<base_item_type, 
+                bi::compare<IntrusiveStripedSetHdrTest::less<base_item_type>>, 
+                bi::priority<priority_cmp<base_item_type>>
+                CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( base_item_type )
+            >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
             ,co::resizing_policy< ci::striped_set::single_bucket_size_threshold<0> >
         > set_type;
@@ -66,6 +95,7 @@ namespace set {
                 , bi::member_hook< member_item_type, bi::bs_set_member_hook<>, &member_item_type::hMember>
                 , bi::compare<IntrusiveStripedSetHdrTest::less<member_item_type> >
                 , bi::priority<priority_cmp<member_item_type> >
+                CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( member_item_type )
             >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
         > set_type;
@@ -81,6 +111,7 @@ namespace set {
                 , bi::member_hook< member_item_type, bi::bs_set_member_hook<>, &member_item_type::hMember>
                 , bi::compare<IntrusiveStripedSetHdrTest::less<member_item_type> >
                 , bi::priority<priority_cmp<member_item_type> >
+                CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( member_item_type )
             >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
             ,co::resizing_policy< ci::striped_set::single_bucket_size_threshold<256> >
@@ -97,6 +128,7 @@ namespace set {
                 , bi::member_hook< member_item_type, bi::bs_set_member_hook<>, &member_item_type::hMember>
                 , bi::compare<IntrusiveStripedSetHdrTest::less<member_item_type> >
                 , bi::priority<priority_cmp<member_item_type> >
+                CDS_BOOST_INTRUSIVE_KEY_OF_VALUE_OPTION( member_item_type )
             >
             ,co::hash< IntrusiveStripedSetHdrTest::hash_int >
             ,co::resizing_policy< ci::striped_set::single_bucket_size_threshold<0> >

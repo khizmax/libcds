@@ -237,7 +237,7 @@ namespace cds { namespace intrusive {
 
                 bool unlink( value_type& val )
                 {
-                    iterator it = m_Set.find( value_type(val) );
+                    iterator it = m_Set.find( value_type(val));
                     if ( it == m_Set.end() || &(*it) != &val )
                         return false;
                     m_Set.erase( it );
