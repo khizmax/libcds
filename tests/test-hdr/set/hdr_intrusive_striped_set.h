@@ -13,6 +13,24 @@ namespace set {
     namespace ci = cds::intrusive;
     namespace co = cds::opt;
 
+    template <typename T>
+    struct get_int_key
+    {
+        int operator()( T const & v ) const
+        {
+            return v.key();
+        }
+    };
+
+    template <>
+    struct get_int_key<int>
+    {
+        int operator()( int i ) const
+        {
+            return i;
+        }
+    };
+
     // MichaelHashSet
     class IntrusiveStripedSetHdrTest: public CppUnitMini::TestCase
     {
@@ -257,24 +275,6 @@ namespace set {
             {
                 ++e.nFindCount;
                 ++w.nFindArgCount;
-            }
-        };
-
-        template <typename T>
-        struct get_int_key
-        {
-            int operator()( T const & v ) const
-            {
-                return v.key();
-            }
-        };
-
-        template <>
-        struct get_int_key<int>
-        {
-            int operator()( int i ) const
-            {
-                return i;
             }
         };
 
