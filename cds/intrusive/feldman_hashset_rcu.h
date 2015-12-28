@@ -170,10 +170,11 @@ namespace cds { namespace intrusive {
             hash_comparator cmp;
 
             while (true) {
+                rcu_lock rcuLock;
+
                 node_ptr slot = base_class::traverse( pos );
                 assert(slot.bits() == 0);
 
-                rcu_lock rcuLock;
                 if ( pos.pArr->nodes[pos.nSlot].load(memory_model::memory_order_acquire) == slot) {
                     if (slot.ptr()) {
                         if ( cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
@@ -1014,71 +1015,69 @@ namespace cds { namespace intrusive {
             value_type * pOld;
 
             while ( true ) {
+                rcu_lock rcuLock;
+
                 node_ptr slot = base_class::traverse( pos );
                 assert(slot.bits() == 0);
 
                 pOld = nullptr;
-                {
-                    rcu_lock rcuLock;
-
-                    if ( pos.pArr->nodes[pos.nSlot].load(memory_model::memory_order_acquire) == slot) {
-                        if ( slot.ptr()) {
-                            if ( cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
-                                // the item with that hash value already exists
-                                // Replace it with val
-                                if ( slot.ptr() == &val ) {
-                                    stats().onUpdateExisting();
-                                    return std::make_pair(true, false);
-                                }
-
-                                if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(slot, node_ptr(&val), memory_model::memory_order_release, atomics::memory_order_relaxed)) {
-                                    // slot can be disposed
-                                    f( val, slot.ptr());
-                                    pOld = slot.ptr();
-                                    stats().onUpdateExisting();
-                                    goto update_existing_done;
-                                }
-
-                                stats().onUpdateRetry();
+                if ( pos.pArr->nodes[pos.nSlot].load(memory_model::memory_order_acquire) == slot) {
+                    if ( slot.ptr()) {
+                        if ( cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
+                            // the item with that hash value already exists
+                            // Replace it with val
+                            if ( slot.ptr() == &val ) {
+                                stats().onUpdateExisting();
+                                return std::make_pair(true, false);
                             }
-                            else {
-                                if ( bInsert ) {
-                                    // the slot must be expanded
-                                    base_class::expand_slot( pos, slot );
-                                }
-                                else {
-                                    stats().onUpdateFailed();
-                                    return std::make_pair(false, false);
-                                }
+
+                            if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(slot, node_ptr(&val), memory_model::memory_order_release, atomics::memory_order_relaxed)) {
+                                // slot can be disposed
+                                f( val, slot.ptr());
+                                pOld = slot.ptr();
+                                stats().onUpdateExisting();
+                                goto update_existing_done;
                             }
+
+                            stats().onUpdateRetry();
                         }
                         else {
-                            // the slot is empty, try to insert data node
-                            if (bInsert) {
-                                node_ptr pNull;
-                                if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(pNull, node_ptr(&val), memory_model::memory_order_release, atomics::memory_order_relaxed))
-                                {
-                                    // the new data node has been inserted
-                                    f(val, nullptr);
-                                    ++m_ItemCounter;
-                                    stats().onUpdateNew();
-                                    stats().height( pos.nHeight );
-                                    return std::make_pair(true, true);
-                                }
+                            if ( bInsert ) {
+                                // the slot must be expanded
+                                base_class::expand_slot( pos, slot );
                             }
                             else {
                                 stats().onUpdateFailed();
                                 return std::make_pair(false, false);
                             }
-
-                            // insert failed - slot has been changed by another thread
-                            // retry updating
-                            stats().onUpdateRetry();
                         }
                     }
-                    else
-                        stats().onSlotChanged();
-                } // rcu_lock
+                    else {
+                        // the slot is empty, try to insert data node
+                        if (bInsert) {
+                            node_ptr pNull;
+                            if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(pNull, node_ptr(&val), memory_model::memory_order_release, atomics::memory_order_relaxed))
+                            {
+                                // the new data node has been inserted
+                                f(val, nullptr);
+                                ++m_ItemCounter;
+                                stats().onUpdateNew();
+                                stats().height( pos.nHeight );
+                                return std::make_pair(true, true);
+                            }
+                        }
+                        else {
+                            stats().onUpdateFailed();
+                            return std::make_pair(false, false);
+                        }
+
+                        // insert failed - slot has been changed by another thread
+                        // retry updating
+                        stats().onUpdateRetry();
+                    }
+                }
+                else
+                    stats().onSlotChanged();
             } // while
 
             // update success
