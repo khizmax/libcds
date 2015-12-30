@@ -766,15 +766,13 @@ namespace cds { namespace gc {
                     When the thread terminated its guard pool is backed to common GC's pool.
                 - \p nEpochCount: internally, DHP memory manager uses epoch-based schema to solve
                     ABA problem for internal data. \p nEpochCount specifies the epoch count,
-
                     i.e. the count of simultaneously working threads that remove the elements
-                    of DHP-based concurrent data structure. Default value is 8.
-
+                    of DHP-based concurrent data structure. Default value is 16.
             */
             static void CDS_STDCALL Construct(
                 size_t nLiberateThreshold = 1024
                 , size_t nInitialThreadGuardCount = 8
-                , size_t nEpochCount = 8
+                , size_t nEpochCount = 16
             );
 
             /// Destroys DHP memory manager

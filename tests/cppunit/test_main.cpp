@@ -380,14 +380,21 @@ int main(int argc, char** argv)
   int num_errors;
   {
       size_t nHazardPtrCount = 0;
+      size_t dhp_liberateThreshold;
+      size_t dhp_initialThreadGuardCount;
+      size_t dhp_epochCount;
       {
         CppUnitMini::TestCfg& cfg = CppUnitMini::TestCase::m_Cfg.get( "General" );
         nHazardPtrCount = cfg.getULong( "hazard_pointer_count", 0 );
+
+        dhp_liberateThreshold = cfg.getSizeT( "dhp_liberate_threshold", 1024 );
+        dhp_initialThreadGuardCount = cfg.getSizeT( "dhp_init_guard_count", 8 );
+        dhp_epochCount = cfg.getSizeT( "dhp_epoch_count", 16 );
       }
 
       // Safe reclamation schemes
       cds::gc::HP hzpGC( nHazardPtrCount );
-      cds::gc::DHP dhpGC;
+      cds::gc::DHP dhpGC( dhp_liberateThreshold, dhp_initialThreadGuardCount, dhp_epochCount );
 
       // RCU varieties
       typedef cds::urcu::gc< cds::urcu::general_instant<> >    rcu_gpi;

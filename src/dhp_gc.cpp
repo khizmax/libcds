@@ -157,7 +157,7 @@ namespace cds { namespace gc { namespace dhp {
     GarbageCollector::GarbageCollector( size_t nLiberateThreshold, size_t nInitialThreadGuardCount, size_t nEpochCount )
         : m_nLiberateThreshold( nLiberateThreshold ? nLiberateThreshold : 1024 )
         , m_nInitialThreadGuardCount( nInitialThreadGuardCount ? nInitialThreadGuardCount : 8 )
-        , m_RetiredAllocator( static_cast<unsigned int>(nEpochCount))
+        , m_RetiredAllocator( static_cast<unsigned int>( nEpochCount ? nEpochCount : 16 ))
         , m_bStatEnabled( false )
     {}
 
