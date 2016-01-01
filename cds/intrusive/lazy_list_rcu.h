@@ -201,7 +201,7 @@ namespace cds { namespace intrusive {
         {
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
 
-            pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_relaxed );
+            pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_release );
             pPred->m_pNext.store( marked_node_ptr(pNode), memory_model::memory_order_release );
         }
 
@@ -211,7 +211,7 @@ namespace cds { namespace intrusive {
             assert( pCur != &m_Tail );
 
             node_type * pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr();
-            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_relaxed ); // logical deletion + back-link for search
+            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_release ); // logical deletion + back-link for search
             pPred->m_pNext.store( marked_node_ptr( pNext ), memory_model::memory_order_release); // physically deleting
         }
 
@@ -1110,6 +1110,8 @@ namespace cds { namespace intrusive {
             while ( pCur != pTail && ( pCur == pHead || cmp( *node_traits::to_value_ptr( *pCur.ptr()), key ) < 0 )) {
                 pPrev = pCur;
                 pCur = pCur->m_pNext.load(memory_model::memory_order_acquire);
+                if ( pCur->is_marked())
+                    pCur = pHead;
             }
 
             pos.pCur = pCur.ptr();

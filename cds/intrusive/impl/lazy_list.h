@@ -256,10 +256,8 @@ namespace cds { namespace intrusive {
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
 
             node_type * pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr();
-            //pCur->m_pNext.store( marked_node_ptr( pNext, 1), memory_model::memory_order_release) ;   // logically deleting
-            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_release )    ; // logical removal + back-link for search
+            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_release ); // logical removal + back-link for search
             pPred->m_pNext.store( marked_node_ptr( pNext ), memory_model::memory_order_release); // physically deleting
-            //pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_release )    ; // back-link for search
         }
 
         void retire_node( node_type * pNode )
@@ -1125,15 +1123,12 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare>
         void search( node_type * pHead, const Q& key, position& pos, Compare cmp )
         {
-            const node_type * pTail = &m_Tail;
+            node_type const* pTail = &m_Tail;
 
             marked_node_ptr pCur( pHead );
             marked_node_ptr pPrev( pHead );
 
-            back_off        bkoff;
-
-            while ( pCur.ptr() != pTail )
-            {
+            while ( pCur.ptr() != pTail ) {
                 if ( pCur.ptr() != pHead ) {
                     if ( cmp( *node_traits::to_value_ptr( *pCur.ptr() ), key ) >= 0 )
                         break;
@@ -1142,14 +1137,12 @@ namespace cds { namespace intrusive {
                 pos.guards.copy( position::guard_prev_item, position::guard_current_item );
                 pPrev = pCur;
 
-                for (;;) {
-                    pCur = pPrev->m_pNext.load(memory_model::memory_order_relaxed);
-                    pos.guards.assign( position::guard_current_item, node_traits::to_value_ptr( pCur.ptr() ));
-                    if ( pCur == pPrev->m_pNext.load(memory_model::memory_order_acquire) )
-                        break;
-                    bkoff();
-                }
+                pCur = pos.guards.protect( position::guard_current_item, pPrev->m_pNext,
+                    []( marked_node_ptr p ) { return node_traits::to_value_ptr( p.ptr()); }
+                );
                 assert( pCur.ptr() != nullptr );
+                if ( pCur->is_marked())
+                    pCur = pHead;
             }
 
             pos.pCur = pCur.ptr();
