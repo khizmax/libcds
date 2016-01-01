@@ -40,7 +40,7 @@ namespace cds { namespace urcu { namespace details {
         uint32_t tmp = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
         if ( (tmp & rcu_class::c_nNestMask) == 0 ) {
             pRec->m_nAccessControl.store( gp_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_relaxed),
-                atomics::memory_order_relaxed );
+                atomics::memory_order_release );
             atomics::atomic_thread_fence( atomics::memory_order_acquire );
             CDS_COMPILER_RW_BARRIER;
         }
@@ -73,7 +73,7 @@ namespace cds { namespace urcu { namespace details {
     template <typename RCUtag>
     inline bool gp_singleton<RCUtag>::check_grace_period( typename gp_singleton<RCUtag>::thread_record * pRec ) const
     {
-        uint32_t const v = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
+        uint32_t const v = pRec->m_nAccessControl.load( atomics::memory_order_acquire );
         return (v & general_purpose_rcu::c_nNestMask)
             && ((( v ^ m_nGlobalControl.load( atomics::memory_order_relaxed )) & ~general_purpose_rcu::c_nNestMask ));
     }
