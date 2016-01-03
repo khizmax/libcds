@@ -75,7 +75,7 @@ namespace cds { namespace urcu { namespace details {
     {
         uint32_t const v = pRec->m_nAccessControl.load( atomics::memory_order_acquire );
         return (v & general_purpose_rcu::c_nNestMask)
-            && ((( v ^ m_nGlobalControl.load( atomics::memory_order_relaxed )) & ~general_purpose_rcu::c_nNestMask ));
+            && (( v ^ m_nGlobalControl.load( atomics::memory_order_relaxed )) & ~general_purpose_rcu::c_nNestMask );
     }
 
     template <typename RCUtag>

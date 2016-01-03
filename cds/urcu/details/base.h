@@ -292,8 +292,8 @@ namespace cds {
             //@cond
             template <typename ThreadData>
             struct thread_list_record {
-                ThreadData *    m_pNext ;  ///< Next item in thread list
-                atomics::atomic<OS::ThreadId>    m_idOwner   ; ///< Owner thread id; 0 - the record is free (not owned)
+                ThreadData *                  m_pNext;   ///< Next item in thread list
+                atomics::atomic<OS::ThreadId> m_idOwner; ///< Owner thread id; 0 - the record is free (not owned)
 
                 thread_list_record()
                     : m_pNext( nullptr )
@@ -309,11 +309,11 @@ namespace cds {
             template <typename RCUtag, class Alloc = CDS_DEFAULT_ALLOCATOR >
             class thread_list {
             public:
-                typedef thread_data<RCUtag>         thread_record;
-                typedef cds::details::Allocator< thread_record, Alloc >   allocator_type;
+                typedef thread_data<RCUtag>                             thread_record;
+                typedef cds::details::Allocator< thread_record, Alloc > allocator_type;
 
             private:
-                atomics::atomic<thread_record *>   m_pHead;
+                atomics::atomic<thread_record *> m_pHead;
 
             public:
                 thread_list()
@@ -331,7 +331,7 @@ namespace cds {
                     cds::OS::ThreadId const nullThreadId = cds::OS::c_NullThreadId;
                     cds::OS::ThreadId const curThreadId  = cds::OS::get_current_thread_id();
 
-                    // First try to reuse a retired (non-active) HP record
+                    // First, try to reuse a retired (non-active) HP record
                     for ( pRec = m_pHead.load( atomics::memory_order_acquire ); pRec; pRec = pRec->m_list.m_pNext ) {
                         cds::OS::ThreadId thId = nullThreadId;
                         if ( !pRec->m_list.m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ) )
@@ -343,8 +343,6 @@ namespace cds {
                     // Allocate and push a new record
                     pRec = allocator_type().New();
                     pRec->m_list.m_idOwner.store( curThreadId, atomics::memory_order_relaxed );
-
-                    atomics::atomic_thread_fence( atomics::memory_order_release );
 
                     thread_record * pOldHead = m_pHead.load( atomics::memory_order_acquire );
                     do {
@@ -385,7 +383,7 @@ namespace cds {
                     CDS_DEBUG_ONLY( cds::OS::ThreadId const nullThreadId = cds::OS::c_NullThreadId; )
                     CDS_DEBUG_ONLY( cds::OS::ThreadId const mainThreadId = cds::OS::get_current_thread_id() ;)
 
-                    thread_record * p = m_pHead.exchange( nullptr, atomics::memory_order_seq_cst );
+                    thread_record * p = m_pHead.exchange( nullptr, atomics::memory_order_acquire );
                     while ( p ) {
                         thread_record * pNext = p->m_list.m_pNext;
 

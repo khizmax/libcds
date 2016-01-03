@@ -60,7 +60,7 @@ namespace cds { namespace urcu {
         /// Returns singleton instance
         static general_instant * instance()
         {
-            return static_cast<general_instant *>( base_class::instance() );
+            return static_cast<general_instant *>( base_class::instance());
         }
 
         /// Checks if the singleton is created and ready to use
@@ -105,7 +105,7 @@ namespace cds { namespace urcu {
     public:
         /// Retires \p p pointer
         /**
-            The method calls \ref synchronize to wait for the end of grace period
+            The method calls \p synchronize() to wait for the end of grace period
             and calls \p p disposer.
         */
         virtual void retire_ptr( retired_ptr& p )
@@ -148,6 +148,7 @@ namespace cds { namespace urcu {
         /// Waits to finish a grace period
         void synchronize()
         {
+            assert( !is_locked());
             std::unique_lock<lock_type> sl( m_Lock );
             flip_and_wait();
             flip_and_wait();
