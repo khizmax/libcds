@@ -125,7 +125,7 @@ namespace cds { namespace intrusive {
         class ordered_list_wrapper: public ordered_list
         {
             typedef ordered_list base_class;
-            typedef typename base_class::auxiliary_head       bucket_head_type;
+            typedef typename base_class::auxiliary_head bucket_head_type;
 
         public:
             bool insert_at( dummy_node_type * pHead, value_type& val )

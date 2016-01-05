@@ -148,7 +148,7 @@ namespace cds { namespace urcu {
         /// Waits to finish a grace period
         void synchronize()
         {
-            assert( !is_locked());
+            assert( !thread_gc::is_locked());
             std::unique_lock<lock_type> sl( m_Lock );
             flip_and_wait();
             flip_and_wait();

@@ -85,8 +85,8 @@ namespace cds { namespace urcu { namespace details {
         OS::ThreadId const nullThreadId = OS::c_NullThreadId;
         m_nGlobalControl.fetch_xor( general_purpose_rcu::c_nControlBit, atomics::memory_order_seq_cst );
 
-        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            while ( pRec->m_list.m_idOwner.load( atomics::memory_order_acquire) != nullThreadId && check_grace_period( pRec ) ) {
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire ); pRec; pRec = pRec->m_list.m_pNext ) {
+            while ( pRec->m_list.m_idOwner.load( atomics::memory_order_acquire ) != nullThreadId && check_grace_period( pRec ) ) {
                 bkoff();
                 CDS_COMPILER_RW_BARRIER;
             }

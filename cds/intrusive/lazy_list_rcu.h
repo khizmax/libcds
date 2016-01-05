@@ -170,7 +170,7 @@ namespace cds { namespace intrusive {
 
         typedef std::unique_lock< position > scoped_position_lock;
 
-        typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock>   check_deadlock_policy;
+        typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock>   deadlock_policy;
         //@endcond
 
     protected:
@@ -192,16 +192,16 @@ namespace cds { namespace intrusive {
         static void dispose_node( node_type * pNode )
         {
             assert( pNode );
-            assert( !gc::is_locked() );
+            assert( !gc::is_locked());
 
-            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ) );
+            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ));
         }
 
         static void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
         {
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
 
-            pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_release );
+            pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_relaxed );
             pPred->m_pNext.store( marked_node_ptr(pNode), memory_model::memory_order_release );
         }
 
@@ -211,7 +211,7 @@ namespace cds { namespace intrusive {
             assert( pCur != &m_Tail );
 
             node_type * pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr();
-            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_release ); // logical deletion + back-link for search
+            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_relaxed ); // logical deletion + back-link for search
             pPred->m_pNext.store( marked_node_ptr( pNext ), memory_model::memory_order_release); // physically deleting
         }
 
@@ -249,10 +249,10 @@ namespace cds { namespace intrusive {
                     node_type * pNode = node_traits::to_node_ptr( m_pNode );
 
                     // Dummy tail node could not be marked
-                    while ( pNode->is_marked() )
+                    while ( pNode->is_marked())
                         pNode = pNode->m_pNext.load(memory_model::memory_order_acquire).ptr();
 
-                    if ( pNode != node_traits::to_node_ptr( m_pNode ) )
+                    if ( pNode != node_traits::to_node_ptr( m_pNode ))
                         m_pNode = node_traits::to_value_ptr( pNode );
                 }
             }
@@ -522,7 +522,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool erase( Q const& key )
         {
-            return erase_at( &m_Head, key, key_comparator() );
+            return erase_at( &m_Head, key, key_comparator());
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -586,7 +586,7 @@ namespace cds { namespace intrusive {
             If the item is not found the function returns empty \p exempt_ptr.
 
             @note The function does NOT call RCU read-side lock or synchronization,
-            and does NOT dispose the item found. It just excludes the item from the list
+            and does NOT dispose the item found. It just unlinks the item from the list
             and returns a pointer to it.
             You should manually lock RCU before calling this function, and you should manually synchronize RCU
             outside the RCU lock region before reusing returned pointer.
@@ -624,7 +624,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            return exempt_ptr( extract_at( &m_Head, key, key_comparator() ));
+            return exempt_ptr( extract_at( &m_Head, key, key_comparator()));
         }
 
         /// Extracts an item from the list using \p pred predicate for searching
@@ -639,7 +639,7 @@ namespace cds { namespace intrusive {
         exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( extract_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() ));
+            return exempt_ptr( extract_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>()));
         }
 
         /// Finds the key \p key
@@ -701,7 +701,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool contains( Q const& key ) const
         {
-            return find_at( const_cast<node_type *>( &m_Head ), key, key_comparator() );
+            return find_at( const_cast<node_type *>( &m_Head ), key, key_comparator());
         }
         //@cond
         template <typename Q>
@@ -722,7 +722,7 @@ namespace cds { namespace intrusive {
         bool contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return find_at( const_cast<node_type *>( &m_Head ), key, cds::opt::details::make_comparator_from_less<Less>() );
+            return find_at( const_cast<node_type *>( &m_Head ), key, cds::opt::details::make_comparator_from_less<Less>());
         }
         //@cond
         template <typename Q, typename Less>
@@ -748,7 +748,7 @@ namespace cds { namespace intrusive {
             // ...
             {
                 // Lock RCU
-                ord_list::rcu_lock lock;
+                typename ord_list::rcu_lock lock;
 
                 foo * pVal = theList.get( 5 );
                 if ( pVal ) {
@@ -789,13 +789,13 @@ namespace cds { namespace intrusive {
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer call can be deferred.
 
-            The function can throw cds::urcu::rcu_deadlock exception if deadlock is encountered and
-            deadlock checking policy is opt::v::rcu_throw_deadlock.
+            The function can throw \p cds::urcu::rcu_deadlock exception if deadlock is encountered and
+            deadlock checking policy is \p opt::v::rcu_throw_deadlock.
         */
         void clear()
         {
-            if( !empty() ) {
-                check_deadlock_policy::check();
+            if( !empty()) {
+                deadlock_policy::check();
 
                 node_type * pHead;
                 for (;;) {
@@ -857,7 +857,7 @@ namespace cds { namespace intrusive {
             // Hack: convert node_type to value_type.
             // Actually, an auxiliary node should not be converted to value_type
             // We assume that comparator can correctly distinguish aux and regular node.
-            return insert_at( pHead, *node_traits::to_value_ptr( pNode ) );
+            return insert_at( pHead, *node_traits::to_value_ptr( pNode ));
         }
 
         bool insert_at( node_type * pHead, value_type& val )
@@ -869,7 +869,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( node_type * pHead, value_type& val, Func f )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
+            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
@@ -884,8 +884,8 @@ namespace cds { namespace intrusive {
                             return false;
                         }
 
-                        link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                         f( val );
+                        link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                         ++m_ItemCounter;
                         return true;
                     }
@@ -921,7 +921,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
             key_comparator  cmp;
-            check_deadlock_policy::check();
+            deadlock_policy::check();
 
             while ( true ) {
                 int nResult = 0;
@@ -930,7 +930,7 @@ namespace cds { namespace intrusive {
                     search( pHead, val, pos );
                     {
                         scoped_position_lock alp( pos );
-                        if ( validate( pos.pPred, pos.pCur ) ) {
+                        if ( validate( pos.pPred, pos.pCur )) {
                             if ( pos.pCur != &m_Tail
                                 && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0
                                 && node_traits::to_value_ptr( pos.pCur ) == &val )
@@ -959,7 +959,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare, typename Func>
         bool erase_at( node_type * const pHead, Q const& val, Compare cmp, Func f, position& pos )
         {
-            check_deadlock_policy::check();
+            deadlock_policy::check();
 
             while ( true ) {
                 int nResult = 0;
@@ -972,7 +972,7 @@ namespace cds { namespace intrusive {
                             if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                                 // key found
                                 unlink_node( pos.pPred, pos.pCur, pHead );
-                                f( *node_traits::to_value_ptr( *pos.pCur ) );
+                                f( *node_traits::to_value_ptr( *pos.pCur ));
                                 --m_ItemCounter;
                                 nResult = 1;
                             }
@@ -1010,7 +1010,7 @@ namespace cds { namespace intrusive {
         value_type * extract_at( node_type * const pHead, Q const& val, Compare cmp )
         {
             position pos;
-            assert( gc::is_locked() ) ; // RCU must be locked!!!
+            assert( gc::is_locked()) ; // RCU must be locked
 
             while ( true ) {
                 search( pHead, val, pos, cmp );
@@ -1066,7 +1066,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare>
         const_iterator find_at_( node_type * pHead, Q& val, Compare cmp ) const
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             position pos;
 
@@ -1093,14 +1093,14 @@ namespace cds { namespace intrusive {
         template <typename Q>
         void search( node_type * const pHead, Q const& key, position& pos ) const
         {
-            search( pHead, key, pos, key_comparator() );
+            search( pHead, key, pos, key_comparator());
         }
 
         template <typename Q, typename Compare>
         void search( node_type * const pHead, Q const& key, position& pos, Compare cmp ) const
         {
-            // RCU should be locked!!!
-            assert( gc::is_locked() );
+            // RCU should be locked
+            assert( gc::is_locked());
 
             node_type const* pTail = &m_Tail;
 
@@ -1110,8 +1110,8 @@ namespace cds { namespace intrusive {
             while ( pCur != pTail && ( pCur == pHead || cmp( *node_traits::to_value_ptr( *pCur.ptr()), key ) < 0 )) {
                 pPrev = pCur;
                 pCur = pCur->m_pNext.load(memory_model::memory_order_acquire);
-                if ( pCur->is_marked())
-                    pCur = pHead;
+                if ( pCur.bits())
+                    pPrev = pCur = pHead;
             }
 
             pos.pCur = pCur.ptr();
@@ -1120,8 +1120,8 @@ namespace cds { namespace intrusive {
 
         static bool validate( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
         {
-            // RCU lock should be locked!!!
-            assert( gc::is_locked() );
+            // RCU lock should be locked
+            assert( gc::is_locked());
 
             return !pPred->is_marked()
                 && !pCur->is_marked()
@@ -1134,8 +1134,8 @@ namespace cds { namespace intrusive {
         //@cond
         bool insert_at_locked( node_type * pHead, value_type& val )
         {
-            // RCU lock should be locked!!!
-            assert( gc::is_locked() );
+            // RCU lock should be locked
+            assert( gc::is_locked());
 
             link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
@@ -1145,7 +1145,7 @@ namespace cds { namespace intrusive {
                 search( pHead, val, pos );
                 {
                     scoped_position_lock alp( pos );
-                    if ( validate( pos.pPred, pos.pCur ) ) {
+                    if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // failed: key already in list
                             return false;
@@ -1162,8 +1162,8 @@ namespace cds { namespace intrusive {
         template <typename Func>
         std::pair<iterator, bool> update_at_locked( node_type * pHead, value_type& val, Func func, bool bAllowInsert )
         {
-            // RCU lock should be locked!!!
-            assert( gc::is_locked() );
+            // RCU lock should be locked
+            assert( gc::is_locked());
 
             position pos;
             key_comparator  cmp;
@@ -1172,7 +1172,7 @@ namespace cds { namespace intrusive {
                 search( pHead, val, pos );
                 {
                     scoped_position_lock alp( pos );
-                    if ( validate( pos.pPred, pos.pCur ) ) {
+                    if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // key already in the list
 
@@ -1184,12 +1184,12 @@ namespace cds { namespace intrusive {
                             if ( !bAllowInsert )
                                 return std::make_pair( end(), false );
 
-                            link_checker::is_empty( node_traits::to_node_ptr( val ) );
+                            link_checker::is_empty( node_traits::to_node_ptr( val ));
 
-                            link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             func( true, val, val );
+                            link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             ++m_ItemCounter;
-                            return std::make_pair( iterator( node_traits::to_node_ptr( val ) ), true );
+                            return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
                         }
                     }
                 }

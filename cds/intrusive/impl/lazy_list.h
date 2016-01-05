@@ -206,7 +206,7 @@ namespace cds { namespace intrusive {
         struct clean_disposer {
             void operator()( value_type * p )
             {
-                lazy_list::node_cleaner<gc, node_type, memory_model>()( node_traits::to_node_ptr( p ) );
+                lazy_list::node_cleaner<gc, node_type, memory_model>()( node_traits::to_node_ptr( p ));
                 disposer()( p );
             }
         };
@@ -263,7 +263,7 @@ namespace cds { namespace intrusive {
         void retire_node( node_type * pNode )
         {
             assert( pNode != nullptr );
-            gc::template retire<clean_disposer>( node_traits::to_value_ptr( *pNode ) );
+            gc::template retire<clean_disposer>( node_traits::to_value_ptr( *pNode ));
         }
         //@endcond
 
@@ -290,9 +290,9 @@ namespace cds { namespace intrusive {
                         do {
                             pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr();
                             g.assign( node_traits::to_value_ptr( pNext ));
-                        } while ( pNext != pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr() );
+                        } while ( pNext != pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr());
 
-                        m_pNode = m_Guard.assign( g.template get<value_type>() );
+                        m_pNode = m_Guard.assign( g.template get<value_type>());
                     }
                 }
             }
@@ -304,14 +304,14 @@ namespace cds { namespace intrusive {
                     node_type * pNode = node_traits::to_node_ptr( m_pNode );
 
                     // Dummy tail node could not be marked
-                    while ( pNode->is_marked() ) {
+                    while ( pNode->is_marked()) {
                         node_type * p = pNode->m_pNext.load(memory_model::memory_order_relaxed).ptr();
                         g.assign( node_traits::to_value_ptr( p ));
-                        if ( p == pNode->m_pNext.load(memory_model::memory_order_relaxed).ptr() )
+                        if ( p == pNode->m_pNext.load(memory_model::memory_order_relaxed).ptr())
                             pNode = p;
                     }
-                    if ( pNode != node_traits::to_node_ptr( m_pNode ) )
-                        m_pNode = m_Guard.assign( g.template get<value_type>() );
+                    if ( pNode != node_traits::to_node_ptr( m_pNode ))
+                        m_pNode = m_Guard.assign( g.template get<value_type>());
                 }
             }
 
@@ -456,7 +456,7 @@ namespace cds { namespace intrusive {
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<node_type *>(&m_Tail) );
+            return const_iterator( const_cast<node_type *>(&m_Tail));
         }
         //@endcond
 
@@ -582,7 +582,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool erase( Q const& key )
         {
-            return erase_at( &m_Head, key, key_comparator() );
+            return erase_at( &m_Head, key, key_comparator());
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -596,7 +596,7 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
+            return erase_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Deletes the item from the list
@@ -663,7 +663,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract( Q const& key )
         {
             guarded_ptr gp;
-            extract_at( &m_Head, gp.guard(), key, key_comparator() );
+            extract_at( &m_Head, gp.guard(), key, key_comparator());
             return gp;
         }
 
@@ -681,7 +681,7 @@ namespace cds { namespace intrusive {
         {
             CDS_UNUSED( pred );
             guarded_ptr gp;
-            extract_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            extract_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>());
             return gp;
         }
 
@@ -744,7 +744,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool contains( Q const& key )
         {
-            return find_at( &m_Head, key, key_comparator() );
+            return find_at( &m_Head, key, key_comparator());
         }
         //@cond
         template <typename Q>
@@ -765,7 +765,7 @@ namespace cds { namespace intrusive {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
         //@cond
         template <typename Q, typename Less>
@@ -809,7 +809,7 @@ namespace cds { namespace intrusive {
         guarded_ptr get( Q const& key )
         {
             guarded_ptr gp;
-            get_at( &m_Head, gp.guard(), key, key_comparator() );
+            get_at( &m_Head, gp.guard(), key, key_comparator());
             return gp;
         }
 
@@ -827,7 +827,7 @@ namespace cds { namespace intrusive {
         {
             CDS_UNUSED( pred );
             guarded_ptr gp;
-            get_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
+            get_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>());
             return gp;
         }
 
@@ -836,9 +836,9 @@ namespace cds { namespace intrusive {
         {
             typename gc::Guard guard;
             marked_node_ptr h;
-            while ( !empty() ) {
+            while ( !empty()) {
                 h = m_Head.m_pNext.load( memory_model::memory_order_relaxed );
-                guard.assign( node_traits::to_value_ptr( h.ptr() ));
+                guard.assign( node_traits::to_value_ptr( h.ptr()));
                 if ( m_Head.m_pNext.load(memory_model::memory_order_acquire) == h ) {
                     m_Head.m_Lock.lock();
                     h->m_Lock.lock();
@@ -848,7 +848,7 @@ namespace cds { namespace intrusive {
                     h->m_Lock.unlock();
                     m_Head.m_Lock.unlock();
 
-                    retire_node( h.ptr() ) ; // free node
+                    retire_node( h.ptr()) ; // free node
                 }
             }
         }
@@ -888,17 +888,17 @@ namespace cds { namespace intrusive {
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node cannot be reducible to value_type
             // We assume that internal comparator can correctly distinguish aux and regular node.
-            return insert_at( pHead, *node_traits::to_value_ptr( pNode ) );
+            return insert_at( pHead, *node_traits::to_value_ptr( pNode ));
         }
 
         bool insert_at( node_type * pHead, value_type& val )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
+            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
             while ( true ) {
-                search( pHead, val, pos, key_comparator() );
+                search( pHead, val, pos, key_comparator());
                 {
                     scoped_position_lock alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
@@ -919,12 +919,12 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( node_type * pHead, value_type& val, Func f )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
+            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
             while ( true ) {
-                search( pHead, val, pos, key_comparator() );
+                search( pHead, val, pos, key_comparator());
                 {
                     scoped_position_lock alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
@@ -950,7 +950,7 @@ namespace cds { namespace intrusive {
             key_comparator  cmp;
 
             while ( true ) {
-                search( pHead, val, pos, key_comparator() );
+                search( pHead, val, pos, key_comparator());
                 {
                     scoped_position_lock alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
@@ -965,7 +965,7 @@ namespace cds { namespace intrusive {
                             if ( !bAllowInsert )
                                 return std::make_pair( false, false );
 
-                            link_checker::is_empty( node_traits::to_node_ptr( val ) );
+                            link_checker::is_empty( node_traits::to_node_ptr( val ));
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             func( true, val, val );
@@ -983,12 +983,12 @@ namespace cds { namespace intrusive {
             key_comparator  cmp;
 
             while ( true ) {
-                search( pHead, val, pos, key_comparator() );
+                search( pHead, val, pos, key_comparator());
                 {
                     int nResult = 0;
                     {
                         scoped_position_lock alp( pos );
-                        if ( validate( pos.pPred, pos.pCur ) ) {
+                        if ( validate( pos.pPred, pos.pCur )) {
                             if ( pos.pCur != &m_Tail
                                 && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0
                                 && node_traits::to_value_ptr( pos.pCur ) == &val )
@@ -1026,7 +1026,7 @@ namespace cds { namespace intrusive {
                             if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                                 // key found
                                 unlink_node( pos.pPred, pos.pCur, pHead );
-                                f( *node_traits::to_value_ptr( *pos.pCur ) );
+                                f( *node_traits::to_value_ptr( *pos.pCur ));
                                 --m_ItemCounter;
                                 nResult = 1;
                             }
@@ -1065,7 +1065,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
             if ( erase_at( pHead, val, cmp, [](value_type const &){}, pos )) {
-                gp.set( pos.guards.template get<value_type>(position::guard_current_item) );
+                gp.set( pos.guards.template get<value_type>(position::guard_current_item));
                 return true;
             }
             return false;
@@ -1130,7 +1130,7 @@ namespace cds { namespace intrusive {
 
             while ( pCur.ptr() != pTail ) {
                 if ( pCur.ptr() != pHead ) {
-                    if ( cmp( *node_traits::to_value_ptr( *pCur.ptr() ), key ) >= 0 )
+                    if ( cmp( *node_traits::to_value_ptr( *pCur.ptr()), key ) >= 0 )
                         break;
                 }
 
@@ -1141,8 +1141,8 @@ namespace cds { namespace intrusive {
                     []( marked_node_ptr p ) { return node_traits::to_value_ptr( p.ptr()); }
                 );
                 assert( pCur.ptr() != nullptr );
-                if ( pCur->is_marked())
-                    pCur = pHead;
+                if ( pCur.bits())
+                    pPrev = pCur = pHead;
             }
 
             pos.pCur = pCur.ptr();
