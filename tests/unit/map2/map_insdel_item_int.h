@@ -291,9 +291,9 @@ namespace map2 {
             CDSUNIT_TEST_BronsonAVLTreeMap
             CDSUNIT_TEST_FeldmanHashMap_fixed
             CDSUNIT_TEST_FeldmanHashMap_city
-            CDSUNIT_TEST_CuckooMap
-            CDSUNIT_TEST_StripedMap
-            CDSUNIT_TEST_RefinableMap
+            //CDSUNIT_TEST_CuckooMap
+            //CDSUNIT_TEST_StripedMap
+            //CDSUNIT_TEST_RefinableMap
             // CDSUNIT_TEST_StdMap // very slow!!
         CPPUNIT_TEST_SUITE_END();
     };
