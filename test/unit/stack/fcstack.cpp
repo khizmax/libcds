@@ -1,0 +1,146 @@
+/*
+    This file is a part of libcds - Concurrent Data Structures library
+
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
+
+    Source code repo: http://github.com/khizmax/libcds/
+    Download: http://sourceforge.net/projects/libcds/files/
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this
+      list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#include <gtest/gtest.h>
+#include <cds/container/fcstack.h>
+
+#include <vector>
+#include <list>
+
+namespace {
+    class FCStack : public ::testing::Test
+    {
+    protected:
+        template <class Stack>
+        void test()
+        {
+            typedef typename Stack::value_type  value_type;
+            Stack stack;
+            value_type v;
+
+            ASSERT_TRUE( stack.empty() );
+            ASSERT_EQ( stack.size(), 0 );
+
+            ASSERT_TRUE( stack.push( 1 ) );
+            ASSERT_TRUE( !stack.empty() );
+            ASSERT_EQ( stack.size(), 1 );
+            ASSERT_TRUE( stack.push( 2 ) );
+            ASSERT_TRUE( !stack.empty() );
+            ASSERT_EQ( stack.size(), 2 );
+            ASSERT_TRUE( stack.push( 3 ) );
+            ASSERT_TRUE( !stack.empty() );
+            ASSERT_EQ( stack.size(), 3 );
+
+            ASSERT_TRUE( stack.pop( v ) );
+            EXPECT_EQ( v, 3 );
+            ASSERT_TRUE( !stack.empty() );
+            ASSERT_EQ( stack.size(), 2 );
+            ASSERT_TRUE( stack.pop( v ) );
+            EXPECT_EQ( v, 2 );
+            ASSERT_TRUE( !stack.empty() );
+            ASSERT_EQ( stack.size(), 1 );
+            ASSERT_TRUE( stack.pop( v ) );
+            EXPECT_EQ( v, 1 );
+            ASSERT_TRUE( stack.empty() );
+            ASSERT_EQ( stack.size(), 0 );
+            v = 1000;
+            ASSERT_TRUE( !stack.pop( v ) );
+            EXPECT_EQ( v, 1000 );
+            ASSERT_TRUE( stack.empty() );
+            ASSERT_EQ( stack.size(), 0 );
+
+            ASSERT_TRUE( stack.push( 10 ) );
+            ASSERT_TRUE( stack.push( 20 ) );
+            ASSERT_TRUE( stack.push( 30 ) );
+            ASSERT_TRUE( !stack.empty() );
+            ASSERT_EQ( stack.size(), 3 );
+
+            while ( stack.pop( v ) );
+
+            ASSERT_TRUE( stack.empty() );
+            ASSERT_EQ( stack.size(), 0 );
+        }
+    };
+
+    TEST_F( FCStack, default_stack )
+    {
+        typedef cds::container::FCStack< unsigned int > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_based )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>> stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_elimination )
+    {
+        struct stack_traits : public
+            cds::container::fcstack::make_traits <
+            cds::opt::enable_elimination < true >
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, vector_based )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::vector<unsigned int>>> stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, vector_elimination )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::vector<unsigned int>>,
+            cds::container::fcstack::make_traits<
+            cds::opt::enable_elimination< true >
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, list_based )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::list<unsigned int>>> stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, list_elimination )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::list<unsigned int>>,
+            cds::container::fcstack::make_traits<
+            cds::opt::enable_elimination< true >
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+} // namespace
