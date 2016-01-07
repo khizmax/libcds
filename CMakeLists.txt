@@ -3,7 +3,7 @@ cmake_policy(SET CMP0016 NEW)
 
 project(cds)
 
-set(PROJECT_VERSION 2.1.0)
+set(PROJECT_VERSION 2.2.0)
 
 # Options
 option(WITH_TESTS "Build unit tests" OFF)
