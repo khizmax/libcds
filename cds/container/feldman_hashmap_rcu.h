@@ -668,7 +668,13 @@ namespace cds { namespace container {
         }
 
         /// Collects tree level statistics into \p stat
-        /** @copydetails cds::intrusive::FeldmanHashSet::get_level_statistics
+        /**
+            The function traverses the set and collects staistics for each level of the tree
+            into \p feldman_hashset::level_statistics struct. The element of \p stat[i]
+            represents statistics for level \p i, level 0 is head array.
+            The function is thread-safe and may be called in multi-threaded environment.
+
+            Result can be useful for estimating efficiency of hash functor you use.
         */
         void get_level_statistics(std::vector< feldman_hashmap::level_statistics>& stat) const
         {

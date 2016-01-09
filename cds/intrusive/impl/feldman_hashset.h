@@ -909,7 +909,7 @@ namespace cds { namespace intrusive {
         using base_class::array_node_size;
 
         /// Collects tree level statistics into \p stat
-        /** @anchor cds_intrusive_FeldmanHashSet_hp_get_level_statistics
+        /** 
             The function traverses the set and collects staistics for each level of the tree
             into \p feldman_hashset::level_statistics struct. The element of \p stat[i]
             represents statistics for level \p i, level 0 is head array.
