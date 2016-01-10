@@ -338,7 +338,7 @@ namespace cds { namespace algo {
 
                     publication_record * pRec = p;
                     p = p->pNext.load( memory_model::memory_order_relaxed );
-                    if ( pRec->nState.load( memory_model::memory_order_relaxed ) == removed )
+                    if ( pRec->nState.load( memory_model::memory_order_acquire ) == removed )
                         free_publication_record( static_cast<publication_record_type *>( pRec ));
                 }
             }
@@ -573,13 +573,12 @@ namespace cds { namespace algo {
                 // Thread done
                 // pRec that is TLS data should be excluded from publication list
                 if ( pRec ) {
-                    if ( pRec->pOwner && pRec->nState.load(memory_model::memory_order_relaxed) == active ) {
-                        // record is active and kernel is alive
-                        unsigned int nState = active;
-                        pRec->nState.compare_exchange_strong( nState, removed, memory_model::memory_order_release, atomics::memory_order_relaxed );
+                    if ( pRec->pOwner ) {
+                        // kernel is alive
+                        pRec->nState.store( removed, memory_model::memory_order_release );
                     }
                     else {
-                        // record is not in publication list or kernel already deleted
+                        // kernel already deleted
                         free_publication_record( pRec );
                     }
                 }
