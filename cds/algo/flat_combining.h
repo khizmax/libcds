@@ -180,7 +180,7 @@ namespace cds { namespace algo {
             void    onCombining()               { ++m_nCombiningCount; }
             void    onCompactPublicationList()  { ++m_nCompactPublicationList; }
             void    onDeactivatePubRecord()     { ++m_nDeactivatePubRecord; }
-            void    onActivatPubRecord()        { ++m_nActivatePubRecord; }
+            void    onActivatePubRecord()       { ++m_nActivatePubRecord; }
             void    onCreatePubRecord()         { ++m_nPubRecordCreated; }
             void    onDeletePubRecord()         { ++m_nPubRecordDeteted; }
             void    onAcquirePubRecord()        { ++m_nAcquirePubRecCount; }
@@ -196,7 +196,7 @@ namespace cds { namespace algo {
             void    onCombining()               {}
             void    onCompactPublicationList()  {}
             void    onDeactivatePubRecord()     {}
-            void    onActivatPubRecord()        {}
+            void    onActivatePubRecord()       {}
             void    onCreatePubRecord()         {}
             void    onDeletePubRecord()         {}
             void    onAcquirePubRecord()        {}
@@ -616,7 +616,7 @@ namespace cds { namespace algo {
                             // Failed CAS changes p
                         } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
                             memory_model::memory_order_release, atomics::memory_order_relaxed ));
-                        m_Stat.onActivatPubRecord();
+                        m_Stat.onActivatePubRecord();
                     }
                 }
             }
