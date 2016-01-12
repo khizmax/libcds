@@ -851,14 +851,14 @@ namespace cds { namespace opt {
             }
         };
 
-        /// \p opt::move_policy based on assignment operator
+        /// \p opt::move_policy based on move-assignment operator
         struct assignment_move_policy
         {
-            /// <tt> dest = src </tt>
+            /// <tt> dest = std::move( src ) </tt>
             template <typename T>
-            void operator()( T& dest, T const& src ) const
+            void operator()( T& dest, T&& src ) const
             {
-                dest = src;
+                dest = std::move( src );
             }
         };
 

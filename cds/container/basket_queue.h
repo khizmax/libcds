@@ -373,12 +373,12 @@ namespace cds { namespace container {
         /// Dequeues a value from the queue
         /**
             If queue is not empty, the function returns \p true, \p dest contains copy of
-            dequeued value. The assignment operator for type \ref value_type is invoked.
+            dequeued value. The assignment operator for \p value_type is invoked.
             If queue is empty, the function returns \p false, \p dest is unchanged.
         */
         bool dequeue( value_type& dest )
         {
-            return dequeue_with( [&dest]( value_type& src ) { dest = src;  } );
+            return dequeue_with( [&dest]( value_type& src ) { dest = std::move( src );});
         }
 
         /// Dequeues a value using a functor

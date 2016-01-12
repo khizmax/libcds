@@ -347,25 +347,17 @@ namespace cds { namespace container {
         */
         bool pop( value_type& val )
         {
-            return pop_with( [&val]( value_type& src ) { val = src; } );
+            return pop_with( [&val]( value_type& src ) { val = std::move(src); } );
         }
 
         /// Pops an item from the stack with functor
         /**
+            \p Func can be used to copy/move popped item from the stack.
             \p Func interface is:
             \code
             void func( value_type& src );
             \endcond
             where \p src - item popped.
-
-            The \p %pop_with can be used to move item from the stack to user-provided storage:
-            \code
-            cds::container::TreiberStack<cds::gc::HP, std::string > myStack;
-            //...
-
-            std::string dest;
-            myStack.pop_with( [&dest]( std::string& src ) { dest = std::move( src ); } );
-            \endcode
         */
         template <typename Func>
         bool pop_with( Func f )

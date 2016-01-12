@@ -201,8 +201,8 @@ namespace priority_queue {
         template <class PQueue>
         void test_msq_stat()
         {
-            PQueue pq( 0 );   // argument should be ignored for static buffer
-            test_bounded_with( pq );
+            std::unique_ptr< PQueue > pq( new PQueue(0)); // argument should be ignored for static buffer
+            test_bounded_with( *pq );
         }
         template <class PQueue>
         void test_msq_dyn()

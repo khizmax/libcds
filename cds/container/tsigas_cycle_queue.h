@@ -362,7 +362,7 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            return dequeue_with( [&dest]( value_type& src ) { dest = src; } );
+            return dequeue_with( [&dest]( value_type& src ) { dest = std::move( src );});
         }
 
         /// Synonym for \p dequeue() function

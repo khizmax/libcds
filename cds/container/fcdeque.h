@@ -417,7 +417,7 @@ namespace cds { namespace container {
                 assert( pRec->pValPop );
                 pRec->bEmpty = m_Deque.empty();
                 if ( !pRec->bEmpty ) {
-                    *(pRec->pValPop) = m_Deque.front();
+                    *(pRec->pValPop) = std::move( m_Deque.front());
                     m_Deque.pop_front();
                 }
                 break;
@@ -425,7 +425,7 @@ namespace cds { namespace container {
                 assert( pRec->pValPop );
                 pRec->bEmpty = m_Deque.empty();
                 if ( !pRec->bEmpty ) {
-                    *(pRec->pValPop) = m_Deque.back();
+                    *(pRec->pValPop) = std::move( m_Deque.back());
                     m_Deque.pop_back();
                 }
                 break;
@@ -454,20 +454,28 @@ namespace cds { namespace container {
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
                 switch ( it->op() ) {
                 case op_push_front:
+                    if ( itPrev != itEnd
+                        && (itPrev->op() == op_pop_front || (m_Deque.empty() && itPrev->op() == op_pop_back)) )
+                    {
+                        collide( *it, *itPrev );
+                        itPrev = itEnd;
+                    }
+                    else
+                        itPrev = it;
+                    break;
                 case op_push_front_move:
                     if ( itPrev != itEnd
                       && (itPrev->op() == op_pop_front || ( m_Deque.empty() && itPrev->op() == op_pop_back )))
                     {
-                        collide( *it, *itPrev );
+                        collide_move( *it, *itPrev );
                         itPrev = itEnd;
                     }
                     else
                         itPrev = it;
                     break;
                 case op_push_back:
-                case op_push_back_move:
                     if ( itPrev != itEnd
-                        && (itPrev->op() == op_pop_back || ( m_Deque.empty() && itPrev->op() == op_pop_front )))
+                        && (itPrev->op() == op_pop_back || (m_Deque.empty() && itPrev->op() == op_pop_front)) )
                     {
                         collide( *it, *itPrev );
                         itPrev = itEnd;
@@ -475,24 +483,84 @@ namespace cds { namespace container {
                     else
                         itPrev = it;
                     break;
-                case op_pop_front:
+                case op_push_back_move:
                     if ( itPrev != itEnd
-                        && ( itPrev->op() == op_push_front || itPrev->op() == op_push_front_move
-                          || ( m_Deque.empty() && ( itPrev->op() == op_push_back || itPrev->op() == op_push_back_move ))))
+                        && (itPrev->op() == op_pop_back || ( m_Deque.empty() && itPrev->op() == op_pop_front )))
                     {
-                        collide( *itPrev, *it );
+                        collide_move( *it, *itPrev );
                         itPrev = itEnd;
                     }
                     else
                         itPrev = it;
                     break;
+                case op_pop_front:
+                    if ( itPrev != itEnd ) {
+                        if ( m_Deque.empty() ) {
+                            switch ( itPrev->op() ) {
+                            case op_push_back:
+                                collide( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            case op_push_back_move:
+                                collide_move( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            default:
+                                itPrev = it;
+                                break;
+                            }
+                        }
+                        else {
+                            switch ( itPrev->op() ) {
+                            case op_push_front:
+                                collide( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            case op_push_front_move:
+                                collide_move( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            default:
+                                itPrev = it;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                        itPrev = it;
+                    break;
                 case op_pop_back:
-                    if ( itPrev != itEnd
-                        && ( itPrev->op() == op_push_back || itPrev->op() == op_push_back_move
-                        || ( m_Deque.empty() && ( itPrev->op() == op_push_front || itPrev->op() == op_push_front_move ))))
-                    {
-                        collide( *itPrev, *it );
-                        itPrev = itEnd;
+                    if ( itPrev != itEnd ) {
+                        if ( m_Deque.empty() ) {
+                            switch ( itPrev->op() ) {
+                            case op_push_front:
+                                collide( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            case op_push_front_move:
+                                collide_move( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            default:
+                                itPrev = it;
+                                break;
+                            }
+                        }
+                        else {
+                            switch ( itPrev->op() ) {
+                            case op_push_back:
+                                collide( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            case op_push_back_move:
+                                collide_move( *itPrev, *it );
+                                itPrev = itEnd;
+                                break;
+                            default:
+                                itPrev = it;
+                                break;
+                            }
+                        }
                     }
                     else
                         itPrev = it;
@@ -508,6 +576,15 @@ namespace cds { namespace container {
         void collide( fc_record& recPush, fc_record& recPop )
         {
             *(recPop.pValPop) = *(recPush.pValPush);
+            recPop.bEmpty = false;
+            m_FlatCombining.operation_done( recPush );
+            m_FlatCombining.operation_done( recPop );
+            m_FlatCombining.internal_statistics().onCollide();
+        }
+
+        void collide_move( fc_record& recPush, fc_record& recPop )
+        {
+            *(recPop.pValPop) = std::move( *(recPush.pValPush));
             recPop.bEmpty = false;
             m_FlatCombining.operation_done( recPush );
             m_FlatCombining.operation_done( recPop );

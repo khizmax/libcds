@@ -251,7 +251,7 @@ namespace cds { namespace container {
         */
         bool pop( value_type& dest )
         {
-            return pop_with( [&dest]( value_type& src ) { move_policy()(dest, src); } );
+            return pop_with( [&dest]( value_type& src ) { move_policy()(dest, std::move(src)); });
         }
 
         /// Extracts an item with high priority
