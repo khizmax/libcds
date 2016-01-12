@@ -28,7 +28,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\stack\fcstack.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\intrusive_fcstack.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\intrusive_treiber_stack_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\intrusive_treiber_stack_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\main.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\treiber_stack_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\treiber_stack_hp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\stack\test_intrusive_treiber_stack.h" />
+    <ClInclude Include="..\..\..\test\unit\stack\test_treiber_stack.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5407E9D2-67D9-4266-976E-7A90BDE2541D}</ProjectGuid>

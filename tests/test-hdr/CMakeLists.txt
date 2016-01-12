@@ -240,14 +240,6 @@ set(CDS_TESTHDR_SET
     set/hdr_striped_hashset_slist.cpp
     set/hdr_striped_hashset_vector.cpp)
 
-set(CDS_TESTHDR_STACK
-    stack/hdr_intrusive_fcstack.cpp
-    stack/hdr_treiber_stack_hp.cpp
-    stack/hdr_treiber_stack_dhp.cpp
-    stack/hdr_elimination_stack_hp.cpp
-    stack/hdr_elimination_stack_dhp.cpp
-    stack/hdr_fcstack.cpp)
-
 set(CDS_TESTHDR_TREE
     tree/hdr_tree_reg.cpp
     tree/hdr_intrusive_ellen_bintree_hp.cpp
@@ -404,7 +396,6 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 set(CDS_TESTHDR_SOURCES
     ${CDS_TESTHDR_QUEUE}
     ${CDS_TESTHDR_PQUEUE}
-    ${CDS_TESTHDR_STACK}
     ${CDS_TESTHDR_MAP}
     ${CDS_TESTHDR_DEQUE}
     ${CDS_TESTHDR_LIST}

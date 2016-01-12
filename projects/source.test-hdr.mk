@@ -238,14 +238,6 @@ CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_striped_hashset_slist.cpp \
     tests/test-hdr/set/hdr_striped_hashset_vector.cpp 
 
-CDS_TESTHDR_STACK := \
-    tests/test-hdr/stack/hdr_intrusive_fcstack.cpp \
-    tests/test-hdr/stack/hdr_treiber_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_treiber_stack_dhp.cpp \
-    tests/test-hdr/stack/hdr_elimination_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_elimination_stack_dhp.cpp \
-    tests/test-hdr/stack/hdr_fcstack.cpp
-
 CDS_TESTHDR_TREE := \
     tests/test-hdr/tree/hdr_tree_reg.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_hp.cpp \
@@ -296,7 +288,6 @@ CDS_TESTHDR_MISC := \
 CDS_TESTHDR_SOURCES := \
     $(CDS_TESTHDR_QUEUE) \
     $(CDS_TESTHDR_PQUEUE) \
-    $(CDS_TESTHDR_STACK) \
     $(CDS_TESTHDR_MAP) \
     $(CDS_TESTHDR_DEQUE) \
     $(CDS_TESTHDR_LIST) \

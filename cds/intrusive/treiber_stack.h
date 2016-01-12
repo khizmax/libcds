@@ -658,6 +658,9 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat           stat;           ///< Internal statistics
         typedef typename traits::back_off       back_off;       ///< back-off strategy
 
+        /// How many Hazard pointers is required for Treiber's stack implementation
+        static CDS_CONSTEXPR size_t const c_nHazardPtrCount = 1;
+
     public: // related to elimination back-off
 
         /// Elimination back-off is enabled or not
@@ -707,7 +710,7 @@ namespace cds { namespace intrusive {
         /// Constructs empty stack and initializes elimination back-off data
         /**
             This form should be used if you use elimination back-off with dynamically allocated collision array, i.e
-            \p Options... contains cds::opt::buffer< cds::opt::v::dynamic_buffer >.
+            \p Traits contains <tt>typedef cds::opt::v::dynamic_buffer buffer</tt>.
             \p nCollisionCapacity parameter specifies the capacity of collision array.
         */
         TreiberStack( size_t nCollisionCapacity )
