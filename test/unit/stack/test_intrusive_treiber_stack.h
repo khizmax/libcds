@@ -34,7 +34,7 @@
 #include <gtest/gtest.h>
 #include <cds/intrusive/details/single_link_struct.h>
 
-namespace cds_gtest {
+namespace cds_test {
 
     class IntrusiveTreiberStack : public ::testing::Test
     {
@@ -129,6 +129,6 @@ namespace cds_gtest {
         }
     };
 
-} // namespace cds_gtest
+} // namespace cds_test
 
 #endif // CDSUNIT_STACK_INTRUSIVE_TREIBER_STACK_H

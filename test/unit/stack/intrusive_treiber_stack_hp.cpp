@@ -38,9 +38,9 @@ namespace {
     namespace ci = cds::intrusive;
     typedef cds::gc::HP gc_type;
 
-    class IntrusiveTreiberStack_HP : public cds_gtest::IntrusiveTreiberStack
+    class IntrusiveTreiberStack_HP : public cds_test::IntrusiveTreiberStack
     {
-    typedef cds_gtest::IntrusiveTreiberStack base_class;
+    typedef cds_test::IntrusiveTreiberStack base_class;
 
     protected:
         void SetUp()

@@ -33,7 +33,7 @@
 
 #include <gtest/gtest.h>
 
-namespace cds_gtest {
+namespace cds_test {
 
     class TreiberStack : public ::testing::Test
     {
@@ -82,6 +82,6 @@ namespace cds_gtest {
             Stack::gc::scan();
         }
     };
-} // namespace cds_gtest
+} // namespace cds_test
 
 #endif // CDSUNIT_STACK_TREIBER_STACK_H

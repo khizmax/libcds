@@ -38,9 +38,9 @@ namespace {
     namespace cc = cds::container;
     typedef cds::gc::HP gc_type;
 
-    class TreiberStack_HP : public cds_gtest::TreiberStack
+    class TreiberStack_HP : public cds_test::TreiberStack
     {
-        typedef cds_gtest::TreiberStack base_class;
+        typedef cds_test::TreiberStack base_class;
 
     protected:
         void SetUp()
@@ -51,7 +51,7 @@ namespace {
             cds::threading::Manager::attachThread();
         }
 
-        void TearDown() 
+        void TearDown()
         {
             cds::threading::Manager::detachThread();
             cds::gc::hp::GarbageCollector::Destruct( true );

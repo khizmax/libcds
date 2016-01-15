@@ -38,9 +38,9 @@ namespace {
     namespace cc = cds::container;
     typedef cds::gc::DHP gc_type;
 
-    class TreiberStack_DHP : public cds_gtest::TreiberStack
+    class TreiberStack_DHP : public cds_test::TreiberStack
     {
-        typedef cds_gtest::TreiberStack base_class;
+        typedef cds_test::TreiberStack base_class;
 
     protected:
         void SetUp()
