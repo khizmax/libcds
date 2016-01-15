@@ -5,16 +5,16 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
     * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
+    list of conditions and the following disclaimer.
 
     * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -25,48 +25,63 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "priority_queue/hdr_pqueue.h"
+#include "test_fcpqueue.h"
 #include <cds/container/fcpriority_queue.h>
+#include <deque>
 
-namespace priority_queue {
+namespace cds_test {
 
-    void PQueueHdrTest::FCPQueue_vector()
+    TEST_F( FCPQueue, deque )
     {
-        typedef cds::container::FCPriorityQueue< PQueueHdrTest::value_type > pqueue_type;
-        test_fcpqueue<pqueue_type>();
-    }
-
-    void PQueueHdrTest::FCPQueue_vector_stat()
-    {
-        struct pqueue_traits : public cds::container::fcpqueue::traits
-        {
-            typedef cds::container::fcpqueue::stat<> stat;
-        };
         typedef cds::container::FCPriorityQueue<
-            PQueueHdrTest::value_type
+            value_type
             ,std::priority_queue<
-                PQueueHdrTest::value_type
-                ,std::vector<PQueueHdrTest::value_type>
-                ,PQueueHdrTest::less
+                value_type
+                ,std::deque<value_type>
+                ,less
             >
-            ,pqueue_traits
         > pqueue_type;
-        test_fcpqueue<pqueue_type>();
+
+        pqueue_type pq;
+        test( pq );
     }
 
-    void PQueueHdrTest::FCPQueue_vector_mutex()
+    TEST_F( FCPQueue, deque_stat )
     {
         typedef cds::container::FCPriorityQueue<
-            PQueueHdrTest::value_type
-            ,std::priority_queue< PQueueHdrTest::value_type >
+            value_type
+            ,std::priority_queue<
+                value_type
+                ,std::deque<value_type>
+                ,less
+            >
+            ,cds::container::fcpqueue::make_traits<
+                cds::opt::stat< cds::container::fcpqueue::stat<> >
+            >::type
+        > pqueue_type;
+
+        pqueue_type pq;
+        test( pq );
+    }
+
+    TEST_F( FCPQueue, deque_mutex )
+    {
+        typedef cds::container::FCPriorityQueue<
+            value_type
+            ,std::priority_queue<
+                value_type
+                ,std::deque<value_type>
+            >
             ,cds::container::fcpqueue::make_traits<
                 cds::opt::lock_type< std::mutex >
             >::type
         > pqueue_type;
-        test_fcpqueue<pqueue_type>();
+
+        pqueue_type pq;
+        test( pq );
     }
 
-} // namespace priorty_queue
+} // namespace cds_test

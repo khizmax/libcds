@@ -245,7 +245,7 @@ namespace cds { namespace intrusive {
     public:
         /// Constructs empty priority queue
         /**
-            For cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            For \p cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
         */
         MSPriorityQueue( size_t nCapacity )
             : m_Heap( nCapacity )

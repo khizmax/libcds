@@ -164,7 +164,7 @@ namespace cds { namespace container {
     public:
         /// Constructs empty priority queue
         /**
-            For cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            For \p cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
         */
         MSPriorityQueue( size_t nCapacity )
             : base_class( nCapacity )

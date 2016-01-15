@@ -103,16 +103,6 @@ CDS_TESTHDR_LIST := \
     tests/test-hdr/list/hdr_michael_kv_rcu_shb.cpp \
     tests/test-hdr/list/hdr_michael_kv_rcu_sht.cpp
 
-CDS_TESTHDR_PQUEUE := \
-    tests/test-hdr/priority_queue/hdr_intrusive_mspqueue_dyn.cpp \
-    tests/test-hdr/priority_queue/hdr_intrusive_mspqueue_static.cpp \
-    tests/test-hdr/priority_queue/hdr_mspqueue_dyn.cpp \
-    tests/test-hdr/priority_queue/hdr_mspqueue_static.cpp \
-    tests/test-hdr/priority_queue/hdr_fcpqueue_boost_stable_vector.cpp \
-    tests/test-hdr/priority_queue/hdr_fcpqueue_deque.cpp \
-    tests/test-hdr/priority_queue/hdr_fcpqueue_vector.cpp \
-    tests/test-hdr/priority_queue/hdr_priority_queue_reg.cpp
-
 CDS_TESTHDR_QUEUE := \
     tests/test-hdr/queue/hdr_queue_register.cpp \
     tests/test-hdr/queue/hdr_intrusive_fcqueue.cpp \
@@ -287,7 +277,6 @@ CDS_TESTHDR_MISC := \
 
 CDS_TESTHDR_SOURCES := \
     $(CDS_TESTHDR_QUEUE) \
-    $(CDS_TESTHDR_PQUEUE) \
     $(CDS_TESTHDR_MAP) \
     $(CDS_TESTHDR_DEQUE) \
     $(CDS_TESTHDR_LIST) \

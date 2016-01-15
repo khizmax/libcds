@@ -105,16 +105,6 @@ set(CDS_TESTHDR_LIST
     list/hdr_michael_kv_rcu_shb.cpp
     list/hdr_michael_kv_rcu_sht.cpp)
 
-set(CDS_TESTHDR_PQUEUE
-    priority_queue/hdr_intrusive_mspqueue_dyn.cpp
-    priority_queue/hdr_intrusive_mspqueue_static.cpp
-    priority_queue/hdr_mspqueue_dyn.cpp
-    priority_queue/hdr_mspqueue_static.cpp
-    priority_queue/hdr_fcpqueue_boost_stable_vector.cpp
-    priority_queue/hdr_fcpqueue_deque.cpp
-    priority_queue/hdr_fcpqueue_vector.cpp
-    priority_queue/hdr_priority_queue_reg.cpp)
-
 set(CDS_TESTHDR_QUEUE
     queue/hdr_queue_register.cpp
     queue/hdr_intrusive_fcqueue.cpp
@@ -364,12 +354,6 @@ set(CDS_TESTHDR_OFFSETOF_QUEUE
     queue/hdr_intrusive_optimisticqueue_hp.cpp
     queue/hdr_intrusive_optimisticqueue_dhp.cpp)
 
-set(CDS_TESTHDR_OFFSETOF_STACK
-    stack/hdr_intrusive_treiber_stack_hp.cpp
-    stack/hdr_intrusive_treiber_stack_dhp.cpp
-    stack/hdr_intrusive_elimination_stack_hp.cpp
-    stack/hdr_intrusive_elimination_stack_dhp.cpp)
-
 set(CDS_TESTHDR_OFFSETOF_TREE
     tree/hdr_intrusive_ellen_bintree_hp_member.cpp
     tree/hdr_intrusive_ellen_bintree_dhp_member.cpp
@@ -381,7 +365,6 @@ set(CDS_TESTHDR_OFFSETOF_TREE
 
 set(CDS_TESTHDR_OFFSETOF_SOURCES
 	${CDS_TESTHDR_OFFSETOF_QUEUE}
-	${CDS_TESTHDR_OFFSETOF_STACK}
 	${CDS_TESTHDR_OFFSETOF_MAP}
 	${CDS_TESTHDR_OFFSETOF_SET}
 	${CDS_TESTHDR_OFFSETOF_LIST}
@@ -395,7 +378,6 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 
 set(CDS_TESTHDR_SOURCES
     ${CDS_TESTHDR_QUEUE}
-    ${CDS_TESTHDR_PQUEUE}
     ${CDS_TESTHDR_MAP}
     ${CDS_TESTHDR_DEQUE}
     ${CDS_TESTHDR_LIST}
