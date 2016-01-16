@@ -64,9 +64,6 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_striped_hashmap_slist.cpp \
     tests/test-hdr/map/hdr_striped_map_reg.cpp
 
-CDS_TESTHDR_DEQUE := \
-    tests/test-hdr/deque/hdr_fcdeque.cpp
-
 CDS_TESTHDR_LIST := \
     tests/test-hdr/list/hdr_lazy_dhp.cpp \
     tests/test-hdr/list/hdr_lazy_hp.cpp \
@@ -278,7 +275,6 @@ CDS_TESTHDR_MISC := \
 CDS_TESTHDR_SOURCES := \
     $(CDS_TESTHDR_QUEUE) \
     $(CDS_TESTHDR_MAP) \
-    $(CDS_TESTHDR_DEQUE) \
     $(CDS_TESTHDR_LIST) \
     $(CDS_TESTHDR_SET) \
     $(CDS_TESTHDR_TREE) \

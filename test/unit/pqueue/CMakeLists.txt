@@ -1,11 +1,11 @@
 set(PACKAGE_NAME unit-pqueue)
 
 set(CDSGTEST_PQUEUE_SOURCES
+    ../main.cpp
     fcpqueue_boost_stable_vector.cpp
     fcpqueue_deque.cpp
     fcpqueue_vector.cpp
     intrusive_mspqueue.cpp
-    main.cpp
     mspqueue.cpp
 )
 

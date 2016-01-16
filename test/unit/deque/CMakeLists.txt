@@ -1,20 +1,15 @@
-set(PACKAGE_NAME unit-stack)
+set(PACKAGE_NAME unit-deque)
 
-set(CDSGTEST_STACK_SOURCES
+set(CDSGTEST_DEQUE_SOURCES
     ../main.cpp
-    fcstack.cpp
-    intrusive_fcstack.cpp
-    intrusive_treiber_stack_dhp.cpp
-    intrusive_treiber_stack_hp.cpp
-    treiber_stack_dhp.cpp
-    treiber_stack_hp.cpp
+    fcdeque.cpp
 )
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PACKAGE_NAME} ${CDSGTEST_STACK_SOURCES})
+add_executable(${PACKAGE_NAME} ${CDSGTEST_DEQUE_SOURCES})
 target_link_libraries(${PACKAGE_NAME} 
     ${CDS_SHARED_LIBRARY}
     ${GTEST_LIBRARY}

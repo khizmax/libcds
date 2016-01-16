@@ -27,11 +27,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\test\unit\main.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\fcstack.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\intrusive_fcstack.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\intrusive_treiber_stack_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\intrusive_treiber_stack_hp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\stack\main.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\treiber_stack_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\treiber_stack_hp.cpp" />
   </ItemGroup>

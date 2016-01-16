@@ -1,2 +1,3 @@
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deque)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)

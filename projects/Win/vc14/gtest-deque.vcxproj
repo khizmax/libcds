@@ -27,19 +27,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\test\unit\deque\fcdeque.cpp" />
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
-    <ClCompile Include="..\..\..\test\unit\pqueue\fcpqueue_boost_stable_vector.cpp" />
-    <ClCompile Include="..\..\..\test\unit\pqueue\fcpqueue_deque.cpp" />
-    <ClCompile Include="..\..\..\test\unit\pqueue\fcpqueue_vector.cpp" />
-    <ClCompile Include="..\..\..\test\unit\pqueue\intrusive_mspqueue.cpp" />
-    <ClCompile Include="..\..\..\test\unit\pqueue\mspqueue.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\test\unit\pqueue\test_data.h" />
-    <ClInclude Include="..\..\..\test\unit\pqueue\test_fcpqueue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EAD522BF-E7DA-4A20-94FF-4D3EAF0A540A}</ProjectGuid>
+    <ProjectGuid>{20A9F084-D01F-47E5-B775-4F4B48504FCC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>stack</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>

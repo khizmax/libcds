@@ -66,9 +66,6 @@ set(CDS_TESTHDR_MAP
     map/hdr_striped_hashmap_slist.cpp
     map/hdr_striped_map_reg.cpp)
 
-set(CDS_TESTHDR_DEQUE
-    deque/hdr_fcdeque.cpp)
-
 set(CDS_TESTHDR_LIST
     list/hdr_lazy_dhp.cpp
     list/hdr_lazy_hp.cpp
@@ -379,7 +376,6 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 set(CDS_TESTHDR_SOURCES
     ${CDS_TESTHDR_QUEUE}
     ${CDS_TESTHDR_MAP}
-    ${CDS_TESTHDR_DEQUE}
     ${CDS_TESTHDR_LIST}
     ${CDS_TESTHDR_SET}
     ${CDS_TESTHDR_TREE}

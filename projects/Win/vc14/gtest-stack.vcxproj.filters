@@ -18,9 +18,6 @@
     <ClCompile Include="..\..\..\test\unit\stack\fcstack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\stack\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\test\unit\stack\intrusive_fcstack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -34,6 +31,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\stack\treiber_stack_dhp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
