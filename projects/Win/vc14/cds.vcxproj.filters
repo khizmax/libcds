@@ -1226,5 +1226,11 @@
     <ClInclude Include="..\..\..\cds\container\feldman_hashmap_rcu.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\free_list.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\free_list_tagged.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
