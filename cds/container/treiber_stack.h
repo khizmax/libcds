@@ -356,7 +356,7 @@ namespace cds { namespace container {
             \p Func interface is:
             \code
             void func( value_type& src );
-            \endcond
+            \endcode
             where \p src - item popped.
         */
         template <typename Func>
