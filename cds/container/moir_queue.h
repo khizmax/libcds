@@ -93,6 +93,8 @@ namespace cds { namespace container {
             typedef MoirQueue< GC2, T2, Traits2 > other   ;   ///< Rebinding result
         };
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+
     public:
         typedef T value_type ; ///< Value type stored in the queue
         typedef typename base_class::gc                 gc;             ///< Garbage collector
@@ -152,13 +154,24 @@ namespace cds { namespace container {
         /// Enqueues \p val value into the queue.
         /**
             The function makes queue node in dynamic memory calling copy constructor for \p val
-            and then it calls intrusive::MoirQueue::enqueue.
+            and then it calls \p intrusive::MoirQueue::enqueue.
             Returns \p true if success, \p false otherwise.
         */
         bool enqueue( value_type const& val )
         {
             scoped_node_ptr p( alloc_node(val) );
             if ( base_class::enqueue( *p )) {
+                p.release();
+                return true;
+            }
+            return false;
+        }
+
+        /// Enqueues \p val value into the queue, move semantics
+        bool enqueue( value_type&& val )
+        {
+            scoped_node_ptr p( alloc_node_move( std::move( val )));
+            if ( base_class::enqueue( *p ) ) {
                 p.release();
                 return true;
             }
@@ -204,6 +217,12 @@ namespace cds { namespace container {
         bool push( value_type const& val )
         {
             return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue() function, move semantics
+        bool push( value_type&& val )
+        {
+            return enqueue( std::move( val ));
         }
 
         /// Synonym for \p enqueue_with() function

@@ -260,6 +260,8 @@ namespace cds { namespace container {
         typedef typename base_class::stat           stat;           ///< Internal statistics policy used
         typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+
     protected:
         typedef typename maker::node_type node_type; ///< queue node type (derived from intrusive::basket_queue::node)
 
@@ -323,6 +325,17 @@ namespace cds { namespace container {
             return false;
         }
 
+        /// Enqueues \p val value into the queue, move semantics
+        bool enqueue( value_type&& val )
+        {
+            scoped_node_ptr p( alloc_node_move( std::move( val )));
+            if ( base_class::enqueue( *p ) ) {
+                p.release();
+                return true;
+            }
+            return false;
+        }
+
         /// Enqueues \p data to queue using a functor
         /**
             \p Func is a functor called to create node.
@@ -346,9 +359,15 @@ namespace cds { namespace container {
         }
 
         /// Synonym for \p enqueue() function
-        bool push( const value_type& val )
+        bool push( value_type const& val )
         {
             return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue() function, move semantics
+        bool push( value_type&& val )
+        {
+            return enqueue( std::move( val ));
         }
 
         /// Synonym for \p enqueue_with() function

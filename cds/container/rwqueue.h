@@ -132,7 +132,7 @@ namespace cds { namespace container {
         typedef T       value_type; ///< Type of value to be stored in the queue
         typedef Traits  traits;     ///< Queue traits
 
-        typedef typename traits::lock_type  lock_type;      ///< Locking primitive
+        typedef typename traits::lock_type    lock_type;    ///< Locking primitive
         typedef typename traits::item_counter item_counter; ///< Item counting policy used
 
     protected:
@@ -252,6 +252,17 @@ namespace cds { namespace container {
             return false;
         }
 
+        /// Enqueues \p data, move semantics
+        bool enqueue( value_type&& data )
+        {
+            scoped_node_ptr p( alloc_node_move( std::move( data )));
+            if ( enqueue_node( p.get() ) ) {
+                p.release();
+                return true;
+            }
+            return false;
+        }
+
         /// Enqueues \p data to the queue using a functor
         /**
             \p Func is a functor called to create node.
@@ -286,10 +297,16 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Synonym for \p enqueue() function
+        /// Synonym for \p enqueue( value_type const& ) function
         bool push( value_type const& val )
         {
             return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue( value_type&& ) function
+        bool push( value_type&& val )
+        {
+            return enqueue( std::move( val ));
         }
 
         /// Synonym for \p enqueue_with() function
@@ -368,6 +385,7 @@ namespace cds { namespace container {
                 m_Head.ptr = m_Head.ptr->m_pNext.load( atomics::memory_order_relaxed );
                 free_node( pHead );
             }
+            m_ItemCounter.reset();
         }
 
         /// Returns queue's item count
