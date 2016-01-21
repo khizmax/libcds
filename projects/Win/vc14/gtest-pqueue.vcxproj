@@ -39,7 +39,7 @@
     <ClInclude Include="..\..\..\test\unit\pqueue\test_fcpqueue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EAD522BF-E7DA-4A20-94FF-4D3EAF0A540A}</ProjectGuid>
+    <ProjectGuid>{ED94B1D1-2442-43C2-A71C-A757122408A6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>stack</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>

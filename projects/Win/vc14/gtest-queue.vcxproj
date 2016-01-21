@@ -27,11 +27,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\test\unit\deque\fcdeque.cpp" />
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\basket_queue_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\basket_queue_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\fcqueue.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\moirqueue_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\moirqueue_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\msqueue_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\msqueue_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\optimistic_queue_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\optimistic_queue_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\rwqueue.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\queue\test_generic_queue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EA5D825A-83A4-4A36-83C1-3D048D21D55B}</ProjectGuid>
+    <ProjectGuid>{9EB8FAB6-78E8-48B6-9589-85985CE8D33D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>stack</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
