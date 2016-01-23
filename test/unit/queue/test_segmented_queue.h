@@ -28,14 +28,14 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSUNIT_QUEUE_TEST_GENERIC_QUEUE_H
-#define CDSUNIT_QUEUE_TEST_GENERIC_QUEUE_H
+#ifndef CDSUNIT_QUEUE_TEST_SEGMENTED_QUEUE_H
+#define CDSUNIT_QUEUE_TEST_SEGMENTED_QUEUE_H
 
 #include <cds_test/check_size.h>
 
 namespace cds_test {
 
-    class generic_queue : public ::testing::Test
+    class segmented_queue : public ::testing::Test
     {
     protected:
         template <typename Queue>
@@ -61,8 +61,13 @@ namespace cds_test {
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
                 ASSERT_TRUE( q.dequeue( it ) );
-                ASSERT_EQ( it, i );
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+
+                int nSegment = int( i / q.quasi_factor() );
+                int nMin = nSegment * int( q.quasi_factor() );
+                int nMax = nMin + int( q.quasi_factor() ) - 1;
+                EXPECT_LE( nMin, it );
+                EXPECT_LE( it, nMax );
             }
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0 );
@@ -76,11 +81,21 @@ namespace cds_test {
             ASSERT_FALSE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, nSize );
 
+            size_t nPushed = nSize;
+            size_t nStartSegment = nPushed / q.quasi_factor();
+            size_t nOffset = nPushed % q.quasi_factor();
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
                 ASSERT_TRUE( q.pop( it ) );
-                ASSERT_EQ( it, i );
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+
+                int nSegment = static_cast<int>((i + nPushed) / q.quasi_factor() - nStartSegment );
+                int nMin = nSegment * static_cast<int>( q.quasi_factor());
+                if ( nSegment )
+                    nMin -= static_cast<int>( nOffset );
+                int nMax = nMin + static_cast<int>( q.quasi_factor()) - 1;
+                EXPECT_LE( nMin, it );
+                EXPECT_LE( it, nMax );
             }
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0 );
@@ -88,7 +103,7 @@ namespace cds_test {
             // push/pop with lambda
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = static_cast<value_type>(i);
-                ASSERT_NE( it, -1 );
+                EXPECT_NE( it, -1 );
                 auto f = [&it]( value_type& dest ) { dest = it; it = -1; };
                 if ( i & 1 )
                     ASSERT_TRUE( q.enqueue_with( f ));
@@ -100,6 +115,9 @@ namespace cds_test {
             ASSERT_FALSE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, nSize );
 
+            nPushed += nSize;
+            nStartSegment = nPushed / q.quasi_factor();
+            nOffset = nPushed % q.quasi_factor();
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
                 auto f = [&it]( value_type& src ) { it = src; src = -1; };
@@ -107,8 +125,15 @@ namespace cds_test {
                     ASSERT_TRUE( q.pop_with( f ));
                 else
                     ASSERT_TRUE( q.dequeue_with( f ));
-                ASSERT_EQ( it, i );
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+
+                int nSegment = static_cast<int>((i + nPushed) / q.quasi_factor() - nStartSegment);
+                int nMin = nSegment * static_cast<int>(q.quasi_factor());
+                if ( nSegment )
+                    nMin -= static_cast<int>(nOffset);
+                int nMax = nMin + static_cast<int>(q.quasi_factor()) - 1;
+                EXPECT_LE( nMin, it );
+                EXPECT_LE( it, nMax );
             }
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0 );
@@ -168,7 +193,7 @@ namespace cds_test {
                         ASSERT_TRUE( q.dequeue_with( f ));
 
                     ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
-                    ASSERT_EQ( s, str[i] );
+                    ASSERT_TRUE( s == str[0] || s == str[1] || s == str[2] );
                 }
             }
             ASSERT_TRUE( q.empty() );
@@ -193,7 +218,7 @@ namespace cds_test {
                 std::string s;
                 ASSERT_TRUE( q.pop( s ) );
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
-                ASSERT_EQ( s, str[i] );
+                ASSERT_TRUE( s == str[0] || s == str[1] || s == str[2] );
             }
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0 );
@@ -203,4 +228,4 @@ namespace cds_test {
 
 } // namespace cds_test
 
-#endif // CDSUNIT_QUEUE_TEST_GENERIC_QUEUE_H
+#endif // CDSUNIT_QUEUE_TEST_SEGMENTED_QUEUE_H

@@ -28,14 +28,14 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSUNIT_QUEUE_TEST_GENERIC_QUEUE_H
-#define CDSUNIT_QUEUE_TEST_GENERIC_QUEUE_H
+#ifndef CDSUNIT_QUEUE_TEST_BOUNDED_QUEUE_H
+#define CDSUNIT_QUEUE_TEST_BOUNDED_QUEUE_H
 
 #include <cds_test/check_size.h>
 
 namespace cds_test {
 
-    class generic_queue : public ::testing::Test
+    class bounded_queue : public ::testing::Test
     {
     protected:
         template <typename Queue>
@@ -44,7 +44,7 @@ namespace cds_test {
             typedef typename Queue::value_type value_type;
             value_type it;
 
-            const size_t nSize = 100;
+            const size_t nSize = q.capacity();
 
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0 );
@@ -113,19 +113,28 @@ namespace cds_test {
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0 );
 
-            // clear
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_TRUE( q.push( static_cast<value_type>(i) ) );
             }
             ASSERT_FALSE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, nSize );
 
+            // push in full queue
+            ASSERT_FALSE( q.push( static_cast<int>(nSize * 2 )));
+            ASSERT_FALSE( q.empty() );
+            ASSERT_CONTAINER_SIZE( q, nSize );
+            it = static_cast<int>( nSize * 2 );
+            ASSERT_FALSE( q.enqueue( it ));
+            ASSERT_FALSE( q.empty() );
+            ASSERT_CONTAINER_SIZE( q, nSize );
+
+            // clear
             q.clear();
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             // pop from empty queue
-            it = nSize * 2;
+            it = static_cast<int>(nSize * 2);
             ASSERT_FALSE( q.pop( it ) );
             ASSERT_EQ( it, nSize * 2 );
             ASSERT_TRUE( q.empty() );
@@ -178,7 +187,7 @@ namespace cds_test {
             // move push
             for ( size_t i = 0; i < nSize; ++i ) {
                 std::string s = str[i];
-                ASSERT_FALSE( s.empty() );
+                ASSERT_FALSE( s.empty());
                 if ( i & 1 )
                     ASSERT_TRUE( q.enqueue( std::move( s )));
                 else
@@ -203,4 +212,4 @@ namespace cds_test {
 
 } // namespace cds_test
 
-#endif // CDSUNIT_QUEUE_TEST_GENERIC_QUEUE_H
+#endif // CDSUNIT_QUEUE_TEST_BOUNDED_QUEUE_H

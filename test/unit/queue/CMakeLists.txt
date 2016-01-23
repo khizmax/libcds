@@ -12,6 +12,10 @@ set(CDSGTEST_QUEUE_SOURCES
     optimistic_queue_hp.cpp
     optimistic_queue_dhp.cpp
     rwqueue.cpp
+    segmented_queue_hp.cpp
+    segmented_queue_dhp.cpp
+    tsigas_queue.cpp
+    vyukov_mpmc_queue.cpp
 )
 
 include_directories(
