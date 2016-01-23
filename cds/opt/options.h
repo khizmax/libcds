@@ -302,17 +302,17 @@ namespace opt {
         This option allows to set up appropriate item counting policy for that data structure.
 
         Predefined option \p Type:
-        - atomicity::empty_item_counter - no item counting performed. It is default policy for many
+        - \p atomicity::empty_item_counter - no item counting performed. It is default policy for many
             containers
-        - atomicity::item_counter - the class that provides atomically item counting
-        - opt::v::sequential_item_counter - simple non-atomic item counter. This item counter is not intended for
+        - \p atomicity::item_counter - the class that provides atomically item counting
+        - \p opt::v::sequential_item_counter - simple non-atomic item counter. This item counter is not intended for
             concurrent containers and may be used only if it is explicitly noted.
 
-        You may provide other implementation of atomicity::item_counter interface for your needs.
+        You may provide other implementation of \p atomicity::item_counter interface for your needs.
 
         Note, the item counting in lock-free containers cannot be exact; for example, if
         item counter for a container returns zero it is not mean that the container is empty.
-        Thus, item counter may be used for statistical purposes only.
+        Thus, the item counter may be used for statistical purposes only.
     */
     template <typename Type>
     struct item_counter {

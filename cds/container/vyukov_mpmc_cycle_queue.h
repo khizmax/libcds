@@ -306,10 +306,22 @@ namespace cds { namespace container {
             return enqueue_with( [&val]( value_type& dest ){ new ( &dest ) value_type( val ); });
         }
 
-        /// Synonym for \p enqueue()
+        /// Enqueues \p val value into the queue, move semantics
+        bool enqueue( value_type&& val )
+        {
+            return enqueue_with( [&val]( value_type& dest ) { new (&dest) value_type( std::move( val ));});
+        }
+
+        /// Synonym for \p enqueue( valuetype const& )
         bool push( value_type const& data )
         {
             return enqueue( data );
+        }
+
+        /// Synonym for \p enqueue( value_type&& )
+        bool push( value_type&& data )
+        {
+            return enqueue( std::move( data ));
         }
 
         /// Synonym for \p enqueue_with()
@@ -384,7 +396,7 @@ namespace cds { namespace container {
             dequeued value. The assignment operator for type \ref value_type is invoked.
             If queue is empty, the function returns \p false, \p dest is unchanged.
         */
-        bool dequeue(value_type & dest )
+        bool dequeue(value_type& dest )
         {
             return dequeue_with( [&dest]( value_type& src ){ dest = std::move( src );});
         }
