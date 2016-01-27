@@ -51,7 +51,7 @@ namespace cds { namespace intrusive {
         frequently, our modification will reduce the number of accesses to global memory. This modification, however,
         introduces the possibility of \p Head and \p Tail 'crossing'."
 
-        Explanation of template arguments see intrusive::MSQueue.
+        Explanation of template arguments see \p intrusive::MSQueue.
 
         \par Examples
         \code
