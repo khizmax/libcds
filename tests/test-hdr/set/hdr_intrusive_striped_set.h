@@ -34,6 +34,16 @@
 #include "cppunit/cppunit_proxy.h"
 #include <cds/opt/hash.h>
 
+#include <boost/version.hpp>
+
+// boost 1.59 bug: intrusive containers require implicit conversion from value_type to key_type
+// Fixed in boost 1.60+
+#if BOOST_VERSION == 105900
+#   define CDSTEST_BOOST_INTRUSIVE_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
+#else
+#   define CDSTEST_BOOST_INTRUSIVE_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND explicit
+#endif
+
 // cds::intrusive namespace forward declaration
 namespace cds { namespace intrusive {}}
 
@@ -129,7 +139,8 @@ namespace set {
             base_item()
             {}
 
-            explicit base_item( int key )
+            CDSTEST_BOOST_INTRUSIVE_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
+            base_item( int key )
                 : item( key )
             {}
 
@@ -158,7 +169,8 @@ namespace set {
             member_item()
             {}
 
-            explicit member_item( int key )
+            CDSTEST_BOOST_INTRUSIVE_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
+            member_item( int key )
                 : item( key )
             {}
 
