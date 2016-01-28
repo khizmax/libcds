@@ -1,4 +1,5 @@
-2.1.0
+2.1.0 06.01.2016
+    General release
     - Added: FeldmanHashSet/Map - an interesting hash map algorithm
       based on multi-level array, requires perfect hashing or fixed-sized keys.
       Supports thread-safe bidirectional iterators.
