@@ -135,7 +135,8 @@ set(CDS_TESTHDR_QUEUE
     queue/hdr_segmented_queue_hp.cpp
     queue/hdr_segmented_queue_dhp.cpp
     queue/hdr_tsigas_cycle_queue.cpp
-    queue/hdr_vyukov_mpmc_cyclic.cpp)
+    queue/hdr_vyukov_mpmc_cyclic.cpp
+	queue/hdr_cache_aware_queue.cpp)
 
 set(CDS_TESTHDR_SET
     set/hdr_intrusive_feldman_hashset_hp.cpp

@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include <stdexcept>
+#include <boost/thread/tss.hpp>
 #include <cds/container/details/base.h>
 #include <cds/user_setup/cache_line.h>
 
@@ -13,6 +14,7 @@ namespace cds { namespace container {
 		{
 			using node_allocator = CDS_DEFAULT_ALLOCATOR;
 			using allocator = CDS_DEFAULT_ALLOCATOR;
+			using item_counter = atomicity::empty_item_counter;
 		};
 
         template <typename... Options> struct make_traits
@@ -70,6 +72,7 @@ namespace cds { namespace container {
 		using traits = Traits;
 		using allocator = cds::details::Allocator<T, typename traits::allocator>;
 		using node_allocator = cds::details::Allocator<node, typename traits::node_allocator>;
+		using item_counter = typename traits::item_counter;
 
 		// one accessor for thread
 		class accessor
@@ -82,7 +85,8 @@ namespace cds { namespace container {
 				a_head = head_node->info.head;
 				a_tail = tail_node->info.tail;
 			}
-			void enqueue(const value_type& value) {
+			bool enqueue(const value_type* value) {
+				value_type* data;
 				node_ptr block = head_node;
 				unsigned char head = a_head;
 
@@ -93,6 +97,7 @@ namespace cds { namespace container {
 						block = block->info.next;
 						if(block == nullptr) {
 							block = node_allocator().New();
+							if(block == nullptr) return false;
 							while((queue.head != oldBlock) && (oldBlock->info.next == nullptr)) {
 								node_ptr headBlock = queue.head;
 								if(headBlock->info.next != oldBlock) break;
@@ -113,10 +118,13 @@ namespace cds { namespace container {
 					} else {
 						if(block->items[head] == (T*)free_item) {
 							value_type* free = (T*)free_item;
-							value_type* data = allocator().New(value);
+							data = allocator().New(value);
+
+							if(data == nullptr) return nullptr;
 							// TODO: first allocate, then construct if CAS successful
-							if(block->items[head].compare_exchange_strong(free, data)) {
+							if(block->items[head].compare_exchange_strong(free, value)) {
 								a_head = head + 1;
+								queue.m_ItemCounter += 1;
 								break;
 							}
 							allocator().Delete(data);
@@ -125,8 +133,9 @@ namespace cds { namespace container {
 						}
 					}
 				} // while(true)
+				return true;
 			}
-			value_type* dequeue_ptr() {
+			value_type* dequeue() {
 				node_ptr block = tail_node;
 				unsigned char tail = a_tail;
 				while(true) {
@@ -170,6 +179,7 @@ namespace cds { namespace container {
 							} else {
 								if(block->items[tail].compare_exchange_strong(value, (T*)removed_item)) {
 									a_tail = tail + 1;
+									queue.m_ItemCounter -= 1;
 									return value;
 								}
 							}
@@ -177,22 +187,15 @@ namespace cds { namespace container {
 					}
 				} // while(true)
 			}
-			value_type dequeue() {
-				T* value_ptr = dequeue_ptr();
-				if(value_ptr != nullptr) {
-					T value = std::move(*value_ptr);
-					allocator().Delete(value_ptr);
-					return std::move(value);
-				}
-				throw std::underflow_error("queue::dequeue(): empty queue");
-			}
 		};
 	private:
 		node_ptr head, tail;
+		boost::thread_specific_ptr<accessor> tls_ptr;
+		item_counter m_ItemCounter;
 	public:
 		CAQueue(): head(node_allocator().New()), tail(head) {}
 		~CAQueue() {
-			node_ptr block = head;
+			node_ptr block = tail;
 			while(block != nullptr) {
 				for(std::atomic<T*>& item: block->items) {
 					T* ptr = item.load();
@@ -203,6 +206,87 @@ namespace cds { namespace container {
 				block = block->info.next;
 			}
 		}
+
+		bool enqueue( value_type const& val ) {
+			if(tls_ptr.get() == nullptr) {
+				tls_ptr.reset(new accessor(*this));
+			}
+			value_type* data = allocator().New(val);
+			if(data == nullptr) return false;
+			return tls_ptr->enqueue(data);
+		}
+        template <typename Func>
+        bool enqueue_with( Func f )
+        {
+			if(tls_ptr.get() == nullptr) {
+				tls_ptr.reset(new accessor(*this));
+			}
+			value_type* data = allocator().New();
+			if(data == nullptr) return false;
+			f(*data);
+			return tls_ptr->enqueue(data);
+        }
+        bool push( value_type const& val )
+        {
+            return enqueue(val);
+        }
+        template <typename Func>
+        bool push_with( Func f )
+        {
+            return enqueue_with(f);
+        }
+        template <typename... Args>
+        bool emplace( Args&&... args )
+        {
+        	value_type* data = allocator().New(alloc_node_move( std::forward<Args>(args)... ));
+			if(data == nullptr) return false;
+			return tls_ptr->enqueue(data);
+        }
+
+        bool dequeue( value_type& dest )
+        {
+            return dequeue_with( [&dest]( value_type& src ) { dest = src; });
+        }
+        template <typename Func>
+        bool dequeue_with( Func f )
+        {
+			if(tls_ptr.get() == nullptr) {
+				tls_ptr.reset(new accessor(*this));
+			}
+            value_type * p = tls_ptr->dequeue();
+            if ( p ) {
+                f( *p );
+                return true;
+            }
+            return false;
+        }
+        template <typename Func>
+        bool pop_with( Func f )
+        {
+            return dequeue_with( f );
+        }
+        bool pop( value_type& dest )
+        {
+            return dequeue( dest );
+        }
+
+        bool empty() const
+        {
+            return m_ItemCounter.value() == 0;
+        }
+        void clear()
+        {
+        	value_type v;
+        	while(dequeue(v));
+        }
+        size_t size() const
+        {
+            return m_ItemCounter.value();
+        }
+        std::nullptr_t statistics() const
+        {
+            return nullptr;
+        }
 	};
 
 	template<class T, class Traits>

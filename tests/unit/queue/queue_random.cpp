@@ -305,6 +305,7 @@ namespace queue {
         CDSUNIT_DECLARE_RWQueue( SimpleValue )
         CDSUNIT_DECLARE_TsigasCycleQueue( SimpleValue )
         CDSUNIT_DECLARE_VyukovMPMCCycleQueue( SimpleValue )
+		CDSUNIT_DECLARE_CacheAwareQueue( SimpleValue )
         CDSUNIT_DECLARE_StdQueue( SimpleValue )
 
         CPPUNIT_TEST_SUITE(Queue_Random)
@@ -318,6 +319,7 @@ namespace queue {
             CDSUNIT_TEST_RWQueue
             CDSUNIT_TEST_TsigasCycleQueue
             CDSUNIT_TEST_VyukovMPMCCycleQueue
+			CDSUNIT_TEST_CacheAwareQueue
             CDSUNIT_TEST_StdQueue
         CPPUNIT_TEST_SUITE_END();
     };
