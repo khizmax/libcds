@@ -199,8 +199,8 @@
 
 // CacheAwareQueue
 #define CDSUNIT_DECLARE_CacheAwareQueue( ITEM_TYPE ) \
-    TEST_CASE( CacheAwareQueue_Spin, ITEM_TYPE ) \
-    TEST_CASE( CacheAwareQueue_Spin_ic, ITEM_TYPE )
+    TEST_CASE( CacheAwareQueue_default, ITEM_TYPE ) \
+    TEST_CASE( CacheAwareQueue_ic, ITEM_TYPE )
 
 // RWQueue
 #define CDSUNIT_DECLARE_RWQueue( ITEM_TYPE ) \

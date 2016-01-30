@@ -85,7 +85,7 @@ namespace cds { namespace container {
 				a_head = head_node->info.head;
 				a_tail = tail_node->info.tail;
 			}
-			bool enqueue(const value_type* value) {
+			bool enqueue(value_type* value) {
 				value_type* data;
 				node_ptr block = head_node;
 				unsigned char head = a_head;
@@ -118,13 +118,13 @@ namespace cds { namespace container {
 					} else {
 						if(block->items[head] == (T*)free_item) {
 							value_type* free = (T*)free_item;
-							data = allocator().New(value);
+							data = allocator().New(*value);
 
-							if(data == nullptr) return nullptr;
+							if(data == nullptr) return false;
 							// TODO: first allocate, then construct if CAS successful
 							if(block->items[head].compare_exchange_strong(free, value)) {
 								a_head = head + 1;
-								queue.m_ItemCounter += 1;
+								queue.m_ItemCounter++;
 								break;
 							}
 							allocator().Delete(data);
@@ -179,7 +179,7 @@ namespace cds { namespace container {
 							} else {
 								if(block->items[tail].compare_exchange_strong(value, (T*)removed_item)) {
 									a_tail = tail + 1;
-									queue.m_ItemCounter -= 1;
+									queue.m_ItemCounter--;
 									return value;
 								}
 							}
@@ -238,7 +238,7 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-        	value_type* data = allocator().New(alloc_node_move( std::forward<Args>(args)... ));
+        	value_type* data = allocator().New( std::forward<Args>(args)... );
 			if(data == nullptr) return false;
 			return tls_ptr->enqueue(data);
         }
@@ -272,7 +272,7 @@ namespace cds { namespace container {
 
         bool empty() const
         {
-            return m_ItemCounter.value() == 0;
+            return (head == tail) && (head->info.head == tail->info.tail);
         }
         void clear()
         {
