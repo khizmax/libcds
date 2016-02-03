@@ -83,7 +83,7 @@ namespace cds { namespace intrusive {
             \p Options are:
             - \p opt::lock_type - mutex type, default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
-            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::intrusive::v::empty_disposer.
+            - \p opt::disposer - the functor used to dispose removed items. Default is \p opt::intrusive::v::empty_disposer.
                 This option is used only in \p FCQueue::clear() function.
             - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::stat - internal statistics, possible type: \p fcqueue::stat, \p fcqueue::empty_stat (the default)

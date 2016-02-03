@@ -16,6 +16,17 @@ set(CDSGTEST_QUEUE_SOURCES
     segmented_queue_dhp.cpp
     tsigas_queue.cpp
     vyukov_mpmc_queue.cpp
+    intrusive_basket_queue_hp.cpp
+    intrusive_basket_queue_dhp.cpp
+    intrusive_fcqueue.cpp
+    intrusive_msqueue_hp.cpp
+    intrusive_msqueue_dhp.cpp
+    intrusive_moirqueue_hp.cpp
+    intrusive_moirqueue_dhp.cpp
+    intrusive_optqueue_hp.cpp
+    intrusive_optqueue_dhp.cpp
+    intrusive_segmented_queue_hp.cpp
+    intrusive_segmented_queue_dhp.cpp
 )
 
 include_directories(
