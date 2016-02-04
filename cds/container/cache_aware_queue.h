@@ -8,15 +8,37 @@
 #include <cds/user_setup/cache_line.h>
 
 namespace cds { namespace container {
-
+	/// Cache aware queue
+	/** @ingroup cds_nonintrusive_helper
+	*/
 	namespace cache_aware_queue {
+		/// CAQueue default type traits
 		struct traits
 		{
+			/// Node allocator
 			using node_allocator = CDS_DEFAULT_ALLOCATOR;
+			/// Item allocator
 			using allocator = CDS_DEFAULT_ALLOCATOR;
+			/// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
 			using item_counter = atomicity::empty_item_counter;
 		};
 
+        /// Metafunction converting option list to \p cache_aware_queue::traits
+        /**
+            Supported \p Options are:
+            - \p opt::allocator - allocator (like \p std::allocator) used for allocating queue items. Default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p opt::node_allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+                To enable item counting use \p cds::atomicity::item_counter
+            Example: declare \p %CAQueue with item counting
+            \code
+            typedef cds::container::CAQueue< Foo,
+                typename cds::container::cache_aware_queue::make_traits<
+                    cds::opt::item_counter< cds::atomicity::item_counter > >
+                >::type
+            > CacheAwareQueue;
+            \endcode
+        */
         template <typename... Options> struct make_traits
 		{
             typedef typename cds::opt::make_options<
@@ -26,6 +48,27 @@ namespace cds { namespace container {
         };
 	} // namespace cache_aware_queue
 
+    /// Cache aware lock-free queue
+    /** @ingroup cds_nonintrusive_queue
+        A lock-free queue implemented using a linked list of arrays, where each thread is avoiding accesses to global pointers in order to reduce number of cache misses.
+        The queue does not require any garbage collector.
+        Template arguments:
+        - \p T is a type stored in the queue.
+        - \p Traits - queue traits, default is \p cache_aware_queue::traits. You can use \p cache_aware_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %cache_aware_queue::traits:
+            \code
+            struct myTraits: public cds::container::cache_aware_queue::traits {
+                typedef cds::atomicity::item_counter    item_counter;
+            };
+            typedef cds::container::CAQueue< Foo, myTraits > myQueue;
+            // Equivalent make_traits example:
+            typedef cds::container::CAQueue< Foo,
+                typename cds::container::cache_aware_queue::make_traits<
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > myQueue;
+            \endcode
+	*/
 	template<class T, class Traits = cache_aware_queue::traits > class CAQueue
 	{
 	private:
@@ -76,11 +119,11 @@ namespace cds { namespace container {
 			}
 		};
 	public:
-		using value_type = T;
-		using traits = Traits;
-		using allocator = cds::details::Allocator<T, typename traits::allocator>;
-		using node_allocator = cds::details::Allocator<node, typename traits::node_allocator>;
-		using item_counter = typename traits::item_counter;
+		using value_type = T;  ///< The value type to be stored in the queue
+		using traits = Traits; ///< Queue traits
+		using allocator = cds::details::Allocator<T, typename traits::allocator>;              ///< Allocator type used for allocate/deallocate the queue items
+		using node_allocator = cds::details::Allocator<node, typename traits::node_allocator>; ///< Allocator type used for allocate/deallocate the queue nodes
+		using item_counter = typename traits::item_counter; ///< Item counting policy used
 
 		// one accessor for thread
 		class accessor
@@ -196,8 +239,15 @@ namespace cds { namespace container {
 		boost::thread_specific_ptr<accessor> tls_ptr;
 		item_counter m_ItemCounter;
 	public:
+		/// Initializes empty queue
 		CAQueue(): head(node_allocator().New()), tail(head) {}
 
+        //@cond
+		CAQueue(const CAQueue&) = delete;
+		CAQueue& operator=(const CAQueue&) = delete;
+        //@endcond
+
+		/// Enqueues \p val value into the queue
 		bool enqueue( value_type const& val ) {
 			if(tls_ptr.get() == nullptr) {
 				tls_ptr.reset(new accessor(*this));
@@ -210,8 +260,17 @@ namespace cds { namespace container {
 			}
 			return true;
 		}
-        template <typename Func>
-        bool enqueue_with( Func f )
+        /// Enqueues data to the queue using a functor
+        /**
+            \p Func is a functor called to create node.
+            The functor \p f takes one argument - a reference to a new node of type \ref value_type :
+            \code
+            cds::container::CAQueue< Foo > myQueue;
+            Bar bar;
+            myQueue.enqueue_with( [&bar]( Foo& dest ) { dest = bar; } );
+            \endcode
+        */
+        template <typename Func> bool enqueue_with( Func f )
         {
 			if(tls_ptr.get() == nullptr) {
 				tls_ptr.reset(new accessor(*this));
@@ -225,15 +284,17 @@ namespace cds { namespace container {
 			}
 			return true;
         }
+        /// Synonym for \p enqueue() function
         bool push( value_type const& val )
         {
             return enqueue(val);
         }
-        template <typename Func>
-        bool push_with( Func f )
+        /// Synonym for \p enqueue_with() function
+        template <typename Func> bool push_with( Func f )
         {
             return enqueue_with(f);
         }
+        /// Enqueues data of type \ref value_type constructed from <tt>std::forward<Args>(args)...</tt>
         template <typename... Args>
         bool emplace( Args&&... args )
         {
@@ -245,13 +306,29 @@ namespace cds { namespace container {
 			}
 			return true;
         }
-
+        /// Dequeues a value from the queue
+        /**
+            If queue is not empty, the function returns \p true, \p dest contains copy of
+            dequeued value. The assignment operator for type \ref value_type is invoked.
+            If queue is empty, the function returns \p false, \p dest is unchanged.
+        */
         bool dequeue( value_type& dest )
         {
             return dequeue_with( [&dest]( value_type& src ) { dest = src; });
         }
-        template <typename Func>
-        bool dequeue_with( Func f )
+        /// Dequeues a value using a functor
+        /**
+            \p Func is a functor called to copy dequeued value.
+            The functor takes one argument - a reference to removed node:
+            \code
+            cds:container::CAQueue< Foo > myQueue;
+            Bar bar;
+            myQueue.dequeue_with( [&bar]( Foo& src ) { bar = std::move( src );});
+            \endcode
+            The functor is called only if the queue is not empty.
+            If queue is empty, functor will not call
+        */
+        template <typename Func> bool dequeue_with( Func f )
         {
 			if(tls_ptr.get() == nullptr) {
 				tls_ptr.reset(new accessor(*this));
@@ -264,25 +341,31 @@ namespace cds { namespace container {
             }
             return false;
         }
-        template <typename Func>
-        bool pop_with( Func f )
+        /// Synonym for \p dequeue_with() function
+        template <typename Func> bool pop_with( Func f )
         {
             return dequeue_with( f );
         }
+        /// Synonym for \p dequeue() function
         bool pop( value_type& dest )
         {
             return dequeue( dest );
         }
-
+        /// Checks if the queue is empty
         bool empty() const
         {
             return (head == tail) && (head->info.head == tail->info.tail);
         }
+        /// Clear the queue
+		/**
+			The function repeatedly calls \ref dequeue until it returns false.
+		*/
         void clear()
         {
         	value_type v;
         	while(dequeue(v));
         }
+        /// Returns queue's item count
         size_t size() const
         {
             return m_ItemCounter.value();
