@@ -52,8 +52,8 @@ namespace cds { namespace container {
 		struct node
 		{
 			struct node_info {
-				unsigned char head  = 0;
-				unsigned char tail  = 0;
+				std::atomic_uchar head {0};
+				std::atomic_uchar tail {0};
 				std::atomic_uchar count  { 0       };
 				std::atomic_bool deleted { false   };
 				node_ptr next;
@@ -64,6 +64,14 @@ namespace cds { namespace container {
 			node() {
 				for(std::atomic<T*>& ptr: items) {
 					ptr.store((T*)free_item);
+				}
+			}
+			~node() {
+				for(std::atomic<T*>& item: items) {
+					T* ptr = item.load();
+					if((ptr != (T*)free_item) && (ptr != (T*)removed_item)) {
+						allocator().Delete(ptr);
+					}
 				}
 			}
 		};
@@ -82,11 +90,10 @@ namespace cds { namespace container {
 			CAQueue& queue;
 		public:
 			accessor(CAQueue& parent): head_node(parent.head), tail_node(parent.tail), queue(parent) {
-				a_head = head_node->info.head;
-				a_tail = tail_node->info.tail;
+				a_head = head_node->info.head.load();
+				a_tail = tail_node->info.tail.load();
 			}
 			bool enqueue(value_type* value) {
-				value_type* data;
 				node_ptr block = head_node;
 				unsigned char head = a_head;
 
@@ -114,20 +121,16 @@ namespace cds { namespace container {
 							}
 						}
 						head_node = block;
-						head = block->info.head;
+						head = block->info.head.load();
 					} else {
 						if(block->items[head] == (T*)free_item) {
 							value_type* free = (T*)free_item;
-							data = allocator().New(*value);
-
-							if(data == nullptr) return false;
 							// TODO: first allocate, then construct if CAS successful
 							if(block->items[head].compare_exchange_strong(free, value)) {
 								a_head = head + 1;
 								queue.m_ItemCounter++;
 								break;
 							}
-							allocator().Delete(data);
 						} else {
 							head += 1;
 						}
@@ -166,7 +169,7 @@ namespace cds { namespace container {
 							}
 						}
 						tail_node = block;
-						tail = block->info.tail;
+						tail = block->info.tail.load();
 					} else {
 						T* value = block->items[tail].load();
 						if(value == (T*)removed_item) {
@@ -194,18 +197,6 @@ namespace cds { namespace container {
 		item_counter m_ItemCounter;
 	public:
 		CAQueue(): head(node_allocator().New()), tail(head) {}
-		~CAQueue() {
-			node_ptr block = tail;
-			while(block != nullptr) {
-				for(std::atomic<T*>& item: block->items) {
-					T* ptr = item.load();
-					if((ptr != (T*)free_item) && (ptr != (T*)removed_item)) {
-						allocator().Delete(ptr);
-					}
-				}
-				block = block->info.next;
-			}
-		}
 
 		bool enqueue( value_type const& val ) {
 			if(tls_ptr.get() == nullptr) {
@@ -213,7 +204,11 @@ namespace cds { namespace container {
 			}
 			value_type* data = allocator().New(val);
 			if(data == nullptr) return false;
-			return tls_ptr->enqueue(data);
+			if(!tls_ptr->enqueue(data)) {
+				allocator().Delete(data);
+				return false;
+			}
+			return true;
 		}
         template <typename Func>
         bool enqueue_with( Func f )
@@ -224,7 +219,11 @@ namespace cds { namespace container {
 			value_type* data = allocator().New();
 			if(data == nullptr) return false;
 			f(*data);
-			return tls_ptr->enqueue(data);
+			if(!tls_ptr->enqueue(data)) {
+				allocator().Delete(data);
+				return false;
+			}
+			return true;
         }
         bool push( value_type const& val )
         {
@@ -240,7 +239,11 @@ namespace cds { namespace container {
         {
         	value_type* data = allocator().New( std::forward<Args>(args)... );
 			if(data == nullptr) return false;
-			return tls_ptr->enqueue(data);
+			if(!tls_ptr->enqueue(data)) {
+				allocator().Delete(data);
+				return false;
+			}
+			return true;
         }
 
         bool dequeue( value_type& dest )
@@ -256,6 +259,7 @@ namespace cds { namespace container {
             value_type * p = tls_ptr->dequeue();
             if ( p ) {
                 f( *p );
+                allocator().Delete(p);
                 return true;
             }
             return false;
