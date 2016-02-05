@@ -70,8 +70,8 @@ namespace cds { namespace container {
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
-            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
         /// Metafunction converting option list to \p tsigas_queue::traits
@@ -84,7 +84,7 @@ namespace cds { namespace container {
             - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
-            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
@@ -93,7 +93,7 @@ namespace cds { namespace container {
             typedef cds::container::TsigasCycleQueue< Foo,
                 typename cds::container::tsigas_queue::make_traits<
                     cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
-                    cds::opt::item_counte< cds::atomicity::item_counter >
+                    cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;
             \endcode

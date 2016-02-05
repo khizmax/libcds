@@ -370,7 +370,7 @@ namespace opt {
         no_special_padding = 0,   ///< no special padding
         cache_line_padding = 1,   ///< use cache line size defined in cds/user_setup/cache_line.h
 
-        /// Apply padding only for tiny data of size less than required padding
+        /// Apply padding only for tiny data when data size is less than required padding
         /**
             The flag means that if your data size is less than the casheline size, the padding is applyed.
             Otherwise no padding will be applyed.
