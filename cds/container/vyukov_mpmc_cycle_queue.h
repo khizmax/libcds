@@ -57,7 +57,7 @@ namespace cds { namespace container {
 
             /// A functor to clean item dequeued.
             /**
-                The functor  calls the destructor for queue item.
+                The functor calls the destructor for queue item.
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
                 If \p T is a complex type, \p value_cleaner may be the useful feature.
 
@@ -153,17 +153,17 @@ namespace cds { namespace container {
 
         Template parameters
         - \p T - type stored in queue.
-        - \p Traits - queue traits, default is \p vykov_queue::traits. You can use \p vykov_queue::make_traits
-            metafunction to make your traits or just derive your traits from \p %vykov_queue::traits:
+        - \p Traits - queue traits, default is \p vyukov_queue::traits. You can use \p vyukov_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %vyukov_queue::traits:
             \code
-            struct myTraits: public cds::container::vykov_queue::traits {
+            struct myTraits: public cds::container::vyukov_queue::traits {
                 typedef cds::atomicity::item_counter    item_counter;
             };
             typedef cds::container::VyukovMPMCCycleQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
             typedef cds::container::VyukovMPMCCycleQueue< cds::gc::HP, Foo,
-                typename cds::container::vykov_queue::make_traits<
+                typename cds::container::vyukov_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;

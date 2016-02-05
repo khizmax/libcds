@@ -77,8 +77,8 @@ namespace cds { namespace intrusive {
             \endcode
 
             Predefined types for \p Type:
-            - opt::v::empty_disposer - the disposer that does nothing
-            - opt::v::delete_disposer - the disposer that calls operator \p delete
+            - \p opt::v::empty_disposer - the disposer that does nothing
+            - \p opt::v::delete_disposer - the disposer that calls operator \p delete
 
             Usually, the disposer should be stateless default-constructible functor.
             It is called by garbage collector in deferred mode.
