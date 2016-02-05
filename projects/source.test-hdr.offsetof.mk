@@ -1,5 +1,3 @@
-CDS_TESTHDR_OFFSETOF_DEQUE := \
-
 CDS_TESTHDR_OFFSETOF_MAP := \
     tests/test-hdr/map/hdr_cuckoo_map.cpp 
 
@@ -67,22 +65,6 @@ CDS_TESTHDR_OFFSETOF_LIST := \
     tests/test-hdr/list/hdr_intrusive_michael_list_rcu_shb.cpp \
     tests/test-hdr/list/hdr_intrusive_michael_list_rcu_sht.cpp
 
-CDS_TESTHDR_OFFSETOF_QUEUE := \
-    tests/test-hdr/queue/hdr_intrusive_basketqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_basketqueue_dhp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_moirqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_moirqueue_dhp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_msqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_msqueue_dhp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_optimisticqueue_hp.cpp \
-    tests/test-hdr/queue/hdr_intrusive_optimisticqueue_dhp.cpp
-
-CDS_TESTHDR_OFFSETOF_STACK := \
-    tests/test-hdr/stack/hdr_intrusive_treiber_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_intrusive_treiber_stack_dhp.cpp \
-    tests/test-hdr/stack/hdr_intrusive_elimination_stack_hp.cpp \
-    tests/test-hdr/stack/hdr_intrusive_elimination_stack_dhp.cpp 
-
 CDS_TESTHDR_OFFSETOF_TREE := \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_hp_member.cpp \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_dhp_member.cpp \
@@ -93,9 +75,6 @@ CDS_TESTHDR_OFFSETOF_TREE := \
     tests/test-hdr/tree/hdr_intrusive_ellen_bintree_rcu_sht_member.cpp
 
 CDS_TESTHDR_OFFSETOF_SOURCES := \
-	$(CDS_TESTHDR_OFFSETOF_QUEUE) \
-	$(CDS_TESTHDR_OFFSETOF_STACK) \
-	$(CDS_TESTHDR_OFFSETOF_DEQUE) \
 	$(CDS_TESTHDR_OFFSETOF_MAP) \
 	$(CDS_TESTHDR_OFFSETOF_SET) \
 	$(CDS_TESTHDR_OFFSETOF_LIST) \

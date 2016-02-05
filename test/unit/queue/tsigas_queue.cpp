@@ -102,7 +102,7 @@ namespace {
         struct traits : public cds::container::tsigas_queue::traits
         {
             typedef cds::opt::v::dynamic_buffer<int> buffer;
-            enum { alignment = 16 };
+            enum { padding = 16 };
         };
         typedef cds::container::TsigasCycleQueue< int, traits > test_queue;
 

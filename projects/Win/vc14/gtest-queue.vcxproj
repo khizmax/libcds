@@ -42,6 +42,8 @@
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_optqueue_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_segmented_queue_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_segmented_queue_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\intrusive_tsigas_queue.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\intrusive_vyukov_queue.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\moirqueue_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\moirqueue_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\msqueue_dhp.cpp" />
@@ -59,6 +61,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\queue\test_bounded_queue.h" />
     <ClInclude Include="..\..\..\test\unit\queue\test_generic_queue.h" />
+    <ClInclude Include="..\..\..\test\unit\queue\test_intrusive_bounded_queue.h" />
     <ClInclude Include="..\..\..\test\unit\queue\test_intrusive_msqueue.h" />
     <ClInclude Include="..\..\..\test\unit\queue\test_intrusive_segmented_queue.h" />
     <ClInclude Include="..\..\..\test\unit\queue\test_segmented_queue.h" />

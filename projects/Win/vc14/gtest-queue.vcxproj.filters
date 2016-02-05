@@ -93,6 +93,12 @@
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_segmented_queue_dhp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\queue\intrusive_vyukov_queue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\queue\intrusive_tsigas_queue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\queue\test_generic_queue.h">
@@ -108,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\queue\test_intrusive_segmented_queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\queue\test_intrusive_bounded_queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
