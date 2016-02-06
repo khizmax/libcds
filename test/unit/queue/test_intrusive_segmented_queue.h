@@ -90,8 +90,8 @@ namespace cds_test {
         {
             typedef typename Queue::value_type value_type;
             val.resize( 100 );
-            for ( int i = 0; i < val.size(); ++i )
-                val[i].nValue = i;
+            for ( size_t i = 0; i < val.size(); ++i )
+                val[i].nValue = static_cast<int>( i );
 
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
@@ -139,13 +139,13 @@ namespace cds_test {
 
             // check that Disposer has not been called
             Queue::gc::force_dispose();
-            for ( int i = 0; i < val.size(); ++i ) {
+            for ( size_t i = 0; i < val.size(); ++i ) {
                 EXPECT_EQ( val[i].nDisposeCount, 0 );
                 EXPECT_EQ( val[i].nDispose2Count, 0 );
             }
 
             // clear
-            for ( int i = 0; i < val.size(); ++i )
+            for ( size_t i = 0; i < val.size(); ++i )
                 EXPECT_TRUE( q.push( val[i] ) );
             EXPECT_CONTAINER_SIZE( q, val.size());
             EXPECT_TRUE( !q.empty() );

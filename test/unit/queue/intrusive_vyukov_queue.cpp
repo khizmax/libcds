@@ -35,7 +35,7 @@ namespace {
 
     class IntrusiveVyukovQueue : public cds_test::intrusive_bounded_queue
     {
-    protected:
+    public:
         struct disposer {
             void operator()( item * p )
             {

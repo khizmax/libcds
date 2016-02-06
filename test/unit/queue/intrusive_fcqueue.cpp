@@ -62,6 +62,7 @@ namespace {
             {}
         };
 
+    public:
         struct disposer
         {
             template <typename T>
@@ -71,6 +72,7 @@ namespace {
             }
         };
 
+    protected:
         template <typename Queue>
         void test( Queue& q )
         {

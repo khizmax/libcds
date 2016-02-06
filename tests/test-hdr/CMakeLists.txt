@@ -102,28 +102,6 @@ set(CDS_TESTHDR_LIST
     list/hdr_michael_kv_rcu_shb.cpp
     list/hdr_michael_kv_rcu_sht.cpp)
 
-set(CDS_TESTHDR_QUEUE
-    queue/hdr_queue_register.cpp
-    queue/hdr_intrusive_fcqueue.cpp
-    queue/hdr_intrusive_segmented_queue_hp.cpp
-    queue/hdr_intrusive_segmented_queue_dhp.cpp
-    queue/hdr_intrusive_tsigas_cycle_queue.cpp
-    queue/hdr_intrusive_vyukovmpmc_cycle_queue.cpp
-    queue/hdr_basketqueue_hp.cpp
-    queue/hdr_basketqueue_dhp.cpp
-    queue/hdr_fcqueue.cpp
-    queue/hdr_moirqueue_hp.cpp
-    queue/hdr_moirqueue_dhp.cpp
-    queue/hdr_msqueue_hp.cpp
-    queue/hdr_msqueue_dhp.cpp
-    queue/hdr_optimistic_hp.cpp
-    queue/hdr_optimistic_dhp.cpp
-    queue/hdr_rwqueue.cpp
-    queue/hdr_segmented_queue_hp.cpp
-    queue/hdr_segmented_queue_dhp.cpp
-    queue/hdr_tsigas_cycle_queue.cpp
-    queue/hdr_vyukov_mpmc_cyclic.cpp)
-
 set(CDS_TESTHDR_SET
     set/hdr_intrusive_feldman_hashset_hp.cpp
     set/hdr_intrusive_feldman_hashset_dhp.cpp
@@ -341,16 +319,6 @@ set(CDS_TESTHDR_OFFSETOF_LIST
     list/hdr_intrusive_michael_list_rcu_shb.cpp
     list/hdr_intrusive_michael_list_rcu_sht.cpp)
 
-set(CDS_TESTHDR_OFFSETOF_QUEUE
-    queue/hdr_intrusive_basketqueue_hp.cpp
-    queue/hdr_intrusive_basketqueue_dhp.cpp
-    queue/hdr_intrusive_moirqueue_hp.cpp
-    queue/hdr_intrusive_moirqueue_dhp.cpp
-    queue/hdr_intrusive_msqueue_hp.cpp
-    queue/hdr_intrusive_msqueue_dhp.cpp
-    queue/hdr_intrusive_optimisticqueue_hp.cpp
-    queue/hdr_intrusive_optimisticqueue_dhp.cpp)
-
 set(CDS_TESTHDR_OFFSETOF_TREE
     tree/hdr_intrusive_ellen_bintree_hp_member.cpp
     tree/hdr_intrusive_ellen_bintree_dhp_member.cpp
@@ -361,7 +329,6 @@ set(CDS_TESTHDR_OFFSETOF_TREE
     tree/hdr_intrusive_ellen_bintree_rcu_sht_member.cpp)
 
 set(CDS_TESTHDR_OFFSETOF_SOURCES
-	${CDS_TESTHDR_OFFSETOF_QUEUE}
 	${CDS_TESTHDR_OFFSETOF_MAP}
 	${CDS_TESTHDR_OFFSETOF_SET}
 	${CDS_TESTHDR_OFFSETOF_LIST}
@@ -374,7 +341,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 set(CDS_TESTHDR_SOURCES
-    ${CDS_TESTHDR_QUEUE}
     ${CDS_TESTHDR_MAP}
     ${CDS_TESTHDR_LIST}
     ${CDS_TESTHDR_SET}
