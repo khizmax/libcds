@@ -545,7 +545,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the list
-        /** \anchor cds_intrusive_MichaelList_rcu_erase_val
+        /**
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \p true.
             If the item with the key equal to \p key is not found the function return \p false.
@@ -566,7 +566,7 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the list using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_rcu_erase_val "erase(Q const&)"
+            The function is an analog of \p erase(Q const&)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
@@ -581,7 +581,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the list
-        /** \anchor cds_intrusive_MichaelList_rcu_erase_func
+        /**
             The function searches an item with key equal to \p key in the list,
             call \p func functor with item found, unlinks it from the list, and returns \p true.
             The \p Func interface is
@@ -609,7 +609,7 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the list using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_rcu_erase_func "erase(Q const&, Func)"
+            The function is an analog of \p erase(Q const&, Func)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
@@ -625,7 +625,6 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item from the list
         /**
-        @anchor cds_intrusive_MichaelList_rcu_extract
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If \p key is not found the function returns an empty \p exempt_ptr.
@@ -633,7 +632,7 @@ namespace cds { namespace intrusive {
             @note The function does NOT dispose the item found. It just unlinks the item from the list
             and returns a pointer to item found.
             You shouldn't lock RCU for current thread before calling this function, and you should manually release
-            \p dest exempt pointer outside the RCU lock before reusing it.
+            the returned exempt pointer before reusing it.
 
             \code
             #include <cds/urcu/general_buffered.h>
@@ -685,7 +684,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Find the key \p val
-        /** \anchor cds_intrusive_MichaelList_rcu_find_func
+        /**
             The function searches the item with key equal to \p key
             and calls the functor \p f for item found.
             The interface of \p Func functor is:
