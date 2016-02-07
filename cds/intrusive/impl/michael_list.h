@@ -604,6 +604,8 @@ namespace cds { namespace intrusive {
             only if \p val is an item of the list, i.e. the pointer to item found
             is equal to <tt> &val </tt>.
 
+            \p disposer specified in \p Traits is called for deleted item.
+
             The function returns \p true if success and \p false otherwise.
         */
         bool unlink( value_type& val )
@@ -616,6 +618,8 @@ namespace cds { namespace intrusive {
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \p true.
             If \p key is not found the function return \p false.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q>
         bool erase( Q const& key )
@@ -629,6 +633,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
@@ -648,6 +654,8 @@ namespace cds { namespace intrusive {
             };
             \endcode
             If \p key is not found the function return \p false, \p func is not called.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Func>
         bool erase( Q const& key, Func func )
@@ -661,6 +669,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )

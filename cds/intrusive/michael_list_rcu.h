@@ -524,8 +524,8 @@ namespace cds { namespace intrusive {
             The function searches the item \p val in the list and unlink it from the list
             if it is found and it is equal to \p val.
 
-            Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
-            and deletes the item found. \p unlink finds an item by key and deletes it
+            Difference between \p erase() and \p %unlink() functions: \p %erase() finds <i>a key</i>
+            and deletes the item found. \p %unlink() finds an item by key and deletes it
             only if \p val is an item of that list, i.e. the pointer to the item found
             is equal to <tt> &val </tt>.
 
@@ -533,6 +533,8 @@ namespace cds { namespace intrusive {
 
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer call can be deferred.
+
+            \p disposer specified in \p Traits is called for unlinked item.
 
             The function can throw cds::urcu::rcu_deadlock exception if deadlock is encountered and
             deadlock checking policy is opt::v::rcu_throw_deadlock.
@@ -551,6 +553,8 @@ namespace cds { namespace intrusive {
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer call can be deferred.
 
+            \p disposer specified in \p Traits is called for deleted item.
+
             The function can throw \ref cds_urcu_rcu_deadlock "cds::urcu::rcu_deadlock" exception if a deadlock is detected and
             the deadlock checking policy is \p opt::v::rcu_throw_deadlock.
         */
@@ -566,6 +570,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
@@ -590,6 +596,8 @@ namespace cds { namespace intrusive {
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer call can be deferred.
 
+            \p disposer specified in \p Traits is called for deleted item.
+
             The function can throw \ref cds_urcu_rcu_deadlock "cds::urcu::rcu_deadlock" exception if a deadlock is detected and
             the deadlock checking policy is \p opt::v::rcu_throw_deadlock.
         */
@@ -605,6 +613,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func func )
