@@ -211,6 +211,8 @@ namespace cds { namespace intrusive {
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
+
         //@cond
         // Rebind traits (split-list support)
         template <typename... Options>
@@ -945,7 +947,6 @@ namespace cds { namespace intrusive {
         bool insert_at( atomic_node_ptr& refHead, value_type& val )
         {
             node_type * pNode = node_traits::to_node_ptr( val );
-            link_checker::is_empty( pNode );
             position pos;
 
             while ( true ) {
@@ -966,7 +967,6 @@ namespace cds { namespace intrusive {
         bool insert_at( atomic_node_ptr& refHead, value_type& val, Func f )
         {
             node_type * pNode = node_traits::to_node_ptr( val );
-            link_checker::is_empty( pNode );
             position pos;
 
             while ( true ) {
