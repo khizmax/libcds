@@ -276,6 +276,7 @@ namespace cds { namespace intrusive {
         void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
         {
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
+            link_checker::is_empty( pNode );
 
             pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_release );
             pPred->m_pNext.store( marked_node_ptr(pNode), memory_model::memory_order_release );
@@ -884,6 +885,7 @@ namespace cds { namespace intrusive {
                     h->m_Lock.lock();
 
                     unlink_node( &m_Head, h.ptr(), &m_Head );
+                    --m_ItemCounter;
 
                     h->m_Lock.unlock();
                     m_Head.m_Lock.unlock();
@@ -933,7 +935,6 @@ namespace cds { namespace intrusive {
 
         bool insert_at( node_type * pHead, value_type& val )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
@@ -959,7 +960,6 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( node_type * pHead, value_type& val, Func f )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
@@ -1004,8 +1004,6 @@ namespace cds { namespace intrusive {
                             // new key
                             if ( !bAllowInsert )
                                 return std::make_pair( false, false );
-
-                            link_checker::is_empty( node_traits::to_node_ptr( val ));
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             func( true, val, val );
