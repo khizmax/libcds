@@ -32,5 +32,11 @@
     <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_dhp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_hp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_dhp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
