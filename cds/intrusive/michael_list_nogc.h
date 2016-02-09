@@ -530,7 +530,6 @@ namespace cds { namespace intrusive {
 
         bool insert_at( atomic_node_ptr& refHead, value_type& val )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos;
 
             while ( true ) {
@@ -566,8 +565,6 @@ namespace cds { namespace intrusive {
                 else {
                     if ( !bAllowInsert )
                         return std::make_pair( end(), false );
-
-                    link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         ++m_ItemCounter;
