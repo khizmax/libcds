@@ -192,7 +192,7 @@ namespace cds { namespace intrusive {
         typedef typename hook::node_type node_type; ///< node type
 
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
+        typedef implementation_defined key_comparator;    ///< key comparison functor based on opt::compare and opt::less option setter.
 #   else
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
@@ -201,9 +201,9 @@ namespace cds { namespace intrusive {
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits; ///< node traits
         typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker; ///< link checker
 
-        typedef typename traits::back_off  back_off    ;   ///< back-off strategy
-        typedef typename traits::item_counter item_counter ;   ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model;   ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
+        typedef typename traits::back_off  back_off;         ///< back-off strategy
+        typedef typename traits::item_counter item_counter;  ///< Item counting policy used
+        typedef typename traits::memory_model  memory_model; ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
@@ -217,7 +217,7 @@ namespace cds { namespace intrusive {
                 gc
                 , value_type
                 , typename cds::opt::make_options< traits, Options...>::type
-            >   type;
+            > type;
         };
         //@endcond
 
@@ -230,7 +230,7 @@ namespace cds { namespace intrusive {
         node_type   m_Head;
         node_type   m_Tail;
 
-        item_counter    m_ItemCounter   ;   ///< Item counter
+        item_counter    m_ItemCounter;
 
         //@cond
         struct clean_disposer {
@@ -243,10 +243,10 @@ namespace cds { namespace intrusive {
 
         /// Position pointer for item search
         struct position {
-            node_type *     pPred   ;    ///< Previous node
-            node_type *     pCur    ;    ///< Current node
+            node_type *     pPred; ///< Previous node
+            node_type *     pCur;  ///< Current node
 
-            typename gc::template GuardArray<2> guards  ;   ///< Guards array
+            typename gc::template GuardArray<2> guards; ///< Guards array
 
             enum {
                 guard_prev_item,

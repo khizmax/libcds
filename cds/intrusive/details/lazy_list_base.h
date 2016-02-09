@@ -288,9 +288,10 @@ namespace cds { namespace intrusive {
             - \p opt::compare - key comparison functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
-            - \p opt::equal_to - specifies binary functor for comparing keys for equality. If \p equal_to is not specified, \p compare is
-                used, \p compare is not specified, \p less is used.
-            - \p opt::sort - specifies ordering policy. Default value is \p true.
+            - \p opt::equal_to - specifies binary functor for comparing keys for equality. This option is applicable only for unordered list.
+                If \p equal_to is not specified, \p compare is used, \p compare is not specified, \p less is used.
+            - \p opt::sort - specifies ordering policy. Default value is \p true, i.e. the list is ordered.
+                Note: unordering feature is not fully supported yet.
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. Due the nature
                 of GC schema the disposer may be called asynchronously.

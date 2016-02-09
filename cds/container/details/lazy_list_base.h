@@ -118,9 +118,10 @@ namespace cds { namespace container {
             - \p opt::compare - key compare functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
             - \p opt::less - specifies binary predicate used for key compare. Default is \p std::less<T>.
-            - \p opt::equal_to - specifies binary functor for comparing keys for equality. No default is provided. If \p equal_to is
-                not specified, \p compare is used, if \p compare is not specified, \p less is used.
-            - \p opt::sort - specifies ordering policy. Default value is \p true.
+            - \p opt::equal_to - specifies binary functor for comparing keys for equality. This option is applicable only for unordered list.
+                No default is provided. If \p equal_to is not specified, \p compare is used, if \p compare is not specified, \p less is used.
+            - \p opt::sort - specifies ordering policy. Default value is \p true, i.e. the list is ordered.
+                Note: unordering feature is not fully supported yet.
             - \p opt::back_off - back-off strategy used. If the option is not specified, \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
                 To enable item counting use \p atomicity::item_counter.
