@@ -73,7 +73,7 @@ namespace {
 
        list_type l;
        test_common( l );
-       test_sorted_iterator( l );
+       test_ordered_iterator( l );
        test_hp( l );
     }
 
@@ -89,7 +89,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
@@ -106,7 +106,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
@@ -124,7 +124,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
@@ -142,7 +142,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
@@ -158,7 +158,7 @@ namespace {
 
        list_type l;
        test_common( l );
-       test_sorted_iterator( l );
+       test_ordered_iterator( l );
        test_hp( l );
     }
 
@@ -174,7 +174,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
@@ -191,7 +191,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
@@ -209,7 +209,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
@@ -227,7 +227,7 @@ namespace {
 
         list_type l;
         test_common( l );
-        test_sorted_iterator( l );
+        test_ordered_iterator( l );
         test_hp( l );
     }
 
