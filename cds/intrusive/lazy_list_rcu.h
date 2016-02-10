@@ -228,6 +228,7 @@ namespace cds { namespace intrusive {
         static void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
         {
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
+            link_checker::is_empty( pNode );
 
             pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_relaxed );
             pPred->m_pNext.store( marked_node_ptr(pNode), memory_model::memory_order_release );
@@ -906,7 +907,6 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( node_type * pHead, value_type& val, Func f )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
@@ -1174,7 +1174,6 @@ namespace cds { namespace intrusive {
             // RCU lock should be locked
             assert( gc::is_locked());
 
-            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
@@ -1220,8 +1219,6 @@ namespace cds { namespace intrusive {
                             // new key
                             if ( !bAllowInsert )
                                 return std::make_pair( end(), false );
-
-                            link_checker::is_empty( node_traits::to_node_ptr( val ));
 
                             func( true, val, val );
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );

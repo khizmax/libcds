@@ -916,7 +916,6 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( atomic_node_ptr& refHead, value_type& val, Func f )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos( refHead );
 
             {
@@ -1164,7 +1163,6 @@ namespace cds { namespace intrusive {
         {
             // RCU lock should be locked!!!
             assert( gc::is_locked() );
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
             while ( true ) {
                 if ( search( pos.refHead, val, pos, key_comparator() ) )
@@ -1196,8 +1194,6 @@ namespace cds { namespace intrusive {
                 else {
                     if ( !bInsert )
                         return std::make_pair( end(), false );
-
-                    link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         ++m_ItemCounter;
