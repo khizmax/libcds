@@ -518,6 +518,7 @@ namespace cds { namespace intrusive {
         {
             return update( val, func, true );
         }
+        //@endcond
 
         /// Unlinks the item \p val from the list
         /**
