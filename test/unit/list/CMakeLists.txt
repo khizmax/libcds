@@ -5,9 +5,19 @@ set(CDSGTEST_LIST_SOURCES
     intrusive_lazy_hp.cpp
     intrusive_lazy_dhp.cpp
     intrusive_lazy_nogc.cpp
+    intrusive_lazy_rcu_gpb.cpp
+    intrusive_lazy_rcu_gpi.cpp
+    intrusive_lazy_rcu_gpt.cpp
+    intrusive_lazy_rcu_shb.cpp
+    intrusive_lazy_rcu_sht.cpp
     intrusive_michael_hp.cpp
     intrusive_michael_dhp.cpp
     intrusive_michael_nogc.cpp
+    intrusive_michael_rcu_gpb.cpp
+    intrusive_michael_rcu_gpi.cpp
+    intrusive_michael_rcu_gpt.cpp
+    intrusive_michael_rcu_shb.cpp
+    intrusive_michael_rcu_sht.cpp
 )
 
 include_directories(

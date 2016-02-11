@@ -477,7 +477,6 @@ namespace cds_test {
                 ASSERT_LT( idx, nSize );
                 EXPECT_EQ( it->nKey, arr[idx].nKey );
                 EXPECT_EQ( (*it).nKey, arr[idx].nKey );
-                ++key;
             }
 
             l.clear();
