@@ -268,8 +268,7 @@ namespace cds { namespace container {
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
               deleting operations it is no guarantee that you iterate all item in the list.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator on the concurrent container
-            for debug purpose only.
+            @warning Use this iterator on the concurrent container for debugging purpose only.
         */
         typedef iterator_type<false>    iterator;
 
@@ -279,6 +278,8 @@ namespace cds { namespace container {
         */
         typedef iterator_type<true>     const_iterator;
 
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Returns a forward iterator addressing the first element in a list
         /**
             For empty list \code begin() == end() \endcode
@@ -302,28 +303,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        //@{
         const_iterator begin() const
         {
             return const_iterator( head() );
         }
+
+        /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
             return const_iterator( head() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        //@{
         const_iterator end() const
         {
             return const_iterator();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return const_iterator();
         }
-        //@}
+    //@}
 
     public:
         /// Default constructor
