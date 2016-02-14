@@ -20,8 +20,10 @@ set(CDSGTEST_LIST_SOURCES
     intrusive_michael_rcu_sht.cpp
     lazy_hp.cpp
     lazy_dhp.cpp
+    lazy_nogc.cpp
     michael_hp.cpp
     michael_dhp.cpp
+    michael_nogc.cpp
 )
 
 include_directories(
