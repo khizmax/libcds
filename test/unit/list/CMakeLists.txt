@@ -21,9 +21,19 @@ set(CDSGTEST_LIST_SOURCES
     lazy_hp.cpp
     lazy_dhp.cpp
     lazy_nogc.cpp
+    lazy_rcu_gpb.cpp
+    lazy_rcu_gpi.cpp
+    lazy_rcu_gpt.cpp
+    lazy_rcu_shb.cpp
+    lazy_rcu_sht.cpp
     michael_hp.cpp
     michael_dhp.cpp
     michael_nogc.cpp
+    michael_rcu_gpb.cpp
+    michael_rcu_gpi.cpp
+    michael_rcu_gpt.cpp
+    michael_rcu_shb.cpp
+    michael_rcu_sht.cpp
 )
 
 include_directories(
