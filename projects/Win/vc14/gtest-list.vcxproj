@@ -33,6 +33,8 @@
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_list_nogc.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_list_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_michael_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\list\test_list.h" />
+    <ClInclude Include="..\..\..\test\unit\list\test_list_hp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_dhp.cpp" />
@@ -79,6 +81,10 @@
     <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_nogc.cpp" />
+    <ClCompile Include="..\..\..\test\unit\list\lazy_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\list\lazy_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\list\michael_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\list\michael_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
