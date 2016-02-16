@@ -52,9 +52,13 @@ namespace cds { namespace container {
             {
                 value_type   m_Data;
 
+                node_type( key_type const& key )
+                    : m_Data( key, mapped_type() )
+                {}
+
                 template <typename Q>
                 node_type( Q const& key )
-                    : m_Data( key, mapped_type() )
+                    : m_Data( key_type( key ), mapped_type() )
                 {}
 
                 template <typename Q, typename R>
@@ -62,9 +66,23 @@ namespace cds { namespace container {
                     : m_Data( pair )
                 {}
 
+                node_type( key_type const& key, mapped_type const& value )
+                    : m_Data( key, value )
+                {}
+
+                template <typename R>
+                node_type( key_type const& key, R const& value )
+                    : m_Data( key, mapped_type( value ) )
+                {}
+
+                template <typename Q>
+                node_type( Q const& key, mapped_type const& value )
+                    : m_Data( key_type( key ), value )
+                {}
+
                 template <typename Q, typename R>
                 node_type( Q const& key, R const& value )
-                    : m_Data( key, value )
+                    : m_Data( key_type( key ), mapped_type( value ))
                 {}
 
                 template <typename Ky, typename... Args>
@@ -109,7 +127,7 @@ namespace cds { namespace container {
 
             struct intrusive_traits: public original_type_traits
             {
-                typedef intrusive::lazy_list::base_hook< opt::gc<gc> >  hook;
+                typedef intrusive::lazy_list::base_hook< opt::gc<gc>, opt::lock_type< typename original_type_traits::lock_type >> hook;
                 typedef node_deallocator disposer;
 
                 typedef typename std::conditional< std::is_same< typename original_type_traits::equal_to, cds::opt::none >::value,
