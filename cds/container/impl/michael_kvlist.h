@@ -36,7 +36,7 @@
 
 namespace cds { namespace container {
 
-    /// Michael's ordered list fo key-value pair
+    /// Michael's ordered list for key-value pair
     /** @ingroup cds_nonintrusive_list
         \anchor cds_nonintrusive_MichaelKVList_gc
 
