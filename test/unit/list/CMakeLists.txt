@@ -20,8 +20,10 @@ set(CDSGTEST_LIST_SOURCES
     intrusive_michael_rcu_sht.cpp
     kv_lazy_hp.cpp
     kv_lazy_dhp.cpp
+    kv_lazy_nogc.cpp
     kv_michael_hp.cpp
     kv_michael_dhp.cpp
+    kv_michael_nogc.cpp
     lazy_hp.cpp
     lazy_dhp.cpp
     lazy_nogc.cpp
