@@ -259,6 +259,8 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's list has some features:
@@ -280,8 +282,6 @@ namespace cds { namespace container {
         */
         typedef iterator_type<true>     const_iterator;
 
-    ///@name Forward iterators (only for debugging purpose)
-    //@{
         /// Returns a forward iterator addressing the first element in a list
         /**
             For empty list \code begin() == end() \endcode
