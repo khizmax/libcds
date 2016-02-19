@@ -12,6 +12,7 @@
 #include <cds/algo/elimination_opt.h>
 #include <deque>
 #include <cds/gc/hp.h>
+#include <atomic>
 
 namespace cds { namespace container {
 
@@ -61,7 +62,7 @@ namespace cds { namespace container {
  		struct buffer_node;
  		struct node {
  			unsigned long timestamp;
- 			T item;
+ 			T* item;
  		};
 
 	public:
@@ -69,9 +70,9 @@ namespace cds { namespace container {
 	 	typedef Traits traits;
 	 	typedef typename cds::details::Allocator<T, typename traits::allocator> allocator;
 	 	typedef typename cds::details::Allocator<node, typename traits::node_allocator> node_allocator;
-	 	typedef typename cds::details::Allocator<node, typename traits::buffernode_allocator> buffernode_allocator;
 	 	typedef typename traits::item_counter item_counter;
-	 	typedef cds::gc::hp::guard* guard;
+	 	typedef std::atomic<buffer_node*> bnode_ptr;
+	 	typedef cds::gc::HP::Guard guard;
 	private:
  		inline unsigned long getTimestamp ()
  		{
@@ -89,60 +90,153 @@ namespace cds { namespace container {
  		}
 
  		class ThreadBuffer {
-
-
+ 		public:
  			struct buffer_node {
- 				buffer_node* left;
- 				buffer_node* right;
- 				node item;
+
+ 				buffer_node() {
+ 					taken.store(false);
+ 					left.store(this);
+ 					right.store(this);
+
+ 				}
+
+ 				std::atomic<buffer_node*> left;
+ 				std::atomic<buffer_node*> right;
+ 				node* item;
  				int index;
- 				bool taken;
+ 				std::atomic<bool> taken;
 
  			};
-
-
-
- 			guard leftend;
- 			guard rightend;
-
+ 		private:
+ 			std::atomic<buffer_node*> leftMost;
+ 			std::atomic<buffer_node*> rightMost;
+ 			long lastIndex;
  		public:
- 			ThreadBuffer() {
+
+ 			typedef typename cds::details::Allocator<ThreadBuffer::buffer_node, typename traits::buffernode_allocator> buffernode_allocator;
+ 			ThreadBuffer() : lastIndex(0) {
+ 				buffer_node* newNode = buffernode_allocator().New();
+ 				newNode->index = 0;
+ 				newNode->item = nullptr;
+ 				newNode->taken.store(true);
+ 				leftMost.store(newNode);
+ 				rightMost.store(newNode);
+ 			}
+
+ 			void insertRight(node* timestamped) {
+ 				buffer_node* newNode = buffernode_allocator().New();
+ 				newNode->index = lastIndex;
+				newNode->item = timestamped;
+				lastIndex += 1;
+
+				buffer_node* place = rightMost.load();
+				while(place->left.load() != place && place->taken.load())
+					place = place->left.load();
+				if(place->left.load() == place)
+					leftMost.store(place);
+				newNode->left.store(place);
+				place->right.store(newNode);
+				rightMost.store(newNode);
+ 			}
+
+ 			void insertLeft(node* timestamped) {
+ 				buffer_node* newNode = buffernode_allocator().New();
+ 				newNode->index = -lastIndex;
+				newNode->item = timestamped;
+				lastIndex += 1;
+
+				buffer_node* place = leftMost.load();
+				while(place->right.load() != place && place->taken.load())
+					place = place->right.load();
+				if(place->right.load() == place)
+					rightMost.store(place);
+				newNode->right.store(place);
+				place->left.store(newNode);
+				leftMost.store(newNode);
 
  			}
 
- 			void insertRight(node timestamped) {
+ 			guard* getRight() {
+ 				buffer_node* oldRight = rightMost.load(),
+ 							 oldLeft = leftMost.load();
+ 				buffer_node* res = oldRight;
+ 				guard* guard = new cds::gc::HP::Guard();
 
- 			}
+ 				while(true) {
+ 					if(res->index < oldLeft->index) return nullptr;
+ 					if(!res->taken.load()) {
+ 						guard->protect(res);
+ 						return guard;
+ 					}
+ 					if(res->left.load() == res) return nullptr;
+ 					res = res->left.load();
 
- 			void insertLeft(node timestamped) {
+ 				}
 
- 			}
-
- 			guard getRight() {
  				return nullptr;
  			}
 
- 			guard getLeft() {
+ 			guard* getLeft() {
+ 				buffer_node  *oldRight = rightMost.load(),
+							 *oldLeft = leftMost.load();
+				buffer_node* res = oldLeft;
+				guard* guard = new cds::gc::HP::Guard();
+
+				while(true) {
+					if(res->index > oldRight->index) return nullptr;
+					if(!res->taken.load()) {
+						guard->protect(std::atomic<buffer_node*>(res));
+						return guard;
+					}
+					if(res->right.load() == res) return nullptr;
+					res = res->right.load();
+
+				}
+
 				return nullptr;
 			}
 
- 			bool tryRemoveRight(guard oldRight, buffer_node* node) {
- 				return true;
+ 			bool tryRemoveRight(guard* guard) {
+ 				buffer_node* node = guard->get<buffer_node*>();
+ 				if(node->taken.compare_exchange_strong(false, true)) {
+ 					return true;
+ 				}
+ 				return false;
  			}
 
- 			bool tryRemoveLeft(guard oldRight, buffer_node* node) {
- 				return true;
+ 			bool tryRemoveLeft(guard* guard) {
+ 				buffer_node* node = guard->get<buffer_node*>();
+				if(node->taken.compare_exchange_strong(false, true)) {
+					return true;
+				}
+				return false;
  			}
 
  		};
 
+ 		ThreadBuffer t;
+
 		public:
 
+		Timestamped_deque() {
+			std::cout << "Timestamped_deque";
+		}
 
 
-			Timestamped_deque() {
-				std::cout << "Timestamped_deque";
-			}
+		bool push_back(value_type const& value) {
+			value_type* pvalue = allocator().New(value);
+			node* timestamped = node_allocator().New();
+			timestamped->item = pvalue;
+			t.insertLeft(timestamped);
+			unsigned long t = getTimestamp();
+			timestamped->timestamp = t;
+		}
+		typedef typename ThreadBuffer::buffer_node   bnode;
+		value_type* pop_back() {
+			guard* res = t.getLeft();
+			bnode* temp = res->get<bnode>();
+			return temp->item->item;
+		}
 	};
 }} // namespace cds::container
 
