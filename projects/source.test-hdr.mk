@@ -64,42 +64,6 @@ CDS_TESTHDR_MAP := \
     tests/test-hdr/map/hdr_striped_hashmap_slist.cpp \
     tests/test-hdr/map/hdr_striped_map_reg.cpp
 
-CDS_TESTHDR_LIST := \
-    tests/test-hdr/list/hdr_lazy_dhp.cpp \
-    tests/test-hdr/list/hdr_lazy_hp.cpp \
-    tests/test-hdr/list/hdr_lazy_nogc.cpp \
-    tests/test-hdr/list/hdr_lazy_nogc_unord.cpp \
-    tests/test-hdr/list/hdr_lazy_rcu_gpi.cpp \
-    tests/test-hdr/list/hdr_lazy_rcu_gpb.cpp \
-    tests/test-hdr/list/hdr_lazy_rcu_gpt.cpp \
-    tests/test-hdr/list/hdr_lazy_rcu_shb.cpp \
-    tests/test-hdr/list/hdr_lazy_rcu_sht.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_dhp.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_hp.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_nogc.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_nogc_unord.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_rcu_gpb.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_rcu_gpi.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_rcu_gpt.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_rcu_shb.cpp \
-    tests/test-hdr/list/hdr_lazy_kv_rcu_sht.cpp \
-    tests/test-hdr/list/hdr_michael_dhp.cpp \
-    tests/test-hdr/list/hdr_michael_hp.cpp \
-    tests/test-hdr/list/hdr_michael_nogc.cpp \
-    tests/test-hdr/list/hdr_michael_rcu_gpi.cpp \
-    tests/test-hdr/list/hdr_michael_rcu_gpb.cpp \
-    tests/test-hdr/list/hdr_michael_rcu_gpt.cpp \
-    tests/test-hdr/list/hdr_michael_rcu_shb.cpp \
-    tests/test-hdr/list/hdr_michael_rcu_sht.cpp \
-    tests/test-hdr/list/hdr_michael_kv_dhp.cpp \
-    tests/test-hdr/list/hdr_michael_kv_hp.cpp \
-    tests/test-hdr/list/hdr_michael_kv_nogc.cpp \
-    tests/test-hdr/list/hdr_michael_kv_rcu_gpi.cpp \
-    tests/test-hdr/list/hdr_michael_kv_rcu_gpb.cpp \
-    tests/test-hdr/list/hdr_michael_kv_rcu_gpt.cpp \
-    tests/test-hdr/list/hdr_michael_kv_rcu_shb.cpp \
-    tests/test-hdr/list/hdr_michael_kv_rcu_sht.cpp
-
 CDS_TESTHDR_SET := \
     tests/test-hdr/set/hdr_intrusive_feldman_hashset_hp.cpp \
     tests/test-hdr/set/hdr_intrusive_feldman_hashset_dhp.cpp \
@@ -252,7 +216,6 @@ CDS_TESTHDR_MISC := \
 
 CDS_TESTHDR_SOURCES := \
     $(CDS_TESTHDR_MAP) \
-    $(CDS_TESTHDR_LIST) \
     $(CDS_TESTHDR_SET) \
     $(CDS_TESTHDR_TREE) \
     $(CDS_TESTHDR_MISC)

@@ -66,42 +66,6 @@ set(CDS_TESTHDR_MAP
     map/hdr_striped_hashmap_slist.cpp
     map/hdr_striped_map_reg.cpp)
 
-set(CDS_TESTHDR_LIST
-    list/hdr_lazy_dhp.cpp
-    list/hdr_lazy_hp.cpp
-    list/hdr_lazy_nogc.cpp
-    list/hdr_lazy_nogc_unord.cpp
-    list/hdr_lazy_rcu_gpi.cpp
-    list/hdr_lazy_rcu_gpb.cpp
-    list/hdr_lazy_rcu_gpt.cpp
-    list/hdr_lazy_rcu_shb.cpp
-    list/hdr_lazy_rcu_sht.cpp
-    list/hdr_lazy_kv_dhp.cpp
-    list/hdr_lazy_kv_hp.cpp
-    list/hdr_lazy_kv_nogc.cpp
-    list/hdr_lazy_kv_nogc_unord.cpp
-    list/hdr_lazy_kv_rcu_gpb.cpp
-    list/hdr_lazy_kv_rcu_gpi.cpp
-    list/hdr_lazy_kv_rcu_gpt.cpp
-    list/hdr_lazy_kv_rcu_shb.cpp
-    list/hdr_lazy_kv_rcu_sht.cpp
-    list/hdr_michael_dhp.cpp
-    list/hdr_michael_hp.cpp
-    list/hdr_michael_nogc.cpp
-    list/hdr_michael_rcu_gpi.cpp
-    list/hdr_michael_rcu_gpb.cpp
-    list/hdr_michael_rcu_gpt.cpp
-    list/hdr_michael_rcu_shb.cpp
-    list/hdr_michael_rcu_sht.cpp
-    list/hdr_michael_kv_dhp.cpp
-    list/hdr_michael_kv_hp.cpp
-    list/hdr_michael_kv_nogc.cpp
-    list/hdr_michael_kv_rcu_gpi.cpp
-    list/hdr_michael_kv_rcu_gpb.cpp
-    list/hdr_michael_kv_rcu_gpt.cpp
-    list/hdr_michael_kv_rcu_shb.cpp
-    list/hdr_michael_kv_rcu_sht.cpp)
-
 set(CDS_TESTHDR_SET
     set/hdr_intrusive_feldman_hashset_hp.cpp
     set/hdr_intrusive_feldman_hashset_dhp.cpp
@@ -300,25 +264,6 @@ set(CDS_TESTHDR_OFFSETOF_SET
     set/hdr_intrusive_splitlist_set_rcu_shb_lazy.cpp
     set/hdr_intrusive_splitlist_set_rcu_sht_lazy.cpp)
 
-set(CDS_TESTHDR_OFFSETOF_LIST
-    list/hdr_intrusive_lazy_dhp.cpp
-    list/hdr_intrusive_lazy_hp.cpp
-    list/hdr_intrusive_lazy_nogc.cpp
-    list/hdr_intrusive_lazy_nogc_unord.cpp
-    list/hdr_intrusive_lazy_rcu_gpb.cpp
-    list/hdr_intrusive_lazy_rcu_gpi.cpp
-    list/hdr_intrusive_lazy_rcu_gpt.cpp
-    list/hdr_intrusive_lazy_rcu_shb.cpp
-    list/hdr_intrusive_lazy_rcu_sht.cpp
-    list/hdr_intrusive_michael_dhp.cpp
-    list/hdr_intrusive_michael_hp.cpp
-    list/hdr_intrusive_michael_nogc.cpp
-    list/hdr_intrusive_michael_list_rcu_gpb.cpp
-    list/hdr_intrusive_michael_list_rcu_gpi.cpp
-    list/hdr_intrusive_michael_list_rcu_gpt.cpp
-    list/hdr_intrusive_michael_list_rcu_shb.cpp
-    list/hdr_intrusive_michael_list_rcu_sht.cpp)
-
 set(CDS_TESTHDR_OFFSETOF_TREE
     tree/hdr_intrusive_ellen_bintree_hp_member.cpp
     tree/hdr_intrusive_ellen_bintree_dhp_member.cpp
@@ -331,7 +276,6 @@ set(CDS_TESTHDR_OFFSETOF_TREE
 set(CDS_TESTHDR_OFFSETOF_SOURCES
 	${CDS_TESTHDR_OFFSETOF_MAP}
 	${CDS_TESTHDR_OFFSETOF_SET}
-	${CDS_TESTHDR_OFFSETOF_LIST}
 	${CDS_TESTHDR_OFFSETOF_TREE})
 
 add_library(test-hdr-offsetof OBJECT ${CDS_TESTHDR_OFFSETOF_SOURCES})
@@ -342,7 +286,6 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 
 set(CDS_TESTHDR_SOURCES
     ${CDS_TESTHDR_MAP}
-    ${CDS_TESTHDR_LIST}
     ${CDS_TESTHDR_SET}
     ${CDS_TESTHDR_TREE}
     ${CDS_TESTHDR_MISC})
