@@ -8,15 +8,13 @@
 #ifndef CDSLIB_CONTAINER_TIMESTAMPED_DEQUE_H_
 #define CDSLIB_CONTAINER_TIMESTAMPED_DEQUE_H_
 
-#include <cds/algo/flat_combining.h>
-#include <cds/algo/elimination_opt.h>
-#include <deque>
 #include <cds/gc/hp.h>
 #include <atomic>
+#include <boost/thread.hpp>
 
 namespace cds { namespace container {
 
-/// Cache aware queue
+///
  	/** @ingroup cds_nonintrusive_helper
  	*/
  	namespace timestamped_deque {
@@ -33,22 +31,6 @@ namespace cds { namespace container {
  			using item_counter = atomicity::empty_item_counter;
  		};
 
-         /// Metafunction converting option list to \p timestamped_deque::traits
-         /**
-             Supported \p Options are:
-             - \p opt::allocator - allocator (like \p std::allocator) used for allocating queue items. Default is \ref CDS_DEFAULT_ALLOCATOR
-             - \p opt::node_allocator - allocator (like \p std::allocator) used for allocating queue nodes. Default is \ref CDS_DEFAULT_ALLOCATOR
-             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
-                 To enable item counting use \p cds::atomicity::item_counter
-             Example: declare \p %CAQueue with item counting
-             \code
-             typedef cds::container::CAQueue< Foo,
-                 typename cds::container::timestamped_deque::make_traits<
-                     cds::opt::item_counter< cds::atomicity::item_counter > >
-                 >::type
-             > TimestampedDeque;
-             \endcode
-         */
          template <typename... Options> struct make_traits
  		{
              typedef typename cds::opt::make_options<
@@ -74,6 +56,7 @@ namespace cds { namespace container {
 	 	typedef std::atomic<buffer_node*> bnode_ptr;
 	 	typedef cds::gc::HP::Guard guard;
 	private:
+
  		inline unsigned long getTimestamp ()
  		{
  			uint32_t time_edx1, time_eax1;
@@ -106,6 +89,14 @@ namespace cds { namespace container {
  				int index;
  				std::atomic<bool> taken;
 
+ 				bool wasAddedRight() {
+ 					return index > 0;
+ 				}
+
+ 				bool wasAddedLeft() {
+ 					return index < 0;
+ 				}
+
  			};
  		private:
  			std::atomic<buffer_node*> leftMost;
@@ -114,7 +105,7 @@ namespace cds { namespace container {
  		public:
 
  			typedef typename cds::details::Allocator<ThreadBuffer::buffer_node, typename traits::buffernode_allocator> buffernode_allocator;
- 			ThreadBuffer() : lastIndex(0) {
+ 			ThreadBuffer() : lastIndex(1) {
  				buffer_node* newNode = buffernode_allocator().New();
  				newNode->index = 0;
  				newNode->item = nullptr;
@@ -158,14 +149,15 @@ namespace cds { namespace container {
 
  			guard* getRight() {
  				buffer_node* oldRight = rightMost.load(),
- 							 oldLeft = leftMost.load();
+ 							*oldLeft = leftMost.load();
  				buffer_node* res = oldRight;
- 				guard* guard = new cds::gc::HP::Guard();
+
 
  				while(true) {
  					if(res->index < oldLeft->index) return nullptr;
  					if(!res->taken.load()) {
- 						guard->protect(res);
+ 						guard* guard = new cds::gc::HP::Guard();
+ 						guard->protect(std::atomic<buffer_node*>(res));
  						return guard;
  					}
  					if(res->left.load() == res) return nullptr;
@@ -180,11 +172,12 @@ namespace cds { namespace container {
  				buffer_node  *oldRight = rightMost.load(),
 							 *oldLeft = leftMost.load();
 				buffer_node* res = oldLeft;
-				guard* guard = new cds::gc::HP::Guard();
+
 
 				while(true) {
 					if(res->index > oldRight->index) return nullptr;
 					if(!res->taken.load()) {
+						guard* guard = new cds::gc::HP::Guard();
 						guard->protect(std::atomic<buffer_node*>(res));
 						return guard;
 					}
@@ -197,44 +190,213 @@ namespace cds { namespace container {
 			}
 
  			bool tryRemoveRight(guard* guard) {
- 				buffer_node* node = guard->get<buffer_node*>();
- 				if(node->taken.compare_exchange_strong(false, true)) {
+ 				buffer_node* node = guard->get<buffer_node>();
+ 				bool t = false;
+ 				if(node->taken.compare_exchange_strong(t, true)) {
  					return true;
  				}
+ 				std::cout << "Failed!\n";
  				return false;
  			}
 
  			bool tryRemoveLeft(guard* guard) {
- 				buffer_node* node = guard->get<buffer_node*>();
-				if(node->taken.compare_exchange_strong(false, true)) {
+ 				buffer_node* node = guard->get<buffer_node>();
+ 				bool t = false;
+				if(node->taken.compare_exchange_strong(t, true)) {
 					return true;
 				}
+				std::cout << "Failed!\n";
 				return false;
  			}
 
  		};
-
+ 		typedef typename ThreadBuffer::buffer_node   bnode;
  		ThreadBuffer t;
+ 		ThreadBuffer* localBuffers;
+ 		std::atomic<int> lastFree;
+ 		int maxThread;
+
+
+ 		boost::thread_specific_ptr<int> threadIndex;
+
+ 		int acquireIndex() {
+ 			int* temp = threadIndex.get();
+ 			if(temp == nullptr) {
+ 				int index = lastFree.load();
+ 				if(index >= maxThread)
+ 					return -1;
+ 				while(!lastFree.compare_exchange_strong(index, index + 1)) {
+ 					index = lastFree.load();
+ 				}
+ 				threadIndex.reset(new int(index));
+ 				return index;
+ 			}
+ 			return *temp;
+ 		}
+
+ 		guard* tryRemoveRight() throw(int) {
+ 			guard* rightest = nullptr;
+ 			unsigned long startTime = getTimestamp();
+ 			int bufferIndex;
+ 			for(int i=0; i < maxThread; i++) {
+ 				guard* finded = localBuffers[i].getRight();
+ 				if(finded == nullptr)
+ 					continue;
+ 				if(rightest == nullptr) {
+ 					rightest = finded;
+ 					continue;
+ 				}
+ 				if(isMoreR(finded->get<bnode>(), rightest->get<bnode>())) {
+ 					rightest->clear();
+ 					delete rightest;
+ 					rightest = finded;
+ 					bufferIndex = i;
+ 				} else {
+ 					finded->clear();
+ 					delete finded;
+ 				}
+ 			}
+ 			if(rightest == nullptr)
+ 				return rightest;
+ 			bnode* rightestNode = rightest->get<bnode>();
+ 			if(rightestNode->wasAddedRight()) {
+ 				if(localBuffers[bufferIndex].tryRemoveRight(rightest))
+ 					return rightest;
+ 			} else {
+ 				if(rightestNode->item->timestamp <= startTime)
+ 					if(localBuffers[bufferIndex].tryRemoveRight(rightest))
+ 						return rightest;
+ 			}
+ 			if(rightest != nullptr) {
+				rightest->clear();
+				delete rightest;
+ 			}
+ 			throw -1;
+ 		}
+
+ 		guard* tryRemoveLeft() throw(int) {
+ 			guard* leftest = nullptr;
+			unsigned long startTime = getTimestamp();
+			int bufferIndex;
+			for(int i=0; i < maxThread; i++) {
+				guard* finded = localBuffers[i].getLeft();
+				if(finded == nullptr)
+					continue;
+				if(leftest == nullptr) {
+					leftest = finded;
+					continue;
+				}
+				if(isMoreL(finded->get<bnode>(), leftest->get<bnode>())) {
+					leftest->clear();
+					delete leftest;
+					leftest = finded;
+					bufferIndex = i;
+				} else {
+ 					finded->clear();
+ 					delete finded;
+ 				}
+			}
+			if(leftest == nullptr)
+				return leftest;
+			bnode* leftestNode = leftest->get<bnode>();
+			if(leftestNode->wasAddedLeft()) {
+				if(localBuffers[bufferIndex].tryRemoveLeft(leftest))
+					return leftest;
+			} else {
+				if(leftestNode->item->timestamp <= startTime)
+					if(localBuffers[bufferIndex].tryRemoveLeft(leftest))
+						return leftest;
+			}
+			if(leftest != nullptr) {
+				leftest->clear();
+				delete leftest;
+			}
+			throw -1;
+ 		}
+
+ 		bool isMoreR(bnode* n1, bnode* n2) {
+ 			node *t1 = n1->item, *t2 = n2->item;
+ 			if(n2->wasAddedLeft()) {
+ 				if(n1->wasAddedRight())
+ 					return true;
+ 				return (t1->timestamp < t2->timestamp);
+ 			} else {
+ 				if(n1->wasAddedLeft())
+ 					return false;
+ 				return (t1->timestamp > t2->timestamp);
+ 			}
+ 		}
+
+ 		bool isMoreL(bnode* n1, bnode* n2) {
+ 			node *t1 = n1->item, *t2 = n2->item;
+			if(n2->wasAddedLeft()) {
+				if(n1->wasAddedRight())
+					return true;
+				return (t1->timestamp > t2->timestamp);
+			} else {
+				if(n1->wasAddedLeft())
+					return false;
+				return (t1->timestamp < t2->timestamp);
+			}
+ 		}
+
 
 		public:
 
 		Timestamped_deque() {
-			std::cout << "Timestamped_deque";
+			maxThread = cds::gc::HP::max_thread_count();
+			localBuffers = new ThreadBuffer[maxThread];
+			lastFree.store(0);
 		}
 
 
 		bool push_back(value_type const& value) {
+			int index = acquireIndex();
 			value_type* pvalue = allocator().New(value);
 			node* timestamped = node_allocator().New();
 			timestamped->item = pvalue;
-			t.insertLeft(timestamped);
+			localBuffers[index].insertLeft(timestamped);
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
 		}
-		typedef typename ThreadBuffer::buffer_node   bnode;
+
+		bool push_front(value_type const& value) {
+			int index = acquireIndex();
+			value_type* pvalue = allocator().New(value);
+			node* timestamped = node_allocator().New();
+			timestamped->item = pvalue;
+			localBuffers[index].insertRight(timestamped);
+			unsigned long t = getTimestamp();
+			timestamped->timestamp = t;
+		}
+
 		value_type* pop_back() {
-			guard* res = t.getLeft();
+			guard* res;
+			bool success = false;
+			do {
+				try {
+					res = tryRemoveLeft();
+					success = true;
+				} catch(int err) {}
+			} while(!success);
 			bnode* temp = res->get<bnode>();
+			res->clear();
+			delete res;
+			return temp->item->item;
+		}
+
+		value_type* pop_front() {
+			guard* res;
+			bool success = false;
+			do {
+				try {
+					res = tryRemoveRight();
+					success = true;
+				} catch(int err) {}
+			} while(!success);
+			bnode* temp = res->get<bnode>();
+			res->clear();
+			delete res;
 			return temp->item->item;
 		}
 	};
