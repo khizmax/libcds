@@ -77,7 +77,6 @@ namespace cds { namespace container {
 	 	typedef cds::gc::HP::Guard guard;
 	private:
 
- 		ThreadBuffer t;
  		ThreadBuffer* localBuffers;
  		std::atomic<int> lastFree;
  		int maxThread;
@@ -168,16 +167,16 @@ namespace cds { namespace container {
  			if(empty && wasEmpty[threadIND])
  				return nullptr;
 
- 			bnode* rightestNode = rightest->get<bnode>();
- 			if(rightestNode->wasAddedRight()) {
- 				if(localBuffers[bufferIndex].tryRemoveRight(rightest))
- 					return rightest;
- 			} else {
- 				if(rightestNode->item->timestamp <= startTime)
- 					if(localBuffers[bufferIndex].tryRemoveRight(rightest))
- 						return rightest;
- 			}
- 			if(rightest != nullptr) {
+			if(rightest != nullptr) {
+				bnode* rightestNode = rightest->get<bnode>();
+				if(rightestNode->wasAddedRight()) {
+					if(localBuffers[bufferIndex].tryRemoveRight(rightest))
+						return rightest;
+				} else {
+					if(rightestNode->item->timestamp <= startTime)
+						if(localBuffers[bufferIndex].tryRemoveRight(rightest))
+							return rightest;
+				}
 				delete rightest;
  			}
  			throw -1;
@@ -217,17 +216,17 @@ namespace cds { namespace container {
  			if(empty && wasEmpty[threadIND])
  				return nullptr;
 
-
-			bnode* leftestNode = leftest->get<bnode>();
-			if(leftestNode->wasAddedLeft()) {
-				if(localBuffers[bufferIndex].tryRemoveLeft(leftest))
-					return leftest;
-			} else {
-				if(leftestNode->item->timestamp <= startTime)
+ 			if(leftest != nullptr) {
+				bnode* leftestNode = leftest->get<bnode>();
+				if(leftestNode->wasAddedLeft()) {
 					if(localBuffers[bufferIndex].tryRemoveLeft(leftest))
 						return leftest;
-			}
-			if(leftest != nullptr) {
+				} else {
+					if(leftestNode->item->timestamp <= startTime)
+						if(localBuffers[bufferIndex].tryRemoveLeft(leftest))
+							return leftest;
+				}
+
 				delete leftest;
 			}
 			throw -1;
@@ -291,6 +290,18 @@ namespace cds { namespace container {
 			lastFree.store(0);
 		}
 
+		~Timestamped_deque() {
+			delete [] localBuffers;
+			for(int i=0; i<maxThread; i++) {
+				delete [] lastLefts[i];
+				delete [] lastRights[i];
+			}
+
+			delete [] wasEmpty;
+			delete [] lastLefts;
+			delete [] lastRights;
+		}
+
 
 		bool push_back(value_type const& value) {
 			int index = acquireIndex();
@@ -302,6 +313,7 @@ namespace cds { namespace container {
 			localBuffers[index].insertLeft(timestamped);
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
+			return true;
 		}
 
 		bool push_front(value_type const& value) {
@@ -314,6 +326,7 @@ namespace cds { namespace container {
 			localBuffers[index].insertRight(timestamped);
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
+			return true;
 		}
 
 		bool push_back(
@@ -328,6 +341,7 @@ namespace cds { namespace container {
 			localBuffers[index].insertLeft(timestamped);
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
+			return true;
 		}
 
 		bool push_front(
@@ -342,9 +356,10 @@ namespace cds { namespace container {
 			localBuffers[index].insertRight(timestamped);
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
+			return true;
 		}
 
-		value_type* pop_back() {
+		bool pop_back(  value_type& val ) {
 			guard* res;
 			bool success = false;
 			do {
@@ -353,13 +368,16 @@ namespace cds { namespace container {
 					success = true;
 				} catch(int err) {}
 			} while(!success);
-			bnode* temp = res->get<bnode>();
-			res->clear();
-			delete res;
-			return temp->item->item;
+			if(res != nullptr) {
+				bnode* temp = res->get<bnode>();
+				delete res;
+				val = *temp->item->item;
+				return true;
+			} else
+				return false;
 		}
 
-		value_type* pop_front() {
+		bool pop_front(  value_type& val ) {
 			guard* res;
 			bool success = false;
 			do {
@@ -368,10 +386,13 @@ namespace cds { namespace container {
 					success = true;
 				} catch(int err) {}
 			} while(!success);
-			bnode* temp = res->get<bnode>();
-			res->clear();
-			delete res;
-			return temp->item->item;
+			if(res != nullptr) {
+				bnode* temp = res->get<bnode>();
+				delete res;
+				val = *temp->item->item;
+				return true;
+			} else
+				return false;
 		}
 
 		bool empty() {
@@ -396,6 +417,7 @@ namespace cds { namespace container {
 		 				node* item;
 		 				int index;
 		 				std::atomic<bool> taken;
+		 				bool isDeletedFromLeft;
 
 		 				bool wasAddedRight() {
 		 					return index > 0;
@@ -409,18 +431,37 @@ namespace cds { namespace container {
 		 		private:
 		 			std::atomic<buffer_node*> leftMost;
 		 			std::atomic<buffer_node*> rightMost;
+		 			std::vector<buffer_node*> garbage;
 		 			long lastIndex;
+		 			int guestCounter;
 		 		public:
 
 		 			typedef typename cds::details::Allocator<ThreadBuffer::buffer_node, typename traits::buffernode_allocator> buffernode_allocator;
-		 			ThreadBuffer() : lastIndex(1) {
+		 			ThreadBuffer() : lastIndex(1), guestCounter(0) {
 		 				buffer_node* newNode = buffernode_allocator().New();
 		 				newNode->index = 0;
 		 				newNode->item = nullptr;
 		 				newNode->taken.store(true);
 		 				leftMost.store(newNode);
 		 				rightMost.store(newNode);
+		 				guestCounter = 0;
+		 				std::cout << "ThreadBuffer\n";
 		 			}
+
+		 			~ThreadBuffer() {
+		 				int counter = 0;
+						std::cout << "~ThreadBuffer\n";
+						buffer_node* curNode = rightMost.load();
+						while(curNode != curNode->left.load()) {
+							std::cout << counter++ << "\n";
+							buffer_node* temp = curNode;
+							curNode = curNode->left.load();
+							node_allocator().Delete(temp->item);
+							buffernode_allocator().Delete(temp);
+						}
+						node_allocator().Delete(curNode->item);
+						buffernode_allocator().Delete(curNode);
+					}
 
 		 			buffer_node* getLeftMost() {
 		 				return leftMost.load();
@@ -439,11 +480,19 @@ namespace cds { namespace container {
 						buffer_node* place = rightMost.load();
 						while(place->left.load() != place && place->taken.load())
 							place = place->left.load();
+						buffer_node* tail = place->right.load();
 						if(place->left.load() == place)
 							leftMost.store(place);
 						newNode->left.store(place);
 						place->right.store(newNode);
 						rightMost.store(newNode);
+
+						if(tail != place) {
+							place->isDeletedFromLeft = false;
+							garbage.push_back(tail);
+						}
+
+
 		 			}
 
 		 			void insertLeft(node* timestamped) {
@@ -455,49 +504,61 @@ namespace cds { namespace container {
 						buffer_node* place = leftMost.load();
 						while(place->right.load() != place && place->taken.load())
 							place = place->right.load();
+						buffer_node* tail = place->left.load();
 						if(place->right.load() == place)
 							rightMost.store(place);
 						newNode->right.store(place);
 						place->left.store(newNode);
 						leftMost.store(newNode);
+
+						if(tail != place) {
+							place->isDeletedFromLeft = true;
+							garbage.push_back(tail);
+						}
+
 		 			}
 
 		 			guard* getRight() {
+		 				guestCounter++;
 		 				buffer_node* oldRight = rightMost.load(),
 		 							*oldLeft = leftMost.load();
 		 				buffer_node* res = oldRight;
-
+		 				guard* toReturn = nullptr;
 
 		 				while(true) {
-		 					if(res->index < oldLeft->index) return nullptr;
+		 					if(res->index < oldLeft->index ) break;;
 		 					if(!res->taken.load()) {
-		 						guard* guard = new cds::gc::HP::Guard();
-		 						guard->protect(std::atomic<buffer_node*>(res));
-		 						return guard;
+								toReturn = new cds::gc::HP::Guard();
+								toReturn->protect(std::atomic<buffer_node*>(res));
+		 						break;
 		 					}
-		 					if(res->left.load() == res) return nullptr;
+		 					if(res->left.load() == res) break;
 		 					res = res->left.load();
-
 		 				}
+		 				guestCounter--;
+						return toReturn;
 		 			}
 
 		 			guard* getLeft() {
+		 				guestCounter++;
 		 				buffer_node  *oldRight = rightMost.load(),
 									 *oldLeft = leftMost.load();
 						buffer_node* res = oldLeft;
+						guard* toReturn = nullptr;
 
 
 						while(true) {
-							if(res->index > oldRight->index) return nullptr;
+							if(res->index > oldRight->index) break;
 							if(!res->taken.load()) {
-								guard* guard = new cds::gc::HP::Guard();
-								guard->protect(std::atomic<buffer_node*>(res));
-								return guard;
+								toReturn = new cds::gc::HP::Guard();
+								toReturn->protect(std::atomic<buffer_node*>(res));
+								break;
 							}
-							if(res->right.load() == res) return nullptr;
+							if(res->right.load() == res) break;
 							res = res->right.load();
-
 						}
+						guestCounter--;
+						return toReturn;
 					}
 
 		 			bool tryRemoveRight(guard* guard) {
@@ -519,6 +580,8 @@ namespace cds { namespace container {
 						std::cout << "Failed!\n";
 						return false;
 		 			}
+
+
 
 		 		};
 	};
