@@ -77,7 +77,7 @@ namespace cds
 						node_type (value_type data_)		:	data(std::make_shared<value_type>(data_)),
 																internal_count(0)
 						{}
-					};
+						};
 
 					atomics::atomic< counted_node_ptr > head;
 					item_counter itemCounter;
@@ -140,7 +140,7 @@ namespace cds
 				WilliamsStack& operator=( const WilliamsStack& other ) = delete;
 
 				// push
-				bool enqueue( value_type const& val )
+				bool push( value_type const& val )
 				{
 					counted_node_ptr new_node;
 					new_node.ptr = alloc_node(val);
@@ -156,56 +156,37 @@ namespace cds
 					return true;
 				}
 
-				template <typename Func>
-				bool enqueue_with( Func f )
-				{
-					value_type val;
-					f( val );
-					return enqueue( val );
-				}
-
 				template <typename... Args>
-				bool emplace( Args&&... args )
+				bool emplace(Args&&... args)
 				{
-					value_type val( std::forward<Args>( args )... );
-					return enqueue( val );
+					value_type val(std::forward<Args>(args)...);
+					return push(val);
 				}
-
-				bool push( value_type const& val )
+				
+				bool pop(value_type& dest)
 				{
-					return enqueue( val );
+					return pop_with([&dest](value_type& src) { dest = src;  });
 				}
-
-				template <typename Func>
-				bool push_with( Func f )
-				{
-					return enqueue_with( f );
-				}
-
-				bool dequeue( value_type& dest )
-				{
-					return dequeue_with( [&dest]( value_type& src ) { dest = src;  } );
-				}
-
+				
 				// pop
 				template <typename Func>
-				bool dequeue_with( Func f )
+				bool pop_with(Func f)
 				{
-					counted_node_ptr old_head = m_Head.load( atomics::memory_order_relaxed );
-					while ( true )
+					counted_node_ptr old_head = m_Head.load(atomics::memory_order_relaxed);
+					while (true)
 					{
-						increase_head_count( old_head );
+						increase_head_count(old_head);
 						node_type * const ptr = old_head.ptr;
-						if ( !ptr )
+						if (!ptr)
 							return false;
-						
+
 						counted_node_ptr next = ptr->next.load();
-						if ( head.compare_exchange_strong(	old_head, next,
-															std::memory_order_relaxed) )
+						if (head.compare_exchange_strong(old_head, next,
+							std::memory_order_relaxed))
 						{
 							std::shared_ptr<value_type> res;
 							res.swap(ptr->data);
-							
+
 							int const count_increase = old_head.external_count - 2;
 
 							if (ptr->internal_count.fetch_add(count_increase, std::memory_order_release) == -count_increase)
@@ -214,7 +195,7 @@ namespace cds
 							}
 
 							--itemCounter;
-							f( *res );
+							f(*res);
 							return true;
 						}
 						else
@@ -227,22 +208,11 @@ namespace cds
 						}
 					}
 				}
-
-				bool pop( value_type& dest )
-				{
-					return dequeue( dest );
-				}
-
-				template <typename Func>
-				bool pop_with( Func f )
-				{
-					return dequeue_with( f );
-				}
-
+								
 				void clear()
 				{
 					value_type v;
-					while( dequeue( v ) );
+					while( pop( &v ) );
 				}
 
 				bool empty() const
