@@ -19,3 +19,4 @@
 *.log
 /.project
 /projects/Win/vc14/*.opendb
+/test/stress/data/dictionary.txt

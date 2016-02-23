@@ -37,6 +37,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <chrono>
+#include <cds/threading/model.h>
 
 namespace cds_test {
 
@@ -45,7 +46,7 @@ namespace cds_test {
     class thread_pool;
 
     // Test thread
-    class thread 
+    class thread
     {
         void run();
 
@@ -55,16 +56,24 @@ namespace cds_test {
         virtual ~thread()
         {}
 
-        void join()         { m_impl.join(); }
+        void join()
+        {
+            m_impl.join();
+        }
 
     protected:
         virtual thread * clone() = 0;
         virtual void test() = 0;
 
         virtual void SetUp()
-        {}
+        {
+            cds::threading::Manager::attachThread();
+        }
+
         virtual void TearDown()
-        {}
+        {
+            cds::threading::Manager::detachThread();
+        }
 
     public:
         explicit thread( thread_pool& master, int type = 0 );
@@ -99,18 +108,17 @@ namespace cds_test {
                 delete t;
         }
 
-        void add( thread& what )
+        void add( thread * what )
         {
-            m_threads.push_back( &what );
-            what.run();
+            m_threads.push_back( what );
         }
 
-        void add( thread& what, size_t count )
+        void add( thread * what, size_t count )
         {
             add( what );
             for ( size_t i = 1; i < count; ++i ) {
-                thread * p = what.clone();
-                add( *p );
+                thread * p = what->clone();
+                add( p );
             }
         }
 
@@ -137,7 +145,7 @@ namespace cds_test {
             for ( auto t : m_threads )
                 t->join();
 
-            return m_testDuration = time_end - time_start;
+            return m_testDuration = std::chrono::duration_cast<std::chrono::milliseconds>( time_end - time_start );
         }
 
         size_t size() const             { return m_threads.size(); }
@@ -206,18 +214,18 @@ namespace cds_test {
         std::chrono::milliseconds m_testDuration;
     };
 
-    inline thread::thread( thread_pool& master, int type = 0 )
+    inline thread::thread( thread_pool& master, int type /*= 0*/ )
         : m_pool( master )
         , m_type( type )
         , m_id( master.get_next_id())
-        , m_impl( &run, this )
+        , m_impl( &thread::run, this )
     {}
 
     inline thread::thread( thread const& sample )
         : m_pool( sample.m_pool )
         , m_type( sample.m_type )
         , m_id( m_pool.get_next_id() )
-        , m_impl( &run, this )
+        , m_impl( &thread::run, this )
     {}
 
     inline void thread::run()

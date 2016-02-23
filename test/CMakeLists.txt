@@ -7,3 +7,4 @@ include_directories(
 )
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/unit)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stress)
