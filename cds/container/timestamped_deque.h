@@ -225,6 +225,59 @@ namespace cds { namespace container {
 
  		}
 
+ 		bool raw_push(value_type const& value, bool fromL) {
+ 			int index = acquireIndex();
+
+			value_type* pvalue = allocator().New(value);
+			node* timestamped = node_allocator().New();
+
+			timestamped->item = pvalue;
+			if(fromL)
+				localBuffers[index].insertLeft(timestamped);
+			else
+				localBuffers[index].insertRight(timestamped);
+			itemCounter++;
+			unsigned long t = getTimestamp();
+			timestamped->timestamp = t;
+			return true;
+ 		}
+
+ 		bool raw_push(value_type&& value, bool fromL) {
+			int index = acquireIndex();
+
+			value_type* pvalue = allocator().New(value);
+			node* timestamped = node_allocator().New();
+
+			timestamped->item = pvalue;
+			if(fromL)
+				localBuffers[index].insertLeft(timestamped);
+			else
+				localBuffers[index].insertRight(timestamped);
+			itemCounter++;
+			unsigned long t = getTimestamp();
+			timestamped->timestamp = t;
+			return true;
+		}
+
+ 		bool raw_pop(value_type& val, bool fromL) {
+ 			guard* res;
+			bool success = false;
+			do {
+				try {
+					res = fromL ? tryRemoveLeft() : tryRemoveRight();
+					success = true;
+				} catch(int err) {}
+			} while(!success);
+			if(res != nullptr) {
+				itemCounter--;
+				bnode* temp = res->get<bnode>();
+				delete res;
+				val = *temp->item->item;
+				return true;
+			} else
+				return false;
+ 		}
+
 
 		public:
 
@@ -258,101 +311,27 @@ namespace cds { namespace container {
 
 
 		bool push_back(value_type const& value) {
-			int index = acquireIndex();
-
-			value_type* pvalue = allocator().New(value);
-			node* timestamped = node_allocator().New();
-
-			timestamped->item = pvalue;
-			localBuffers[index].insertLeft(timestamped);
-			itemCounter++;
-			unsigned long t = getTimestamp();
-			timestamped->timestamp = t;
-			return true;
+			return raw_push(value, true);
 		}
 
 		bool push_front(value_type const& value) {
-			int index = acquireIndex();
-
-			value_type* pvalue = allocator().New(value);
-			node* timestamped = node_allocator().New();
-
-			timestamped->item = pvalue;
-			localBuffers[index].insertRight(timestamped);
-			itemCounter++;
-			unsigned long t = getTimestamp();
-			timestamped->timestamp = t;
-			return true;
+			return raw_push(value, false);
 		}
 
-		bool push_back(
-		            value_type&& value ///< Value to be moved to inserted element
-		        ) {
-			int index = acquireIndex();
-
-			value_type* pvalue = allocator().New(value);
-			node* timestamped = node_allocator().New();
-
-			timestamped->item = pvalue;
-			localBuffers[index].insertLeft(timestamped);
-			itemCounter++;
-			unsigned long t = getTimestamp();
-			timestamped->timestamp = t;
-			return true;
+		bool push_back(value_type&& value ) {
+			return raw_push(value, true);
 		}
 
-		bool push_front(
-					value_type&& value ///< Value to be moved to inserted element
-				) {
-			int index = acquireIndex();
-
-			value_type* pvalue = allocator().New(value);
-			node* timestamped = node_allocator().New();
-
-			timestamped->item = pvalue;
-			localBuffers[index].insertRight(timestamped);
-			itemCounter++;
-			unsigned long t = getTimestamp();
-			timestamped->timestamp = t;
-			return true;
+		bool push_front( value_type&& value	) {
+			return raw_push(value, false);
 		}
 
 		bool pop_back(  value_type& val ) {
-			guard* res;
-			bool success = false;
-			do {
-				try {
-					res = tryRemoveLeft();
-					success = true;
-				} catch(int err) {}
-			} while(!success);
-			if(res != nullptr) {
-				itemCounter--;
-				bnode* temp = res->get<bnode>();
-				delete res;
-				val = *temp->item->item;
-				return true;
-			} else
-				return false;
+			return raw_pop(val, true);
 		}
 
 		bool pop_front(  value_type& val ) {
-			guard* res;
-			bool success = false;
-			do {
-				try {
-					res = tryRemoveRight();
-					success = true;
-				} catch(int err) {}
-			} while(!success);
-			if(res != nullptr) {
-				itemCounter--;
-				bnode* temp = res->get<bnode>();
-				delete res;
-				val = *temp->item->item;
-				return true;
-			} else
-				return false;
+			return raw_pop(val, false);
 		}
 
 		bool empty() {
@@ -561,8 +540,6 @@ namespace cds { namespace container {
 						}
 						return false;
 		 			}
-
-
 
 		 		};
 	};
