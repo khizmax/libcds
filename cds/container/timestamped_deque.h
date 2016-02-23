@@ -11,6 +11,7 @@
 #include <cds/gc/hp.h>
 #include <atomic>
 #include <boost/thread.hpp>
+#include <cds/container/details/base.h>
 
 namespace cds { namespace container {
 
@@ -33,12 +34,14 @@ namespace cds { namespace container {
 
          template <typename... Options> struct make_traits
  		{
-             typedef typename cds::opt::make_options<
+             typedef typename cds::opt::make_options <
                  typename cds::opt::find_type_traits< traits, Options... >::type
                  ,Options...
              >::type type;
          };
  	} // namespace timestamped_deque
+
+
  	template <typename T, typename Traits = cds::container::timestamped_deque::traits>
 	class Timestamped_deque {
  		class ThreadBuffer;
@@ -75,11 +78,15 @@ namespace cds { namespace container {
 	 	typedef std::atomic<buffer_node*> bnode_ptr;
 	 	typedef typename ThreadBuffer::buffer_node   bnode;
 	 	typedef cds::gc::HP::Guard guard;
+	 	typedef std::pair<guard*, guard*> finded_ptr;
+
 	private:
 
  		ThreadBuffer* localBuffers;
  		std::atomic<int> lastFree;
  		int maxThread;
+
+ 		item_counter itemCounter;
 
  		bnode*** lastLefts;
  		bnode*** lastRights;
@@ -100,12 +107,12 @@ namespace cds { namespace container {
  				threadIndex.reset(new int(index));
  				return index;
  			}
-
  			return *temp;
  		}
 
  		bool doEmptyCheck() {
  			int threadIND = acquireIndex();
+ 			finded_ptr findedPair(nullptr, nullptr);
 			guard* finded = nullptr;
 			bool empty = true;
 			bool exist = false;
@@ -134,142 +141,89 @@ namespace cds { namespace container {
 			return empty;
  		}
 
- 		guard* tryRemoveRight() throw(int) {
- 			bool empty = true;
- 			int threadIND = acquireIndex();
-
- 			guard* rightest = nullptr;
- 			unsigned long startTime = getTimestamp();
- 			int bufferIndex = 0;
- 			for(int i=0; i < maxThread; i++) {
- 				guard* finded = localBuffers[i].getRight();
-
- 				empty = empty && checkEmptyCondition(finded, i);
-
- 				if(finded == nullptr)
-					continue;
-				if(rightest == nullptr) {
-					rightest = finded;
-					continue;
-				}
-
- 				if(isMoreR(finded->get<bnode>(), rightest->get<bnode>())) {
- 					delete rightest;
- 					rightest = finded;
- 					bufferIndex = i;
- 				} else {
- 					delete finded;
- 				}
-
- 			}
- 			empty = empty && wasEmpty[threadIND];
- 			wasEmpty[threadIND] = rightest == nullptr;
- 			if(empty && wasEmpty[threadIND])
- 				return nullptr;
-
-			if(rightest != nullptr) {
-				bnode* rightestNode = rightest->get<bnode>();
-				if(rightestNode->wasAddedRight()) {
-					if(localBuffers[bufferIndex].tryRemoveRight(rightest))
-						return rightest;
-				} else {
-					if(rightestNode->item->timestamp <= startTime)
-						if(localBuffers[bufferIndex].tryRemoveRight(rightest))
-							return rightest;
-				}
-				delete rightest;
- 			}
- 			throw -1;
- 		}
 
 
- 		guard* tryRemoveLeft() throw(int) {
- 			bool empty = true;
- 			int threadIND = acquireIndex();
 
- 			guard* leftest = nullptr;
-			unsigned long startTime = getTimestamp();
-			int bufferIndex = 0;
 
-			for(int i=0; i < maxThread; i++) {
-				guard* finded = localBuffers[i].getLeft();
+
+ 		guard* tryRemove(bool fromL) {
+			 bool empty = true;
+			 int threadIND = acquireIndex();
+			 guard* border = nullptr;
+			 unsigned long startTime = getTimestamp();
+			 int bufferIndex = 0;
+
+			 for(int i=0; i < maxThread; i++) {
+				guard* finded = localBuffers[i].get(fromL);
 
 				empty = empty && checkEmptyCondition(finded, i);
 
-				if(finded == nullptr)
+				if(finded == nullptr) {
 					continue;
-				if(leftest == nullptr) {
-					leftest = finded;
+				}
+				if(border == nullptr) {
+					border = finded;
 					continue;
 				}
 
-				if(isMoreL(finded->get<bnode>(), leftest->get<bnode>())) {
-					delete leftest;
-					leftest = finded;
+				if(isMore(finded->get<bnode>(), border->get<bnode>(), fromL)) {
+					delete border;
+					border = finded;
 					bufferIndex = i;
 				} else {
- 					delete finded;
- 				}
-			}
- 			empty = empty && wasEmpty[threadIND];
- 			wasEmpty[threadIND] = leftest == nullptr;
- 			if(empty && wasEmpty[threadIND])
- 				return nullptr;
-
- 			if(leftest != nullptr) {
-				bnode* leftestNode = leftest->get<bnode>();
-				if(leftestNode->wasAddedLeft()) {
-					if(localBuffers[bufferIndex].tryRemoveLeft(leftest))
-						return leftest;
-				} else {
-					if(leftestNode->item->timestamp <= startTime)
-						if(localBuffers[bufferIndex].tryRemoveLeft(leftest))
-							return leftest;
+					delete finded;
 				}
 
-				delete leftest;
+			}
+			empty = empty && wasEmpty[threadIND];
+			wasEmpty[threadIND] = border == nullptr;
+
+			if(empty && wasEmpty[threadIND])
+				return nullptr;
+
+			if(border != nullptr) {
+				bnode* borderNode = border->get<bnode>();
+
+				if(borderNode->wasAdded(fromL)) {
+					if(localBuffers[bufferIndex].tryRemove(border, fromL))
+						return border;
+				} else {
+					if(borderNode->item->timestamp <= startTime)
+						if(localBuffers[bufferIndex].tryRemove(border, fromL))
+							return border;
+				}
+
+				delete border;
 			}
 			throw -1;
- 		}
+		}
 
- 		bool isMoreR(bnode* n1, bnode* n2) {
- 			if(n1 == nullptr || n1->item->timestamp == 0)
- 				return false;
- 			else if (n2 == nullptr || n2->item->timestamp == 0)
- 				return true;
+ 		guard* tryRemoveRight() throw(int) {
+			return tryRemove(false);
+		}
 
- 			node *t1 = n1->item, *t2 = n2->item;
+ 		guard* tryRemoveLeft() throw(int) {
+			return tryRemove(true);
+		}
 
- 			if(n2->wasAddedLeft()) {
- 				if(n1->wasAddedRight())
- 					return true;
- 				return (t1->timestamp < t2->timestamp);
- 			} else {
- 				if(n1->wasAddedLeft())
- 					return false;
- 				return (t1->timestamp > t2->timestamp);
- 			}
- 		}
-
- 		bool isMoreL(bnode* n1, bnode* n2) {
+ 		bool isMore(bnode* n1, bnode* n2, bool fromL) {
  			if(n1 == nullptr || n1->item->timestamp == 0)
 				return false;
 			else if (n2 == nullptr || n2->item->timestamp == 0)
 				return true;
 
- 			node *t1 = n1->item, *t2 = n2->item;
-
- 			if(n2->wasAddedLeft()) {
+			node *t1 = n1->item, *t2 = n2->item;
+			if(n2->wasAddedLeft()) {
 				if(n1->wasAddedRight())
-					return false;
-				return (t1->timestamp > t2->timestamp);
+					return !fromL;
+				return fromL ? (t1->timestamp > t2->timestamp) : (t1->timestamp < t2->timestamp);
 			} else {
 				if(n1->wasAddedLeft())
-					return true;
-				return (t1->timestamp < t2->timestamp);
+					return fromL;
+				return fromL ? (t1->timestamp < t2->timestamp) : (t1->timestamp > t2->timestamp);
 			}
- 		}
 
+ 		}
 
 
 		public:
@@ -311,6 +265,7 @@ namespace cds { namespace container {
 
 			timestamped->item = pvalue;
 			localBuffers[index].insertLeft(timestamped);
+			itemCounter++;
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
 			return true;
@@ -324,6 +279,7 @@ namespace cds { namespace container {
 
 			timestamped->item = pvalue;
 			localBuffers[index].insertRight(timestamped);
+			itemCounter++;
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
 			return true;
@@ -339,6 +295,7 @@ namespace cds { namespace container {
 
 			timestamped->item = pvalue;
 			localBuffers[index].insertLeft(timestamped);
+			itemCounter++;
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
 			return true;
@@ -354,6 +311,7 @@ namespace cds { namespace container {
 
 			timestamped->item = pvalue;
 			localBuffers[index].insertRight(timestamped);
+			itemCounter++;
 			unsigned long t = getTimestamp();
 			timestamped->timestamp = t;
 			return true;
@@ -369,6 +327,7 @@ namespace cds { namespace container {
 				} catch(int err) {}
 			} while(!success);
 			if(res != nullptr) {
+				itemCounter--;
 				bnode* temp = res->get<bnode>();
 				delete res;
 				val = *temp->item->item;
@@ -387,6 +346,7 @@ namespace cds { namespace container {
 				} catch(int err) {}
 			} while(!success);
 			if(res != nullptr) {
+				itemCounter--;
 				bnode* temp = res->get<bnode>();
 				delete res;
 				val = *temp->item->item;
@@ -398,6 +358,11 @@ namespace cds { namespace container {
 		bool empty() {
 			doEmptyCheck();
 			return doEmptyCheck();
+		}
+
+		size_t size() const
+		{
+			return itemCounter.value();
 		}
 
 		private:
@@ -418,6 +383,13 @@ namespace cds { namespace container {
 		 				int index;
 		 				std::atomic<bool> taken;
 		 				bool isDeletedFromLeft;
+
+		 				bool wasAdded(bool fromL) {
+		 					if(fromL)
+		 						return wasAddedLeft();
+							else
+								return wasAddedRight();
+		 				}
 
 		 				bool wasAddedRight() {
 		 					return index > 0;
@@ -445,15 +417,12 @@ namespace cds { namespace container {
 		 				leftMost.store(newNode);
 		 				rightMost.store(newNode);
 		 				guestCounter = 0;
-		 				std::cout << "ThreadBuffer\n";
+
 		 			}
 
 		 			~ThreadBuffer() {
-		 				int counter = 0;
-						std::cout << "~ThreadBuffer\n";
 						buffer_node* curNode = rightMost.load();
 						while(curNode != curNode->left.load()) {
-							std::cout << counter++ << "\n";
 							buffer_node* temp = curNode;
 							curNode = curNode->left.load();
 							node_allocator().Delete(temp->item);
@@ -518,6 +487,10 @@ namespace cds { namespace container {
 
 		 			}
 
+		 			guard* get(bool fromL) {
+		 				return (fromL ? getLeft() : getRight());
+		 			}
+
 		 			guard* getRight() {
 		 				guestCounter++;
 		 				buffer_node* oldRight = rightMost.load(),
@@ -535,6 +508,7 @@ namespace cds { namespace container {
 		 					if(res->left.load() == res) break;
 		 					res = res->left.load();
 		 				}
+
 		 				guestCounter--;
 						return toReturn;
 		 			}
@@ -546,7 +520,6 @@ namespace cds { namespace container {
 						buffer_node* res = oldLeft;
 						guard* toReturn = nullptr;
 
-
 						while(true) {
 							if(res->index > oldRight->index) break;
 							if(!res->taken.load()) {
@@ -557,17 +530,26 @@ namespace cds { namespace container {
 							if(res->right.load() == res) break;
 							res = res->right.load();
 						}
+
 						guestCounter--;
 						return toReturn;
 					}
 
+
+		 			bool tryRemove(guard* guard, bool fromL) {
+		 				if(fromL)
+		 					return tryRemoveLeft(guard);
+		 				else
+		 					return tryRemoveRight(guard);
+		 			}
+
 		 			bool tryRemoveRight(guard* guard) {
+
 		 				buffer_node* node = guard->get<buffer_node>();
 		 				bool t = false;
 		 				if(node->taken.compare_exchange_strong(t, true)) {
 		 					return true;
 		 				}
-		 				std::cout << "Failed!\n";
 		 				return false;
 		 			}
 
@@ -577,7 +559,6 @@ namespace cds { namespace container {
 						if(node->taken.compare_exchange_strong(t, true)) {
 							return true;
 						}
-						std::cout << "Failed!\n";
 						return false;
 		 			}
 
