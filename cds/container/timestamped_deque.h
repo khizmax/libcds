@@ -117,7 +117,7 @@ namespace cds { namespace container {
 			bool empty = true;
 			bool exist = false;
 			for(int i=0; i < maxThread; i++) {
-				finded = localBuffers[i].getRight();
+				finded = localBuffers[i].getRight(nullptr);
 				empty = empty && checkEmptyCondition(finded, i);
 				exist = finded != nullptr;
 				delete finded;
@@ -141,37 +141,40 @@ namespace cds { namespace container {
 			return empty;
  		}
 
-
-
-
-
-
  		guard* tryRemove(bool fromL) {
 			 bool empty = true;
 			 int threadIND = acquireIndex();
 			 guard* border = nullptr;
+			 guard* temp;
+			 guard* startPoint = nullptr;
 			 unsigned long startTime = getTimestamp();
 			 int bufferIndex = 0;
 
 			 for(int i=0; i < maxThread; i++) {
-				guard* finded = localBuffers[i].get(fromL);
+				temp = new guard();
+				guard* finded = localBuffers[i].get(temp, fromL);
 
 				empty = empty && checkEmptyCondition(finded, i);
 
 				if(finded == nullptr) {
+					delete temp;
 					continue;
 				}
 				if(border == nullptr) {
 					border = finded;
+					startPoint = temp;
 					continue;
 				}
 
 				if(isMore(finded->get<bnode>(), border->get<bnode>(), fromL)) {
 					delete border;
+					delete startPoint;
+					startPoint = temp;
 					border = finded;
 					bufferIndex = i;
 				} else {
 					delete finded;
+					delete temp;
 				}
 
 			}
@@ -185,16 +188,21 @@ namespace cds { namespace container {
 				bnode* borderNode = border->get<bnode>();
 
 				if(borderNode->wasAdded(fromL)) {
-					if(localBuffers[bufferIndex].tryRemove(border, fromL))
+					if(localBuffers[bufferIndex].tryRemove(border, startPoint, fromL)) {
+						delete startPoint;
 						return border;
+					}
 				} else {
 					if(borderNode->item->timestamp <= startTime)
-						if(localBuffers[bufferIndex].tryRemove(border, fromL))
+						if(localBuffers[bufferIndex].tryRemove(border, startPoint, fromL)) {
+							delete startPoint;
 							return border;
+						}
 				}
 
 				delete border;
 			}
+			delete startPoint;
 			throw -1;
 		}
 
@@ -303,7 +311,6 @@ namespace cds { namespace container {
 				delete [] lastLefts[i];
 				delete [] lastRights[i];
 			}
-
 			delete [] wasEmpty;
 			delete [] lastLefts;
 			delete [] lastRights;
@@ -337,6 +344,11 @@ namespace cds { namespace container {
 		bool empty() {
 			doEmptyCheck();
 			return doEmptyCheck();
+		}
+
+		void clear() {
+			value_type v;
+			while(pop_back(v)) {}
 		}
 
 		size_t size() const
@@ -380,6 +392,45 @@ namespace cds { namespace container {
 
 		 			};
 		 		private:
+
+		 			template <typename M>
+					struct disposer {
+						void operator ()( buffer_node * p ) {
+							node_allocator().Delete(p->item);
+							buffernode_allocator().Delete(p);
+						}
+					};
+
+					void cleanUnlinked(bool delayed) {
+						int size = garbage.size();
+						disposer<buffer_node*> executioner;
+						for(int i = 0; i<size; i++ ) {
+							buffer_node* cur = garbage[i];
+							if(cur->isDeletedFromLeft) {
+								while(cur->left.load() != cur) {
+									buffer_node* toDel = cur;
+									cur = cur->left.load();
+									freeNode(executioner, toDel, delayed);
+								}
+								freeNode(executioner, cur, delayed);
+							} else {
+								while(cur->right.load() != cur) {
+									buffer_node* toDel = cur;
+									cur = cur->right.load();
+									freeNode(executioner, toDel, delayed);
+								}
+								freeNode(executioner, cur, delayed);
+							}
+						}
+					}
+
+					void freeNode(disposer<buffer_node*> &executioner, buffer_node* toDel, bool delayed) {
+						if(delayed)
+							cds::gc::HP::retire<disposer<buffer_node> >(toDel);
+						else
+							executioner(toDel);
+					}
+
 		 			std::atomic<buffer_node*> leftMost;
 		 			std::atomic<buffer_node*> rightMost;
 		 			std::vector<buffer_node*> garbage;
@@ -401,14 +452,14 @@ namespace cds { namespace container {
 
 		 			~ThreadBuffer() {
 						buffer_node* curNode = rightMost.load();
+						disposer<buffer_node*> executioner;
 						while(curNode != curNode->left.load()) {
 							buffer_node* temp = curNode;
 							curNode = curNode->left.load();
-							node_allocator().Delete(temp->item);
-							buffernode_allocator().Delete(temp);
+							freeNode(executioner, temp, false);
 						}
-						node_allocator().Delete(curNode->item);
-						buffernode_allocator().Delete(curNode);
+						freeNode(executioner, curNode, false);
+						cleanUnlinked(false);
 					}
 
 		 			buffer_node* getLeftMost() {
@@ -439,6 +490,8 @@ namespace cds { namespace container {
 							place->isDeletedFromLeft = false;
 							garbage.push_back(tail);
 						}
+						if(guestCounter == 0)
+							cleanUnlinked(true);
 
 
 		 			}
@@ -463,14 +516,16 @@ namespace cds { namespace container {
 							place->isDeletedFromLeft = true;
 							garbage.push_back(tail);
 						}
+						if(guestCounter == 0)
+							cleanUnlinked(true);
 
 		 			}
 
-		 			guard* get(bool fromL) {
-		 				return (fromL ? getLeft() : getRight());
+		 			guard* get( guard* start, bool fromL) {
+		 				return (fromL ? getLeft(start) : getRight(start));
 		 			}
 
-		 			guard* getRight() {
+		 			guard* getRight(guard* start) {
 		 				guestCounter++;
 		 				buffer_node* oldRight = rightMost.load(),
 		 							*oldLeft = leftMost.load();
@@ -487,12 +542,13 @@ namespace cds { namespace container {
 		 					if(res->left.load() == res) break;
 		 					res = res->left.load();
 		 				}
-
+		 				if(start != nullptr)
+		 					start->protect( std::atomic<buffer_node*>(oldRight));
 		 				guestCounter--;
 						return toReturn;
 		 			}
 
-		 			guard* getLeft() {
+		 			guard* getLeft(guard* start) {
 		 				guestCounter++;
 		 				buffer_node  *oldRight = rightMost.load(),
 									 *oldLeft = leftMost.load();
@@ -509,37 +565,45 @@ namespace cds { namespace container {
 							if(res->right.load() == res) break;
 							res = res->right.load();
 						}
-
+						if(start != nullptr)
+							start->protect( std::atomic<buffer_node*>(oldLeft));
 						guestCounter--;
 						return toReturn;
 					}
 
 
-		 			bool tryRemove(guard* guard, bool fromL) {
+		 			bool tryRemove(guard* takenNode, guard* start, bool fromL) {
 		 				if(fromL)
-		 					return tryRemoveLeft(guard);
+		 					return tryRemoveLeft(takenNode, start);
 		 				else
-		 					return tryRemoveRight(guard);
+		 					return tryRemoveRight(takenNode, start);
 		 			}
 
-		 			bool tryRemoveRight(guard* guard) {
+		 			bool tryRemoveRight(guard* takenNode, guard* start) {
 
-		 				buffer_node* node = guard->get<buffer_node>();
+		 				buffer_node* node = takenNode->get<buffer_node>();
+		 				buffer_node* startPoint = start->get<buffer_node>();
 		 				bool t = false;
 		 				if(node->taken.compare_exchange_strong(t, true)) {
+		 					rightMost.compare_exchange_strong(startPoint, node);
 		 					return true;
 		 				}
 		 				return false;
 		 			}
 
-		 			bool tryRemoveLeft(guard* guard) {
-		 				buffer_node* node = guard->get<buffer_node>();
+		 			bool tryRemoveLeft(guard* takenNode, guard* start) {
+		 				buffer_node* node = takenNode->get<buffer_node>();
+		 				buffer_node* startPoint = start->get<buffer_node>();
+
 		 				bool t = false;
 						if(node->taken.compare_exchange_strong(t, true)) {
+							leftMost.compare_exchange_strong(startPoint, node);
 							return true;
 						}
 						return false;
 		 			}
+
+
 
 		 		};
 	};
