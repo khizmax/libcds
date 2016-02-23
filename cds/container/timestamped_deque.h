@@ -412,16 +412,15 @@ namespace cds { namespace container {
 									cur = cur->left.load();
 									freeNode(executioner, toDel, delayed);
 								}
-								freeNode(executioner, cur, delayed);
 							} else {
 								while(cur->right.load() != cur) {
 									buffer_node* toDel = cur;
 									cur = cur->right.load();
 									freeNode(executioner, toDel, delayed);
 								}
-								freeNode(executioner, cur, delayed);
 							}
 						}
+						garbage.clear();
 					}
 
 					void freeNode(disposer<buffer_node*> &executioner, buffer_node* toDel, bool delayed) {
@@ -491,7 +490,7 @@ namespace cds { namespace container {
 							garbage.push_back(tail);
 						}
 						if(guestCounter == 0)
-							cleanUnlinked(true);
+								cleanUnlinked(true);
 
 
 		 			}
