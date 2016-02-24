@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\test\stress\main.cpp" />
     <ClCompile Include="..\..\..\test\stress\stack\intrusive_push_pop.cpp" />
+    <ClCompile Include="..\..\..\test\stress\stack\intrusive_push_pop_fcstack.cpp" />
     <ClCompile Include="..\..\..\test\stress\stack\push.cpp" />
     <ClCompile Include="..\..\..\test\stress\stack\push_pop.cpp" />
   </ItemGroup>

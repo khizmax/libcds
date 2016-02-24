@@ -470,7 +470,7 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, Elimination_DHP_dyn ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_DHP_dyn_stat )
 
-#define CDSSTRESS_FCStack( test_fixture ) \
+#define CDSSTRESS_FCStack_slist( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist_stat ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist_elimination ) \
@@ -478,6 +478,8 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist_mutex_stat ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist_mutex_elimination ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist_mutex_elimination_stat ) \
+
+#define CDSSTRESS_FCStack_list( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_list ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_list_stat ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_list_elimination ) \

@@ -45,8 +45,8 @@ namespace cds_test {
 
         static atomics::atomic<size_t>  s_nWorkingProducers;
 
-        static CDS_CONSTEXPR const size_t c_nValArraySize = 1024;
-        static CDS_CONSTEXPR const size_t c_nBadConsumer = 0xbadc0ffe;
+        static constexpr const size_t c_nValArraySize = 1024;
+        static constexpr const size_t c_nBadConsumer = 0xbadc0ffe;
 
         enum thread_type
         {
@@ -283,8 +283,9 @@ namespace cds_test {
 
             {
                 typename Stack::value_type * pEnd = pValStart + s_nStackSize;
+                size_t const nBadConsumer = c_nBadConsumer;
                 for ( typename Stack::value_type * it = pValStart; it != pEnd; ++it )
-                    EXPECT_NE( it->nConsumer, c_nBadConsumer );
+                    EXPECT_NE( it->nConsumer, nBadConsumer );
             }
 
             analyze( stack );

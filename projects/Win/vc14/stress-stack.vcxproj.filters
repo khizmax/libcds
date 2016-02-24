@@ -27,6 +27,9 @@
     <ClCompile Include="..\..\..\test\stress\stack\intrusive_push_pop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\stress\stack\intrusive_push_pop_fcstack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\stress\stack\stack_type.h">

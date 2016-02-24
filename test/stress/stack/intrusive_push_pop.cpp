@@ -177,4 +177,6 @@ namespace {
 
 #undef CDSSTRESS_Stack_F
 
+    //INSTANTIATE_TEST_CASE_P( a, intrusive_stack_push_pop, ::testing::Values(1));
+
 } // namespace
