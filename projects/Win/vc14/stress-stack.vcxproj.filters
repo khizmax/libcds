@@ -24,9 +24,18 @@
     <ClCompile Include="..\..\..\test\stress\stack\push.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\stress\stack\intrusive_push_pop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\stress\stack\stack_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\stress\stack\intrusive_stack_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\stress\stack\intrusive_stack_push_pop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

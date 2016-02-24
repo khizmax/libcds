@@ -28,10 +28,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\stress\main.cpp" />
+    <ClCompile Include="..\..\..\test\stress\stack\intrusive_push_pop.cpp" />
     <ClCompile Include="..\..\..\test\stress\stack\push.cpp" />
     <ClCompile Include="..\..\..\test\stress\stack\push_pop.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\stress\stack\intrusive_stack_push_pop.h" />
+    <ClInclude Include="..\..\..\test\stress\stack\intrusive_stack_type.h" />
     <ClInclude Include="..\..\..\test\stress\stack\stack_type.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
