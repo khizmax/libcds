@@ -1,4 +1,4 @@
-*/*
+/*
     This file is a part of libcds - Concurrent Data Structures library
 
     (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
