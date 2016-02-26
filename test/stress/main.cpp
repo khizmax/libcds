@@ -46,10 +46,11 @@ int main( int argc, char **argv )
     int result;
     cds::Initialize();
     {
-        ::testing::InitGoogleTest( &argc, argv );
-
         // Read test config file
         cds_test::init_config( argc, argv );
+
+        // Init Google test
+        ::testing::InitGoogleTest( &argc, argv );
 
         cds_test::config const& general_cfg = cds_test::stress_fixture::get_config( "General" );
 

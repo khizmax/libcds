@@ -193,10 +193,11 @@ namespace cds_test {
             T * get() const { return m_pArr.get(); }
         };
 
-    protected:
+    public:
         static void SetUpTestCase();
         //static void TearDownTestCase();
 
+    protected:
         template <class Stack>
         void analyze( Stack& stack )
         {
