@@ -163,9 +163,9 @@ namespace cds
 					return push(val);
 				}
 				
-				bool pop(value_type& dest)
+				bool pop(value_type& val)
 				{
-					return pop_with([&dest](value_type& src) { dest = src;  });
+					return pop_with([&val](value_type& src) { val = src; });
 				}
 				
 				// pop
