@@ -25,7 +25,7 @@ namespace cds {  namespace algo {  namespace flat_combining {
     };
 
     template<typename UserPublicationRecord, typename Traits>
-    struct DefautlWaitStartegy
+    struct BareWaitStartegy
     {
         struct ExtendedPublicationRecord: public UserPublicationRecord
         {

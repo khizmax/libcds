@@ -111,9 +111,9 @@ namespace cds { namespace container {
 
 
 	template <typename T,
-	    class Queue,
-	    class Traits,
-	    template <class, class>  class WaitStrategy
+	    class Queue = std::queue<T>,
+	    class Traits = fcqueue::traits,
+	    template <class, class>  class WaitStrategy = cds::algo::flat_combining::WaitBakkOffStrategy
 	>
 	class FCQueue
 #ifndef CDS_DOXYGEN_INVOKED

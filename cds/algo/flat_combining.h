@@ -232,7 +232,7 @@ namespace cds { namespace algo {
         template <
             typename PublicationRecord
             ,typename Traits
-            ,template<class, class> class WaitStrategy
+            ,template<class, class> class WaitStrategy = WaitBakkOffStrategy
         >
         class kernel
         {
