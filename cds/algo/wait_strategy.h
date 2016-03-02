@@ -7,6 +7,7 @@
 #include <cds/algo/backoff_strategy.h>
 
 namespace cds {  namespace algo {  namespace flat_combining {
+	/// Waiting strategy for flat combining
 
     // Special values of publication_record::nRequest
     enum request_value
@@ -24,6 +25,7 @@ namespace cds {  namespace algo {  namespace flat_combining {
         removed         ///< Record should be removed
     };
 
+    /// do-nothing strategy
     template<typename UserPublicationRecord, typename Traits>
     struct BareWaitStartegy
     {
@@ -36,7 +38,8 @@ namespace cds {  namespace algo {  namespace flat_combining {
             pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
         }
     };
-    //===================================================================
+
+    /// Wait/notify strategy based on thread-local mutex and thread-local condition variable
     template<typename UserPublicationRecord, typename Traits>
     struct WaitStartegyMultMutexMultCondVar
     {
@@ -49,7 +52,6 @@ namespace cds {  namespace algo {  namespace flat_combining {
         void wait(ExtendedPublicationRecord * pRec){
             boost::unique_lock<boost::mutex> lock(pRec->_waitMutex);
             if (pRec->nRequest.load( Traits::memory_model::memory_order_acquire ) >= req_Operation)
-                //pRec->_condVar.timed_wait(lock, static_cast<boost::posix_time::seconds>(1));
 				pRec->_condVar.wait(lock);
         }
 
@@ -60,7 +62,11 @@ namespace cds {  namespace algo {  namespace flat_combining {
         }
     };
 
-    //====================================================================
+    /// Back-off strategy
+    /**
+     * When N threads compete for the critical resource that can be accessed with the help of CAS-operations,
+     * only one of them gets an access. Other N–1 threads interrupt each other and consume process time in vain.
+     */
     template<typename UserPublicationRecord, typename Traits>
 	struct WaitBakkOffStrategy
 	{
@@ -75,7 +81,12 @@ namespace cds {  namespace algo {  namespace flat_combining {
             pRec->nRequest.store( req_Response, Traits::memory_model::memory_order_release);
         }
     };
-    //====================================================================
+
+    /// Wait/notify strategy based on the global mutex and the condition variable
+    /**
+     *  The strategy is based on the usage of synchronization primitives of
+     *  the FC core which are shared by all threads.
+     */
     template<typename UserPublicationRecord, typename Traits>
     struct WaitOneMutexOneCondVarStrategy
 	{
@@ -99,6 +110,11 @@ namespace cds {  namespace algo {  namespace flat_combining {
         }
     };
 
+    /// Wait/notify strategy based on the global mutex and the thread-local condition variable
+    /**
+     * It uses one extra mutex aggregated in the FC core and a condition variable for every
+     * thread aggregated in thread's publication record in the publication list
+     */
 	template<typename UserPublicationRecord, typename Traits>
 	struct WaitStratygyBaseOnSingleMutexMutlLocalCondVars
 	{
@@ -170,6 +186,12 @@ namespace cds {  namespace algo {  namespace flat_combining {
         enum {value = v};
     };
 
+    ///Adaptive strategy
+    /**
+     * It works like “back-off”-strategy with “light” elements with small size
+     * and like Wait/notify strategy based on thread-local mutex and thread-local condition variable
+     * with “heavy” elements.
+     */
     template<typename UserPublicationRecord, typename Traits>
     struct AutoWaitStrategy
     {
