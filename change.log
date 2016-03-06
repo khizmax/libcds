@@ -1,3 +1,8 @@
+2.2.0
+    General release
+    - Changed: CMake is used for build libcds. Ancient build.sh is removed
+    - Changed: unit and stress tests are migrated to googletest framework
+
 2.1.0 06.01.2016
     General release
     - Added: FeldmanHashSet/Map - an interesting hash map algorithm
