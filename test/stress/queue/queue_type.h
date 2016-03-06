@@ -28,8 +28,8 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSUNIT_QUEUE_TYPES_H
-#define CDSUNIT_QUEUE_TYPES_H
+#ifndef CDSSTRESS_QUEUE_TYPES_H
+#define CDSSTRESS_QUEUE_TYPES_H
 
 #include <cds/container/msqueue.h>
 #include <cds/container/moir_queue.h>
@@ -45,14 +45,17 @@
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
 
-#include "queue/std_queue.h"
+#include "std_queue.h"
 #include "lock/win32_lock.h"
-#include "michael_alloc.h"
-#include "print_segmentedqueue_stat.h"
+#include "framework/michael_alloc.h"
 
 #include <boost/container/deque.hpp>
 
+#include <cds_test/stress_test.h>
+#include "print_stat.h"
+
 namespace queue {
+
     namespace details {
         template <typename T, typename Traits=cds::container::fcdeque::traits, class Deque=std::deque<T> >
         class FCDequeL: public cds::container::FCDeque<T, Deque, Traits >
@@ -482,8 +485,8 @@ namespace queue {
 
         typedef StdQueue_deque<Value>               StdQueue_deque_Spinlock;
         typedef StdQueue_list<Value>                StdQueue_list_Spinlock;
-        typedef StdQueue_deque<Value, std::mutex>   StdQueue_deque_BoostMutex;
-        typedef StdQueue_list<Value, std::mutex>    StdQueue_list_BoostMutex;
+        typedef StdQueue_deque<Value, std::mutex>   StdQueue_deque_Mutex;
+        typedef StdQueue_list<Value, std::mutex>    StdQueue_list_Mutex;
 #ifdef UNIT_LOCK_WIN_CS
         typedef StdQueue_deque<Value, lock::win::CS>    StdQueue_deque_WinCS;
         typedef StdQueue_list<Value, lock::win::CS>     StdQueue_list_WinCS;
@@ -539,136 +542,183 @@ namespace queue {
 
 // *********************************************
 // Queue statistics
-namespace std {
+namespace cds_test {
 
     template <typename Counter>
-    static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::stat<Counter> const& s)
+    static inline property_stream& operator <<( property_stream& o, cds::container::fcqueue::stat<Counter> const& s )
+    {
+            return o
+                << CDSSTRESS_STAT_OUT( s, m_nEnqueue )
+                << CDSSTRESS_STAT_OUT( s, m_nEnqMove )
+                << CDSSTRESS_STAT_OUT( s, m_nDequeue )
+                << CDSSTRESS_STAT_OUT( s, m_nFailedDeq )
+                << CDSSTRESS_STAT_OUT( s, m_nCollided )
+                << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
+                << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
+                << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
+                << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
+                << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
+                << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
+                << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
+                << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
+                << CDSSTRESS_STAT_OUT( s, m_nAcquirePubRecCount )
+                << CDSSTRESS_STAT_OUT( s, m_nReleasePubRecCount );
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::container::fcqueue::empty_stat const& /*s*/ )
+    {
+        return o;
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::container::fcdeque::empty_stat const& /*s*/ )
+    {
+        return o;
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::container::fcdeque::stat<> const& s )
     {
         return o
-            << "\tStatistics:\n"
-            << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t      Dequeue empty: " << s.m_EmptyDequeue.get() << "\n"
-            << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n"
-            << "\t\tAdd basket attempts: " << s.m_TryAddBasket.get() << "\n"
-            << "\t\t Add basket success: " << s.m_AddBasketCount.get() << "\n";
-    }
-    static inline std::ostream& operator <<(std::ostream& o, cds::container::basket_queue::empty_stat const& /*s*/)
-    {
-        return o;
-    }
-
-    template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::container::msqueue::stat<Counter> const& s )
-    {
-        return o
-            << "\tStatistics:\n"
-            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get()  << "\n"
-            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t     Dequeue empty: " << s.m_EmptyDequeue.get() << "\n"
-            << "\t\t      Dequeue race: " << s.m_DequeueRace.get()  << "\n"
-            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
+            << CDSSTRESS_STAT_OUT( s, m_nPushFront )
+            << CDSSTRESS_STAT_OUT( s, m_nPushFrontMove )
+            << CDSSTRESS_STAT_OUT( s, m_nPushBack )
+            << CDSSTRESS_STAT_OUT( s, m_nPushBackMove )
+            << CDSSTRESS_STAT_OUT( s, m_nPopFront )
+            << CDSSTRESS_STAT_OUT( s, m_nFailedPopFront )
+            << CDSSTRESS_STAT_OUT( s, m_nPopBack )
+            << CDSSTRESS_STAT_OUT( s, m_nFailedPopBack )
+            << CDSSTRESS_STAT_OUT( s, m_nCollided )
+            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
+            << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
+            << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
+            << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
+            << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
+            << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
+            << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
+            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
+            << CDSSTRESS_STAT_OUT( s, m_nAcquirePubRecCount )
+            << CDSSTRESS_STAT_OUT( s, m_nReleasePubRecCount );
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::container::msqueue::empty_stat const& /*s*/ )
-    {
-        return o;
+} // namespace cds_test
+
+#define CDSSTRESS_Queue_F( test_fixture, type_name ) \
+    TEST_F( test_fixture, type_name ) \
+    { \
+        typedef queue::Types< value_type >::type_name queue_type; \
+        queue_type queue; \
+        test( queue ); \
     }
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::opt::none )
-    {
-        return o;
-    }
+#define CDSSTRESS_MSQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_HP ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_stat )
 
-    // cds::intrusive::optimistic_queue::stat
-    template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::stat<Counter> const& s )
-    {
-        return o
-            << "\tStatistics:\n"
-            << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t      Dequeue empty: " << s.m_EmptyDequeue.get() << "\n"
-            << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n"
-            << "\t\t      fix list call: " << s.m_FixListCount.get() << "\n";
-    }
+#define CDSSTRESS_MoirQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_stat )
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::empty_stat const& /*s*/ )
-    {
-        return o;
-    }
+#define CDSSTRESS_OptimsticQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_stat )
 
-    // cds::container::fcqueue::stat
-    template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::container::fcqueue::stat<Counter> const& s )
-    {
-            return o << "\tStatistics:\n"
-                << "\t                    Push: " << s.m_nEnqueue.get()           << "\n"
-                << "\t                PushMove: " << s.m_nEnqMove.get()           << "\n"
-                << "\t                     Pop: " << s.m_nDequeue.get()           << "\n"
-                << "\t               FailedPop: " << s.m_nFailedDeq.get()         << "\n"
-                << "\t  Collided push/pop pair: " << s.m_nCollided.get()          << "\n"
-                << "\tFlat combining statistics:\n"
-                << "\t        Combining factor: " << s.combining_factor()         << "\n"
-                << "\t         Operation count: " << s.m_nOperationCount.get()    << "\n"
-                << "\t      Combine call count: " << s.m_nCombiningCount.get()    << "\n"
-                << "\t        Compact pub-list: " << s.m_nCompactPublicationList.get() << "\n"
-                << "\t   Deactivate pub-record: " << s.m_nDeactivatePubRecord.get()    << "\n"
-                << "\t     Activate pub-record: " << s.m_nActivatePubRecord.get() << "\n"
-                << "\t       Create pub-record: " << s.m_nPubRecordCreated.get()  << "\n"
-                << "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get()  << "\n"
-                << "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get()<< "\n"
-                << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
-    }
+#define CDSSTRESS_BasketQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_seqcst ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_stat )
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::container::fcqueue::empty_stat const& /*s*/ )
-    {
-        return o;
-    }
+#define CDSSTRESS_FCQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_deque ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_elimination ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_elimination_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_list ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_list_elimination ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_list_elimination_stat )
 
-    static inline std::ostream& operator <<( std::ostream& o, std::nullptr_t /*s*/ )
-    {
-        return o;
-    }
+#define CDSSTRESS_FCDeque( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_default ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_mutex ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_elimination ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_elimination_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_boost ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_boost_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_boost_elimination ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_boost_elimination_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_default ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_mutex ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_elimination ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_elimination_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_boost ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_boost_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_boost_elimination ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeR_boost_elimination_stat )
 
-    static inline ostream& operator <<( ostream& o, cds::container::fcdeque::empty_stat const& /*s*/ )
-    {
-        return o;
-    }
+#define CDSSTRESS_RWQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin ) \
+    CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin_ic ) \
+    CDSSTRESS_Queue_F( test_fixture, RWQueue_mutex )
 
-    static inline ostream& operator <<( ostream& o, cds::container::fcdeque::stat<> const& s )
-    {
-        return o << "\tStatistics:\n"
-            << "\t              Push front: " << s.m_nPushFront.get()         << "\n"
-            << "\t         Push front move: " << s.m_nPushFrontMove.get()     << "\n"
-            << "\t               Push back: " << s.m_nPushBack.get()          << "\n"
-            << "\t          Push back move: " << s.m_nPushBackMove.get()      << "\n"
-            << "\t               Pop front: " << s.m_nPopFront.get()          << "\n"
-            << "\t        Failed pop front: " << s.m_nFailedPopFront.get()    << "\n"
-            << "\t                Pop back: " << s.m_nPopBack.get()           << "\n"
-            << "\t         Failed pop back: " << s.m_nFailedPopBack.get()     << "\n"
-            << "\t  Collided push/pop pair: " << s.m_nCollided.get()          << "\n"
-            << "\tFlat combining statistics:\n"
-            << "\t        Combining factor: " << s.combining_factor()         << "\n"
-            << "\t         Operation count: " << s.m_nOperationCount.get()    << "\n"
-            << "\t      Combine call count: " << s.m_nCombiningCount.get()    << "\n"
-            << "\t        Compact pub-list: " << s.m_nCompactPublicationList.get() << "\n"
-            << "\t   Deactivate pub-record: " << s.m_nDeactivatePubRecord.get()    << "\n"
-            << "\t     Activate pub-record: " << s.m_nActivatePubRecord.get() << "\n"
-            << "\t       Create pub-record: " << s.m_nPubRecordCreated.get()  << "\n"
-            << "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get()  << "\n"
-            << "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get()<< "\n"
-            << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
-    }
+#define CDSSTRESS_SegmentedQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_spin ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_spin_padding ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_spin_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_mutex ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_mutex_padding ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_mutex_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_spin ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_spin_padding ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_spin_stat ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_mutex ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_mutex_padding ) \
+    CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_mutex_stat )
 
-}
 
-#endif // #ifndef CDSUNIT_QUEUE_TYPES_H
+#define CDSSTRESS_TsigasQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, TsigasCycleQueue_dyn ) \
+    CDSSTRESS_Queue_F( test_fixture, TsigasCycleQueue_dyn_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, TsigasCycleQueue_dyn_ic )
+
+#define CDSSTRESS_VyukovQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn ) \
+    CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn_michaelAlloc ) \
+    CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn_ic )
+
+#define CDSSTRESS_StdQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, StdQueue_deque_Spinlock ) \
+    CDSSTRESS_Queue_F( test_fixture, StdQueue_list_Spinlock ) \
+    CDSSTRESS_Queue_F( test_fixture, StdQueue_deque_Mutex ) \
+    CDSSTRESS_Queue_F( test_fixture, StdQueue_list_Mutex )
+
+#endif // #ifndef CDSSTRESS_QUEUE_TYPES_H

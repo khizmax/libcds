@@ -16,5 +16,4 @@ add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME} WORKING_DIRECTORY ${EXECUT
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/map2)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/set2)

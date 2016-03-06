@@ -33,6 +33,7 @@
 
 #include <mutex>    //unique_lock
 #include <queue>
+#include <list>
 #include <cds/sync/spinlock.h>
 
 namespace queue {
@@ -71,12 +72,10 @@ namespace queue {
     };
 
     template <typename T, class Lock = cds::sync::spin >
-    class StdQueue_deque: public StdQueue<T, std::deque<T>, Lock >
-    {};
+    using StdQueue_deque = StdQueue<T, std::deque<T>, Lock >;
 
     template <typename T, class Lock = cds::sync::spin >
-    class StdQueue_list: public StdQueue<T, std::list<T>, Lock >
-    {};
+    using StdQueue_list = StdQueue<T, std::list<T>, Lock >;
 }
 
 #endif // #ifndef CDSUNIT_QUEUE_STD_QUEUE_H

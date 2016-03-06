@@ -28,8 +28,8 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
-#define CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
+#ifndef CDSSTRESS_INTRUSIVE_QUEUE_TYPES_H
+#define CDSSTRESS_INTRUSIVE_QUEUE_TYPES_H
 
 #include <cds/intrusive/msqueue.h>
 #include <cds/intrusive/moir_queue.h>
@@ -45,7 +45,8 @@
 
 #include <boost/intrusive/slist.hpp>
 
-#include "print_segmentedqueue_stat.h"
+#include <cds_test/stress_test.h>
+#include "print_stat.h"
 
 namespace queue {
 
@@ -108,11 +109,11 @@ namespace queue {
                 return empty_stat();
             }
         };
-    }
+    } // namespace details
 
     template <typename T>
-    struct Types {
-
+    struct Types 
+    {
         // MSQueue, MoirQueue
         struct traits_MSQueue_HP : public cds::intrusive::msqueue::traits
         {
@@ -494,127 +495,36 @@ namespace queue {
         typedef details::BoostSList< T, std::mutex >      BoostSList_mutex;
         typedef details::BoostSList< T, cds::sync::spin > BoostSList_spin;
     };
-}
+} // namespace queue
 
+namespace cds_test {
 
-// *********************************************
-// Queue statistics
-namespace std {
-    /*
-    // cds::intrusive::queue_stat
+    // cds::container::fcqueue::stat
     template <typename Counter>
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_stat<Counter> const& s)
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::fcqueue::stat<Counter> const& s )
     {
         return o
-            << "\tStatistics:\n"
-            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t      Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
+            << CDSSTRESS_STAT_OUT( s, m_nEnqueue )
+            << CDSSTRESS_STAT_OUT( s, m_nDequeue )
+            << CDSSTRESS_STAT_OUT( s, m_nFailedDeq )
+            << CDSSTRESS_STAT_OUT( s, m_nCollided )
+            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
+            << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
+            << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
+            << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
+            << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
+            << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
+            << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
+            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
+            << CDSSTRESS_STAT_OUT( s, m_nAcquirePubRecCount )
+            << CDSSTRESS_STAT_OUT( s, m_nReleasePubRecCount );
     }
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::queue_dummy_stat const& s)
-    {
-        return o;
-    }
-    */
 
-
-    template <typename Counter>
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::basket_queue::stat<Counter> const& s)
-    {
-        return o
-            << "\tStatistics:\n"
-            << "\t\t      Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t       Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t      Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t       Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\t Advance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t           Bad tail: " << s.m_BadTail.get() << "\n"
-            << "\t\tAdd basket attempts: " << s.m_TryAddBasket.get() << "\n"
-            << "\t\t Add basket success: " << s.m_AddBasketCount.get() << "\n";
-    }
-    static inline std::ostream& operator <<(std::ostream& o, cds::intrusive::basket_queue::empty_stat const& /*s*/)
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::fcqueue::empty_stat const& /*s*/ )
     {
         return o;
     }
 
-    template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::msqueue::stat<Counter> const& s )
-    {
-        return o
-            << "\tStatistics:\n"
-            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get()  << "\n"
-            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t      Dequeue race: " << s.m_DequeueRace.get()  << "\n"
-            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n";
-    }
+} // namespace cds_test
 
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::msqueue::empty_stat const& /*s*/ )
-    {
-        return o;
-    }
-
-    static inline std::ostream& operator <<( std::ostream& o, cds::opt::none )
-    {
-        return o;
-    }
-
-    // cds::intrusive::optimistic_queue::stat
-    template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::stat<Counter> const& s )
-    {
-        return o
-            << "\tStatistics:\n"
-            << "\t\t     Enqueue count: " << s.m_EnqueueCount.get() << "\n"
-            << "\t\t      Enqueue race: " << s.m_EnqueueRace.get() << "\n"
-            << "\t\t     Dequeue count: " << s.m_DequeueCount.get() << "\n"
-            << "\t\t      Dequeue race: " << s.m_DequeueRace.get() << "\n"
-            << "\t\tAdvance tail error: " << s.m_AdvanceTailError.get() << "\n"
-            << "\t\t          Bad tail: " << s.m_BadTail.get() << "\n"
-            << "\t\t     fix list call: " << s.m_FixListCount.get() << "\n";
-    }
-
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::optimistic_queue::empty_stat const& /*s*/ )
-    {
-        return o;
-    }
-
-    // cds::intrusive::fcqueue::stat
-    template <typename Counter>
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::fcqueue::stat<Counter> const& s )
-    {
-            return o << "\tStatistics:\n"
-                << "\t                    Push: " << s.m_nEnqueue.get()           << "\n"
-                << "\t                     Pop: " << s.m_nDequeue.get()           << "\n"
-                << "\t               FailedPop: " << s.m_nFailedDeq.get()         << "\n"
-                << "\t  Collided push/pop pair: " << s.m_nCollided.get()          << "\n"
-                << "\tFlat combining statistics:\n"
-                << "\t        Combining factor: " << s.combining_factor()         << "\n"
-                << "\t         Operation count: " << s.m_nOperationCount.get()    << "\n"
-                << "\t      Combine call count: " << s.m_nCombiningCount.get()    << "\n"
-                << "\t        Compact pub-list: " << s.m_nCompactPublicationList.get() << "\n"
-                << "\t   Deactivate pub-record: " << s.m_nDeactivatePubRecord.get()    << "\n"
-                << "\t     Activate pub-record: " << s.m_nActivatePubRecord.get() << "\n"
-                << "\t       Create pub-record: " << s.m_nPubRecordCreated.get()  << "\n"
-                << "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get()  << "\n"
-                << "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get()<< "\n"
-                << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
-    }
-
-    static inline std::ostream& operator <<( std::ostream& o, cds::intrusive::fcqueue::empty_stat const& /*s*/ )
-    {
-        return o;
-    }
-
-    static inline std::ostream& operator <<( std::ostream& o, queue::details::empty_stat const& /*s*/ )
-    {
-        return o;
-    }
-
-} // namespace std
-
-#endif // #ifndef CDSUNIT_INTRUSIVE_QUEUE_TYPES_H
+#endif // #ifndef CDSSTRESS_INTRUSIVE_QUEUE_TYPES_H
