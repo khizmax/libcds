@@ -129,12 +129,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hdr-test-tree", "hdr-test-t
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-pqueue", "unit-pqueue.vcxproj", "{20B6C380-E96A-4CFF-BC17-D88AAE581919}"
-	ProjectSection(ProjectDependencies) = postProject
-		{61179F2F-07E1-490D-B64D-D85A90B6EF81} = {61179F2F-07E1-490D-B64D-D85A90B6EF81}
-		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-map-insdel-item", "unit-map-insdel-item.vcxproj", "{7521DD92-56FF-4ECA-93E5-CCE50862354B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{61179F2F-07E1-490D-B64D-D85A90B6EF81} = {61179F2F-07E1-490D-B64D-D85A90B6EF81}
@@ -164,6 +158,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cds_test", "cds_test", "{3A
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\test\include\cds_test\check_size.h = ..\..\..\test\include\cds_test\check_size.h
 		..\..\..\test\include\cds_test\fixture.h = ..\..\..\test\include\cds_test\fixture.h
+		..\..\..\test\include\cds_test\stat_ellenbintree_out.h = ..\..\..\test\include\cds_test\stat_ellenbintree_out.h
+		..\..\..\test\include\cds_test\stat_skiplist_out.h = ..\..\..\test\include\cds_test\stat_skiplist_out.h
 		..\..\..\test\include\cds_test\stress_test.h = ..\..\..\test\include\cds_test\stress_test.h
 		..\..\..\test\include\cds_test\thread.h = ..\..\..\test\include\cds_test\thread.h
 	EndProjectSection
@@ -189,9 +185,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-list", "gtest-list.vc
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stress", "stress", "{10E1FAF2-904D-405E-8AB5-6878A1B03346}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\test\stress\michael_alloc.h = ..\..\..\test\stress\michael_alloc.h
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-framework", "stress-framework.vcxproj", "{A34CED07-A442-4FA1-81C4-F8B9CD3C832B}"
 EndProject
@@ -206,6 +199,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-queue", "stress-queu
 		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-pqueue", "stress-pqueue.vcxproj", "{51AC349E-B365-4FCF-8778-17A1534E4584}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -373,18 +368,6 @@ Global
 		{6F834EAD-7B94-4979-A0F1-A662E3D30145}.Release|Win32.Build.0 = Release|Win32
 		{6F834EAD-7B94-4979-A0F1-A662E3D30145}.Release|x64.ActiveCfg = Release|x64
 		{6F834EAD-7B94-4979-A0F1-A662E3D30145}.Release|x64.Build.0 = Release|x64
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Debug|Win32.ActiveCfg = Debug|Win32
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Debug|Win32.Build.0 = Debug|Win32
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Debug|x64.ActiveCfg = Debug|x64
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Debug|x64.Build.0 = Debug|x64
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.DebugVLD|x64.Build.0 = DebugVLD|x64
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Release|Win32.ActiveCfg = Release|Win32
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Release|Win32.Build.0 = Release|Win32
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Release|x64.ActiveCfg = Release|x64
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919}.Release|x64.Build.0 = Release|x64
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.Debug|Win32.Build.0 = Debug|Win32
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B}.Debug|x64.ActiveCfg = Debug|x64
@@ -517,6 +500,18 @@ Global
 		{50B2EC4B-A118-4E7B-ABC7-2EA8B685A58C}.Release|Win32.Build.0 = Release|Win32
 		{50B2EC4B-A118-4E7B-ABC7-2EA8B685A58C}.Release|x64.ActiveCfg = Release|x64
 		{50B2EC4B-A118-4E7B-ABC7-2EA8B685A58C}.Release|x64.Build.0 = Release|x64
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Debug|Win32.ActiveCfg = Debug|Win32
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Debug|Win32.Build.0 = Debug|Win32
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Debug|x64.ActiveCfg = Debug|x64
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Debug|x64.Build.0 = Debug|x64
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.DebugVLD|x64.Build.0 = DebugVLD|x64
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Release|Win32.ActiveCfg = Release|Win32
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Release|Win32.Build.0 = Release|Win32
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Release|x64.ActiveCfg = Release|x64
+		{51AC349E-B365-4FCF-8778-17A1534E4584}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -536,7 +531,6 @@ Global
 		{E5E9DB4A-7816-45D4-A116-6BBBA0EE8EE7} = {B8C24D26-A3BF-4DA6-B64C-142CBA4BFE75}
 		{A38E5597-6916-4480-A343-C9846EF544E4} = {B8C24D26-A3BF-4DA6-B64C-142CBA4BFE75}
 		{6F834EAD-7B94-4979-A0F1-A662E3D30145} = {B8C24D26-A3BF-4DA6-B64C-142CBA4BFE75}
-		{20B6C380-E96A-4CFF-BC17-D88AAE581919} = {B30CA283-1796-4763-92C3-2E4848D443F7}
 		{7521DD92-56FF-4ECA-93E5-CCE50862354B} = {6BB7A27F-FC59-4267-B6FA-D034176D1459}
 		{CA6F0834-0628-4CD7-8800-AEABCD636360} = {6BB7A27F-FC59-4267-B6FA-D034176D1459}
 		{DE256E91-EE96-412E-82EE-DD7BD1A1130D} = {A64449B7-90FB-4E2B-A686-9EFC0E298644}
@@ -548,6 +542,7 @@ Global
 		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {10E1FAF2-904D-405E-8AB5-6878A1B03346}
 		{5E1C3684-9463-4A98-BAFC-9BD51F179BB6} = {10E1FAF2-904D-405E-8AB5-6878A1B03346}
 		{50B2EC4B-A118-4E7B-ABC7-2EA8B685A58C} = {10E1FAF2-904D-405E-8AB5-6878A1B03346}
+		{51AC349E-B365-4FCF-8778-17A1534E4584} = {10E1FAF2-904D-405E-8AB5-6878A1B03346}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}

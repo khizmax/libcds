@@ -104,8 +104,7 @@ namespace cds_test {
 
         ~thread_pool()
         {
-            for ( auto t : m_threads )
-                delete t;
+            clear();
         }
 
         void add( thread * what )
@@ -158,6 +157,16 @@ namespace cds_test {
         }
 
         std::chrono::milliseconds duration() const { return m_testDuration; }
+
+        void clear()
+        {
+            for ( auto t : m_threads )
+                delete t;
+            m_threads.clear();
+            m_bRunning = false;
+            m_bStopped = false;
+            m_doneCount = 0;
+        }
 
     protected: // thread interface
         size_t get_next_id()

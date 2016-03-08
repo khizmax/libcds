@@ -28,42 +28,51 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSUNIT_PQUEUE_ITEM_H
-#define CDSUNIT_PQUEUE_ITEM_H
+#ifndef CDSSTRESS_PQUEUE_ITEM_H
+#define CDSSTRESS_PQUEUE_ITEM_H
 
 namespace pqueue {
-    struct SimpleValue {
-        size_t      key;
 
+    struct simple_value {
         typedef size_t  key_type;
 
+        key_type key;
+
         struct key_extractor {
-            void operator()( key_type& k, SimpleValue const& s ) const
+            void operator()( key_type& k, simple_value const& s ) const
             {
                 k = s.key;
             }
         };
 
-        SimpleValue(): key(0) {}
-        SimpleValue( size_t n ): key(n) {}
+        simple_value()
+            : key(0)
+        {}
+
+        simple_value( key_type n )
+            : key(n) 
+        {}
     };
-}
+} // namespace pqueue
 
 namespace std {
+    template <class T> struct less;
+    template <class T> struct greater;
+
     template <>
-    struct less<pqueue::SimpleValue>
+    struct less<pqueue::simple_value>
     {
-        bool operator()( pqueue::SimpleValue const& k1, pqueue::SimpleValue const& k2 ) const
+        bool operator()( pqueue::simple_value const& k1, pqueue::simple_value const& k2 ) const
         {
             return k1.key < k2.key;
         }
 
-        bool operator()( pqueue::SimpleValue const& k1, size_t k2 ) const
+        bool operator()( pqueue::simple_value const& k1, size_t k2 ) const
         {
             return k1.key < k2;
         }
 
-        bool operator()( size_t k1, pqueue::SimpleValue const& k2 ) const
+        bool operator()( size_t k1, pqueue::simple_value const& k2 ) const
         {
             return k1 < k2.key;
         }
@@ -75,19 +84,19 @@ namespace std {
     };
 
     template <>
-    struct greater<pqueue::SimpleValue>
+    struct greater<pqueue::simple_value>
     {
-        bool operator()( pqueue::SimpleValue const& k1, pqueue::SimpleValue const& k2 ) const
+        bool operator()( pqueue::simple_value const& k1, pqueue::simple_value const& k2 ) const
         {
             return k1.key > k2.key;
         }
 
-        bool operator()( pqueue::SimpleValue const& k1, size_t k2 ) const
+        bool operator()( pqueue::simple_value const& k1, size_t k2 ) const
         {
             return k1.key > k2;
         }
 
-        bool operator()( size_t k1, pqueue::SimpleValue const& k2 ) const
+        bool operator()( size_t k1, pqueue::simple_value const& k2 ) const
         {
             return k1 > k2.key;
         }
@@ -100,4 +109,4 @@ namespace std {
 
 } // namespace std
 
-#endif // #ifndef CDSUNIT_PQUEUE_ITEM_H
+#endif // #ifndef CDSSTRESS_PQUEUE_ITEM_H

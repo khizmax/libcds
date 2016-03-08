@@ -15,5 +15,4 @@ target_link_libraries(${PACKAGE_NAME} ${CDS_SHARED_LIBRARY} ${Boost_THREAD_LIBRA
 add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/map2)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/set2)
