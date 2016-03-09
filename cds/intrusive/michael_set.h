@@ -292,6 +292,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
@@ -300,9 +302,9 @@ namespace cds { namespace intrusive {
             - The iterator cannot be moved across thread boundary since it may contain GC's guard that is thread-private GC data.
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
               deleting operations it is no guarantee that you iterate all item in the set.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator for the concurrent container
-            for debug purpose only.
+            @warning Use this iterator on the concurrent container for debugging purpose only.        
         */
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
@@ -333,28 +335,29 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return get_const_begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return get_const_begin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return get_const_end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return get_const_end();
         }
-        //@}
+    //@}
 
     private:
         //@cond
@@ -559,7 +562,7 @@ namespace cds { namespace intrusive {
             Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q, typename Func>
-        bool erase( const Q& key, Func f )
+        bool erase( Q const& key, Func f )
         {
             if ( bucket( key ).erase( key, f )) {
                 --m_ItemCounter;
@@ -576,7 +579,7 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less, typename Func>
-        bool erase_with( const Q& key, Less pred, Func f )
+        bool erase_with( Q const& key, Less pred, Func f )
         {
             if ( bucket( key ).erase_with( key, pred, f )) {
                 --m_ItemCounter;
