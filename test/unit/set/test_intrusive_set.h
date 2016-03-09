@@ -48,6 +48,8 @@ namespace cds_test {
     class intrusive_set: public fixture
     {
     protected:
+        static size_t const kSize = 100;
+
         struct stat
         {
             unsigned int nDisposeCount  ;   // count of disposer calling
@@ -58,7 +60,12 @@ namespace cds_test {
 
             stat()
             {
-                memset( this, 0, sizeof(*this));
+                clear_stat();
+            }
+
+            void clear_stat()
+            {
+                memset( this, 0, sizeof( *this ) );
             }
         };
 
@@ -251,45 +258,6 @@ namespace cds_test {
             }
         };
 
-        struct find_functor
-        {
-            template <typename Item, typename T>
-            void operator()( Item& item, T& /*val*/ )
-            {
-                ++item.nFindCount;
-            }
-        };
-
-        struct insert_functor
-        {
-            template <typename Item>
-            void operator()(Item& item )
-            {
-                item.nVal = item.nKey * 100;
-            }
-        };
-
-        struct update_functor
-        {
-            template <typename Item>
-            void operator()( bool bNew, Item& item, Item& /*val*/ )
-            {
-                if ( bNew )
-                    ++item.nUpdateNewCount;
-                else
-                    ++item.nUpdateCount;
-            }
-        };
-
-        struct erase_functor
-        {
-            template <typename Item>
-            void operator()( Item const& item )
-            {
-                item.nEraseCount++;
-            }
-        };
-
         template <class Set>
         void test( Set& s )
         {
@@ -302,20 +270,160 @@ namespace cds_test {
             typedef typename Set::value_type value_type;
 
             std::vector< value_type > data;
-            size_t const kSize = 100;
+            std::vector< size_t> indices;
             data.reserve( kSize );
+            indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
                 data.push_back( value_type( static_cast<int>( key )));
+                indices.push_back( key );
             }
-            shuffle( data.begin(), data.end() );
+            shuffle( indices.begin(), indices.end() );
 
             // insert/find
-            for ( auto& i : data ) {
+            for ( auto idx : indices ) {
+                auto& i = data[ idx ];
+
                 ASSERT_FALSE( s.contains( i.nKey ));
                 ASSERT_FALSE( s.contains( i ));
-                ASSERT_FALSE( s.contains( other_item( i.key()), other_less());
-                ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} );
+                ASSERT_FALSE( s.contains( other_item( i.key()), other_less()));
+                ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
+
+                std::pair<bool, bool> updResult;
+
+                updResult = s.update( i, []( bool bNew, value_type&, value_type& )
+                {
+                    ASSERT_TRUE( false );
+                }, false );
+                EXPECT_FALSE( updResult.first );
+                EXPECT_FALSE( updResult.second );
+
+                switch ( i.key() % 3 ) {
+                case 0:
+                    ASSERT_TRUE( s.insert( i ));
+                    ASSERT_FALSE( s.insert( i ));
+                    updResult = s.update( i, []( bool bNew, value_type& val, value_type& arg) 
+                        {
+                            EXPECT_FALSE( bNew );
+                            EXPECT_EQ( &val, &arg );
+                        }, false );
+                    EXPECT_TRUE( updResult.first );
+                    EXPECT_FALSE( updResult.second );
+                    break;
+                case 1:
+                    EXPECT_EQ( i.nUpdateNewCount, 0 );
+                    ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
+                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ) );
+                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    i.nUpdateNewCount = 0;
+                    break;
+                case 2:
+                    updResult = s.update( i, []( bool bNew, value_type& val, value_type& arg )
+                    {
+                        EXPECT_TRUE( bNew );
+                        EXPECT_EQ( &val, &arg );
+                    });
+                    EXPECT_TRUE( updResult.first );
+                    EXPECT_TRUE( updResult.second );
+                    break;
+                }
+
+                ASSERT_TRUE( s.contains( i.nKey ) );
+                ASSERT_TRUE( s.contains( i ) );
+                ASSERT_TRUE( s.contains( other_item( i.key() ), other_less()));
+                EXPECT_EQ( i.nFindCount, 0 );
+                ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
+                EXPECT_EQ( i.nFindCount, 1 );
+                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
+                EXPECT_EQ( i.nFindCount, 2 );
+            }
+            ASSERT_FALSE( s.empty() );
+            ASSERT_CONTAINER_SIZE( s, kSize );
+
+            std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
+
+            // erase
+            shuffle( indices.begin(), indices.end() );
+            for ( auto idx : indices ) {
+                auto& i = data[ idx ];
+
+                ASSERT_TRUE( s.contains( i.nKey ) );
+                ASSERT_TRUE( s.contains( i ) );
+                ASSERT_TRUE( s.contains( other_item( i.key() ), other_less() ) );
+                EXPECT_EQ( i.nFindCount, 0 );
+                ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
+                EXPECT_EQ( i.nFindCount, 1 );
+                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
+                EXPECT_EQ( i.nFindCount, 2 );
+
+                value_type v( i );
+                switch ( i.key() % 6 ) {
+                case 0:
+                    ASSERT_FALSE( s.unlink( v ));
+                    ASSERT_TRUE( s.unlink( i ));
+                    ASSERT_FALSE( s.unlink( i ) );
+                    break;
+                case 1:
+                    ASSERT_TRUE( s.erase( i.key()));
+                    ASSERT_FALSE( s.erase( i.key() ) );
+                    break;
+                case 2:
+                    ASSERT_TRUE( s.erase( v ));
+                    ASSERT_FALSE( s.erase( v ) );
+                    break;
+                case 3:
+                    ASSERT_TRUE( s.erase_with( other_item( i.key()), other_less()));
+                    ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_less() ) );
+                    break;
+                case 4:
+                    EXPECT_EQ( i.nEraseCount, 0 );
+                    ASSERT_TRUE( s.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
+                    EXPECT_EQ( i.nEraseCount, 1 );
+                    ASSERT_FALSE( s.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
+                    EXPECT_EQ( i.nEraseCount, 1 );
+                    break;
+                case 5:
+                    EXPECT_EQ( i.nEraseCount, 0 );
+                    ASSERT_TRUE( s.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    EXPECT_EQ( i.nEraseCount, 1 );
+                    ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    EXPECT_EQ( i.nEraseCount, 1 );
+                    break;
+                }
+
+                ASSERT_FALSE( s.contains( i.nKey ));
+                ASSERT_FALSE( s.contains( i ));
+                ASSERT_FALSE( s.contains( other_item( i.key()), other_less()));
+                ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
+                ASSERT_FALSE( s.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
+            }
+            ASSERT_TRUE( s.empty() );
+            ASSERT_CONTAINER_SIZE( s, 0 );
+
+            // Force retiring cycle
+            Set::gc::force_dispose();
+            for ( auto& i : data ) {
+                EXPECT_EQ( i.nDisposeCount, 1 );
+            }
+
+            // clear
+            for ( auto& i : data ) {
+                i.nDisposeCount = 0;
+                ASSERT_TRUE( s.insert( i ));
+            }
+            ASSERT_FALSE( s.empty() );
+            ASSERT_CONTAINER_SIZE( s, kSize );
+
+            s.clear();
+
+            ASSERT_TRUE( s.empty());
+            ASSERT_CONTAINER_SIZE( s, 0 );
+
+            // Force retiring cycle
+            Set::gc::force_dispose();
+            for ( auto& i : data ) {
+                EXPECT_EQ( i.nDisposeCount, 1 );
             }
         }
     };

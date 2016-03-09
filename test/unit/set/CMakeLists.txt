@@ -2,6 +2,8 @@ set(PACKAGE_NAME unit-set)
 
 set(CDSGTEST_SET_SOURCES
     ../main.cpp
+    intrusive_michael_michael_hp.cpp
+    intrusive_michael_michael_dhp.cpp
 )
 
 include_directories(
