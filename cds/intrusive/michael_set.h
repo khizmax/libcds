@@ -264,6 +264,10 @@ namespace cds { namespace intrusive {
         /// Bucket table allocator
         typedef cds::details::Allocator< bucket_type, typename traits::allocator > bucket_table_allocator;
 
+        /// Count of hazard pointer required for the algorithm
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount;
+
+
     protected:
         item_counter    m_ItemCounter;   ///< Item counter
         hash            m_HashFunctor;   ///< Hash functor
