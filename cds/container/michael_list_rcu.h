@@ -297,14 +297,18 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
+        /**
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the item the iterator points to.
+        */
         typedef iterator_type<false>    iterator;
 
         /// Const forward iterator
         typedef iterator_type<true>     const_iterator;
 
-    ///@name Forward iterators (only for debugging purpose)
-    //@{
         /// Returns a forward iterator addressing the first element in a list
         /**
             For empty list \code begin() == end() \endcode

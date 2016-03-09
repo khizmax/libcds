@@ -271,6 +271,7 @@ namespace cds { namespace container {
             - The iterator cannot be moved across thread boundary since it contains GC's guard that is thread-private GC data.
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
               deleting operations it is no guarantee that you iterate all item in the list.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
             @warning Use this iterator on the concurrent container for debugging purpose only.
         */
