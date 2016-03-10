@@ -308,7 +308,7 @@ namespace cds { namespace intrusive {
               deleting operations it is no guarantee that you iterate all item in the set.
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            @warning Use this iterator on the concurrent container for debugging purpose only.        
+            @warning Use this iterator on the concurrent container for debugging purpose only.
         */
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
