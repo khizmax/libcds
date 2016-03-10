@@ -24,12 +24,21 @@
     <ClCompile Include="..\..\..\test\unit\set\intrusive_michael_michael_dhp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_michael_lazy_hp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_michael_lazy_dhp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_set.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_set_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_intrusive_set_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

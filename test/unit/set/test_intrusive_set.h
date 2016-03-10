@@ -409,22 +409,37 @@ namespace cds_test {
 
             // clear
             for ( auto& i : data ) {
-                i.nDisposeCount = 0;
+                i.clear_stat();
                 ASSERT_TRUE( s.insert( i ));
             }
             ASSERT_FALSE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, kSize );
 
+            // Iterator test
+            for ( auto it = s.begin(); it != s.end(); ++it ) {
+                ++it->nFindCount;
+            }
+            for ( auto it = s.cbegin(); it != s.cend(); ++it ) {
+                EXPECT_EQ( it->nFindCount, 1 );
+            }
+            for ( auto& i : data ) {
+                EXPECT_EQ( i.nFindCount, 1 );
+            }
+
+            // clear test
             s.clear();
 
             ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_TRUE( s.begin() == s.end() );
+            ASSERT_TRUE( s.cbegin() == s.cend() );
 
             // Force retiring cycle
             Set::gc::force_dispose();
             for ( auto& i : data ) {
                 EXPECT_EQ( i.nDisposeCount, 1 );
             }
+
         }
     };
 
