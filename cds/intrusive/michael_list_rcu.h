@@ -371,7 +371,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-    ///@name Forward iterators (only for debugging purpose)
+    ///@name Forward iterators (thread-safe only under RCU lock)
     //@{
         /// Forward iterator
         /**

@@ -156,7 +156,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-    ///@name Forward iterators (only for debugging purpose)
+    ///@name Forward iterators (thread-safe only under RCU lock)
     //@{
         /// Forward iterator
         /**
@@ -164,7 +164,8 @@ namespace cds { namespace intrusive {
             - it has no post-increment operator
             - it iterates items in unordered fashion
 
-            @warning Use this iterator on the concurrent container for debugging purpose only.
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
         */
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
