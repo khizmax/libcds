@@ -69,15 +69,23 @@ namespace cds { namespace intrusive { namespace details {
             apply();
         }
 
-        raw_ptr_disposer& operator=(raw_ptr_disposer&& d)
+        raw_ptr_disposer& combine(raw_ptr_disposer&& d)
         {
-            assert( pReclaimedChain == nullptr );
-            pReclaimedChain = d.pReclaimedChain;
+            if ( pReclaimedChain == nullptr )
+                pReclaimedChain = d.pReclaimedChain;
+            else if ( d.pReclaimedChain ) {
+                // union reclaimed chains
+                node_type * pEnd = d.pReclaimedChain;
+                for ( ; pEnd->m_pDelChain; pEnd = pEnd->m_pDelChain );
+                pEnd->m_pDelChain = pReclaimedChain;
+                pReclaimedChain = d.pReclaimedChain;
+            }
             d.pReclaimedChain = nullptr;
             return *this;
         }
 
         raw_ptr_disposer& operator=(raw_ptr_disposer const& d) = delete;
+        raw_ptr_disposer& operator=( raw_ptr_disposer&& d ) = delete;
 
         void apply()
         {
