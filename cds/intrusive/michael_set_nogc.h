@@ -102,6 +102,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
@@ -137,28 +139,27 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return cbegin();
         }
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return const_iterator( m_Buckets[0].cbegin(), m_Buckets, m_Buckets + bucket_count() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return cend();
         }
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return const_iterator( m_Buckets[bucket_count() - 1].cend(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
-        //@}
+    //@}
 
     public:
         /// Initializes hash set
