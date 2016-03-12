@@ -542,6 +542,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
         /**
             The forward iterator for a split-list has some features:
@@ -549,6 +551,7 @@ namespace cds { namespace intrusive {
             - it depends on iterator of underlying \p OrderedList
         */
         typedef iterator_type<false>    iterator;
+
         /// Const forward iterator
         /**
             For iterator's features and requirements see \ref iterator
@@ -577,28 +580,29 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a split-list
-        //@{
         const_iterator begin() const
         {
             return const_iterator( m_List.begin(), m_List.end() );
         }
+
+        /// Returns a forward const iterator addressing the first element in a split-list
         const_iterator cbegin() const
         {
             return const_iterator( m_List.cbegin(), m_List.cend() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a split-list
-        //@{
         const_iterator end() const
         {
             return const_iterator( m_List.end(), m_List.end() );
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a split-list
         const_iterator cend() const
         {
             return const_iterator( m_List.cend(), m_List.cend() );
         }
-        //@}
+    //@}
 
     protected:
         //@cond

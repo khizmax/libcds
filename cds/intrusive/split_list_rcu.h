@@ -1025,17 +1025,16 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators (thread-safe under RCU lock)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for a split-list has some features:
             - it has no post-increment operator
             - it depends on iterator of underlying \p OrderedList
-            - The iterator cannot be moved across thread boundary since it may contain GC's guard that is thread-private GC data.
-            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the split-list.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator on the concurrent container
-            for debug purpose only.
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
         */
         typedef iterator_type<false>    iterator;
         /// Const forward iterator
@@ -1086,7 +1085,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator( m_List.cend(), m_List.cend() );
         }
-
+    //@}
     };
 
 }}  // namespace cds::intrusive
