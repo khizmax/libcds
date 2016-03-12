@@ -41,6 +41,7 @@ namespace {
 
     class IntrusiveMichaelLazySet_DHP : public cds_test::intrusive_set_hp
     {
+    protected:
         typedef cds_test::intrusive_set_hp base_class;
 
     protected:

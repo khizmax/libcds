@@ -1,11 +1,25 @@
 set(PACKAGE_NAME unit-set)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
+
 set(CDSGTEST_SET_SOURCES
     ../main.cpp
     intrusive_michael_lazy_hp.cpp
     intrusive_michael_lazy_dhp.cpp
+    intrusive_michael_lazy_nogc.cpp
+    intrusive_michael_lazy_rcu_gpb.cpp
+    intrusive_michael_lazy_rcu_gpi.cpp
+    intrusive_michael_lazy_rcu_gpt.cpp
+    intrusive_michael_lazy_rcu_shb.cpp
+    intrusive_michael_lazy_rcu_sht.cpp
     intrusive_michael_michael_hp.cpp
     intrusive_michael_michael_dhp.cpp
+    intrusive_michael_michael_nogc.cpp
+    intrusive_michael_michael_rcu_gpb.cpp
+    intrusive_michael_michael_rcu_gpi.cpp
+    intrusive_michael_michael_rcu_gpt.cpp
+    intrusive_michael_michael_rcu_shb.cpp
+    intrusive_michael_michael_rcu_sht.cpp
 )
 
 include_directories(

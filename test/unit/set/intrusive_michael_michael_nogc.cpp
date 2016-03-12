@@ -28,51 +28,38 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#include "test_intrusive_set_hp.h"
+#include "test_intrusive_set_nogc.h"
 
-#include <cds/intrusive/michael_list_dhp.h>
-#include <cds/intrusive/michael_set.h>
+#include <cds/intrusive/michael_list_nogc.h>
+#include <cds/intrusive/michael_set_nogc.h>
 
 namespace {
     namespace ci = cds::intrusive;
-    typedef cds::gc::DHP gc_type;
+    typedef cds::gc::nogc gc_type;
 
-    class IntrusiveMichaelSet_DHP : public cds_test::intrusive_set_hp
+    class IntrusiveMichaelSet_NoGC : public cds_test::intrusive_set_nogc
     {
     protected:
-        typedef cds_test::intrusive_set_hp base_class;
+        typedef cds_test::intrusive_set_nogc base_class;
 
     protected:
         typedef typename base_class::base_int_item< ci::michael_list::node<gc_type>>   base_item_type;
         typedef typename base_class::member_int_item< ci::michael_list::node<gc_type>> member_item_type;
 
-        void SetUp()
-        {
-            struct list_traits : public ci::michael_list::traits
-            {
-                typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
-            };
-            typedef ci::MichaelList< gc_type, base_item_type, list_traits > list_type;
-            typedef ci::MichaelHashSet< gc_type, list_type >   set_type;
+        //void SetUp()
+        //{}
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, set_type::c_nHazardPtrCount );
-            cds::threading::Manager::attachThread();
-        }
-
-        void TearDown()
-        {
-            cds::threading::Manager::detachThread();
-            cds::gc::dhp::GarbageCollector::Destruct();
-        }
+        //void TearDown()
+        //{}
     };
 
 
-    TEST_F( IntrusiveMichaelSet_DHP, base_cmp )
+    TEST_F( IntrusiveMichaelSet_NoGC, base_cmp )
     {
         typedef ci::MichaelList< gc_type
             , base_item_type
             ,ci::michael_list::make_traits<
-                ci::opt::hook< ci::michael_list::base_hook< ci::opt::gc< gc_type >>>
+                ci::opt::hook< ci::michael_list::base_hook< ci::opt::gc< gc_type > > >
                 ,ci::opt::compare< cmp<base_item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
@@ -88,7 +75,7 @@ namespace {
         test( s );
     }
 
-    TEST_F( IntrusiveMichaelSet_DHP, base_less )
+    TEST_F( IntrusiveMichaelSet_NoGC, base_less )
     {
         typedef ci::MichaelList< gc_type
             , base_item_type
@@ -109,7 +96,7 @@ namespace {
         test( s );
     }
 
-    TEST_F( IntrusiveMichaelSet_DHP, base_cmpmix )
+    TEST_F( IntrusiveMichaelSet_NoGC, base_cmpmix )
     {
         struct list_traits : public ci::michael_list::traits
         {
@@ -132,7 +119,7 @@ namespace {
     }
 
 
-    TEST_F( IntrusiveMichaelSet_DHP, member_cmp )
+    TEST_F( IntrusiveMichaelSet_NoGC, member_cmp )
     {
         typedef ci::MichaelList< gc_type
             ,member_item_type
@@ -156,7 +143,7 @@ namespace {
         test( s );
     }
 
-    TEST_F( IntrusiveMichaelSet_DHP, member_less )
+    TEST_F( IntrusiveMichaelSet_NoGC, member_less )
     {
         typedef ci::MichaelList< gc_type
             , member_item_type
@@ -180,7 +167,7 @@ namespace {
         test( s );
     }
 
-    TEST_F( IntrusiveMichaelSet_DHP, member_cmpmix )
+    TEST_F( IntrusiveMichaelSet_NoGC, member_cmpmix )
     {
         struct list_traits : public ci::michael_list::traits
         {

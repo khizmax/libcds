@@ -103,17 +103,17 @@ namespace cds_test {
 
                 EXPECT_EQ( i.nFindCount, 0 );
                 gp = s.get( i );
-                ASSERT_TRUE( gp );
+                ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
                 EXPECT_EQ( i.nFindCount, 1 );
 
                 gp = s.get( i.key() );
-                ASSERT_TRUE( gp );
+                ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
                 EXPECT_EQ( i.nFindCount, 2 );
 
                 gp = s.get_with( other_item( i.key()), other_less());
-                ASSERT_TRUE( gp );
+                ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
                 EXPECT_EQ( i.nFindCount, 3 );
 
@@ -129,7 +129,7 @@ namespace cds_test {
                     gp = s.extract_with( other_item( i.key() ), other_less() );
                     break;
                 }
-                ASSERT_TRUE( gp );
+                ASSERT_FALSE( !gp );
                 ++gp->nEraseCount;
                 EXPECT_EQ( i.nEraseCount, 1 );
 

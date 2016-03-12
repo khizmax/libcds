@@ -122,46 +122,53 @@ namespace cds_test {
                     rcu_lock l;
                     EXPECT_EQ( i.nFindCount, 0 );
                     rp = s.get( i );
-                    ASSERT_TRUE( rp );
+                    ASSERT_FALSE( !rp );
                     ++rp->nFindCount;
                     EXPECT_EQ( i.nFindCount, 1 );
 
                     rp = s.get( i.key() );
-                    ASSERT_TRUE( rp );
+                    ASSERT_FALSE( !rp );
                     ++rp->nFindCount;
                     EXPECT_EQ( i.nFindCount, 2 );
 
                     rp = s.get_with( other_item( i.key()), other_less());
-                    ASSERT_TRUE( rp );
+                    ASSERT_FALSE( !rp );
                     ++rp->nFindCount;
                     EXPECT_EQ( i.nFindCount, 3 );
                 }
 
                 if ( Set::c_bExtractLockExternal ) {
-                    rcu_lock l;
+                    {
+                        rcu_lock l;
 
-                    EXPECT_EQ( i.nEraseCount, 0 );
-                    switch ( i.key() % 3 ) {
-                    case 0:
-                        xp = s.extract( i.key());
-                        break;
-                    case 1:
-                        xp = s.extract( i );
-                        break;
-                    case 2:
-                        xp = s.extract_with( other_item( i.key() ), other_less() );
-                        break;
+                        EXPECT_EQ( i.nEraseCount, 0 );
+                        switch ( i.key() % 3 ) {
+                        case 0:
+                            xp = s.extract( i.key());
+                            break;
+                        case 1:
+                            xp = s.extract( i );
+                            break;
+                        case 2:
+                            xp = s.extract_with( other_item( i.key() ), other_less() );
+                            break;
+                        }
+                        ASSERT_FALSE( !xp );
+                        ++xp->nEraseCount;
                     }
-                    ASSERT_TRUE( xp );
-                    ++xp->nEraseCount;
                     EXPECT_EQ( i.nEraseCount, 1 );
+                    xp.release();
 
-                    xp = s.extract( i );
-                    ASSERT_TRUE( !xp );
-                    xp = s.extract( i.key() );
-                    ASSERT_TRUE( !xp );
-                    xp = s.extract_with( other_item( i.key() ), other_less() );
-                    ASSERT_TRUE( !xp );
+                    {
+                        rcu_lock l;
+
+                        xp = s.extract( i );
+                        ASSERT_TRUE( !xp );
+                        xp = s.extract( i.key() );
+                        ASSERT_TRUE( !xp );
+                        xp = s.extract_with( other_item( i.key() ), other_less() );
+                        ASSERT_TRUE( !xp );
+                    }
                 }
                 else {
                     EXPECT_EQ( i.nEraseCount, 0 );
@@ -176,7 +183,7 @@ namespace cds_test {
                         xp = s.extract_with( other_item( i.key() ), other_less() );
                         break;
                     }
-                    ASSERT_TRUE( xp );
+                    ASSERT_FALSE( !xp );
                     ++xp->nEraseCount;
                     EXPECT_EQ( i.nEraseCount, 1 );
 
