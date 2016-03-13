@@ -20,6 +20,22 @@ set(CDSGTEST_SET_SOURCES
     intrusive_michael_michael_rcu_gpt.cpp
     intrusive_michael_michael_rcu_shb.cpp
     intrusive_michael_michael_rcu_sht.cpp
+    intrusive_split_lazy_hp.cpp
+    intrusive_split_lazy_dhp.cpp
+    intrusive_split_lazy_nogc.cpp
+    intrusive_split_lazy_rcu_gpb.cpp
+    intrusive_split_lazy_rcu_gpi.cpp
+    intrusive_split_lazy_rcu_gpt.cpp
+    intrusive_split_lazy_rcu_shb.cpp
+    intrusive_split_lazy_rcu_sht.cpp
+    intrusive_split_michael_hp.cpp
+    intrusive_split_michael_dhp.cpp
+    intrusive_split_michael_nogc.cpp
+    intrusive_split_michael_rcu_gpb.cpp
+    intrusive_split_michael_rcu_gpi.cpp
+    intrusive_split_michael_rcu_gpt.cpp
+    intrusive_split_michael_rcu_shb.cpp
+    intrusive_split_michael_rcu_sht.cpp
 )
 
 include_directories(
