@@ -218,9 +218,6 @@ namespace cds { namespace intrusive {
         protected:
             void next()
             {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-
                 back_off bkoff;
 
                 for (;;) {
@@ -253,9 +250,6 @@ namespace cds { namespace intrusive {
             iterator( node_type& refHead )
                 : m_pNode( nullptr )
             {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-
                 back_off bkoff;
 
                 for (;;) {
@@ -279,17 +273,11 @@ namespace cds { namespace intrusive {
         public:
             iterator()
                 : m_pNode( nullptr )
-            {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-            }
+            {}
 
             iterator( iterator const& s)
                 : m_pNode( s.m_pNode )
-            {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-            }
+            {}
 
             value_type * operator ->() const
             {
