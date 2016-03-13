@@ -248,6 +248,9 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat              stat;         ///< Internal statistics, see \p spit_list::stat
         typedef typename ordered_list::guarded_ptr guarded_ptr;  ///< Guarded pointer
 
+        /// Count of hazard pointer required
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount + 4; // +4 - for iterators
+
     protected:
         typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
         typedef split_list::node<list_node_type>    node_type;       ///< split-list node type

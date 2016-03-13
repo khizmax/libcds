@@ -356,9 +356,9 @@ namespace cds { namespace intrusive {
         /**
             The function unlink all items from the set.
             The function is not atomic. It cleans up each bucket and then resets the item counter to zero.
-            If there are a thread that performs insertion while \p clear is working the result is undefined in general case:
+            If there are a thread that performs insertion while \p %clear() is working the result is undefined in general case:
             <tt> empty() </tt> may return \p true but the set may contain item(s).
-            Therefore, \p clear may be used only for debugging purposes.
+            Therefore, \p %clear() may be used only for debugging purposes.
 
             For each item the \p disposer is called after unlinking.
         */

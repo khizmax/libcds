@@ -777,6 +777,25 @@ namespace cds { namespace intrusive {
             return pPred->m_pNext.load(memory_model::memory_order_acquire) == pCur;
         }
 
+        // for split-list
+        template <typename Predicate>
+        void erase_for( Predicate pred )
+        {
+            node_type * pPred = nullptr;
+            node_type * pHead = m_Head.m_pNext.load( memory_model::memory_order_relaxed );
+
+            while ( pHead != &m_Tail ) {
+                node_type * p = pHead->m_pNext.load( memory_model::memory_order_relaxed );
+                if ( pred( *node_traits::to_value_ptr( pHead ))) {
+                    assert( pPred != nullptr );
+                    pPred->m_pNext.store( p, memory_model::memory_order_relaxed );
+                    dispose_node( pHead, disposer() );
+                }
+                else
+                    pPred = pHead;
+                pHead = p;
+            }
+        }
         //@endcond
     };
 

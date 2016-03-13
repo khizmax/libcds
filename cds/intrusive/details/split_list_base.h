@@ -781,7 +781,7 @@ namespace cds { namespace intrusive {
                     opt::compare< key_compare >
                     ,opt::disposer< wrapped_disposer >
                     ,opt::boundary_node_type< splitlist_node_type >
-                >::type    result;
+                >::type result;
             };
 
             template <typename OrderedList, bool IsConst>
@@ -835,7 +835,6 @@ namespace cds { namespace intrusive {
                     while ( m_itCur != m_itEnd && node_traits::to_node_ptr( *m_itCur )->is_dummy() )
                         ++m_itCur;
                 }
-
 
                 value_ptr operator ->() const
                 {

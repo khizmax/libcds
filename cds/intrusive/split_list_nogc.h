@@ -119,7 +119,7 @@ namespace cds { namespace intrusive {
         class ordered_list_wrapper: public ordered_list
         {
             typedef ordered_list base_class;
-            typedef typename base_class::auxiliary_head       bucket_head_type;
+            typedef typename base_class::auxiliary_head bucket_head_type;
 
         public:
             list_iterator insert_at_( dummy_node_type * pHead, value_type& val )
@@ -161,6 +161,12 @@ namespace cds { namespace intrusive {
             {
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::insert_aux_node( h, pNode );
+            }
+
+            template <typename Predicate>
+            void erase_for( Predicate pred )
+            {
+                return base_class::erase_for( pred );
             }
         };
 
@@ -494,6 +500,23 @@ namespace cds { namespace intrusive {
             return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
         }
         //@endcond
+
+
+        /// Clears the set (non-atomic, not thread-safe)
+        /**
+            The function unlink all items from the set.
+            The function is not atomic. It cleans up each bucket and then resets the item counter to zero.
+            If there are a thread that performs insertion while \p %clear() is working the result is undefined in general case:
+            <tt> empty() </tt> may return \p true but the set may contain item(s).
+            Therefore, \p %clear() may be used only for debugging purposes.
+
+            For each item the \p disposer is called after unlinking.
+        */
+        void clear()
+        {
+            m_List.erase_for( []( value_type const& val ) -> bool { return !node_traits::to_node_ptr( val )->is_dummy(); } );
+            m_ItemCounter.reset();
+        }
 
         /// Checks if the set is empty
         /**
