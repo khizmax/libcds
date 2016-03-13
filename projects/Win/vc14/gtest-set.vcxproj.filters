@@ -19,6 +19,9 @@
     <Filter Include="Source Files\intrusive:SplitList">
       <UniqueIdentifier>{619a4db2-c9a0-44eb-bbcf-842ed42d4172}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\intrusive::SkipList">
+      <UniqueIdentifier>{9c07e86e-bd5b-4ae1-a730-c768234ba9f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -120,6 +123,30 @@
     <ClCompile Include="..\..\..\test\unit\set\intrusive_split_lazy_rcu_sht.cpp">
       <Filter>Source Files\intrusive:SplitList</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_hp.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_dhp.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_rcu_gpb.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_rcu_gpi.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_rcu_gpt.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_rcu_shb.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_rcu_sht.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_nogc.cpp">
+      <Filter>Source Files\intrusive::SkipList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_set.h">
@@ -144,6 +171,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_split_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_intrusive_skiplist_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
