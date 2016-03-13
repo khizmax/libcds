@@ -141,8 +141,9 @@ namespace cds { namespace container {
 			return empty;
  		}
 
- 		guard* tryRemove(bool fromL) {
+ 		guard* tryRemove(bool fromL, bool& success) {
 			 bool empty = true;
+			 success = true;
 			 int threadIND = acquireIndex();
 			 guard* border = nullptr;
 			 guard* temp;
@@ -203,15 +204,16 @@ namespace cds { namespace container {
 				delete border;
 			}
 			delete startPoint;
-			throw -1;
+			success = false;
+			return nullptr;
 		}
 
- 		guard* tryRemoveRight() throw(int) {
-			return tryRemove(false);
+ 		guard* tryRemoveRight(bool &success) {
+			return tryRemove(false, success);
 		}
 
- 		guard* tryRemoveLeft() throw(int) {
-			return tryRemove(true);
+ 		guard* tryRemoveLeft(bool &success) {
+			return tryRemove(true, success);
 		}
 
  		bool isMore(bnode* n1, bnode* n2, bool fromL) {
@@ -271,10 +273,7 @@ namespace cds { namespace container {
  			guard* res;
 			bool success = false;
 			do {
-				try {
-					res = fromL ? tryRemoveLeft() : tryRemoveRight();
-					success = true;
-				} catch(int err) {}
+				res = fromL ? tryRemoveLeft(success) : tryRemoveRight(success);
 			} while(!success);
 			if(res != nullptr) {
 				itemCounter--;
