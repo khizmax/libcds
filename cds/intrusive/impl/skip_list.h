@@ -391,6 +391,11 @@ namespace cds { namespace intrusive {
         static unsigned int const c_nMinHeight = 5;
         //@endcond
 
+        // c_nMaxHeight * 2 - pPred/pSucc guards
+        // + 1 - for erase, unlink
+        // + 1 - for clear
+        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 2; ///< Count of hazard pointer required for the skip-list
+
     protected:
         typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic marked node pointer
         typedef typename node_type::marked_ptr          marked_node_ptr;   ///< Node marked pointer
@@ -407,10 +412,6 @@ namespace cds { namespace intrusive {
 
         typedef std::unique_ptr< node_type, typename node_builder::node_disposer > scoped_node_ptr;
 
-        // c_nMaxHeight * 2 - pPred/pSucc guards
-        // + 1 - for erase, unlink
-        // + 1 - for clear
-        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 2;
         struct position {
             node_type *   pPrev[ c_nMaxHeight ];
             node_type *   pSucc[ c_nMaxHeight ];
