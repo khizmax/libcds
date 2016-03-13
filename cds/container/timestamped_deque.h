@@ -111,29 +111,17 @@ namespace cds { namespace container {
  		}
 
  		bool doEmptyCheck() {
- 			int threadIND = acquireIndex();
- 			finded_ptr findedPair(nullptr, nullptr);
-			guard* finded = nullptr;
-			bool empty = true;
-			bool exist = false;
-			for(int i=0; i < maxThread; i++) {
-				finded = localBuffers[i].getRight(nullptr);
-				empty = empty && checkEmptyCondition(finded, i);
-				exist = finded != nullptr;
-				delete finded;
-			}
-			empty = wasEmpty[threadIND] && empty;
-			wasEmpty[threadIND] = !exist;
-			return empty;
+
+			return itemCounter == 0;
  		}
  		/*
  		 *  Helping fucntion for checking emptiness
  		 */
- 		bool checkEmptyCondition(guard* finded , int i) {
+ 		bool checkEmptyCondition(bool found , int i) {
  			int threadIND = acquireIndex();
 			bnode *leftBorder = localBuffers[i].getLeftMost(),
 				   *rightBorder = localBuffers[i].getRightMost();
-			bool empty = leftBorder == rightBorder || (finded == nullptr
+			bool empty = leftBorder == rightBorder || (found
 					&& lastLefts[threadIND][i] == leftBorder
 					&& lastRights[threadIND][i] == rightBorder);
 			lastLefts[threadIND][i] = leftBorder;
@@ -141,79 +129,57 @@ namespace cds { namespace container {
 			return empty;
  		}
 
- 		guard* tryRemove(bool fromL, bool& success) {
-			 bool empty = true;
+ 		bool tryRemove(guard& toRemove, bool fromL, bool& success) {
+			 guard candidate, startCandidate, startPoint;
+			 bool empty = true, isFound = false;
 			 success = true;
 			 int threadIND = acquireIndex();
-			 guard* border = nullptr;
-			 guard* temp;
-			 guard* startPoint = nullptr;
 			 unsigned long startTime = getTimestamp();
 			 int bufferIndex = 0;
 
 			 for(int i=0; i < maxThread; i++) {
-				temp = new guard();
-				guard* finded = localBuffers[i].get(temp, fromL);
-
-				empty = empty && checkEmptyCondition(finded, i);
-
-				if(finded == nullptr) {
-					delete temp;
-					continue;
-				}
-				if(border == nullptr) {
-					border = finded;
-					startPoint = temp;
-					continue;
-				}
-
-				if(isMore(finded->get<bnode>(), border->get<bnode>(), fromL)) {
-					delete border;
-					delete startPoint;
-					startPoint = temp;
-					border = finded;
-					bufferIndex = i;
-				} else {
-					delete finded;
-					delete temp;
-				}
-
+				 if(localBuffers[i].get(candidate, startCandidate, fromL)) {
+					 if(isMore(candidate.get<bnode>(), toRemove.get<bnode>(), fromL)) {
+						 isFound = true;
+						 toRemove.copy(candidate);
+						 startPoint.copy(startCandidate);
+						 bufferIndex = i;
+					 }
+					 empty = empty && checkEmptyCondition(true, i);
+				 } else {
+					 empty = empty && checkEmptyCondition(false, i);
+				 }
 			}
 			empty = empty && wasEmpty[threadIND];
-			wasEmpty[threadIND] = border == nullptr;
+			wasEmpty[threadIND] = isFound;
 
 			if(empty && wasEmpty[threadIND])
 				return nullptr;
 
-			if(border != nullptr) {
-				bnode* borderNode = border->get<bnode>();
+			if(isFound) {
+				bnode* borderNode = toRemove.get<bnode>();
 
 				if(borderNode->wasAdded(fromL)) {
-					if(localBuffers[bufferIndex].tryRemove(border, startPoint, fromL)) {
-						delete startPoint;
-						return border;
+					if(localBuffers[bufferIndex].tryRemove(toRemove, startPoint, fromL)) {
+						return true;
 					}
 				} else {
 					if(borderNode->item->timestamp <= startTime)
-						if(localBuffers[bufferIndex].tryRemove(border, startPoint, fromL)) {
-							delete startPoint;
-							return border;
+						if(localBuffers[bufferIndex].tryRemove(toRemove, startPoint, fromL)) {
+							return true;
 						}
 				}
-
-				delete border;
 			}
-			delete startPoint;
 			success = false;
-			return nullptr;
+			return false;
 		}
 
- 		guard* tryRemoveRight(bool &success) {
-			return tryRemove(false, success);
+ 		bool tryRemoveRight(guard &res, bool &success) {
+			return tryRemove( res, false, success);
 		}
 
- 		guard* tryRemoveLeft(bool &success) {
-			return tryRemove(true, success);
+ 		bool tryRemoveLeft(guard &res, bool &success) {
+			return tryRemove( res, true, success);
 		}
 
  		bool isMore(bnode* n1, bnode* n2, bool fromL) {
@@ -270,15 +236,14 @@ namespace cds { namespace container {
 		}
 
  		bool raw_pop(value_type& val, bool fromL) {
- 			guard* res;
+ 			guard res;
 			bool success = false;
 			do {
-				res = fromL ? tryRemoveLeft(success) : tryRemoveRight(success);
+				tryRemove(res, fromL, success);
 			} while(!success);
-			if(res != nullptr) {
+			bnode* temp = res.get<bnode>();
+			if(temp != nullptr) {
 				itemCounter--;
-				bnode* temp = res->get<bnode>();
-				delete res;
 				val = *temp->item->item;
 				return true;
 			} else
@@ -353,6 +318,10 @@ namespace cds { namespace container {
 		size_t size() const
 		{
 			return itemCounter.value();
+		}
+
+		int version() {
+			return 5;
 		}
 
 		private:
@@ -519,68 +488,62 @@ namespace cds { namespace container {
 
 		 			}
 
-		 			guard* get( guard* start, bool fromL) {
-		 				return (fromL ? getLeft(start) : getRight(start));
+		 			bool get( guard& finded ,guard& start, bool fromL) {
+		 				return (fromL ? getLeft(finded, start) : getRight(finded, start));
 		 			}
 
-		 			guard* getRight(guard* start) {
+		 			bool getRight(guard& found, guard& start) {
 		 				guestCounter++;
-		 				buffer_node* oldRight = rightMost.load(),
+		 				buffer_node *oldRight = rightMost.load(),
 		 							*oldLeft = leftMost.load();
 		 				buffer_node* res = oldRight;
-		 				guard* toReturn = nullptr;
 
 		 				while(true) {
-		 					if(res->index < oldLeft->index ) break;;
+		 					if(res->index < oldLeft->index ) return false;
 		 					if(!res->taken.load()) {
-								toReturn = new cds::gc::HP::Guard();
-								toReturn->protect(std::atomic<buffer_node*>(res));
+								found.protect(std::atomic<buffer_node*>(res));
 		 						break;
 		 					}
-		 					if(res->left.load() == res) break;
+		 					if(res->left.load() == res) return false;
 		 					res = res->left.load();
 		 				}
-		 				if(start != nullptr)
-		 					start->protect( std::atomic<buffer_node*>(oldRight));
+						start.protect( std::atomic<buffer_node*>(oldRight));
 		 				guestCounter--;
-						return toReturn;
+						return true;
 		 			}
 
-		 			guard* getLeft(guard* start) {
+		 			bool getLeft(guard& found, guard& start) {
 		 				guestCounter++;
 		 				buffer_node  *oldRight = rightMost.load(),
 									 *oldLeft = leftMost.load();
 						buffer_node* res = oldLeft;
-						guard* toReturn = nullptr;
 
 						while(true) {
-							if(res->index > oldRight->index) break;
+							if(res->index > oldRight->index) return false;
 							if(!res->taken.load()) {
-								toReturn = new cds::gc::HP::Guard();
-								toReturn->protect(std::atomic<buffer_node*>(res));
+								found.protect(std::atomic<buffer_node*>(res));
 								break;
 							}
-							if(res->right.load() == res) break;
+							if(res->right.load() == res) return false;
 							res = res->right.load();
 						}
-						if(start != nullptr)
-							start->protect( std::atomic<buffer_node*>(oldLeft));
+						start.protect( std::atomic<buffer_node*>(oldLeft));
 						guestCounter--;
-						return toReturn;
+						return true;
 					}
 
 
-		 			bool tryRemove(guard* takenNode, guard* start, bool fromL) {
+		 			bool tryRemove(guard& takenNode, guard& start, bool fromL) {
 		 				if(fromL)
 		 					return tryRemoveLeft(takenNode, start);
 		 				else
 		 					return tryRemoveRight(takenNode, start);
 		 			}
 
-		 			bool tryRemoveRight(guard* takenNode, guard* start) {
+		 			bool tryRemoveRight(guard& takenNode, guard& start) {
 
-		 				buffer_node* node = takenNode->get<buffer_node>();
-		 				buffer_node* startPoint = start->get<buffer_node>();
+		 				buffer_node* node = takenNode.get<buffer_node>();
+		 				buffer_node* startPoint = start.get<buffer_node>();
 		 				bool t = false;
 		 				if(node->taken.compare_exchange_strong(t, true)) {
 		 					rightMost.compare_exchange_strong(startPoint, node);
@@ -589,9 +552,9 @@ namespace cds { namespace container {
 		 				return false;
 		 			}
 
-		 			bool tryRemoveLeft(guard* takenNode, guard* start) {
-		 				buffer_node* node = takenNode->get<buffer_node>();
-		 				buffer_node* startPoint = start->get<buffer_node>();
+		 			bool tryRemoveLeft(guard& takenNode, guard& start) {
+		 				buffer_node* node = takenNode.get<buffer_node>();
+		 				buffer_node* startPoint = start.get<buffer_node>();
 
 		 				bool t = false;
 						if(node->taken.compare_exchange_strong(t, true)) {
