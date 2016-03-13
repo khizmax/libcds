@@ -1037,6 +1037,7 @@ namespace cds { namespace intrusive {
             Otherwise, a crash is possible if another thread deletes the element the iterator points to.
         */
         typedef iterator_type<false>    iterator;
+
         /// Const forward iterator
         /**
             For iterator's features and requirements see \ref iterator
