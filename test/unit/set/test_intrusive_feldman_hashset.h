@@ -39,12 +39,9 @@
 
 // forward declaration
 namespace cds { namespace intrusive {}}
+namespace ci = cds::intrusive;
 
 namespace cds_test {
-
-    namespace ci = cds::intrusive;
-    namespace co = cds::opt;
-
     class intrusive_feldman_hashset: public fixture
     {
     public:
@@ -218,6 +215,13 @@ namespace cds_test {
 
             std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
 
+            // get_level_statistics
+            {
+                std::vector< typename Set::level_statistics > level_stat;
+                s.get_level_statistics( level_stat );
+                EXPECT_GT( level_stat.size(), 0 );
+            }
+
             // erase
             shuffle( indices.begin(), indices.end() );
             for ( auto idx : indices ) {
@@ -250,48 +254,6 @@ namespace cds_test {
 
                 ASSERT_FALSE( s.contains( i.nKey ));
                 ASSERT_FALSE( s.find( i.nKey, []( value_type const& ) {} ));
-            }
-            ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
-
-            // Force retiring cycle
-            Set::gc::force_dispose();
-            for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
-            }
-
-            // erase_at( iterator )
-            for ( auto& i : data ) {
-                i.clear_stat();
-                ASSERT_TRUE( s.insert( i ) );
-            }
-            ASSERT_FALSE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, nSetSize );
-
-            for ( auto it = s.begin(); it != s.end(); ++it ) {
-                ASSERT_TRUE( s.erase_at( it ));
-                ASSERT_FALSE( s.erase_at( it ));
-            }
-            ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
-
-            // Force retiring cycle
-            Set::gc::force_dispose();
-            for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
-            }
-
-            // erase_at( reverse_iterator )
-            for ( auto& i : data ) {
-                i.clear_stat();
-                ASSERT_TRUE( s.insert( i ) );
-            }
-            ASSERT_FALSE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, nSetSize );
-
-            for ( auto it = s.rbegin(); it != s.rend(); ++it ) {
-                ASSERT_TRUE( s.erase_at( it ) );
-                ASSERT_FALSE( s.erase_at( it ) );
             }
             ASSERT_TRUE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, 0 );
