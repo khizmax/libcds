@@ -22,6 +22,9 @@
     <Filter Include="Source Files\intrusive::SkipList">
       <UniqueIdentifier>{9c07e86e-bd5b-4ae1-a730-c768234ba9f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\intrusive:FeldmanHashSet">
+      <UniqueIdentifier>{852d2603-551b-460b-b17f-f370d91f79e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -147,6 +150,12 @@
     <ClCompile Include="..\..\..\test\unit\set\intrusive_skiplist_nogc.cpp">
       <Filter>Source Files\intrusive::SkipList</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_feldman_hashset_hp.cpp">
+      <Filter>Source Files\intrusive:FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\intrusive_feldman_hashset_dhp.cpp">
+      <Filter>Source Files\intrusive:FeldmanHashSet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_set.h">
@@ -174,6 +183,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_skiplist_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_intrusive_feldman_hashset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_intrusive_feldman_hashset_hp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

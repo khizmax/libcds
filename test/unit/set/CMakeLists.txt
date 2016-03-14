@@ -4,6 +4,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
 
 set(CDSGTEST_SET_SOURCES
     ../main.cpp
+    intrusive_feldman_hashset_hp.cpp
+    intrusive_feldman_hashset_dhp.cpp
     intrusive_michael_lazy_hp.cpp
     intrusive_michael_lazy_dhp.cpp
     intrusive_michael_lazy_nogc.cpp
