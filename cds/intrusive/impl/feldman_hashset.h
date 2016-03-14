@@ -1155,9 +1155,11 @@ namespace cds { namespace intrusive {
         {
             if ( iter.m_set != this )
                 return false;
-            if ( iter.m_pNode == head() && iter.m_idx >= head_size())
-                return false;
-            if ( iter.m_idx >= array_node_size())
+            if ( iter.m_pNode == head()) {
+                if ( iter.m_idx >= head_size())
+                    return false;
+            }
+            else if ( iter.m_idx >= array_node_size())
                 return false;
 
             for (;;) {
