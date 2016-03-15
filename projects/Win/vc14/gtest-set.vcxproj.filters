@@ -25,6 +25,9 @@
     <Filter Include="Source Files\intrusive:FeldmanHashSet">
       <UniqueIdentifier>{852d2603-551b-460b-b17f-f370d91f79e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MichaelSet">
+      <UniqueIdentifier>{4c75be9d-6104-435d-b08f-09fa33b2bfcc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -170,6 +173,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\set\intrusive_feldman_hashset_rcu_sht.cpp">
       <Filter>Source Files\intrusive:FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_hp.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_dhp.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

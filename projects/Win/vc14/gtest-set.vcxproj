@@ -194,6 +194,8 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\set\intrusive_split_michael_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\test\unit\set\intrusive_split_michael_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_hp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_feldman_hashset.h" />

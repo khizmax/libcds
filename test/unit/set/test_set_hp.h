@@ -79,7 +79,7 @@ namespace cds_test {
                 EXPECT_EQ( it->nFindCount, it->key() * 3 );
             }
 
-            typedef typename Set::guqrded_ptr guarded_ptr;
+            typedef typename Set::guarded_ptr guarded_ptr;
             guarded_ptr gp;
 
             // get()

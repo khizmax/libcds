@@ -41,7 +41,6 @@
 namespace cds { namespace container {}}
 
 namespace cds_test {
-    namespace cc = cds::container;
     namespace co = cds::opt;
 
     class container_set : public fixture
@@ -80,7 +79,7 @@ namespace cds_test {
             }
         };
 
-        struct int_item
+        struct int_item: public stat
         {
             int nKey;
             int nVal;
@@ -200,16 +199,16 @@ namespace cds_test {
                 return v1.key() > v2.key() ? 1 : 0;
             }
 
-            template <typename T, typename Q>
-            int operator ()( T const& v1, const Q& v2 ) const
+            template <typename T>
+            int operator ()( T const& v1, int v2 ) const
             {
                 if ( v1.key() < v2 )
                     return -1;
                 return v1.key() > v2 ? 1 : 0;
             }
 
-            template <typename T, typename Q>
-            int operator ()( const Q& v1, T const& v2 ) const
+            template <typename T>
+            int operator ()( int v1, T const& v2 ) const
             {
                 if ( v1 < v2.key() )
                     return -1;
@@ -273,10 +272,10 @@ namespace cds_test {
                 case 0:
                     ASSERT_TRUE( s.insert( i ));
                     ASSERT_FALSE( s.insert( i ));
-                    updResult = s.update( i, []( bool bNew, value_type& val, value_type& arg) 
+                    updResult = s.update( i, []( bool bNew, value_type& val, value_type const& arg) 
                         {
                             EXPECT_FALSE( bNew );
-                            EXPECT_EQ( &val, &arg );
+                            EXPECT_EQ( val.key(), arg.key() );
                         }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
@@ -287,7 +286,7 @@ namespace cds_test {
                     updResult = s.update( i.key(), []( bool bNew, value_type& val, int arg) 
                         {
                             EXPECT_FALSE( bNew );
-                            EXPECT_EQ( &val, &arg );
+                            EXPECT_EQ( val.key(), arg );
                         }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
@@ -295,7 +294,7 @@ namespace cds_test {
                 case 2:
                     ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ));
                     ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ));
-                    ASSERT_TRUE( s.find( i.nKey, []( value_type const& V, int key ) 
+                    ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
                         {
                             EXPECT_EQ( v.key(), key );
                             EXPECT_EQ( v.nFindCount, 1 );
@@ -304,7 +303,7 @@ namespace cds_test {
                 case 3:
                     ASSERT_TRUE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ));
                     ASSERT_FALSE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ));
-                    ASSERT_TRUE( s.find( i.nKey, []( value_type const& V, int key ) 
+                    ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
                         {
                             EXPECT_EQ( v.key(), key );
                             EXPECT_EQ( v.nFindCount, 1 );
@@ -322,17 +321,17 @@ namespace cds_test {
 
                     updResult = s.update( i, []( bool bNew, value_type& v, value_type const& arg )
                         {
-                            EXPECT_TRUE( bNew );
+                            EXPECT_FALSE( bNew );
                             EXPECT_EQ( v.key(), arg.key() );
                             ++v.nUpdateNewCount;
-                        } ), false );
+                        }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
 
-                    ASSERT_TRUE( s.find( i.nKey, []( value_type const& V, int key )
+                    ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                         {
                             EXPECT_EQ( v.key(), key );
-                            EXPECT_EQ( v.nFindCount, 2 );
+                            EXPECT_EQ( v.nUpdateNewCount, 2 );
                         }));
                     break;
                 case 5:
@@ -347,22 +346,22 @@ namespace cds_test {
 
                     updResult = s.update( i.key(), []( bool bNew, value_type& v, int arg )
                         {
-                            EXPECT_TRUE( bNew );
+                            EXPECT_FALSE( bNew );
                             EXPECT_EQ( v.key(), arg );
                             ++v.nUpdateNewCount;
-                        } ), false );
+                        }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
 
-                    ASSERT_TRUE( s.find( i, []( value_type const& V, value_type const& arg )
+                    ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
                             EXPECT_EQ( v.key(), arg.key() );
-                            EXPECT_EQ( v.nFindCount, 2 );
+                            EXPECT_EQ( v.nUpdateNewCount, 2 );
                         }));
                     break;
                 case 6:
                     ASSERT_TRUE( s.emplace( i.key()));
-                    ASSERT_TRUE( s.find( i, []( value_type const& V, value_type const& arg )
+                    ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
                             EXPECT_EQ( v.key(), arg.key() );
                             EXPECT_EQ( v.nVal, arg.nVal );
@@ -372,7 +371,7 @@ namespace cds_test {
                     str = "Hello!";
                     ASSERT_TRUE( s.emplace( i.key(), std::move( str )));
                     EXPECT_TRUE( str.empty());
-                    ASSERT_TRUE( s.find( i, []( value_type const& V, value_type const& arg )
+                    ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
                             EXPECT_EQ( v.key(), arg.key() );
                             EXPECT_EQ( v.nVal, arg.nVal );
@@ -407,7 +406,7 @@ namespace cds_test {
                     { 
                         v.nFindCount = 1;
                     }));
-                ASSERT_TRUE( s.find( i, []( value_type& v, int ) 
+                ASSERT_TRUE( s.find( i, []( value_type& v, value_type const& ) 
                     { 
                         EXPECT_EQ( ++v.nFindCount, 2 );
                     }));
@@ -415,7 +414,6 @@ namespace cds_test {
                     { 
                         EXPECT_EQ( ++v.nFindCount, 3 );
                     }));
-                EXPECT_EQ( i.nFindCount, 2 );
 
                 int nKey = i.key() - 1;
                 switch ( idx % 6 ) {
@@ -467,7 +465,7 @@ namespace cds_test {
                     EXPECT_EQ( i.key(), nKey );
 
                     nKey = i.key() - 1;
-                    ASSERT_FALSE( s.erase( other_item( i.key()), other_less(), [&nKey]( value_type const& v )
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_less(), [&nKey]( value_type const& v )
                         {
                             nKey = v.key();
                         } ));
