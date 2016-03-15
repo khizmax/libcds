@@ -251,6 +251,51 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator for Michael's set has some features:
+            - it has no post-increment operator
+            - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
+              For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
+              may be thrown if the limit of guard count per thread is exceeded.
+            - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
+            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
+              deleting operations there is no guarantee that you iterate all item in the set. 
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+
+            @warning Use this iterator on the concurrent container for debugging purpose only.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
+
         /// Forward iterator
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
@@ -278,28 +323,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return get_const_begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return get_const_begin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return get_const_end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return get_const_end();
         }
-        //@}
+    //@}
 
     private:
         //@cond

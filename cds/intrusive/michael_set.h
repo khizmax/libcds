@@ -302,7 +302,7 @@ namespace cds { namespace intrusive {
             The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
             - it has no post-increment operator
             - it iterates items in unordered fashion
-            - The iterator cannot be moved across thread boundary since it may contain GC's guard that is thread-private GC data.
+            - The iterator cannot be moved across thread boundary because it may contain GC's guard that is thread-private GC data.
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
               deleting operations it is no guarantee that you iterate all item in the set.
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
