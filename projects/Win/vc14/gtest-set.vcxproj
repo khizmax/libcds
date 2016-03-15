@@ -208,6 +208,8 @@
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_skiplist_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_split_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_intrusive_split_michael_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_set.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_set_hp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A589D3F1-A749-4268-ADEC-D0CE13D1E359}</ProjectGuid>
