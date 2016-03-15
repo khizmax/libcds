@@ -93,47 +93,6 @@ namespace cds { namespace container {
         };
         \endcode
 
-        <b>Iterators</b>
-
-        The class supports a forward iterator (\ref iterator and \ref const_iterator).
-        The iteration is unordered.
-        The iterator object is thread-safe: the element pointed by the iterator object is guarded,
-        so, the element cannot be reclaimed while the iterator object is alive.
-        However, passing an iterator object between threads is dangerous.
-
-        @warning Due to concurrent nature of Michael's set it is not guarantee that you can iterate
-        all elements in the set: any concurrent deletion can exclude the element
-        pointed by the iterator from the set, and your iteration can be terminated
-        before end of the set. Therefore, such iteration is more suitable for debugging purpose only
-
-        Remember, each iterator object requires an additional hazard pointer, that may be
-        a limited resource for \p GC like \p gc::HP (for \p gc::DHP the total count of
-        guards is unlimited).
-
-        The iterator class supports the following minimalistic interface:
-        \code
-        struct iterator {
-        // Default ctor
-        iterator();
-
-        // Copy ctor
-        iterator( iterator const& s);
-
-        value_type * operator ->() const;
-        value_type& operator *() const;
-
-        // Pre-increment
-        iterator& operator ++();
-
-        // Copy assignment
-        iterator& operator = (const iterator& src);
-
-        bool operator ==(iterator const& i ) const;
-        bool operator !=(iterator const& i ) const;
-        };
-        \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
-
         <b>How to use</b>
 
         Suppose, we have the following type \p Foo that we want to store in our \p %MichaelHashSet:
