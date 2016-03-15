@@ -34,8 +34,6 @@
 #include <cds/container/details/michael_set_base.h>
 #include <cds/details/allocator.h>
 
-#include <type_traits> // is_move_constructible
-
 namespace cds { namespace container {
 
     /// Michael's hash set
