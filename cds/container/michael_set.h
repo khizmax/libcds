@@ -34,6 +34,8 @@
 #include <cds/container/details/michael_set_base.h>
 #include <cds/details/allocator.h>
 
+#include <type_traits> // is_move_constructible
+
 namespace cds { namespace container {
 
     /// Michael's hash set
@@ -218,15 +220,31 @@ namespace cds { namespace container {
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter item_counter; ///< Item counter type
 
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
-
         typedef typename bucket_type::guarded_ptr  guarded_ptr; ///< Guarded pointer
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = bucket_type::c_nHazardPtrCount; ///< Count of hazard pointer required
 
     protected:
+        //@cond
+        class internal_bucket_type: public bucket_type
+        {
+            typedef bucket_type base_class;
+        public:
+            using base_class::node_type;
+            using base_class::alloc_node;
+            using base_class::insert_node;
+            using base_class::node_to_value;
+        };
+
+        /// Bucket table allocator
+        typedef cds::details::Allocator< internal_bucket_type, typename traits::allocator >  bucket_table_allocator;
+        //@endcond
+
+    protected:
+        //@cond
         item_counter    m_ItemCounter; ///< Item counter
         hash            m_HashFunctor; ///< Hash functor
-        bucket_type *   m_Buckets;     ///< bucket table
+        internal_bucket_type *  m_Buckets;     ///< bucket table
+        //@endcond
 
     private:
         //@cond
@@ -244,7 +262,7 @@ namespace cds { namespace container {
 
         /// Returns the bucket (ordered list) for \p key
         template <typename Q>
-        bucket_type&    bucket( Q const& key )
+        internal_bucket_type&    bucket( Q const& key )
         {
             return m_Buckets[ hash_value( key ) ];
         }
@@ -351,11 +369,11 @@ namespace cds { namespace container {
         //@cond
         const_iterator get_const_begin() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
         //@endcond
 
@@ -489,7 +507,8 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            bool bRet = bucket( value_type(std::forward<Args>(args)...) ).emplace( std::forward<Args>(args)... );
+            typename internal_bucket_type::node_type * pNode = internal_bucket_type::alloc_node( std::forward<Args>( args )... );
+            bool bRet = bucket( internal_bucket_type::node_to_value( *pNode )).insert_node( pNode );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;
