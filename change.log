@@ -2,6 +2,13 @@
     General release
     - Changed: CMake is used for build libcds. Ancient build.sh is removed
     - Changed: unit and stress tests are migrated to googletest framework
+    - Fixed: serious bug in MichaelSet::emplace() function
+      New node was created twice from the arguments by move semantics. 
+      However, move semantics may change internal state of the argument
+      that can lead to an incorrect element in the set and even
+      to an incorrect key that breaks the set logic.
+    - Fixed: bug in FeldmanHashSet::erase_at( iterator ): due an error
+      in precondition checking the function can incorrectly return false.
 
 2.1.0 06.01.2016
     General release
