@@ -146,9 +146,6 @@ namespace cds { namespace container {
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter item_counter;   ///< Item counter type
 
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
-
         typedef typename bucket_type::rcu_lock   rcu_lock;   ///< RCU scoped lock
         typedef typename bucket_type::exempt_ptr exempt_ptr; ///< pointer to extracted node
         typedef typename bucket_type::raw_ptr    raw_ptr;    ///< Return type of \p get() member function and its derivatives
@@ -156,9 +153,26 @@ namespace cds { namespace container {
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
     protected:
-        item_counter    m_ItemCounter; ///< Item counter
-        hash            m_HashFunctor; ///< Hash functor
-        bucket_type *   m_Buckets;     ///< bucket table
+        //@cond
+        class internal_bucket_type: public bucket_type
+        {
+            typedef bucket_type base_class;
+        public:
+            using base_class::node_type;
+            using base_class::alloc_node;
+            using base_class::insert_node;
+            using base_class::node_to_value;
+        };
+
+        /// Bucket table allocator
+        typedef cds::details::Allocator< internal_bucket_type, typename traits::allocator >  bucket_table_allocator;
+
+        //@endcond
+
+    protected:
+        item_counter             m_ItemCounter; ///< Item counter
+        hash                     m_HashFunctor; ///< Hash functor
+        internal_bucket_type *   m_Buckets;     ///< bucket table
 
     private:
         //@cond
@@ -176,12 +190,12 @@ namespace cds { namespace container {
 
         /// Returns the bucket (ordered list) for \p key
         template <typename Q>
-        bucket_type&    bucket( Q const& key )
+        internal_bucket_type& bucket( Q const& key )
         {
             return m_Buckets[ hash_value( key ) ];
         }
         template <typename Q>
-        bucket_type const&    bucket( Q const& key ) const
+        internal_bucket_type const& bucket( Q const& key ) const
         {
             return m_Buckets[ hash_value( key ) ];
         }
@@ -280,11 +294,11 @@ namespace cds { namespace container {
         //@cond
         const_iterator get_const_begin() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
         //@endcond
 
@@ -306,7 +320,6 @@ namespace cds { namespace container {
             // GC and OrderedList::gc must be the same
             static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
-            // atomicity::empty_item_counter is not allowed as a item counter
             static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
                            "atomicity::empty_item_counter is not allowed as a item counter");
 
@@ -455,7 +468,8 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            bool bRet = bucket( value_type(std::forward<Args>(args)...) ).emplace( std::forward<Args>(args)... );
+            typename internal_bucket_type::node_type * pNode = internal_bucket_type::alloc_node( std::forward<Args>( args )... );
+            bool bRet = bucket( internal_bucket_type::node_to_value( *pNode ) ).insert_node( pNode );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;

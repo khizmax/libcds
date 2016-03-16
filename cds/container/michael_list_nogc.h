@@ -426,6 +426,16 @@ namespace cds { namespace container {
 
     protected:
         //@cond
+        static value_type& node_to_value( node_type& n )
+        {
+            return n.m_Value;
+        }
+
+        iterator insert_node( node_type * pNode )
+        {
+            return node_to_iterator( insert_node_at( head(), pNode ));
+        }
+
         node_type * insert_node_at( head_type& refHead, node_type * pNode )
         {
             assert( pNode != nullptr );
