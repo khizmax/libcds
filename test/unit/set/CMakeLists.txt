@@ -53,6 +53,12 @@ set(CDSGTEST_SET_SOURCES
     intrusive_split_michael_rcu_sht.cpp
     michael_michael_hp.cpp
     michael_michael_dhp.cpp
+    michael_michael_nogc.cpp
+    michael_michael_rcu_gpb.cpp
+    michael_michael_rcu_gpi.cpp
+    michael_michael_rcu_gpt.cpp
+    michael_michael_rcu_shb.cpp
+    michael_michael_rcu_sht.cpp
 )
 
 include_directories(
