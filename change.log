@@ -9,6 +9,8 @@
       to an incorrect key that breaks the set logic.
     - Fixed: bug in FeldmanHashSet::erase_at( iterator ): due an error
       in precondition checking the function can incorrectly return false.
+    - Fixed: possible double-free case in flat combining algorithm. 
+      Thanks to Amila Jayasekara who points me to this problem
 
 2.1.0 06.01.2016
     General release
