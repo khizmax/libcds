@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\MichaelSet">
+      <UniqueIdentifier>{9f3cc5d8-7142-4a8e-a520-512911312b13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SkipList">
+      <UniqueIdentifier>{9c07e86e-bd5b-4ae1-a730-c768234ba9f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FeldmanHashSet">
+      <UniqueIdentifier>{852d2603-551b-460b-b17f-f370d91f79e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SplitList">
+      <UniqueIdentifier>{619a4db2-c9a0-44eb-bbcf-842ed42d4172}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\test\unit\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_dhp.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_hp.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_nogc.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_rcu_shb.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_lazy_rcu_sht.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_dhp.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_hp.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_nogc.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_rcu_gpb.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_rcu_gpi.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_rcu_gpt.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_rcu_shb.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_michael_rcu_sht.cpp">
+      <Filter>Source Files\MichaelSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_hp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_dhp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_hp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_dhp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_nogc.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_nogc.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_rcu_gpb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_rcu_gpi.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_rcu_gpt.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_rcu_shb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_michael_rcu_sht.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_rcu_shb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_lazy_rcu_sht.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_hp.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_dhp.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_rcu_gpb.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_rcu_gpi.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_rcu_gpt.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_rcu_shb.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_rcu_sht.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_skiplist_nogc.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_hp.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_dhp.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_rcu_gpb.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_rcu_gpi.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_rcu_gpt.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_rcu_shb.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_rcu_sht.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_michael_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_michael_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_nogc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_skiplist_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_feldman_hashset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_feldman_hashset_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_feldman_hashset_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_michael_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
