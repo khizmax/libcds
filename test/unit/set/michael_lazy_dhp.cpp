@@ -30,21 +30,21 @@
 
 #include "test_set_hp.h"
 
-#include <cds/container/michael_list_dhp.h>
+#include <cds/container/lazy_list_dhp.h>
 #include <cds/container/michael_set.h>
 
 namespace {
     namespace cc = cds::container;
     typedef cds::gc::DHP gc_type;
 
-    class MichaelSet_DHP : public cds_test::container_set_hp
+    class MichaelLazySet_DHP : public cds_test::container_set_hp
     {
     protected:
         typedef cds_test::container_set_hp base_class;
 
         void SetUp()
         {
-            typedef cc::MichaelList< gc_type, int_item > list_type;
+            typedef cc::LazyList< gc_type, int_item > list_type;
             typedef cc::MichaelHashSet< gc_type, list_type >   set_type;
 
             cds::gc::dhp::GarbageCollector::Construct( 16, set_type::c_nHazardPtrCount );
@@ -58,10 +58,10 @@ namespace {
         }
     };
 
-    TEST_F( MichaelSet_DHP, compare )
+    TEST_F( MichaelLazySet_DHP, compare )
     {
-        typedef cc::MichaelList< gc_type, int_item,
-            typename cc::michael_list::make_traits<
+        typedef cc::LazyList< gc_type, int_item,
+            typename cc::lazy_list::make_traits<
                 cds::opt::compare< cmp >
             >::type
         > list_type;
@@ -76,10 +76,10 @@ namespace {
         test( s );
     }
 
-    TEST_F( MichaelSet_DHP, less )
+    TEST_F( MichaelLazySet_DHP, less )
     {
-        typedef cc::MichaelList< gc_type, int_item,
-            typename cc::michael_list::make_traits<
+        typedef cc::LazyList< gc_type, int_item,
+            typename cc::lazy_list::make_traits<
                 cds::opt::less< base_class::less >
             >::type
         > list_type;
@@ -94,14 +94,14 @@ namespace {
         test( s );
     }
 
-    TEST_F( MichaelSet_DHP, cmpmix )
+    TEST_F( MichaelLazySet_DHP, cmpmix )
     {
-        struct list_traits : public cc::michael_list::traits
+        struct list_traits : public cc::lazy_list::traits
         {
             typedef base_class::less less;
             typedef cmp compare;
         };
-        typedef cc::MichaelList< gc_type, int_item, list_traits > list_type;
+        typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
 
         typedef cc::MichaelHashSet< gc_type, list_type, 
             typename cc::michael_set::make_traits<
@@ -113,13 +113,13 @@ namespace {
         test( s );
     }
 
-    TEST_F( MichaelSet_DHP, item_counting )
+    TEST_F( MichaelLazySet_DHP, item_counting )
     {
-        struct list_traits : public cc::michael_list::traits
+        struct list_traits : public cc::lazy_list::traits
         {
             typedef cmp compare;
         };
-        typedef cc::MichaelList< gc_type, int_item, list_traits > list_type;
+        typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
 
         struct set_traits: public cc::michael_set::traits
         {
@@ -132,14 +132,14 @@ namespace {
         test( s );
     }
 
-    TEST_F( MichaelSet_DHP, backoff )
+    TEST_F( MichaelLazySet_DHP, backoff )
     {
-        struct list_traits : public cc::michael_list::traits
+        struct list_traits : public cc::lazy_list::traits
         {
             typedef cmp compare;
             typedef cds::backoff::exponential<cds::backoff::pause, cds::backoff::yield> back_off;
         };
-        typedef cc::MichaelList< gc_type, int_item, list_traits > list_type;
+        typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
 
         struct set_traits : public cc::michael_set::traits
         {
@@ -152,17 +152,38 @@ namespace {
         test( s );
     }
 
-    TEST_F( MichaelSet_DHP, seq_cst )
+    TEST_F( MichaelLazySet_DHP, seq_cst )
     {
-        struct list_traits : public cc::michael_list::traits
+        struct list_traits : public cc::lazy_list::traits
         {
             typedef base_class::less less;
             typedef cds::backoff::pause back_off;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cc::MichaelList< gc_type, int_item, list_traits > list_type;
+        typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
 
         struct set_traits : public cc::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cc::MichaelHashSet< gc_type, list_type, set_traits >set_type;
+
+        set_type s( kSize, 4 );
+        test( s );
+    }
+
+    TEST_F( MichaelLazySet_DHP, mutex )
+    {
+        struct list_traits: public cc::lazy_list::traits
+        {
+            typedef base_class::less less;
+            typedef cds::backoff::pause back_off;
+            typedef std::mutex lock_type;
+        };
+        typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
+
+        struct set_traits: public cc::michael_set::traits
         {
             typedef hash_int hash;
             typedef cds::atomicity::item_counter item_counter;

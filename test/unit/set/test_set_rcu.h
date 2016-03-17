@@ -89,7 +89,7 @@ namespace cds_test {
 
                 {
                     rcu_lock l;
-                    raw_ptr  rp;
+                    raw_ptr  rp{};
                     ASSERT_TRUE( !rp );
                     switch ( idx % 3 ) {
                     case 0:
@@ -117,37 +117,44 @@ namespace cds_test {
 
                 ASSERT_TRUE( !xp );
                 if ( Set::c_bExtractLockExternal ) {
-                    rcu_lock l;
+                    {
+                        rcu_lock l;
 
-                    switch ( idx % 3 ) {
-                    case 0:
-                        xp = s.extract( i.key() );
-                        ASSERT_FALSE( !xp );
-                        break;
-                    case 1:
-                        xp = s.extract( i );
-                        ASSERT_FALSE( !xp );
-                        break;
-                    case 2:
-                        xp = s.extract_with( other_item( i.key() ), other_less() );
-                        ASSERT_FALSE( !xp );
-                        break;
+                        switch ( idx % 3 ) {
+                        case 0:
+                            xp = s.extract( i.key() );
+                            ASSERT_FALSE( !xp );
+                            break;
+                        case 1:
+                            xp = s.extract( i );
+                            ASSERT_FALSE( !xp );
+                            break;
+                        case 2:
+                            xp = s.extract_with( other_item( i.key() ), other_less() );
+                            ASSERT_FALSE( !xp );
+                            break;
+                        }
+                        EXPECT_EQ( xp->key(), i.key() );
+                        EXPECT_EQ( xp->nFindCount, i.key() * 6 );
                     }
-                    EXPECT_EQ( xp->key(), i.key() );
-                    EXPECT_EQ( xp->nFindCount, i.key() * 6 );
+                    xp.release();
 
-                    switch ( idx % 3 ) {
-                    case 0:
-                        xp = s.extract( i.key() );
-                        break;
-                    case 1:
-                        xp = s.extract( i );
-                        break;
-                    case 2:
-                        xp = s.extract_with( other_item( i.key() ), other_less() );
-                        break;
+                    {
+                        rcu_lock l;
+
+                        switch ( idx % 3 ) {
+                        case 0:
+                            xp = s.extract( i.key() );
+                            break;
+                        case 1:
+                            xp = s.extract( i );
+                            break;
+                        case 2:
+                            xp = s.extract_with( other_item( i.key() ), other_less() );
+                            break;
+                        }
+                        ASSERT_TRUE( !xp );
                     }
-                    ASSERT_TRUE( !xp );
                 }
                 else {
                     switch ( idx % 3 ) {
