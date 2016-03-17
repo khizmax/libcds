@@ -28,10 +28,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_dhp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_hp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_nogc.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_gpb.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_nogc.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_gpb.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
@@ -39,8 +39,8 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_gpt.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_gpt.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
@@ -48,14 +48,14 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set_nogc.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_set.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_set_hp.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_set_nogc.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_set_rcu.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A589D3F1-A749-4268-ADEC-D0CE13D1E359}</ProjectGuid>

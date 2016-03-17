@@ -21,42 +21,42 @@
     <ClCompile Include="..\..\..\test\unit\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_hp.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_hp.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_dhp.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_dhp.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_gpb.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_gpb.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_gpi.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_gpi.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_gpt.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_gpt.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_shb.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_shb.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_rcu_sht.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_sht.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\intrusive-set\michael_michael_nogc.cpp">
+    <ClCompile Include="..\..\..\test\unit\set\michael_michael_nogc.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set.h">
+    <ClInclude Include="..\..\..\test\unit\set\test_set.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set_hp.h">
+    <ClInclude Include="..\..\..\test\unit\set\test_set_hp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set_rcu.h">
+    <ClInclude Include="..\..\..\test\unit\set\test_set_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_set_nogc.h">
+    <ClInclude Include="..\..\..\test\unit\set\test_set_nogc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
