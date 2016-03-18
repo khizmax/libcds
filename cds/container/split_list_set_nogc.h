@@ -391,6 +391,12 @@ namespace cds { namespace container {
         }
         //@endcond
 
+        /// Clears the set (not atomic, for debugging purposes only)
+        void clear()
+        {
+            base_class::clear();
+        }
+
         /// Checks if the set is empty
         /**
             Emptiness is checked by item counting: if item count is zero then the set is empty.

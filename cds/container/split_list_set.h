@@ -180,6 +180,9 @@ namespace cds { namespace container {
         typedef typename base_class::item_counter item_counter; ///< Item counter type
         typedef typename base_class::stat         stat; ///< Internal statistics
 
+        /// Count of hazard pointer required
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount;
+
     protected:
         //@cond
         typedef typename maker::cxx_node_allocator    cxx_node_allocator;
