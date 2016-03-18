@@ -16,6 +16,9 @@
     <Filter Include="Source Files\MichaelSet">
       <UniqueIdentifier>{4c75be9d-6104-435d-b08f-09fa33b2bfcc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SplitList">
+      <UniqueIdentifier>{6cf522b0-3039-424a-80f6-12e9ca592630}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -69,6 +72,54 @@
     <ClCompile Include="..\..\..\test\unit\set\michael_lazy_nogc.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_hp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_dhp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_hp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_dhp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_rcu_gpb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_rcu_gpi.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_rcu_gpt.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_rcu_shb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_rcu_sht.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_rcu_shb.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_rcu_sht.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_michael_nogc.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_lazy_nogc.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_set.h">
@@ -87,6 +138,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\set\test_michael_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_split_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_split_lazy_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

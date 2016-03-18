@@ -18,6 +18,22 @@ set(CDSGTEST_SET_SOURCES
     michael_michael_rcu_gpt.cpp
     michael_michael_rcu_shb.cpp
     michael_michael_rcu_sht.cpp
+    split_lazy_hp.cpp
+    split_lazy_dhp.cpp
+    split_lazy_nogc.cpp
+    split_lazy_rcu_gpb.cpp
+    split_lazy_rcu_gpi.cpp
+    split_lazy_rcu_gpt.cpp
+    split_lazy_rcu_shb.cpp
+    split_lazy_rcu_sht.cpp
+    split_michael_hp.cpp
+    split_michael_dhp.cpp
+    split_michael_nogc.cpp
+    split_michael_rcu_gpb.cpp
+    split_michael_rcu_gpi.cpp
+    split_michael_rcu_gpt.cpp
+    split_michael_rcu_shb.cpp
+    split_michael_rcu_sht.cpp
 )
 
 include_directories(
