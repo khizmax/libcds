@@ -22,6 +22,9 @@
     <Filter Include="Source Files\SkipList">
       <UniqueIdentifier>{5c30de7f-5e68-4ef5-b9a5-63a1ec626010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FeldmanHashSet">
+      <UniqueIdentifier>{0f6f4b41-97bc-411f-b24e-790ff162e314}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -147,6 +150,27 @@
     <ClCompile Include="..\..\..\test\unit\set\skiplist_rcu_sht.cpp">
       <Filter>Source Files\SkipList</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_hp.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_dhp.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpb.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpi.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpt.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_shb.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_sht.cpp">
+      <Filter>Source Files\FeldmanHashSet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_set.h">
@@ -174,6 +198,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\set\test_skiplist_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

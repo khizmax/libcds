@@ -28,6 +28,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\set\michael_lazy_dhp.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
@@ -196,6 +203,9 @@
     <ClCompile Include="..\..\..\test\unit\set\split_michael_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset_hp.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_michael_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_michael_michael_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set.h" />

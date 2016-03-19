@@ -2,6 +2,13 @@ set(PACKAGE_NAME unit-set)
 
 set(CDSGTEST_SET_SOURCES
     ../main.cpp
+    feldman_hashset_hp.cpp
+    feldman_hashset_dhp.cpp
+    feldman_hashset_rcu_gpb.cpp
+    feldman_hashset_rcu_gpi.cpp
+    feldman_hashset_rcu_gpt.cpp
+    feldman_hashset_rcu_shb.cpp
+    feldman_hashset_rcu_sht.cpp
     michael_lazy_hp.cpp
     michael_lazy_dhp.cpp
     michael_lazy_nogc.cpp
