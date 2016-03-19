@@ -152,6 +152,8 @@ namespace cds { namespace container {
         typedef typename traits::random_level_generator random_level_generator; ///< random level generator
         typedef typename traits::stat             stat;           ///< internal statistics type
 
+        static size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the skip-list
+
     protected:
         //@cond
         typedef typename maker::node_type           node_type;
@@ -183,7 +185,50 @@ namespace cds { namespace container {
         {}
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Iterator type
+        /**
+            The forward iterator has some features:
+            - it has no post-increment operator
+            - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
+              For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
+              may be thrown if the limit of guard count per thread is exceeded.
+            - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
+            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
+              deleting operations there is no guarantee that you iterate all item in the list. 
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+
+            @warning Use this iterator on the concurrent container for debugging purpose only.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
         typedef skip_list::details::iterator< typename base_class::iterator >  iterator;
 
         /// Const iterator type
@@ -224,6 +269,7 @@ namespace cds { namespace container {
         {
             return const_iterator( base_class::cend() );
         }
+    //@}
 
     public:
         /// Inserts new node
@@ -578,7 +624,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             return base_class::find_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                                          [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
+                                          [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); } );
         }
         //@endcond
 
