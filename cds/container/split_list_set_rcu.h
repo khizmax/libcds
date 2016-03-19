@@ -366,26 +366,13 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
-        /// Forward iterator
-        /**
-            \p IsConst - constness boolean flag
-
-            The forward iterator for a split-list has the following features:
-            - it has no post-increment operator
-            - it depends on underlying ordered list iterator
-            - it is safe to iterate only inside RCU critical section
-            - deleting an item pointed by the iterator can cause to deadlock
-
-            Therefore, the use of iterators in concurrent environment is not good idea.
-            Use it for debug purpose only.
-        */
+        //@cond
         template <bool IsConst>
         class iterator_type: protected base_class::template iterator_type<IsConst>
         {
-            //@cond
             typedef typename base_class::template iterator_type<IsConst> iterator_base_class;
             friend class SplitListSet;
-            //@endcond
+
         public:
             /// Value pointer type (const for const iterator)
             typedef typename cds::details::make_const_type<value_type, IsConst>::pointer   value_ptr;
@@ -403,11 +390,9 @@ namespace cds { namespace container {
             {}
 
         protected:
-            //@cond
             explicit iterator_type( iterator_base_class const& src )
                 : iterator_base_class( src )
             {}
-            //@endcond
 
         public:
             /// Dereference operator
@@ -450,6 +435,7 @@ namespace cds { namespace container {
                 return iterator_base_class::operator!=(i);
             }
         };
+        //@endcond
 
     public:
         /// Initializes split-ordered list of default capacity
@@ -471,8 +457,49 @@ namespace cds { namespace container {
         {}
 
     public:
-        typedef iterator_type<false>  iterator        ; ///< Forward iterator
-        typedef iterator_type<true>   const_iterator  ; ///< Forward const iterator
+    ///@name Forward iterators (thread-safe under RCU lock)
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
+            - it has no post-increment operator
+            - it iterates items in unordered fashion
+
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
+        typedef iterator_type<false>  iterator;
+
+        /// Forward const iterator
+        typedef iterator_type<true>   const_iterator;
 
         /// Returns a forward iterator addressing the first element in a set
         /**
@@ -515,6 +542,7 @@ namespace cds { namespace container {
         {
             return const_iterator( base_class::cend() );
         }
+    //@}
 
     public:
         /// Inserts new node

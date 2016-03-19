@@ -137,21 +137,13 @@ namespace cds { namespace container {
         {}
 
     protected:
-        /// Forward iterator
-        /**
-            \p IsConst - constness boolean flag
-
-            The forward iterator has the following features:
-            - it has no post-increment operator
-            - it depends on underlying ordered list iterator
-        */
+        //@cond
         template <bool IsConst>
         class iterator_type: protected base_class::template iterator_type<IsConst>
         {
-            //@cond
             typedef typename base_class::template iterator_type<IsConst> iterator_base_class;
             friend class SplitListSet;
-            //@endcond
+
         public:
             /// Value pointer type (const for const iterator)
             typedef typename cds::details::make_const_type<value_type, IsConst>::pointer   value_ptr;
@@ -169,11 +161,9 @@ namespace cds { namespace container {
             {}
 
         protected:
-            //@cond
             explicit iterator_type( iterator_base_class const& src )
                 : iterator_base_class( src )
             {}
-            //@endcond
 
         public:
             /// Dereference operator
@@ -216,9 +206,45 @@ namespace cds { namespace container {
                 return iterator_base_class::operator!=(i);
             }
         };
+        //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
+        /**
+            The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
+            - it has no post-increment operator
+            - it iterates items in unordered fashion
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
         typedef iterator_type<false>  iterator;
 
         /// Const forward iterator
@@ -265,6 +291,7 @@ namespace cds { namespace container {
         {
             return const_iterator( base_class::cend() );
         }
+    //@}
 
     protected:
         //@cond

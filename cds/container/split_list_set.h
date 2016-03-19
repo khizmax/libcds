@@ -249,26 +249,13 @@ namespace cds { namespace container {
         //@endcond
 
     protected:
-        /// Forward iterator
-        /**
-            \p IsConst - constness boolean flag
-
-            The forward iterator for a split-list has the following features:
-            - it has no post-increment operator
-            - it depends on underlying ordered list iterator
-            - The iterator object cannot be moved across thread boundary since it contains GC's guard that is thread-private GC data.
-            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the split-list.
-
-            Therefore, the use of iterators in concurrent environment is not good idea. Use it for debug purpose only.
-        */
+        //@cond
         template <bool IsConst>
         class iterator_type: protected base_class::template iterator_type<IsConst>
         {
-            //@cond
             typedef typename base_class::template iterator_type<IsConst> iterator_base_class;
             friend class SplitListSet;
-            //@endcond
+
         public:
             /// Value pointer type (const for const iterator)
             typedef typename cds::details::make_const_type<value_type, IsConst>::pointer   value_ptr;
@@ -286,11 +273,9 @@ namespace cds { namespace container {
             {}
 
         protected:
-            //@cond
             explicit iterator_type( iterator_base_class const& src )
                 : iterator_base_class( src )
             {}
-            //@endcond
 
         public:
             /// Dereference operator
@@ -333,6 +318,7 @@ namespace cds { namespace container {
                 return iterator_base_class::operator!=(i);
             }
         };
+        //@endcond
 
     public:
         /// Initializes split-ordered list of default capacity
@@ -354,7 +340,48 @@ namespace cds { namespace container {
         {}
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
+        /**
+            The forward iterator for a split-list has the following features:
+            - it has no post-increment operator
+            - it depends on underlying ordered list iterator
+            - The iterator object cannot be moved across thread boundary because it contains GC's guard that is thread-private GC data.
+            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
+              deleting operations it is no guarantee that you iterate all item in the split-list.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+
+              @warning Use this iterator on the concurrent container for debugging purpose only.
+
+              The iterator interface:
+              \code
+              class iterator {
+              public:
+              // Default constructor
+              iterator();
+
+              // Copy construtor
+              iterator( iterator const& src );
+
+              // Dereference operator
+              value_type * operator ->() const;
+
+              // Dereference operator
+              value_type& operator *() const;
+
+              // Preincrement operator
+              iterator& operator ++();
+
+              // Assignment operator
+              iterator& operator = (iterator const& src);
+
+              // Equality operators
+              bool operator ==(iterator const& i ) const;
+              bool operator !=(iterator const& i ) const;
+              };
+              \endcode
+        */
         typedef iterator_type<false>  iterator;
 
         /// Const forward iterator
@@ -401,6 +428,7 @@ namespace cds { namespace container {
         {
             return const_iterator( base_class::cend());
         }
+    //@}
 
     public:
         /// Inserts new node
