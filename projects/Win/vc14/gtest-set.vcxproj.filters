@@ -19,6 +19,9 @@
     <Filter Include="Source Files\SplitList">
       <UniqueIdentifier>{6cf522b0-3039-424a-80f6-12e9ca592630}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SkipList">
+      <UniqueIdentifier>{5c30de7f-5e68-4ef5-b9a5-63a1ec626010}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -120,6 +123,30 @@
     <ClCompile Include="..\..\..\test\unit\set\split_lazy_nogc.cpp">
       <Filter>Source Files\SplitList</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_hp.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_dhp.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_nogc.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_rcu_gpb.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_rcu_gpi.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_rcu_gpt.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_rcu_shb.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\skiplist_rcu_sht.cpp">
+      <Filter>Source Files\SkipList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_set.h">
@@ -144,6 +171,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\set\test_split_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_skiplist_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
