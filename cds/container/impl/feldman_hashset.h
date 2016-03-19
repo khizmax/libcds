@@ -148,16 +148,138 @@ namespace cds { namespace container {
         /// Count of hazard pointers required
         static CDS_CONSTEXPR size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount;
 
-        typedef typename base_class::iterator               iterator;       ///< @ref cds_container_FeldmanHashSet_iterators "bidirectional iterator" type
-        typedef typename base_class::const_iterator         const_iterator; ///< @ref cds_container_FeldmanHashSet_iterators "bidirectional const iterator" type
-        typedef typename base_class::reverse_iterator       reverse_iterator;       ///< @ref cds_container_FeldmanHashSet_iterators "bidirectional reverse iterator" type
-        typedef typename base_class::const_reverse_iterator const_reverse_iterator; ///< @ref cds_container_FeldmanHashSet_iterators "bidirectional reverse const iterator" type
+        /// Level statistics
+        typedef feldman_hashset::level_statistics level_statistics;
 
     protected:
         //@cond
         typedef typename maker::cxx_node_allocator cxx_node_allocator;
         typedef std::unique_ptr< value_type, typename maker::node_disposer > scoped_node_ptr;
         //@endcond
+
+    public:
+    ///@name Thread-safe iterators
+    ///@{
+        /// Bidirectional iterator
+        /** @anchor cds_container_FeldmanHashSet_iterators
+            The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment.
+            It is guaranteed that the iterators will remain valid even if another thread deletes the node the iterator points to:
+            Hazard Pointer embedded into the iterator object protects the node from physical reclamation.
+
+            @note Since the iterator object contains hazard pointer that is a thread-local resource,
+            the iterator should not be passed to another thread.
+
+            Each iterator object supports the following interface:
+            - dereference operators:
+                @code
+                value_type [const] * operator ->() noexcept
+                value_type [const] & operator *() noexcept
+                @endcode
+            - pre-increment and pre-decrement. Post-operators is not supported
+            - equality operators <tt>==</tt> and <tt>!=</tt>.
+                Iterators are equal iff they point to the same cell of the same array node.
+                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
+                does not entail <tt> &(*it1) == &(*it2) </tt>
+            - helper member function \p release() that clears internal hazard pointer.
+                After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
+
+            During iteration you may safely erase any item from the set;
+            @ref erase_at() function call doesn't invalidate any iterator.
+            If some iterator points to the item to be erased, that item is not deleted immediately
+            but only after that iterator will be advanced forward or backward.
+
+            @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
+            in array node that is being splitted.
+        */
+        typedef typename base_class::iterator               iterator;
+        typedef typename base_class::const_iterator         const_iterator; ///< @ref cds_container_FeldmanHashSet_iterators "bidirectional const iterator" type
+        typedef typename base_class::reverse_iterator       reverse_iterator;       ///< @ref cds_container_FeldmanHashSet_iterators "bidirectional reverse iterator" type
+        typedef typename base_class::const_reverse_iterator const_reverse_iterator; ///< @ref cds_container_FeldmanHashSet_iterators "bidirectional reverse const iterator" type
+
+        /// Returns an iterator to the beginning of the set
+        iterator begin()
+        {
+            return base_class::begin();
+        }
+
+        /// Returns an const iterator to the beginning of the set
+        const_iterator begin() const
+        {
+            return base_class::begin();
+        }
+
+        /// Returns an const iterator to the beginning of the set
+        const_iterator cbegin()
+        {
+            return base_class::cbegin();
+        }
+
+        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
+        iterator end()
+        {
+            return base_class::end();
+        }
+
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
+        const_iterator end() const
+        {
+            return base_class::end();
+        }
+
+        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
+        const_iterator cend()
+        {
+            return base_class::cend();
+        }
+
+        /// Returns a reverse iterator to the first element of the reversed set
+        reverse_iterator rbegin()
+        {
+            return base_class::rbegin();
+        }
+
+        /// Returns a const reverse iterator to the first element of the reversed set
+        const_reverse_iterator rbegin() const
+        {
+            return base_class::rbegin();
+        }
+
+        /// Returns a const reverse iterator to the first element of the reversed set
+        const_reverse_iterator crbegin()
+        {
+            return base_class::crbegin();
+        }
+
+        /// Returns a reverse iterator to the element following the last element of the reversed set
+        /**
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
+        */
+        reverse_iterator rend()
+        {
+            return base_class::rend();
+        }
+
+        /// Returns a const reverse iterator to the element following the last element of the reversed set
+        /**
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
+        */
+        const_reverse_iterator rend() const
+        {
+            return base_class::rend();
+        }
+
+        /// Returns a const reverse iterator to the element following the last element of the reversed set
+        /**
+            It corresponds to the element preceding the first element of the non-reversed container.
+            This element acts as a placeholder, attempting to access it results in undefined behavior.
+        */
+        const_reverse_iterator crend()
+        {
+            return base_class::crend();
+        }
+    ///@}
 
     public:
         /// Creates empty set
@@ -272,7 +394,7 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            scoped_node_ptr sp( cxx_node_allocator().New( std::forward<Args>(args)... ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( std::forward<Args>(args)... ));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -478,125 +600,6 @@ namespace cds { namespace container {
         {
             base_class::get_level_statistics(stat);
         }
-
-    public:
-    ///@name Thread-safe iterators
-        /** @anchor cds_container_FeldmanHashSet_iterators
-            The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment.
-            It is guaranteed that the iterators will remain valid even if another thread deletes the node the iterator points to:
-            Hazard Pointer embedded into the iterator object protects the node from physical reclamation.
-
-            @note Since the iterator object contains hazard pointer that is a thread-local resource,
-            the iterator should not be passed to another thread.
-
-            Each iterator object supports the common interface:
-            - dereference operators:
-                @code
-                value_type [const] * operator ->() noexcept
-                value_type [const] & operator *() noexcept
-                @endcode
-            - pre-increment and pre-decrement. Post-operators is not supported
-            - equality operators <tt>==</tt> and <tt>!=</tt>.
-                Iterators are equal iff they point to the same cell of the same array node.
-                Note that for two iterators \p it1 and \p it2, the conditon <tt> it1 == it2 </tt>
-                does not entail <tt> &(*it1) == &(*it2) </tt>
-            - helper member function \p release() that clears internal hazard pointer.
-                After \p release() the iterator points to \p nullptr but it still remain valid: further iterating is possible.
-
-            During iteration you may safely erase any item from the set;
-            @ref erase_at() function call doesn't invalidate any iterator.
-            If some iterator points to the item to be erased, that item is not deleted immediately
-            but only after that iterator will be advanced forward or backward.
-
-            @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
-            in array node that is being splitted.
-        */
-    ///@{
-
-        /// Returns an iterator to the beginning of the set
-        iterator begin()
-        {
-            return base_class::begin();
-        }
-
-        /// Returns an const iterator to the beginning of the set
-        const_iterator begin() const
-        {
-            return base_class::begin();
-        }
-
-        /// Returns an const iterator to the beginning of the set
-        const_iterator cbegin()
-        {
-            return base_class::cbegin();
-        }
-
-        /// Returns an iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
-        iterator end()
-        {
-            return base_class::end();
-        }
-
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
-        const_iterator end() const
-        {
-            return base_class::end();
-        }
-
-        /// Returns a const iterator to the element following the last element of the set. This element acts as a placeholder; attempting to access it results in undefined behavior.
-        const_iterator cend()
-        {
-            return base_class::cend();
-        }
-
-        /// Returns a reverse iterator to the first element of the reversed set
-        reverse_iterator rbegin()
-        {
-            return base_class::rbegin();
-        }
-
-        /// Returns a const reverse iterator to the first element of the reversed set
-        const_reverse_iterator rbegin() const
-        {
-            return base_class::rbegin();
-        }
-
-        /// Returns a const reverse iterator to the first element of the reversed set
-        const_reverse_iterator crbegin()
-        {
-            return base_class::crbegin();
-        }
-
-        /// Returns a reverse iterator to the element following the last element of the reversed set
-        /**
-            It corresponds to the element preceding the first element of the non-reversed container.
-            This element acts as a placeholder, attempting to access it results in undefined behavior.
-        */
-        reverse_iterator rend()
-        {
-            return base_class::rend();
-        }
-
-        /// Returns a const reverse iterator to the element following the last element of the reversed set
-        /**
-            It corresponds to the element preceding the first element of the non-reversed container.
-            This element acts as a placeholder, attempting to access it results in undefined behavior.
-        */
-        const_reverse_iterator rend() const
-        {
-            return base_class::rend();
-        }
-
-        /// Returns a const reverse iterator to the element following the last element of the reversed set
-        /**
-            It corresponds to the element preceding the first element of the non-reversed container.
-            This element acts as a placeholder, attempting to access it results in undefined behavior.
-        */
-        const_reverse_iterator crend()
-        {
-            return base_class::crend();
-        }
-    ///@}
     };
 
 }} // namespace cds::container

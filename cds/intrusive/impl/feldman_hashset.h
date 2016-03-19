@@ -145,9 +145,8 @@ namespace cds { namespace intrusive {
         /// Count of hazard pointers required
         static CDS_CONSTEXPR size_t const c_nHazardPtrCount = 2;
 
-        //@cond
+        /// Level statistics
         typedef feldman_hashset::level_statistics level_statistics;
-        //@endcond
 
     protected:
         //@cond

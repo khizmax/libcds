@@ -112,10 +112,8 @@ namespace cds { namespace container {
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
         typedef typename base_class::exempt_ptr exempt_ptr; ///< pointer to extracted node
 
-        typedef typename base_class::iterator               iterator;       ///< @ref cds_container_FeldmanHashSet_rcu_iterators "bidirectional iterator" type
-        typedef typename base_class::const_iterator         const_iterator; ///< @ref cds_container_FeldmanHashSet_rcu_iterators "bidirectional const iterator" type
-        typedef typename base_class::reverse_iterator       reverse_iterator;       ///< @ref cds_container_FeldmanHashSet_rcu_iterators "bidirectional reverse iterator" type
-        typedef typename base_class::const_reverse_iterator const_reverse_iterator; ///< @ref cds_container_FeldmanHashSet_rcu_iterators "bidirectional reverse const iterator" type
+        /// Level statistics
+        typedef feldman_hashset::level_statistics level_statistics;
 
     protected:
         //@cond
@@ -240,7 +238,7 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            scoped_node_ptr sp( cxx_node_allocator().New( std::forward<Args>(args)... ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( std::forward<Args>(args)... ));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -364,7 +362,7 @@ namespace cds { namespace container {
             // ...
             {
                 // lock RCU
-                my_set::rcu_lock;
+                my_set::rcu_lock lock;
 
                 foo * p = theSet.get( 5 );
                 if ( p ) {
@@ -440,6 +438,8 @@ namespace cds { namespace container {
 
     public:
         ///@name Thread-safe iterators
+        ///@{
+        /// Bidirectional iterator
         /** @anchor cds_container_FeldmanHashSet_rcu_iterators
             The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment
             under explicit RCU lock.
@@ -499,7 +499,10 @@ namespace cds { namespace container {
             @note It is possible the item can be iterated more that once, for example, if an iterator points to the item
             in an array node that is being splitted.
         */
-    ///@{
+        typedef typename base_class::iterator               iterator;
+        typedef typename base_class::const_iterator         const_iterator; ///< @ref cds_container_FeldmanHashSet_rcu_iterators "bidirectional const iterator" type
+        typedef typename base_class::reverse_iterator       reverse_iterator;       ///< @ref cds_container_FeldmanHashSet_rcu_iterators "bidirectional reverse iterator" type
+        typedef typename base_class::const_reverse_iterator const_reverse_iterator; ///< @ref cds_container_FeldmanHashSet_rcu_iterators "bidirectional reverse const iterator" type
 
         /// Returns an iterator to the beginning of the set
         iterator begin()
