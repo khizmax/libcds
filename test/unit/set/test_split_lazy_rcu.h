@@ -258,7 +258,7 @@ TYPED_TEST_P( SplitListLazySet, static_bucket_table )
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
     set_type s( TestFixture::kSize, 4 );
-    test( s );
+    this->test( s );
 }
 
 
