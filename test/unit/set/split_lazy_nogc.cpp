@@ -63,7 +63,7 @@ namespace {
             >::type
         > set_type;
 
-        set_type s;
+        set_type s( kSize, 2 );
         test( s );
     }
 
@@ -81,7 +81,7 @@ namespace {
             >::type
         > set_type;
 
-        set_type s;
+        set_type s( kSize, 2 );
         test( s );
     }
 
@@ -100,7 +100,7 @@ namespace {
             >::type
         > set_type;
 
-        set_type s;
+        set_type s( kSize, 1 );
         test( s );
     }
 
@@ -121,7 +121,7 @@ namespace {
         };
         typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
 
-        set_type s;
+        set_type s( kSize, 3 );
         test( s );
     }
 
@@ -142,7 +142,7 @@ namespace {
         };
         typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
 
-        set_type s;
+        set_type s( kSize, 4 );
         test( s );
     }
 
@@ -164,7 +164,7 @@ namespace {
         };
         typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
 
-        set_type s;
+        set_type s( kSize, 2 );
         test( s );
     }
 
@@ -187,8 +187,34 @@ namespace {
         };
         typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
 
-        set_type s;
+        set_type s( kSize, 3 );
         test( s );
     }
+
+    struct set_static_traits: public cc::split_list::traits
+    {
+        static bool const dynamic_bucket_table = false;
+    };
+
+    TEST_F( SplitListLazySet_NoGC, static_bucket_table )
+    {
+        struct set_traits: public set_static_traits
+        {
+            typedef cc::lazy_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+
+            struct ordered_list_traits: public cc::lazy_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::pause back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 4 );
+        test( s );
+    }
+
 
 } // namespace

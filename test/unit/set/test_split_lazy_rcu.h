@@ -78,7 +78,7 @@ TYPED_TEST_P( SplitListLazySet, compare )
         >::type
     > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 2 );
     this->test( s );
 }
 
@@ -100,7 +100,7 @@ TYPED_TEST_P( SplitListLazySet, less )
         >::type
     > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 4 );
     this->test( s );
 }
 
@@ -123,7 +123,7 @@ TYPED_TEST_P( SplitListLazySet, cmpmix )
         >::type
     > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 2 );
     this->test( s );
 }
 
@@ -148,7 +148,7 @@ TYPED_TEST_P( SplitListLazySet, item_counting )
     };
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 1 );
     this->test( s );
 }
 
@@ -173,7 +173,7 @@ TYPED_TEST_P( SplitListLazySet, stat )
     };
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 3 );
     this->test( s );
 }
 
@@ -199,7 +199,7 @@ TYPED_TEST_P( SplitListLazySet, back_off )
     };
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 2 );
     this->test( s );
 }
 
@@ -226,14 +226,46 @@ TYPED_TEST_P( SplitListLazySet, mutex )
     };
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 2 );
     this->test( s );
 }
+
+namespace {
+    struct set_static_traits: public cc::split_list::traits
+    {
+        static bool const dynamic_bucket_table = false;
+    };
+}
+
+TYPED_TEST_P( SplitListLazySet, static_bucket_table )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+    typedef typename TestFixture::hash_int hash_int;
+
+    struct set_traits: public set_static_traits
+    {
+        typedef cc::lazy_list_tag ordered_list;
+        typedef hash_int hash;
+        typedef cds::atomicity::item_counter item_counter;
+
+        struct ordered_list_traits: public cc::lazy_list::traits
+        {
+            typedef typename TestFixture::cmp compare;
+            typedef cds::backoff::pause back_off;
+        };
+    };
+    typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
+
+    set_type s( TestFixture::kSize, 4 );
+    test( s );
+}
+
 
 // GCC 5: All this->test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No this->test named <test_name> can be found in this this->test case"
 REGISTER_TYPED_TEST_CASE_P( SplitListLazySet,
-    compare, less, cmpmix, item_counting, stat, back_off, mutex
+    compare, less, cmpmix, item_counting, stat, back_off, mutex, static_bucket_table
 );
 
 

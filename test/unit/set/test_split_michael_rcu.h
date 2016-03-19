@@ -59,7 +59,6 @@ protected:
 
 TYPED_TEST_CASE_P( SplitListMichaelSet );
 
-//TYPED_TEST_P( SplitListMichaelSet, compare )
 TYPED_TEST_P( SplitListMichaelSet, compare )
 {
     typedef typename TestFixture::rcu_type rcu_type;
@@ -78,7 +77,7 @@ TYPED_TEST_P( SplitListMichaelSet, compare )
         >::type
     > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 2 );
     this->test( s );
 }
 
@@ -100,7 +99,7 @@ TYPED_TEST_P( SplitListMichaelSet, less )
         >::type
     > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 2 );
     this->test( s );
 }
 
@@ -123,7 +122,7 @@ TYPED_TEST_P( SplitListMichaelSet, cmpmix )
         >::type
     > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 3 );
     this->test( s );
 }
 
@@ -148,7 +147,7 @@ TYPED_TEST_P( SplitListMichaelSet, item_counting )
     };
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 8 );
     this->test( s );
 }
 
@@ -173,7 +172,7 @@ TYPED_TEST_P( SplitListMichaelSet, stat )
     };
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 4 );
     this->test( s );
 }
 
@@ -199,15 +198,46 @@ TYPED_TEST_P( SplitListMichaelSet, back_off )
     };
     typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
 
-    set_type s;
+    set_type s( TestFixture::kSize, 2 );
     this->test( s );
+}
+
+namespace {
+    struct set_static_traits: public cc::split_list::traits
+    {
+        static bool const dynamic_bucket_table = false;
+    };
+}
+
+TYPED_TEST_P( SplitListMichaelSet, static_bucket_table )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+    typedef typename TestFixture::hash_int hash_int;
+
+    struct set_traits: public set_static_traits
+    {
+        typedef cc::michael_list_tag ordered_list;
+        typedef hash_int hash;
+        typedef cds::atomicity::item_counter item_counter;
+
+        struct ordered_list_traits: public cc::michael_list::traits
+        {
+            typedef typename TestFixture::cmp compare;
+            typedef cds::backoff::pause back_off;
+        };
+    };
+    typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
+
+    set_type s( TestFixture::kSize, 4 );
+    test( s );
 }
 
 
 // GCC 5: All this->test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No this->test named <test_name> can be found in this this->test case"
 REGISTER_TYPED_TEST_CASE_P( SplitListMichaelSet,
-    compare, less, cmpmix, item_counting, stat, back_off
+    compare, less, cmpmix, item_counting, stat, back_off, static_bucket_table
 );
 
 
