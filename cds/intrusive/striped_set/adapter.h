@@ -255,7 +255,7 @@ namespace cds { namespace intrusive {
                         return std::make_pair( true, res.second );
                     }
                     else {
-                        auto it = m_Set.find( val );
+                        auto it = m_Set.find( val, key_comparator() );
                         if ( it == m_Set.end() )
                             return std::make_pair( false, false );
                         f( false, *it, val );
@@ -265,7 +265,7 @@ namespace cds { namespace intrusive {
 
                 bool unlink( value_type& val )
                 {
-                    iterator it = m_Set.find( value_type(val));
+                    iterator it = m_Set.find( val, key_comparator() );
                     if ( it == m_Set.end() || &(*it) != &val )
                         return false;
                     m_Set.erase( it );
