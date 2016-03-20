@@ -4,7 +4,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof -DCDSUNIT_ENABLE_B
 
 set(CDSGTEST_SET_SOURCES
     ../main.cpp
+    intrusive_boost_avl_set.cpp
+    intrusive_boost_list.cpp
+    intrusive_boost_set.cpp
+    intrusive_boost_sg_set.cpp
+    intrusive_boost_slist.cpp
     intrusive_cuckoo_set.cpp
+    intrusive_boost_splay_set.cpp
+    intrusive_boost_treap_set.cpp
 )
 
 include_directories(

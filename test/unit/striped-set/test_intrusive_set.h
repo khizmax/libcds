@@ -36,6 +36,12 @@
 
 #include <cds/opt/hash.h>
 
+#ifdef CDSTEST_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
+#   define CDSTEST_EXPLICIT
+#else
+#   define CDSTEST_EXPLICIT explicit
+#endif
+
 // forward declaration
 namespace cds { namespace intrusive {}}
 
@@ -80,7 +86,7 @@ namespace cds_test {
             base_int_item()
             {}
 
-            explicit base_int_item( int key )
+            CDSTEST_EXPLICIT base_int_item( int key )
                 : nKey( key )
                 , nVal( key )
             {}
@@ -118,7 +124,7 @@ namespace cds_test {
             member_int_item()
             {}
 
-            explicit member_int_item( int key )
+            CDSTEST_EXPLICIT member_int_item( int key )
                 : nKey( key )
                 , nVal( key )
             {}
@@ -149,6 +155,24 @@ namespace cds_test {
             size_t operator()( const Item& i ) const
             {
                 return (*this)( i.key() );
+            }
+        };
+        typedef hash_int hash1;
+
+        struct hash2: private hash1
+        {
+            typedef hash1 base_class;
+
+            size_t operator()( int i ) const
+            {
+                size_t h = ~(base_class::operator()( i ));
+                return ~h + 0x9e3779b9 + (h << 6) + (h >> 2);
+            }
+            template <typename Item>
+            size_t operator()( const Item& i ) const
+            {
+                size_t h = ~(base_class::operator()( i ));
+                return ~h + 0x9e3779b9 + (h << 6) + (h >> 2);
             }
         };
 
@@ -189,16 +213,19 @@ namespace cds_test {
                 return v1.key() < v2.key();
             }
 
-            template <typename Q>
-            bool operator ()(const T& v1, const Q& v2 ) const
+            bool operator ()(const T& v1, int v2 ) const
             {
                 return v1.key() < v2;
             }
 
-            template <typename Q>
-            bool operator ()(const Q& v1, const T& v2 ) const
+            bool operator ()(int v1, const T& v2 ) const
             {
                 return v1 < v2.key();
+            }
+
+            bool operator()( int v1, int v2 ) const
+            {
+                return v1 < v2;
             }
         };
 
@@ -262,10 +289,26 @@ namespace cds_test {
         };
 
         struct other_less {
-            template <typename Q, typename T>
-            bool operator()( Q const& lhs, T const& rhs ) const
+            template <typename T>
+            bool operator()( other_item const& lhs, T const& rhs ) const
             {
                 return lhs.key() < rhs.key();
+            }
+
+            template <typename T>
+            bool operator()( T const& lhs, other_item const& rhs ) const
+            {
+                return lhs.key() < rhs.key();
+            }
+
+            bool operator()( other_item const& lhs, int rhs ) const
+            {
+                return lhs.key() < rhs;
+            }
+
+            bool operator()( int lhs, other_item const& rhs ) const
+            {
+                return lhs < rhs.key();
             }
         };
 
@@ -450,9 +493,23 @@ namespace cds_test {
 
             ASSERT_TRUE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, 0 );
+
+            // clear_and_dispose
+            for ( auto& i : data ) {
+                i.clear_stat();
+                ASSERT_TRUE( s.insert( i ) );
+            }
+            ASSERT_FALSE( s.empty() );
+            ASSERT_CONTAINER_SIZE( s, nSetSize );
+
+            s.clear_and_dispose( mock_disposer() );
+
+            ASSERT_TRUE( s.empty() );
+            ASSERT_CONTAINER_SIZE( s, 0 );
             for ( auto& i : data ) {
                 EXPECT_EQ( i.nDisposeCount, 1 );
             }
+
         }
     };
 

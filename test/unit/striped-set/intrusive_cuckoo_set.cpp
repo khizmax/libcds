@@ -42,31 +42,6 @@ namespace {
 
         typedef base_class::hash_int hash1;
 
-        struct hash2: private hash1
-        {
-            typedef hash1 base_class;
-
-            size_t operator()( int i ) const
-            {
-                size_t h = ~(base_class::operator()( i ));
-                return ~h + 0x9e3779b9 + (h << 6) + (h >> 2);
-            }
-            template <typename Item>
-            size_t operator()( const Item& i ) const
-            {
-                size_t h = ~(base_class::operator()( i ));
-                return ~h + 0x9e3779b9 + (h << 6) + (h >> 2);
-            }
-        };
-
-        struct disposer2
-        {
-            template <typename T>
-            void operator ()( T * p )
-            {
-                ++p->nEraseCount;
-            }
-        };
 
         template <typename Set>
         void test( Set& s )
@@ -76,23 +51,15 @@ namespace {
 
             base_class::test_< Set::c_isSorted>( s );
 
-            ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
-
             typedef typename Set::value_type value_type;
+            size_t const nSetSize = base_class::kSize;
 
             std::vector< value_type > data;
-            std::vector< size_t> indices;
-            data.reserve( kSize );
-            indices.reserve( kSize );
-            size_t const nSetSize = kSize;
-            for ( size_t key = 0; key < kSize; ++key ) {
+            data.reserve( nSetSize );
+            for ( size_t key = 0; key < nSetSize; ++key )
                 data.push_back( value_type( static_cast<int>(key) ) );
-                indices.push_back( key );
-            }
-            shuffle( indices.begin(), indices.end() );
 
-            // clear_and_dispose
+            // clear
             for ( auto& i : data ) {
                 i.clear_stat();
                 ASSERT_TRUE( s.insert( i ) );
@@ -100,13 +67,12 @@ namespace {
             ASSERT_FALSE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
-            s.clear_and_dispose( disposer2());
+            s.clear();
 
             ASSERT_TRUE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, 0 );
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 0 );
-                EXPECT_EQ( i.nEraseCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1 );
             }
 
         }
