@@ -978,48 +978,48 @@ namespace cds { namespace intrusive {
             }
         };
 
-        /// CuckooSet internal statistics
+        /// \p CuckooSet internal statistics
         struct stat {
             typedef cds::atomicity::event_counter   counter_type ;  ///< Counter type
 
-            counter_type    m_nRelocateCallCount    ; ///< Count of \p relocate function call
+            counter_type    m_nRelocateCallCount    ; ///< Count of \p relocate() function call
             counter_type    m_nRelocateRoundCount   ; ///< Count of attempts to relocate items
             counter_type    m_nFalseRelocateCount   ; ///< Count of unneeded attempts of \p relocate call
             counter_type    m_nSuccessRelocateCount ; ///< Count of successfull item relocating
             counter_type    m_nRelocateAboveThresholdCount; ///< Count of item relocating above probeset threshold
             counter_type    m_nFailedRelocateCount  ;   ///< Count of failed relocation attemp (when all probeset is full)
 
-            counter_type    m_nResizeCallCount      ;   ///< Count of \p resize function call
-            counter_type    m_nFalseResizeCount     ;   ///< Count of false \p resize function call (when other thread has been resized the set)
+            counter_type    m_nResizeCallCount      ;   ///< Count of \p resize() function call
+            counter_type    m_nFalseResizeCount     ;   ///< Count of false \p resize() function call (when other thread has been resized the set)
             counter_type    m_nResizeSuccessNodeMove;   ///< Count of successfull node moving when resizing
-            counter_type    m_nResizeRelocateCall   ;   ///< Count of \p relocate function call from \p resize function
+            counter_type    m_nResizeRelocateCall   ;   ///< Count of \p relocate() function call from \p resize function
 
-            counter_type    m_nInsertSuccess        ;   ///< Count of successfull \p insert function call
-            counter_type    m_nInsertFailed         ;   ///< Count of failed \p insert function call
-            counter_type    m_nInsertResizeCount    ;   ///< Count of \p resize function call from \p insert
-            counter_type    m_nInsertRelocateCount  ;   ///< Count of \p relocate function call from \p insert
-            counter_type    m_nInsertRelocateFault  ;   ///< Count of failed \p relocate function call from \p insert
+            counter_type    m_nInsertSuccess        ;   ///< Count of successfull \p insert() function call
+            counter_type    m_nInsertFailed         ;   ///< Count of failed \p insert() function call
+            counter_type    m_nInsertResizeCount    ;   ///< Count of \p resize() function call from \p insert()
+            counter_type    m_nInsertRelocateCount  ;   ///< Count of \p relocate() function call from \p insert()
+            counter_type    m_nInsertRelocateFault  ;   ///< Count of failed \p relocate() function call from \p insert()
 
             counter_type    m_nUpdateExistCount     ;   ///< Count of call \p update() function for existing node
-            counter_type    m_nUpdateSuccessCount   ;   ///< Count of successfull \p insert function call for new node
-            counter_type    m_nUpdateResizeCount    ;   ///< Count of \p resize function call from \p update()
-            counter_type    m_nUpdateRelocateCount  ;   ///< Count of \p relocate function call from \p update()
-            counter_type    m_nUpdateRelocateFault  ;   ///< Count of failed \p relocate function call from \p update()
+            counter_type    m_nUpdateSuccessCount   ;   ///< Count of successfull \p insert() function call for new node
+            counter_type    m_nUpdateResizeCount    ;   ///< Count of \p resize() function call from \p update()
+            counter_type    m_nUpdateRelocateCount  ;   ///< Count of \p relocate() function call from \p update()
+            counter_type    m_nUpdateRelocateFault  ;   ///< Count of failed \p relocate() function call from \p update()
 
-            counter_type    m_nUnlinkSuccess        ;   ///< Count of success \p unlink function call
-            counter_type    m_nUnlinkFailed         ;   ///< Count of failed \p unlink function call
+            counter_type    m_nUnlinkSuccess        ;   ///< Count of success \p unlink() function call
+            counter_type    m_nUnlinkFailed         ;   ///< Count of failed \p unlink() function call
 
-            counter_type    m_nEraseSuccess         ;   ///< Count of success \p erase function call
-            counter_type    m_nEraseFailed          ;   ///< Count of failed \p erase function call
+            counter_type    m_nEraseSuccess         ;   ///< Count of success \p erase() function call
+            counter_type    m_nEraseFailed          ;   ///< Count of failed \p erase() function call
 
-            counter_type    m_nFindSuccess         ;   ///< Count of success \p find function call
-            counter_type    m_nFindFailed          ;   ///< Count of failed \p find function call
+            counter_type    m_nFindSuccess         ;   ///< Count of success \p find() function call
+            counter_type    m_nFindFailed          ;   ///< Count of failed \p find() function call
 
-            counter_type    m_nFindEqualSuccess         ;   ///< Count of success \p find_equal function call
-            counter_type    m_nFindEqualFailed          ;   ///< Count of failed \p find_equal function call
+            counter_type    m_nFindEqualSuccess         ;   ///< Count of success \p find_equal() function call
+            counter_type    m_nFindEqualFailed          ;   ///< Count of failed \p find_equal() function call
 
-            counter_type    m_nFindWithSuccess         ;   ///< Count of success \p find_with function call
-            counter_type    m_nFindWithFailed          ;   ///< Count of failed \p find_with function call
+            counter_type    m_nFindWithSuccess         ;   ///< Count of success \p find_with() function call
+            counter_type    m_nFindWithFailed          ;   ///< Count of failed \p find_with() function call
 
             //@cond
             void    onRelocateCall()        { ++m_nRelocateCallCount; }
@@ -1651,17 +1651,17 @@ namespace cds { namespace intrusive {
             the average search complexity is <tt>O(PROBE_SET/2)</tt>.
             However, the overhead of sorting can eliminate a gain of ordered search.
 
-            The probe set is ordered if opt::compare or opt::less is specified in \p Traits template
-            parameter. Otherwise, the probe set is unordered and \p Traits must contain
-            opt::equal_to option.
+            The probe set is ordered if \p opt::compare or \p opt::less is specified in \p Traits template
+            parameter. Otherwise, the probe set is unordered and \p Traits should provide
+            \p opt::equal_to option.
 
-            The cds::intrusive::cuckoo namespace contains \p %CuckooSet-related declarations.
+            The \p cds::intrusive::cuckoo namespace contains \p %CuckooSet-related declarations.
 
         Template arguments:
-        - \p T - the type stored in the set.  The type must be based on cuckoo::node (for cuckoo::base_hook)
-            or it must have a member of type %cuckoo::node (for cuckoo::member_hook),
-            or it must be convertible to \p %cuckoo::node (for cuckoo::traits_hook)
-        - \p Traits - type traits, default is  cuckoo::traits. It is possible to declare option-based
+        - \p T - the type stored in the set. The type must be based on \p cuckoo::node (for \p cuckoo::base_hook)
+            or it must have a member of type %cuckoo::node (for \p cuckoo::member_hook),
+            or it must be convertible to \p %cuckoo::node (for \p cuckoo::traits_hook)
+        - \p Traits - type traits, default is \p cuckoo::traits. It is possible to declare option-based
             set with \p cuckoo::make_traits metafunction result as \p Traits template argument.
 
         <b>How to use</b>
@@ -1863,13 +1863,7 @@ namespace cds { namespace intrusive {
 
         typedef typename traits::mutex_policy  original_mutex_policy; ///< Concurrent access policy, see \p cuckoo::traits::mutex_policy
 
-        /// Actual mutex policy
-        /**
-            Actual mutex policy is built from mutex policy type provided by \p Traits template argument (see \p cuckoo::traits::mutex_policy)
-            but mutex policy internal statistics is conformed with \p cukoo::traits::stat type provided by \p Traits:
-            - if \p %cuckoo::traits::stat is \p cuckoo::empty_stat then mutex policy statistics is already empty
-            - otherwise real mutex policy statistics is used
-        */
+        //@cond
         typedef typename original_mutex_policy::template rebind_statistics<
             typename std::conditional<
                 std::is_same< stat, cuckoo::empty_stat >::value
@@ -1877,15 +1871,21 @@ namespace cds { namespace intrusive {
                 ,typename original_mutex_policy::real_stat
             >::type
         >::other    mutex_policy;
+        //@endcond
 
+        /// Probe set should be ordered or not
+        /**
+            If \p Traits specifies \p cmpare or \p less functor then the set is ordered.
+            Otherwise, it is unordered and \p Traits should provide \p equal_to functor.
+        */
         static bool const c_isSorted = !( std::is_same< typename traits::compare, opt::none >::value
-                && std::is_same< typename traits::less, opt::none >::value ) ; ///< whether the probe set should be ordered
+                && std::is_same< typename traits::less, opt::none >::value ) ;
         static size_t const c_nArity = hash::size ; ///< the arity of cuckoo hashing: the number of hash functors provided; minimum 2.
 
         /// Key equality functor; used only for unordered probe-set
         typedef typename opt::details::make_equal_to< value_type, traits, !c_isSorted>::type key_equal_to;
 
-        /// key comparing functor based on opt::compare and opt::less option setter. Used only for ordered probe set
+        /// key comparing functor based on \p opt::compare and \p opt::less option setter. Used only for ordered probe set
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 
         /// allocator type
@@ -2247,9 +2247,9 @@ namespace cds { namespace intrusive {
             then \p nProbesetSize is ignored since it should be equal to vector's \p Capacity.
         */
         CuckooSet(
-            size_t nInitialSize                 ///< Initial set size; if 0 - use default initial size \ref c_nDefaultInitialSize
+            size_t nInitialSize                 ///< Initial set size; if 0 - use default initial size \p c_nDefaultInitialSize
             , unsigned int nProbesetSize        ///< probe set size
-            , unsigned int nProbesetThreshold = 0   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, nProbesetThreshold = nProbesetSize - 1
+            , unsigned int nProbesetThreshold = 0   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, <tt>nProbesetThreshold = nProbesetSize - 1</tt>
         )
             : m_nProbesetSize( calc_probeset_size(nProbesetSize) )
             , m_nProbesetThreshold( nProbesetThreshold ? nProbesetThreshold : m_nProbesetSize - 1 )
@@ -2263,7 +2263,7 @@ namespace cds { namespace intrusive {
 
         /// Constructs the set object with given hash functor tuple
         /**
-            The probe set size and threshold are set as default, see CuckooSet()
+            The probe set size and threshold are set as default, see \p CuckooSet()
         */
         CuckooSet(
             hash_tuple_type const& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
@@ -2285,9 +2285,9 @@ namespace cds { namespace intrusive {
             then \p nProbesetSize should be equal to vector's \p Capacity.
         */
         CuckooSet(
-            size_t nInitialSize                 ///< Initial set size; if 0 - use default initial size \ref c_nDefaultInitialSize
+            size_t nInitialSize                 ///< Initial set size; if 0 - use default initial size \p c_nDefaultInitialSize
             , unsigned int nProbesetSize        ///< probe set size, positive integer
-            , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, nProbesetThreshold = nProbesetSize - 1
+            , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, <tt>nProbesetThreshold = nProbesetSize - 1</tt>
             , hash_tuple_type const& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
             : m_nProbesetSize( calc_probeset_size(nProbesetSize) )
@@ -2303,7 +2303,7 @@ namespace cds { namespace intrusive {
 
         /// Constructs the set object with given hash functor tuple (move semantics)
         /**
-            The probe set size and threshold are set as default, see CuckooSet()
+            The probe set size and threshold are set as default, see \p CuckooSet()
         */
         CuckooSet(
             hash_tuple_type&& h     ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
@@ -2325,9 +2325,9 @@ namespace cds { namespace intrusive {
             then \p nProbesetSize should be equal to vector's \p Capacity.
         */
         CuckooSet(
-            size_t nInitialSize                 ///< Initial set size; if 0 - use default initial size \ref c_nDefaultInitialSize
+            size_t nInitialSize                 ///< Initial set size; if 0 - use default initial size \p c_nDefaultInitialSize
             , unsigned int nProbesetSize        ///< probe set size, positive integer
-            , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, nProbesetThreshold = nProbesetSize - 1
+            , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, <tt>nProbesetThreshold = nProbesetSize - 1</tt>
             , hash_tuple_type&& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
             : m_nProbesetSize( calc_probeset_size(nProbesetSize) )
@@ -2350,10 +2350,9 @@ namespace cds { namespace intrusive {
     public:
         /// Inserts new node
         /**
-            The function inserts \p val in the set if it does not contain
-            an item with key equal to \p val.
+            The function inserts \p val in the set if it does not contain an item with key equal to \p val.
 
-            Returns \p true if \p val is placed into the set, \p false otherwise.
+            Returns \p true if \p val is inserted into the set, \p false otherwise.
         */
         bool insert( value_type& val )
         {
@@ -2715,8 +2714,9 @@ namespace cds { namespace intrusive {
         /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
             The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p Less must imply the same element order as the comparator used for building the set.
+            If the set is unordered, \p Predicate has semantics like \p std::equal_to.
+            For ordered set \p Predicate has \p std::less semantics. In that case \p pred
+            must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Predicate>
         bool contains( Q const& key, Predicate pred )
@@ -2736,7 +2736,7 @@ namespace cds { namespace intrusive {
         /// Clears the set
         /**
             The function unlinks all items from the set.
-            For any item \ref disposer is called
+            For any item <tt> @ref disposer</tt> is called
         */
         void clear()
         {
@@ -2745,7 +2745,7 @@ namespace cds { namespace intrusive {
 
         /// Clears the set and calls \p disposer for each item
         /**
-            The function unlinks all items from the set calling \p disposer for each item.
+            The function unlinks all items from the set calling \p oDisposer for each item.
             \p Disposer functor interface is:
             \code
             struct Disposer{
@@ -2753,7 +2753,7 @@ namespace cds { namespace intrusive {
             };
             \endcode
 
-            The \ref disposer specified in \p Traits traits is not called.
+            The <tt> @ref disposer</tt> specified in \p Traits is not called.
         */
         template <typename Disposer>
         void clear_and_dispose( Disposer oDisposer )
