@@ -30,17 +30,6 @@
 
 #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER
 
-#include <boost/version.hpp>
-
-#if BOOST_VERSION >= 105900 && BOOST_VERSION < 106100
-#   define CDSTEST_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
-#endif
-
-#include <cds/details/defs.h>
-#if ( CDS_COMPILER == CDS_COMPILER_GCC || CDS_COMPILER == CDS_COMPILER_CLANG ) && BOOST_VERSION >= 105900 && BOOST_VERSION < 106100
-#   pragma message("boost 1.59 - 1.60 has a bug in boost::intrusive::sg_set, test skipped")
-#else
-
 #include "test_intrusive_striped_set.h"
 #include <cds/intrusive/striped_set/boost_sg_set.h>
 
@@ -67,5 +56,4 @@ namespace {
 
 } // namespace
 
-#endif
 #endif // CDSUNIT_ENABLE_BOOST_CONTAINER

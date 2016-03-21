@@ -36,12 +36,6 @@
 
 #include <cds/opt/hash.h>
 
-#ifdef CDSTEST_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
-#   define CDSTEST_EXPLICIT
-#else
-#   define CDSTEST_EXPLICIT explicit
-#endif
-
 // forward declaration
 namespace cds { namespace intrusive {}}
 
@@ -86,7 +80,7 @@ namespace cds_test {
             base_int_item()
             {}
 
-            CDSTEST_EXPLICIT base_int_item( int key )
+            explicit base_int_item( int key )
                 : nKey( key )
                 , nVal( key )
             {}
@@ -124,7 +118,7 @@ namespace cds_test {
             member_int_item()
             {}
 
-            CDSTEST_EXPLICIT member_int_item( int key )
+            explicit member_int_item( int key )
                 : nKey( key )
                 , nVal( key )
             {}
@@ -331,13 +325,13 @@ namespace cds_test {
 
     protected:
         template <typename Set>
-        void test( Set& s )
+        void test( Set& s, std::vector< typename Set::value_type >& data )
         {
-            test_< true >( s );
+            test_< true >( s, data );
         }
 
         template <bool Sorted, class Set>
-        void test_( Set& s )
+        void test_( Set& s, std::vector< typename Set::value_type >& data )
         {
             // Precondition: set is empty
             // Postcondition: set is empty
@@ -349,7 +343,6 @@ namespace cds_test {
             typedef typename std::conditional< Sorted, other_less, other_equal_to >::type other_predicate;
             size_t const nSetSize = kSize;
 
-            std::vector< value_type > data;
             std::vector< size_t> indices;
             data.reserve( kSize );
             indices.reserve( kSize );

@@ -44,20 +44,15 @@ namespace {
 
 
         template <typename Set>
-        void test( Set& s )
+        void test( Set& s, std::vector< typename Set::value_type >& data )
         {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            base_class::test_< Set::c_isSorted>( s );
+            base_class::test_< Set::c_isSorted>( s, data );
 
             typedef typename Set::value_type value_type;
             size_t const nSetSize = base_class::kSize;
-
-            std::vector< value_type > data;
-            data.reserve( nSetSize );
-            for ( size_t key = 0; key < nSetSize; ++key )
-                data.push_back( value_type( static_cast<int>(key) ) );
 
             // clear
             for ( auto& i : data ) {
@@ -99,8 +94,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_basehook_unordered )
@@ -115,8 +113,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_basehook_ordered_cmp )
@@ -134,8 +135,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s( 32, 6, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 6, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_basehook_ordered_cmp )
@@ -153,9 +157,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_basehook_ordered_less )
@@ -173,9 +180,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 4, ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 4, ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_basehook_ordered_less )
@@ -193,9 +203,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_basehook_ordered_cmpmix )
@@ -214,9 +227,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_basehook_ordered_cmpmix )
@@ -235,9 +251,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_basehook_ordered_stat )
@@ -257,8 +276,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_basehook_ordered_stat )
@@ -278,8 +300,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_basehook_unordered_storehash )
@@ -298,8 +323,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_basehook_unordered_storehash )
@@ -318,8 +346,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_basehook_ordered_storehash )
@@ -339,9 +370,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_basehook_ordered_storehash )
@@ -361,9 +395,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
 //************************************************************
@@ -381,8 +418,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_memberhook_unordered )
@@ -398,8 +438,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_memberhook_ordered_cmp )
@@ -417,8 +460,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s( 32, 6, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 6, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_memberhook_ordered_cmp )
@@ -436,9 +482,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_memberhook_ordered_less )
@@ -456,9 +505,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 4, ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 4, ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_memberhook_ordered_less )
@@ -476,9 +528,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_memberhook_ordered_cmpmix )
@@ -497,9 +552,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_memberhook_ordered_cmpmix )
@@ -518,9 +576,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_memberhook_ordered_stat )
@@ -540,8 +601,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_memberhook_ordered_stat )
@@ -561,8 +625,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_memberhook_unordered_storehash )
@@ -581,8 +648,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_memberhook_unordered_storehash )
@@ -601,8 +671,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_list_memberhook_ordered_storehash )
@@ -622,9 +695,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, striped_vector_memberhook_ordered_storehash )
@@ -644,9 +720,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
 //************************************************************
@@ -664,8 +743,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_basehook_unordered )
@@ -681,8 +763,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_basehook_ordered_cmp )
@@ -701,8 +786,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s( 32, 6, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 6, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_basehook_ordered_cmp )
@@ -721,9 +809,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_basehook_ordered_less )
@@ -742,9 +833,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 4, ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 4, ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_basehook_ordered_less )
@@ -763,9 +857,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_basehook_ordered_cmpmix )
@@ -785,9 +882,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_basehook_ordered_cmpmix )
@@ -807,9 +907,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_basehook_ordered_stat )
@@ -830,8 +933,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_basehook_ordered_stat )
@@ -852,8 +958,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_basehook_unordered_storehash )
@@ -873,8 +982,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_basehook_unordered_storehash )
@@ -894,8 +1006,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_basehook_ordered_storehash )
@@ -916,9 +1031,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_basehook_ordered_storehash )
@@ -939,9 +1057,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
 //************************************************************
@@ -960,8 +1081,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_memberhook_unordered )
@@ -978,8 +1102,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_memberhook_ordered_cmp )
@@ -998,8 +1125,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s( 32, 6, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 6, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_memberhook_ordered_cmp )
@@ -1018,9 +1148,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_memberhook_ordered_less )
@@ -1039,9 +1172,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 4, ht );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 4, ht );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_memberhook_ordered_less )
@@ -1060,9 +1196,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_memberhook_ordered_cmpmix )
@@ -1082,9 +1221,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_memberhook_ordered_cmpmix )
@@ -1104,9 +1246,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_memberhook_ordered_stat )
@@ -1127,8 +1272,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_memberhook_ordered_stat )
@@ -1149,8 +1297,11 @@ namespace {
             >::type
         > set_type; 
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_memberhook_unordered_storehash )
@@ -1170,8 +1321,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s;
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_memberhook_unordered_storehash )
@@ -1191,8 +1345,11 @@ namespace {
         };
         typedef ci::CuckooSet< item_type, set_traits > set_type;
 
-        set_type s( 32, 4 );
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32, 4 );
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_list_memberhook_ordered_storehash )
@@ -1213,9 +1370,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( 32, 6, 0, std::move( ht ));
+            test( s, data );
+        }
     }
 
     TEST_F( IntrusiveCuckooSet, refinable_vector_memberhook_ordered_storehash )
@@ -1236,9 +1396,12 @@ namespace {
             >::type
         > set_type; 
 
-        typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ));
-        test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            typename set_type::hash_tuple_type ht;
+            set_type s( std::move( ht ));
+            test( s, data );
+        }
     }
 
 } // namespace

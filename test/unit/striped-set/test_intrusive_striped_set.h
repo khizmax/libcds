@@ -70,8 +70,11 @@ namespace {
             ci::opt::compare< typename TestFixture::template cmp< typename TestFixture::base_item >>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_basehook_less )
@@ -82,8 +85,11 @@ namespace {
             ci::opt::less< typename TestFixture::template less< typename TestFixture::base_item >>
         > set_type;
 
-        set_type s( 32 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_basehook_cmpmix )
@@ -96,8 +102,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::load_factor_resizing< 8 >>
         > set_type;
 
-        set_type s( 64 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64 );
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_basehook_resizing_threshold )
@@ -110,8 +119,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<8>>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_basehook_resizing_threshold_rt )
@@ -124,8 +136,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<0>>
         > set_type;
 
-        set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ));
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
+            this->test( s, data );
+        }
     }
 
 // ****************************************************************
@@ -139,8 +154,11 @@ namespace {
             ci::opt::compare< typename TestFixture::template cmp< typename TestFixture::member_item >>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_memberhook_less )
@@ -151,8 +169,11 @@ namespace {
             ci::opt::less< typename TestFixture::template less< typename TestFixture::member_item >>
         > set_type;
 
-        set_type s( 32 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32 );
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_memberhook_cmpmix )
@@ -165,8 +186,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::load_factor_resizing< 8 >>
         > set_type;
 
-        set_type s( 64 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64 );
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_memberhook_resizing_threshold )
@@ -179,8 +203,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<8>>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_memberhook_resizing_threshold_rt )
@@ -193,8 +220,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<0>>
         > set_type;
 
-        set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
+            this->test( s, data );
+        }
     }
 
 
@@ -209,8 +239,11 @@ namespace {
             ci::opt::compare< typename TestFixture::template cmp< typename TestFixture::base_item >>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_basehook_less )
@@ -221,8 +254,11 @@ namespace {
             ci::opt::less< typename TestFixture::template less< typename TestFixture::base_item >>
         > set_type;
 
-        set_type s( 32 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32 );
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_basehook_cmpmix )
@@ -235,8 +271,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::load_factor_resizing< 8 >>
         > set_type;
 
-        set_type s( 64 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64 );
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_basehook_resizing_threshold )
@@ -249,8 +288,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<8>>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_basehook_resizing_threshold_rt )
@@ -263,8 +305,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<0>>
         > set_type;
 
-        set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ));
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ));
+            this->test( s, data );
+        }
     }
 
 // ****************************************************************
@@ -278,8 +323,11 @@ namespace {
             ci::opt::compare< typename TestFixture::template cmp< typename TestFixture::member_item >>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_memberhook_less )
@@ -290,8 +338,11 @@ namespace {
             ci::opt::less< typename TestFixture::template less< typename TestFixture::member_item >>
         > set_type;
 
-        set_type s( 32 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 32 );
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_memberhook_cmpmix )
@@ -304,8 +355,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::load_factor_resizing< 8 >>
         > set_type;
 
-        set_type s( 64 );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64 );
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_memberhook_resizing_threshold )
@@ -318,8 +372,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<8>>
         > set_type;
 
-        set_type s;
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s;
+            this->test( s, data );
+        }
     }
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_memberhook_resizing_threshold_rt )
@@ -332,8 +389,11 @@ namespace {
             ci::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<0>>
         > set_type;
 
-        set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
-        this->test( s );
+        std::vector< typename set_type::value_type > data;
+        {
+            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
+            this->test( s, data );
+        }
     }
 
     REGISTER_TYPED_TEST_CASE_P( IntrusiveStripedSet,

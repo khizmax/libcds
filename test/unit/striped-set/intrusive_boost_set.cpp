@@ -30,10 +30,10 @@
 
 #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 105900 && BOOST_VERSION < 106100
-#   define CDSTEST_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
-#endif
+//#include <boost/version.hpp>
+//#if BOOST_VERSION >= 105900 && BOOST_VERSION < 106100
+//#   define CDSTEST_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
+//#endif
 
 #include "test_intrusive_striped_set.h"
 #include <cds/intrusive/striped_set/boost_set.h>

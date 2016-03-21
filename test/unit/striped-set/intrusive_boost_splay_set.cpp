@@ -31,14 +31,6 @@
 #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER
 
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 105900 && BOOST_VERSION < 106100
-#   define CDSTEST_REQUIRES_IMPLICIT_CONVERSION_WORKAROUND
-#endif
-
-#include <cds/details/defs.h>
-#if ( CDS_COMPILER == CDS_COMPILER_GCC || CDS_COMPILER == CDS_COMPILER_CLANG ) && BOOST_VERSION >= 105900 && BOOST_VERSION < 106100
-#   pragma message("boost 1.59 - 1.60 has a bug in boost::intrusive::splay_set, test skipped")
-#else
 
 #include "test_intrusive_striped_set.h"
 #include <cds/intrusive/striped_set/boost_splay_set.h>
@@ -49,7 +41,7 @@ namespace {
 
     struct test_traits
     {
-#   if BOOST_VERSION < 105600
+#if BOOST_VERSION < 105600
         typedef bi::splay_set_member_hook<> splay_set_member_hook;
         typedef bi::splay_set_base_hook<> splay_set_base_hook;
 #else
@@ -73,5 +65,4 @@ namespace {
 
 } // namespace
 
-#endif
 #endif // CDSUNIT_ENABLE_BOOST_CONTAINER
