@@ -11,6 +11,7 @@ set(CDSGTEST_SET_SOURCES
     intrusive_boost_slist.cpp
     intrusive_boost_splay_set.cpp
     intrusive_boost_treap_set.cpp
+    intrusive_boost_unordered_set.cpp
     intrusive_cuckoo_set.cpp
 )
 

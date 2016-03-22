@@ -256,14 +256,12 @@ namespace cds_test {
                 return v1.key() == v2.key();
             }
 
-            template <typename Q>
-            int operator ()( const T& v1, const Q& v2 ) const
+            int operator ()( const T& v1, int v2 ) const
             {
                 return v1.key() == v2;
             }
 
-            template <typename Q>
-            int operator ()( const Q& v1, const T& v2 ) const
+            int operator ()( int v1, const T& v2 ) const
             {
                 return v1 == v2.key();
             }

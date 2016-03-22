@@ -42,6 +42,9 @@
     <ClCompile Include="..\..\..\test\unit\striped-set\intrusive_boost_treap_set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\striped-set\intrusive_boost_unordered_set.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\striped-set\test_intrusive_set.h">
