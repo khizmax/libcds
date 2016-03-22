@@ -17,5 +17,12 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)
 
+add_custom_target( stress-all
+    DEPENDS
+        stress-pqueue
+        stress-queue
+        stress-stack
+)
+
 file(GLOB CONF_FILES ${PROJECT_SOURCE_DIR}/test/stress/data/*.conf)
 file(COPY ${CONF_FILES} DESTINATION ${EXECUTABLE_OUTPUT_PATH})

@@ -6,3 +6,15 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/intrusive-set)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/set)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-set)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)
+
+add_custom_target(unit-all
+    DEPENDS 
+        unit-deque
+        unit-list
+        unit-pqueue
+        unit-queue
+        unit-intrusive-set
+        unit-set
+        unit-striped-set
+        unit-stack
+)
