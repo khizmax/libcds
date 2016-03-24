@@ -28,8 +28,8 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSUNIT_SET_TEST_INTRUSIVE_SET_H
-#define CDSUNIT_SET_TEST_INTRUSIVE_SET_H
+#ifndef CDSUNIT_STRIPED_SET_TEST_INTRUSIVE_SET_H
+#define CDSUNIT_STRIPED_SET_TEST_INTRUSIVE_SET_H
 
 #include <cds_test/check_size.h>
 #include <cds_test/fixture.h>
@@ -506,4 +506,4 @@ namespace cds_test {
 
 } // namespace cds_test
 
-#endif // #ifndef CDSUNIT_SET_TEST_INTRUSIVE_SET_H
+#endif // #ifndef CDSUNIT_STRIPED_SET_TEST_INTRUSIVE_SET_H
