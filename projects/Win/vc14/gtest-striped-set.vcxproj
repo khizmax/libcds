@@ -58,11 +58,23 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\striped-set\intrusive_boost_unordered_set.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_boost_flatset.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_boost_list.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_boost_set.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_boost_slist.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_boost_stable_vector.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_boost_unordered_set.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_boost_vector.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_std_list.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_std_set.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_std_unordered_set.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-set\set_std_vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\striped-set\test_intrusive_striped_set.h" />
     <ClInclude Include="..\..\..\test\unit\striped-set\test_intrusive_set.h" />
     <ClInclude Include="..\..\..\test\unit\striped-set\test_set.h" />
+    <ClInclude Include="..\..\..\test\unit\striped-set\test_striped_set.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{648021D3-6E18-4B94-88B8-F6A59609E210}</ProjectGuid>

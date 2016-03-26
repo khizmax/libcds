@@ -60,9 +60,19 @@ namespace cds_test {
                 clear_stat();
             }
 
+            stat( stat const& s )
+            {
+                copy_stat( s );
+            }
+
             void clear_stat()
             {
                 memset( this, 0, sizeof( *this ) );
+            }
+
+            void copy_stat( stat const& s )
+            {
+                memcpy( this, &s, sizeof( *this ));
             }
         };
 
@@ -102,13 +112,15 @@ namespace cds_test {
             {}
 
             int_item( int_item const& src )
-                : nKey( src.nKey )
+                : stat( src )
+                , nKey( src.nKey )
                 , nVal( src.nVal )
                 , strVal( src.strVal )
             {}
 
             int_item( int_item&& src )
-                : nKey( src.nKey )
+                : stat( src )
+                , nKey( src.nKey )
                 , nVal( src.nVal )
                 , strVal( std::move( src.strVal ) )
             {}
@@ -123,6 +135,28 @@ namespace cds_test {
                 : nKey( s.key() )
                 , nVal( s.key() * 2 )
             {}
+
+            int_item& operator=( int_item const& src )
+            {
+                if ( &src != this ) {
+                    copy_stat( src );
+                    nKey = src.nKey;
+                    nVal = src.nVal;
+                    strVal = src.strVal;
+                }
+                return *this;
+            }
+
+            int_item& operator=( int_item&& src )
+            {
+                if ( &src != this ) {
+                    copy_stat( src );
+                    nKey = src.nKey;
+                    nVal = src.nVal;
+                    strVal = std::move( src.strVal );
+                }
+                return *this;
+            }
 
             int key() const
             {

@@ -14,6 +14,17 @@ set(CDSGTEST_SET_SOURCES
     intrusive_boost_treap_set.cpp
     intrusive_boost_unordered_set.cpp
     intrusive_cuckoo_set.cpp
+    set_boost_flatset.cpp
+    set_boost_list.cpp
+    set_boost_set.cpp
+    set_boost_slist.cpp
+    set_boost_stable_vector.cpp
+    set_boost_unordered_set.cpp
+    set_boost_vector.cpp
+    set_std_list.cpp
+    set_std_set.cpp
+    set_std_unordered_set.cpp
+    set_std_vector.cpp
 )
 
 include_directories(
