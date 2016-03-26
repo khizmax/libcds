@@ -66,109 +66,6 @@ set(CDS_TESTHDR_MAP
     map/hdr_striped_hashmap_slist.cpp
     map/hdr_striped_map_reg.cpp)
 
-set(CDS_TESTHDR_SET
-    set/hdr_intrusive_feldman_hashset_hp.cpp
-    set/hdr_intrusive_feldman_hashset_dhp.cpp
-    set/hdr_intrusive_feldman_hashset_rcu_gpi.cpp
-    set/hdr_intrusive_feldman_hashset_rcu_gpb.cpp
-    set/hdr_intrusive_feldman_hashset_rcu_gpt.cpp
-    set/hdr_intrusive_feldman_hashset_rcu_shb.cpp
-    set/hdr_intrusive_feldman_hashset_rcu_sht.cpp
-    set/hdr_intrusive_refinable_hashset_avlset.cpp
-    set/hdr_intrusive_refinable_hashset_list.cpp
-    set/hdr_intrusive_refinable_hashset_set.cpp
-    set/hdr_intrusive_refinable_hashset_sgset.cpp
-    set/hdr_intrusive_refinable_hashset_slist.cpp
-    set/hdr_intrusive_refinable_hashset_splayset.cpp
-    set/hdr_intrusive_refinable_hashset_treapset.cpp
-    set/hdr_intrusive_refinable_hashset_uset.cpp
-    set/hdr_intrusive_skiplist_hp.cpp
-    set/hdr_intrusive_skiplist_dhp.cpp
-    set/hdr_intrusive_skiplist_rcu_gpb.cpp
-    set/hdr_intrusive_skiplist_rcu_gpi.cpp
-    set/hdr_intrusive_skiplist_rcu_gpt.cpp
-    set/hdr_intrusive_skiplist_rcu_shb.cpp
-    set/hdr_intrusive_skiplist_rcu_sht.cpp
-    set/hdr_intrusive_skiplist_nogc.cpp
-    set/hdr_intrusive_striped_hashset_avlset.cpp
-    set/hdr_intrusive_striped_hashset_list.cpp
-    set/hdr_intrusive_striped_hashset_set.cpp
-    set/hdr_intrusive_striped_hashset_sgset.cpp
-    set/hdr_intrusive_striped_hashset_slist.cpp
-    set/hdr_intrusive_striped_hashset_splayset.cpp
-    set/hdr_intrusive_striped_hashset_treapset.cpp
-    set/hdr_intrusive_striped_hashset_uset.cpp
-    set/hdr_intrusive_striped_set.cpp
-    set/hdr_michael_set_hp.cpp
-    set/hdr_michael_set_dhp.cpp
-    set/hdr_michael_set_rcu_gpi.cpp
-    set/hdr_michael_set_rcu_gpb.cpp
-    set/hdr_michael_set_rcu_gpt.cpp
-    set/hdr_michael_set_rcu_shb.cpp
-    set/hdr_michael_set_rcu_sht.cpp
-    set/hdr_michael_set_nogc.cpp
-    set/hdr_michael_set_lazy_hp.cpp
-    set/hdr_michael_set_lazy_dhp.cpp
-    set/hdr_michael_set_lazy_rcu_gpi.cpp
-    set/hdr_michael_set_lazy_rcu_gpb.cpp
-    set/hdr_michael_set_lazy_rcu_gpt.cpp
-    set/hdr_michael_set_lazy_rcu_shb.cpp
-    set/hdr_michael_set_lazy_rcu_sht.cpp
-    set/hdr_michael_set_lazy_nogc.cpp
-    set/hdr_feldman_hashset_hp.cpp
-    set/hdr_feldman_hashset_dhp.cpp
-    set/hdr_feldman_hashset_rcu_gpb.cpp
-    set/hdr_feldman_hashset_rcu_gpi.cpp
-    set/hdr_feldman_hashset_rcu_gpt.cpp
-    set/hdr_feldman_hashset_rcu_shb.cpp
-    set/hdr_feldman_hashset_rcu_sht.cpp
-    set/hdr_refinable_hashset_hashset_std.cpp
-    set/hdr_refinable_hashset_boost_flat_set.cpp
-    set/hdr_refinable_hashset_boost_list.cpp
-    set/hdr_refinable_hashset_boost_set.cpp
-    set/hdr_refinable_hashset_boost_stable_vector.cpp
-    set/hdr_refinable_hashset_boost_unordered_set.cpp
-    set/hdr_refinable_hashset_boost_vector.cpp
-    set/hdr_refinable_hashset_list.cpp
-    set/hdr_refinable_hashset_set.cpp
-    set/hdr_refinable_hashset_slist.cpp
-    set/hdr_refinable_hashset_vector.cpp
-    set/hdr_skiplist_set_hp.cpp
-    set/hdr_skiplist_set_dhp.cpp
-    set/hdr_skiplist_set_rcu_gpi.cpp
-    set/hdr_skiplist_set_rcu_gpb.cpp
-    set/hdr_skiplist_set_rcu_gpt.cpp
-    set/hdr_skiplist_set_rcu_shb.cpp
-    set/hdr_skiplist_set_rcu_sht.cpp
-    set/hdr_skiplist_set_nogc.cpp
-    set/hdr_splitlist_set_hp.cpp
-    set/hdr_splitlist_set_nogc.cpp
-    set/hdr_splitlist_set_dhp.cpp
-    set/hdr_splitlist_set_rcu_gpi.cpp
-    set/hdr_splitlist_set_rcu_gpb.cpp
-    set/hdr_splitlist_set_rcu_gpt.cpp
-    set/hdr_splitlist_set_rcu_shb.cpp
-    set/hdr_splitlist_set_rcu_sht.cpp
-    set/hdr_splitlist_set_lazy_hp.cpp
-    set/hdr_splitlist_set_lazy_nogc.cpp
-    set/hdr_splitlist_set_lazy_dhp.cpp
-    set/hdr_splitlist_set_lazy_rcu_gpi.cpp
-    set/hdr_splitlist_set_lazy_rcu_gpb.cpp
-    set/hdr_splitlist_set_lazy_rcu_gpt.cpp
-    set/hdr_splitlist_set_lazy_rcu_shb.cpp
-    set/hdr_splitlist_set_lazy_rcu_sht.cpp
-    set/hdr_striped_hashset_hashset_std.cpp
-    set/hdr_striped_hashset_boost_flat_set.cpp
-    set/hdr_striped_hashset_boost_list.cpp
-    set/hdr_striped_hashset_boost_set.cpp
-    set/hdr_striped_hashset_boost_stable_vector.cpp
-    set/hdr_striped_hashset_boost_unordered_set.cpp
-    set/hdr_striped_hashset_boost_vector.cpp
-    set/hdr_striped_hashset_list.cpp
-    set/hdr_striped_hashset_set.cpp
-    set/hdr_striped_hashset_slist.cpp
-    set/hdr_striped_hashset_vector.cpp)
-
 set(CDS_TESTHDR_TREE
     tree/hdr_tree_reg.cpp
     tree/hdr_intrusive_ellen_bintree_hp.cpp
@@ -219,51 +116,6 @@ set(CDS_TESTHDR_MISC
 set(CDS_TESTHDR_OFFSETOF_MAP
     map/hdr_cuckoo_map.cpp)
 
-set(CDS_TESTHDR_OFFSETOF_SET
-    set/hdr_cuckoo_set.cpp
-    set/hdr_intrusive_cuckoo_set.cpp
-    set/hdr_intrusive_cuckoo_refinable_set.cpp
-    set/hdr_intrusive_michael_set_hp.cpp
-    set/hdr_intrusive_michael_set_dhp.cpp
-    set/hdr_intrusive_michael_set_nogc.cpp
-    set/hdr_intrusive_michael_set_rcu_gpi.cpp
-    set/hdr_intrusive_michael_set_rcu_gpb.cpp
-    set/hdr_intrusive_michael_set_rcu_gpt.cpp
-    set/hdr_intrusive_michael_set_rcu_shb.cpp
-    set/hdr_intrusive_michael_set_rcu_sht.cpp
-    set/hdr_intrusive_michael_set_hp_lazy.cpp
-    set/hdr_intrusive_michael_set_dhp_lazy.cpp
-    set/hdr_intrusive_michael_set_nogc_lazy.cpp
-    set/hdr_intrusive_michael_set_rcu_gpi_lazy.cpp
-    set/hdr_intrusive_michael_set_rcu_gpb_lazy.cpp
-    set/hdr_intrusive_michael_set_rcu_gpt_lazy.cpp
-    set/hdr_intrusive_michael_set_rcu_shb_lazy.cpp
-    set/hdr_intrusive_michael_set_rcu_sht_lazy.cpp
-    set/hdr_intrusive_skiplist_hp_member.cpp
-    set/hdr_intrusive_skiplist_dhp_member.cpp
-    set/hdr_intrusive_skiplist_rcu_gpi_member.cpp
-    set/hdr_intrusive_skiplist_rcu_gpb_member.cpp
-    set/hdr_intrusive_skiplist_rcu_gpt_member.cpp
-    set/hdr_intrusive_skiplist_rcu_shb_member.cpp
-    set/hdr_intrusive_skiplist_rcu_sht_member.cpp
-    set/hdr_intrusive_skiplist_nogc_member.cpp
-    set/hdr_intrusive_splitlist_set_hp.cpp
-    set/hdr_intrusive_splitlist_set_nogc.cpp
-    set/hdr_intrusive_splitlist_set_dhp.cpp
-    set/hdr_intrusive_splitlist_set_rcu_gpb.cpp
-    set/hdr_intrusive_splitlist_set_rcu_gpi.cpp
-    set/hdr_intrusive_splitlist_set_rcu_gpt.cpp
-    set/hdr_intrusive_splitlist_set_rcu_shb.cpp
-    set/hdr_intrusive_splitlist_set_rcu_sht.cpp
-    set/hdr_intrusive_splitlist_set_hp_lazy.cpp
-    set/hdr_intrusive_splitlist_set_nogc_lazy.cpp
-    set/hdr_intrusive_splitlist_set_dhp_lazy.cpp
-    set/hdr_intrusive_splitlist_set_rcu_gpb_lazy.cpp
-    set/hdr_intrusive_splitlist_set_rcu_gpi_lazy.cpp
-    set/hdr_intrusive_splitlist_set_rcu_gpt_lazy.cpp
-    set/hdr_intrusive_splitlist_set_rcu_shb_lazy.cpp
-    set/hdr_intrusive_splitlist_set_rcu_sht_lazy.cpp)
-
 set(CDS_TESTHDR_OFFSETOF_TREE
     tree/hdr_intrusive_ellen_bintree_hp_member.cpp
     tree/hdr_intrusive_ellen_bintree_dhp_member.cpp
@@ -275,7 +127,6 @@ set(CDS_TESTHDR_OFFSETOF_TREE
 
 set(CDS_TESTHDR_OFFSETOF_SOURCES
 	${CDS_TESTHDR_OFFSETOF_MAP}
-	${CDS_TESTHDR_OFFSETOF_SET}
 	${CDS_TESTHDR_OFFSETOF_TREE})
 
 add_library(test-hdr-offsetof OBJECT ${CDS_TESTHDR_OFFSETOF_SOURCES})
@@ -286,7 +137,6 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 
 set(CDS_TESTHDR_SOURCES
     ${CDS_TESTHDR_MAP}
-    ${CDS_TESTHDR_SET}
     ${CDS_TESTHDR_TREE}
     ${CDS_TESTHDR_MISC})
 
