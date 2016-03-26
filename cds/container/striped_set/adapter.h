@@ -328,7 +328,7 @@ namespace cds { namespace container {
                         return std::make_pair( true, res.second );
                     }
                     else {
-                        auto it = m_Set.find( val );
+                        auto it = m_Set.find( value_type( val ));
                         if ( it == m_Set.end() )
                             return std::make_pair( false, false );
                         func( false, const_cast<value_type&>(*it), val );
