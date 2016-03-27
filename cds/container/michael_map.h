@@ -637,7 +637,7 @@ namespace cds { namespace container {
         /// Extracts the item with specified \p key
         /** \anchor cds_nonintrusive_MichaelHashMap_hp_extract
             The function searches an item with key equal to \p key,
-            unlinks it from the set, and returns it as \p guarded_ptr.
+            unlinks it from the map, and returns it as \p guarded_ptr.
             If \p key is not found the function returns an empty guarded pointer.
 
             Note the compare functor should accept a parameter of type \p K that may be not the same as \p key_type.
