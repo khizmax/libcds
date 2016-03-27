@@ -127,7 +127,7 @@ namespace {
             typedef hash_int hash;
             typedef simple_item_counter item_counter;
         };
-        typedef cc::MichaelHashSet< gc_type, list_type, set_traits >set_type;
+        typedef cc::MichaelHashSet< gc_type, list_type, set_traits > set_type;
 
         set_type s( kSize, 3 );
         test( s );
@@ -147,7 +147,7 @@ namespace {
             typedef hash_int hash;
             typedef cds::atomicity::item_counter item_counter;
         };
-        typedef cc::MichaelHashSet< gc_type, list_type, set_traits >set_type;
+        typedef cc::MichaelHashSet< gc_type, list_type, set_traits > set_type;
 
         set_type s( kSize, 4 );
         test( s );
@@ -168,7 +168,7 @@ namespace {
             typedef hash_int hash;
             typedef cds::atomicity::item_counter item_counter;
         };
-        typedef cc::MichaelHashSet< gc_type, list_type, set_traits >set_type;
+        typedef cc::MichaelHashSet< gc_type, list_type, set_traits > set_type;
 
         set_type s( kSize, 4 );
         test( s );
