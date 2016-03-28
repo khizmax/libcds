@@ -136,37 +136,18 @@ namespace cds { namespace container {
             return m_Buckets[ hash_value( key ) ];
         }
         //@endcond
+
     protected:
-        /// Forward iterator
-        /**
-            \p IsConst - constness boolean flag
-
-            The forward iterator for Michael's map is based on \p OrderedList forward iterator and has the following features:
-            - it has no post-increment operator, only pre-increment
-            - it iterates items in unordered fashion
-            - The iterator cannot be moved across thread boundary since it may contain GC's guard that is thread-private GC data.
-            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the map.
-
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator for the concurrent container
-            for debug purpose only.
-        */
+        //@cond
         template <bool IsConst>
         class iterator_type: private cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >
         {
-            //@cond
             typedef cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >  base_class;
             friend class MichaelHashMap;
-            //@endcond
 
         protected:
-            //@cond
-            //typedef typename base_class::bucket_type    bucket_type;
             typedef typename base_class::bucket_ptr     bucket_ptr;
             typedef typename base_class::list_iterator  list_iterator;
-
-            //typedef typename bucket_type::key_type      key_type;
-            //@endcond
 
         public:
             /// Value pointer type (const for const_iterator)
@@ -180,11 +161,9 @@ namespace cds { namespace container {
             typedef typename cds::details::make_const_type<typename MichaelHashMap::value_type, IsConst>::reference pair_ref;
 
         protected:
-            //@cond
             iterator_type( list_iterator const& it, bucket_ptr pFirst, bucket_ptr pLast )
                 : base_class( it, pFirst, pLast )
             {}
-            //@endcond
 
         public:
             /// Default ctor
@@ -244,9 +223,49 @@ namespace cds { namespace container {
                 return !( *this == i );
             }
         };
+        //@endcond
 
     public:
+    ///@name Forward iterators (thread-safe under RCU lock)
+    //@{
+
         /// Forward iterator
+        /**
+            The forward iterator for Michael's map is based on \p OrderedList forward iterator and has some features:
+            - it has no post-increment operator
+            - it iterates items in unordered fashion
+
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
         typedef iterator_type< false >    iterator;
 
         /// Const forward iterator
@@ -273,28 +292,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a map
-        //@{
         const_iterator begin() const
         {
             return get_const_begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
             return get_const_begin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a map
-        //@{
         const_iterator end() const
         {
             return get_const_end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a map
         const_iterator cend() const
         {
             return get_const_end();
         }
-        //@}
+    //@}
 
     private:
         //@cond
