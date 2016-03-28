@@ -51,15 +51,16 @@ namespace cds_test {
             ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
-            typedef Map::value_type map_pair;
+            typedef typename Map::value_type map_pair;
+            size_t const kkSize = base_class::kSize;
 
             std::vector<key_type> arrKeys;
-            for ( int i = 0; i < static_cast<int>(kSize); ++i )
+            for ( int i = 0; i < static_cast<int>(kkSize); ++i )
                 arrKeys.push_back( key_type( i ));
             shuffle( arrKeys.begin(), arrKeys.end());
 
             std::vector< value_type > arrVals;
-            for ( size_t i = 0; i < kSize; ++i ) {
+            for ( size_t i = 0; i < kkSize; ++i ) {
                 value_type val;
                 val.nVal = static_cast<int>( i );
                 val.strVal = std::to_string( i );
@@ -69,23 +70,23 @@ namespace cds_test {
             for ( auto const& i : arrKeys )
                 ASSERT_TRUE( m.insert( i ) );
             ASSERT_FALSE( m.empty() );
-            ASSERT_CONTAINER_SIZE( m, kSize );
+            ASSERT_CONTAINER_SIZE( m, kkSize );
 
             // iterators
             size_t nCount = 0;
             for ( auto it = m.begin(); it != m.end(); ++it ) {
                 EXPECT_EQ( it->second.nVal, 0 );
-                it->second.nVal = it->first.nKey;
+                it->second.nVal = it->first.nKey * 2;
                 ++nCount;
             }
-            EXPECT_EQ( nCount, kSize );
+            EXPECT_EQ( nCount, kkSize );
 
             nCount = 0;
             for ( auto it = m.cbegin(); it != m.cend(); ++it ) {
-                EXPECT_EQ( it->second.nVal, it->first.nKey );
+                EXPECT_EQ( it->second.nVal, it->first.nKey * 2 );
                 ++nCount;
             }
-            EXPECT_EQ( nCount, kSize );
+            EXPECT_EQ( nCount, kkSize );
 
             // get/extract
             typedef typename Map::guarded_ptr guarded_ptr;

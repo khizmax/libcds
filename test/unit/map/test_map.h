@@ -237,15 +237,16 @@ namespace cds_test {
             ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
-            typedef Map::value_type map_pair;
+            typedef typename Map::value_type map_pair;
+            size_t const kkSize = kSize;
 
             std::vector<key_type> arrKeys;
-            for ( int i = 0; i < static_cast<int>(kSize); ++i )
+            for ( int i = 0; i < static_cast<int>(kkSize); ++i )
                 arrKeys.push_back( key_type( i ));
             shuffle( arrKeys.begin(), arrKeys.end());
 
             std::vector< value_type > arrVals;
-            for ( size_t i = 0; i < kSize; ++i ) {
+            for ( size_t i = 0; i < kkSize; ++i ) {
                 value_type val;
                 val.nVal = static_cast<int>( i );
                 val.strVal = std::to_string( i );
@@ -452,7 +453,7 @@ namespace cds_test {
                 } ));
             }
             ASSERT_FALSE( m.empty() );
-            ASSERT_CONTAINER_SIZE( m, kSize );
+            ASSERT_CONTAINER_SIZE( m, kkSize );
             ASSERT_FALSE( m.begin() == m.end() );
             ASSERT_FALSE( m.cbegin() == m.cend() );
 
@@ -560,7 +561,7 @@ namespace cds_test {
                 ASSERT_TRUE( m.insert( i ));
 
             ASSERT_FALSE( m.empty() );
-            ASSERT_CONTAINER_SIZE( m, kSize );
+            ASSERT_CONTAINER_SIZE( m, kkSize );
 
             m.clear();
 
