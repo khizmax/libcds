@@ -4,6 +4,7 @@ set(CDSGTEST_MAP_SOURCES
     ../main.cpp
     michael_lazy_hp.cpp
     michael_lazy_dhp.cpp
+    michael_lazy_nogc.cpp
     michael_lazy_rcu_gpb.cpp
     michael_lazy_rcu_gpi.cpp
     michael_lazy_rcu_gpt.cpp
@@ -11,6 +12,7 @@ set(CDSGTEST_MAP_SOURCES
     michael_lazy_rcu_sht.cpp
     michael_michael_hp.cpp
     michael_michael_dhp.cpp
+    michael_michael_nogc.cpp
     michael_michael_rcu_gpb.cpp
     michael_michael_rcu_gpi.cpp
     michael_michael_rcu_gpt.cpp

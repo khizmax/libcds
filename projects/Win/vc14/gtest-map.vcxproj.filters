@@ -63,6 +63,12 @@
     <ClCompile Include="..\..\..\test\unit\map\michael_lazy_rcu_sht.cpp">
       <Filter>Source Files\MichaelMap</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_nogc.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_nogc.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\map\test_map.h">
@@ -78,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\map\test_michael_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_map_nogc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
