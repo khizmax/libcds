@@ -155,7 +155,7 @@ namespace cds { namespace container {
         typedef GC     gc;          ///< Garbage collector
         typedef Key    key_type;    ///< key type
         typedef Value  mapped_type; ///< type of value to be stored in the map
-        typedef Traits options;     ///< Map traits
+        typedef Traits traits;      ///< Map traits
 
         typedef std::pair<key_type const, mapped_type>  value_type  ;   ///< key-value pair type
         typedef typename base_class::ordered_list       ordered_list;   ///< Underlying ordered list class
@@ -176,14 +176,51 @@ namespace cds { namespace container {
         typedef typename gc::template guarded_ptr< node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
 
     public:
-        /// Forward iterator (see \p SplitListSet::iterator)
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
+        /// Forward iterator
         /**
-            Remember, the iterator <tt>operator -> </tt> and <tt>operator *</tt> returns \ref value_type pointer and reference.
-            To access item key and value use <tt>it->first</tt> and <tt>it->second</tt> respectively.
+            The forward iterator for a split-list has the following features:
+            - it has no post-increment operator
+            - it depends on underlying ordered list iterator
+            - The iterator object cannot be moved across thread boundary because it contains GC's guard that is thread-private GC data.
+            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
+              deleting operations it is no guarantee that you iterate all item in the split-list.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+
+              @warning Use this iterator on the concurrent container for debugging purpose only.
+
+              The iterator interface:
+              \code
+              class iterator {
+              public:
+                  // Default constructor
+                  iterator();
+
+                  // Copy construtor
+                  iterator( iterator const& src );
+
+                  // Dereference operator
+                  value_type * operator ->() const;
+
+                  // Dereference operator
+                  value_type& operator *() const;
+
+                  // Preincrement operator
+                  iterator& operator ++();
+
+                  // Assignment operator
+                  iterator& operator = (iterator const& src);
+
+                  // Equality operators
+                  bool operator ==(iterator const& i ) const;
+                  bool operator !=(iterator const& i ) const;
+              };
+              \endcode
         */
         typedef typename base_class::iterator iterator;
 
-        /// Const forward iterator (see SplitListSet::const_iterator)
+        /// Const forward iterator
         typedef typename base_class::const_iterator const_iterator;
 
         /// Returns a forward iterator addressing the first element in a map
@@ -207,28 +244,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a map
-        //@{
         const_iterator begin() const
         {
             return base_class::begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
             return base_class::cbegin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a map
-        //@{
         const_iterator end() const
         {
             return base_class::end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a map
         const_iterator cend() const
         {
             return base_class::cend();
         }
-        //@}
+    //@}
 
     public:
         /// Initializes split-ordered map of default capacity

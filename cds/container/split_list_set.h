@@ -358,27 +358,27 @@ namespace cds { namespace container {
               \code
               class iterator {
               public:
-              // Default constructor
-              iterator();
+                  // Default constructor
+                  iterator();
 
-              // Copy construtor
-              iterator( iterator const& src );
+                  // Copy construtor
+                  iterator( iterator const& src );
 
-              // Dereference operator
-              value_type * operator ->() const;
+                  // Dereference operator
+                  value_type * operator ->() const;
 
-              // Dereference operator
-              value_type& operator *() const;
+                  // Dereference operator
+                  value_type& operator *() const;
 
-              // Preincrement operator
-              iterator& operator ++();
+                  // Preincrement operator
+                  iterator& operator ++();
 
-              // Assignment operator
-              iterator& operator = (iterator const& src);
+                  // Assignment operator
+                  iterator& operator = (iterator const& src);
 
-              // Equality operators
-              bool operator ==(iterator const& i ) const;
-              bool operator !=(iterator const& i ) const;
+                  // Equality operators
+                  bool operator ==(iterator const& i ) const;
+                  bool operator !=(iterator const& i ) const;
               };
               \endcode
         */
