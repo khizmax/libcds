@@ -93,43 +93,31 @@ namespace cds { namespace container {
     protected:
         //@cond
         /// Calculates hash value of \p key
-        size_t hash_value( key_type const & key ) const
+        template <typename K>
+        size_t hash_value( K const & key ) const
         {
             return m_HashFunctor( key ) & m_nHashBitmask;
         }
 
         /// Returns the bucket (ordered list) for \p key
-        bucket_type&    bucket( key_type const& key )
+        template <typename K>
+        bucket_type&    bucket( K const& key )
         {
             return m_Buckets[ hash_value( key ) ];
         }
         //@endcond
 
     protected:
-        /// Forward iterator
-        /**
-            \p IsConst - constness boolean flag
-
-            The forward iterator for Michael's map is based on \p OrderedList forward iterator and has some features:
-            - it has no post-increment operator, only pre-increment
-            - it iterates items in unordered fashion
-        */
+        //@cond
         template <bool IsConst>
         class iterator_type: private cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >
         {
-            //@cond
             typedef cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >  base_class;
             friend class MichaelHashMap;
-            //@endcond
 
         protected:
-            //@cond
-            //typedef typename base_class::bucket_type    bucket_type;
             typedef typename base_class::bucket_ptr     bucket_ptr;
             typedef typename base_class::list_iterator  list_iterator;
-
-            //typedef typename bucket_type::key_type      key_type;
-            //@endcond
 
         public:
             /// Value pointer type (const for const_iterator)
@@ -143,11 +131,9 @@ namespace cds { namespace container {
             typedef typename cds::details::make_const_type<typename MichaelHashMap::value_type, IsConst>::reference pair_ref;
 
         protected:
-            //@cond
             iterator_type( list_iterator const& it, bucket_ptr pFirst, bucket_ptr pLast )
                 : base_class( it, pFirst, pLast )
             {}
-            //@endcond
 
         public:
             /// Default ctor
@@ -207,10 +193,45 @@ namespace cds { namespace container {
                 return !( *this == i );
             }
         };
-
+        //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
+        /**
+            The forward iterator for Michael's map is based on \p OrderedList forward iterator and has some features:
+            - it has no post-increment operator
+            - it iterates items in unordered fashion
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
         typedef iterator_type< false >    iterator;
 
         /// Const forward iterator
@@ -237,28 +258,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return get_const_begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return get_const_begin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return get_const_end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return get_const_end();
         }
-        //@}
+    //@}
 
     private:
         //@cond
@@ -485,6 +507,7 @@ namespace cds { namespace container {
             The function is an analog of <tt>contains( key )</tt> but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the map.
+            Hash functor specified in \p Traits should accept parameters of type \p K.
         */
         template <typename K, typename Less>
         iterator contains( K const& key, Less pred )
