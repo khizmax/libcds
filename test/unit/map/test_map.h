@@ -56,6 +56,10 @@ namespace cds_test {
             explicit key_type( std::string const& str )
                 : nKey( std::stoi( str ))
             {}
+
+            key_type( key_type const& s )
+                : nKey( s.nKey )
+            {}
         };
 
         struct value_type {

@@ -16,6 +16,9 @@
     <Filter Include="Source Files\MichaelMap">
       <UniqueIdentifier>{12baf500-5c1c-44a7-9bac-e0554eb93b1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SplitListMap">
+      <UniqueIdentifier>{3f37c15c-de68-4230-9c59-bc3a2e059950}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -68,6 +71,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\map\michael_lazy_nogc.cpp">
       <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_hp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_dhp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_nogc.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

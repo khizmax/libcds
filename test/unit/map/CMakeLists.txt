@@ -18,6 +18,9 @@ set(CDSGTEST_MAP_SOURCES
     michael_michael_rcu_gpt.cpp
     michael_michael_rcu_shb.cpp
     michael_michael_rcu_sht.cpp
+    split_michael_hp.cpp
+    split_michael_dhp.cpp
+    split_michael_nogc.cpp
 )
 
 include_directories(
