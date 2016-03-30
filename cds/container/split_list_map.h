@@ -165,6 +165,9 @@ namespace cds { namespace container {
         typedef typename base_class::item_counter   item_counter; ///< Item counter type
         typedef typename base_class::stat           stat;         ///< Internal statistics
 
+        /// Count of hazard pointer required
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount;
+
     protected:
         //@cond
         typedef typename base_class::maker::traits::key_accessor key_accessor;
@@ -302,8 +305,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key )
         {
-            //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, mapped_type()));
+            return base_class::emplace( key_type( key ), mapped_type() );
         }
 
         /// Inserts new node
@@ -320,8 +322,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-            //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair(key, val));
+            return base_class::emplace( key_type( key ), mapped_type( val ));
         }
 
         /// Inserts new node and initialize it by a functor
@@ -359,7 +360,7 @@ namespace cds { namespace container {
         bool insert_with( K const& key, Func func )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, mapped_type()), func );
+            return base_class::insert( std::make_pair( key_type( key ), mapped_type()), func );
         }
 
         /// For key \p key inserts data of type \p mapped_type created from \p args
@@ -371,7 +372,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            return base_class::emplace( std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)));
+            return base_class::emplace( key_type( std::forward<K>(key)), mapped_type( std::forward<Args>(args)...));
         }
 
         /// Updates the node
@@ -404,8 +405,10 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::update( std::make_pair( key, mapped_type()),
-                [&func](bool bNew, value_type& item, value_type const& /*val*/) {
+            typedef decltype( std::make_pair( key_type( key ), mapped_type() )) arg_pair_type;
+
+            return base_class::update( std::make_pair( key_type( key ), mapped_type()),
+                [&func](bool bNew, value_type& item, arg_pair_type const& /*val*/) {
                     func( bNew, item );
                 },
                 bAllowInsert );
