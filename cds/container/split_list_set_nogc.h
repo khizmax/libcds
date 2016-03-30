@@ -213,7 +213,7 @@ namespace cds { namespace container {
     //@{
         /// Forward iterator
         /**
-            The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
+            The forward iterator for split-list is based on \p OrderedList forward iterator and has some features:
             - it has no post-increment operator
             - it iterates items in unordered fashion
 
