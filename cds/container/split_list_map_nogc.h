@@ -92,14 +92,45 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        /// Forward iterator (see \p SplitListSet::iterator)
+    ///@name Forward iterators
+    //@{
+        /// Forward iterator
         /**
-            Remember, the iterator <tt>operator -> </tt> and <tt>operator *</tt> returns \ref value_type pointer and reference.
-            To access item key and value use <tt>it->first</tt> and <tt>it->second</tt> respectively.
+            The forward iterator for split-list is based on \p OrderedList forward iterator and has some features:
+            - it has no post-increment operator
+            - it iterates items in unordered fashion
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
         */
         typedef typename base_class::iterator iterator;
 
-        /// Const forward iterator (see SplitListSet::const_iterator)
+        /// Const forward iterator
         typedef typename base_class::const_iterator const_iterator;
 
         /// Returns a forward iterator addressing the first element in a map
@@ -123,28 +154,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a map
-        //@{
         const_iterator begin() const
         {
             return base_class::begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
             return base_class::cbegin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a map
-        //@{
         const_iterator end() const
         {
             return base_class::end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a map
         const_iterator cend() const
         {
             return base_class::cend();
         }
-        //@}
+    //@}
 
     public:
         /// Initialize split-ordered map of default capacity
@@ -181,7 +213,7 @@ namespace cds { namespace container {
         iterator insert( K const& key )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, mapped_type() ) );
+            return base_class::emplace( key_type( key ), mapped_type() );
         }
 
         /// Inserts new node
@@ -198,8 +230,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         iterator insert( K const& key, V const& val )
         {
-            //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, val ) );
+            return base_class::emplace( key_type( key ), mapped_type( val ));
         }
 
         /// Inserts new node and initialize it by a functor
@@ -248,7 +279,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         iterator emplace( K&& key, Args&&... args )
         {
-            return base_class::emplace( std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)));
+            return base_class::emplace( key_type( std::forward<K>( key )), mapped_type( std::forward<Args>( args )...));
         }
 
         /// Updates the item
@@ -266,7 +297,7 @@ namespace cds { namespace container {
         std::pair<iterator, bool> update( K const& key, bool bAllowInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::update( std::make_pair( key, mapped_type() ), bAllowInsert );
+            return base_class::update( std::make_pair( key_type( key ), mapped_type() ), bAllowInsert );
         }
         //@cond
         template <typename K>
@@ -316,6 +347,13 @@ namespace cds { namespace container {
             return contains( key, pred );
         }
         //@endcond
+
+
+        /// Clears the set (not atomic, for debugging purposes only)
+        void clear()
+        {
+            base_class::clear();
+        }
 
         /// Checks if the map is empty
         /**
