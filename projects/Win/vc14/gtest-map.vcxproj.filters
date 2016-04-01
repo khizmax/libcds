@@ -81,6 +81,45 @@
     <ClCompile Include="..\..\..\test\unit\map\split_michael_nogc.cpp">
       <Filter>Source Files\SplitListMap</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpi.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpt.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_shb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_sht.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_hp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_dhp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_nogc.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_shb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_sht.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\map\test_map.h">
@@ -99,6 +138,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\map\test_map_nogc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_split_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_split_lazy_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -65,6 +65,56 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_dhp.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_hp.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_nogc.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpb.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpi.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpt.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\map\split_michael_dhp.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
@@ -89,6 +139,32 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpb.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpi.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpt.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\map\test_map.h" />
@@ -97,6 +173,8 @@
     <ClInclude Include="..\..\..\test\unit\map\test_map_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_michael_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_michael_michael_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_split_lazy_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_split_michael_rcu.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{42B7E892-DDDA-4D00-9AB7-378E0E7E9433}</ProjectGuid>
