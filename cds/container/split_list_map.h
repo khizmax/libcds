@@ -408,7 +408,7 @@ namespace cds { namespace container {
             typedef decltype( std::make_pair( key_type( key ), mapped_type() )) arg_pair_type;
 
             return base_class::update( std::make_pair( key_type( key ), mapped_type()),
-                [&func](bool bNew, value_type& item, arg_pair_type const& /*val*/) {
+                [&func]( bool bNew, value_type& item, arg_pair_type const& /*val*/ ) {
                     func( bNew, item );
                 },
                 bAllowInsert );
