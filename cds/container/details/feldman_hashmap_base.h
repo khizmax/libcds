@@ -290,19 +290,9 @@ namespace cds { namespace container {
                 node_type() = delete;
                 node_type(node_type const&) = delete;
 
-                template <typename Q>
-                node_type(hasher /*h*/, Q const& key)
-                    : m_Value(std::move(std::make_pair(key, mapped_type())))
-                {}
-
-                template <typename Q, typename U >
-                node_type(hasher /*h*/, Q const& key, U const& val)
-                    : m_Value(std::move(std::make_pair(key, mapped_type(val))))
-                {}
-
                 template <typename Q, typename... Args>
-                node_type(hasher /*h*/, Q&& key, Args&&... args)
-                    : m_Value(std::move(std::make_pair(std::forward<Q>(key), std::move(mapped_type(std::forward<Args>(args)...)))))
+                node_type( hasher /*h*/, Q&& key, Args&&... args )
+                    : m_Value( std::make_pair( key_type( std::forward<Q>( key )), mapped_type( std::forward<Args>(args)...) ))
                 {}
             };
 
