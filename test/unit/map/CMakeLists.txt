@@ -18,6 +18,14 @@ set(CDSGTEST_MAP_SOURCES
     michael_michael_rcu_gpt.cpp
     michael_michael_rcu_shb.cpp
     michael_michael_rcu_sht.cpp
+    skiplist_hp.cpp
+    skiplist_dhp.cpp
+    skiplist_nogc.cpp
+    skiplist_rcu_gpb.cpp
+    skiplist_rcu_gpi.cpp
+    skiplist_rcu_gpt.cpp
+    skiplist_rcu_shb.cpp
+    skiplist_rcu_sht.cpp
     split_lazy_hp.cpp
     split_lazy_dhp.cpp
     split_lazy_nogc.cpp

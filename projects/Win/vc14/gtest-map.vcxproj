@@ -65,6 +65,28 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_nogc.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpb.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpt.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\map\split_lazy_dhp.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
@@ -173,6 +195,8 @@
     <ClInclude Include="..\..\..\test\unit\map\test_map_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_michael_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_michael_michael_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_skiplist_hp.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_skiplist_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_split_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_split_michael_rcu.h" />
   </ItemGroup>

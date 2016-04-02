@@ -122,6 +122,20 @@ namespace cds_test {
                 }
                 return *this;
             }
+
+            value_type& operator=( int i )
+            {
+                nVal = i;
+                strVal = std::to_string( i );
+                return *this;
+            }
+
+            value_type& operator=( std::string const& s )
+            {
+                nVal = std::stoi( s );
+                strVal = s;
+                return *this;
+            }
         };
 
         typedef std::pair<key_type const, value_type> pair_type;

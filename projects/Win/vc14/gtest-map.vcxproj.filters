@@ -19,6 +19,9 @@
     <Filter Include="Source Files\SplitListMap">
       <UniqueIdentifier>{3f37c15c-de68-4230-9c59-bc3a2e059950}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SkipListMap">
+      <UniqueIdentifier>{1e70af02-0389-402a-bb6e-e1a399628288}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
@@ -120,6 +123,30 @@
     <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_sht.cpp">
       <Filter>Source Files\SplitListMap</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_hp.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_dhp.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_nogc.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpb.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpi.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpt.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_shb.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_sht.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\map\test_map.h">
@@ -144,6 +171,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\map\test_split_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_skiplist_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_skiplist_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
