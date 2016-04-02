@@ -2,6 +2,8 @@ set(PACKAGE_NAME unit-map)
 
 set(CDSGTEST_MAP_SOURCES
     ../main.cpp
+    feldman_hashmap_hp.cpp
+    feldman_hashmap_dhp.cpp
     michael_lazy_hp.cpp
     michael_lazy_dhp.cpp
     michael_lazy_nogc.cpp
