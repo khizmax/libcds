@@ -259,7 +259,7 @@ namespace cds { namespace container {
         {}
 
     public:
-    ///@name Forward iterators (thread-safe under RCU lock)
+    ///@name Forward ordered iterators (thread-safe under RCU lock)
     //@{
         /// Forward iterator
         /**

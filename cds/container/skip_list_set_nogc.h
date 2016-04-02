@@ -201,7 +201,7 @@ namespace cds { namespace container {
     public:
     ///@name Forward iterators
     //@{
-        /// Forward iterator
+        /// Forward ordered iterator
         /**
             The forward iterator for a split-list has some features:
             - it has no post-increment operator

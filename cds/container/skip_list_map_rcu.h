@@ -212,7 +212,17 @@ namespace cds { namespace container {
         {}
 
     public:
-        /// Iterator type
+    ///@name Forward ordered iterators (thread-safe under RCU lock)
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator has some features:
+            - it has no post-increment operator
+            - it depends on iterator of underlying \p OrderedList
+
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
+        */
         typedef skip_list::details::iterator< typename base_class::iterator >  iterator;
 
         /// Const iterator type
@@ -251,6 +261,7 @@ namespace cds { namespace container {
         {
             return const_iterator( base_class::cend() );
         }
+    //@}
 
     public:
         /// Inserts new node with key and default value
