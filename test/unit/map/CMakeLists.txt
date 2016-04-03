@@ -4,6 +4,11 @@ set(CDSGTEST_MAP_SOURCES
     ../main.cpp
     feldman_hashmap_hp.cpp
     feldman_hashmap_dhp.cpp
+    feldman_hashset_rcu_gpb.cpp
+    feldman_hashset_rcu_gpi.cpp
+    feldman_hashset_rcu_gpt.cpp
+    feldman_hashset_rcu_shb.cpp
+    feldman_hashset_rcu_sht.cpp
     michael_lazy_hp.cpp
     michael_lazy_dhp.cpp
     michael_lazy_nogc.cpp

@@ -156,6 +156,21 @@
     <ClCompile Include="..\..\..\test\unit\map\feldman_hashmap_dhp.cpp">
       <Filter>Source Files\FeldmanHashMap</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_gpb.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_gpi.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_gpt.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_shb.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_sht.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\map\test_map.h">
@@ -195,6 +210,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\map\test_feldman_hashmap_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_feldman_hashmap_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
