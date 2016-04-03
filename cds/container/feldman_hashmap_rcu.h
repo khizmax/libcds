@@ -109,11 +109,14 @@ namespace cds { namespace container {
         typedef typename traits::allocator      allocator;      ///< Element allocator
         typedef typename traits::node_allocator node_allocator; ///< Array node allocator
         typedef typename traits::memory_model   memory_model;   ///< Memory model
-        typedef typename traits::back_off       back_off;       ///< Backoff strategy
+        typedef typename traits::back_off       back_off;       ///< Back-off strategy
         typedef typename traits::stat           stat;           ///< Internal statistics type
         typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename gc::scoped_lock       rcu_lock;        ///< RCU scoped lock
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
+
+        /// Level statistics
+        typedef feldman_hashmap::level_statistics level_statistics;
 
     protected:
         //@cond
