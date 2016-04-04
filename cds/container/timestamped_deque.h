@@ -124,7 +124,7 @@ namespace cds { namespace container {
  			int threadIND = acquireIndex();
 			bnode *leftBorder = localBuffers[i].getLeftMost(),
 				   *rightBorder = localBuffers[i].getRightMost();
-			bool empty = leftBorder == rightBorder || (found
+			bool empty = leftBorder == rightBorder || (!found
 					&& lastLefts[threadIND][i] == leftBorder
 					&& lastRights[threadIND][i] == rightBorder);
 			lastLefts[threadIND][i] = leftBorder;
@@ -134,6 +134,11 @@ namespace cds { namespace container {
 
  		bool tryRemove(guard& toRemove, bool fromL, bool& success) {
 			 guard candidate, startCandidate, startPoint;
+			 candidate.clear();
+			startCandidate.clear();
+			startPoint.clear();
+			toRemove.clear();
+			 bnode *b = candidate.get<bnode>();
 			 bool empty = true, isFound = false;
 			 success = true;
 			 int threadIND = acquireIndex();
@@ -156,7 +161,7 @@ namespace cds { namespace container {
 			empty = empty && wasEmpty[threadIND];
 			wasEmpty[threadIND] = isFound;
 
-			if(empty && wasEmpty[threadIND])
+			if(doEmptyCheck())
 				return nullptr;
 
 			if(isFound) {
@@ -218,10 +223,7 @@ namespace cds { namespace container {
 			itemCounter++;
 			unsigned long t = platform::getTimestamp();
 			timestamped->timestamp = t;
-			if(fromL)
-				stats.pushLeft++;
-			else
-				stats.pushRight++;
+
 			return true;
  		}
 
@@ -239,10 +241,7 @@ namespace cds { namespace container {
 			itemCounter++;
 			unsigned long t = platform::getTimestamp();
 			timestamped->timestamp = t;
-			if(fromL)
-				stats.pushLeft++;
-			else
-				stats.pushRight++;
+
 			return true;
 		}
 
@@ -251,19 +250,9 @@ namespace cds { namespace container {
 			bool success = false;
 			do {
 				tryRemove(res, fromL, success);
-				if(!success) {
-					if(fromL)
-						stats.failedPopLeft++;
-					else
-						stats.failedPopRight++;
-				}
+
 			} while(!success);
-			if(!success) {
-				if(fromL)
-					stats.successPopLeft++;
-				else
-					stats.successPopRight++;
-			}
+
 			bnode* temp = res.get<bnode>();
 			if(temp != nullptr) {
 				itemCounter--;
@@ -388,6 +377,10 @@ namespace cds { namespace container {
 					struct garbage_node {
 						unsigned long timestamp;
 						buffer_node* item;
+
+						garbage_node(buffer_node* item): item(item) {
+							timestamp = platform::getTimestamp();
+						}
 					};
 
 		 			template <typename M>
@@ -427,18 +420,63 @@ namespace cds { namespace container {
 							executioner(toDel);
 					}
 
-					void putToGarbage() {
+					void freeNode(buffer_node* toDel, bool delayed = true) {
+						disposer<buffer_node*> executioner;
+						freeNode(executioner, toDel, delayed);
+					}
+
+					int findEmptyCell() {
+						int place = -1;
+						garbage_node* candidate;
+						for(int i=0; i < garbageSize; i++ ) {
+							candidate = garbageArray[i].load();
+							if(candidate == nullptr) {
+								place = i;
+							}
+						}
+						return place;
+					}
+
+					void putToGarbage(buffer_node* node) {
+						garbage_node* gNode = new garbage_node(node);
+						int place = findEmptyCell();
+						if( place == -1) {
+							// Phew
+							while(!tryToCleanGarbage()) {}
+							place = findEmptyCell();
+						}
+						garbageArray[place].store(gNode);
 
 					}
 
-					void tryToCleanGarbage() {
+					bool tryToCleanGarbage() {
+						unsigned long timestamp = platform::getTimestamp();
+						if(guestCounter == 0) {
+							int place = -1;
+							garbage_node* candidate;
+							for(int i=0; i < garbageSize; i++ ) {
+								candidate = garbageArray[i].load();
+								if(candidate != nullptr && candidate->timestamp < timestamp) {
+									place = i;
+									break;
+								}
+							}
+							if(place == -1)
+								return true;
+							if(garbageArray[place].compare_exchange_strong(candidate, nullptr)) {
+								freeNode(candidate->item, true);
+								std::cout << "freed" << "\n";
+								return true;
+							}
 
+						}
+						return false;
 					}
 
 		 			std::atomic<buffer_node*> leftMost;
 		 			std::atomic<buffer_node*> rightMost;
 		 			std::vector<buffer_node*> garbage;
-					garbage_node* garbageArray;
+					std::atomic<garbage_node*> *garbageArray;
 					int garbageSize;
 		 			long lastIndex;
 		 			int guestCounter;
@@ -454,7 +492,7 @@ namespace cds { namespace container {
 		 				leftMost.store(newNode);
 		 				rightMost.store(newNode);
 		 				guestCounter = 0;
-						garbageArray = new garbage_node [garbageSize];
+						garbageArray = new std::atomic<garbage_node*>[garbageSize];
 
 		 			}
 
@@ -495,11 +533,10 @@ namespace cds { namespace container {
 						rightMost.store(newNode);
 
 						if(tail != place) {
-							place->isDeletedFromLeft = false;
-							garbage.push_back(tail);
+							tail->isDeletedFromLeft = false;
+							putToGarbage(tail);
 						}
-						if(guestCounter == 0)
-								cleanUnlinked(true);
+
 
 
 		 			}
@@ -521,11 +558,10 @@ namespace cds { namespace container {
 						leftMost.store(newNode);
 
 						if(tail != place) {
-							place->isDeletedFromLeft = true;
-							garbage.push_back(tail);
+							tail->isDeletedFromLeft = true;
+							putToGarbage(tail);
 						}
-						if(guestCounter == 0)
-							cleanUnlinked(true);
+
 
 		 			}
 
@@ -540,12 +576,18 @@ namespace cds { namespace container {
 		 				buffer_node* res = oldRight;
 
 		 				while(true) {
-		 					if(res->index < oldLeft->index ) return false;
+		 					if(res->index < oldLeft->index ) {
+								guestCounter--;
+								return false;
+							}
 		 					if(!res->taken.load()) {
 								found.protect(std::atomic<buffer_node*>(res));
 		 						break;
 		 					}
-		 					if(res->left.load() == res) return false;
+		 					if(res->left.load() == res) {
+								guestCounter--;
+								return false;
+							}
 		 					res = res->left.load();
 		 				}
 						start.protect( std::atomic<buffer_node*>(oldRight));
@@ -560,12 +602,18 @@ namespace cds { namespace container {
 						buffer_node* res = oldLeft;
 
 						while(true) {
-							if(res->index > oldRight->index) return false;
+							if(res->index > oldRight->index) {
+								guestCounter--;
+								return false;
+							}
 							if(!res->taken.load()) {
 								found.protect(std::atomic<buffer_node*>(res));
 								break;
 							}
-							if(res->right.load() == res) return false;
+							if(res->right.load() == res) {
+								guestCounter--;
+								return false;
+							}
 							res = res->right.load();
 						}
 						start.protect( std::atomic<buffer_node*>(oldLeft));
@@ -588,6 +636,7 @@ namespace cds { namespace container {
 		 				bool t = false;
 		 				if(node->taken.compare_exchange_strong(t, true)) {
 		 					rightMost.compare_exchange_strong(startPoint, node);
+							tryToCleanGarbage();
 		 					return true;
 		 				}
 		 				return false;
@@ -600,6 +649,7 @@ namespace cds { namespace container {
 		 				bool t = false;
 						if(node->taken.compare_exchange_strong(t, true)) {
 							leftMost.compare_exchange_strong(startPoint, node);
+							tryToCleanGarbage();
 							return true;
 						}
 						return false;
