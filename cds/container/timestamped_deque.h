@@ -12,6 +12,7 @@
 #include <atomic>
 #include <boost/thread.hpp>
 #include <cds/container/details/base.h>
+#include <cds/compiler/timestamp.h>
 
 namespace cds { namespace container {
 
@@ -40,7 +41,7 @@ namespace cds { namespace container {
              >::type type;
          };
  	} // namespace timestamped_deque
-
+    using namespace cds::timestamp;
 
  	template <typename T, typename Traits = cds::container::timestamped_deque::traits>
 	class Timestamped_deque {
@@ -52,21 +53,23 @@ namespace cds { namespace container {
  			node(): timestamp(0) {}
  		};
 
- 		inline unsigned long getTimestamp ()
-		{
-			uint32_t time_edx1, time_eax1;
-			unsigned long time_last;
-			asm volatile (  "rdtscp\n\t"
-							"mov %%edx, %0\n\t"
-							"mov %%eax, %1\n\t"
-							"cpuid\n\t" : "=r"(time_edx1), "=r"(time_eax1) ::
-							"%rax", "%rbx", "%rcx", "%rdx");
+		struct Statistic {
+			int failedPopLeft;
+			int failedPopRight;
+			int successPopLeft;
+			int successPopRight;
+			int pushLeft;
+			int pushRight;
 
-			time_last =
-						(static_cast<unsigned long long>(time_edx1) << 32 | static_cast<unsigned long long>(time_eax1));
-			return time_last;
-		}
-
+			Statistic() {
+				failedPopLeft = 0;
+				failedPopRight = 0;
+				successPopLeft = 0;
+				successPopRight = 0;
+				pushLeft = 0;
+				pushRight = 0;
+			}
+		};
 
 
 	public:
@@ -81,7 +84,7 @@ namespace cds { namespace container {
 	 	typedef std::pair<guard*, guard*> finded_ptr;
 
 	private:
-
+		Statistic stats;
  		ThreadBuffer* localBuffers;
  		std::atomic<int> lastFree;
  		int maxThread;
@@ -115,7 +118,7 @@ namespace cds { namespace container {
 			return itemCounter == 0;
  		}
  		/*
- 		 *  Helping fucntion for checking emptiness
+ 		 *  Helping function for checking emptiness
  		 */
  		bool checkEmptyCondition(bool found , int i) {
  			int threadIND = acquireIndex();
@@ -134,7 +137,7 @@ namespace cds { namespace container {
 			 bool empty = true, isFound = false;
 			 success = true;
 			 int threadIND = acquireIndex();
-			 unsigned long startTime = getTimestamp();
+			 unsigned long startTime = platform::getTimestamp();
 			 int bufferIndex = 0;
 
 			 for(int i=0; i < maxThread; i++) {
@@ -213,8 +216,12 @@ namespace cds { namespace container {
 			else
 				localBuffers[index].insertRight(timestamped);
 			itemCounter++;
-			unsigned long t = getTimestamp();
+			unsigned long t = platform::getTimestamp();
 			timestamped->timestamp = t;
+			if(fromL)
+				stats.pushLeft++;
+			else
+				stats.pushRight++;
 			return true;
  		}
 
@@ -230,8 +237,12 @@ namespace cds { namespace container {
 			else
 				localBuffers[index].insertRight(timestamped);
 			itemCounter++;
-			unsigned long t = getTimestamp();
+			unsigned long t = platform::getTimestamp();
 			timestamped->timestamp = t;
+			if(fromL)
+				stats.pushLeft++;
+			else
+				stats.pushRight++;
 			return true;
 		}
 
@@ -240,7 +251,19 @@ namespace cds { namespace container {
 			bool success = false;
 			do {
 				tryRemove(res, fromL, success);
+				if(!success) {
+					if(fromL)
+						stats.failedPopLeft++;
+					else
+						stats.failedPopRight++;
+				}
 			} while(!success);
+			if(!success) {
+				if(fromL)
+					stats.successPopLeft++;
+				else
+					stats.successPopRight++;
+			}
 			bnode* temp = res.get<bnode>();
 			if(temp != nullptr) {
 				itemCounter--;
@@ -321,7 +344,7 @@ namespace cds { namespace container {
 		}
 
 		int version() {
-			return 5;
+			return 8;
 		}
 
 		private:
@@ -359,7 +382,13 @@ namespace cds { namespace container {
 		 				}
 
 		 			};
+
+
 		 		private:
+					struct garbage_node {
+						unsigned long timestamp;
+						buffer_node* item;
+					};
 
 		 			template <typename M>
 					struct disposer {
@@ -398,15 +427,26 @@ namespace cds { namespace container {
 							executioner(toDel);
 					}
 
+					void putToGarbage() {
+
+					}
+
+					void tryToCleanGarbage() {
+
+					}
+
 		 			std::atomic<buffer_node*> leftMost;
 		 			std::atomic<buffer_node*> rightMost;
 		 			std::vector<buffer_node*> garbage;
+					garbage_node* garbageArray;
+					int garbageSize;
 		 			long lastIndex;
 		 			int guestCounter;
 		 		public:
 
 		 			typedef typename cds::details::Allocator<ThreadBuffer::buffer_node, typename traits::buffernode_allocator> buffernode_allocator;
 		 			ThreadBuffer() : lastIndex(1), guestCounter(0) {
+						garbageSize = 20;
 		 				buffer_node* newNode = buffernode_allocator().New();
 		 				newNode->index = 0;
 		 				newNode->item = nullptr;
@@ -414,6 +454,7 @@ namespace cds { namespace container {
 		 				leftMost.store(newNode);
 		 				rightMost.store(newNode);
 		 				guestCounter = 0;
+						garbageArray = new garbage_node [garbageSize];
 
 		 			}
 
