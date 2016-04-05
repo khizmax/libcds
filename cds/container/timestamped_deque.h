@@ -54,20 +54,32 @@ namespace cds { namespace container {
  		};
 
 		struct Statistic {
-			int failedPopLeft;
-			int failedPopRight;
-			int successPopLeft;
-			int successPopRight;
-			int pushLeft;
-			int pushRight;
+			std::atomic<int> failedPopLeft;
+			std::atomic<int> failedPopRight;
+			std::atomic<int> successPopLeft;
+			std::atomic<int> successPopRight;
+			std::atomic<int> pushLeft;
+			std::atomic<int> pushRight;
+			std::atomic<int> emptyPopLeft;
+			std::atomic<int> emptyPopRight;
+			std::atomic<int> poppedAmount;
+			std::atomic<int> freedAmount;
+			std::atomic<int> pushedAmount;
+			std::atomic<int> delayedToFree;
 
 			Statistic() {
-				failedPopLeft = 0;
-				failedPopRight = 0;
-				successPopLeft = 0;
-				successPopRight = 0;
-				pushLeft = 0;
-				pushRight = 0;
+				failedPopLeft.store(0);
+				failedPopRight.store(0);
+				successPopLeft.store(0);
+				successPopRight.store(0);
+				pushLeft.store(0);
+				pushRight.store(0);
+				emptyPopLeft.store(0);
+				emptyPopRight.store(0);
+				poppedAmount.store(0);
+				freedAmount.store(0);
+				pushedAmount.store(0);
+				delayedToFree.store(0);
 			}
 		};
 
@@ -223,7 +235,11 @@ namespace cds { namespace container {
 			itemCounter++;
 			unsigned long t = platform::getTimestamp();
 			timestamped->timestamp = t;
-
+			if(fromL)
+				stats.pushLeft++;
+			else
+				stats.pushRight++;
+			stats.pushedAmount++;
 			return true;
  		}
 
@@ -241,7 +257,10 @@ namespace cds { namespace container {
 			itemCounter++;
 			unsigned long t = platform::getTimestamp();
 			timestamped->timestamp = t;
-
+			if(fromL)
+				stats.pushLeft++;
+			else
+				stats.pushRight++;
 			return true;
 		}
 
@@ -250,16 +269,31 @@ namespace cds { namespace container {
 			bool success = false;
 			do {
 				tryRemove(res, fromL, success);
-
+				if(!success) {
+					if(fromL)
+						stats.failedPopLeft++;
+					else
+						stats.failedPopRight++;
+				}
 			} while(!success);
 
 			bnode* temp = res.get<bnode>();
 			if(temp != nullptr) {
+				if(fromL)
+					stats.successPopLeft++;
+				else
+					stats.successPopRight++;
+				stats.poppedAmount++;
 				itemCounter--;
 				val = *temp->item->item;
 				return true;
-			} else
+			} else {
+				if(fromL)
+					stats.emptyPopLeft++;
+				else
+					stats.emptyPopRight++;
 				return false;
+			}
  		}
 
 
@@ -268,6 +302,8 @@ namespace cds { namespace container {
 		Timestamped_deque() {
 			maxThread = cds::gc::HP::max_thread_count();
 			localBuffers = new ThreadBuffer[maxThread];
+			for(int i=0; i< maxThread; i++)
+				localBuffers[i].setStat(&stats);
 			lastLefts = new bnode** [maxThread];
 			// Initializing arrays for detecting empty state of container
 			for(int i=0; i< maxThread; i++)
@@ -336,6 +372,27 @@ namespace cds { namespace container {
 			return 8;
 		}
 
+		void printStats() {
+			std::cout << "----------------------------------------------------------------------------------\n";
+			std::cout << "Amount of pushes         = " << stats.pushedAmount.load() << "\n";
+			std::cout << "Amount of succesful pops = " << stats.poppedAmount.load() << "\n";
+			std::cout << "Amount of empty pops     = " << stats.emptyPopLeft.load() + stats.emptyPopRight.load() << "\n";
+			std::cout << "Amount of failed pops    = " << stats.failedPopLeft.load() + stats.failedPopRight.load() << "\n";
+			std::cout << "Amount of freed nodes    = " << stats.freedAmount.load() << "\n";
+			std::cout << "Amount of delayed        = " << stats.freedAmount.load() << "\n";
+			std::cout << "==================================================================================\n";
+			std::cout << "Amount of succesful left pops  = " << stats.successPopLeft.load() << "\n";
+			std::cout << "Amount of succesful right pops = " << stats.successPopRight.load() << "\n";
+			std::cout << "Amount of empty left pops      = " << stats.emptyPopLeft.load() << "\n";
+			std::cout << "Amount of empty right pops     = " << stats.emptyPopRight.load() << "\n";
+			std::cout << "Amount of failed left pops     = " << stats.failedPopLeft.load() << "\n";
+			std::cout << "Amount of failed right pops    = " << stats.failedPopRight.load() << "\n";
+			std::cout << "Amount of left pushes          = " << stats.pushLeft.load() << "\n";
+			std::cout << "Amount of right pushes         = " << stats.pushRight.load() << "\n";
+			std::cout << "----------------------------------------------------------------------------------\n";
+
+		}
+
 		private:
 		class ThreadBuffer {
 		 		public:
@@ -391,33 +448,33 @@ namespace cds { namespace container {
 						}
 					};
 
-					void cleanUnlinked(bool delayed) {
+					void cleanUnlinked(buffer_node* condemned, bool delayed) {
 						int size = garbage.size();
 						disposer<buffer_node*> executioner;
-						for(int i = 0; i<size; i++ ) {
-							buffer_node* cur = garbage[i];
-							if(cur->isDeletedFromLeft) {
-								while(cur->left.load() != cur) {
-									buffer_node* toDel = cur;
-									cur = cur->left.load();
-									freeNode(executioner, toDel, delayed);
-								}
-							} else {
-								while(cur->right.load() != cur) {
-									buffer_node* toDel = cur;
-									cur = cur->right.load();
-									freeNode(executioner, toDel, delayed);
-								}
+						buffer_node* cur = condemned;
+						if(cur->isDeletedFromLeft) {
+							while(cur->left.load() != cur) {
+								buffer_node* toDel = cur;
+								cur = cur->left.load();
+								freeNode(executioner, toDel, delayed);
+							}
+						} else {
+							while(cur->right.load() != cur) {
+								buffer_node* toDel = cur;
+								cur = cur->right.load();
+								freeNode(executioner, toDel, delayed);
 							}
 						}
-						garbage.clear();
 					}
+
+
 
 					void freeNode(disposer<buffer_node*> &executioner, buffer_node* toDel, bool delayed) {
 						if(delayed)
 							cds::gc::HP::retire<disposer<buffer_node> >(toDel);
 						else
 							executioner(toDel);
+						stats->freedAmount++;
 					}
 
 					void freeNode(buffer_node* toDel, bool delayed = true) {
@@ -437,7 +494,24 @@ namespace cds { namespace container {
 						return place;
 					}
 
+					void countGarbage(buffer_node* node) {
+						buffer_node* cur = node;
+						stats->delayedToFree++;
+						if(cur->isDeletedFromLeft) {
+							while(cur->left.load() != cur) {
+								stats->delayedToFree++;
+								cur = cur->left.load();
+							}
+						} else {
+							while(cur->right.load() != cur) {
+								stats->delayedToFree++;
+								cur = cur->right.load();
+							}
+						}
+					}
+
 					void putToGarbage(buffer_node* node) {
+						countGarbage(node);
 						garbage_node* gNode = new garbage_node(node);
 						int place = findEmptyCell();
 						if( place == -1) {
@@ -451,7 +525,7 @@ namespace cds { namespace container {
 
 					bool tryToCleanGarbage() {
 						unsigned long timestamp = platform::getTimestamp();
-						if(guestCounter == 0) {
+						if(guestCounter.load() == 0) {
 							int place = -1;
 							garbage_node* candidate;
 							for(int i=0; i < garbageSize; i++ ) {
@@ -464,8 +538,9 @@ namespace cds { namespace container {
 							if(place == -1)
 								return true;
 							if(garbageArray[place].compare_exchange_strong(candidate, nullptr)) {
-								freeNode(candidate->item, true);
-								std::cout << "freed" << "\n";
+
+								cleanUnlinked(candidate->item, true);
+
 								return true;
 							}
 
@@ -479,11 +554,12 @@ namespace cds { namespace container {
 					std::atomic<garbage_node*> *garbageArray;
 					int garbageSize;
 		 			long lastIndex;
-		 			int guestCounter;
+					std::atomic<int> guestCounter;
+					Statistic* stats;
 		 		public:
 
 		 			typedef typename cds::details::Allocator<ThreadBuffer::buffer_node, typename traits::buffernode_allocator> buffernode_allocator;
-		 			ThreadBuffer() : lastIndex(1), guestCounter(0) {
+		 			ThreadBuffer() : lastIndex(1) {
 						garbageSize = 20;
 		 				buffer_node* newNode = buffernode_allocator().New();
 		 				newNode->index = 0;
@@ -491,7 +567,7 @@ namespace cds { namespace container {
 		 				newNode->taken.store(true);
 		 				leftMost.store(newNode);
 		 				rightMost.store(newNode);
-		 				guestCounter = 0;
+		 				guestCounter.store(0);
 						garbageArray = new std::atomic<garbage_node*>[garbageSize];
 
 		 			}
@@ -505,7 +581,7 @@ namespace cds { namespace container {
 							freeNode(executioner, temp, false);
 						}
 						freeNode(executioner, curNode, false);
-						cleanUnlinked(false);
+
 					}
 
 		 			buffer_node* getLeftMost() {
@@ -514,6 +590,10 @@ namespace cds { namespace container {
 
 		 			buffer_node* getRightMost() {
 						return rightMost.load();
+					}
+
+					void setStat(Statistic* stats) {
+						this->stats = stats;
 					}
 
 		 			void insertRight(node* timestamped) {
