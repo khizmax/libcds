@@ -38,7 +38,7 @@ namespace cds { namespace container {} }
 
 namespace cds_test {
 
-    class striped_map: public striped_map_fixture
+    class container_map: public striped_map_fixture
     {
     public:
         static size_t const kSize = 1000;

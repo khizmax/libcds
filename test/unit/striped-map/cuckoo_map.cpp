@@ -35,10 +35,10 @@
 namespace {
     namespace cc = cds::container;
 
-    class CuckooMap : public cds_test::striped_map
+    class CuckooMap : public cds_test::container_map
     {
     protected:
-        typedef cds_test::striped_map base_class;
+        typedef cds_test::container_map base_class;
 
         template <typename Set>
         void test( Set& m )

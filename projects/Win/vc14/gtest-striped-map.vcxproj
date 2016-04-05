@@ -42,10 +42,13 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_std_list.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_std_map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\striped-map\test_map.h" />
     <ClInclude Include="..\..\..\test\unit\striped-map\test_map_data.h" />
+    <ClInclude Include="..\..\..\test\unit\striped-map\test_striped_map.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{00FD5CB8-E1A4-40CA-B613-30A06A75622B}</ProjectGuid>

@@ -4,6 +4,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDSUNIT_ENABLE_BOOST_CONTAINER")
 
 set(CDSGTEST_STRIPED_MAP_SOURCES
     ../main.cpp
+    cuckoo_map.cpp
+    map_std_list.cpp
+    map_std_map.cpp
 )
 
 include_directories(
