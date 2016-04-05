@@ -711,6 +711,7 @@ template <class Container, typename... Options>
         {
             return update( key, func, true );
         }
+        //@endcond
 
         /// Delete \p key from the map
         /** \anchor cds_nonintrusive_StripedMap_erase
