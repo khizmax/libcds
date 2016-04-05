@@ -16,7 +16,7 @@
 
 namespace cds { namespace container {
 
-///
+//
  	/** @ingroup cds_nonintrusive_helper
  	*/
  	namespace timestamped_deque {
