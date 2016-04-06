@@ -178,8 +178,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair< iterator, bool > pos = find_prev_item( key );
                 if ( !pos.second ) {
-                    value_type newItem( key, mapped_type() );
-                    pos.first = m_List.insert_after( pos.first, newItem );
+                    pos.first = m_List.insert_after( pos.first, value_type( key_type( key ), mapped_type() ));
                     f( *pos.first );
                     return true;
                 }
@@ -193,7 +192,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair< iterator, bool > pos = find_prev_item( key );
                 if ( !pos.second ) {
-                    m_List.emplace_after( pos.first, std::forward<K>(key), std::move( mapped_type( std::forward<Args>(args)... )));
+                    m_List.emplace_after( pos.first, key_type( std::forward<K>( key )), mapped_type( std::forward<Args>( args )... ));
                     return true;
                 }
                 return false;
@@ -208,8 +207,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     if ( !bAllowInsert )
                         return std::make_pair( false, false );
 
-                    value_type newItem( key, mapped_type() );
-                    pos.first = m_List.insert_after( pos.first, newItem );
+                    pos.first = m_List.insert_after( pos.first, value_type( key_type( key ), mapped_type() ));
                     func( true, *pos.first );
                     return std::make_pair( true, true );
                 }

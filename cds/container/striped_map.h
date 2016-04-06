@@ -241,7 +241,7 @@ namespace cds { namespace container {
                         #include <cds/container/striped_map/boost_map.h>
                         #include <cds/container/striped_hash_map.h>
                         typedef cds::container::StripedMap<
-                            boost::container::map< Key, T, std::pair< const Key, T> >
+                            boost::container::map< Key, T, std::less<Key> >
                         > striped_map;
                     \endcode
                     </td>
@@ -256,7 +256,7 @@ namespace cds { namespace container {
                         #include <cds/container/striped_hash_map.h>
                         typedef cds::container::StripedMap<
                             boost::container::flat_map< Key, T,
-                                std::less< std::pair< const Key, T> >
+                                std::less< std::less<Key> >
                             >
                         > striped_map;
                     \endcode
@@ -286,7 +286,7 @@ namespace cds { namespace container {
             There are two possibility:
             - either your \p MyBestContainer class has native support of bucket's interface;
                 in this case, you can use default <tt>striped_set::adapt</tt> metafunction;
-            - or your \p MyBestContainer class does not support bucket's interface, which means, that you should develop a specialization
+            - or your \p MyBestContainer class does not support bucket's interface; it means you should develop a specialization
                 <tt>cds::container::striped_set::adapt<MyBestContainer> </tt> metafunction providing necessary interface.
 
             The <tt>striped_set::adapt< Container, Options... ></tt> metafunction has two template argument:
@@ -295,7 +295,7 @@ namespace cds { namespace container {
                 any option from \p Options for its internal use. For example, a \p compare option can be passed to \p adapt
                 metafunction via \p Options argument of \p %StripedMap declaration.
 
-            See striped_set::adapt metafunction for the description of interface that the bucket container must provide
+            See \p striped_set::adapt metafunction for the description of interface that the bucket container must provide
             to be \p %StripedMap compatible.
 
         <b>Copy policy</b>

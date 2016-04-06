@@ -132,7 +132,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool insert( const Q& key, Func f )
             {
-                std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ) );
+                std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type() ) );
                 if ( res.second )
                     f( *res.first );
                 return res.second;
@@ -141,7 +141,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename... Args>
             bool emplace( Q&& key, Args&&... args )
             {
-                std::pair<iterator, bool> res = m_Map.emplace( std::forward<Q>(key), std::move(mapped_type( std::forward<Args>(args)...)));
+                std::pair<iterator, bool> res = m_Map.emplace( key_type( std::forward<Q>( key )), mapped_type( std::forward<Args>( args )...));
                 return res.second;
             }
 
@@ -149,12 +149,12 @@ namespace cds { namespace intrusive { namespace striped_set {
             std::pair<bool, bool> update( const Q& key, Func func, bool bAllowInsert )
             {
                 if ( bAllowInsert ) {
-                    std::pair<iterator, bool> res = m_Map.insert( value_type( key, mapped_type() ));
+                    std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type() ));
                     func( res.second, *res.first );
                     return std::make_pair( true, res.second );
                 }
                 else {
-                    auto it = m_Map.find(key_type( key ));
+                    auto it = m_Map.find( key_type( key ));
                     if ( it == end() )
                         return std::make_pair( false, false );
                     func( false, *it );
@@ -165,7 +165,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool erase( const Q& key, Func f )
             {
-                iterator it = m_Map.find( key_type(key) );
+                iterator it = m_Map.find( key_type( key ));
                 if ( it == m_Map.end() )
                     return false;
                 f( *it );
@@ -174,12 +174,12 @@ namespace cds { namespace intrusive { namespace striped_set {
             }
 
             template <typename Q, typename Func>
-            bool find( Q& val, Func f )
+            bool find( Q& key, Func f )
             {
-                iterator it = m_Map.find( key_type(val) );
+                iterator it = m_Map.find( key_type( key ));
                 if ( it == m_Map.end() )
                     return false;
-                f( *it, val );
+                f( *it, key );
                 return true;
             }
 

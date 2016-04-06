@@ -177,8 +177,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 iterator it = std::lower_bound( m_List.begin(), m_List.end(), key, find_predicate() );
                 if ( it == m_List.end() || key_comparator()( key, it->first ) != 0 ) {
-                    //value_type newItem( key );
-                    it = m_List.insert( it, value_type( key, mapped_type()) );
+                    it = m_List.insert( it, value_type( key_type( key ), mapped_type()) );
                     f( *it );
 
 #           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
@@ -216,8 +215,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     if ( !bAllowInsert )
                         return std::make_pair( false, false );
 
-                    value_type newItem( key, mapped_type() );
-                    it = m_List.insert( it, newItem );
+                    it = m_List.insert( it, value_type( key_type( key ), mapped_type() ));
                     func( true, *it );
 #           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                     ++m_nSize;
