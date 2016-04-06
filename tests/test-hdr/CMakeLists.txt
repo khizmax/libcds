@@ -1,71 +1,5 @@
 set(PACKAGE_NAME test-hdr)
 
-set(CDS_TESTHDR_MAP
-    map/hdr_michael_map_hp.cpp
-    map/hdr_michael_map_dhp.cpp
-    map/hdr_michael_map_rcu_gpi.cpp
-    map/hdr_michael_map_rcu_gpb.cpp
-    map/hdr_michael_map_rcu_gpt.cpp
-    map/hdr_michael_map_rcu_shb.cpp
-    map/hdr_michael_map_rcu_sht.cpp
-    map/hdr_michael_map_nogc.cpp
-    map/hdr_michael_map_lazy_hp.cpp
-    map/hdr_michael_map_lazy_dhp.cpp
-    map/hdr_michael_map_lazy_rcu_gpi.cpp
-    map/hdr_michael_map_lazy_rcu_gpb.cpp
-    map/hdr_michael_map_lazy_rcu_gpt.cpp
-    map/hdr_michael_map_lazy_rcu_shb.cpp
-    map/hdr_michael_map_lazy_rcu_sht.cpp
-    map/hdr_michael_map_lazy_nogc.cpp
-    map/hdr_feldman_hashmap_hp.cpp
-    map/hdr_feldman_hashmap_dhp.cpp
-    map/hdr_feldman_hashmap_rcu_gpb.cpp
-    map/hdr_feldman_hashmap_rcu_gpi.cpp
-    map/hdr_feldman_hashmap_rcu_gpt.cpp
-    map/hdr_feldman_hashmap_rcu_shb.cpp
-    map/hdr_feldman_hashmap_rcu_sht.cpp
-    map/hdr_refinable_hashmap_hashmap_std.cpp
-    map/hdr_refinable_hashmap_boost_list.cpp
-    map/hdr_refinable_hashmap_list.cpp
-    map/hdr_refinable_hashmap_map.cpp
-    map/hdr_refinable_hashmap_boost_map.cpp
-    map/hdr_refinable_hashmap_boost_flat_map.cpp
-    map/hdr_refinable_hashmap_boost_unordered_map.cpp
-    map/hdr_refinable_hashmap_slist.cpp
-    map/hdr_skiplist_map_hp.cpp
-    map/hdr_skiplist_map_dhp.cpp
-    map/hdr_skiplist_map_rcu_gpi.cpp
-    map/hdr_skiplist_map_rcu_gpb.cpp
-    map/hdr_skiplist_map_rcu_gpt.cpp
-    map/hdr_skiplist_map_rcu_shb.cpp
-    map/hdr_skiplist_map_rcu_sht.cpp
-    map/hdr_skiplist_map_nogc.cpp
-    map/hdr_splitlist_map_hp.cpp
-    map/hdr_splitlist_map_dhp.cpp
-    map/hdr_splitlist_map_nogc.cpp
-    map/hdr_splitlist_map_rcu_gpi.cpp
-    map/hdr_splitlist_map_rcu_gpb.cpp
-    map/hdr_splitlist_map_rcu_gpt.cpp
-    map/hdr_splitlist_map_rcu_shb.cpp
-    map/hdr_splitlist_map_rcu_sht.cpp
-    map/hdr_splitlist_map_lazy_hp.cpp
-    map/hdr_splitlist_map_lazy_dhp.cpp
-    map/hdr_splitlist_map_lazy_nogc.cpp
-    map/hdr_splitlist_map_lazy_rcu_gpi.cpp
-    map/hdr_splitlist_map_lazy_rcu_gpb.cpp
-    map/hdr_splitlist_map_lazy_rcu_gpt.cpp
-    map/hdr_splitlist_map_lazy_rcu_sht.cpp
-    map/hdr_splitlist_map_lazy_rcu_shb.cpp
-    map/hdr_striped_hashmap_hashmap_std.cpp
-    map/hdr_striped_hashmap_boost_list.cpp
-    map/hdr_striped_hashmap_list.cpp
-    map/hdr_striped_hashmap_map.cpp
-    map/hdr_striped_hashmap_boost_map.cpp
-    map/hdr_striped_hashmap_boost_flat_map.cpp
-    map/hdr_striped_hashmap_boost_unordered_map.cpp
-    map/hdr_striped_hashmap_slist.cpp
-    map/hdr_striped_map_reg.cpp)
-
 set(CDS_TESTHDR_TREE
     tree/hdr_tree_reg.cpp
     tree/hdr_intrusive_ellen_bintree_hp.cpp
@@ -113,9 +47,6 @@ set(CDS_TESTHDR_MISC
     misc/permutation_generator.cpp
     misc/thread_init_fini.cpp)
 
-set(CDS_TESTHDR_OFFSETOF_MAP
-    map/hdr_cuckoo_map.cpp)
-
 set(CDS_TESTHDR_OFFSETOF_TREE
     tree/hdr_intrusive_ellen_bintree_hp_member.cpp
     tree/hdr_intrusive_ellen_bintree_dhp_member.cpp
@@ -126,7 +57,6 @@ set(CDS_TESTHDR_OFFSETOF_TREE
     tree/hdr_intrusive_ellen_bintree_rcu_sht_member.cpp)
 
 set(CDS_TESTHDR_OFFSETOF_SOURCES
-	${CDS_TESTHDR_OFFSETOF_MAP}
 	${CDS_TESTHDR_OFFSETOF_TREE})
 
 add_library(test-hdr-offsetof OBJECT ${CDS_TESTHDR_OFFSETOF_SOURCES})
@@ -136,7 +66,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 set(CDS_TESTHDR_SOURCES
-    ${CDS_TESTHDR_MAP}
     ${CDS_TESTHDR_TREE}
     ${CDS_TESTHDR_MISC})
 
