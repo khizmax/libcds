@@ -319,7 +319,6 @@ namespace {
                         ASSERT_TRUE( str.empty());
                         str = val.strVal;
                         ASSERT_FALSE( m.emplace( i, std::move( str )));
-                        ASSERT_TRUE( str.empty());
                     }
                     break;
                 case 15:
@@ -329,7 +328,6 @@ namespace {
                         ASSERT_TRUE( str.empty());
                         str = val.strVal;
                         ASSERT_FALSE( m.emplace( i, i.nKey, std::move( str )));
-                        ASSERT_TRUE( str.empty());
                     }
                     break;
                 }

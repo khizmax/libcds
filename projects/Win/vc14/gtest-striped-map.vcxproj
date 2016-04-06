@@ -42,8 +42,14 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_flat_map.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_list.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_map.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_slist.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_unordered_map.cpp" />
     <ClCompile Include="..\..\..\test\unit\striped-map\map_std_list.cpp" />
     <ClCompile Include="..\..\..\test\unit\striped-map\map_std_map.cpp" />
+    <ClCompile Include="..\..\..\test\unit\striped-map\map_std_unordered_map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\striped-map\test_map.h" />
