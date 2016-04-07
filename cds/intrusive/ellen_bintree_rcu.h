@@ -349,8 +349,8 @@ namespace cds { namespace intrusive {
         // Foo struct is derived from two ellen_bintree::node class
         // with different tags
         struct Foo
-            : public cds::intrusive::ellen_bintree::node< gpb_rcu, cds::opt::tag< string_tag > >
-            , public cds::intrusive::ellen_bintree::node< gpb_rcu >, cds::opt::tag< int_tag >
+            : public cds::intrusive::ellen_bintree::node< gpb_rcu, cds::opt::tag< string_tag >>
+            , public cds::intrusive::ellen_bintree::node< gpb_rcu, cds::opt::tag< int_tag >>
         {
             std::string m_strKey    ;   // string key
             int         m_nKey      ;   // int key
@@ -917,7 +917,8 @@ namespace cds { namespace intrusive {
             unlinks it from the tree, and returns \p true.
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Note the \pTraits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
@@ -969,7 +970,8 @@ namespace cds { namespace intrusive {
 
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Note the \pTraits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
