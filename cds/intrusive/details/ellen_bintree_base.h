@@ -463,13 +463,13 @@ namespace cds { namespace intrusive {
         /// EllenBinTree traits
         struct traits
         {
-            /// Hook used
+            /// Hook used (mandatory)
             /**
                 Possible values are: \p ellen_bintree::base_hook, \p ellen_bintree::member_hook, \p ellen_bintree::traits_hook.
             */
             typedef base_hook<>       hook;
 
-            /// Key extracting functor
+            /// Key extracting functor (mandatory)
             /**
                 You should explicit define a valid functor.
                 The functor has the following prototype:
@@ -481,7 +481,7 @@ namespace cds { namespace intrusive {
                 It should initialize \p dest key from \p src data.
                 The functor is used to initialize internal nodes.
             */
-            typedef opt::none           key_extractor;
+            typedef opt::none key_extractor;
 
             /// Key comparison functor
             /**
@@ -492,7 +492,7 @@ namespace cds { namespace intrusive {
                 You should provide \p compare or \p less functor.
                 See \ref cds_intrusive_EllenBinTree_rcu_less "predicate requirements".
             */
-            typedef opt::none                       compare;
+            typedef opt::none compare;
 
             /// Specifies binary predicate used for key compare.
             /**
@@ -501,26 +501,26 @@ namespace cds { namespace intrusive {
                 You should provide \p compare or \p less functor.
                 See \ref cds_intrusive_EllenBinTree_rcu_less "predicate requirements".
             */
-            typedef opt::none                       less;
+            typedef opt::none less;
 
             /// Disposer
             /**
                 The functor used for dispose removed items. Default is \p opt::v::empty_disposer.
             */
-            typedef opt::v::empty_disposer          disposer;
+            typedef opt::v::empty_disposer disposer;
 
             /// Item counter
             /**
                 The type for item counter, by default it is disabled (\p atomicity::empty_item_counter).
                 To enable it use \p atomicity::item_counter
             */
-            typedef atomicity::empty_item_counter     item_counter;
+            typedef atomicity::empty_item_counter item_counter;
 
             /// C++ memory ordering model
             /**
                 List of available memory ordering see \p opt::memory_model
             */
-            typedef opt::v::relaxed_ordering        memory_model;
+            typedef opt::v::relaxed_ordering memory_model;
 
             /// Allocator for update descriptors
             /**
@@ -536,29 +536,29 @@ namespace cds { namespace intrusive {
                 Also notice that size of update descriptor is constant and not dependent on the type of data
                 stored in the tree so single free-list object can be used for several \p EllenBinTree object.
             */
-            typedef CDS_DEFAULT_ALLOCATOR           update_desc_allocator;
+            typedef CDS_DEFAULT_ALLOCATOR update_desc_allocator;
 
             /// Allocator for internal nodes
             /**
                 The allocator type is used for \p ellen_bintree::internal_node.
             */
-            typedef CDS_DEFAULT_ALLOCATOR           node_allocator;
+            typedef CDS_DEFAULT_ALLOCATOR node_allocator;
 
             /// Internal statistics
             /**
                 By default, internal statistics is disabled (\p ellen_bintree::empty_stat).
                 To enable it use \p ellen_bintree::stat.
             */
-            typedef empty_stat                      stat;
+            typedef empty_stat stat;
 
             /// Back-off strategy
-            typedef cds::backoff::empty             back_off;
+            typedef cds::backoff::empty back_off;
 
             /// RCU deadlock checking policy (only for \ref cds_intrusive_EllenBinTree_rcu "RCU-based EllenBinTree")
             /**
                 List of available options see \p opt::rcu_check_deadlock
             */
-            typedef cds::opt::v::rcu_throw_deadlock      rcu_check_deadlock;
+            typedef cds::opt::v::rcu_throw_deadlock rcu_check_deadlock;
         };
 
         /// Metafunction converting option list to EllenBinTree traits
