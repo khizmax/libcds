@@ -2,6 +2,7 @@ set(PACKAGE_NAME unit-tree)
 
 set(CDSGTEST_TREE_SOURCES
     ../main.cpp
+    intrusive_ellenbintree_hp.cpp
 )
 
 include_directories(

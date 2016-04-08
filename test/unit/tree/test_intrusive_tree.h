@@ -66,6 +66,8 @@ namespace cds_test {
             }
         };
 
+        typedef int key_type;
+
         template <typename Node>
         struct base_int_item
             : public Node
@@ -136,6 +138,15 @@ namespace cds_test {
             }
         };
 
+        struct key_extractor
+        {
+            template <typename T>
+            void operator()( key_type& key, T const& val ) const
+            {
+                key = val.key();
+            }
+        };
+
         struct simple_item_counter {
             size_t  m_nCount;
 
@@ -182,6 +193,11 @@ namespace cds_test {
             {
                 return lhs < rhs.key();
             }
+
+            bool operator()( int lhs, int rhs ) const
+            {
+                return lhs < rhs;
+            }
         };
 
         template <typename T>
@@ -194,18 +210,25 @@ namespace cds_test {
                 return v1.key() > v2.key() ? 1 : 0;
             }
 
-            bool operator()( T const& lhs, int rhs ) const
+            int operator()( T const& lhs, int rhs ) const
             {
                 if ( lhs.key() < rhs )
                     return -1;
                 return lhs.key() > rhs ? 1 : 0;
             }
 
-            bool operator()( int lhs, T const& rhs ) const
+            int operator()( int lhs, T const& rhs ) const
             {
                 if ( lhs < rhs.key() )
                     return -1;
                 return lhs > rhs.key() ? 1 : 0;
+            }
+
+            int operator()( int lhs, int rhs ) const
+            {
+                if ( lhs < rhs )
+                    return -1;
+                return lhs > rhs ? 1 : 0;
             }
         };
 
@@ -227,6 +250,18 @@ namespace cds_test {
             bool operator()( Q const& lhs, T const& rhs ) const
             {
                 return lhs.key() < rhs.key();
+            }
+
+            template <typename Q>
+            bool operator()( Q const& lhs, int rhs ) const
+            {
+                return lhs.key() < rhs;
+            }
+
+            template <typename T>
+            bool operator()( int lhs, T const& rhs ) const
+            {
+                return lhs < rhs.key();
             }
         };
 
@@ -329,7 +364,7 @@ namespace cds_test {
                         ++val.nUpdateCount;
                     }, false );
                     EXPECT_TRUE( updResult.first );
-                    EXPECT_TRUE( updResult.second );
+                    EXPECT_FALSE( updResult.second );
                     EXPECT_EQ( i.nUpdateCount, 1 );
                     i.nUpdateCount = 0;
 
@@ -418,7 +453,8 @@ namespace cds_test {
             }
 
             // clear
-            for ( auto& i : data ) {
+            for ( auto idx : indices ) {
+                auto& i = data[idx];
                 i.clear_stat();
                 ASSERT_TRUE( t.insert( i ));
             }
@@ -430,8 +466,6 @@ namespace cds_test {
 
             ASSERT_TRUE( t.empty());
             ASSERT_CONTAINER_SIZE( t, 0 );
-            ASSERT_TRUE( t.begin() == t.end() );
-            ASSERT_TRUE( t.cbegin() == t.cend() );
 
             // Force retiring cycle
             Tree::gc::force_dispose();

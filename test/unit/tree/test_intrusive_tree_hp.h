@@ -96,7 +96,8 @@ namespace cds_test {
             }
 
             // fill tree
-            for ( auto& i : data ) {
+            for ( auto idx : indices ) {
+                auto& i = data[idx];
                 i.nDisposeCount = 0;
                 ASSERT_TRUE( t.insert( i ) );
             }
@@ -157,7 +158,8 @@ namespace cds_test {
             }
 
             // extract_min
-            for ( auto& i : data ) {
+            for ( auto idx : indices ) {
+                auto& i = data[idx];
                 i.nDisposeCount = 0;
                 ASSERT_TRUE( t.insert( i ) );
             }
@@ -183,7 +185,8 @@ namespace cds_test {
             }
 
             // extract_max
-            for ( auto& i : data ) {
+            for ( auto idx : indices ) {
+                auto& i = data[idx];
                 i.nDisposeCount = 0;
                 ASSERT_TRUE( t.insert( i ) );
             }
