@@ -21,6 +21,9 @@
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_hp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree.h">

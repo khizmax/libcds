@@ -1,8 +1,11 @@
 set(PACKAGE_NAME unit-tree)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
+ 
 set(CDSGTEST_TREE_SOURCES
     ../main.cpp
     intrusive_ellenbintree_hp.cpp
+    intrusive_ellenbintree_dhp.cpp
 )
 
 include_directories(

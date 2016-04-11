@@ -30,15 +30,15 @@
 
 #include "test_intrusive_tree_hp.h"
 
-#include <cds/intrusive/ellen_bintree_hp.h>
+#include <cds/intrusive/ellen_bintree_dhp.h>
 //#include <cds/memory/vyukov_queue_pool.h>
 //#include <cds/memory/pool_allocator.h>
 
 namespace {
     namespace ci = cds::intrusive;
-    typedef cds::gc::HP gc_type;
+    typedef cds::gc::DHP gc_type;
 
-    class IntrusiveEllenBinTree_HP : public cds_test::intrusive_tree_hp
+    class IntrusiveEllenBinTree_DHP : public cds_test::intrusive_tree_hp
     {
     protected:
         typedef cds_test::intrusive_tree_hp base_class;
@@ -62,15 +62,14 @@ namespace {
             };
             typedef ci::EllenBinTree< gc_type, key_type, base_item_type > tree_type;
 
-            // +1 - for guarded_ptr
-            cds::gc::hp::GarbageCollector::Construct( tree_type::c_nHazardPtrCount + 1, 1, 16 );
+            cds::gc::dhp::GarbageCollector::Construct( 16, tree_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::hp::GarbageCollector::Destruct( true );
+            cds::gc::dhp::GarbageCollector::Destruct();
         }
 
         struct generic_traits: public ci::ellen_bintree::traits
@@ -81,7 +80,7 @@ namespace {
     };
 
 
-    TEST_F( IntrusiveEllenBinTree_HP, base_cmp )
+    TEST_F( IntrusiveEllenBinTree_DHP, base_cmp )
     {
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type,
             ci::ellen_bintree::make_traits< 
@@ -95,7 +94,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, base_less )
+    TEST_F( IntrusiveEllenBinTree_DHP, base_less )
     {
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type,
             ci::ellen_bintree::make_traits< 
@@ -109,7 +108,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, base_item_counter )
+    TEST_F( IntrusiveEllenBinTree_DHP, base_item_counter )
     {
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type,
             ci::ellen_bintree::make_traits< 
@@ -124,7 +123,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, base_backoff )
+    TEST_F( IntrusiveEllenBinTree_DHP, base_backoff )
     {
         struct tree_traits: public generic_traits
         {
@@ -141,7 +140,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, base_seq_cst )
+    TEST_F( IntrusiveEllenBinTree_DHP, base_seq_cst )
     {
         struct tree_traits: public generic_traits
         {
@@ -160,7 +159,7 @@ namespace {
     }
 
     // member hook
-    TEST_F( IntrusiveEllenBinTree_HP, member_cmp )
+    TEST_F( IntrusiveEllenBinTree_DHP, member_cmp )
     {
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type,
             ci::ellen_bintree::make_traits< 
@@ -174,7 +173,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, member_less )
+    TEST_F( IntrusiveEllenBinTree_DHP, member_less )
     {
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type,
             ci::ellen_bintree::make_traits< 
@@ -188,7 +187,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, member_item_counter )
+    TEST_F( IntrusiveEllenBinTree_DHP, member_item_counter )
     {
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type,
             ci::ellen_bintree::make_traits< 
@@ -203,7 +202,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, member_backoff )
+    TEST_F( IntrusiveEllenBinTree_DHP, member_backoff )
     {
         struct tree_traits: public generic_traits
         {
@@ -220,7 +219,7 @@ namespace {
         test( t );
     }
 
-    TEST_F( IntrusiveEllenBinTree_HP, member_seq_cst )
+    TEST_F( IntrusiveEllenBinTree_DHP, member_seq_cst )
     {
         struct tree_traits: public generic_traits
         {
