@@ -917,7 +917,7 @@ namespace cds { namespace intrusive {
             unlinks it from the tree, and returns \p true.
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the \pTraits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
             that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
@@ -970,7 +970,7 @@ namespace cds { namespace intrusive {
 
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the \pTraits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
             that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
