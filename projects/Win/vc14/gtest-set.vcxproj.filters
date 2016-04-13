@@ -209,5 +209,8 @@
     <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_ordered_set_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

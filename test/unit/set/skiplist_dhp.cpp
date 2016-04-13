@@ -28,7 +28,7 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#include "test_set_hp.h"
+#include "test_ordered_set_hp.h"
 
 #include <cds/container/skip_list_set_dhp.h>
 
@@ -36,10 +36,10 @@ namespace {
     namespace cc = cds::container;
     typedef cds::gc::DHP gc_type;
 
-    class SkipListSet_DHP : public cds_test::container_set_hp
+    class SkipListSet_DHP : public cds_test::container_ordered_set_hp
     {
     protected:
-        typedef cds_test::container_set_hp base_class;
+        typedef cds_test::container_ordered_set_hp base_class;
 
         void SetUp()
         {
