@@ -147,7 +147,7 @@ namespace {
         typedef typename TestFixture::generic_traits generic_traits;
 
         typedef ci::EllenBinTree< rcu_type, key_type, base_item_type,
-            ci::ellen_bintree::make_traits<
+            typename ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 , ci::opt::hook< ci::ellen_bintree::base_hook< ci::opt::gc< rcu_type >>>
                 , ci::opt::compare< typename TestFixture::template cmp<base_item_type>>
@@ -166,7 +166,7 @@ namespace {
         typedef typename TestFixture::generic_traits generic_traits;
 
         typedef ci::EllenBinTree< rcu_type, key_type, base_item_type,
-            ci::ellen_bintree::make_traits<
+            typename ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 , ci::opt::hook< ci::ellen_bintree::base_hook< ci::opt::gc< rcu_type >>>
                 , ci::opt::less< typename TestFixture::template less<base_item_type>>
@@ -185,7 +185,7 @@ namespace {
         typedef typename TestFixture::generic_traits generic_traits;
 
         typedef ci::EllenBinTree< rcu_type, key_type, base_item_type,
-            ci::ellen_bintree::make_traits<
+            typename ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 , ci::opt::hook< ci::ellen_bintree::base_hook< ci::opt::gc< rcu_type >>>
                 , ci::opt::compare< typename TestFixture::template cmp<base_item_type>>
@@ -293,7 +293,7 @@ namespace {
         typedef typename TestFixture::generic_traits   generic_traits;
 
         typedef ci::EllenBinTree< rcu_type, key_type, member_item_type,
-            ci::ellen_bintree::make_traits<
+            typename ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 , ci::opt::hook< ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< rcu_type >>>
                 , ci::opt::compare< typename TestFixture::template cmp<member_item_type>>
@@ -312,7 +312,7 @@ namespace {
         typedef typename TestFixture::generic_traits   generic_traits;
 
         typedef ci::EllenBinTree< rcu_type, key_type, member_item_type,
-            ci::ellen_bintree::make_traits<
+            typename ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 , ci::opt::hook< ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< rcu_type >>>
                 , ci::opt::less< typename TestFixture::template less<member_item_type>>
@@ -331,7 +331,7 @@ namespace {
         typedef typename TestFixture::generic_traits   generic_traits;
 
         typedef ci::EllenBinTree< rcu_type, key_type, member_item_type,
-            ci::ellen_bintree::make_traits<
+            typename ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 , ci::opt::hook< ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< rcu_type >>>
                 , ci::opt::compare< typename TestFixture::template cmp<member_item_type>>
