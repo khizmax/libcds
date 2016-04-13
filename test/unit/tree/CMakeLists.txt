@@ -6,6 +6,11 @@ set(CDSGTEST_TREE_SOURCES
     ../main.cpp
     intrusive_ellenbintree_hp.cpp
     intrusive_ellenbintree_dhp.cpp
+    intrusive_ellenbintree_rcu_gpb.cpp
+    intrusive_ellenbintree_rcu_gpi.cpp
+    intrusive_ellenbintree_rcu_gpt.cpp
+    intrusive_ellenbintree_rcu_shb.cpp
+    intrusive_ellenbintree_rcu_sht.cpp
 )
 
 include_directories(

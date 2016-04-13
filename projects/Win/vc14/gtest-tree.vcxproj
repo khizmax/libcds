@@ -30,10 +30,38 @@
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpb.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpi.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpt.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_ellen_bintree_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree.h" />
     <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree_hp.h" />
+    <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree_rcu.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2ABD6A2E-BEA7-4c8c-982B-A609F83D2DCB}</ProjectGuid>

@@ -24,12 +24,33 @@
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_shb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_ellen_bintree_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
