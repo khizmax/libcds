@@ -66,7 +66,7 @@ namespace cds { namespace intrusive {
         the operation done. Such solution allows greatly simplify implementation of the tree.
 
         @attention Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
-        for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
+        for uniformly distributed random keys, but in the worst case the complexity is <tt>O(N)</tt>.
 
         @note Do not include <tt><cds/intrusive/impl/ellen_bintree.h></tt> header file explicitly.
         There are header file for each GC type:

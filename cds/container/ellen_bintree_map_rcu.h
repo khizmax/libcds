@@ -58,7 +58,7 @@ namespace cds { namespace container {
         the priority value plus some uniformly distributed random value.
 
         @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
-        for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
+        for uniformly distributed random keys, but in the worst case the complexity is <tt>O(N)</tt>.
 
         @note In the current implementation we do not use helping technique described in original paper.
         So, the current implementation is near to fine-grained lock-based tree.

@@ -60,7 +60,7 @@ namespace cds { namespace container {
         the priority value plus some uniformly distributed random value.
 
         @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
-        for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
+        for uniformly distributed random keys, but in the worst case the complexity is <tt>O(N)</tt>.
 
         @note In the current implementation we do not use helping technique described in the original paper.
         In Hazard Pointer schema helping is too complicated and does not give any observable benefits.
