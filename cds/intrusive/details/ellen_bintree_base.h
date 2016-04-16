@@ -96,7 +96,7 @@ namespace cds { namespace intrusive {
                 delete_info     dInfo;
             };
 
-            update_desc *   pNextRetire     ;   // for local retired list (RCU)
+            update_desc *   pNextRetire; // for local retired list (RCU)
 
             update_desc()
                 : pNextRetire( nullptr )

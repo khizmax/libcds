@@ -437,7 +437,7 @@ namespace cds { namespace container {
             return base_class::extract_min();
         }
 
-        /// Extracts minimal key key and corresponding value
+        /// Extracts minimal key and corresponding value
         /**
             Returns \p exempt_ptr to the leftmost item.
             If the tree is empty, returns empty \p exempt_ptr.
@@ -469,7 +469,7 @@ namespace cds { namespace container {
             return base_class::extract_min( f );
         }
 
-        /// Extracts minimal key key and corresponding value
+        /// Extracts minimal key and corresponding value
         /**
             This function is a shortcut for the following call:
             \code

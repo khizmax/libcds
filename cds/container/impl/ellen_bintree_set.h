@@ -290,7 +290,7 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            scoped_node_ptr sp( cxx_leaf_node_allocator().New( std::forward<Args>(args)... ));
+            scoped_node_ptr sp( cxx_leaf_node_allocator().MoveNew( std::forward<Args>(args)... ));
             if ( base_class::insert( *sp.get() )) {
                 sp.release();
                 return true;

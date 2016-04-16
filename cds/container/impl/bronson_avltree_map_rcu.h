@@ -436,7 +436,7 @@ namespace cds { namespace container {
             return exempt_ptr(do_extract_min( []( key_type const& ) {}));
         }
 
-        /// Extracts minimal key key and corresponding value
+        /// Extracts minimal key and corresponding value
         /**
             Returns \p exempt_ptr to the leftmost item.
             If the tree is empty, returns empty \p exempt_ptr.
@@ -468,7 +468,7 @@ namespace cds { namespace container {
             return exempt_ptr(do_extract_min( [&f]( key_type const& key ) { f(key); }));
         }
 
-        /// Extracts minimal key key and corresponding value
+        /// Extracts minimal key and corresponding value
         /**
             This function is a shortcut for the following call:
             \code

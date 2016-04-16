@@ -88,14 +88,14 @@ namespace cds { namespace container {
 
             /// Copy constructor
             template <typename... Args>
-            node( Args const&... args)
+            node( Args const&... args )
                 : m_Value( args... )
             {}
 
             /// Move constructor
             template <typename... Args>
-            node( Args&&... args)
-                : m_Value( std::forward<Args>(args)... )
+            node( Args&&... args )
+                : m_Value( std::forward<Args>( args )... )
             {}
         };
 
@@ -127,15 +127,15 @@ namespace cds { namespace container {
         {
             /// Key extracting functor (only for \p EllenBinTreeSet)
             /**
-                You should explicit define a valid functor.
-                The functor has the following prototype:
+                This is mandatory functor for \p %EllenBinTreeSet.
+                It has the following prototype:
                 \code
                 struct key_extractor {
                     void operator ()( Key& dest, T const& src );
                 };
                 \endcode
                 It should initialize \p dest key from \p src data.
-                The functor is used to initialize internal nodes of \p EllenBinTreeSet
+                The functor is used to initialize internal nodes of \p %EllenBinTreeSet
             */
             typedef opt::none           key_extractor;
 
@@ -359,7 +359,7 @@ namespace cds { namespace container {
 
                 typedef typename cds::opt::details::make_comparator< value_type, original_traits, false >::type key_comparator;
 
-                typedef cds::details::Allocator< leaf_node, typename original_traits::allocator>  cxx_leaf_node_allocator;
+                typedef cds::details::Allocator< leaf_node, typename original_traits::allocator> cxx_leaf_node_allocator;
                 struct leaf_deallocator
                 {
                     void operator()( leaf_node * p ) const
@@ -370,14 +370,14 @@ namespace cds { namespace container {
 
                 struct intrusive_traits: public original_traits
                 {
-                    typedef cds::intrusive::ellen_bintree::base_hook< cds::opt::gc< gc > >  hook;
+                    typedef cds::intrusive::ellen_bintree::base_hook< cds::opt::gc< gc >> hook;
                     typedef intrusive_key_extractor key_extractor;
                     typedef leaf_deallocator        disposer;
                     typedef cds::details::compare_wrapper< leaf_node, key_comparator, value_accessor > compare;
                 };
 
                 // Metafunction result
-                typedef cds::intrusive::EllenBinTree< gc, key_type, leaf_node, intrusive_traits >    type;
+                typedef cds::intrusive::EllenBinTree< gc, key_type, leaf_node, intrusive_traits > type;
             };
 
             template < class GC, typename Key, typename T, class Traits>
