@@ -474,7 +474,7 @@ namespace cds { namespace container {
             \code
             key_type key;
             exempt_ptr xp = theTree.extract_min( [&key]( key_type const& k ) { key = k; } );
-            \endode
+            \endcode
             \p key_type should be copy-assignable. The copy of minimal key
             is returned in \p min_key argument.
         */
@@ -545,7 +545,7 @@ namespace cds { namespace container {
             \code
                 key_type key;
                 exempt_ptr xp = theTree.extract_max( [&key]( key_type const& k ) { key = k; } );
-            \endode
+            \endcode
             \p key_type should be copy-assignable. The copy of maximal key
             is returned in \p max_key argument.
         */
