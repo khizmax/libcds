@@ -103,6 +103,8 @@ namespace cds { namespace container {
         typedef std::pair< key_type const, mapped_type >    value_type;   ///< Key-value pair stored in leaf node of the mp
         typedef Traits  traits;      ///< Traits template parameter
 
+        static_assert( std::is_default_constructible<key_type>::value, "Key should be default constructible type" );
+
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator  ;    ///< key compare functor based on \p Traits::compare and \p Traits::less
 #   else
@@ -241,7 +243,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            scoped_node_ptr pNode( cxx_leaf_node_allocator().New( std::forward<K>(key), std::forward<Args>(args)... ));
+            scoped_node_ptr pNode( cxx_leaf_node_allocator().MoveNew( key_type( std::forward<K>(key)), mapped_type( std::forward<Args>(args)... )));
             if ( base_class::insert( *pNode )) {
                 pNode.release();
                 return true;

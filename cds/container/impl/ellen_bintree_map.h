@@ -69,7 +69,7 @@ namespace cds { namespace container {
 
         <b>Template arguments</b> :
         - \p GC - safe memory reclamation (i.e. light-weight garbage collector) type, like \p cds::gc::HP, \p cds::gc::DHP
-        - \p Key - key type
+        - \p Key - key type. Should be default-constructible
         - \p T - value type to be stored in tree's leaf nodes.
         - \p Traits - map traits, default is \p ellen_bintree::traits
             It is possible to declare option-based tree with \p ellen_bintree::make_map_traits metafunction
@@ -109,6 +109,8 @@ namespace cds { namespace container {
         typedef T       mapped_type; ///< type of value stored in the map
         typedef std::pair< key_type const, mapped_type >    value_type  ;   ///< Key-value pair stored in leaf node of the mp
         typedef Traits  traits;      ///< Map traits
+
+        static_assert( std::is_default_constructible<key_type>::value, "Key should be default constructible type");
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator; ///< key compare functor based on \p Traits::compare and \p Traits::less
@@ -234,7 +236,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            scoped_node_ptr pNode( cxx_leaf_node_allocator().New( std::forward<K>(key), std::forward<Args>(args)... ));
+            scoped_node_ptr pNode( cxx_leaf_node_allocator().MoveNew( key_type( std::forward<K>(key)), mapped_type( std::forward<Args>(args)... )));
             if ( base_class::insert( *pNode )) {
                 pNode.release();
                 return true;
