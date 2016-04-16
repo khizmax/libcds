@@ -31,8 +31,7 @@
 #include "test_intrusive_tree_hp.h"
 
 #include <cds/intrusive/ellen_bintree_hp.h>
-#include <cds/memory/vyukov_queue_pool.h>
-#include <cds/memory/pool_allocator.h>
+#include "test_ellen_bintree_update_desc_pool.h"
 
 namespace {
     namespace ci = cds::intrusive;
@@ -47,66 +46,11 @@ namespace {
         typedef base_class::key_type key_type;
 
         typedef typename base_class::base_int_item< ci::ellen_bintree::node<gc_type>> base_item_type;
-        typedef ci::ellen_bintree::internal_node< key_type, base_item_type >          internal_base_node;
-        typedef ci::ellen_bintree::update_desc< base_item_type, internal_base_node >  update_base_desc;
-
         typedef typename base_class::member_int_item< ci::ellen_bintree::node<gc_type>>  member_item_type;
-        typedef ci::ellen_bintree::internal_node< key_type, member_item_type >           internal_member_node;
-        typedef ci::ellen_bintree::update_desc< member_item_type, internal_member_node > update_member_desc;
-
-        // update_desc pools
-        struct pool_traits: public cds::memory::vyukov_queue_pool_traits
-        {
-            typedef cds::opt::v::static_buffer< update_base_desc, 256 > buffer;
-        };
-        typedef cds::memory::vyukov_queue_pool< update_base_desc, pool_traits > pool_type;
-        typedef cds::memory::lazy_vyukov_queue_pool< update_base_desc, pool_traits > lazy_pool_type;
-
-        static pool_type *         s_Pool;
-        static lazy_pool_type *    s_LazyPool;
-
-        struct pool_accessor
-        {
-            typedef pool_type::value_type value_type;
-
-            pool_type& operator()() const
-            {
-                return *s_Pool;
-            }
-        };
-
-        struct lazy_pool_accessor
-        {
-            typedef lazy_pool_type::value_type value_type;
-
-            lazy_pool_type& operator()() const
-            {
-                return *s_LazyPool;
-            }
-        };
-
-        static void SetUpTestCase()
-        {
-            ASSERT_TRUE( s_Pool == nullptr );
-            ASSERT_TRUE( s_LazyPool == nullptr );
-            s_Pool = new pool_type;
-            s_LazyPool = new lazy_pool_type;
-        }
-
-        static void TearDownTestCase()
-        {
-            ASSERT_TRUE( s_Pool != nullptr );
-            ASSERT_TRUE( s_LazyPool != nullptr );
-            delete s_LazyPool;
-            delete s_Pool;
-
-            s_LazyPool = nullptr;
-            s_Pool = nullptr;
-        }
 
         void SetUp()
         {
-            struct list_traits : public ci::ellen_bintree::traits
+            struct tree_traits : public ci::ellen_bintree::traits
             {
                 typedef ci::ellen_bintree::base_hook< ci::opt::gc<gc_type>> hook;
             };
@@ -129,9 +73,6 @@ namespace {
             typedef mock_disposer disposer;
         };
     };
-
-    /*static*/ IntrusiveEllenBinTree_HP::pool_type *         IntrusiveEllenBinTree_HP::s_Pool = nullptr;
-    /*static*/ IntrusiveEllenBinTree_HP::lazy_pool_type *    IntrusiveEllenBinTree_HP::s_LazyPool = nullptr;
 
 
     TEST_F( IntrusiveEllenBinTree_HP, base_cmp )
@@ -219,7 +160,7 @@ namespace {
             typedef ci::ellen_bintree::base_hook< ci::opt::gc< gc_type >> hook;
             typedef base_class::less<base_item_type> less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::memory::pool_allocator<update_base_desc, pool_accessor> update_desc_allocator;
+            typedef cds::memory::pool_allocator< cds_test::update_desc, cds_test::pool_accessor> update_desc_allocator;
         };
 
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type, tree_traits > tree_type;
@@ -235,7 +176,7 @@ namespace {
             typedef ci::ellen_bintree::base_hook< ci::opt::gc< gc_type >> hook;
             typedef base_class::less<base_item_type> less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::memory::pool_allocator<update_base_desc, lazy_pool_accessor> update_desc_allocator;
+            typedef cds::memory::pool_allocator<cds_test::update_desc, cds_test::lazy_pool_accessor> update_desc_allocator;
         };
 
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type, tree_traits > tree_type;
@@ -330,7 +271,7 @@ namespace {
             typedef ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
             typedef base_class::less<member_item_type> less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::memory::pool_allocator<update_member_desc, pool_accessor> update_desc_allocator;
+            typedef cds::memory::pool_allocator<cds_test::update_desc, cds_test::pool_accessor> update_desc_allocator;
         };
 
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type, tree_traits > tree_type;
@@ -346,7 +287,7 @@ namespace {
             typedef ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
             typedef base_class::less<member_item_type> less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::memory::pool_allocator<update_member_desc, lazy_pool_accessor> update_desc_allocator;
+            typedef cds::memory::pool_allocator<cds_test::update_desc, cds_test::lazy_pool_accessor> update_desc_allocator;
         };
 
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type, tree_traits > tree_type;

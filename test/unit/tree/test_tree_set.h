@@ -28,22 +28,18 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSUNIT_SET_TEST_SET_H
-#define CDSUNIT_SET_TEST_SET_H
+#ifndef CDSUNIT_SET_TEST_TREE_SET_H
+#define CDSUNIT_SET_TEST_TREE_SET_H
 
 #include <cds_test/check_size.h>
 #include <cds_test/fixture.h>
-
-#include <cds/opt/hash.h>
-#include <functional>   // ref
 
 // forward declaration
 namespace cds { namespace container {}}
 
 namespace cds_test {
-    namespace co = cds::opt;
 
-    class container_set : public fixture
+    class container_tree_set : public fixture
     {
     public:
         static size_t const kSize = 1000;
@@ -130,15 +126,12 @@ namespace cds_test {
             }
         };
 
-        struct hash_int {
-            size_t operator()( int i ) const
+        struct key_extractor
+        {
+            template <typename T>
+            void operator()( int& key, T const& val ) const
             {
-                return co::v::hash<int>()(i);
-            }
-            template <typename Item>
-            size_t operator()( const Item& i ) const
-            {
-                return (*this)(i.key());
+                key = val.key();
             }
         };
 
@@ -178,6 +171,11 @@ namespace cds_test {
                 return v1.key() < v2.key();
             }
 
+            bool operator()( int lhs, int rhs ) const
+            {
+                return lhs < rhs;
+            }
+
             template <typename Q>
             bool operator ()( int_item const& v1, const Q& v2 ) const
             {
@@ -197,6 +195,11 @@ namespace cds_test {
                 if ( v1.key() < v2.key() )
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
+            }
+
+            int operator()( int lhs, int rhs ) const
+            {
+                return lhs - rhs;
             }
 
             template <typename T>
@@ -221,6 +224,16 @@ namespace cds_test {
             bool operator()( Q const& lhs, T const& rhs ) const
             {
                 return lhs.key() < rhs.key();
+            }
+
+            bool operator()( int lhs, other_item const& rhs ) const
+            {
+                return lhs < rhs.key();
+            }
+
+            bool operator()( other_item const& lhs, int rhs ) const
+            {
+                return lhs.key() < rhs;
             }
         };
 
@@ -496,12 +509,9 @@ namespace cds_test {
 
             ASSERT_TRUE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, 0 );
-
-            ASSERT_TRUE( s.begin() == s.end() );
-            ASSERT_TRUE( s.cbegin() == s.cend() );
         }
     };
 
 } // namespace cds_test
 
-#endif // CDSUNIT_SET_TEST_SET_H
+#endif // CDSUNIT_SET_TEST_TREE_SET_H

@@ -13,31 +13,61 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\intrusive.EllenBinTree">
+      <UniqueIdentifier>{5e28703f-0f92-4c6c-b3a6-3bd837deb8f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EllenBinTreeSet">
+      <UniqueIdentifier>{9fc83943-2620-4528-a704-d3765f52522b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp">
+      <Filter>Source Files\intrusive.EllenBinTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_hp.cpp">
+      <Filter>Source Files\intrusive.EllenBinTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpb.cpp">
+      <Filter>Source Files\intrusive.EllenBinTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpi.cpp">
+      <Filter>Source Files\intrusive.EllenBinTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpt.cpp">
+      <Filter>Source Files\intrusive.EllenBinTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_shb.cpp">
+      <Filter>Source Files\intrusive.EllenBinTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp">
+      <Filter>Source Files\intrusive.EllenBinTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellenbintree_set_hp.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_hp.cpp">
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_update_desc_pool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\tree\ellenbintree_set_dhp.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpb.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_gpb.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpi.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_gpi.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_gpt.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_gpt.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_shb.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_shb.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_sht.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +81,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_ellen_bintree_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_set_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_update_desc_pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_set_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_set_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
