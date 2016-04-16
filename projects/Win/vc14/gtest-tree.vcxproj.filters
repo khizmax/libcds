@@ -19,6 +19,9 @@
     <Filter Include="Source Files\EllenBinTreeSet">
       <UniqueIdentifier>{9fc83943-2620-4528-a704-d3765f52522b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EllenBinTreeMap">
+      <UniqueIdentifier>{5e8e3c4d-563e-41fd-91ed-52f61f4b7d24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp">
@@ -42,17 +45,11 @@
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp">
       <Filter>Source Files\intrusive.EllenBinTree</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\ellenbintree_set_hp.cpp">
-      <Filter>Source Files\EllenBinTreeSet</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_update_desc_pool.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\ellenbintree_set_dhp.cpp">
-      <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_gpb.cpp">
       <Filter>Source Files\EllenBinTreeSet</Filter>
@@ -68,6 +65,33 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_sht.cpp">
       <Filter>Source Files\EllenBinTreeSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_dhp.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_hp.cpp">
+      <Filter>Source Files\EllenBinTreeSet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_hp.cpp">
+      <Filter>Source Files\EllenBinTreeMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_dhp.cpp">
+      <Filter>Source Files\EllenBinTreeMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_gpb.cpp">
+      <Filter>Source Files\EllenBinTreeMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_gpi.cpp">
+      <Filter>Source Files\EllenBinTreeMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_gpt.cpp">
+      <Filter>Source Files\EllenBinTreeMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_shb.cpp">
+      <Filter>Source Files\EllenBinTreeMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_sht.cpp">
+      <Filter>Source Files\EllenBinTreeMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +120,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_set_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_map_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_map_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_map_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_map_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

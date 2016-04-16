@@ -407,6 +407,8 @@ namespace cds_test {
             ASSERT_FALSE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
+            ASSERT_TRUE( s.check_consistency());
+
             // erase
             shuffle( indices.begin(), indices.end() );
             for ( auto idx : indices ) {

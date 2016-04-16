@@ -5,8 +5,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
 set(CDSGTEST_TREE_SOURCES
     ../main.cpp
     ellen_bintree_update_desc_pool.cpp
-    ellenbintree_set_dhp.cpp
-    ellenbintree_set_hp.cpp
+    ellen_bintree_map_hp.cpp
+    ellen_bintree_map_dhp.cpp
+    ellen_bintree_map_rcu_gpb.cpp
+    ellen_bintree_map_rcu_gpi.cpp
+    ellen_bintree_map_rcu_gpt.cpp
+    ellen_bintree_map_rcu_shb.cpp
+    ellen_bintree_map_rcu_sht.cpp
+    ellen_bintree_set_dhp.cpp
+    ellen_bintree_set_hp.cpp
     ellen_bintree_set_rcu_gpb.cpp
     ellen_bintree_set_rcu_gpi.cpp
     ellen_bintree_set_rcu_gpt.cpp
