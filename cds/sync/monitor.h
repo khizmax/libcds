@@ -75,7 +75,7 @@ namespace cds { namespace sync {
             template <typename Node>
             struct node_injection: public Node
             {
-                // Monitor data to inject into container's node
+                // Monitor data injecting into container's node
                 // ...
             };
             // Locks the node
@@ -89,7 +89,7 @@ namespace cds { namespace sync {
             using scoped_lock = monitor_scoped_lock< pool_monitor, Node >;
         };
         \endcode
-        Monitor's data must be inject into container's node as \p m_SyncMonitorInjection data member:
+        Monitor's data must be injected into container's node as \p m_SyncMonitorInjection data member:
         \code
         template <typename SyncMonitor>
         struct my_node
