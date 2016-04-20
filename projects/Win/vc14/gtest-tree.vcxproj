@@ -28,6 +28,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_gpb.cpp">
@@ -115,6 +120,7 @@
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\tree\test_bronson_avltree_map_ptr.h" />
     <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_map_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_set_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_update_desc_pool.h" />

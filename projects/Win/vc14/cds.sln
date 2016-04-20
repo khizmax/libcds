@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds.vcxproj", "{408FE9BC-44F0-4E6A-89FA-D6F952584239}"
 EndProject
@@ -186,6 +186,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-queue", "stress-queu
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-pqueue", "stress-pqueue.vcxproj", "{51AC349E-B365-4FCF-8778-17A1534E4584}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set", "gtest-set.vcxproj", "{A589D3F1-A749-4268-ADEC-D0CE13D1E359}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -213,6 +216,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-striped-map", "gtest-
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-tree", "gtest-tree.vcxproj", "{2ABD6A2E-BEA7-4C8C-982B-A609F83D2DCB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
