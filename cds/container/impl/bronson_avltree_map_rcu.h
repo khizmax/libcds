@@ -38,7 +38,7 @@
 
 namespace cds { namespace container {
 
-    /// Bronson et al AVL-tree (RCU specialization for storing pointer to values)
+    /// Bronson et al AVL-tree (RCU specialization for pointers)
     /** @ingroup cds_nonintrusive_map
         @ingroup cds_nonintrusive_tree
         @headerfile cds/container/bronson_avltree_map_rcu.h
