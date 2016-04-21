@@ -4,6 +4,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
  
 set(CDSGTEST_TREE_SOURCES
     ../main.cpp
+    bronson_avltree_map_rcu_gpb.cpp
+    bronson_avltree_map_rcu_gpi.cpp
+    bronson_avltree_map_rcu_gpt.cpp
+    bronson_avltree_map_rcu_shb.cpp
+    bronson_avltree_map_rcu_sht.cpp
     bronson_avltree_map_ptr_rcu_gpb.cpp
     bronson_avltree_map_ptr_rcu_gpi.cpp
     bronson_avltree_map_ptr_rcu_gpt.cpp
