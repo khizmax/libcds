@@ -121,16 +121,6 @@ TESTHDR_SRC_DIR=../tests/test-hdr
 $(TESTHDR_OBJS): %.o: %.cpp
 	$(CXX) $(CPP_COMP_OPT) -I$(TESTHDR_SRC_DIR) -I$(TEST_COMMONHDR_SRC_DIR) $< -o $@
 
-include ../projects/source.test-hdr.offsetof.mk
-CDS_TESTHDR_OFFSETOF_SOURCES := $(CDS_TESTHDR_OFFSETOF_SOURCES:%.cpp=../%.cpp)
-TESTHDR_OBJS_NO_OFFSETOF_WARN := $(CDS_TESTHDR_OFFSETOF_SOURCES:%.cpp=%.o)
-TESTHDR_OBJS_NO_OFFSETOF_WARN_DEPS := $(TESTHDR_OBJS_NO_OFFSETOF_WARN:%.o=%.d)
-
--include $(TESTHDR_OBJS_NO_OFFSETOF_WARN_DEPS)
-$(TESTHDR_OBJS_NO_OFFSETOF_WARN): %.o: %.cpp
-	$(CXX) $(CPP_COMP_OPT) -I$(TESTHDR_SRC_DIR) -I$(TEST_COMMONHDR_SRC_DIR) -Wno-invalid-offsetof $< -o $@
-
-
 TEST_SRC_DIR=../tests/unit
 TEST_DATA_DIR=`pwd`/../tests/data
 
