@@ -263,7 +263,7 @@ namespace cds { namespace container {
             ) == update_flags::result_inserted;
         }
 
-        /// For key \p key inserts data of type \p mapped_type created in-place from \p args
+        /// For \p key inserts data of type \p mapped_type created in-place from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
 
@@ -272,36 +272,20 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-#       if !( CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION >= 40800 && CDS_COMPILER_VERSION < 40900 )
-            // Probably, the following code is not so efficient, since we pass lvalues instead rvalues to lambda
-            //TODO: study how to pass a parameter pack to a lambda efficiently using perfect forwarding
-            // see http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#904 - this is what we need
-            return base_class::do_update( key, key_comparator(),
-                [&args...]( node_type * pNode ) -> mapped_type *
-                {
-                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    CDS_UNUSED( pNode );
-                    return cxx_allocator().New( std::forward<Args>(args)...);
-                },
-                update_flags::allow_insert
-            ) == update_flags::result_inserted;
-#       else
-            // gcc 4.8 error: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47226
-            // workaround (from http://stackoverflow.com/questions/14191989/how-do-i-use-variadic-perfect-forwarding-into-a-lambda)
-            auto f = std::bind<mapped_type *>(
-                        []( Args... args) -> mapped_type* { return cxx_allocator().New( std::move(args)...); },
-                        std::forward<Args>(args)...
-                        );
-            return base_class::do_update( key, key_comparator(),
-                [&f]( node_type * pNode ) -> mapped_type *
-                {
-                    assert( pNode->m_pValue.load( memory_model::memory_order_relaxed ) == nullptr );
-                    CDS_UNUSED( pNode );
-                    return f();
-                },
-                update_flags::allow_insert
-            ) == update_flags::result_inserted;
-#       endif
+            struct scoped_ptr
+            {
+                mapped_type * pVal;
+                scoped_ptr( mapped_type * p ): pVal( p ) {}
+                ~scoped_ptr() { if ( pVal ) cxx_allocator().Delete( pVal ); }
+                void release() { pVal = nullptr; }
+            };
+
+            scoped_ptr p( cxx_allocator().MoveNew( std::forward<Args>( args )... ));
+            if ( base_class::insert( std::forward<K>( key ), p.pVal )) {
+                p.release();
+                return true;
+            }
+            return false;
         }
 
         /// Updates the value for \p key
