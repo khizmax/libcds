@@ -29,12 +29,13 @@
 */
 
 #include <cds/opt/permutation.h>
-#include "cppunit/cppunit_proxy.h"
+#include <gtest/gtest.h>
 
-namespace misc {
+namespace {
 
-    class Permutations: public CppUnitMini::TestCase
+    class Permutations: public ::testing::Test
     {
+    protected:
         static const size_t c_nMax = 1024;
 
         template <typename Gen>
@@ -51,9 +52,9 @@ namespace misc {
                 } while ( gen.next() );
 
                 for ( size_t i = 0; i < nLen; ++i )
-                    CPPUNIT_CHECK_EX( arr[i] == 1, "arr[" << i << "]=" << arr[i] );
+                    EXPECT_EQ( arr[i], 1 ) << "i=" << i;
                 for ( size_t i = nLen; i < c_nMax; ++i )
-                    CPPUNIT_CHECK_EX( arr[i] == 0, "arr[" << i << "]=" << arr[i] );
+                    EXPECT_EQ( arr[i], 0 ) << "i=" << i;
 
                 gen.reset();
             }
@@ -76,30 +77,19 @@ namespace misc {
                 test_with( gen, nLen );
             }
         }
-
-        void test_random_permutation()
-        {
-            test< cds::opt::v::random_permutation<> >();
-        }
-
-        void test_random2_permutation()
-        {
-            test2< cds::opt::v::random2_permutation<> >();
-        }
-
-        void test_random_shuffle_permutation()
-        {
-            test< cds::opt::v::random_shuffle_permutation<> >();
-        }
-
-    public:
-        CPPUNIT_TEST_SUITE(Permutations)
-            CPPUNIT_TEST( test_random_permutation )
-            CPPUNIT_TEST( test_random2_permutation )
-            CPPUNIT_TEST( test_random_shuffle_permutation )
-        CPPUNIT_TEST_SUITE_END()
     };
 
-} // namespace misc
+    TEST_F( Permutations, random_permutation )
+    {
+        test< cds::opt::v::random_permutation<> >();
+    }
+    TEST_F( Permutations, random2_permutation )
+    {
+        test2< cds::opt::v::random2_permutation<> >();
+    }
+    TEST_F( Permutations, random_shuffle_permutation )
+    {
+        test< cds::opt::v::random_shuffle_permutation<> >();
+    }
 
-CPPUNIT_TEST_SUITE_REGISTRATION(misc::Permutations);
+} // namespace

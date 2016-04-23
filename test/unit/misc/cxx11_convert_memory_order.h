@@ -30,7 +30,7 @@
 
 // This header should be included AFTER <cds/algo/atomic.h> if needed
 
-namespace misc {
+namespace {
 
     static inline atomics::memory_order convert_to_store_order( atomics::memory_order order )
     {
@@ -84,4 +84,4 @@ namespace misc {
         typedef T volatile   type;
     };
 
-} // namespace misc
+} // namespace

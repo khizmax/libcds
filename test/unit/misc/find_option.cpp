@@ -57,27 +57,15 @@ namespace {
 // Declare necessary cds::opt::find_option specialization for user-provided enum type
 CDS_DECLARE_FIND_OPTION_INTEGRAL_SPECIALIZATION( user_enum )
 
-#if CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION < 40500
-// GCC 4.4 does not support local struct declarations
-namespace {
-    struct tag_default;
-    struct tag_a;
-    struct tag_b;
-}
-#endif
-
 void find_option_compiler_test()
 {
 
     // *************************************************
     // Type options
     //
-#if !(CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION < 40500)
-    // GCC 4.4 does not support local struct declarations
     struct tag_default;
     struct tag_a;
     struct tag_b;
-#endif
 
     // Option not found
     static_assert( (std::is_same<
@@ -168,7 +156,6 @@ void find_option_compiler_test()
     >::value), "Result != tag_a" );
 
 
-
     // *****************************************************
     // Value options
 
@@ -203,10 +190,8 @@ void find_option_compiler_test()
 
 void test_extracting_option_value()
 {
-#if !(CDS_COMPILER == CDS_COMPILER_GCC && CDS_COMPILER_VERSION < 40500)
-    // GCC 4.4 does not support local struct declarations
     struct tag_a;
-#endif
+
     // Define option
     typedef cds::opt::tag< tag_a >  tag_option;
 
