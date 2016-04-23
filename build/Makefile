@@ -111,16 +111,6 @@ $(TEST_COMMON_OBJS) : %.o : %.cpp
 	$(CXX) $(CPP_COMP_OPT) -I$(TEST_COMMONHDR_SRC_DIR) $< -o $@
 
 
-include ../projects/source.test-hdr.mk
-CDS_TESTHDR_SOURCES := $(CDS_TESTHDR_SOURCES:%.cpp=../%.cpp)
-TESTHDR_OBJS := $(CDS_TESTHDR_SOURCES:%.cpp=%.o)
-TESTHDR_OBJS_DEPS := $(TESTHDR_OBJS:%.o=%.d)
-
-TESTHDR_SRC_DIR=../tests/test-hdr
--include $(TESTHDR_OBJS_DEPS)
-$(TESTHDR_OBJS): %.o: %.cpp
-	$(CXX) $(CPP_COMP_OPT) -I$(TESTHDR_SRC_DIR) -I$(TEST_COMMONHDR_SRC_DIR) $< -o $@
-
 TEST_SRC_DIR=../tests/unit
 TEST_DATA_DIR=`pwd`/../tests/data
 
@@ -155,19 +145,14 @@ unit-map: $(CDSUNIT_MAP_EXE)
 unit-set: $(CDSUNIT_SET_EXE)
 
 ifeq ($(platform),mingw)
-make_test : $(BIN_PATH)/test-hdr $(CDSUNIT_EXE_FILES)
+make_test : $(CDSUNIT_EXE_FILES)
 	cd $(TEST_DATA_DIR); perl -X split.pl
 	cp -f $(TEST_DATA_DIR)/test.conf $(TEST_DATA_DIR)/test-debug.conf $(TEST_DATA_DIR)/dictionary.txt $(BIN_PATH)
 else
-make_test : $(BIN_PATH)/test-hdr $(CDSUNIT_EXE_FILES)
+make_test : $(CDSUNIT_EXE_FILES)
 	cd $(TEST_DATA_DIR); perl -X split.pl
 	ln -sf $(TEST_DATA_DIR)/test.conf $(TEST_DATA_DIR)/test-debug.conf $(TEST_DATA_DIR)/dictionary.txt $(BIN_PATH)
 endif
-
-$(BIN_PATH)/test-hdr : $(TEST_COMMON_OBJS) $(TESTHDR_OBJS) $(TESTHDR_OBJS_NO_OFFSETOF_WARN)
-	$(CXX) $(LD_OPTS) -L$(BIN_PATH) \
-	$(TESTHDR_OBJS) $(TESTHDR_OBJS_NO_OFFSETOF_WARN) $(TEST_COMMON_OBJS) \
-	-o $@ $(LD_BOOST_THREAD_LIB) $(LD_TEST_COMMON_LIBS) $(LDLIBS)
 
 $(CDSUNIT_MAP_EXE) : $(CDSUNIT_MAP_OBJS) $(CDSUNIT_COMMON_FILE) $(TEST_COMMON_OBJS)
 	$(CXX) $(LD_OPTS) -L$(BIN_PATH) $(CDSUNIT_MAP_OBJS) $(CDSUNIT_COMMON_FILE) $(TEST_COMMON_OBJS) -o $@ $(LD_BOOST_THREAD_LIB) $(LD_TEST_COMMON_LIBS) $(LDLIBS)
@@ -188,19 +173,14 @@ unit-map-dbg: $(CDSUNIT_MAP_EXE_DBG)
 unit-set-dbg: $(CDSUNIT_SET_EXE_DBG)
 
 ifeq ($(platform),mingw)
-make_debug_test : $(BIN_PATH)/test-hdr-debug $(CDSUNIT_EXE_DBG_FILES)
+make_debug_test : $(CDSUNIT_EXE_DBG_FILES)
 	cd $(TEST_DATA_DIR); perl -X split.pl
 	cp -f $(TEST_DATA_DIR)/test.conf $(TEST_DATA_DIR)/test-debug.conf $(TEST_DATA_DIR)/dictionary.txt $(BIN_PATH)
 else
-make_debug_test : $(BIN_PATH)/test-hdr-debug $(CDSUNIT_EXE_DBG_FILES)
+make_debug_test : $(CDSUNIT_EXE_DBG_FILES)
 	cd $(TEST_DATA_DIR); perl -X split.pl
 	ln -sf $(TEST_DATA_DIR)/test.conf $(TEST_DATA_DIR)/test-debug.conf $(TEST_DATA_DIR)/dictionary.txt $(BIN_PATH)
 endif
-
-$(BIN_PATH)/test-hdr-debug : $(TESTHDR_OBJS) $(TESTHDR_OBJS_NO_OFFSETOF_WARN) $(TEST_COMMON_OBJS)
-	$(CXX) $(LD_OPTS) -L$(BIN_PATH) \
-	$(TESTHDR_OBJS) $(TESTHDR_OBJS_NO_OFFSETOF_WARN) $(TEST_COMMON_OBJS) \
-	-o $@ $(LD_BOOST_THREAD_LIB) $(LD_TEST_COMMON_DEBUG_LIBS) $(LDLIBS)
 
 $(CDSUNIT_MAP_EXE_DBG) : $(CDSUNIT_MAP_OBJS) $(CDSUNIT_COMMON_FILE) $(TEST_COMMON_OBJS)
 	$(CXX) $(LD_OPTS) -L$(BIN_PATH) $(CDSUNIT_MAP_OBJS) $(CDSUNIT_COMMON_FILE) $(TEST_COMMON_OBJS) -o $@ $(LD_BOOST_THREAD_LIB) $(LD_TEST_COMMON_DEBUG_LIBS) $(LDLIBS)
@@ -214,9 +194,6 @@ $(CDSUNIT_MISC_EXE_DBG) : $(CDSUNIT_MISC_OBJS) $(CDSUNIT_COMMON_FILE) $(TEST_COM
 test: make_test 
 test_debug: make_debug_test
 
-test_hdr: $(BIN_PATH)/test-hdr
-test_hdr_debug: $(BIN_PATH)/test-hdr-debug
-
 ##########################################
 #
 clean: 
@@ -226,5 +203,4 @@ clean:
 	rm -f $(TEST_COMMON_OBJS_DEPS) $(TESTHDR_OBJS_DEPS) $(TESTHDR_OBJS_NO_OFFSETOF_WARN_DEPS) $(TEST_OBJ_FILE_DEPS)
 	rm -f $(BIN_PATH)/libcds*
 	rm -f $(BIN_PATH)/cdsu-*
-	rm -f $(BIN_PATH)/test-hdr
 
