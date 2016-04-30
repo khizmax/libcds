@@ -482,7 +482,7 @@ namespace cds { namespace memory {
         ~bounded_vyukov_queue_pool()
         {
             m_Queue.clear();
-            std_allocatr().deallocate( m_pFirst, m_Queue.capacity());
+            std_allocator().deallocate( m_pFirst, m_Queue.capacity());
         }
 
         /// Allocates an object from pool
