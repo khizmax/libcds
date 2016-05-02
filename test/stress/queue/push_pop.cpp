@@ -98,6 +98,7 @@ namespace {
 
                 s_nProducerDone.fetch_add( 1 );
             }
+
         public:
             Queue&              m_Queue;
             size_t              m_nPushFailed;

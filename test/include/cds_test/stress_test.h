@@ -126,6 +126,15 @@ namespace cds_test {
         return s;
     }
 
+    template <typename T>
+    static inline property_stream& operator <<( property_stream& s, std::pair<std::string, T > prop )
+    {
+        std::stringstream ss;
+        ss << prop.second;
+        ::testing::Test::RecordProperty( prop.first.c_str(), ss.str().c_str() );
+        return s;
+    }
+
     static inline property_stream& operator <<( property_stream& s, std::pair<char const *, std::chrono::milliseconds > prop )
     {
         std::stringstream ss;

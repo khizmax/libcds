@@ -6,10 +6,10 @@
 #include <cds/details/defs.h>
 
 #if CDS_BUILD_BITS == 64
-#   include "hashing/city.h"
+#   include <cds_test/city.h>
 #endif
 
-namespace hashing {
+namespace cds_test {
 
 #if CDS_BUILD_BITS == 64
     class city32 {
@@ -103,6 +103,6 @@ namespace hashing {
 #endif // #if CDS_BUILD_BITS == 64
 
 
-} // namespace hashing
+} // namespace cds_test
 
 #endif // #ifndef CDSUNIT_HASH_FUNC_H

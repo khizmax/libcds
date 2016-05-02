@@ -126,8 +126,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cds_test", "cds_test", "{3A
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\test\include\cds_test\check_size.h = ..\..\..\test\include\cds_test\check_size.h
 		..\..\..\test\include\cds_test\fixture.h = ..\..\..\test\include\cds_test\fixture.h
+		..\..\..\test\include\cds_test\hash_func.h = ..\..\..\test\include\cds_test\hash_func.h
+		..\..\..\test\include\cds_test\stat_cuckoo_out.h = ..\..\..\test\include\cds_test\stat_cuckoo_out.h
 		..\..\..\test\include\cds_test\stat_ellenbintree_out.h = ..\..\..\test\include\cds_test\stat_ellenbintree_out.h
+		..\..\..\test\include\cds_test\stat_feldman_hashset_out.h = ..\..\..\test\include\cds_test\stat_feldman_hashset_out.h
 		..\..\..\test\include\cds_test\stat_skiplist_out.h = ..\..\..\test\include\cds_test\stat_skiplist_out.h
+		..\..\..\test\include\cds_test\stat_splitlist_out.h = ..\..\..\test\include\cds_test\stat_splitlist_out.h
 		..\..\..\test\include\cds_test\stress_test.h = ..\..\..\test\include\cds_test\stress_test.h
 		..\..\..\test\include\cds_test\thread.h = ..\..\..\test\include\cds_test\thread.h
 	EndProjectSection
@@ -206,6 +210,29 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-misc", "gtest-misc.vcxproj", "{FA22E700-1AE5-4D7B-B9F1-0A919FF7FF06}"
 	ProjectSection(ProjectDependencies) = postProject
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "set", "set", "{0D83E8C7-97D1-4BA1-928A-6846E7089652}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-delodd", "stress-set-delodd.vcxproj", "{8202D428-1E08-4744-B372-6B2E83A9928E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header Files", "{D968B0F5-52BD-40C1-B230-28104567CE97}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\test\stress\set\set_type.h = ..\..\..\test\stress\set\set_type.h
+		..\..\..\test\stress\set\set_type_cuckoo.h = ..\..\..\test\stress\set\set_type_cuckoo.h
+		..\..\..\test\stress\set\set_type_ellen_bintree.h = ..\..\..\test\stress\set\set_type_ellen_bintree.h
+		..\..\..\test\stress\set\set_type_feldman_hashset.h = ..\..\..\test\stress\set\set_type_feldman_hashset.h
+		..\..\..\test\stress\set\set_type_lazy_list.h = ..\..\..\test\stress\set\set_type_lazy_list.h
+		..\..\..\test\stress\set\set_type_michael.h = ..\..\..\test\stress\set\set_type_michael.h
+		..\..\..\test\stress\set\set_type_michael_list.h = ..\..\..\test\stress\set\set_type_michael_list.h
+		..\..\..\test\stress\set\set_type_skip_list.h = ..\..\..\test\stress\set\set_type_skip_list.h
+		..\..\..\test\stress\set\set_type_split_list.h = ..\..\..\test\stress\set\set_type_split_list.h
+		..\..\..\test\stress\set\set_type_std.h = ..\..\..\test\stress\set\set_type_std.h
+		..\..\..\test\stress\set\set_type_striped.h = ..\..\..\test\stress\set\set_type_striped.h
 	EndProjectSection
 EndProject
 Global
@@ -542,6 +569,18 @@ Global
 		{FA22E700-1AE5-4D7B-B9F1-0A919FF7FF06}.Release|Win32.Build.0 = Release|Win32
 		{FA22E700-1AE5-4D7B-B9F1-0A919FF7FF06}.Release|x64.ActiveCfg = Release|x64
 		{FA22E700-1AE5-4D7B-B9F1-0A919FF7FF06}.Release|x64.Build.0 = Release|x64
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Debug|Win32.Build.0 = Debug|Win32
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Debug|x64.ActiveCfg = Debug|x64
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Debug|x64.Build.0 = Debug|x64
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.DebugVLD|x64.Build.0 = DebugVLD|x64
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Release|Win32.ActiveCfg = Release|Win32
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Release|Win32.Build.0 = Release|Win32
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Release|x64.ActiveCfg = Release|x64
+		{8202D428-1E08-4744-B372-6B2E83A9928E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -575,6 +614,9 @@ Global
 		{00FD5CB8-E1A4-40CA-B613-30A06A75622B} = {810490B7-31E5-49AE-8455-CAF99A9658B6}
 		{2ABD6A2E-BEA7-4C8C-982B-A609F83D2DCB} = {810490B7-31E5-49AE-8455-CAF99A9658B6}
 		{FA22E700-1AE5-4D7B-B9F1-0A919FF7FF06} = {810490B7-31E5-49AE-8455-CAF99A9658B6}
+		{0D83E8C7-97D1-4BA1-928A-6846E7089652} = {10E1FAF2-904D-405E-8AB5-6878A1B03346}
+		{8202D428-1E08-4744-B372-6B2E83A9928E} = {0D83E8C7-97D1-4BA1-928A-6846E7089652}
+		{D968B0F5-52BD-40C1-B230-28104567CE97} = {0D83E8C7-97D1-4BA1-928A-6846E7089652}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}

@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\include\cds_test\stress_test.h" />
+    <ClInclude Include="..\..\..\test\stress\framework\ellen_bintree_update_desc_pool.h" />
     <ClInclude Include="..\..\..\test\stress\framework\michael_alloc.h" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +41,7 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4267</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\stress\framework\config.cpp" />
+    <ClCompile Include="..\..\..\test\stress\framework\ellen_bintree_update_desc_pool.cpp" />
     <ClCompile Include="..\..\..\test\stress\framework\michael_alloc.cpp" />
     <ClCompile Include="..\..\..\test\stress\framework\stress_test.cpp" />
   </ItemGroup>

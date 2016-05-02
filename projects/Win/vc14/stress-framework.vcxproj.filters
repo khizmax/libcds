@@ -21,6 +21,9 @@
     <ClInclude Include="..\..\..\test\stress\framework\michael_alloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\stress\framework\ellen_bintree_update_desc_pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\stress\framework\config.cpp">
@@ -33,6 +36,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\stress\framework\michael_alloc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\stress\framework\ellen_bintree_update_desc_pool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

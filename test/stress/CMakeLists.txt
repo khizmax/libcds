@@ -3,6 +3,7 @@ set(CDSSTRESS_FRAMEWORK_LIBRARY stress-framework)
 set(CDSSTRESS_FRAMEWORK_SOURCES
     framework/city.cpp
     framework/config.cpp
+    framework/ellen_bintree_update_desc_pool.cpp
     framework/michael_alloc.cpp
     framework/stress_test.cpp
 )
@@ -15,6 +16,7 @@ include_directories(
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/set)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)
 
 add_custom_target( stress-all
@@ -22,6 +24,7 @@ add_custom_target( stress-all
         stress-pqueue
         stress-queue
         stress-stack
+        stress-set
 )
 
 file(GLOB CONF_FILES ${PROJECT_SOURCE_DIR}/test/stress/data/*.conf)
