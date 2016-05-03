@@ -448,7 +448,7 @@ namespace cds { namespace container {
             return insert_with_at( head(), key, func );
         }
 
-        /// Ensures that the \p key exists in the list
+        /// Updates an element with given \p key
         /**
             The operation performs inserting or changing data with lock-free manner.
 

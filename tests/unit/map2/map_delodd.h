@@ -810,7 +810,7 @@ namespace map2 {
         //CDSUNIT_DECLARE_FeldmanHashMap_city
         CDSUNIT_DECLARE_CuckooMap
 
-        CPPUNIT_TEST_SUITE(Map_DelOdd)
+        CPPUNIT_TEST_SUITE_(Map_DelOdd, "map_delodd")
             CDSUNIT_TEST_MichaelMap
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListMap

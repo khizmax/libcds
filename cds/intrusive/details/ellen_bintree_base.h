@@ -374,9 +374,9 @@ namespace cds { namespace intrusive {
             event_counter   m_nInsertSuccess        ; ///< Count of success insertion
             event_counter   m_nInsertFailed         ; ///< Count of failed insertion
             event_counter   m_nInsertRetries        ; ///< Count of unsuccessful retries of insertion
-            event_counter   m_nEnsureExist          ; ///< Count of \p ensure call for existed node
-            event_counter   m_nEnsureNew            ; ///< Count of \p ensure call for new node
-            event_counter   m_nEnsureRetries        ; ///< Count of unsuccessful retries of ensuring
+            event_counter   m_nUpdateExist          ; ///< Count of \p update() call for existed node
+            event_counter   m_nUpdateNew            ; ///< Count of \p update() call for new node
+            event_counter   m_nUpdateRetries        ; ///< Count of unsuccessful retries of ensuring
             event_counter   m_nEraseSuccess         ; ///< Count of successful call of \p erase and \p unlink
             event_counter   m_nEraseFailed          ; ///< Count of failed call of \p erase and \p unlink
             event_counter   m_nEraseRetries         ; ///< Count of unsuccessful retries inside erasing/unlinking
@@ -404,9 +404,9 @@ namespace cds { namespace intrusive {
             void    onInsertSuccess()               { ++m_nInsertSuccess        ; }
             void    onInsertFailed()                { ++m_nInsertFailed         ; }
             void    onInsertRetry()                 { ++m_nInsertRetries        ; }
-            void    onEnsureExist()                 { ++m_nEnsureExist          ; }
-            void    onEnsureNew()                   { ++m_nEnsureNew            ; }
-            void    onEnsureRetry()                 { ++m_nEnsureRetries        ; }
+            void    onUpdateExist()                 { ++m_nUpdateExist          ; }
+            void    onUpdateNew()                   { ++m_nUpdateNew            ; }
+            void    onUpdateRetry()                 { ++m_nUpdateRetries        ; }
             void    onEraseSuccess()                { ++m_nEraseSuccess         ; }
             void    onEraseFailed()                 { ++m_nEraseFailed          ; }
             void    onEraseRetry()                  { ++m_nEraseRetries         ; }
@@ -437,9 +437,9 @@ namespace cds { namespace intrusive {
             void    onInsertSuccess()               const {}
             void    onInsertFailed()                const {}
             void    onInsertRetry()                 const {}
-            void    onEnsureExist()                 const {}
-            void    onEnsureNew()                   const {}
-            void    onEnsureRetry()                 const {}
+            void    onUpdateExist()                 const {}
+            void    onUpdateNew()                   const {}
+            void    onUpdateRetry()                 const {}
             void    onEraseSuccess()                const {}
             void    onEraseFailed()                 const {}
             void    onEraseRetry()                  const {}

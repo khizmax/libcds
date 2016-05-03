@@ -636,10 +636,10 @@ namespace cds { namespace intrusive {
             std::pair<bool, bool> bRet = m_List.update_at( pHead, val, func, bAllowInsert );
             if ( bRet.first && bRet.second ) {
                 inc_item_count();
-                m_Stat.onEnsureNew();
+                m_Stat.onUpdateNew();
             }
             else
-                m_Stat.onEnsureExist();
+                m_Stat.onUpdateExist();
             return bRet;
         }
         //@cond

@@ -660,10 +660,10 @@ namespace cds { namespace intrusive {
             if ( ret.first != m_List.end() ) {
                 if ( ret.second ) {
                     inc_item_count();
-                    m_Stat.onEnsureNew();
+                    m_Stat.onUpdateNew();
                 }
                 else
-                    m_Stat.onEnsureExist();
+                    m_Stat.onUpdateExist();
                 return std::make_pair( iterator(ret.first, m_List.end()), ret.second );
             }
             return std::make_pair( end(), ret.second );

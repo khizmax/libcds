@@ -38,7 +38,7 @@ namespace set2 {
         c_nSetSize = cfg.getSizeT("MapSize", c_nSetSize );
         c_nInsertThreadCount = cfg.getSizeT("InsertThreadCount", c_nInsertThreadCount );
         c_nDeleteThreadCount = cfg.getSizeT("DeleteThreadCount", c_nDeleteThreadCount );
-        c_nUpdateThreadCount = cfg.getSizeT("EnsureThreadCount", c_nUpdateThreadCount );
+        c_nUpdateThreadCount = cfg.getSizeT("UpdateThreadCount", c_nUpdateThreadCount );
         c_nThreadPassCount = cfg.getSizeT("ThreadPassCount", c_nThreadPassCount );
         c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor );
         c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );

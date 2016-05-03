@@ -605,7 +605,7 @@ namespace cds { namespace container {
             return insert_node( alloc_node( std::forward<Args>(args)...));
         }
 
-        /// Ensures that the \p val exists in the set
+        /// Updates an element with given \p val
         /**
             The operation performs inserting or changing data with lock-free manner.
 

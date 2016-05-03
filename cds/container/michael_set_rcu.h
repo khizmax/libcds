@@ -384,36 +384,7 @@ namespace cds { namespace container {
             return bRet;
         }
 
-        /// Ensures that the item exists in the set
-        /**
-            The operation performs inserting or changing data with lock-free manner.
 
-            If the \p val key not found in the set, then the new item created from \p val
-            is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func signature is:
-            \code
-                struct my_functor {
-                    void operator()( bool bNew, value_type& item, const Q& val );
-                };
-            \endcode
-
-            with arguments:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the set
-            - \p val - argument \p key passed into the \p ensure function
-
-            The functor may change non-key fields of the \p item.
-
-            The function applies RCU lock internally.
-
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
-            already is in the set.
-
-            @warning For \ref cds_nonintrusive_MichaelList_rcu "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_nonintrusive_LazyList_rcu "LazyList" provides exclusive access to inserted item and does not require any node-level
-            synchronization.
-        */
         /// Updates the element
         /**
             The operation performs inserting or changing data with lock-free manner.

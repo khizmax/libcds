@@ -848,7 +848,7 @@ namespace cds { namespace intrusive {
                         func( false, *node_traits::to_value_ptr( res.pLeaf ), val );
                         if ( pNewInternal.get())
                             m_Stat.onInternalNodeDeleted() ;    // unique_internal_node_ptr deletes internal node
-                        m_Stat.onEnsureExist();
+                        m_Stat.onUpdateExist();
                         return std::make_pair( true, false );
                     }
 
@@ -869,12 +869,12 @@ namespace cds { namespace intrusive {
                         help( res.updParent, updRetire );
 
                     bkoff();
-                    m_Stat.onEnsureRetry();
+                    m_Stat.onUpdateRetry();
                 }
             }
 
             ++m_ItemCounter;
-            m_Stat.onEnsureNew();
+            m_Stat.onUpdateNew();
 
             return std::make_pair( true, true );
         }
