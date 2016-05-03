@@ -26,10 +26,3 @@ CDSUNIT_SET_SOURCES := \
 	tests/unit/set2/set_insdelfind_split.cpp \
 	tests/unit/set2/set_insdelfind_striped.cpp \
     tests/unit/set2/set_insdelfind_std.cpp \
-	tests/unit/set2/set_delodd.cpp \
-	tests/unit/set2/set_delodd_cuckoo.cpp \
-	tests/unit/set2/set_delodd_ellentree.cpp \
-	tests/unit/set2/set_delodd_michael.cpp \
-	tests/unit/set2/set_delodd_feldmanhashset.cpp \
-	tests/unit/set2/set_delodd_skip.cpp \
-	tests/unit/set2/set_delodd_split.cpp \

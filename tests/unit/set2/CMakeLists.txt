@@ -27,13 +27,6 @@ set(CDSUNIT_SET_SOURCES
     set_insdelfind_split.cpp
     set_insdelfind_striped.cpp
     set_insdelfind_std.cpp
-    set_delodd.cpp
-    set_delodd_cuckoo.cpp
-    set_delodd_ellentree.cpp
-    set_delodd_michael.cpp
-    set_delodd_feldmanhashset.cpp
-    set_delodd_skip.cpp
-    set_delodd_split.cpp
 )
 
 add_executable(${PACKAGE_NAME} ${CDSUNIT_SET_SOURCES} $<TARGET_OBJECTS:${TEST_COMMON}>)
