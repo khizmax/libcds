@@ -45,4 +45,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\test\stress\set\delodd\CMakeLists.txt" />
+  </ItemGroup>
 </Project>

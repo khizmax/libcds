@@ -56,6 +56,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\test\stress\set\delodd\set_delodd.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\test\stress\set\delodd\CMakeLists.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8202D428-1E08-4744-B372-6B2E83A9928E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

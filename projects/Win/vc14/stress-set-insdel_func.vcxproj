@@ -28,38 +28,41 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\stress\main.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_cuckoo.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_cuckoo.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_ellentree.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_feldman_hashset.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_michael.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_skip.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_split.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_ellentree.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_feldman_hashset.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_michael.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_skip.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_split.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_std.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_striped.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_striped.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\stress\set\insdel_find\set_insdelfind.h" />
+    <ClInclude Include="..\..\..\test\stress\set\insdel_func\set_insdel_func.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\test\stress\set\insdel_find\CMakeLists.txt" />
+    <Text Include="..\..\..\test\stress\set\insdel_func\CMakeLists.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{133D1AEE-3BAF-42D1-B1AB-93D5239F4926}</ProjectGuid>
+    <ProjectGuid>{EE7A269E-83E4-402B-9C79-85058826E81E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>stress_set_insdelfind</RootNamespace>
+    <RootNamespace>stress_set_insdel_func</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>stress-set-insdelfind</ProjectName>
+    <ProjectName>stress-set-insdel-func</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

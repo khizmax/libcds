@@ -18,40 +18,37 @@
     <ClCompile Include="..\..\..\test\stress\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_michael.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_cuckoo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_split.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_ellentree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_skip.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_feldman_hashset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_feldman_hashset.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_michael.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_ellentree.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_skip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_cuckoo.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_split.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_std.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_striped.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_func\set_insdel_func_striped.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\stress\set\insdel_find\set_insdelfind.h">
+    <ClInclude Include="..\..\..\test\stress\set\insdel_func\set_insdel_func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\test\stress\set\insdel_find\CMakeLists.txt" />
+    <Text Include="..\..\..\test\stress\set\insdel_func\CMakeLists.txt" />
   </ItemGroup>
 </Project>

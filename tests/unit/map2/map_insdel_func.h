@@ -590,7 +590,7 @@ namespace map2 {
         CDSUNIT_DECLARE_RefinableMap
         CDSUNIT_DECLARE_CuckooMap
 
-        CPPUNIT_TEST_SUITE(Map_InsDel_func)
+        CPPUNIT_TEST_SUITE_(Map_InsDel_func, "map_insdel_func")
             CDSUNIT_TEST_MichaelMap
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListMap

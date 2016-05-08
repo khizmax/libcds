@@ -27,14 +27,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_cuckoo.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_ellentree.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_michael.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_feldmanhashset.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_skip.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_split.cpp" />
-    <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_func_striped.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_cuckoo.cpp" />
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_ellentree.cpp" />
@@ -46,7 +38,6 @@
     <ClCompile Include="..\..\..\tests\unit\set2\set_insdel_string_striped.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\tests\unit\set2\set_insdel_func.h" />
     <ClInclude Include="..\..\..\tests\unit\set2\set_insdel_string.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

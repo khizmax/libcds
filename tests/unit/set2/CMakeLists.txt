@@ -1,14 +1,6 @@
 set(PACKAGE_NAME cdsu-set)
 
 set(CDSUNIT_SET_SOURCES
-    set_insdel_func.cpp
-    set_insdel_func_cuckoo.cpp
-    set_insdel_func_ellentree.cpp
-    set_insdel_func_michael.cpp
-    set_insdel_func_feldmanhashset.cpp
-    set_insdel_func_skip.cpp
-    set_insdel_func_split.cpp
-    set_insdel_func_striped.cpp
     set_insdel_string.cpp
     set_insdel_string_cuckoo.cpp
     set_insdel_string_ellentree.cpp
