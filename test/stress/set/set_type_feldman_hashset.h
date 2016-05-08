@@ -316,7 +316,37 @@ namespace set {
 
         o << s.statistics() << level_stat;
     }
-
 } // namespace set
+
+#define CDSSTRESS_FeldmanHashSet_case( fixture, test_case, feldman_set_type, key_type, value_type ) \
+    TEST_F( fixture, feldman_set_type ) \
+    { \
+        typedef set::set_type< tag_FeldmanHashSet, key_type, value_type >::feldman_set_type set_type; \
+        test_case<set_type>(); \
+    }
+
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+#   define CDSSTRESS_FeldmanHashSet_SHRCU( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_fixed,      key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_fixed,      key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_fixed_stat, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_fixed_stat, key_type, value_type )
+#else
+#   define CDSSTRESS_FeldmanHashSet_SHRCU( fixture, test_case, key_type, value_type )
+#endif
+
+
+#define CDSSTRESS_FeldmanHashSet( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_fixed,             key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_fixed,            key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_fixed,        key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_fixed,        key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_fixed,        key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_fixed_stat,        key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_fixed_stat,       key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_fixed_stat,   key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_fixed_stat,   key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_fixed_stat,   key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_SHRCU( fixture, test_case, key_type, value_type )
 
 #endif // #ifndef CDSUNIT_SET_TYPE_FELDMAN_HASHSET_H

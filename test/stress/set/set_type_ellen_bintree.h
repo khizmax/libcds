@@ -322,8 +322,40 @@ namespace set {
     {
         EXPECT_TRUE( s.check_consistency() );
     }
-
-
 } // namespace set
+
+#define CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, ellen_set_type, key_type, value_type ) \
+    TEST_F( fixture, ellen_set_type ) \
+    { \
+        typedef set::set_type< tag_EllenBinTreeSet, key_type, value_type >::ellen_set_type set_type; \
+        test_case<set_type>(); \
+    }
+
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+#   define CDSSTRESS_EllenBinTreeSet_SHRCU( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_shb,      key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_sht,      key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_shb_stat, key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_sht_stat, key_type, value_type )
+#else
+#   define CDSSTRESS_EllenBinTreeSet_SHRCU( fixture, test_case, key_type, value_type )
+#endif
+
+
+#define CDSSTRESS_EllenBinTreeSet( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_hp,             key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_dhp,            key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpi,        key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpb,        key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpt,        key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_hp,       key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_dhp,      key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_rcu_gpb,  key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_hp_stat,        key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_dhp_stat,       key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpi_stat,   key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpb_stat,   key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpt_stat,   key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeSet_SHRCU( fixture, test_case, key_type, value_type )
 
 #endif // #ifndef CDSUNIT_SET_TYPE_ELLEN_BINTREE_H

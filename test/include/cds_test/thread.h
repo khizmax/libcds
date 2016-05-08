@@ -81,6 +81,7 @@ namespace cds_test {
         thread_pool& pool() { return m_pool; }
         int type() const { return m_type; }
         size_t id() const { return m_id;  }
+        bool time_elapsed() const;
 
     private:
         friend class thread_pool;
@@ -100,6 +101,8 @@ namespace cds_test {
             , m_bRunning( false )
             , m_bStopped( false )
             , m_doneCount( 0 )
+            , m_bTimeElapsed( false )
+            , m_readyCount( 0 )
         {}
 
         ~thread_pool()
@@ -123,13 +126,29 @@ namespace cds_test {
 
         std::chrono::milliseconds run()
         {
+            return run( std::chrono::seconds::zero() );
+        }
+
+        std::chrono::milliseconds run( std::chrono::seconds duration )
+        {
             m_bStopped = false;
             m_doneCount = 0;
 
+            while ( m_readyCount.load() != m_threads.size() )
+                std::this_thread::yield();
+
+            m_bTimeElapsed.store( false, std::memory_order_release );
             auto time_start = std::chrono::steady_clock::now();
 
-            m_bRunning = true;
-            m_cvStart.notify_all();
+            {
+                scoped_lock l( m_cvMutex );
+                m_bRunning = true;
+                m_cvStart.notify_all();
+            }
+
+            if ( duration != std::chrono::seconds::zero() )
+                std::this_thread::sleep_for( duration );
+            m_bTimeElapsed.store( true, std::memory_order_release );
 
             {
                 scoped_lock l( m_cvMutex );
@@ -144,7 +163,7 @@ namespace cds_test {
             for ( auto t : m_threads )
                 t->join();
 
-            return m_testDuration = std::chrono::duration_cast<std::chrono::milliseconds>( time_end - time_start );
+            return m_testDuration = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
         }
 
         size_t size() const             { return m_threads.size(); }
@@ -180,6 +199,7 @@ namespace cds_test {
 
             // Wait for all thread created
             scoped_lock l( m_cvMutex );
+            m_readyCount.fetch_add( 1 );
             while ( !m_bRunning )
                 m_cvStart.wait( l );
         }
@@ -191,14 +211,11 @@ namespace cds_test {
             {
                 scoped_lock l( m_cvMutex );
                 ++m_doneCount;
-            }
 
-            // Tell pool that the thread is done
-            m_cvDone.notify_all();
-            
-            // Wait for all thread done
-            {
-                scoped_lock l( m_cvMutex );
+                // Tell pool that the thread is done
+                m_cvDone.notify_all();
+
+                // Wait for all thread done
                 while ( !m_bStopped )
                     m_cvStop.wait( l );
             }
@@ -219,6 +236,8 @@ namespace cds_test {
         volatile bool   m_bRunning;
         volatile bool   m_bStopped;
         volatile size_t m_doneCount;
+        std::atomic<bool> m_bTimeElapsed;
+        std::atomic<size_t> m_readyCount;
 
         std::chrono::milliseconds m_testDuration;
     };
@@ -244,6 +263,11 @@ namespace cds_test {
         test();
         m_pool.thread_done( *this );
         TearDown();
+    }
+
+    inline bool thread::time_elapsed() const
+    {
+        return m_pool.m_bTimeElapsed.load( std::memory_order_acquire );
     }
 
 } // namespace cds_test

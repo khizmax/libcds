@@ -96,7 +96,7 @@ namespace set {
     template <>
     struct hash<set::key_thread>
     {
-        typedef size_t              result_type;
+        typedef size_t             result_type;
         typedef set::key_thread    argument_type;
 
         size_t operator()( set::key_thread const& k ) const

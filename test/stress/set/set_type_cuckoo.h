@@ -207,4 +207,38 @@ namespace set {
 
 } // namespace set
 
+#define CDSSTRESS_CuckooSet_case( fixture, test_case, cuckoo_set_type, key_type, value_type ) \
+    TEST_F( fixture, cuckoo_set_type ) \
+    { \
+        typedef set::set_type< tag_CuckooSet, key_type, value_type >::cuckoo_set_type set_type; \
+        test_case<set_type>(); \
+    }
+
+#define CDSSTRESS_CuckooSet( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_list_unord,                  key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_list_unord,                key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_list_unord_stat,             key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_list_unord_stat,           key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_list_unord_storehash,        key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_list_unord_storehash,      key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_list_ord,                    key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_list_ord,                  key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_list_ord_stat,               key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_list_ord_stat,             key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_list_ord_storehash,          key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_list_ord_storehash,        key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_vector_unord,                key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_vector_unord,              key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_vector_unord_stat,           key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_vector_unord_stat,         key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_vector_unord_storehash,      key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_vector_unord_storehash,    key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_vector_ord,                  key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_vector_ord,                key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_vector_ord_stat,             key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_vector_ord_stat,           key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooStripedSet_vector_ord_storehash,        key_type, value_type ) \
+    CDSSTRESS_CuckooSet_case( fixture, test_case, CuckooRefinableSet_vector_ord_storehash,      key_type, value_type ) \
+
+
 #endif // #ifndef CDSUNIT_SET_TYPE_CUCKOO_H

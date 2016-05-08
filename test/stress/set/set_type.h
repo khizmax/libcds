@@ -83,6 +83,17 @@ namespace set {
     CDSUNIT_INT_COMPARE(unsigned long long);
 #undef CDSUNIT_INT_COMPARE
 
+#define CDSUNIT_INT_LESS(t)  template <> struct less<t> { bool operator()( t k1, t k2 ){ return k1 < k2; } }
+    CDSUNIT_INT_LESS( char );
+    CDSUNIT_INT_LESS( unsigned char );
+    CDSUNIT_INT_LESS( int );
+    CDSUNIT_INT_LESS( unsigned int );
+    CDSUNIT_INT_LESS( long );
+    CDSUNIT_INT_LESS( unsigned long );
+    CDSUNIT_INT_LESS( long long );
+    CDSUNIT_INT_LESS( unsigned long long );
+#undef CDSUNIT_INT_LESS
+
     template <>
     struct cmp<std::string>
     {
@@ -99,6 +110,36 @@ namespace set {
             return -s2.compare( s1 );
         }
     };
+
+    template <typename T>
+    struct hash
+    {
+        typedef size_t result_type;
+        typedef T      argument_type;
+
+        size_t operator()( T const& k ) const
+        {
+            return std::hash<size_t>()(k.nKey);
+        }
+
+        size_t operator()( size_t k ) const
+        {
+            return std::hash<size_t>()(k);
+        }
+    };
+
+    template <>
+    struct hash<size_t>
+    {
+        typedef size_t result_type;
+        typedef size_t argument_type;
+
+        size_t operator()( size_t k ) const
+        {
+            return std::hash<size_t>()(k);
+        }
+    };
+
 
     // forward
     template <typename ImplSelector, typename Key, typename Value>

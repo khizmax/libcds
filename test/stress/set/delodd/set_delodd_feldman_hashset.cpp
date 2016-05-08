@@ -31,33 +31,8 @@
 #include "set_delodd.h"
 #include "set_type_feldman_hashset.h"
 
-#define CDSSTRESS_FeldmanHashSet( feldman_set_type ) \
-    TEST_F( Set_DelOdd, feldman_set_type ) \
-    { \
-        typedef set::set_type< tag_FeldmanHashSet, key_thread, size_t >::feldman_set_type set_type; \
-        run_test_extract<set_type>(); \
-    }
-
 namespace set {
 
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_hp_fixed )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_dhp_fixed )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_gpi_fixed )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_gpb_fixed )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_gpt_fixed )
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_shb_fixed )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_sht_fixed )
-#endif
-
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_hp_fixed_stat )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_dhp_fixed_stat )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_gpi_fixed_stat )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_gpb_fixed_stat )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_gpt_fixed_stat )
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_shb_fixed_stat )
-    CDSSTRESS_FeldmanHashSet( FeldmanHashSet_rcu_sht_fixed_stat )
-#endif
+    CDSSTRESS_FeldmanHashSet( Set_DelOdd, run_test_extract, key_thread, size_t )
 
 } // namespace set

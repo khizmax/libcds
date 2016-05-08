@@ -31,7 +31,7 @@
 #ifndef CDSUNIT_SET_TYPE_STRIPED_H
 #define CDSUNIT_SET_TYPE_STRIPED_H
 
-#include "set2/set_type.h"
+#include "set_type.h"
 
 #include <cds/container/striped_set/std_list.h>
 #include <cds/container/striped_set/std_vector.h>
@@ -50,7 +50,7 @@
 #endif
 #include <cds/container/striped_set.h>
 
-namespace set2 {
+namespace set {
 
     struct tag_StripedSet;
 
@@ -89,7 +89,7 @@ namespace set2 {
         public:
             template <class Config>
             StripedHashSet_seq( Config const& cfg )
-                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nLoadFactor )) )
+                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )) )
             {}
 
             /*
@@ -125,7 +125,7 @@ namespace set2 {
         public:
             template <class Config>
             StripedHashSet_seq_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
-                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.c_nLoadFactor )) )
+                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.s_nLoadFactor )) )
             {}
 
             /*
@@ -162,16 +162,8 @@ namespace set2 {
         public:
             template <class Config>
             StripedHashSet_ord( Config const& cfg )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nMaxLoadFactor * 1024 )) )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
             {}
-
-            /*
-            template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
-            {
-                return base_class::erase( v );
-            }
-            */
 
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
@@ -198,16 +190,8 @@ namespace set2 {
         public:
             template <class Config>
             StripedHashSet_ord_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.c_nLoadFactor )))
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.s_nLoadFactor )))
             {}
-
-            /*
-            template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
-            {
-                return base_class::erase( v );
-            }
-            */
 
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
@@ -365,7 +349,7 @@ namespace set2 {
         public:
             template <class Config>
             RefinableHashSet_seq( Config const& cfg )
-                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nLoadFactor )) )
+                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )) )
             {}
 
             /*
@@ -400,16 +384,8 @@ namespace set2 {
         public:
             template <class Config>
             RefinableHashSet_seq_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
-                : base_class( cfg.c_nSetSize / cfg.c_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.c_nLoadFactor )))
+                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.s_nLoadFactor )))
             {}
-
-            /*
-            template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
-            {
-                return base_class::erase( v );
-            }
-            */
 
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
@@ -436,16 +412,8 @@ namespace set2 {
         public:
             template <class Config>
             RefinableHashSet_ord( Config const& cfg )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.c_nMaxLoadFactor * 1024 )) )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
             {}
-
-            /*
-            template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
-            {
-                return base_class::erase( v );
-            }
-            */
 
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
@@ -471,16 +439,8 @@ namespace set2 {
         public:
             template <class Config>
             RefinableHashSet_ord_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.c_nLoadFactor )))
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.s_nLoadFactor )))
             {}
-
-            /*
-            template <typename Q, typename Less>
-            bool erase_with( Q const& v, Less pred )
-            {
-                return base_class::erase( v );
-            }
-            */
 
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
@@ -614,6 +574,31 @@ namespace set2 {
         > RefinableSet_rational_boost_unordered_set;
     };
 
-} // namespace set2
+} // namespace set
+
+#define CDSSTRESS_StripedSet_case( fixture, test_case, striped_set_type, key_type, value_type ) \
+    TEST_P( fixture, striped_set_type ) \
+    { \
+        typedef set::set_type< tag_StripedSet, key_type, value_type >::striped_set_type set_type; \
+        test_case<set_type>(); \
+    }
+
+#define CDSSTRESS_StripedSet( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_list,                 key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_rational_list,        key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_vector,               key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_rational_vector,      key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_set,                  key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_rational_set,         key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_hashset,              key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, StripedSet_rational_hashset,     key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_list,               key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_rational_list,      key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_vector,             key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_rational_vector,    key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_set,                key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_rational_set,       key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_hashset,            key_type, value_type ) \
+    CDSSTRESS_StripedSet_case( fixture, test_case, RefinableSet_rational_hashset,   key_type, value_type )
 
 #endif // #ifndef CDSUNIT_SET_TYPE_STRIPED_H

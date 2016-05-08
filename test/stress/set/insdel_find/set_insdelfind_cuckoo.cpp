@@ -28,11 +28,11 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#include "set_delodd.h"
+#include "set_insdelfind.h"
 #include "set_type_cuckoo.h"
 
 namespace set {
 
-    CDSSTRESS_CuckooSet( Set_DelOdd, run_test, key_thread, size_t )
+    CDSSTRESS_CuckooSet( Set_InsDelFind, run_test, size_t, size_t )
 
 } // namespace set

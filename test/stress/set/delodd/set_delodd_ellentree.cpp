@@ -31,36 +31,8 @@
 #include "set_delodd.h"
 #include "set_type_ellen_bintree.h"
 
-#define CDSSTRESS_EllenBinTreeSet( ellen_set_type ) \
-    TEST_F( Set_DelOdd, ellen_set_type ) \
-    { \
-        typedef set::set_type< tag_EllenBinTreeSet, key_thread, size_t >::ellen_set_type set_type; \
-        run_test_extract<set_type>(); \
-    }
-
 namespace set {
 
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_hp )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_dhp )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_gpi )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_gpb )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_gpt )
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_shb )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_sht )
-#endif
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_yield_hp )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_yield_dhp )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_yield_rcu_gpb )
-
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_hp_stat )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_dhp_stat )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_gpi_stat )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_gpb_stat )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_gpt_stat )
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_shb_stat )
-    CDSSTRESS_EllenBinTreeSet( EllenBinTreeSet_rcu_sht_stat )
-#endif
+    CDSSTRESS_EllenBinTreeSet( Set_DelOdd, run_test_extract, key_thread, size_t )
 
 } // namespace set

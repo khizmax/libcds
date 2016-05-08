@@ -35,9 +35,9 @@
 #include <set>
 #include <mutex>    //unique_lock
 
-#include "set2/set_type.h"
+#include "set_type.h"
 
-namespace set2 {
+namespace set {
 
     struct tag_StdSet;
 
@@ -233,13 +233,26 @@ namespace set2 {
 
         typedef StdSet< key_val, less, cds::sync::spin > StdSet_Spin;
         typedef StdSet< key_val, less, std::mutex > StdSet_Mutex;
-        typedef StdSet< key_val, less, lock::NoLock>     StdSet_NoLock;
+        //typedef StdSet< key_val, less, lock::NoLock>     StdSet_NoLock;
 
         typedef StdHashSet< key_val, hash, less, equal_to, cds::sync::spin > StdHashSet_Spin;
         typedef StdHashSet< key_val, hash, less, equal_to, std::mutex > StdHashSet_Mutex;
-        typedef StdHashSet< key_val, hash, less, equal_to, lock::NoLock >    StdHashSet_NoLock;
+        //typedef StdHashSet< key_val, hash, less, equal_to, lock::NoLock >    StdHashSet_NoLock;
     };
 
-} // namespace set2
+} // namespace set
+
+#define CDSSTRESS_StdSet_case( fixture, test_case, std_set_type, key_type, value_type ) \
+    TEST_F( fixture, std_set_type ) \
+    { \
+        typedef set::set_type< tag_StdSet, key_type, value_type >::std_set_type set_type; \
+        test_case<set_type>(); \
+    }
+
+#define CDSSTRESS_StdSet( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_StdSet_case( fixture, test_case, StdSet_Spin,      key_type, value_type ) \
+    CDSSTRESS_StdSet_case( fixture, test_case, StdSet_Mutex,     key_type, value_type ) \
+    CDSSTRESS_StdSet_case( fixture, test_case, StdHashSet_Spin,  key_type, value_type ) \
+    CDSSTRESS_StdSet_case( fixture, test_case, StdHashSet_Mutex, key_type, value_type )
 
 #endif // #ifndef CDSUNIT_SET_TYPE_STD_H
