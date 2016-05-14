@@ -167,6 +167,8 @@ namespace cds_test {
         static config const& get_config( char const * slot );
         static config const& get_config( std::string const& slot );
 
+        static std::vector<std::string> load_dictionary();
+
     private:
         thread_pool     m_thread_pool;
     };

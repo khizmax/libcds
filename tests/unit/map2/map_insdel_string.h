@@ -291,7 +291,7 @@ namespace map2 {
         CDSUNIT_DECLARE_CuckooMap
         CDSUNIT_DECLARE_StdMap
 
-        CPPUNIT_TEST_SUITE(Map_InsDel_string)
+        CPPUNIT_TEST_SUITE_(Map_InsDel_string, "map_insdel_func")
             CDSUNIT_TEST_MichaelMap
             CDSUNIT_TEST_SplitList
             CDSUNIT_TEST_SkipListMap

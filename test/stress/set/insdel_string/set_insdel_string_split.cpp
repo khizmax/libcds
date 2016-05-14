@@ -28,13 +28,11 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#include "set2/set_insdelfind.h"
-#include "set2/set_type_std.h"
+#include "set_insdel_string.h"
+#include "set_type_split_list.h"
 
-#undef TEST_CASE
-#define TEST_CASE(TAG, X)  void Set_InsDelFind::X() { run_test<typename set_type< TAG, key_type, value_type>::X>(); }
-#include "set2/set_defs.h"
+namespace set {
 
-namespace set2 {
-    CDSUNIT_DECLARE_StdSet
-} // namespace set2
+    CDSSTRESS_SplitListSet( Set_InsDel_string_LF, run_test_extract, std::string, size_t )
+
+} // namespace set

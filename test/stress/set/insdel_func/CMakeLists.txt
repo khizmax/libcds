@@ -1,6 +1,6 @@
 set(PACKAGE_NAME stress-set-insdel-func)
 
-set(CDSSTRESS_SET_DELODD_SOURCES
+set(CDSSTRESS_SET_INSDEL_FUNC_SOURCES
     ../../main.cpp
     set_insdel_func.cpp
     set_insdel_func_cuckoo.cpp
@@ -17,7 +17,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-add_executable(${PACKAGE_NAME} ${CDSSTRESS_SET_DELODD_SOURCES} $<TARGET_OBJECTS:${CDSSTRESS_FRAMEWORK_LIBRARY}>)
+add_executable(${PACKAGE_NAME} ${CDSSTRESS_SET_INSDEL_FUNC_SOURCES} $<TARGET_OBJECTS:${CDSSTRESS_FRAMEWORK_LIBRARY}>)
 target_link_libraries(${PACKAGE_NAME} 
     ${CDS_SHARED_LIBRARY}
     ${GTEST_LIBRARY}

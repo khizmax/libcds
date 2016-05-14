@@ -33,6 +33,6 @@
 
 namespace set {
 
-    CDSSTRESS_FeldmanHashSet( Set_DelOdd, run_test_extract, key_thread, size_t )
+    CDSSTRESS_FeldmanHashSet_fixed( Set_DelOdd, run_test_extract, key_thread, size_t )
 
 } // namespace set

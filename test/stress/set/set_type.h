@@ -111,6 +111,23 @@ namespace set {
         }
     };
 
+    template <>
+    struct less<std::string>
+    {
+        bool operator ()( std::string const& k1, std::string const& k2 ) const
+        {
+            return cmp<std::string>()( k1, k2 ) < 0;
+        }
+        bool operator ()( std::string const& k1, char const* k2 ) const
+        {
+            return cmp<std::string>()( k1, k2 ) < 0;
+        }
+        bool operator ()( char const* k1, std::string const& k2 ) const
+        {
+            return cmp<std::string>()( k1, k2 ) < 0;
+        }
+    };
+
     template <typename T>
     struct hash
     {
@@ -140,6 +157,17 @@ namespace set {
         }
     };
 
+    template <>
+    struct hash<std::string>
+    {
+        typedef size_t result_type;
+        typedef std::string argument_type;
+
+        size_t operator()( std::string const& k ) const
+        {
+            return std::hash<std::string>()(k);
+        }
+    };
 
     // forward
     template <typename ImplSelector, typename Key, typename Value>

@@ -28,30 +28,12 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#include "set2/set_insdel_string.h"
+#include "set_insdel_string.h"
+#include "set_type_feldman_hashset.h"
 
-namespace set2 {
-    CPPUNIT_TEST_SUITE_REGISTRATION( Set_InsDel_string );
+namespace set {
 
-    void Set_InsDel_string::setUpParams( const CppUnitMini::TestCfg& cfg )
-    {
-        c_nSetSize = cfg.getSizeT("MapSize", c_nSetSize );
-        c_nInsertThreadCount = cfg.getSizeT("InsertThreadCount", c_nInsertThreadCount );
-        c_nDeleteThreadCount = cfg.getSizeT("DeleteThreadCount", c_nDeleteThreadCount );
-        c_nThreadPassCount = cfg.getSizeT("ThreadPassCount", c_nThreadPassCount );
-        c_nMaxLoadFactor = cfg.getSizeT("MaxLoadFactor", c_nMaxLoadFactor );
-        c_bPrintGCState = cfg.getBool("PrintGCStateFlag", c_bPrintGCState );
+    CDSSTRESS_FeldmanHashSet_stdhash( Set_InsDel_string, run_test_extract, std::string, size_t )
+    CDSSTRESS_FeldmanHashSet_city( Set_InsDel_string, run_test_extract, std::string, size_t )
 
-        c_nCuckooInitialSize = cfg.getSizeT("CuckooInitialSize", c_nCuckooInitialSize );
-        c_nCuckooProbesetSize = cfg.getSizeT("CuckooProbesetSize", c_nCuckooProbesetSize );
-        c_nCuckooProbesetThreshold = cfg.getSizeT("CuckooProbesetThreshold", c_nCuckooProbesetThreshold );
-
-        c_nFeldmanSet_HeadBits = cfg.getSizeT("FeldmanMapHeadBits", c_nFeldmanSet_HeadBits);
-        c_nFeldmanSet_ArrayBits = cfg.getSizeT("FeldmanMapArrayBits", c_nFeldmanSet_ArrayBits);
-
-        if ( c_nInsertThreadCount == 0 )
-            c_nInsertThreadCount = std::thread::hardware_concurrency();
-        if ( c_nDeleteThreadCount == 0 )
-            c_nDeleteThreadCount = std::thread::hardware_concurrency();
-    }
-} // namespace set2
+} // namespace set

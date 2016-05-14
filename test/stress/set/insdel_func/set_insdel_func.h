@@ -136,7 +136,6 @@ namespace set {
         public:
             size_t  m_nInsertSuccess = 0;
             size_t  m_nInsertFailed = 0;
-
             size_t  m_nTestFunctorRef = 0;
 
         public:
@@ -349,7 +348,6 @@ namespace set {
         public:
             size_t  m_nDeleteSuccess = 0;
             size_t  m_nDeleteFailed = 0;
-
             size_t  m_nValueSuccess = 0;
             size_t  m_nValueFailed = 0;
 

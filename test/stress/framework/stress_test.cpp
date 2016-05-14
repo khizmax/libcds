@@ -28,6 +28,8 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <fstream>
+#include <iostream>
 #include <cds_test/stress_test.h>
 
 namespace cds_test {
@@ -40,4 +42,33 @@ namespace cds_test {
         static property_stream s_prop_stream;
         return s_prop_stream;
     }
+
+    /*static*/ std::vector<std::string> stress_fixture::load_dictionary()
+    {
+        std::vector<std::string> arrString;
+
+        std::ifstream s;
+        char const* filename = "./dictionary.txt";
+        s.open( filename );
+        if ( !s.is_open() ) {
+            std::cerr << "WARNING: Cannot open test file " << filename << std::endl;
+            return arrString;
+        }
+
+        std::string line;
+        std::getline( s, line );
+
+        arrString.reserve( std::stoul( line ));
+
+        while ( !s.eof() ) {
+            std::getline( s, line );
+            if ( !line.empty() )
+                arrString.push_back( std::move( line ));
+        }
+
+        s.close();
+
+        return arrString;
+    }
+
 } // namespace

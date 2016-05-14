@@ -33,6 +33,6 @@
 
 namespace set {
 
-    CDSSTRESS_FeldmanHashSet( Set_InsDel_func, run_test, size_t, value )
+    CDSSTRESS_FeldmanHashSet_fixed( Set_InsDel_func, run_test, size_t, value )
 
 } // namespace set

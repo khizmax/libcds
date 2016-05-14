@@ -1,6 +1,6 @@
 set(PACKAGE_NAME stress-set-insdelfind)
 
-set(CDSSTRESS_SET_DELODD_SOURCES
+set(CDSSTRESS_SET_INSDELFIND_SOURCES
     ../../main.cpp
     set_insdelfind.cpp
     set_insdelfind_cuckoo.cpp
@@ -18,7 +18,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-add_executable(${PACKAGE_NAME} ${CDSSTRESS_SET_DELODD_SOURCES} $<TARGET_OBJECTS:${CDSSTRESS_FRAMEWORK_LIBRARY}>)
+add_executable(${PACKAGE_NAME} ${CDSSTRESS_SET_INSDELFIND_SOURCES} $<TARGET_OBJECTS:${CDSSTRESS_FRAMEWORK_LIBRARY}>)
 target_link_libraries(${PACKAGE_NAME} 
     ${CDS_SHARED_LIBRARY}
     ${GTEST_LIBRARY}
