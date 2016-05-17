@@ -63,7 +63,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${PROJECT_SOURCE_DIR})
 
 # Component names for separate distribution in rpms, debs etc.
 set(LIBRARIES_COMPONENT lib)
@@ -88,12 +88,12 @@ target_link_libraries(${CDS_STATIC_LIBRARY} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 install(TARGETS ${CDS_SHARED_LIBRARY} DESTINATION lib COMPONENT ${LIBRARIES_COMPONENT})
 install(TARGETS ${CDS_STATIC_LIBRARY} DESTINATION lib COMPONENT ${LIBRARIES_COMPONENT})
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/cds DESTINATION include COMPONENT ${HEADERS_COMPONENT})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/cds DESTINATION include COMPONENT ${HEADERS_COMPONENT})
 
 if(WITH_TESTS)
   enable_testing()
-  add_subdirectory(${CMAKE_SOURCE_DIR}/test)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/test)
   message(STATUS "Build tests: activated")
 endif(WITH_TESTS)
 
@@ -103,7 +103,7 @@ set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_CONTACT "Max Khizhinsky <libcds-user@lists.sourceforge.net>")
 set(CPACK_PACKAGE_RELEASE 1)
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "cds")
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/build/cmake/description.txt")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/build/cmake/description.txt")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Library of concurrent data structures")
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}")
 set(DEPLOY_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}")
@@ -114,8 +114,8 @@ set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 # RPM specific
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_RPM_PACKAGE_RELEASE ${CPACK_PACKAGE_RELEASE})
-set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/build/cmake/post_install_script.sh")
-set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/build/cmake/post_uninstall_script.sh")
+set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${PROJECT_SOURCE_DIR}/build/cmake/post_install_script.sh")
+set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${PROJECT_SOURCE_DIR}/build/cmake/post_uninstall_script.sh")
 set(CPACK_RPM_PACKAGE_URL https://github.com/khizmax/libcds)
 set(CPACK_RPM_PACKAGE_LICENSE GPL)
 set(CPACK_RPM_PACKAGE_GROUP "System Environment/Base")
@@ -128,7 +128,7 @@ set(CPACK_RPM_devel_PACKAGE_REQUIRES "boost >= 1.50, cds-lib = ${PROJECT_VERSION
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost (>= 1.50)")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/khizmax/libcds")
-set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/build/cmake/post_install_script.sh;;${CMAKE_SOURCE_DIR}/build/cmake/post_uninstall_script.sh;" )
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${PROJECT_SOURCE_DIR}/build/cmake/post_install_script.sh;;${PROJECT_SOURCE_DIR}/build/cmake/post_uninstall_script.sh;" )
 
 # NSYS specific
 set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
