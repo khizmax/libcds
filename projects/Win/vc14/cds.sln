@@ -223,9 +223,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header File
 		..\..\..\test\stress\map\map_type_michael_list.h = ..\..\..\test\stress\map\map_type_michael_list.h
 		..\..\..\test\stress\map\map_type_skip_list.h = ..\..\..\test\stress\map\map_type_skip_list.h
 		..\..\..\test\stress\map\map_type_split_list.h = ..\..\..\test\stress\map\map_type_split_list.h
+		..\..\..\test\stress\map\map_type_std.h = ..\..\..\test\stress\map\map_type_std.h
+		..\..\..\test\stress\map\map_type_striped.h = ..\..\..\test\stress\map\map_type_striped.h
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-delodd", "stress-map-delodd.vcxproj", "{DD432BE7-0CA8-47C6-B861-943A036C18EF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-find_int", "stress-map-find_int.vcxproj", "{3F36B97B-8028-4335-ADDD-20B6B81F87AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -585,6 +589,18 @@ Global
 		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Release|Win32.Build.0 = Release|Win32
 		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Release|x64.ActiveCfg = Release|x64
 		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Release|x64.Build.0 = Release|x64
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Debug|Win32.Build.0 = Debug|Win32
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Debug|x64.ActiveCfg = Debug|x64
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Debug|x64.Build.0 = Debug|x64
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.DebugVLD|x64.Build.0 = DebugVLD|x64
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Release|Win32.ActiveCfg = Release|Win32
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Release|Win32.Build.0 = Release|Win32
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Release|x64.ActiveCfg = Release|x64
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -623,6 +639,7 @@ Global
 		{7D3EE35B-185D-40B5-88C2-7F9933426978} = {10E1FAF2-904D-405E-8AB5-6878A1B03346}
 		{2C41747C-6CC6-4AE8-9EB8-EB8B954BBDB4} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 		{DD432BE7-0CA8-47C6-B861-943A036C18EF} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
+		{3F36B97B-8028-4335-ADDD-20B6B81F87AF} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}

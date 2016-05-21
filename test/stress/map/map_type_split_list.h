@@ -74,7 +74,7 @@ namespace map {
     public:
         template <typename Config>
         SplitListMap( Config const& cfg)
-            : base_class( cfg.c_nMapSize, cfg.c_nLoadFactor )
+            : base_class( cfg.s_nMapSize, cfg.s_nLoadFactor )
         {}
 
         template <typename K>

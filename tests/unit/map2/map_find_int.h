@@ -262,7 +262,7 @@ namespace map2 {
         CDSUNIT_DECLARE_StdMap
         CDSUNIT_DECLARE_StdMap_NoLock
 
-        CPPUNIT_TEST_SUITE(Map_find_int)
+        CPPUNIT_TEST_SUITE_(Map_find_int, "map_find_int")
             CDSUNIT_TEST_MichaelMap
             CDSUNIT_TEST_MichaelMap_nogc
             CDSUNIT_TEST_SplitList

@@ -1,15 +1,5 @@
 
 CDSUNIT_MAP_SOURCES := \
-    tests/unit/map2/map_find_int.cpp \
-    tests/unit/map2/map_find_int_bronsonavltree.cpp \
-    tests/unit/map2/map_find_int_cuckoo.cpp \
-    tests/unit/map2/map_find_int_ellentree.cpp \
-    tests/unit/map2/map_find_int_michael.cpp \
-    tests/unit/map2/map_find_int_feldmanhashmap.cpp \
-    tests/unit/map2/map_find_int_skip.cpp \
-    tests/unit/map2/map_find_int_split.cpp \
-    tests/unit/map2/map_find_int_striped.cpp \
-    tests/unit/map2/map_find_int_std.cpp \
     tests/unit/map2/map_find_string.cpp \
     tests/unit/map2/map_find_string_bronsonavltree.cpp \
     tests/unit/map2/map_find_string_cuckoo.cpp \
@@ -87,11 +77,3 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insdelfind_split.cpp \
     tests/unit/map2/map_insdelfind_striped.cpp \
     tests/unit/map2/map_insdelfind_std.cpp \
-    tests/unit/map2/map_delodd.cpp \
-    tests/unit/map2/map_delodd_bronsonavltree.cpp \
-    tests/unit/map2/map_delodd_cuckoo.cpp \
-    tests/unit/map2/map_delodd_ellentree.cpp \
-    tests/unit/map2/map_delodd_michael.cpp \
-    tests/unit/map2/map_delodd_feldmanhashmap.cpp \
-    tests/unit/map2/map_delodd_skip.cpp \
-    tests/unit/map2/map_delodd_split.cpp \
