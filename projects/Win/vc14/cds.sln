@@ -93,11 +93,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cds_test", "cds_test", "{3A
 		..\..\..\test\include\cds_test\check_size.h = ..\..\..\test\include\cds_test\check_size.h
 		..\..\..\test\include\cds_test\fixture.h = ..\..\..\test\include\cds_test\fixture.h
 		..\..\..\test\include\cds_test\hash_func.h = ..\..\..\test\include\cds_test\hash_func.h
+		..\..\..\test\include\cds_test\stat_bronson_avltree_out.h = ..\..\..\test\include\cds_test\stat_bronson_avltree_out.h
 		..\..\..\test\include\cds_test\stat_cuckoo_out.h = ..\..\..\test\include\cds_test\stat_cuckoo_out.h
 		..\..\..\test\include\cds_test\stat_ellenbintree_out.h = ..\..\..\test\include\cds_test\stat_ellenbintree_out.h
 		..\..\..\test\include\cds_test\stat_feldman_hashset_out.h = ..\..\..\test\include\cds_test\stat_feldman_hashset_out.h
 		..\..\..\test\include\cds_test\stat_skiplist_out.h = ..\..\..\test\include\cds_test\stat_skiplist_out.h
 		..\..\..\test\include\cds_test\stat_splitlist_out.h = ..\..\..\test\include\cds_test\stat_splitlist_out.h
+		..\..\..\test\include\cds_test\stat_sync_monitor_out.h = ..\..\..\test\include\cds_test\stat_sync_monitor_out.h
 		..\..\..\test\include\cds_test\stress_test.h = ..\..\..\test\include\cds_test\stress_test.h
 		..\..\..\test\include\cds_test\thread.h = ..\..\..\test\include\cds_test\thread.h
 	EndProjectSection
@@ -206,6 +208,24 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-insdel-func", "stress-set-insdel_func.vcxproj", "{EE7A269E-83E4-402B-9C79-85058826E81E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-insdel-string", "stress-set-insdel_string.vcxproj", "{937D82C6-92AB-4C58-ACE8-F88E7063BFA9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "map", "map", "{7D3EE35B-185D-40B5-88C2-7F9933426978}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header Files", "{2C41747C-6CC6-4AE8-9EB8-EB8B954BBDB4}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\test\stress\map\map_type.h = ..\..\..\test\stress\map\map_type.h
+		..\..\..\test\stress\map\map_type_bronson_avltree.h = ..\..\..\test\stress\map\map_type_bronson_avltree.h
+		..\..\..\test\stress\map\map_type_cuckoo.h = ..\..\..\test\stress\map\map_type_cuckoo.h
+		..\..\..\test\stress\map\map_type_ellen_bintree.h = ..\..\..\test\stress\map\map_type_ellen_bintree.h
+		..\..\..\test\stress\map\map_type_feldman_hashmap.h = ..\..\..\test\stress\map\map_type_feldman_hashmap.h
+		..\..\..\test\stress\map\map_type_lazy_list.h = ..\..\..\test\stress\map\map_type_lazy_list.h
+		..\..\..\test\stress\map\map_type_michael.h = ..\..\..\test\stress\map\map_type_michael.h
+		..\..\..\test\stress\map\map_type_michael_list.h = ..\..\..\test\stress\map\map_type_michael_list.h
+		..\..\..\test\stress\map\map_type_skip_list.h = ..\..\..\test\stress\map\map_type_skip_list.h
+		..\..\..\test\stress\map\map_type_split_list.h = ..\..\..\test\stress\map\map_type_split_list.h
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-delodd", "stress-map-delodd.vcxproj", "{DD432BE7-0CA8-47C6-B861-943A036C18EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -553,6 +573,18 @@ Global
 		{937D82C6-92AB-4C58-ACE8-F88E7063BFA9}.Release|Win32.Build.0 = Release|Win32
 		{937D82C6-92AB-4C58-ACE8-F88E7063BFA9}.Release|x64.ActiveCfg = Release|x64
 		{937D82C6-92AB-4C58-ACE8-F88E7063BFA9}.Release|x64.Build.0 = Release|x64
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Debug|Win32.Build.0 = Debug|Win32
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Debug|x64.ActiveCfg = Debug|x64
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Debug|x64.Build.0 = Debug|x64
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.DebugVLD|x64.Build.0 = DebugVLD|x64
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Release|Win32.ActiveCfg = Release|Win32
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Release|Win32.Build.0 = Release|Win32
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Release|x64.ActiveCfg = Release|x64
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -588,6 +620,9 @@ Global
 		{133D1AEE-3BAF-42D1-B1AB-93D5239F4926} = {0D83E8C7-97D1-4BA1-928A-6846E7089652}
 		{EE7A269E-83E4-402B-9C79-85058826E81E} = {0D83E8C7-97D1-4BA1-928A-6846E7089652}
 		{937D82C6-92AB-4C58-ACE8-F88E7063BFA9} = {0D83E8C7-97D1-4BA1-928A-6846E7089652}
+		{7D3EE35B-185D-40B5-88C2-7F9933426978} = {10E1FAF2-904D-405E-8AB5-6878A1B03346}
+		{2C41747C-6CC6-4AE8-9EB8-EB8B954BBDB4} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
+		{DD432BE7-0CA8-47C6-B861-943A036C18EF} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}

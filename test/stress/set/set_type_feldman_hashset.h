@@ -314,7 +314,8 @@ namespace set {
         std::vector< cds::intrusive::feldman_hashset::level_statistics > level_stat;
         s.get_level_statistics( level_stat );
 
-        o << s.statistics() << level_stat;
+        o << s.statistics()
+          << level_stat;
     }
 } // namespace set
 

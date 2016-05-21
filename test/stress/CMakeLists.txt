@@ -14,6 +14,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/map)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/set)
@@ -21,6 +22,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)
 
 add_custom_target( stress-all
     DEPENDS
+        stress-map
         stress-pqueue
         stress-queue
         stress-stack
