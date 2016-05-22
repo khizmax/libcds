@@ -67,7 +67,8 @@ set(CDS_TESTHDR_MAP
     map/hdr_striped_map_reg.cpp)
 
 set(CDS_TESTHDR_DEQUE
-    deque/hdr_fcdeque.cpp)
+    deque/hdr_fcdeque.cpp
+    deque/hdr_tsdeque.cpp)
 
 set(CDS_TESTHDR_LIST
     list/hdr_lazy_dhp.cpp
