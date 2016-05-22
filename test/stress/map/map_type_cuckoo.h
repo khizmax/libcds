@@ -34,6 +34,7 @@
 #include "map_type.h"
 #include <cds/container/cuckoo_map.h>
 #include <cds_test/stat_cuckoo_out.h>
+#include <cds_test/hash_func.h>
 
 namespace map {
 
@@ -184,6 +185,104 @@ namespace map {
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_storehash>> CuckooStripedMap_vector_ord_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_storehash>> CuckooRefinableMap_vector_ord_storehash;
 
+#if CDS_BUILD_BITS == 64
+
+        struct traits_CuckooMap_list_unord_city64:
+            public cc::cuckoo::make_traits <
+                cc::cuckoo::probeset_type< cc::cuckoo::list >
+                , co::equal_to< equal_to >
+                , co::hash< std::tuple< cds_test::city64, hash2 > >
+            > ::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord_city64>> CuckooStripedMap_list_unord_city64;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord_city64>> CuckooRefinableMap_list_unord_city64;
+
+        struct traits_CuckooMap_list_unord_city64_stat: public traits_CuckooMap_list_unord_city64
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord_city64_stat>> CuckooStripedMap_list_unord_city64_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord_city64_stat>> CuckooRefinableMap_list_unord_city64_stat;
+
+        struct traits_CuckooMap_list_unord_city64_storehash: public traits_CuckooMap_list_unord_city64
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord_city64_storehash>> CuckooStripedMap_list_unord_city64_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord_city64_storehash>> CuckooRefinableMap_list_unord_city64_storehash;
+
+        struct traits_CuckooMap_list_ord_city64:
+            public cc::cuckoo::make_traits <
+            cc::cuckoo::probeset_type< cc::cuckoo::list >
+            , co::compare< compare >
+            , co::hash< std::tuple< cds_test::city64, hash2 > >
+            >::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord_city64>> CuckooStripedMap_list_ord_city64;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord_city64>> CuckooRefinableMap_list_ord_city64;
+
+        struct traits_CuckooMap_list_ord_city64_stat: public traits_CuckooMap_list_ord_city64
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord_city64_stat>> CuckooStripedMap_list_ord_city64_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord_city64_stat>> CuckooRefinableMap_list_ord_city64_stat;
+
+        struct traits_CuckooMap_list_ord_city64_storehash: public traits_CuckooMap_list_ord_city64
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord_city64_storehash>> CuckooStripedMap_list_ord_city64_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord_city64_storehash>> CuckooRefinableMap_list_ord_city64_storehash;
+
+        struct traits_CuckooMap_vector_unord_city64:
+            public cc::cuckoo::make_traits <
+            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
+            , co::equal_to< equal_to >
+            , co::hash< std::tuple< cds_test::city64, hash2 > >
+            >::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord_city64>> CuckooStripedMap_vector_unord_city64;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord_city64>> CuckooRefinableMap_vector_unord_city64;
+
+        struct traits_CuckooMap_vector_unord_city64_stat: public traits_CuckooMap_vector_unord_city64
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord_city64_stat>> CuckooStripedMap_vector_unord_city64_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord_city64_stat>> CuckooRefinableMap_vector_unord_city64_stat;
+
+        struct traits_CuckooMap_vector_unord_city64_storehash: public traits_CuckooMap_vector_unord_city64
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord_city64_storehash>> CuckooStripedMap_vector_unord_city64_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord_city64_storehash>> CuckooRefinableMap_vector_unord_city64_storehash;
+
+        struct traits_CuckooMap_vector_ord_city64:
+            public cc::cuckoo::make_traits <
+            cc::cuckoo::probeset_type< cc::cuckoo::vector<4> >
+            , co::compare< compare >
+            , co::hash< std::tuple< cds_test::city64, hash2 > >
+            >::type
+        {};
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_city64>> CuckooStripedMap_vector_ord_city64;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_city64>> CuckooRefinableMap_vector_ord_city64;
+
+        struct traits_CuckooMap_vector_ord_city64_stat: public traits_CuckooMap_vector_ord_city64
+        {
+            typedef cc::cuckoo::stat stat;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_city64_stat>> CuckooStripedMap_vector_ord_city64_stat;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_city64_stat>> CuckooRefinableMap_vector_ord_city64_stat;
+
+        struct traits_CuckooMap_vector_ord_city64_storehash: public traits_CuckooMap_vector_ord_city64
+        {
+            static CDS_CONSTEXPR const bool store_hash = true;
+        };
+        typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_city64_storehash>> CuckooStripedMap_vector_ord_city64_storehash;
+        typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_city64_storehash>> CuckooRefinableMap_vector_ord_city64_storehash;
+#endif // CDS_BUILD_BITS == 64
     };
 
     template <typename Key, typename T, typename Traits >
@@ -235,4 +334,31 @@ namespace map {
     CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_vector_ord_storehash,    key_type, value_type ) \
     CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_vector_ord_storehash,  key_type, value_type )
 
+#if CDS_BUILD_BITS == 64
+#   define CDSSTRESS_CuckooMap_city64( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_list_unord_city64,              key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_list_unord_city64,            key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_list_unord_city64_stat,         key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_list_unord_city64_stat,       key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_list_unord_city64_storehash,    key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_list_unord_city64_storehash,  key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_list_ord_city64,                key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_list_ord_city64,              key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_list_ord_city64_stat,           key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_list_ord_city64_stat,         key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_list_ord_city64_storehash,      key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_list_ord_city64_storehash,    key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_vector_unord_city64,            key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_vector_unord_city64,          key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_vector_unord_city64_stat,       key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_vector_unord_city64_stat,     key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_vector_unord_city64_storehash,  key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_vector_unord_city64_storehash, key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_vector_ord_city64,              key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_vector_ord_city64,            key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_vector_ord_city64_stat,         key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_vector_ord_city64_stat,       key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooStripedMap_vector_ord_city64_storehash,    key_type, value_type ) \
+        CDSSTRESS_CuckooMap_case( fixture, test_case, CuckooRefinableMap_vector_ord_city64_storehash,  key_type, value_type )
+#endif
 #endif // ifndef CDSUNIT_MAP_TYPE_CUCKOO_H

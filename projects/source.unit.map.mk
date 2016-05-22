@@ -1,15 +1,5 @@
 
 CDSUNIT_MAP_SOURCES := \
-    tests/unit/map2/map_find_string.cpp \
-    tests/unit/map2/map_find_string_bronsonavltree.cpp \
-    tests/unit/map2/map_find_string_cuckoo.cpp \
-    tests/unit/map2/map_find_string_ellentree.cpp \
-    tests/unit/map2/map_find_string_michael.cpp \
-    tests/unit/map2/map_find_string_feldmanhashmap.cpp \
-    tests/unit/map2/map_find_string_skip.cpp \
-    tests/unit/map2/map_find_string_split.cpp \
-    tests/unit/map2/map_find_string_striped.cpp \
-    tests/unit/map2/map_find_string_std.cpp \
     tests/unit/map2/map_insfind_int.cpp \
     tests/unit/map2/map_insfind_int_bronsonavltree.cpp \
     tests/unit/map2/map_insfind_int_cuckoo.cpp \

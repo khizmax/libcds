@@ -15,19 +15,20 @@ namespace cds_test {
     class city32 {
     public:
         typedef uint32_t hash_type;
+        typedef hash_type result_type;
 
-        hash_type operator()( void const * pBuf, size_t len )
+        hash_type operator()( void const * pBuf, size_t len ) const
         {
             return CityHash32( reinterpret_cast<char const *>( pBuf ), len );
         }
 
-        hash_type operator()( std::string const& s )
+        hash_type operator()( std::string const& s ) const
         {
             return CityHash32( s.c_str(), s.length() );
         }
 
         template <typename T>
-        hash_type operator()( T const& s )
+        hash_type operator()( T const& s ) const
         {
             return CityHash32( reinterpret_cast<char const *>( &s ), sizeof(s));
         }
@@ -44,19 +45,20 @@ namespace cds_test {
     class city64 {
     public:
         typedef uint64_t hash_type;
+        typedef hash_type result_type;
 
-        hash_type operator()( void const * pBuf, size_t len )
+        hash_type operator()( void const * pBuf, size_t len ) const
         {
             return CityHash64( reinterpret_cast<char const *>( pBuf ), len );
         }
 
-        hash_type operator()( std::string const& s )
+        hash_type operator()( std::string const& s ) const
         {
             return CityHash64( s.c_str(), s.length() );
         }
 
         template <typename T>
-        hash_type operator()( T const& s )
+        hash_type operator()( T const& s ) const
         {
             return CityHash64( reinterpret_cast<char const *>( &s ), sizeof(s));
         }
@@ -73,19 +75,20 @@ namespace cds_test {
     class city128 {
     public:
         typedef uint128 hash_type;
+        typedef hash_type result_type;
 
-        hash_type operator()( void const * pBuf, size_t len )
+        hash_type operator()( void const * pBuf, size_t len ) const
         {
             return CityHash128( reinterpret_cast<char const *>( pBuf ), len );
         }
 
-        hash_type operator()( std::string const& s )
+        hash_type operator()( std::string const& s ) const
         {
             return CityHash128( s.c_str(), s.length() );
         }
 
         template <typename T>
-        hash_type operator()( T const& s )
+        hash_type operator()( T const& s ) const
         {
             return CityHash128( reinterpret_cast<char const *>( &s ), sizeof(s));
         }

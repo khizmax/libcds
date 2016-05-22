@@ -218,24 +218,28 @@ namespace map {
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_sht_stdhash_stat, key_type, value_type ) \
 
 #   if CDS_BUILD_BITS == 64
-#       define CDSSTRESS_FeldmanHashMap_city_SHRCU( fixture, test_case, key_type, value_type ) \
+#       define CDSSTRESS_FeldmanHashMap_city64_SHRCU( fixture, test_case, key_type, value_type ) \
             CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_shb_city64, key_type, value_type ) \
             CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_sht_city64, key_type, value_type ) \
             CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_shb_city64_stat, key_type, value_type ) \
             CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_sht_city64_stat, key_type, value_type ) \
-            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_shb_city128, key_type, value_type ) \
-            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_sht_city128, key_type, value_type ) \
-            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_shb_city128_stat, key_type, value_type ) \
-            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_sht_city128_stat, key_type, value_type ) \
+
+#       define CDSSTRESS_FeldmanHashMap_city128_SHRCU( fixture, test_case, key_type, value_type ) \
+            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_shb_city64, key_type, value_type ) \
+            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_sht_city64, key_type, value_type ) \
+            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_shb_city64_stat, key_type, value_type ) \
+            CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_sht_city64_stat, key_type, value_type ) \
 
 #   else
-#       define CDSSTRESS_FeldmanHashMap_city_SHRCU( fixture, test_case, key_type, value_type )
+#       define CDSSTRESS_FeldmanHashMap_city64_SHRCU( fixture, test_case, key_type, value_type )
+#       define CDSSTRESS_FeldmanHashMap_city128_SHRCU( fixture, test_case, key_type, value_type )
 #   endif
 
 #else
 #   define CDSSTRESS_FeldmanHashMap_fixed_SHRCU( fixture, test_case, key_type, value_type )
 #   define CDSSTRESS_FeldmanHashMap_stdhash_SHRCU( fixture, test_case, key_type, value_type )
-#   define CDSSTRESS_FeldmanHashMap_city_SHRCU( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_FeldmanHashMap_city64_SHRCU( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_FeldmanHashMap_city128_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
 #define CDSSTRESS_FeldmanHashMap_fixed( fixture, test_case, key_type, value_type ) \
@@ -266,7 +270,7 @@ namespace map {
 
 
 #if CDS_BUILD_BITS == 64
-#   define CDSSTRESS_FeldmanHashMap_city( fixture, test_case, key_type, value_type ) \
+#   define CDSSTRESS_FeldmanHashMap_city64( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_hp_city64, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_dhp_city64, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpi_city64, key_type, value_type ) \
@@ -277,6 +281,9 @@ namespace map {
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpi_city64_stat, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpb_city64_stat, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpt_city64_stat, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashMap_city64_SHRCU( fixture, test_case, key_type, value_type )
+
+#   define CDSSTRESS_FeldmanHashMap_city128( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_hp_city128, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_dhp_city128, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpi_city128, key_type, value_type ) \
@@ -287,9 +294,15 @@ namespace map {
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpi_city128_stat, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpb_city128_stat, key_type, value_type ) \
         CDSSTRESS_FeldmanHashMap_case( fixture, test_case, FeldmanHashMap_rcu_gpt_city128_stat, key_type, value_type ) \
-        CDSSTRESS_FeldmanHashMap_city_SHRCU( fixture, test_case, key_type, value_type )
+        CDSSTRESS_FeldmanHashMap_city128_SHRCU( fixture, test_case, key_type, value_type )
+
+#   define CDSSTRESS_FeldmanHashMap_city( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashMap_city64( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashMap_city128( fixture, test_case, key_type, value_type )
 
 #else
+#   define CDSSTRESS_FeldmanHashMap_city64( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_FeldmanHashMap_city128( fixture, test_case, key_type, value_type )
 #   define CDSSTRESS_FeldmanHashMap_city( fixture, test_case, key_type, value_type )
 #endif
 
