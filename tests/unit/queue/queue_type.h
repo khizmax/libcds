@@ -41,6 +41,7 @@
 #include <cds/container/fcqueue.h>
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
+#include <cds/container/williams_queue.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -533,6 +534,15 @@ namespace queue {
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex >  SegmentedQueue_DHP_mutex;
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex_padding >  SegmentedQueue_DHP_mutex_padding;
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_DHP_mutex_stat;
+		
+		// WilliamsQueue
+		typedef cds::container::WilliamsQueue< Value > WilliamsQueue_default;
+
+		struct traits_WilliamsQueue_ic : public cds::container::williams_queue::traits
+		{
+			typedef cds::atomicity::item_counter item_counter;
+		};
+		typedef cds::container::WilliamsQueue< Value, traits_WilliamsQueue_ic > WilliamsQueue_ic;
     };
 }
 

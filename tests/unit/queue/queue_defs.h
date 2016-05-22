@@ -205,6 +205,10 @@
     CPPUNIT_TEST(RWQueue_Spin_ic) \
     CPPUNIT_TEST(RWQueue_mutex)
 
+#define CDSUNIT_TEST_WilliamsQueue \
+    CPPUNIT_TEST( WilliamsQueue_default ) \
+    CPPUNIT_TEST( WilliamsQueue_ic )
+
 // TsigasCycleQueue
 #define CDSUNIT_DECLARE_TsigasCycleQueue( ITEM_TYPE ) \
     TEST_BOUNDED(TsigasCycleQueue_dyn, ITEM_TYPE) \
@@ -228,6 +232,11 @@
     CPPUNIT_TEST(VyukovMPMCCycleQueue_dyn) \
     CPPUNIT_TEST(VyukovMPMCCycleQueue_dyn_michaelAlloc) \
     CPPUNIT_TEST(VyukovMPMCCycleQueue_dyn_ic) \
+	
+// WilliamsQueue
+#define CDSUNIT_DECLARE_WilliamsQueue( ITEM_TYPE ) \
+    TEST_CASE( WilliamsQueue_default, ITEM_TYPE ) \
+    TEST_CASE( WilliamsQueue_ic, ITEM_TYPE )
 
 // SegmentedQueue
 #define CDSUNIT_DECLARE_SegmentedQueue( ITEM_TYPE ) \

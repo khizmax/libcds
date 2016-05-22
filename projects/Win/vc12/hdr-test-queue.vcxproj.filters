@@ -83,6 +83,9 @@
     <ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_tsigas_cycle_queue.cpp">
       <Filter>container</Filter>
     </ClCompile>
+	<ClCompile Include="..\..\..\tests\test-hdr\queue\hdr_williams_queue.cpp">
+      <Filter>container</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\tests\test-hdr\queue\hdr_intrusive_msqueue.h">
