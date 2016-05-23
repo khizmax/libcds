@@ -1,32 +1,4 @@
-/*
-    This file is a part of libcds - Concurrent Data Structures library
-
-    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
-
-    Source code repo: http://github.com/khizmax/libcds/
-    Download: http://sourceforge.net/projects/libcds/files/
-    
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
-*/
+//$$CDS-header$$
 
 #include "cppunit/thread.h"
 #include "queue/queue_type.h"
@@ -48,13 +20,32 @@ namespace queue {
         static size_t s_nQueueSize = 10000000;
 
         struct SimpleValue {
-            size_t      nNo;
-            size_t      nThread;
+            size_t    nNo;
+            size_t nThread;
 
-            SimpleValue() {}
+            SimpleValue(): nNo(0) {}
             SimpleValue( size_t n ): nNo(n) {}
+            SimpleValue(const SimpleValue &object) :nNo(object.nNo), nThread(object.nThread){}
+
             size_t getNo() const { return  nNo; }
         };
+#define array_size  10000
+        struct HeavyValue {
+            size_t    nNo;
+            size_t nThread;
+            static int pop_buff[array_size] ;
+
+            HeavyValue() : nNo(0) {}
+            HeavyValue(size_t n) : nNo(n) {}
+
+            HeavyValue(const HeavyValue &object):nNo(object.nNo), nThread(object.nThread){
+                for (int i = 0; i < array_size; ++i)
+                    this->pop_buff[i] = (int)std::sqrt(object.pop_buff[i]);
+            }
+            size_t getNo() const { return  nNo; }
+        };
+        int HeavyValue::pop_buff[]= {};
+#undef array_size
     }
 
     using namespace ns_Queue_Random;
@@ -127,7 +118,7 @@ namespace queue {
                 size_t const nThreadCount = s_nThreadCount;
                 size_t const nTotalPush = getTest().m_nThreadPushCount;
 
-                SimpleValue node;
+                typename Queue::value_type node;
 
                 m_fTime = m_Timer.duration();
 
@@ -164,7 +155,7 @@ namespace queue {
 
             bool pop( size_t nThreadCount )
             {
-                SimpleValue node;
+                typename Queue::value_type node;
                 node.nThread = -1;
                 node.nNo = -1;
                 if ( m_Queue.pop( node )) {
@@ -295,30 +286,10 @@ namespace queue {
         }
 
     protected:
-        CDSUNIT_DECLARE_MoirQueue( SimpleValue )
-        CDSUNIT_DECLARE_MSQueue( SimpleValue )
-        CDSUNIT_DECLARE_OptimisticQueue( SimpleValue )
-        CDSUNIT_DECLARE_BasketQueue( SimpleValue )
-        CDSUNIT_DECLARE_FCQueue( SimpleValue )
-        CDSUNIT_DECLARE_FCDeque( SimpleValue )
-        CDSUNIT_DECLARE_SegmentedQueue( SimpleValue )
-        CDSUNIT_DECLARE_RWQueue( SimpleValue )
-        CDSUNIT_DECLARE_TsigasCycleQueue( SimpleValue )
-        CDSUNIT_DECLARE_VyukovMPMCCycleQueue( SimpleValue )
-        CDSUNIT_DECLARE_StdQueue( SimpleValue )
+          CDSUNIT_DECLARE_FCQueue( HeavyValue )
 
         CPPUNIT_TEST_SUITE(Queue_Random)
-            CDSUNIT_TEST_MoirQueue
-            CDSUNIT_TEST_MSQueue
-            CDSUNIT_TEST_OptimisticQueue
-            CDSUNIT_TEST_BasketQueue
             CDSUNIT_TEST_FCQueue
-            CDSUNIT_TEST_FCDeque
-            CDSUNIT_TEST_SegmentedQueue
-            CDSUNIT_TEST_RWQueue
-            CDSUNIT_TEST_TsigasCycleQueue
-            CDSUNIT_TEST_VyukovMPMCCycleQueue
-            CDSUNIT_TEST_StdQueue
         CPPUNIT_TEST_SUITE_END();
     };
 

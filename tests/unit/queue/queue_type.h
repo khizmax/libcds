@@ -1,32 +1,4 @@
-/*
-    This file is a part of libcds - Concurrent Data Structures library
-
-    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
-
-    Source code repo: http://github.com/khizmax/libcds/
-    Download: http://sourceforge.net/projects/libcds/files/
-    
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
-*/
+//$$CDS-header$$
 
 #ifndef CDSUNIT_QUEUE_TYPES_H
 #define CDSUNIT_QUEUE_TYPES_H
@@ -421,12 +393,26 @@ namespace queue {
         {};
         class traits_FCQueue_elimination_stat:
             public cds::container::fcqueue::make_traits<
-                cds::opt::enable_elimination< true >
+                cds::opt::enable_elimination< false >
                 ,cds::opt::stat< cds::container::fcqueue::stat<> >
             >::type
         {};
 
-        typedef cds::container::FCQueue< Value > FCQueue_deque;
+
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat, cds::algo::flat_combining::BareWaitStartegy > FCQueue_deque;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat > FCQueue_backof;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat, cds::algo::flat_combining::WaitOneMutexOneCondVarStrategy >
+      FCQueue_oneMutex_oneCondVar;
+		typedef cds::container::FCQueue< Value, std::queue<Value>,
+      traits_FCQueue_elimination_stat, cds::algo::flat_combining::WaitStratygyBaseOnSingleMutexMutlLocalCondVars >
+      FCQueue_singleMutex_MultCondVar;
+		 typedef cds::container::FCQueue< Value, std::queue<Value>,
+       traits_FCQueue_elimination_stat, cds::algo::flat_combining::AutoWaitStrategy > FCQueue_autoWaitStrategy;
+
+
         typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
         typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque_elimination_stat;
 
@@ -610,23 +596,28 @@ namespace std {
     template <typename Counter>
     static inline std::ostream& operator <<( std::ostream& o, cds::container::fcqueue::stat<Counter> const& s )
     {
-            return o << "\tStatistics:\n"
-                << "\t                    Push: " << s.m_nEnqueue.get()           << "\n"
-                << "\t                PushMove: " << s.m_nEnqMove.get()           << "\n"
-                << "\t                     Pop: " << s.m_nDequeue.get()           << "\n"
-                << "\t               FailedPop: " << s.m_nFailedDeq.get()         << "\n"
-                << "\t  Collided push/pop pair: " << s.m_nCollided.get()          << "\n"
-                << "\tFlat combining statistics:\n"
-                << "\t        Combining factor: " << s.combining_factor()         << "\n"
-                << "\t         Operation count: " << s.m_nOperationCount.get()    << "\n"
-                << "\t      Combine call count: " << s.m_nCombiningCount.get()    << "\n"
-                << "\t        Compact pub-list: " << s.m_nCompactPublicationList.get() << "\n"
-                << "\t   Deactivate pub-record: " << s.m_nDeactivatePubRecord.get()    << "\n"
-                << "\t     Activate pub-record: " << s.m_nActivatePubRecord.get() << "\n"
-                << "\t       Create pub-record: " << s.m_nPubRecordCreated.get()  << "\n"
-                << "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get()  << "\n"
-                << "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get()<< "\n"
-                << "\t      Release pub-record: " << s.m_nReleasePubRecCount.get()<< "\n";
+		int redundatOperation = (int)s.m_nIterationCount.get() - (int)s.m_nWaitForCombiningCount.get();
+
+		return o << "\tStatistics:\n"
+			<< "\t                    Push: " << s.m_nEnqueue.get() << "\n"
+			<< "\t                PushMove: " << s.m_nEnqMove.get() << "\n"
+			<< "\t                     Pop: " << s.m_nDequeue.get() << "\n"
+			<< "\t               FailedPop: " << s.m_nFailedDeq.get() << "\n"
+			<< "\t  Collided push/pop pair: " << s.m_nCollided.get() << "\n"
+			<< "\tFlat combining statistics:\n"
+			<< "\t        Combining factor: " << s.combining_factor() << "\n"
+			<< "\t         Operation count: " << s.m_nOperationCount.get() << "\n"
+			<< "\t      Combine call count: " << s.m_nCombiningCount.get() << "\n"
+			<< "\t        Compact pub-list: " << s.m_nCompactPublicationList.get() << "\n"
+			<< "\t   Deactivate pub-record: " << s.m_nDeactivatePubRecord.get() << "\n"
+			<< "\t     Activate pub-record: " << s.m_nActivatePubRecord.get() << "\n"
+			<< "\t       Create pub-record: " << s.m_nPubRecordCreated.get() << "\n"
+			<< "\t       Delete pub-record: " << s.m_nPubRecordDeteted.get() << "\n"
+			<< "\t      Acquire pub-record: " << s.m_nAcquirePubRecCount.get() << "\n"
+			<< "\t      Release pub-record: " << s.m_nReleasePubRecCount.get() << "\n"
+			<< "\t  WaitForCombining calls: " << s.m_nWaitForCombiningCount.get() << "\n"
+			<< "\t         Loop iterations: " << s.m_nIterationCount.get() << "\n"
+			<< "\t    Redundant iterations: " << ((redundatOperation < 0) ? 0 : redundatOperation) << "\n";
     }
 
     static inline std::ostream& operator <<( std::ostream& o, cds::container::fcqueue::empty_stat const& /*s*/ )

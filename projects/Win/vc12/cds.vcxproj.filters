@@ -452,6 +452,9 @@
     <ClInclude Include="..\..\..\cds\opt\hash.h">
       <Filter>Header Files\cds\opt</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\opt\make_options_var.h">
+      <Filter>Header Files\cds\opt</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\cds\opt\options.h">
       <Filter>Header Files\cds\opt</Filter>
     </ClInclude>
@@ -1145,6 +1148,12 @@
     <ClInclude Include="..\..\..\cds\algo\atomic.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\bronson_avltree_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\bronson_avltree_rcu.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\bronson_avltree_base.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
@@ -1178,53 +1187,8 @@
     <ClInclude Include="..\..\..\cds\intrusive\details\raw_ptr_disposer.h">
       <Filter>Header Files\cds\intrusive\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\impl\feldman_hashset.h">
-      <Filter>Header Files\cds\intrusive\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\details\feldman_hashset_base.h">
-      <Filter>Header Files\cds\intrusive\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\feldman_hashset_hp.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\feldman_hashset_dhp.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\algo\split_bitstring.h">
+    <ClInclude Include="..\..\..\cds\algo\wait_strategy.h">
       <Filter>Header Files\cds\algo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\details\feldman_hashset_base.h">
-      <Filter>Header Files\cds\container\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\impl\feldman_hashset.h">
-      <Filter>Header Files\cds\container\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\feldman_hashset_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\feldman_hashset_dhp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\details\feldman_hashmap_base.h">
-      <Filter>Header Files\cds\container\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\impl\feldman_hashmap.h">
-      <Filter>Header Files\cds\container\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\feldman_hashmap_dhp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\feldman_hashmap_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\feldman_hashset_rcu.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\feldman_hashset_rcu.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\feldman_hashmap_rcu.h">
-      <Filter>Header Files\cds\container</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
