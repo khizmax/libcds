@@ -10,15 +10,6 @@ CDSUNIT_MAP_SOURCES := \
     tests/unit/map2/map_insfind_int_split.cpp \
     tests/unit/map2/map_insfind_int_striped.cpp \
     tests/unit/map2/map_insfind_int_std.cpp \
-    tests/unit/map2/map_insdel_func.cpp \
-    tests/unit/map2/map_insdel_func_bronsonavltree.cpp \
-    tests/unit/map2/map_insdel_func_cuckoo.cpp \
-    tests/unit/map2/map_insdel_func_ellentree.cpp \
-    tests/unit/map2/map_insdel_func_michael.cpp \
-    tests/unit/map2/map_insdel_func_feldmanhashmap.cpp \
-    tests/unit/map2/map_insdel_func_skip.cpp \
-    tests/unit/map2/map_insdel_func_split.cpp \
-    tests/unit/map2/map_insdel_func_striped.cpp \
     tests/unit/map2/map_insdel_int.cpp \
     tests/unit/map2/map_insdel_int_bronsonavltree.cpp \
     tests/unit/map2/map_insdel_int_cuckoo.cpp \

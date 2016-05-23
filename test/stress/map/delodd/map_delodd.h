@@ -395,9 +395,6 @@ namespace map {
             {
                 Map& rMap = m_Map;
 
-                m_nDeleteSuccess =
-                    m_nDeleteFailed = 0;
-
                 typename Map::guarded_ptr gp;
                 Map_DelOdd& fixture = pool().template fixture<Map_DelOdd>();
                 size_t const nInsThreadCount = s_nInsThreadCount;
