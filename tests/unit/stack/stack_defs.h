@@ -192,4 +192,14 @@
     CPPUNIT_TEST( StdStack_List_Mutex   ) \
     CPPUNIT_TEST( StdStack_List_Spin    )
 
+
+#define CDSUNIT_DECLARE_WilliamsStack \
+    TEST_CASE( WilliamsStack_default) \
+	TEST_CASE( WilliamsStack_item_counter)
+
+#define CDSUNIT_TEST_WilliamsStack \
+    CPPUNIT_TEST( WilliamsStack_default) \
+	CPPUNIT_TEST( WilliamsStack_item_counter)
+    
+
 #endif // #ifndef CDSUNIT_STACK_DEFS_H

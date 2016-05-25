@@ -291,6 +291,7 @@ namespace stack {
         CDSUNIT_DECLARE_FCStack
         CDSUNIT_DECLARE_FCDeque
         CDSUNIT_DECLARE_StdStack
+		CDSUNIT_DECLARE_WilliamsStack
 
         CPPUNIT_TEST_SUITE(Stack_PushPop)
             CDSUNIT_TEST_TreiberStack
@@ -298,7 +299,8 @@ namespace stack {
             CDSUNIT_TEST_FCStack
             CDSUNIT_TEST_FCDeque
             CDSUNIT_TEST_StdStack
-        CPPUNIT_TEST_SUITE_END();
+			CDSUNIT_TEST_WilliamsStack
+		CPPUNIT_TEST_SUITE_END();
     };
 } // namespace stack
 
