@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds.vcxproj", "{408FE9BC-44F0-4E6A-89FA-D6F952584239}"
 EndProject
@@ -130,6 +130,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-queue", "stress-queu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-pqueue", "stress-pqueue.vcxproj", "{51AC349E-B365-4FCF-8778-17A1534E4584}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
 EndProject
@@ -192,10 +193,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header File
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-insdelfind", "stress-set-insdelfind.vcxproj", "{133D1AEE-3BAF-42D1-B1AB-93D5239F4926}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-insdel-func", "stress-set-insdel_func.vcxproj", "{EE7A269E-83E4-402B-9C79-85058826E81E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-insdel-string", "stress-set-insdel_string.vcxproj", "{937D82C6-92AB-4C58-ACE8-F88E7063BFA9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "map", "map", "{7D3EE35B-185D-40B5-88C2-7F9933426978}"
 EndProject
@@ -216,16 +229,46 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header File
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-delodd", "stress-map-delodd.vcxproj", "{DD432BE7-0CA8-47C6-B861-943A036C18EF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-find_int", "stress-map-find_int.vcxproj", "{3F36B97B-8028-4335-ADDD-20B6B81F87AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-find_string", "stress-map-find_string.vcxproj", "{C127CD80-E8A7-47E4-B7EC-1709D2188982}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-insdel-func", "stress-map-insdel-func.vcxproj", "{34FA4110-F17B-4AD0-A4C9-C91B92AD06E4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-insdel-int", "stress-map-insdel-int.vcxproj", "{46649F79-2919-4B4C-B243-08C724901F58}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-insdel-string", "stress-map-insdel-string.vcxproj", "{2D0E651D-058D-4D69-9A44-12149E6CA5BE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-insdel-item-int", "stress-map-insdel-item-int.vcxproj", "{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -621,6 +664,18 @@ Global
 		{2D0E651D-058D-4D69-9A44-12149E6CA5BE}.Release|Win32.Build.0 = Release|Win32
 		{2D0E651D-058D-4D69-9A44-12149E6CA5BE}.Release|x64.ActiveCfg = Release|x64
 		{2D0E651D-058D-4D69-9A44-12149E6CA5BE}.Release|x64.Build.0 = Release|x64
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Debug|Win32.Build.0 = Debug|Win32
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Debug|x64.ActiveCfg = Debug|x64
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Debug|x64.Build.0 = Debug|x64
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.DebugVLD|x64.Build.0 = DebugVLD|x64
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Release|Win32.ActiveCfg = Release|Win32
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Release|Win32.Build.0 = Release|Win32
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Release|x64.ActiveCfg = Release|x64
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -662,6 +717,7 @@ Global
 		{34FA4110-F17B-4AD0-A4C9-C91B92AD06E4} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 		{46649F79-2919-4B4C-B243-08C724901F58} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 		{2D0E651D-058D-4D69-9A44-12149E6CA5BE} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
+		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
