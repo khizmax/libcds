@@ -9,6 +9,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insdel_int)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insdel_string)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insdel_item_int)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insdelfind)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insfind_int)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insdel_find)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insdel_func)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/insdel_string)
@@ -23,4 +24,5 @@ add_custom_target( stress-map
         stress-map-insdel-string
         stress-map-insdel-item-int
         stress-map-insdelfind
+        stress-map-insfind-int
 )

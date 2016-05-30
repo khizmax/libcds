@@ -29,31 +29,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-misc", "unit-misc.vcxp
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "map", "map", "{6BB7A27F-FC59-4267-B6FA-D034176D1459}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\tests\unit\map2\map_defs.h = ..\..\..\tests\unit\map2\map_defs.h
-		..\..\..\tests\unit\map2\map_type.h = ..\..\..\tests\unit\map2\map_type.h
-		..\..\..\tests\unit\map2\map_type_bronson_avltree.h = ..\..\..\tests\unit\map2\map_type_bronson_avltree.h
-		..\..\..\tests\unit\map2\map_type_cuckoo.h = ..\..\..\tests\unit\map2\map_type_cuckoo.h
-		..\..\..\tests\unit\map2\map_type_ellen_bintree.h = ..\..\..\tests\unit\map2\map_type_ellen_bintree.h
-		..\..\..\tests\unit\map2\map_type_feldman_hashmap.h = ..\..\..\tests\unit\map2\map_type_feldman_hashmap.h
-		..\..\..\tests\unit\map2\map_type_lazy_list.h = ..\..\..\tests\unit\map2\map_type_lazy_list.h
-		..\..\..\tests\unit\map2\map_type_michael.h = ..\..\..\tests\unit\map2\map_type_michael.h
-		..\..\..\tests\unit\map2\map_type_michael_list.h = ..\..\..\tests\unit\map2\map_type_michael_list.h
-		..\..\..\tests\unit\map2\map_type_skip_list.h = ..\..\..\tests\unit\map2\map_type_skip_list.h
-		..\..\..\tests\unit\map2\map_type_split_list.h = ..\..\..\tests\unit\map2\map_type_split_list.h
-		..\..\..\tests\unit\map2\map_type_std.h = ..\..\..\tests\unit\map2\map_type_std.h
-		..\..\..\tests\unit\map2\map_type_striped.h = ..\..\..\tests\unit\map2\map_type_striped.h
-		..\..\..\tests\unit\map2\std_hash_map.h = ..\..\..\tests\unit\map2\std_hash_map.h
-		..\..\..\tests\unit\map2\std_map.h = ..\..\..\tests\unit\map2\std_map.h
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-map-find", "unit-map-find.vcxproj", "{BA2A9239-0299-4069-BB0E-16DACE87ADE0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{61179F2F-07E1-490D-B64D-D85A90B6EF81} = {61179F2F-07E1-490D-B64D-D85A90B6EF81}
-		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit", "unit", "{810490B7-31E5-49AE-8455-CAF99A9658B6}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\tests\test-hdr\size_check.h = ..\..\..\tests\test-hdr\size_check.h
@@ -264,6 +239,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-insdelfind", "st
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-insfind-int", "stress-map-insfind-int.vcxproj", "{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -310,18 +291,6 @@ Global
 		{77350FDC-9E51-438B-9A8F-D2FEA11D46B2}.Release|Win32.Build.0 = Release|Win32
 		{77350FDC-9E51-438B-9A8F-D2FEA11D46B2}.Release|x64.ActiveCfg = Release|x64
 		{77350FDC-9E51-438B-9A8F-D2FEA11D46B2}.Release|x64.Build.0 = Release|x64
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Debug|Win32.Build.0 = Debug|Win32
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Debug|x64.ActiveCfg = Debug|x64
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Debug|x64.Build.0 = Debug|x64
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.DebugVLD|x64.Build.0 = DebugVLD|x64
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Release|Win32.ActiveCfg = Release|Win32
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Release|Win32.Build.0 = Release|Win32
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Release|x64.ActiveCfg = Release|x64
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0}.Release|x64.Build.0 = Release|x64
 		{5407E9D2-67D9-4266-976E-7A90BDE2541D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{5407E9D2-67D9-4266-976E-7A90BDE2541D}.Debug|Win32.Build.0 = Debug|Win32
 		{5407E9D2-67D9-4266-976E-7A90BDE2541D}.Debug|x64.ActiveCfg = Debug|x64
@@ -658,6 +627,18 @@ Global
 		{1BB746AC-7856-4E59-9430-51177621DC35}.Release|Win32.Build.0 = Release|Win32
 		{1BB746AC-7856-4E59-9430-51177621DC35}.Release|x64.ActiveCfg = Release|x64
 		{1BB746AC-7856-4E59-9430-51177621DC35}.Release|x64.Build.0 = Release|x64
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Debug|Win32.Build.0 = Debug|Win32
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Debug|x64.ActiveCfg = Debug|x64
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Debug|x64.Build.0 = Debug|x64
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.DebugVLD|x64.Build.0 = DebugVLD|x64
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Release|Win32.ActiveCfg = Release|Win32
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Release|Win32.Build.0 = Release|Win32
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Release|x64.ActiveCfg = Release|x64
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -665,8 +646,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{61179F2F-07E1-490D-B64D-D85A90B6EF81} = {B30CA283-1796-4763-92C3-2E4848D443F7}
 		{77350FDC-9E51-438B-9A8F-D2FEA11D46B2} = {B30CA283-1796-4763-92C3-2E4848D443F7}
-		{6BB7A27F-FC59-4267-B6FA-D034176D1459} = {B30CA283-1796-4763-92C3-2E4848D443F7}
-		{BA2A9239-0299-4069-BB0E-16DACE87ADE0} = {6BB7A27F-FC59-4267-B6FA-D034176D1459}
 		{5407E9D2-67D9-4266-976E-7A90BDE2541D} = {810490B7-31E5-49AE-8455-CAF99A9658B6}
 		{EA5D825A-83A4-4A36-83C1-3D048D21D55B} = {810490B7-31E5-49AE-8455-CAF99A9658B6}
 		{ED94B1D1-2442-43C2-A71C-A757122408A6} = {810490B7-31E5-49AE-8455-CAF99A9658B6}
@@ -699,6 +678,7 @@ Global
 		{2D0E651D-058D-4D69-9A44-12149E6CA5BE} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 		{1BB746AC-7856-4E59-9430-51177621DC35} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
+		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}

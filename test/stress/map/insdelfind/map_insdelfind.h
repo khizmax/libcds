@@ -37,8 +37,8 @@ namespace map {
     {
     public:
         static size_t s_nMapSize;           // initial map size
-        static size_t  s_nThreadCount;      // thread count
-        static size_t  s_nMaxLoadFactor;    // maximum load factor
+        static size_t s_nThreadCount;       // thread count
+        static size_t s_nMaxLoadFactor;     // maximum load factor
         static unsigned int s_nInsertPercentage;
         static unsigned int s_nDeletePercentage;
         static unsigned int s_nDuration;    // test duration, seconds
