@@ -138,7 +138,10 @@ namespace cds_test {
                 std::this_thread::yield();
 
             m_bTimeElapsed.store( false, std::memory_order_release );
+
+            auto native_duration = std::chrono::duration_cast<std::chrono::steady_clock::duration>(duration);
             auto time_start = std::chrono::steady_clock::now();
+            auto const expected_end = time_start + native_duration;
 
             {
                 scoped_lock l( m_cvMutex );
@@ -146,8 +149,15 @@ namespace cds_test {
                 m_cvStart.notify_all();
             }
 
-            if ( duration != std::chrono::seconds::zero() )
-                std::this_thread::sleep_for( duration );
+            if ( duration != std::chrono::seconds::zero() ) {
+                for ( ;; ) {
+                    std::this_thread::sleep_for( native_duration );
+                    auto time_now = std::chrono::steady_clock::now();
+                    if ( time_now >= expected_end )
+                        break;
+                    native_duration = expected_end - time_now;
+                } 
+            }
             m_bTimeElapsed.store( true, std::memory_order_release );
 
             {

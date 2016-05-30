@@ -28,28 +28,29 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#include "set_type.h"
+#include "map_type.h"
 
-namespace set {
+namespace map {
 
-    class Set_InsDelFind: public cds_test::stress_fixture
+
+    class Map_InsDelFind: public cds_test::stress_fixture
     {
     public:
-        static size_t s_nSetSize;           // initial set size
-        static size_t s_nThreadCount;       // thread count
-        static size_t s_nMaxLoadFactor;     // maximum load factor
+        static size_t s_nMapSize;           // initial map size
+        static size_t  s_nThreadCount;      // thread count
+        static size_t  s_nMaxLoadFactor;    // maximum load factor
         static unsigned int s_nInsertPercentage;
         static unsigned int s_nDeletePercentage;
-        static unsigned int s_nDuration;   // test duration, seconds
+        static unsigned int s_nDuration;    // test duration, seconds
 
-        static size_t  s_nCuckooInitialSize;        // initial size for CuckooSet
-        static size_t  s_nCuckooProbesetSize;       // CuckooSet probeset size (only for list-based probeset)
-        static size_t  s_nCuckooProbesetThreshold;  // CUckooSet probeset threshold (0 - use default)
+        static size_t s_nCuckooInitialSize;         // initial size for CuckooMap
+        static size_t s_nCuckooProbesetSize;        // CuckooMap probeset size (only for list-based probeset)
+        static size_t s_nCuckooProbesetThreshold;   // CuckooMap probeset threshold (o - use default)
 
-        static size_t s_nFeldmanSet_HeadBits;
-        static size_t s_nFeldmanSet_ArrayBits;
+        static size_t s_nFeldmanMap_HeadBits;
+        static size_t s_nFeldmanMap_ArrayBits;
 
-        static size_t s_nLoadFactor;
+        static size_t  s_nLoadFactor;  // current load factor
 
         static void SetUpTestCase();
         //static void TearDownTestCase();
@@ -62,17 +63,17 @@ namespace set {
             do_delete
         };
         static const unsigned int c_nShuffleSize = 100;
-        actions m_arrShuffle[c_nShuffleSize];
+        static actions s_arrShuffle[c_nShuffleSize];
 
     protected:
         typedef size_t  key_type;
         typedef size_t  value_type;
 
-        template <class Set>
+        template <class Map>
         class Worker: public cds_test::thread
         {
             typedef cds_test::thread base_class;
-            Set&     m_Set;
+            Map&     m_Map;
 
         public:
             size_t  m_nInsertSuccess = 0;
@@ -83,14 +84,14 @@ namespace set {
             size_t  m_nFindFailed = 0;
 
         public:
-            Worker( cds_test::thread_pool& pool, Set& set )
+            Worker( cds_test::thread_pool& pool, Map& map )
                 : base_class( pool )
-                , m_Set( set )
+                , m_Map( map )
             {}
 
             Worker( Worker& src )
                 : base_class( src )
-                , m_Set( src.m_Set )
+                , m_Map( src.m_Map )
             {}
 
             virtual thread * clone()
@@ -98,34 +99,60 @@ namespace set {
                 return new Worker( *this );
             }
 
+            typedef std::pair< key_type const, value_type > map_value_type;
+
+            struct update_functor {
+                template <typename Q>
+                void operator()( bool /*bNew*/, map_value_type& /*cur*/, Q const& /*val*/ )
+                {}
+
+                // FeldmanHashMap
+                void operator()( map_value_type& /*cur*/, map_value_type * /*old*/)
+                {}
+
+                // MichaelMap
+                void operator()( bool /*bNew*/, map_value_type& /*cur*/ )
+                {}
+
+                // BronsonAVLTreeMap
+                void operator()( bool /*bNew*/, key_type /*key*/, value_type& /*val*/ )
+                {}
+            };
+
             virtual void test()
             {
-                Set& rSet = m_Set;
-                Set_InsDelFind& fixture = pool().template fixture<Set_InsDelFind>();
+                Map& rMap = m_Map;
 
-                actions * pAct = fixture.m_arrShuffle;
                 unsigned int i = 0;
-                size_t const nNormalize = size_t(-1) / ( fixture.s_nSetSize * 2);
+                size_t const nNormalize = size_t(-1) / ( s_nMapSize * 2 );
 
                 size_t nRand = 0;
                 while ( !time_elapsed() ) {
-                    nRand = cds::bitop::RandXorShift(nRand);
+                    nRand = cds::bitop::RandXorShift( nRand );
                     size_t n = nRand / nNormalize;
-                    switch ( pAct[i] ) {
+                    switch ( s_arrShuffle[i] ) {
                     case do_find:
-                        if ( rSet.contains( n ))
+                        if ( rMap.contains( n ))
                             ++m_nFindSuccess;
                         else
                             ++m_nFindFailed;
                         break;
                     case do_insert:
-                        if ( rSet.insert( n ))
-                            ++m_nInsertSuccess;
-                        else
-                            ++m_nInsertFailed;
+                        if ( n % 2 ) {
+                            if ( rMap.insert( n, n ))
+                                ++m_nInsertSuccess;
+                            else
+                                ++m_nInsertFailed;
+                        }
+                        else {
+                            if ( rMap.update( n, update_functor(), true ).first )
+                                ++m_nInsertSuccess;
+                            else
+                                ++m_nInsertFailed;
+                        }
                         break;
                     case do_delete:
-                        if ( rSet.erase( n ))
+                        if ( rMap.erase( n ))
                             ++m_nDeleteSuccess;
                         else
                             ++m_nDeleteFailed;
@@ -139,31 +166,29 @@ namespace set {
         };
 
     protected:
-        template <class Set>
-        void do_test( Set& testSet )
+        template <class Map>
+        void do_test( Map& testMap )
         {
-            typedef Worker<Set> work_thread;
+            typedef Worker<Map> worker;
 
             // fill map - only odd number
             {
-                size_t * pInitArr = new size_t[ s_nSetSize ];
-                size_t * pEnd = pInitArr + s_nSetSize;
-                for ( size_t i = 0; i < s_nSetSize; ++i )
-                    pInitArr[i] = i * 2 + 1;
-                shuffle( pInitArr, pEnd );
-                for ( size_t * p = pInitArr; p < pEnd; ++p )
-                    testSet.insert( typename Set::value_type( *p, *p ) );
-                delete [] pInitArr;
+                std::vector<size_t> arr;
+                arr.reserve( s_nMapSize );
+                for ( size_t i = 0; i < s_nMapSize; ++i )
+                    arr.push_back( i * 2 + 1);
+                shuffle( arr.begin(), arr.end() );
+                for ( size_t i = 0; i < s_nMapSize; ++i )
+                    testMap.insert( arr[i], arr[i] );
             }
 
             cds_test::thread_pool& pool = get_pool();
-            pool.add( new work_thread( pool, testSet ), s_nThreadCount );
+            pool.add( new worker( pool, testMap ), s_nThreadCount );
 
             propout() << std::make_pair( "thread_count", s_nThreadCount )
-                << std::make_pair( "set_size", s_nSetSize )
                 << std::make_pair( "insert_percentage", s_nInsertPercentage )
                 << std::make_pair( "delete_percentage", s_nDeletePercentage )
-                << std::make_pair( "total_duration", s_nDuration );
+                << std::make_pair( "map_size", s_nMapSize );
 
             std::chrono::milliseconds duration = pool.run( std::chrono::seconds( s_nDuration ));
 
@@ -176,13 +201,14 @@ namespace set {
             size_t nFindSuccess = 0;
             size_t nFindFailed = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
-                work_thread& thr = static_cast<work_thread&>( pool.get( i ));
+                worker& thr = static_cast<worker&>( pool.get( i ));
+
                 nInsertSuccess += thr.m_nInsertSuccess;
-                nInsertFailed  += thr.m_nInsertFailed;
+                nInsertFailed += thr.m_nInsertFailed;
                 nDeleteSuccess += thr.m_nDeleteSuccess;
-                nDeleteFailed  += thr.m_nDeleteFailed;
-                nFindSuccess   += thr.m_nFindSuccess;
-                nFindFailed    += thr.m_nFindFailed;
+                nDeleteFailed += thr.m_nDeleteFailed;
+                nFindSuccess += thr.m_nFindSuccess;
+                nFindFailed += thr.m_nFindFailed;
             }
 
             propout()
@@ -191,44 +217,46 @@ namespace set {
                 << std::make_pair( "delete_success", nDeleteSuccess )
                 << std::make_pair( "delete_failed", nDeleteFailed )
                 << std::make_pair( "find_success", nFindSuccess )
-                << std::make_pair( "find_failed", nFindFailed );
+                << std::make_pair( "find_failed", nFindFailed )
+                << std::make_pair( "finish_map_size", testMap.size() );
 
             {
                 ASSERT_TRUE( std::chrono::duration_cast<std::chrono::seconds>(duration).count() > 0 );
                 size_t nTotalOps = nInsertSuccess + nInsertFailed + nDeleteSuccess + nDeleteFailed + nFindSuccess + nFindFailed;
-                propout() << std::make_pair( "avg_speed", nTotalOps / std::chrono::duration_cast<std::chrono::seconds>(duration).count() );
+                propout() << std::make_pair( "avg_speed", nTotalOps / std::chrono::duration_cast<std::chrono::seconds>( duration ).count());
             }
 
+            check_before_cleanup( testMap );
 
-            testSet.clear();
-            EXPECT_TRUE( testSet.empty()) << "set size=" << testSet.size();
+            testMap.clear();
+            EXPECT_TRUE( testMap.empty());
 
-            additional_check( testSet );
-            print_stat( propout(), testSet );
-            additional_cleanup( testSet );
+            additional_check( testMap );
+            print_stat( propout(), testMap );
+            additional_cleanup( testMap );
         }
 
-        template <class Set>
+        template <class Map>
         void run_test()
         {
-            Set s( *this );
-            do_test( s );
+            Map testMap( *this );
+            do_test( testMap );
         }
     };
 
-    class Set_InsDelFind_LF: public Set_InsDelFind
+    class Map_InsDelFind_LF: public Map_InsDelFind
         , public ::testing::WithParamInterface<size_t>
     {
     public:
-        template <class Set>
+        template <class Map>
         void run_test()
         {
             s_nLoadFactor = GetParam();
             propout() << std::make_pair( "load_factor", s_nLoadFactor );
-            Set_InsDelFind::run_test<Set>();
+            Map_InsDelFind::run_test<Map>();
         }
 
         static std::vector<size_t> get_load_factors();
     };
 
-} // namespace set
+} // namespace map
