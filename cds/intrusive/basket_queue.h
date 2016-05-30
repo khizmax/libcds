@@ -264,20 +264,19 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to \p basket_queue::traits
         /**
             Supported \p Options are:
-
-            - opt::hook - hook used. Possible hooks are: \p basket_queue::base_hook, \p basket_queue::member_hook, \p basket_queue::traits_hook.
+            - \p opt::hook - hook used. Possible hooks are: \p basket_queue::base_hook, \p basket_queue::member_hook, \p basket_queue::traits_hook.
                 If the option is not specified, \p %basket_queue::base_hook<> is used.
-            - opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
-            - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
+            - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
                 when dequeuing.
-            - opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
-            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
+            - \p opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
-            - opt::stat - the type to gather internal statistics.
+            - \p opt::stat - the type to gather internal statistics.
                 Possible statistics types are: \p basket_queue::stat, \p basket_queue::empty_stat, user-provided class that supports \p %basket_queue::stat interface.
                 Default is \p %basket_queue::empty_stat (internal statistics disabled).
             - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
-            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
             Example: declare \p %BasketQueue with item counting and internal statistics
@@ -343,7 +342,7 @@ namespace cds { namespace intrusive {
         of the backoff mechanisms to reduce contention, making the algorithm an attractive
         out-of-the-box queue.
 
-        In order to enqueue, just as in MSQueue, a thread first tries to link the new node to
+        In order to enqueue, just as in \p MSQueue, a thread first tries to link the new node to
         the last node. If it failed to do so, then another thread has already succeeded. Thus it
         tries to insert the new node into the new basket that was created by the winner thread.
         To dequeue a node, a thread first reads the head of the queue to obtain the

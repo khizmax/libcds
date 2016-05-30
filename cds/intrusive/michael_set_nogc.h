@@ -102,11 +102,41 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
             - it has no post-increment operator
             - it iterates items in unordered fashion
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
         */
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
@@ -137,28 +167,27 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return cbegin();
         }
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return const_iterator( m_Buckets[0].cbegin(), m_Buckets, m_Buckets + bucket_count() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return cend();
         }
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return const_iterator( m_Buckets[bucket_count() - 1].cend(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
-        //@}
+    //@}
 
     public:
         /// Initializes hash set
@@ -355,9 +384,9 @@ namespace cds { namespace intrusive {
         /**
             The function unlink all items from the set.
             The function is not atomic. It cleans up each bucket and then resets the item counter to zero.
-            If there are a thread that performs insertion while \p clear is working the result is undefined in general case:
+            If there are a thread that performs insertion while \p %clear() is working the result is undefined in general case:
             <tt> empty() </tt> may return \p true but the set may contain item(s).
-            Therefore, \p clear may be used only for debugging purposes.
+            Therefore, \p %clear() may be used only for debugging purposes.
 
             For each item the \p disposer is called after unlinking.
         */

@@ -146,9 +146,6 @@ namespace cds { namespace container {
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter item_counter;   ///< Item counter type
 
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
-
         typedef typename bucket_type::rcu_lock   rcu_lock;   ///< RCU scoped lock
         typedef typename bucket_type::exempt_ptr exempt_ptr; ///< pointer to extracted node
         typedef typename bucket_type::raw_ptr    raw_ptr;    ///< Return type of \p get() member function and its derivatives
@@ -156,9 +153,26 @@ namespace cds { namespace container {
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
 
     protected:
-        item_counter    m_ItemCounter; ///< Item counter
-        hash            m_HashFunctor; ///< Hash functor
-        bucket_type *   m_Buckets;     ///< bucket table
+        //@cond
+        class internal_bucket_type: public bucket_type
+        {
+            typedef bucket_type base_class;
+        public:
+            using base_class::node_type;
+            using base_class::alloc_node;
+            using base_class::insert_node;
+            using base_class::node_to_value;
+        };
+
+        /// Bucket table allocator
+        typedef cds::details::Allocator< internal_bucket_type, typename traits::allocator >  bucket_table_allocator;
+
+        //@endcond
+
+    protected:
+        item_counter             m_ItemCounter; ///< Item counter
+        hash                     m_HashFunctor; ///< Hash functor
+        internal_bucket_type *   m_Buckets;     ///< bucket table
 
     private:
         //@cond
@@ -176,28 +190,55 @@ namespace cds { namespace container {
 
         /// Returns the bucket (ordered list) for \p key
         template <typename Q>
-        bucket_type&    bucket( Q const& key )
+        internal_bucket_type& bucket( Q const& key )
         {
             return m_Buckets[ hash_value( key ) ];
         }
         template <typename Q>
-        bucket_type const&    bucket( Q const& key ) const
+        internal_bucket_type const& bucket( Q const& key ) const
         {
             return m_Buckets[ hash_value( key ) ];
         }
         //@endcond
     public:
+    ///@name Forward iterators (thread-safe under RCU lock)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
             - it has no post-increment operator
             - it iterates items in unordered fashion
-            - The iterator cannot be moved across thread boundary since it may contain GC's guard that is thread-private GC data.
-            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the set.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator for the concurrent container
-            for debug purpose only.
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
         */
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
@@ -225,38 +266,39 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return get_const_begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return get_const_begin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return get_const_end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return get_const_end();
         }
-        //@}
+    //@}
 
     private:
         //@cond
         const_iterator get_const_begin() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
         //@endcond
 
@@ -278,7 +320,6 @@ namespace cds { namespace container {
             // GC and OrderedList::gc must be the same
             static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
 
-            // atomicity::empty_item_counter is not allowed as a item counter
             static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
                            "atomicity::empty_item_counter is not allowed as a item counter");
 
@@ -343,36 +384,7 @@ namespace cds { namespace container {
             return bRet;
         }
 
-        /// Ensures that the item exists in the set
-        /**
-            The operation performs inserting or changing data with lock-free manner.
 
-            If the \p val key not found in the set, then the new item created from \p val
-            is inserted into the set. Otherwise, the functor \p func is called with the item found.
-            The functor \p Func signature is:
-            \code
-                struct my_functor {
-                    void operator()( bool bNew, value_type& item, const Q& val );
-                };
-            \endcode
-
-            with arguments:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the set
-            - \p val - argument \p key passed into the \p ensure function
-
-            The functor may change non-key fields of the \p item.
-
-            The function applies RCU lock internally.
-
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
-            \p second is true if new item has been added or \p false if the item with \p key
-            already is in the set.
-
-            @warning For \ref cds_nonintrusive_MichaelList_rcu "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_nonintrusive_LazyList_rcu "LazyList" provides exclusive access to inserted item and does not require any node-level
-            synchronization.
-        */
         /// Updates the element
         /**
             The operation performs inserting or changing data with lock-free manner.
@@ -427,7 +439,8 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            bool bRet = bucket( value_type(std::forward<Args>(args)...) ).emplace( std::forward<Args>(args)... );
+            typename internal_bucket_type::node_type * pNode = internal_bucket_type::alloc_node( std::forward<Args>( args )... );
+            bool bRet = bucket( internal_bucket_type::node_to_value( *pNode ) ).insert_node( pNode );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;

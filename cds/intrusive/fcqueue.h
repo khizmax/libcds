@@ -38,10 +38,10 @@
 
 namespace cds { namespace intrusive {
 
-    /// FCQueue related definitions
+    /// \p FCQueue related definitions
     namespace fcqueue {
 
-        /// FCQueue internal statistics
+        /// \p FCQueue internal statistics
         template <typename Counter = cds::atomicity::event_counter >
         struct stat: public cds::algo::flat_combining::stat<Counter>
         {
@@ -70,7 +70,7 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// FCQueue type traits
+        /// \p FCQueue type traits
         struct traits: public cds::algo::flat_combining::traits
         {
             typedef cds::intrusive::opt::v::empty_disposer  disposer ; ///< Disposer to erase removed elements. Used only in \p FCQueue::clear() function
@@ -83,7 +83,7 @@ namespace cds { namespace intrusive {
             \p Options are:
             - \p opt::lock_type - mutex type, default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
-            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::intrusive::v::empty_disposer.
+            - \p opt::disposer - the functor used to dispose removed items. Default is \p opt::intrusive::v::empty_disposer.
                 This option is used only in \p FCQueue::clear() function.
             - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::stat - internal statistics, possible type: \p fcqueue::stat, \p fcqueue::empty_stat (the default)
@@ -91,7 +91,7 @@ namespace cds { namespace intrusive {
                 List of all available memory ordering see \p opt::memory_model.
                 Default is \p cds::opt::v:relaxed_ordering
             - \p opt::enable_elimination - enable/disable operation \ref cds_elimination_description "elimination"
-                By default, the elimination is disabled.
+                By default, the elimination is disabled (\p false)
         */
         template <typename... Options>
         struct make_traits {

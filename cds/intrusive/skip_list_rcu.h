@@ -218,9 +218,6 @@ namespace cds { namespace intrusive {
         protected:
             void next()
             {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-
                 back_off bkoff;
 
                 for (;;) {
@@ -253,9 +250,6 @@ namespace cds { namespace intrusive {
             iterator( node_type& refHead )
                 : m_pNode( nullptr )
             {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-
                 back_off bkoff;
 
                 for (;;) {
@@ -279,17 +273,11 @@ namespace cds { namespace intrusive {
         public:
             iterator()
                 : m_pNode( nullptr )
-            {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-            }
+            {}
 
             iterator( iterator const& s)
                 : m_pNode( s.m_pNode )
-            {
-                // RCU should be locked before iterating!!!
-                assert( gc::is_locked() );
-            }
+            {}
 
             value_type * operator ->() const
             {
@@ -1335,7 +1323,17 @@ namespace cds { namespace intrusive {
         }
 
     public:
-        /// Iterator type
+    ///@name Forward iterators (thread-safe under RCU lock)
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator has some features:
+            - it has no post-increment operator
+            - it depends on iterator of underlying \p OrderedList
+
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
+        */
         typedef skip_list::details::iterator< gc, node_traits, back_off, false >  iterator;
 
         /// Const iterator type
@@ -1376,6 +1374,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator();
         }
+    //@}
 
     public:
         /// Inserts new node

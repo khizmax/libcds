@@ -45,7 +45,7 @@ namespace cds { namespace beans {
     static inline size_t log2ceil( size_t n )
     {
         size_t i = log2floor( n );
-        return size_t( 1 << i ) < n ? i + 1 : i;
+        return ( size_t( 1 ) << i ) < n ? i + 1 : i;
     }
 
     /// Returns largest previous power of 2 for \p n

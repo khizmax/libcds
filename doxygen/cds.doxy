@@ -31,7 +31,7 @@ PROJECT_NAME           = cds
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 2.1.0
+PROJECT_NUMBER         = 2.2.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -69,7 +69,7 @@ OUTPUT_LANGUAGE        = English
 
 BRIEF_MEMBER_DESC      = YES
 
-MARKDOWN_SUPPORT = NO
+MARKDOWN_SUPPORT = YES
 
 # If the REPEAT_BRIEF tag is set to YES (the default) Doxygen will prepend 
 # the brief description of a member or function before the detailed description. 

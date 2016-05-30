@@ -608,7 +608,14 @@ namespace cds { namespace intrusive {
         }
 
     public:
-        /// Iterator type
+    ///@name Forward iterators
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator for a split-list has some features:
+            - it has no post-increment operator
+            - it depends on iterator of underlying \p OrderedList
+        */
         typedef skip_list::details::iterator< gc, node_traits, back_off, false >  iterator;
 
         /// Const iterator type
@@ -647,6 +654,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator();
         }
+    //@}
 
     protected:
         //@cond

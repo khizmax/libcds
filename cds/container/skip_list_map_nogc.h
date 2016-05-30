@@ -122,10 +122,13 @@ namespace cds { namespace container {
         {}
 
     public:
+    ///@name Forward ordered iterators
+    //@{
         /// Forward iterator
         /**
-            Remember, the iterator <tt>operator -> </tt> and <tt>operator *</tt> returns \ref value_type pointer and reference.
-            To access item key and value use <tt>it->first</tt> and <tt>it->second</tt> respectively.
+            The forward iterator for a split-list has some features:
+            - it has no post-increment operator
+            - it depends on iterator of underlying \p OrderedList
         */
         typedef typename base_class::iterator iterator;
 
@@ -157,6 +160,7 @@ namespace cds { namespace container {
         {
             return base_class::begin();
         }
+
         /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
@@ -168,11 +172,13 @@ namespace cds { namespace container {
         {
             return base_class::end();
         }
+
         /// Returns an const iterator that addresses the location succeeding the last element in a map
         const_iterator cend() const
         {
             return base_class::cend();
         }
+    //@}
 
     public:
         /// Inserts new node with key and default value
@@ -190,7 +196,7 @@ namespace cds { namespace container {
         iterator insert( K const& key )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, mapped_type() ) );
+            return base_class::insert( std::make_pair( key_type( key ), mapped_type() ) );
         }
 
         /// Inserts new node
@@ -208,7 +214,7 @@ namespace cds { namespace container {
         iterator insert( K const& key, V const& val )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key, val ) );
+            return base_class::insert( std::make_pair( key_type( key ), mapped_type( val )));
         }
 
         /// Inserts new node and initialize it by a functor
@@ -256,7 +262,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         iterator emplace( K&& key, Args&&... args )
         {
-            return base_class::emplace( std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)));
+            return base_class::emplace( key_type( std::forward<K>( key )), mapped_type( std::forward<Args>(args)... ));
         }
 
         /// UPdates data by \p key
@@ -272,7 +278,7 @@ namespace cds { namespace container {
         std::pair<iterator, bool> update( K const& key, bool bInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::update( std::make_pair( key, mapped_type() ), bInsert );
+            return base_class::update( std::make_pair( key_type( key ), mapped_type() ), bInsert );
         }
         //@cond
         template <typename K>

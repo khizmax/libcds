@@ -189,12 +189,11 @@ namespace cds {
             {
                 m_counter.store( 0, atomics::memory_order_release );
             }
-
         };
 
         /// Atomic item counter
         /**
-            This class is simplified interface around <tt>std::atomic_size_t</tt>.
+            This class is simplified interface around \p std::atomic_size_t.
             The class supports getting of current value of the counter and increment/decrement its value.
         */
         class item_counter

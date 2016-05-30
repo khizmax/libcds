@@ -71,8 +71,8 @@ namespace cds { namespace intrusive {
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
-            /// Alignment for internal queue data. Default is \p opt::cache_line_alignment
-            enum { alignment = opt::cache_line_alignment };
+            /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+            enum { padding = opt::cache_line_padding };
         };
 
         /// Metafunction converting option list to \p tsigas_queue::traits
@@ -86,7 +86,7 @@ namespace cds { namespace intrusive {
                 when dequeuing.
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
-            - \p opt::alignment - the alignment for internal queue data. Default is \p opt::cache_line_alignment
+            - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
@@ -192,17 +192,18 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef typename opt::details::alignment_setter< buffer, traits::alignment >::type aligned_buffer;
         typedef size_t index_type;
-        typedef typename opt::details::alignment_setter< atomics::atomic<index_type>, traits::alignment >::type aligned_index;
         //@endcond
 
     protected:
         //@cond
-        buffer          m_buffer    ;   ///< array of pointer T *, array size is equal to m_nCapacity+1
-        aligned_index   m_nHead     ;   ///< index of queue's head
-        aligned_index   m_nTail     ;   ///< index of queue's tail
-        item_counter    m_ItemCounter   ;   ///< item counter
+        buffer       m_buffer    ;   ///< array of pointer T *, array size is equal to m_nCapacity+1
+        typename opt::details::apply_padding< index_type, traits::padding >::padding_type pad1_;
+        atomics::atomic<index_type>   m_nHead     ;   ///< index of queue's head
+        typename opt::details::apply_padding< index_type, traits::padding >::padding_type pad2_;
+        atomics::atomic<index_type>   m_nTail     ;   ///< index of queue's tail
+        typename opt::details::apply_padding< index_type, traits::padding >::padding_type pad3_;
+        item_counter m_ItemCounter;  ///< item counter
         //@endcond
 
     protected:

@@ -192,7 +192,7 @@ namespace cds { namespace intrusive {
         typedef typename hook::node_type node_type; ///< node type
 
 #   ifdef CDS_DOXYGEN_INVOKED
-        typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
+        typedef implementation_defined key_comparator;    ///< key comparison functor based on opt::compare and opt::less option setter.
 #   else
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
@@ -201,11 +201,13 @@ namespace cds { namespace intrusive {
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits; ///< node traits
         typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker; ///< link checker
 
-        typedef typename traits::back_off  back_off    ;   ///< back-off strategy
-        typedef typename traits::item_counter item_counter ;   ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model;   ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
+        typedef typename traits::back_off  back_off;         ///< back-off strategy
+        typedef typename traits::item_counter item_counter;  ///< Item counting policy used
+        typedef typename traits::memory_model  memory_model; ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
+
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
 
         //@cond
         // Rebind traits (split-list support)
@@ -215,7 +217,7 @@ namespace cds { namespace intrusive {
                 gc
                 , value_type
                 , typename cds::opt::make_options< traits, Options...>::type
-            >   type;
+            > type;
         };
         //@endcond
 
@@ -228,7 +230,7 @@ namespace cds { namespace intrusive {
         node_type   m_Head;
         node_type   m_Tail;
 
-        item_counter    m_ItemCounter   ;   ///< Item counter
+        item_counter    m_ItemCounter;
 
         //@cond
         struct clean_disposer {
@@ -241,10 +243,10 @@ namespace cds { namespace intrusive {
 
         /// Position pointer for item search
         struct position {
-            node_type *     pPred   ;    ///< Previous node
-            node_type *     pCur    ;    ///< Current node
+            node_type *     pPred; ///< Previous node
+            node_type *     pCur;  ///< Current node
 
-            typename gc::template GuardArray<2> guards  ;   ///< Guards array
+            typename gc::template GuardArray<2> guards; ///< Guards array
 
             enum {
                 guard_prev_item,
@@ -274,6 +276,7 @@ namespace cds { namespace intrusive {
         void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
         {
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
+            link_checker::is_empty( pNode );
 
             pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_release );
             pPred->m_pNext.store( marked_node_ptr(pNode), memory_model::memory_order_release );
@@ -406,6 +409,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for lazy list has some features:
@@ -416,9 +421,9 @@ namespace cds { namespace intrusive {
             - The iterator cannot be moved across thread boundary since it contains GC's guard that is thread-private GC data.
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
               deleting operations it is no guarantee that you iterate all item in the list.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator on the concurrent container
-            for debug purpose only.
+            @warning Use this iterator on the concurrent container for debugging purpose only.
         */
         typedef iterator_type<false>    iterator;
         /// Const forward iterator
@@ -451,28 +456,29 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        //@{
         const_iterator begin() const
         {
             return get_const_begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
             return get_const_begin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        //@{
         const_iterator end() const
         {
             return get_const_end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return get_const_end();
         }
-        //@}
+    //@}
 
     private:
         //@cond
@@ -595,6 +601,8 @@ namespace cds { namespace intrusive {
             is equal to <tt> &val </tt>.
 
             The function returns \p true if success and \p false otherwise.
+
+            \p disposer specified in \p Traits is called for unlinked item.
         */
         bool unlink( value_type& val )
         {
@@ -606,6 +614,8 @@ namespace cds { namespace intrusive {
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \p true.
             If the item with the key equal to \p key is not found the function return \p false.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q>
         bool erase( Q const& key )
@@ -619,6 +629,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
@@ -639,6 +651,8 @@ namespace cds { namespace intrusive {
             \endcode
 
             If \p key is not found the function return \p false.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Func>
         bool erase( const Q& key, Func func )
@@ -652,6 +666,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less, typename Func>
         bool erase_with( const Q& key, Less pred, Func func )
@@ -872,6 +888,7 @@ namespace cds { namespace intrusive {
                     h->m_Lock.lock();
 
                     unlink_node( &m_Head, h.ptr(), &m_Head );
+                    --m_ItemCounter;
 
                     h->m_Lock.unlock();
                     m_Head.m_Lock.unlock();
@@ -921,7 +938,6 @@ namespace cds { namespace intrusive {
 
         bool insert_at( node_type * pHead, value_type& val )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
@@ -947,7 +963,6 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( node_type * pHead, value_type& val, Func f )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ));
             position pos;
             key_comparator  cmp;
 
@@ -992,8 +1007,6 @@ namespace cds { namespace intrusive {
                             // new key
                             if ( !bAllowInsert )
                                 return std::make_pair( false, false );
-
-                            link_checker::is_empty( node_traits::to_node_ptr( val ));
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             func( true, val, val );

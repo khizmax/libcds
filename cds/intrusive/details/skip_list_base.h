@@ -551,7 +551,7 @@ namespace cds { namespace intrusive {
             /// Item counter
             /**
                 The type for item counting feature.
-                By default, item counting is disabled (\p atomicity::empty_item_counter)
+                By default, item counting is disabled (\p atomicity::empty_item_counter),
                 \p atomicity::item_counter enables it.
             */
             typedef atomicity::empty_item_counter     item_counter;

@@ -137,6 +137,8 @@ namespace cds { namespace container {
         typedef typename maker::key_comparator      key_comparator; ///< key comparison functor
         typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+
     protected:
         //@cond
         typedef typename base_class::value_type      node_type;
@@ -151,7 +153,7 @@ namespace cds { namespace container {
         /// Guarded pointer
         typedef typename gc::template guarded_ptr< node_type, value_type, details::guarded_ptr_cast_set<node_type, value_type> > guarded_ptr;
 
-    private:
+    protected:
         //@cond
         static value_type& node_to_value( node_type& n )
         {
@@ -161,10 +163,7 @@ namespace cds { namespace container {
         {
             return n.m_Value;
         }
-        //@endcond
 
-    protected:
-        //@cond
         template <typename Q>
         static node_type * alloc_node( Q const& v )
         {
@@ -257,6 +256,8 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's list has some features:
@@ -267,9 +268,9 @@ namespace cds { namespace container {
             - The iterator cannot be moved across thread boundary since it contains GC's guard that is thread-private GC data.
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
               deleting operations it is no guarantee that you iterate all item in the list.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator on the concurrent container
-            for debug purpose only.
+            @warning Use this iterator on the concurrent container for debugging purpose only.
         */
         typedef iterator_type<false>    iterator;
 
@@ -302,28 +303,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        //@{
         const_iterator begin() const
         {
             return const_iterator( head() );
         }
+
+        /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
             return const_iterator( head() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        //@{
         const_iterator end() const
         {
             return const_iterator();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return const_iterator();
         }
-        //@}
+    //@}
 
     public:
         /// Default constructor
@@ -733,6 +735,11 @@ namespace cds { namespace container {
 
     protected:
         //@cond
+        bool insert_node( node_type * pNode )
+        {
+            return insert_node_at( head(), pNode );
+        }
+
         bool insert_node_at( head_type& refHead, node_type * pNode )
         {
             assert( pNode );

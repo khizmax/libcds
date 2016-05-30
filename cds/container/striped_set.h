@@ -624,13 +624,14 @@ namespace cds { namespace container {
         {
             bool bOk;
             bool bResize;
-            size_t nHash = base_class::hashing( value_type( std::forward<Args>(args)...));
+            value_type val( std::forward<Args>( args )... );
+            size_t nHash = base_class::hashing( val );
             bucket_type * pBucket;
             {
                 scoped_cell_lock sl( base_class::m_MutexPolicy, nHash );
                 pBucket = base_class::bucket( nHash );
 
-                bOk = pBucket->emplace( std::forward<Args>(args)...);
+                bOk = pBucket->emplace( std::move( val ));
                 bResize = bOk && base_class::m_ResizingPolicy( ++base_class::m_ItemCounter, *this, *pBucket );
             }
 
@@ -667,7 +668,7 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( Q const& val, Func func, bool bAllowInsert = true )
         {
             std::pair<bool, bool> result;
-            bool bResize;
+            bool bResize = false;
             size_t nHash = base_class::hashing( val );
             bucket_type * pBucket;
             {
@@ -675,7 +676,8 @@ namespace cds { namespace container {
                 pBucket = base_class::bucket( nHash );
 
                 result = pBucket->update( val, func, bAllowInsert );
-                bResize = result.first && result.second && base_class::m_ResizingPolicy( ++base_class::m_ItemCounter, *this, *pBucket );
+                if ( result.first && result.second )
+                    bResize = base_class::m_ResizingPolicy( ++base_class::m_ItemCounter, *this, *pBucket );
             }
 
             if ( bResize )

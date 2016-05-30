@@ -248,6 +248,9 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat              stat;         ///< Internal statistics, see \p spit_list::stat
         typedef typename ordered_list::guarded_ptr guarded_ptr;  ///< Guarded pointer
 
+        /// Count of hazard pointer required
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount + 4; // +4 - for iterators
+
     protected:
         typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
         typedef split_list::node<list_node_type>    node_type;       ///< split-list node type
@@ -751,10 +754,10 @@ namespace cds { namespace intrusive {
             std::pair<bool, bool> bRet = m_List.update_at( pHead, val, func, bAllowInsert );
             if ( bRet.first && bRet.second ) {
                 inc_item_count();
-                m_Stat.onEnsureNew();
+                m_Stat.onUpdateNew();
             }
             else
-                m_Stat.onEnsureExist();
+                m_Stat.onUpdateExist();
             return bRet;
         }
         //@cond
@@ -1135,6 +1138,8 @@ namespace cds { namespace intrusive {
         };
         //@endcond
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for a split-list has some features:
@@ -1142,12 +1147,13 @@ namespace cds { namespace intrusive {
             - it depends on iterator of underlying \p OrderedList
             - The iterator cannot be moved across thread boundary since it may contain GC's guard that is thread-private GC data.
             - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the split-list.
+              deleting operations it is no guarantee that you iterate all item in the set.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator on the concurrent container
-            for debug purpose only.
+            @warning Use this iterator on the concurrent container for debugging purpose only.
         */
         typedef iterator_type<false>    iterator;
+
         /// Const forward iterator
         /**
             For iterator's features and requirements see \ref iterator
@@ -1196,7 +1202,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator( m_List.cend(), m_List.cend());
         }
-
+    //@}
     };
 
 }}  // namespace cds::intrusive

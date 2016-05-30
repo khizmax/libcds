@@ -283,6 +283,17 @@ namespace cds { namespace container {
             return false;
         }
 
+        /// Enqueues \p val value into the queue, move semntics
+        bool enqueue( value_type&& val )
+        {
+            scoped_node_ptr p( alloc_node_move( std::move( val )));
+            if ( base_class::enqueue( *p ) ) {
+                p.release();
+                return true;
+            }
+            return false;
+        }
+
         /// Enqueues \p data to queue using a functor
         /**
             \p Func is a functor called to create node.
@@ -317,10 +328,16 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Synonym for \p enqueue() function
+        /// Synonym for \p enqueue( const value_type& ) function
         bool push( const value_type& val )
         {
             return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue( value_type&& ) function
+        bool push( value_type&& val )
+        {
+            return enqueue( std::move( val ));
         }
 
         /// Synonym for \p enqueue_with() function
@@ -339,7 +356,7 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            return dequeue_with( [&dest]( value_type& src ) { dest = src; } );
+            return dequeue_with( [&dest]( value_type& src ) { dest = std::move( src ); });
         }
 
         /// Dequeues a value using a functor

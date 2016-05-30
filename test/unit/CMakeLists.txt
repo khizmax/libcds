@@ -1,0 +1,27 @@
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deque)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/list)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/map)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/misc)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/intrusive-set)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/set)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-map)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-set)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tree)
+
+add_custom_target(unit-all
+    DEPENDS 
+        unit-deque
+        unit-list
+        unit-map
+        unit-misc
+        unit-pqueue
+        unit-queue
+        unit-intrusive-set
+        unit-set
+        unit-striped-set
+        unit-stack
+        unit-tree
+)

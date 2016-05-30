@@ -93,47 +93,6 @@ namespace cds { namespace container {
         };
         \endcode
 
-        <b>Iterators</b>
-
-        The class supports a forward iterator (\ref iterator and \ref const_iterator).
-        The iteration is unordered.
-        The iterator object is thread-safe: the element pointed by the iterator object is guarded,
-        so, the element cannot be reclaimed while the iterator object is alive.
-        However, passing an iterator object between threads is dangerous.
-
-        @warning Due to concurrent nature of Michael's set it is not guarantee that you can iterate
-        all elements in the set: any concurrent deletion can exclude the element
-        pointed by the iterator from the set, and your iteration can be terminated
-        before end of the set. Therefore, such iteration is more suitable for debugging purpose only
-
-        Remember, each iterator object requires an additional hazard pointer, that may be
-        a limited resource for \p GC like \p gc::HP (for \p gc::DHP the total count of
-        guards is unlimited).
-
-        The iterator class supports the following minimalistic interface:
-        \code
-        struct iterator {
-        // Default ctor
-        iterator();
-
-        // Copy ctor
-        iterator( iterator const& s);
-
-        value_type * operator ->() const;
-        value_type& operator *() const;
-
-        // Pre-increment
-        iterator& operator ++();
-
-        // Copy assignment
-        iterator& operator = (const iterator& src);
-
-        bool operator ==(iterator const& i ) const;
-        bool operator !=(iterator const& i ) const;
-        };
-        \endcode
-        Note, the iterator object returned by \ref end, \p cend member functions points to \p nullptr and should not be dereferenced.
-
         <b>How to use</b>
 
         Suppose, we have the following type \p Foo that we want to store in our \p %MichaelHashSet:
@@ -218,15 +177,31 @@ namespace cds { namespace container {
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter item_counter; ///< Item counter type
 
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
-
         typedef typename bucket_type::guarded_ptr  guarded_ptr; ///< Guarded pointer
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = bucket_type::c_nHazardPtrCount; ///< Count of hazard pointer required
 
     protected:
+        //@cond
+        class internal_bucket_type: public bucket_type
+        {
+            typedef bucket_type base_class;
+        public:
+            using base_class::node_type;
+            using base_class::alloc_node;
+            using base_class::insert_node;
+            using base_class::node_to_value;
+        };
+
+        /// Bucket table allocator
+        typedef cds::details::Allocator< internal_bucket_type, typename traits::allocator >  bucket_table_allocator;
+        //@endcond
+
+    protected:
+        //@cond
         item_counter    m_ItemCounter; ///< Item counter
         hash            m_HashFunctor; ///< Hash functor
-        bucket_type *   m_Buckets;     ///< bucket table
+        internal_bucket_type *  m_Buckets;     ///< bucket table
+        //@endcond
 
     private:
         //@cond
@@ -244,13 +219,58 @@ namespace cds { namespace container {
 
         /// Returns the bucket (ordered list) for \p key
         template <typename Q>
-        bucket_type&    bucket( Q const& key )
+        internal_bucket_type&    bucket( Q const& key )
         {
             return m_Buckets[ hash_value( key ) ];
         }
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator for Michael's set has some features:
+            - it has no post-increment operator
+            - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
+              For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
+              may be thrown if the limit of guard count per thread is exceeded.
+            - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
+            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
+              deleting operations there is no guarantee that you iterate all item in the set. 
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+
+            @warning Use this iterator on the concurrent container for debugging purpose only.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
+
         /// Forward iterator
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
@@ -278,38 +298,39 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return get_const_begin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return get_const_begin();
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return get_const_end();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return get_const_end();
         }
-        //@}
+    //@}
 
     private:
         //@cond
         const_iterator get_const_begin() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
         //@endcond
 
@@ -443,7 +464,8 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            bool bRet = bucket( value_type(std::forward<Args>(args)...) ).emplace( std::forward<Args>(args)... );
+            typename internal_bucket_type::node_type * pNode = internal_bucket_type::alloc_node( std::forward<Args>( args )... );
+            bool bRet = bucket( internal_bucket_type::node_to_value( *pNode )).insert_node( pNode );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;

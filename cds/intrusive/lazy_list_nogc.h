@@ -201,6 +201,7 @@ namespace cds { namespace intrusive {
 
         void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
         {
+            link_checker::is_empty( pNode );
             assert( pPred->m_pNext.load(memory_model::memory_order_relaxed) == pCur );
 
             pNode->m_pNext.store( pCur, memory_model::memory_order_release );
@@ -558,6 +559,7 @@ namespace cds { namespace intrusive {
             while ( pHead != &m_Tail ) {
                 node_type * p = pHead->m_pNext.load(memory_model::memory_order_relaxed);
                 dispose_node( pHead, disp );
+                --m_ItemCounter;
                 pHead = p;
             }
         }
@@ -612,7 +614,6 @@ namespace cds { namespace intrusive {
 
         bool insert_at( node_type * pHead, value_type& val )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos;
             key_comparator pred;
 
@@ -664,8 +665,6 @@ namespace cds { namespace intrusive {
                             // new key
                             if ( !bAllowInsert )
                                 return std::make_pair( end(), false );
-
-                            link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             func( true, val, val );
@@ -778,6 +777,25 @@ namespace cds { namespace intrusive {
             return pPred->m_pNext.load(memory_model::memory_order_acquire) == pCur;
         }
 
+        // for split-list
+        template <typename Predicate>
+        void erase_for( Predicate pred )
+        {
+            node_type * pPred = nullptr;
+            node_type * pHead = m_Head.m_pNext.load( memory_model::memory_order_relaxed );
+
+            while ( pHead != &m_Tail ) {
+                node_type * p = pHead->m_pNext.load( memory_model::memory_order_relaxed );
+                if ( pred( *node_traits::to_value_ptr( pHead ))) {
+                    assert( pPred != nullptr );
+                    pPred->m_pNext.store( p, memory_model::memory_order_relaxed );
+                    dispose_node( pHead, disposer() );
+                }
+                else
+                    pPred = pHead;
+                pHead = p;
+            }
+        }
         //@endcond
     };
 

@@ -95,17 +95,17 @@ namespace cds { namespace intrusive {
 
         Template parameters:
         - \p T - type stored in queue.
-        - \p Traits - queue traits, default is \p vykov_queue::traits. You can use \p vykov_queue::make_traits
-            metafunction to make your traits or just derive your traits from \p %vykov_queue::traits:
+        - \p Traits - queue traits, default is \p vyukov_queue::traits. You can use \p vyukov_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %vyukov_queue::traits:
             \code
-            struct myTraits: public cds::intrusive::vykov_queue::traits {
+            struct myTraits: public cds::intrusive::vyukov_queue::traits {
                 typedef cds::atomicity::item_counter    item_counter;
             };
             typedef cds::intrusive::VyukovMPMCCycleQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
             typedef cds::intrusive::VyukovMPMCCycleQueue< cds::gc::HP, Foo,
-                typename cds::intrusive::vykov_queue::make_traits<
+                typename cds::intrusive::vyukov_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;

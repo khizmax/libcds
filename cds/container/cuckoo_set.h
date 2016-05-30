@@ -117,7 +117,7 @@ namespace cds { namespace container {
         <b>About Cuckoo hashing</b>
 
             [From "The Art of Multiprocessor Programming"]
-            Cuckoo hashing is a hashing algorithm in which a newly added item displaces any earlier item
+            <a href="https://en.wikipedia.org/wiki/Cuckoo_hashing">Cuckoo hashing</a> is a hashing algorithm in which a newly added item displaces any earlier item
             occupying the same slot. For brevity, a table is a k-entry array of items. For a hash set f size
             N = 2k we use a two-entry array of tables, and two independent hash functions,
             <tt> h0, h1: KeyRange -> 0,...,k-1</tt>
@@ -155,9 +155,9 @@ namespace cds { namespace container {
             the average search complexity is <tt>O(PROBE_SET/2)</tt>.
             However, the overhead of sorting can eliminate a gain of ordered search.
 
-            The probe set is ordered if opt::compare or opt::less is specified in \p %CuckooSet
-            declaration. Otherwise, the probe set is unordered and \p %CuckooSet must contain
-            opt::equal_to option.
+            The probe set is ordered if \p compare or \p less is specified in \p Traits
+            template parameter. Otherwise, the probe set is unordered and \p Traits must contain
+            \p equal_to predicate.
 
         Template arguments:
         - \p T - the type stored in the set.

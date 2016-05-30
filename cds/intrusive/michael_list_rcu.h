@@ -371,8 +371,15 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators (thread-safe only under RCU lock)
+    //@{
         /// Forward iterator
+        /**
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the item the iterator points to.
+        */
         typedef iterator_type<false>    iterator;
+
         /// Const forward iterator
         typedef iterator_type<true>     const_iterator;
 
@@ -419,6 +426,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator();
         }
+    //@}
 
     public:
         /// Default constructor initializes empty list
@@ -518,14 +526,15 @@ namespace cds { namespace intrusive {
         {
             return update( val, func, true );
         }
+        //@endcond
 
         /// Unlinks the item \p val from the list
         /**
             The function searches the item \p val in the list and unlink it from the list
             if it is found and it is equal to \p val.
 
-            Difference between \ref erase and \p unlink functions: \p erase finds <i>a key</i>
-            and deletes the item found. \p unlink finds an item by key and deletes it
+            Difference between \p erase() and \p %unlink() functions: \p %erase() finds <i>a key</i>
+            and deletes the item found. \p %unlink() finds an item by key and deletes it
             only if \p val is an item of that list, i.e. the pointer to the item found
             is equal to <tt> &val </tt>.
 
@@ -533,6 +542,8 @@ namespace cds { namespace intrusive {
 
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer call can be deferred.
+
+            \p disposer specified in \p Traits is called for unlinked item.
 
             The function can throw cds::urcu::rcu_deadlock exception if deadlock is encountered and
             deadlock checking policy is opt::v::rcu_throw_deadlock.
@@ -543,13 +554,15 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the list
-        /** \anchor cds_intrusive_MichaelList_rcu_erase_val
+        /**
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \p true.
             If the item with the key equal to \p key is not found the function return \p false.
 
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer call can be deferred.
+
+            \p disposer specified in \p Traits is called for deleted item.
 
             The function can throw \ref cds_urcu_rcu_deadlock "cds::urcu::rcu_deadlock" exception if a deadlock is detected and
             the deadlock checking policy is \p opt::v::rcu_throw_deadlock.
@@ -562,10 +575,12 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the list using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_rcu_erase_val "erase(Q const&)"
+            The function is an analog of \p erase(Q const&)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
@@ -575,7 +590,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the list
-        /** \anchor cds_intrusive_MichaelList_rcu_erase_func
+        /**
             The function searches an item with key equal to \p key in the list,
             call \p func functor with item found, unlinks it from the list, and returns \p true.
             The \p Func interface is
@@ -590,6 +605,8 @@ namespace cds { namespace intrusive {
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer call can be deferred.
 
+            \p disposer specified in \p Traits is called for deleted item.
+
             The function can throw \ref cds_urcu_rcu_deadlock "cds::urcu::rcu_deadlock" exception if a deadlock is detected and
             the deadlock checking policy is \p opt::v::rcu_throw_deadlock.
         */
@@ -601,10 +618,12 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the list using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_rcu_erase_func "erase(Q const&, Func)"
+            The function is an analog of \p erase(Q const&, Func)
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func func )
@@ -615,7 +634,6 @@ namespace cds { namespace intrusive {
 
         /// Extracts an item from the list
         /**
-        @anchor cds_intrusive_MichaelList_rcu_extract
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \ref cds::urcu::exempt_ptr "exempt_ptr" pointer to the item found.
             If \p key is not found the function returns an empty \p exempt_ptr.
@@ -623,7 +641,7 @@ namespace cds { namespace intrusive {
             @note The function does NOT dispose the item found. It just unlinks the item from the list
             and returns a pointer to item found.
             You shouldn't lock RCU for current thread before calling this function, and you should manually release
-            \p dest exempt pointer outside the RCU lock before reusing it.
+            the returned exempt pointer before reusing it.
 
             \code
             #include <cds/urcu/general_buffered.h>
@@ -675,7 +693,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Find the key \p val
-        /** \anchor cds_intrusive_MichaelList_rcu_find_func
+        /**
             The function searches the item with key equal to \p key
             and calls the functor \p f for item found.
             The interface of \p Func functor is:
@@ -906,7 +924,6 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( atomic_node_ptr& refHead, value_type& val, Func f )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos( refHead );
 
             {
@@ -1154,7 +1171,6 @@ namespace cds { namespace intrusive {
         {
             // RCU lock should be locked!!!
             assert( gc::is_locked() );
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
             while ( true ) {
                 if ( search( pos.refHead, val, pos, key_comparator() ) )
@@ -1186,8 +1202,6 @@ namespace cds { namespace intrusive {
                 else {
                     if ( !bInsert )
                         return std::make_pair( end(), false );
-
-                    link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         ++m_ItemCounter;

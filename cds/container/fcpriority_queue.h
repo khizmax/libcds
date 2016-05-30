@@ -303,7 +303,7 @@ namespace cds { namespace container {
                 assert( pRec->pValPop );
                 pRec->bEmpty = m_PQueue.empty();
                 if ( !pRec->bEmpty ) {
-                    *(pRec->pValPop) = m_PQueue.top();
+                    *(pRec->pValPop) = std::move( m_PQueue.top());
                     m_PQueue.pop();
                 }
                 break;

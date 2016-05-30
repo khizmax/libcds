@@ -119,7 +119,7 @@ namespace cds { namespace intrusive {
         class ordered_list_wrapper: public ordered_list
         {
             typedef ordered_list base_class;
-            typedef typename base_class::auxiliary_head       bucket_head_type;
+            typedef typename base_class::auxiliary_head bucket_head_type;
 
         public:
             list_iterator insert_at_( dummy_node_type * pHead, value_type& val )
@@ -161,6 +161,12 @@ namespace cds { namespace intrusive {
             {
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::insert_aux_node( h, pNode );
+            }
+
+            template <typename Predicate>
+            void erase_for( Predicate pred )
+            {
+                return base_class::erase_for( pred );
             }
         };
 
@@ -495,6 +501,23 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
+
+        /// Clears the set (non-atomic, not thread-safe)
+        /**
+            The function unlink all items from the set.
+            The function is not atomic. It cleans up each bucket and then resets the item counter to zero.
+            If there are a thread that performs insertion while \p %clear() is working the result is undefined in general case:
+            <tt> empty() </tt> may return \p true but the set may contain item(s).
+            Therefore, \p %clear() may be used only for debugging purposes.
+
+            For each item the \p disposer is called after unlinking.
+        */
+        void clear()
+        {
+            m_List.erase_for( []( value_type const& val ) -> bool { return !node_traits::to_node_ptr( val )->is_dummy(); } );
+            m_ItemCounter.reset();
+        }
+
         /// Checks if the set is empty
         /**
             Emptiness is checked by item counting: if item count is zero then the set is empty.
@@ -542,6 +565,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
         /**
             The forward iterator for a split-list has some features:
@@ -549,6 +574,7 @@ namespace cds { namespace intrusive {
             - it depends on iterator of underlying \p OrderedList
         */
         typedef iterator_type<false>    iterator;
+
         /// Const forward iterator
         /**
             For iterator's features and requirements see \ref iterator
@@ -577,28 +603,29 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a split-list
-        //@{
         const_iterator begin() const
         {
             return const_iterator( m_List.begin(), m_List.end() );
         }
+
+        /// Returns a forward const iterator addressing the first element in a split-list
         const_iterator cbegin() const
         {
             return const_iterator( m_List.cbegin(), m_List.cend() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a split-list
-        //@{
         const_iterator end() const
         {
             return const_iterator( m_List.end(), m_List.end() );
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a split-list
         const_iterator cend() const
         {
             return const_iterator( m_List.cend(), m_List.cend() );
         }
-        //@}
+    //@}
 
     protected:
         //@cond
@@ -633,10 +660,10 @@ namespace cds { namespace intrusive {
             if ( ret.first != m_List.end() ) {
                 if ( ret.second ) {
                     inc_item_count();
-                    m_Stat.onEnsureNew();
+                    m_Stat.onUpdateNew();
                 }
                 else
-                    m_Stat.onEnsureExist();
+                    m_Stat.onUpdateExist();
                 return std::make_pair( iterator(ret.first, m_List.end()), ret.second );
             }
             return std::make_pair( end(), ret.second );

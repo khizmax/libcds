@@ -222,6 +222,8 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+   ///@name Forward iterators
+   //@{
         /// Returns a forward iterator addressing the first element in a list
         /**
             For empty list \code begin() == end() \endcode
@@ -257,28 +259,29 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        //@{
         const_iterator begin() const
         {
             return const_iterator( head() );
         }
+
+        /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
             return const_iterator( head() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        //@{
         const_iterator end() const
         {
             return const_iterator();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return const_iterator();
         }
-        //@}
+    //@}
 
     protected:
         //@cond
@@ -323,7 +326,6 @@ namespace cds { namespace container {
         /// Updates the item
         /**
             If \p key is not in the list and \p bAllowInsert is \p true,
-
             the function inserts a new item.
             Otherwise, the function returns an iterator pointing to the item found.
 
@@ -424,6 +426,16 @@ namespace cds { namespace container {
 
     protected:
         //@cond
+        static value_type& node_to_value( node_type& n )
+        {
+            return n.m_Value;
+        }
+
+        iterator insert_node( node_type * pNode )
+        {
+            return node_to_iterator( insert_node_at( head(), pNode ));
+        }
+
         node_type * insert_node_at( head_type& refHead, node_type * pNode )
         {
             assert( pNode != nullptr );

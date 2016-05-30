@@ -152,7 +152,7 @@ namespace cds { namespace intrusive {
             all other \p %segmented_queue::traits members left unchanged.
 
             \p Options are:
-            - \p opt::disposer - the functor used for dispose removed items.
+            - \p opt::disposer - the functor used to dispose removed items.
             - \p opt::stat - internal statistics, possible type: \p segmented_queue::stat, \p segmented_queue::empty_stat (the default)
             - \p opt::item_counter - item counting feature. Note that \p atomicity::empty_item_counetr is not suitable
                 for segmented queue.
@@ -599,7 +599,7 @@ namespace cds { namespace intrusive {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns \p nullptr.
+            The function repeatedly calls \p dequeue() until it returns \p nullptr.
             The disposer specified in \p Traits template argument is called for each removed item.
         */
         void clear()

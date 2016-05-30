@@ -530,7 +530,6 @@ namespace cds { namespace intrusive {
 
         bool insert_at( atomic_node_ptr& refHead, value_type& val )
         {
-            link_checker::is_empty( node_traits::to_node_ptr( val ) );
             position pos;
 
             while ( true ) {
@@ -566,8 +565,6 @@ namespace cds { namespace intrusive {
                 else {
                     if ( !bAllowInsert )
                         return std::make_pair( end(), false );
-
-                    link_checker::is_empty( node_traits::to_node_ptr( val ) );
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         ++m_ItemCounter;
@@ -667,6 +664,25 @@ namespace cds { namespace intrusive {
                 }
                 pPrev = &( pCur->m_pNext );
                 pCur = pNext;
+            }
+        }
+
+        // for split-list
+        template <typename Predicate>
+        void erase_for( Predicate pred )
+        {
+            node_type * pPred = nullptr;
+            node_type * pHead = m_pHead.load( memory_model::memory_order_relaxed );
+            while ( pHead ) {
+                node_type * p = pHead->m_pNext.load( memory_model::memory_order_relaxed );
+                if ( pred( *node_traits::to_value_ptr( pHead ))) {
+                    assert( pPred != nullptr );
+                    pPred->m_pNext.store( p, memory_model::memory_order_relaxed );
+                    dispose_node( pHead, disposer());
+                }
+                else
+                    pPred = pHead;
+                pHead = p;
             }
         }
         //@endcond

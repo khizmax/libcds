@@ -83,7 +83,7 @@ namespace cds { namespace intrusive {
         the priority value plus some uniformly distributed random value.
 
         @attention Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
-        for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
+        for uniformly distributed random keys, but in the worst case the complexity is <tt>O(N)</tt>.
 
         @note In the current implementation we do not use helping technique described in the original paper.
         Instead of helping, when a thread encounters a concurrent operation it just spins waiting for
@@ -349,8 +349,8 @@ namespace cds { namespace intrusive {
         // Foo struct is derived from two ellen_bintree::node class
         // with different tags
         struct Foo
-            : public cds::intrusive::ellen_bintree::node< gpb_rcu, cds::opt::tag< string_tag > >
-            , public cds::intrusive::ellen_bintree::node< gpb_rcu >, cds::opt::tag< int_tag >
+            : public cds::intrusive::ellen_bintree::node< gpb_rcu, cds::opt::tag< string_tag >>
+            , public cds::intrusive::ellen_bintree::node< gpb_rcu, cds::opt::tag< int_tag >>
         {
             std::string m_strKey    ;   // string key
             int         m_nKey      ;   // int key
@@ -848,7 +848,7 @@ namespace cds { namespace intrusive {
                         func( false, *node_traits::to_value_ptr( res.pLeaf ), val );
                         if ( pNewInternal.get())
                             m_Stat.onInternalNodeDeleted() ;    // unique_internal_node_ptr deletes internal node
-                        m_Stat.onEnsureExist();
+                        m_Stat.onUpdateExist();
                         return std::make_pair( true, false );
                     }
 
@@ -869,12 +869,12 @@ namespace cds { namespace intrusive {
                         help( res.updParent, updRetire );
 
                     bkoff();
-                    m_Stat.onEnsureRetry();
+                    m_Stat.onUpdateRetry();
                 }
             }
 
             ++m_ItemCounter;
-            m_Stat.onEnsureNew();
+            m_Stat.onUpdateNew();
 
             return std::make_pair( true, true );
         }
@@ -917,7 +917,8 @@ namespace cds { namespace intrusive {
             unlinks it from the tree, and returns \p true.
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */
@@ -969,7 +970,8 @@ namespace cds { namespace intrusive {
 
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
         */

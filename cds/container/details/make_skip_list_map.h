@@ -96,7 +96,7 @@ namespace cds { namespace container { namespace details {
             template <typename Q>
             node_type * New( unsigned int nHeight, Q const& key )
             {
-                return base_class::New( nHeight, key );
+                return base_class::New( nHeight, key_type( key ));
             }
             template <typename Q, typename U>
             node_type * New( unsigned int nHeight, Q const& key, U const& val )
@@ -105,7 +105,7 @@ namespace cds { namespace container { namespace details {
                 return new( pMem )
                     node_type( nHeight,
                         nHeight > 1 ? reinterpret_cast<typename base_class::node_tower_item *>( pMem + base_class::c_nNodeSize ) : nullptr,
-                        key, val
+                        key_type( key ), mapped_type( val )
                     );
             }
             template <typename... Args>

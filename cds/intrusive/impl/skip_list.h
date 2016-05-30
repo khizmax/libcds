@@ -391,6 +391,11 @@ namespace cds { namespace intrusive {
         static unsigned int const c_nMinHeight = 5;
         //@endcond
 
+        // c_nMaxHeight * 2 - pPred/pSucc guards
+        // + 1 - for erase, unlink
+        // + 1 - for clear
+        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 2; ///< Count of hazard pointer required for the skip-list
+
     protected:
         typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic marked node pointer
         typedef typename node_type::marked_ptr          marked_node_ptr;   ///< Node marked pointer
@@ -407,10 +412,6 @@ namespace cds { namespace intrusive {
 
         typedef std::unique_ptr< node_type, typename node_builder::node_disposer > scoped_node_ptr;
 
-        // c_nMaxHeight * 2 - pPred/pSucc guards
-        // + 1 - for erase, unlink
-        // + 1 - for clear
-        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 2;
         struct position {
             node_type *   pPrev[ c_nMaxHeight ];
             node_type *   pSucc[ c_nMaxHeight ];
@@ -990,7 +991,50 @@ namespace cds { namespace intrusive {
         }
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Iterator type
+        /**
+            The forward iterator has some features:
+            - it has no post-increment operator
+            - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
+              For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
+              may be thrown if the limit of guard count per thread is exceeded.
+            - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
+            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
+              deleting operations there is no guarantee that you iterate all item in the list. 
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+
+            @warning Use this iterator on the concurrent container for debugging purpose only.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
         typedef skip_list::details::iterator< gc, node_traits, back_off, false >  iterator;
 
         /// Const iterator type
@@ -1029,6 +1073,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator();
         }
+    //@}
 
     public:
         /// Inserts new node

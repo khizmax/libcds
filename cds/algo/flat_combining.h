@@ -180,7 +180,7 @@ namespace cds { namespace algo {
             void    onCombining()               { ++m_nCombiningCount; }
             void    onCompactPublicationList()  { ++m_nCompactPublicationList; }
             void    onDeactivatePubRecord()     { ++m_nDeactivatePubRecord; }
-            void    onActivatPubRecord()        { ++m_nActivatePubRecord; }
+            void    onActivatePubRecord()       { ++m_nActivatePubRecord; }
             void    onCreatePubRecord()         { ++m_nPubRecordCreated; }
             void    onDeletePubRecord()         { ++m_nPubRecordDeteted; }
             void    onAcquirePubRecord()        { ++m_nAcquirePubRecCount; }
@@ -196,7 +196,7 @@ namespace cds { namespace algo {
             void    onCombining()               {}
             void    onCompactPublicationList()  {}
             void    onDeactivatePubRecord()     {}
-            void    onActivatPubRecord()        {}
+            void    onActivatePubRecord()       {}
             void    onCreatePubRecord()         {}
             void    onDeletePubRecord()         {}
             void    onAcquirePubRecord()        {}
@@ -338,7 +338,7 @@ namespace cds { namespace algo {
 
                     publication_record * pRec = p;
                     p = p->pNext.load( memory_model::memory_order_relaxed );
-                    if ( pRec->nState.load( memory_model::memory_order_relaxed ) == removed )
+                    if ( pRec->nState.load( memory_model::memory_order_acquire ) == removed )
                         free_publication_record( static_cast<publication_record_type *>( pRec ));
                 }
             }
@@ -573,13 +573,12 @@ namespace cds { namespace algo {
                 // Thread done
                 // pRec that is TLS data should be excluded from publication list
                 if ( pRec ) {
-                    if ( pRec->pOwner && pRec->nState.load(memory_model::memory_order_relaxed) == active ) {
-                        // record is active and kernel is alive
-                        unsigned int nState = active;
-                        pRec->nState.compare_exchange_strong( nState, removed, memory_model::memory_order_release, atomics::memory_order_relaxed );
+                    if ( pRec->pOwner ) {
+                        // kernel is alive
+                        pRec->nState.store( removed, memory_model::memory_order_release );
                     }
                     else {
-                        // record is not in publication list or kernel already deleted
+                        // kernel already deleted
                         free_publication_record( pRec );
                     }
                 }
@@ -616,7 +615,7 @@ namespace cds { namespace algo {
                             // Failed CAS changes p
                         } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
                             memory_model::memory_order_release, atomics::memory_order_relaxed ));
-                        m_Stat.onActivatPubRecord();
+                        m_Stat.onActivatePubRecord();
                     }
                 }
             }

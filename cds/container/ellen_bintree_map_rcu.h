@@ -58,7 +58,7 @@ namespace cds { namespace container {
         the priority value plus some uniformly distributed random value.
 
         @warning Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
-        for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
+        for uniformly distributed random keys, but in the worst case the complexity is <tt>O(N)</tt>.
 
         @note In the current implementation we do not use helping technique described in original paper.
         So, the current implementation is near to fine-grained lock-based tree.
@@ -102,6 +102,8 @@ namespace cds { namespace container {
         typedef T       mapped_type; ///< type of value stored in the map
         typedef std::pair< key_type const, mapped_type >    value_type;   ///< Key-value pair stored in leaf node of the mp
         typedef Traits  traits;      ///< Traits template parameter
+
+        static_assert( std::is_default_constructible<key_type>::value, "Key should be default constructible type" );
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator  ;    ///< key compare functor based on \p Traits::compare and \p Traits::less
@@ -241,7 +243,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            scoped_node_ptr pNode( cxx_leaf_node_allocator().New( std::forward<K>(key), std::forward<Args>(args)... ));
+            scoped_node_ptr pNode( cxx_leaf_node_allocator().MoveNew( key_type( std::forward<K>(key)), mapped_type( std::forward<Args>(args)... )));
             if ( base_class::insert( *pNode )) {
                 pNode.release();
                 return true;

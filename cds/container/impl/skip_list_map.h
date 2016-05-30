@@ -79,48 +79,6 @@ namespace cds { namespace container {
         - <tt><cds/container/skip_list_map_dhp.h></tt> for \p gc::DHP garbage collector
         - <tt><cds/container/skip_list_map_rcu.h></tt> for \ref cds_nonintrusive_SkipListMap_rcu "RCU type"
         - <tt><cds/container/skip_list_map_nogc.h></tt> for \ref cds_nonintrusive_SkipListMap_nogc "non-deletable SkipListMap"
-
-        <b>Iterators</b>
-
-        The class supports a forward iterator (\ref iterator and \ref const_iterator).
-        The iteration is ordered.
-        The iterator object is thread-safe: the element pointed by the iterator object is guarded,
-        so, the element cannot be reclaimed while the iterator object is alive.
-        However, passing an iterator object between threads is dangerous.
-
-        \warning Due to concurrent nature of skip-list map it is not guarantee that you can iterate
-        all elements in the map: any concurrent deletion can exclude the element
-        pointed by the iterator from the map, and your iteration can be terminated
-        before end of the map. Therefore, such iteration is more suitable for debugging purpose only
-
-        Remember, each iterator object requires 2 additional hazard pointers, that may be
-        a limited resource for \p GC like \p gc::HP (for gc::DHP the count of
-        guards is unlimited).
-
-        The iterator class supports the following minimalistic interface:
-        \code
-        struct iterator {
-            // Default ctor
-            iterator();
-
-            // Copy ctor
-            iterator( iterator const& s);
-
-            value_type * operator ->() const;
-            value_type& operator *() const;
-
-            // Pre-increment
-            iterator& operator ++();
-
-            // Copy assignment
-            iterator& operator = (const iterator& src);
-
-            bool operator ==(iterator const& i ) const;
-            bool operator !=(iterator const& i ) const;
-        };
-        \endcode
-        Note, the iterator object returned by \ref end, \ cend member functions points to \p nullptr and should not be dereferenced.
-
     */
     template <
         typename GC,
@@ -162,6 +120,8 @@ namespace cds { namespace container {
         typedef typename traits::random_level_generator random_level_generator ; ///< random level generator
         typedef typename traits::stat              stat;           ///< internal statistics type
 
+        static size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the skip-list
+
     protected:
         //@cond
         typedef typename maker::node_type           node_type;
@@ -193,11 +153,57 @@ namespace cds { namespace container {
         {}
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Iterator type
+        /**
+            The forward iterator has some features:
+            - it is ordered
+            - it has no post-increment operator
+            - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
+              For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
+              may be thrown if the limit of guard count per thread is exceeded.
+            - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
+            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
+              deleting operations there is no guarantee that you iterate all item in the list. 
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+
+            @warning Use this iterator on the concurrent container for debugging purpose only.
+
+            @note \p end() and \p cend() are not dereferenceable.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
+        */
         typedef skip_list::details::iterator< typename base_class::iterator >  iterator;
 
-        /// Const iterator type
-        typedef skip_list::details::iterator< typename base_class::const_iterator >   const_iterator;
+        /// Const forward iterator type
+        typedef skip_list::details::iterator< typename base_class::const_iterator > const_iterator;
 
         /// Returns a forward iterator addressing the first element in a map
         iterator begin()
@@ -210,6 +216,7 @@ namespace cds { namespace container {
         {
             return cbegin();
         }
+
         /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
@@ -227,11 +234,13 @@ namespace cds { namespace container {
         {
             return cend();
         }
+
         /// Returns a forward const iterator that addresses the location succeeding the last element in a map.
         const_iterator cend() const
         {
             return const_iterator( base_class::cend() );
         }
+    //@}
 
     public:
         /// Inserts new node with key and default value
@@ -265,7 +274,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K const& key, V const& val )
         {
-            return insert_with( key, [&val](value_type& item) { item.second = val ; } );
+            return insert_with( key, [&val]( value_type& item ) { item.second = val; } );
         }
 
         /// Inserts new node and initialize it by a functor

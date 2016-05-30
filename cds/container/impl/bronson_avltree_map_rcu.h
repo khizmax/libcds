@@ -38,7 +38,7 @@
 
 namespace cds { namespace container {
 
-    /// Bronson et al AVL-tree (RCU specialization for storing pointer to values)
+    /// Bronson et al AVL-tree (RCU specialization for pointers)
     /** @ingroup cds_nonintrusive_map
         @ingroup cds_nonintrusive_tree
         @headerfile cds/container/bronson_avltree_map_rcu.h
@@ -366,7 +366,7 @@ namespace cds { namespace container {
 
             The functor \p Func interface:
             \code
-            struct extractor {
+            struct functor {
                 void operator()( key_type const& key, std::remove_pointer<mapped_type>::type& val) { ... }
             };
             \endcode
@@ -436,7 +436,7 @@ namespace cds { namespace container {
             return exempt_ptr(do_extract_min( []( key_type const& ) {}));
         }
 
-        /// Extracts minimal key key and corresponding value
+        /// Extracts minimal key and corresponding value
         /**
             Returns \p exempt_ptr to the leftmost item.
             If the tree is empty, returns empty \p exempt_ptr.
@@ -449,7 +449,7 @@ namespace cds { namespace container {
             };
             \endcode
             If the tree is empty, \p f is not called.
-            Otherwise, is it called with minimal key, the pointer to corresponding value is returned
+            Otherwise, it is called with minimal key, the pointer to corresponding value is returned
             as \p exempt_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> minimum key.
@@ -468,13 +468,13 @@ namespace cds { namespace container {
             return exempt_ptr(do_extract_min( [&f]( key_type const& key ) { f(key); }));
         }
 
-        /// Extracts minimal key key and corresponding value
+        /// Extracts minimal key and corresponding value
         /**
             This function is a shortcut for the following call:
             \code
             key_type key;
             exempt_ptr xp = theTree.extract_min( [&key]( key_type const& k ) { key = k; } );
-            \endode
+            \endcode
             \p key_type should be copy-assignable. The copy of minimal key
             is returned in \p min_key argument.
         */
@@ -520,7 +520,7 @@ namespace cds { namespace container {
                 };
             \endcode
             If the tree is empty, \p f is not called.
-            Otherwise, is it called with maximal key, the pointer to corresponding value is returned
+            Otherwise, it is called with maximal key, the pointer to corresponding value is returned
             as \p exempt_ptr.
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
@@ -545,7 +545,7 @@ namespace cds { namespace container {
             \code
                 key_type key;
                 exempt_ptr xp = theTree.extract_max( [&key]( key_type const& k ) { key = k; } );
-            \endode
+            \endcode
             \p key_type should be copy-assignable. The copy of maximal key
             is returned in \p max_key argument.
         */
@@ -592,7 +592,7 @@ namespace cds { namespace container {
             The interface of \p Func functor is:
             \code
             struct functor {
-                void operator()( key_type const& key, mapped_type& item );
+                void operator()( key_type const& key, std::remove_pointer< mapped_type )::type& item );
             };
             \endcode
             where \p item is the item found.

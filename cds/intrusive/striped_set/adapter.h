@@ -223,7 +223,7 @@ namespace cds { namespace intrusive {
                 typedef typename container_type::iterator       iterator        ;   ///< container iterator
                 typedef typename container_type::const_iterator const_iterator  ;   ///< container const iterator
 
-                typedef typename container_type::value_compare  key_comparator;
+                typedef typename container_type::key_compare  key_comparator;
 
             private:
                 container_type  m_Set;
@@ -255,7 +255,7 @@ namespace cds { namespace intrusive {
                         return std::make_pair( true, res.second );
                     }
                     else {
-                        auto it = m_Set.find( val );
+                        auto it = m_Set.find( val, key_comparator() );
                         if ( it == m_Set.end() )
                             return std::make_pair( false, false );
                         f( false, *it, val );
@@ -265,7 +265,7 @@ namespace cds { namespace intrusive {
 
                 bool unlink( value_type& val )
                 {
-                    iterator it = m_Set.find( value_type(val));
+                    iterator it = m_Set.find( val, key_comparator() );
                     if ( it == m_Set.end() || &(*it) != &val )
                         return false;
                     m_Set.erase( it );
@@ -297,13 +297,13 @@ namespace cds { namespace intrusive {
                 }
 
                 template <typename Q, typename Func>
-                bool find( Q& key, Func f )
+                bool find( Q const& key, Func f )
                 {
                     return find( key, key_comparator(), f );
                 }
 
                 template <typename Q, typename Compare, typename Func>
-                bool find( Q& key, Compare cmp, Func f )
+                bool find( Q const& key, Compare cmp, Func f )
                 {
                     iterator it = m_Set.find( key, cmp );
                     if ( it == m_Set.end() )

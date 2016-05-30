@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\MichaelMap">
+      <UniqueIdentifier>{12baf500-5c1c-44a7-9bac-e0554eb93b1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SplitListMap">
+      <UniqueIdentifier>{3f37c15c-de68-4230-9c59-bc3a2e059950}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SkipListMap">
+      <UniqueIdentifier>{1e70af02-0389-402a-bb6e-e1a399628288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FeldmanHashMap">
+      <UniqueIdentifier>{d953f61d-84a0-4056-b0b1-9191f256b27b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\test\unit\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_hp.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_dhp.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_hp.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_dhp.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_gpb.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_gpi.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_gpt.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_shb.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_rcu_sht.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_rcu_shb.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_rcu_sht.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_michael_nogc.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\michael_lazy_nogc.cpp">
+      <Filter>Source Files\MichaelMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_hp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_dhp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_nogc.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpi.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_gpt.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_shb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_michael_rcu_sht.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_hp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_dhp.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_nogc.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_shb.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_sht.cpp">
+      <Filter>Source Files\SplitListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_hp.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_dhp.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_nogc.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpb.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpi.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_gpt.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_shb.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_sht.cpp">
+      <Filter>Source Files\SkipListMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashmap_hp.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashmap_dhp.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_gpb.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_gpi.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_gpt.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_shb.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\map\feldman_hashset_rcu_sht.cpp">
+      <Filter>Source Files\FeldmanHashMap</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\map\test_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_map_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_map_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_michael_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_michael_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_map_nogc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_split_michael_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_split_lazy_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_skiplist_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_skiplist_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_map_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_feldman_hashmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_feldman_hashmap_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\map\test_feldman_hashmap_rcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

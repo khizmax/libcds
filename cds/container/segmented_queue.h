@@ -281,6 +281,17 @@ namespace cds { namespace container {
             return false;
         }
 
+        /// Inserts a new element at last segment of the queue, move semantics
+        bool enqueue( value_type&& val )
+        {
+            scoped_node_ptr p( alloc_node_move( std::move( val )));
+            if ( base_class::enqueue( *p ) ) {
+                p.release();
+                return true;
+            }
+            return false;
+        }
+
         /// Enqueues data to the queue using a functor
         /**
             \p Func is a functor called to create node.
@@ -304,10 +315,16 @@ namespace cds { namespace container {
         }
 
 
-        /// Synonym for \p enqueue() member function
+        /// Synonym for \p enqueue( value_type const& ) member function
         bool push( value_type const& val )
         {
             return enqueue( val );
+        }
+
+        /// Synonym for \p enqueue( value_type&& ) member function
+        bool push( value_type&& val )
+        {
+            return enqueue( std::move( val ));
         }
 
         /// Synonym for \p enqueue_with() member function
@@ -337,7 +354,7 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            return dequeue_with( [&dest]( value_type& src ) { dest = src; });
+            return dequeue_with( [&dest]( value_type& src ) { dest = std::move( src );});
         }
 
         /// Dequeues a value using a functor
@@ -390,7 +407,7 @@ namespace cds { namespace container {
 
         /// Clear the queue
         /**
-            The function repeatedly calls \ref dequeue until it returns \p nullptr.
+            The function repeatedly calls \p dequeue() until it returns \p nullptr.
             The disposer specified in \p Traits template argument is called for each removed item.
         */
         void clear()

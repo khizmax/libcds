@@ -31,6 +31,7 @@
 #ifndef CDSLIB_OPT_BUFFER_H
 #define CDSLIB_OPT_BUFFER_H
 
+#include <memory.h>
 #include <cds/details/defs.h>
 #include <cds/user_setup/allocator.h>
 #include <cds/details/allocator.h>

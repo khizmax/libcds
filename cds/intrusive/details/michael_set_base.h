@@ -94,10 +94,10 @@ namespace cds { namespace intrusive {
                     nLoadFactor = 1;
                 if ( nMaxItemCount == 0 )
                     nMaxItemCount = 4;
-                const size_t nBucketCount = (size_t)( nMaxItemCount / nLoadFactor );
-                const size_t nLog2 = cds::bitop::MSB( nBucketCount );
+                const size_t nBucketCount = nMaxItemCount / nLoadFactor;
+                const size_t exp2 = size_t( 1 ) << cds::bitop::MSB( nBucketCount );
 
-                return (( size_t( 1 << nLog2 ) < nBucketCount ? size_t( 1 << (nLog2 + 1) ) : size_t( 1 << nLog2 ))) - 1;
+                return ( exp2 < nBucketCount ? exp2 * 2 : exp2 ) - 1;
             }
 
             template <typename OrderedList, bool IsConst>

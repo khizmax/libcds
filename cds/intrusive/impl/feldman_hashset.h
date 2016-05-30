@@ -145,6 +145,9 @@ namespace cds { namespace intrusive {
         /// Count of hazard pointers required
         static CDS_CONSTEXPR size_t const c_nHazardPtrCount = 2;
 
+        /// Level statistics
+        typedef feldman_hashset::level_statistics level_statistics;
+
     protected:
         //@cond
         typedef typename base_class::node_ptr node_ptr;
@@ -186,7 +189,7 @@ namespace cds { namespace intrusive {
                 m_guard.copy( rhs.m_guard );
             }
 
-            iterator_base& operator=(iterator_base const& rhs) CDS_NOEXCEPT
+            iterator_base& operator=( iterator_base const& rhs ) CDS_NOEXCEPT
             {
                 m_pNode = rhs.m_pNode;
                 m_idx = rhs.m_idx;
@@ -212,12 +215,12 @@ namespace cds { namespace intrusive {
                 m_guard.clear();
             }
 
-            bool operator ==(iterator_base const& rhs) const CDS_NOEXCEPT
+            bool operator ==( iterator_base const& rhs ) const CDS_NOEXCEPT
             {
                 return m_pNode == rhs.m_pNode && m_idx == rhs.m_idx && m_set == rhs.m_set;
             }
 
-            bool operator !=(iterator_base const& rhs) const CDS_NOEXCEPT
+            bool operator !=( iterator_base const& rhs ) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
@@ -270,7 +273,7 @@ namespace cds { namespace intrusive {
                         else {
                             if ( slot.ptr()) {
                                 // data node
-                                if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
+                                if ( m_guard.protect( pNode->nodes[idx], []( node_ptr p ) -> value_type* { return p.ptr(); }) == slot ) {
                                     m_pNode = pNode;
                                     m_idx = idx;
                                     return;
@@ -328,7 +331,7 @@ namespace cds { namespace intrusive {
                         else {
                             if ( slot.ptr()) {
                                 // data node
-                                if ( m_guard.protect( pNode->nodes[idx], [](node_ptr p) -> value_type * { return p.ptr(); }) == slot ) {
+                                if ( m_guard.protect( pNode->nodes[idx], []( node_ptr p ) -> value_type* { return p.ptr(); }) == slot ) {
                                     m_pNode = pNode;
                                     m_idx = idx;
                                     return;
@@ -402,7 +405,7 @@ namespace cds { namespace intrusive {
                 : iterator_base( rhs )
             {}
 
-            bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            bidirectional_iterator& operator=( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
             {
                 iterator_base::operator=( rhs );
                 return *this;
@@ -438,13 +441,13 @@ namespace cds { namespace intrusive {
             }
 
             template <bool IsConst2>
-            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator ==( bidirectional_iterator<IsConst2> const& rhs ) const CDS_NOEXCEPT
             {
                 return iterator_base::operator==( rhs );
             }
 
             template <bool IsConst2>
-            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator !=( bidirectional_iterator<IsConst2> const& rhs ) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
@@ -514,13 +517,13 @@ namespace cds { namespace intrusive {
             }
 
             template <bool IsConst2>
-            bool operator ==(reverse_bidirectional_iterator<IsConst2> const& rhs) const
+            bool operator ==( reverse_bidirectional_iterator<IsConst2> const& rhs ) const
             {
                 return iterator_base::operator==( rhs );
             }
 
             template <bool IsConst2>
-            bool operator !=(reverse_bidirectional_iterator<IsConst2> const& rhs)
+            bool operator !=( reverse_bidirectional_iterator<IsConst2> const& rhs )
             {
                 return !( *this == rhs );
             }
@@ -564,7 +567,7 @@ namespace cds { namespace intrusive {
 
             Equation for \p head_bits and \p array_bits:
             \code
-            sizeof(hash_type) * 8 == head_bits + N * array_bits
+            sizeof( hash_type ) * 8 == head_bits + N * array_bits
             \endcode
             where \p N is multi-level array depth.
         */
@@ -587,7 +590,7 @@ namespace cds { namespace intrusive {
         */
         bool insert( value_type& val )
         {
-            return insert( val, [](value_type&) {} );
+            return insert( val, []( value_type& ) {} );
         }
 
         /// Inserts new node
@@ -612,7 +615,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert( value_type& val, Func f )
         {
-            hash_type const& hash = hash_accessor()(val);
+            hash_type const& hash = hash_accessor()( val );
             traverse_data pos( hash, *this );
             hash_comparator cmp;
             typename gc::template GuardArray<2> guards;
@@ -623,13 +626,13 @@ namespace cds { namespace intrusive {
                 assert( slot.bits() == 0 );
 
                 // protect data node by hazard pointer
-                if (guards.protect( 0, pos.pArr->nodes[pos.nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
+                if ( guards.protect( 0, pos.pArr->nodes[pos.nSlot], []( node_ptr p ) -> value_type* { return p.ptr(); }) != slot ) {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
                 }
 
-                if (slot.ptr()) {
-                    if ( cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
+                if ( slot.ptr()) {
+                    if ( cmp( hash, hash_accessor()( *slot.ptr())) == 0 ) {
                         // the item with that hash value already exists
                         stats().onInsertFailed();
                         return false;
@@ -641,13 +644,13 @@ namespace cds { namespace intrusive {
                 else {
                     // the slot is empty, try to insert data node
                     node_ptr pNull;
-                    if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong( pNull, node_ptr(&val), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                    if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     {
                         // the new data node has been inserted
-                        f(val);
+                        f( val );
                         ++m_ItemCounter;
                         stats().onInsertSuccess();
-                        stats().height(pos.nHeight);
+                        stats().height( pos.nHeight );
                         return true;
                     }
 
@@ -675,7 +678,7 @@ namespace cds { namespace intrusive {
         */
         std::pair<bool, bool> update( value_type& val, bool bInsert = true )
         {
-            return do_update(val, [](value_type&, value_type *) {}, bInsert );
+            return do_update( val, []( value_type&, value_type* ) {}, bInsert );
         }
 
         /// Unlinks the item \p val from the set
@@ -688,7 +691,7 @@ namespace cds { namespace intrusive {
         bool unlink( value_type const& val )
         {
             typename gc::Guard guard;
-            auto pred = [&val](value_type const& item) -> bool { return &item == &val; };
+            auto pred = [&val]( value_type const& item ) -> bool { return &item == &val; };
             value_type * p = do_erase( hash_accessor()( val ), guard, std::ref( pred ));
             return p != nullptr;
         }
@@ -703,7 +706,7 @@ namespace cds { namespace intrusive {
         */
         bool erase( hash_type const& hash )
         {
-            return erase(hash, [](value_type const&) {} );
+            return erase( hash, []( value_type const& ) {} );
         }
 
         /// Deletes the item from the set
@@ -831,7 +834,7 @@ namespace cds { namespace intrusive {
         */
         bool contains( hash_type const& hash )
         {
-            return find( hash, [](value_type&) {} );
+            return find( hash, []( value_type& ) {} );
         }
 
         /// Finds an item by it's \p hash and returns the item found
@@ -909,15 +912,15 @@ namespace cds { namespace intrusive {
         using base_class::array_node_size;
 
         /// Collects tree level statistics into \p stat
-        /** @anchor cds_intrusive_FeldmanHashSet_hp_get_level_statistics
-            The function traverses the set and collects staistics for each level of the tree
+        /** 
+            The function traverses the set and collects statistics for each level of the tree
             into \p feldman_hashset::level_statistics struct. The element of \p stat[i]
             represents statistics for level \p i, level 0 is head array.
             The function is thread-safe and may be called in multi-threaded environment.
 
             Result can be useful for estimating efficiency of hash functor you use.
         */
-        void get_level_statistics(std::vector< feldman_hashset::level_statistics>& stat) const
+        void get_level_statistics( std::vector< feldman_hashset::level_statistics>& stat ) const
         {
             base_class::get_level_statistics( stat );
         }
@@ -1058,7 +1061,7 @@ namespace cds { namespace intrusive {
                     }
                     else if ( slot.bits() == base_class::flag_array_converting ) {
                         // the slot is converting to array node right now
-                        while ( (slot = pArr->load(memory_model::memory_order_acquire)).bits() == base_class::flag_array_converting ) {
+                        while (( slot = pArr->load( memory_model::memory_order_acquire )).bits() == base_class::flag_array_converting ) {
                             bkoff();
                             stats().onSlotConverting();
                         }
@@ -1092,17 +1095,17 @@ namespace cds { namespace intrusive {
             traverse_data pos( hash, *this );
             hash_comparator cmp;
 
-            while (true) {
+            while ( true ) {
                 node_ptr slot = base_class::traverse( pos );
-                assert(slot.bits() == 0);
+                assert( slot.bits() == 0 );
 
                 // protect data node by hazard pointer
-                if (guard.protect( pos.pArr->nodes[pos.nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot) {
+                if ( guard.protect( pos.pArr->nodes[pos.nSlot], []( node_ptr p ) -> value_type* { return p.ptr(); }) != slot) {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
                     continue;
                 }
-                else if (slot.ptr() && cmp(hash, hash_accessor()(*slot.ptr())) == 0) {
+                else if ( slot.ptr() && cmp( hash, hash_accessor()( *slot.ptr())) == 0 ) {
                     // item found
                     stats().onFindSuccess();
                     return slot.ptr();
@@ -1117,21 +1120,21 @@ namespace cds { namespace intrusive {
         {
             traverse_data pos( hash, *this );
             hash_comparator cmp;
-            while (true) {
+            while ( true ) {
                 node_ptr slot = base_class::traverse( pos );
-                assert(slot.bits() == 0);
+                assert( slot.bits() == 0 );
 
                 // protect data node by hazard pointer
-                if (guard.protect( pos.pArr->nodes[pos.nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot) {
+                if ( guard.protect( pos.pArr->nodes[pos.nSlot], []( node_ptr p ) -> value_type* { return p.ptr(); }) != slot ) {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
                 }
-                else if (slot.ptr()) {
-                    if ( cmp(hash, hash_accessor()(*slot.ptr())) == 0 && pred(*slot.ptr())) {
+                else if ( slot.ptr()) {
+                    if ( cmp( hash, hash_accessor()( *slot.ptr())) == 0 && pred( *slot.ptr())) {
                         // item found - replace it with nullptr
-                        if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed)) {
+                        if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong( slot, node_ptr( nullptr ), memory_model::memory_order_acquire, atomics::memory_order_relaxed)) {
                             // slot is guarded by HP
-                            gc::template retire<disposer>(slot.ptr());
+                            gc::template retire<disposer>( slot.ptr());
                             --m_ItemCounter;
                             stats().onEraseSuccess();
 
@@ -1155,15 +1158,17 @@ namespace cds { namespace intrusive {
         {
             if ( iter.m_set != this )
                 return false;
-            if ( iter.m_pNode == head() && iter.m_idx >= head_size())
-                return false;
-            if ( iter.m_idx >= array_node_size())
+            if ( iter.m_pNode == head()) {
+                if ( iter.m_idx >= head_size())
+                    return false;
+            }
+            else if ( iter.m_idx >= array_node_size())
                 return false;
 
             for (;;) {
                 node_ptr slot = iter.m_pNode->nodes[iter.m_idx].load( memory_model::memory_order_acquire );
                 if ( slot.bits() == 0 && slot.ptr() == iter.pointer()) {
-                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong(slot, node_ptr(nullptr), memory_model::memory_order_acquire, atomics::memory_order_relaxed)) {
+                    if ( iter.m_pNode->nodes[iter.m_idx].compare_exchange_strong( slot, node_ptr( nullptr ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                         // the item is guarded by iterator, so we may retire it safely
                         gc::template retire<disposer>( slot.ptr());
                         --m_ItemCounter;
@@ -1185,30 +1190,30 @@ namespace cds { namespace intrusive {
             typename gc::template GuardArray<2> guards;
 
             guards.assign( 1, &val );
-            while (true) {
+            while ( true ) {
                 node_ptr slot = base_class::traverse( pos );
-                assert(slot.bits() == 0);
+                assert( slot.bits() == 0 );
 
                 // protect data node by hazard pointer
-                if ( guards.protect( 0, pos.pArr->nodes[pos.nSlot], [](node_ptr p) -> value_type * { return p.ptr(); }) != slot ) {
+                if ( guards.protect( 0, pos.pArr->nodes[pos.nSlot], []( node_ptr p ) -> value_type* { return p.ptr(); }) != slot ) {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
                 }
                 else if ( slot.ptr()) {
-                    if ( cmp( hash, hash_accessor()(*slot.ptr())) == 0 ) {
+                    if ( cmp( hash, hash_accessor()( *slot.ptr())) == 0 ) {
                         // the item with that hash value already exists
                         // Replace it with val
                         if ( slot.ptr() == &val ) {
                             stats().onUpdateExisting();
-                            return std::make_pair(true, false);
+                            return std::make_pair( true, false );
                         }
 
-                        if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(slot, node_ptr(&val), memory_model::memory_order_release, atomics::memory_order_relaxed)) {
+                        if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong( slot, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                             // slot can be disposed
                             f( val, slot.ptr());
                             gc::template retire<disposer>( slot.ptr());
                             stats().onUpdateExisting();
-                            return std::make_pair(true, false);
+                            return std::make_pair( true, false );
                         }
 
                         stats().onUpdateRetry();
@@ -1221,26 +1226,26 @@ namespace cds { namespace intrusive {
                     }
                     else {
                         stats().onUpdateFailed();
-                        return std::make_pair(false, false);
+                        return std::make_pair( false, false );
                     }
                 }
                 else {
                     // the slot is empty, try to insert data node
                     if ( bInsert ) {
                         node_ptr pNull;
-                        if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong(pNull, node_ptr(&val), memory_model::memory_order_release, atomics::memory_order_relaxed))
+                        if ( pos.pArr->nodes[pos.nSlot].compare_exchange_strong( pNull, node_ptr( &val ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         {
                             // the new data node has been inserted
-                            f(val, nullptr);
+                            f( val, nullptr );
                             ++m_ItemCounter;
                             stats().onUpdateNew();
                             stats().height( pos.nHeight );
-                            return std::make_pair(true, true);
+                            return std::make_pair( true, true );
                         }
                     }
                     else {
                         stats().onUpdateFailed();
-                        return std::make_pair(false, false);
+                        return std::make_pair( false, false );
                     }
 
                     // insert failed - slot has been changed by another thread

@@ -47,7 +47,7 @@ namespace cds { namespace urcu {
         outside RCU lock.
 
         The object of \p %raw_ptr solves that problem: it contains the pointer to the node found
-        and a chain of nodes that were reclaimed during traversing. The \p %raw_ptr object destructor
+        and a chain of nodes that were be reclaimed during traversing. The \p %raw_ptr object destructor
         frees the chain (but not the node found) passing it to RCU \p batch_retire().
 
         The object of \p %raw_ptr class must be destructed only outside RCU-lock of current thread.
@@ -136,16 +136,12 @@ namespace cds { namespace urcu {
         /// Move assignment operator
         /**
             This operator may be called only inside RCU-lock.
-            The \p this should be empty.
         */
         raw_ptr& operator=( raw_ptr&& p ) CDS_NOEXCEPT
         {
-            assert( empty() );
-            if ( !rcu::is_locked() )
-                release();
-
+            assert( rcu::is_locked());
             m_ptr = p.m_ptr;
-            m_Enum = std::move( p.m_Enum );
+            m_Enum.combine(  std::move( p.m_Enum ));
             p.m_ptr = nullptr;
             return *this;
         }

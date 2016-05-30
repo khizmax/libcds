@@ -39,7 +39,7 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
 - mkdir libcds-release
 - cd libcds-release
 - cmake -DWITH\_TESTS=ON -DCMAKE\_BUILD_TYPE=RELEASE ../libcds
-
+```
     -- The C compiler identification is GNU 4.8.3
     -- The CXX compiler identification is GNU 4.8.3
     ...
@@ -52,9 +52,9 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
     -- Configuring done
     -- Generating done
     -- Build files have been written to: <...>/libcds-release
-    
+``` 
 - make -j4
-  
+```
     Scanning dependencies of target cds
     Scanning dependencies of target test-common
     Scanning dependencies of target cds-s
@@ -63,9 +63,10 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
     ...
     [100%] Built target test-hdr
     gmake: выход из каталога «/home/kel/projects_cds/libcds-debug»
-        
-- ctest
+```
 
+- ctest
+```
     Test project /home/kel/projects_cds/libcds-debug
         Start 1: test-hdr
     1/7 Test #1: test-hdr .........................   Passed  1352.24 sec
@@ -73,9 +74,10 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
     2/7 Test #2: cdsu-misc ........................   Passed    0.00 sec
         Start 3: cdsu-map
     ...
-    
-- cpack -G RPM
+```
 
+- cpack -G RPM
+```
     CPack: Create package using RPM
     CPack: Install projects
     CPack: - Run preinstall target for: cds
@@ -88,7 +90,8 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
     CPackRPM: Will use GENERATED spec file: /home/kel/projects_cds/libcds-debug/_CPack_Packages/Linux/RPM/SPECS/cds-lib.spec
     CPack: - package: /home/kel/projects_cds/libcds-debug/cds-2.1.0-1-devel.rpm generated.
     CPack: - package: /home/kel/projects_cds/libcds-debug/cds-2.1.0-1-lib.rpm generated.
-  
+```
+
 Future development
 ----------
 - CDash: use CI system

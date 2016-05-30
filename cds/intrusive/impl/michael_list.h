@@ -211,6 +211,8 @@ namespace cds { namespace intrusive {
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
+
         //@cond
         // Rebind traits (split-list support)
         template <typename... Options>
@@ -406,6 +408,8 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's list has some features:
@@ -415,10 +419,10 @@ namespace cds { namespace intrusive {
               may be thrown if the limit of guard count per thread is exceeded.
             - The iterator cannot be moved across thread boundary since it contains thread-private GC's guard.
             - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
-              deleting operations there is no guarantee that you iterate all item in the list.
+              deleting operations there is no guarantee that you iterate all item in the list. 
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            Therefore, the use of iterators in concurrent environment is not good idea. Use the iterator on the concurrent container
-            for debug purpose only.
+            @warning Use this iterator on the concurrent container for debugging purpose only.
 
             The iterator interface:
             \code
@@ -500,6 +504,7 @@ namespace cds { namespace intrusive {
         {
             return const_iterator();
         }
+    //@}
 
     public:
         /// Default constructor initializes empty list
@@ -604,6 +609,8 @@ namespace cds { namespace intrusive {
             only if \p val is an item of the list, i.e. the pointer to item found
             is equal to <tt> &val </tt>.
 
+            \p disposer specified in \p Traits is called for deleted item.
+
             The function returns \p true if success and \p false otherwise.
         */
         bool unlink( value_type& val )
@@ -616,6 +623,8 @@ namespace cds { namespace intrusive {
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \p true.
             If \p key is not found the function return \p false.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q>
         bool erase( Q const& key )
@@ -629,6 +638,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less>
         bool erase_with( Q const& key, Less pred )
@@ -648,6 +659,8 @@ namespace cds { namespace intrusive {
             };
             \endcode
             If \p key is not found the function return \p false, \p func is not called.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Func>
         bool erase( Q const& key, Func func )
@@ -661,6 +674,8 @@ namespace cds { namespace intrusive {
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
+
+            \p disposer specified in \p Traits is called for deleted item.
         */
         template <typename Q, typename Less, typename Func>
         bool erase_with( Q const& key, Less pred, Func f )
@@ -935,7 +950,6 @@ namespace cds { namespace intrusive {
         bool insert_at( atomic_node_ptr& refHead, value_type& val )
         {
             node_type * pNode = node_traits::to_node_ptr( val );
-            link_checker::is_empty( pNode );
             position pos;
 
             while ( true ) {
@@ -956,7 +970,6 @@ namespace cds { namespace intrusive {
         bool insert_at( atomic_node_ptr& refHead, value_type& val, Func f )
         {
             node_type * pNode = node_traits::to_node_ptr( val );
-            link_checker::is_empty( pNode );
             position pos;
 
             while ( true ) {

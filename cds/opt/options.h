@@ -302,17 +302,17 @@ namespace opt {
         This option allows to set up appropriate item counting policy for that data structure.
 
         Predefined option \p Type:
-        - atomicity::empty_item_counter - no item counting performed. It is default policy for many
+        - \p atomicity::empty_item_counter - no item counting performed. It is default policy for many
             containers
-        - atomicity::item_counter - the class that provides atomically item counting
-        - opt::v::sequential_item_counter - simple non-atomic item counter. This item counter is not intended for
+        - \p atomicity::item_counter - the class that provides atomically item counting
+        - \p opt::v::sequential_item_counter - simple non-atomic item counter. This item counter is not intended for
             concurrent containers and may be used only if it is explicitly noted.
 
-        You may provide other implementation of atomicity::item_counter interface for your needs.
+        You may provide other implementation of \p atomicity::item_counter interface for your needs.
 
         Note, the item counting in lock-free containers cannot be exact; for example, if
         item counter for a container returns zero it is not mean that the container is empty.
-        Thus, item counter may be used for statistical purposes only.
+        Thus, the item counter may be used for statistical purposes only.
     */
     template <typename Type>
     struct item_counter {
@@ -370,7 +370,7 @@ namespace opt {
         no_special_padding = 0,   ///< no special padding
         cache_line_padding = 1,   ///< use cache line size defined in cds/user_setup/cache_line.h
 
-        /// Apply padding only for tiny data of size less than required padding
+        /// Apply padding only for tiny data when data size is less than required padding
         /**
             The flag means that if your data size is less than the casheline size, the padding is applyed.
             Otherwise no padding will be applyed.
@@ -851,14 +851,14 @@ namespace cds { namespace opt {
             }
         };
 
-        /// \p opt::move_policy based on assignment operator
+        /// \p opt::move_policy based on move-assignment operator
         struct assignment_move_policy
         {
-            /// <tt> dest = src </tt>
+            /// <tt> dest = std::move( src ) </tt>
             template <typename T>
-            void operator()( T& dest, T const& src ) const
+            void operator()( T& dest, T&& src ) const
             {
-                dest = src;
+                dest = std::move( src );
             }
         };
 

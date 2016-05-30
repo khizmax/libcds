@@ -48,7 +48,7 @@ namespace cds { namespace memory {
     /// Free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
-        - \p T - the type of object maintaining by free-list
+        - \p T - the type of object maintaining by free-list. \p T must be default constructible.
         - \p Traits - traits for \p cds::intrusive::VyukovMPMCCycleQueue class plus
             \p cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
@@ -124,6 +124,7 @@ namespace cds { namespace memory {
     protected:
         //@cond
         typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+        typedef typename cxx_allocator::allocator_type std_allocator;
 
         queue_type      m_Queue;
         value_type *    m_pFirst;
@@ -134,7 +135,7 @@ namespace cds { namespace memory {
         //@cond
         void preallocate_pool()
         {
-            m_pFirst = cxx_allocator().NewArray( m_Queue.capacity() );
+            m_pFirst = std_allocator().allocate( m_Queue.capacity() );
             m_pLast = m_pFirst + m_Queue.capacity();
 
             for ( value_type * p = m_pFirst; p < m_pLast; ++p ) {
@@ -165,13 +166,13 @@ namespace cds { namespace memory {
         ~vyukov_queue_pool()
         {
             m_Queue.clear();
-            cxx_allocator().Delete( m_pFirst, m_Queue.capacity());
+            std_allocator().deallocate( m_pFirst, m_Queue.capacity());
         }
 
         /// Allocates an object from pool
         /**
             The pool supports allocation only single object (\p n = 1).
-            If \p n > 1 the behaviour is undefined.
+            If \p n > 1 the behavior is undefined.
 
             If the queue is not empty, the popped value is returned.
             Otherwise, a new value allocated.
@@ -184,7 +185,7 @@ namespace cds { namespace memory {
             value_type * p = m_Queue.pop();
             if ( p ) {
                 assert( from_pool(p) );
-                return p;
+                return new( p ) value_type;
             }
             // The pool is empty - allocate new from the heap
             return cxx_allocator().New();
@@ -193,7 +194,7 @@ namespace cds { namespace memory {
         /// Deallocated the object \p p
         /**
             The pool supports allocation only single object (\p n = 1).
-            If \p n > 1 the behaviour is undefined.
+            If \p n > 1 the behavior is undefined.
 
             If \p p is from preallocated pool, it pushes into the queue.
             Otherwise, \p p is deallocated by allocator provided.
@@ -205,6 +206,7 @@ namespace cds { namespace memory {
 
             if ( p ) {
                 if ( from_pool(p) ) {
+                    p->~value_type();
                     // The queue can notify about false fullness state
                     // so we push in loop
                     back_off bkoff;
@@ -221,9 +223,9 @@ namespace cds { namespace memory {
     /// Lazy free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
-        - \p T - the type of object maintaining by free-list
+        - \p T - the type of object maintaining by free-list. \p T must be default constructible
         - \p Traits - traits for \p cds::intrusive::VyukovMPMCCycleQueue class plus
-            \p cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
+            \p cds::opt::allocator option, default is \p vyukov_queue_pool_traits
 
         \b Internals
 
@@ -292,6 +294,7 @@ namespace cds { namespace memory {
     protected:
         //@cond
         typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+        typedef typename cxx_allocator::allocator_type std_allocator;
 
         queue_type      m_Queue;
         //@endcond
@@ -305,15 +308,15 @@ namespace cds { namespace memory {
         /// Deallocates all objects from the pool
         ~lazy_vyukov_queue_pool()
         {
-            cxx_allocator a;
+            std_allocator a;
             while ( !m_Queue.empty() )
-                a.Delete( m_Queue.pop());
+                a.deallocate( m_Queue.pop(), 1 );
         }
 
         /// Allocates an object from pool
         /**
             The pool supports allocation only single object (\p n = 1).
-            If \p n > 1 the behaviour is undefined.
+            If \p n > 1 the behavior is undefined.
 
             If the queue is not empty, the popped value is returned.
             Otherwise, a new value allocated.
@@ -325,7 +328,7 @@ namespace cds { namespace memory {
 
             value_type * p = m_Queue.pop();
             if ( p )
-                return p;
+                return new( p ) value_type;
 
             return cxx_allocator().New();
         }
@@ -344,9 +347,10 @@ namespace cds { namespace memory {
             CDS_UNUSED(n);
 
             if ( p ) {
+                p->~value_type();
                 // Here we ignore false fullness state of the queue
                 if ( !m_Queue.push( *p ))
-                    cxx_allocator().Delete( p );
+                    std_allocator().deallocate( p, 1 );
             }
         }
 
@@ -355,7 +359,7 @@ namespace cds { namespace memory {
     /// Bounded free-list based on bounded lock-free queue \p cds::intrusive::VyukovMPMCCycleQueue
     /** @ingroup cds_memory_pool
         Template parameters:
-        - \p T - the type of object maintaining by free-list
+        - \p T - the type of object maintaining by free-list. \p T must be default-constructible
         - \p Traits - traits for \p cds::intrusive::VyukovMPMCCycleQueue class plus
             \p cds::opt::allocator option, defaul is \p vyukov_queue_pool_traits
 
@@ -435,7 +439,8 @@ namespace cds { namespace memory {
 
     protected:
         //@cond
-        typedef cds::details::Allocator< value_type, allocator_type >   cxx_allocator;
+        typedef cds::details::Allocator< value_type, allocator_type > cxx_allocator;
+        typedef typename cxx_allocator::allocator_type std_allocator;
 
         queue_type      m_Queue;
         value_type *    m_pFirst;
@@ -447,7 +452,7 @@ namespace cds { namespace memory {
         void preallocate_pool()
         {
             size_t const nCount = m_Queue.capacity();
-            m_pFirst = cxx_allocator().NewArray( nCount );
+            m_pFirst = std_allocator().allocate( nCount );
             m_pLast = m_pFirst + nCount;
 
             for ( value_type * p = m_pFirst; p < m_pLast; ++p )
@@ -477,7 +482,7 @@ namespace cds { namespace memory {
         ~bounded_vyukov_queue_pool()
         {
             m_Queue.clear();
-            cxx_allocator().Delete( m_pFirst, m_Queue.capacity() );
+            std_allocator().deallocate( m_pFirst, m_Queue.capacity());
         }
 
         /// Allocates an object from pool

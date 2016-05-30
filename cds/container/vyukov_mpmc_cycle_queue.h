@@ -57,7 +57,7 @@ namespace cds { namespace container {
 
             /// A functor to clean item dequeued.
             /**
-                The functor  calls the destructor for queue item.
+                The functor calls the destructor for queue item.
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
                 If \p T is a complex type, \p value_cleaner may be the useful feature.
 
@@ -153,17 +153,17 @@ namespace cds { namespace container {
 
         Template parameters
         - \p T - type stored in queue.
-        - \p Traits - queue traits, default is \p vykov_queue::traits. You can use \p vykov_queue::make_traits
-            metafunction to make your traits or just derive your traits from \p %vykov_queue::traits:
+        - \p Traits - queue traits, default is \p vyukov_queue::traits. You can use \p vyukov_queue::make_traits
+            metafunction to make your traits or just derive your traits from \p %vyukov_queue::traits:
             \code
-            struct myTraits: public cds::container::vykov_queue::traits {
+            struct myTraits: public cds::container::vyukov_queue::traits {
                 typedef cds::atomicity::item_counter    item_counter;
             };
             typedef cds::container::VyukovMPMCCycleQueue< Foo, myTraits > myQueue;
 
             // Equivalent make_traits example:
             typedef cds::container::VyukovMPMCCycleQueue< cds::gc::HP, Foo,
-                typename cds::container::vykov_queue::make_traits<
+                typename cds::container::vyukov_queue::make_traits<
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;
@@ -306,10 +306,22 @@ namespace cds { namespace container {
             return enqueue_with( [&val]( value_type& dest ){ new ( &dest ) value_type( val ); });
         }
 
-        /// Synonym for \p enqueue()
+        /// Enqueues \p val value into the queue, move semantics
+        bool enqueue( value_type&& val )
+        {
+            return enqueue_with( [&val]( value_type& dest ) { new (&dest) value_type( std::move( val ));});
+        }
+
+        /// Synonym for \p enqueue( valuetype const& )
         bool push( value_type const& data )
         {
             return enqueue( data );
+        }
+
+        /// Synonym for \p enqueue( value_type&& )
+        bool push( value_type&& data )
+        {
+            return enqueue( std::move( data ));
         }
 
         /// Synonym for \p enqueue_with()
@@ -380,13 +392,13 @@ namespace cds { namespace container {
 
         /// Dequeues a value from the queue
         /**
-            If queue is not empty, the function returns \p true, \p dest contains copy of
+            If queue is not empty, the function returns \p true, \p dest contains a copy of
             dequeued value. The assignment operator for type \ref value_type is invoked.
             If queue is empty, the function returns \p false, \p dest is unchanged.
         */
-        bool dequeue(value_type & dest )
+        bool dequeue(value_type& dest )
         {
-            return dequeue_with( [&dest]( value_type& src ){ dest = src; } );
+            return dequeue_with( [&dest]( value_type& src ){ dest = std::move( src );});
         }
 
         /// Synonym for \p dequeue()

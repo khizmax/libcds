@@ -39,10 +39,6 @@
 #include <cds/container/striped_set/adapter.h>
 #include <boost/container/flat_map.hpp>
 
-//#if CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION >= 1700
-//#   error "boost::container::flat_map is not compatible with MS VC++ 11"
-//#endif
-
 
 //@cond
 namespace cds { namespace container {

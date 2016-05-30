@@ -176,9 +176,8 @@
     - <a href="http://www.boost.org/">boost library</a> 1.51 and above. You should create environment variable
         \p BOOST_PATH containing full path to \p boost root directory (for example, <tt>C:\\libs\\boost_1_57_0</tt>).
 
-   Open solution file <tt>cds\projects\vcX\cds.sln</tt> where \p vcX is the version of
-   Microsoft Visual C++ you use: vc12 for MS VC 2013 Update 4, vc14 for MS VC 2015. The solution
-   contains \p cds project and a lot of test projects. Just build the library using solution.
+   Open solution file <tt>cds\projects\vc14\cds.sln</tt> with Microsoft VisualStudio 2015.
+   The solution contains \p cds project and a lot of test projects. Just build the library using solution.
 
    <b>Warning</b>: the solution depends on \p BOOST_PATH environment variable that specifies full path
    to \p boost library root directory. The test projects search \p boost libraries in:
@@ -188,27 +187,8 @@
    \par *NIX build
 
    For Unix-like systems GCC and Clang compilers are supported.
-   Use GCC 4.8+ compiler or Clang 3.3+ to build <b>cds</b> library. The distributive contains
-   makefile and <tt>build.sh</tt> script in <tt>build</tt> directory.
-   The <tt>build/sample</tt> directory contains sample scripts for different operating systems and
-   processor architectures.
-   The <tt>build.sh</tt> script supports the following options:
-   - <tt>-c toolset</tt> - Toolset name, possible values: <tt>gcc</tt> (default), <tt>clang</tt>, <tt>icc</tt>
-   - <tt>-x compiler</tt> - C++ compiler name (e.g. g++, g++-4.5 and so on)
-   - <tt>-p arch</tt> - processor architecture; possible values for arch are: x86, amd64 (x86_64), sparc, ia64, ppc64
-   - <tt>-o OStype</tt> - OS family; possible values for OStype are: linux, sunos (solaris), hpux, mingw
-   - <tt>-D define</tt> additional defines
-   - <tt>-b bits</tt> - bits to build, accepts 64, 32
-   - <tt>-l "options"</tt> - extra linker options (in quotes)
-   - <tt>-z "options"</tt> - extra compiler options (in quotes)
-   - <tt>--with-boost path</tt> - path to boost include
-   - <tt>--debug-cxx-options "options"</tt> - extra compiler options for debug target
-   - <tt>--debug-ld-options "options"</tt> - extra linker options for debug target
-   - <tt>--release-cxx-options "options"</tt> - extra compiler options for release target
-   - <tt>--release-ld-options "optons"</tt> - extra linker options for release target
-   - <tt>--clean</tt> - clean all before building
-   - <tt>--debug-test</tt> - make unit test in debug mode; by defalt release unit test generated
-   - <tt>--amd64-use-128bit</tt> - compile with supporting 128bit (16byte) CAS on amd64 (for am64 only)
+   Use GCC 4.8+ compiler or Clang 3.3+ to build <b>cds</b> library with CMake.
+   See accompanying file <tt>/build/cmake/readme.md</tt> for more info.
 
    @note Important for GCC compiler: all your projects that use \p libcds must be compiled with <b>-fno-strict-aliasing</b>
    compiler flag.

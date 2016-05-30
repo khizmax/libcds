@@ -161,20 +161,18 @@ namespace cds { namespace container {
         /// Type of \p get() member function return value
         typedef value_type * raw_ptr;
 
-    private:
+    protected:
         //@cond
         static value_type& node_to_value( node_type& n )
         {
             return n.m_Value;
         }
+
         static value_type const& node_to_value( node_type const& n )
         {
             return n.m_Value;
         }
-        //@endcond
 
-    protected:
-        //@cond
         template <typename Q>
         static node_type * alloc_node( Q const& v )
         {
@@ -281,7 +279,13 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+    ///@name Forward iterators (only for debugging purpose)
+    //@{
         /// Forward iterator
+        /**
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the item the iterator points to.
+        */
         typedef iterator_type<false>    iterator;
 
         /// Const forward iterator
@@ -314,32 +318,33 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        //@{
         const_iterator begin() const
         {
             const_iterator it( head() );
             ++it        ;   // skip dummy head node
             return it;
         }
+
+        /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
             const_iterator it( head() );
             ++it        ;   // skip dummy head node
             return it;
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        //@{
         const_iterator end() const
         {
             return const_iterator( tail() );
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return const_iterator( tail() );
         }
-        //@}
+    //@}
 
     public:
         /// Default constructor
@@ -765,6 +770,11 @@ namespace cds { namespace container {
 
     protected:
         //@cond
+        bool insert_node( node_type * pNode )
+        {
+            return insert_node_at( head(), pNode );
+        }
+
         bool insert_node_at( head_type& refHead, node_type * pNode )
         {
             assert( pNode != nullptr );

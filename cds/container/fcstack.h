@@ -321,7 +321,7 @@ namespace cds { namespace container {
                 assert( pRec->pValPop );
                 pRec->bEmpty = m_Stack.empty();
                 if ( !pRec->bEmpty ) {
-                    *(pRec->pValPop) = m_Stack.top();
+                    *(pRec->pValPop) = std::move( m_Stack.top());
                     m_Stack.pop();
                 }
                 break;

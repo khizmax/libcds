@@ -155,6 +155,9 @@ namespace cds { namespace container {
         /// Count of hazard pointers required
         static CDS_CONSTEXPR size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount;
 
+        /// Level statistics
+        typedef feldman_hashmap::level_statistics level_statistics;
+
     protected:
         //@cond
         typedef typename maker::node_type node_type;
@@ -182,7 +185,7 @@ namespace cds { namespace container {
                 : iterator_base( rhs )
             {}
 
-            bidirectional_iterator& operator=(bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            bidirectional_iterator& operator=( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
             {
                 iterator_base::operator=( rhs );
                 return *this;
@@ -219,13 +222,13 @@ namespace cds { namespace container {
             }
 
             template <bool IsConst2>
-            bool operator ==(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator ==( bidirectional_iterator<IsConst2> const& rhs ) const CDS_NOEXCEPT
             {
                 return iterator_base::operator==( rhs );
             }
 
             template <bool IsConst2>
-            bool operator !=(bidirectional_iterator<IsConst2> const& rhs) const CDS_NOEXCEPT
+            bool operator !=( bidirectional_iterator<IsConst2> const& rhs ) const CDS_NOEXCEPT
             {
                 return !( *this == rhs );
             }
@@ -297,13 +300,13 @@ namespace cds { namespace container {
             }
 
             template <bool IsConst2>
-            bool operator ==(reverse_bidirectional_iterator<IsConst2> const& rhs) const
+            bool operator ==( reverse_bidirectional_iterator<IsConst2> const& rhs ) const
             {
                 return iterator_base::operator==( rhs );
             }
 
             template <bool IsConst2>
-            bool operator !=(reverse_bidirectional_iterator<IsConst2> const& rhs)
+            bool operator !=( reverse_bidirectional_iterator<IsConst2> const& rhs )
             {
                 return !( *this == rhs );
             }
@@ -355,7 +358,7 @@ namespace cds { namespace container {
 
             Equation for \p head_bits and \p array_bits:
             \code
-            sizeof(hash_type) * 8 == head_bits + N * array_bits
+            sizeof( hash_type ) * 8 == head_bits + N * array_bits
             \endcode
             where \p N is multi-level array depth.
         */
@@ -381,7 +384,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K&& key )
         {
-            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key) ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>( key ) ));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -403,7 +406,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K&& key, V&& val )
         {
-            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key), std::forward<V>(val)));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>( key ), std::forward<V>( val )));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -439,7 +442,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool insert_with( K&& key, Func func )
         {
-            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key)));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>( key )));
             if ( base_class::insert( *sp, [&func]( node_type& item ) { func( item.m_Value ); } )) {
                 sp.release();
                 return true;
@@ -454,7 +457,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key), std::forward<Args>(args)... ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>( key ), std::forward<Args>( args )... ));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -491,7 +494,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         std::pair<bool, bool> update( K&& key, Func func, bool bInsert = true )
         {
-            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key)));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>( key )));
             std::pair<bool, bool> result = base_class::do_update( *sp,
                 [&func]( node_type& node, node_type * old ) { func( node.m_Value, old ? &old->m_Value : nullptr );},
                 bInsert );
@@ -521,7 +524,7 @@ namespace cds { namespace container {
             The functor \p Func interface:
             \code
             struct extractor {
-                void operator()(value_type& item) { ... }
+                void operator()( value_type& item ) { ... }
             };
             \endcode
             where \p item is the element found.
@@ -533,7 +536,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool erase( K const& key, Func f )
         {
-            return base_class::erase( m_Hasher(key_type(key)), [&f]( node_type& node) { f( node.m_Value ); } );
+            return base_class::erase( m_Hasher( key_type( key )), [&f]( node_type& node) { f( node.m_Value ); } );
         }
 
         /// Deletes the element pointed by iterator \p iter
@@ -548,6 +551,14 @@ namespace cds { namespace container {
         }
         //@cond
         bool erase_at( reverse_iterator const& iter )
+        {
+            return base_class::do_erase_at( iter );
+        }
+        bool erase_at( const_iterator const& iter )
+        {
+            return base_class::do_erase_at( iter );
+        }
+        bool erase_at( const_reverse_iterator const& iter )
         {
             return base_class::do_erase_at( iter );
         }
@@ -622,7 +633,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool find( K const& key, Func f )
         {
-            return base_class::find( m_Hasher( key_type( key )), [&f](node_type& node) { f( node.m_Value );});
+            return base_class::find( m_Hasher( key_type( key )), [&f]( node_type& node ) { f( node.m_Value );});
         }
 
         /// Finds the key \p key and return the item found
@@ -708,9 +719,15 @@ namespace cds { namespace container {
         }
 
         /// Collects tree level statistics into \p stat
-        /** @copydetails cds::intrusive::FeldmanHashSet::get_level_statistics
+        /**
+            The function traverses the set and collects statistics for each level of the tree
+            into \p feldman_hashset::level_statistics struct. The element of \p stat[i]
+            represents statistics for level \p i, level 0 is head array.
+            The function is thread-safe and may be called in multi-threaded environment.
+
+            Result can be useful for estimating efficiency of hash functor you use.
         */
-        void get_level_statistics(std::vector< feldman_hashmap::level_statistics>& stat) const
+        void get_level_statistics( std::vector< feldman_hashmap::level_statistics>& stat) const
         {
             base_class::get_level_statistics( stat );
         }

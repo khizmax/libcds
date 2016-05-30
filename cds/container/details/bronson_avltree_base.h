@@ -480,11 +480,11 @@ namespace cds { namespace container {
             - \p opt::node_allocator - the allocator for internal nodes. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \p opt::allocator - the allocator for node's value. Default is \ref CDS_DEFAULT_ALLOCATOR.
                 This option is not used in \p BronsonAVLTreeMap<RCU, Key, T*, Traits> specialisation
-            - \ref cds::intrusive::opt::disposer "container::opt::disposer" - the functor used for dispose removed values.
+            - \p cds::intrusive::opt::disposer - the functor used for dispose removed values.
                 The user-provided disposer is used only for pointer-oriented tree specialization
                 like \p BronsonAVLTreeMap<GC, Key, T*, Traits>. When the node becomes the rounting node without value,
                 the disposer will be called to signal that the memory for the value can be safely freed.
-                Default is \ref cds::intrusive::opt::delete_disposer "cds::container::opt::v::delete_disposer<>" which calls \p delete operator.
+                Default is \p cds::intrusive::opt::delete_disposer which calls \p delete operator.
                 Due the nature of GC schema the disposer may be called asynchronously.
             - \p opt::sync_monitor -  @ref cds_sync_monitor "synchronization monitor" type for node-level locking,
                 default is \p cds::sync::injecting_monitor<cds::sync::spin>

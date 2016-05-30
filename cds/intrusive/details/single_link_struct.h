@@ -54,7 +54,7 @@ namespace cds { namespace intrusive {
             typedef GC              gc  ;   ///< Garbage collector
             typedef Tag             tag ;   ///< tag
 
-            typedef typename gc::template atomic_ref<node>    atomic_node_ptr    ;    ///< atomic pointer
+            typedef typename gc::template atomic_ref<node>    atomic_node_ptr; ///< atomic pointer
 
             /// Rebind node for other template parameters
             template <class GC2, typename Tag2 = tag>

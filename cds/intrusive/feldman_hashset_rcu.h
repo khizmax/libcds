@@ -113,6 +113,10 @@ namespace cds { namespace intrusive {
 
         using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, disposer, void >; ///< pointer to extracted node
 
+        //@cond
+        typedef feldman_hashset::level_statistics level_statistics;
+        //@endcond
+
     protected:
         //@cond
         typedef typename base_class::node_ptr node_ptr;
@@ -496,7 +500,13 @@ namespace cds { namespace intrusive {
         using base_class::array_node_size;
 
         /// Collects tree level statistics into \p stat
-        /** @copydetails cds::intrusive::FeldmanHashSet::get_level_statistics
+        /**
+            The function traverses the set and collects statistics for each level of the tree
+            into \p feldman_hashset::level_statistics struct. The element of \p stat[i]
+            represents statistics for level \p i, level 0 is head array.
+            The function is thread-safe and may be called in multi-threaded environment.
+
+            Result can be useful for estimating efficiency of hash functor you use.
         */
         void get_level_statistics(std::vector<feldman_hashset::level_statistics>& stat) const
         {
@@ -580,13 +590,11 @@ namespace cds { namespace intrusive {
 
             value_type * pointer() const CDS_NOEXCEPT
             {
-                assert(gc::is_locked());
                 return m_pValue;
             }
 
             void forward()
             {
-                assert( gc::is_locked());
                 assert(m_set != nullptr);
                 assert(m_pNode != nullptr);
 
@@ -643,7 +651,6 @@ namespace cds { namespace intrusive {
 
             void backward()
             {
-                assert(gc::is_locked());
                 assert(m_set != nullptr);
                 assert(m_pNode != nullptr);
 
@@ -890,7 +897,7 @@ namespace cds { namespace intrusive {
             The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment
             under explicit RCU lock.
             RCU lock requirement means that inserting or searching is allowed but you must not erase the items from the set
-            since erasing under RCU lock can lead to a deadlock. However, another thread can call \p erase() safely
+            because erasing under RCU lock can lead to a deadlock. However, another thread can call \p erase() safely
             while your thread is iterating.
 
             A typical example is:

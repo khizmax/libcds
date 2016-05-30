@@ -38,7 +38,7 @@
 
 namespace cds { namespace intrusive {
 
-    /// OptimisticQueue related definitions
+    /// \p OptimisticQueue related definitions
     /** @ingroup cds_intrusive_helper
     */
     namespace optimistic_queue {
@@ -88,8 +88,8 @@ namespace cds { namespace intrusive {
         /// Base hook
         /**
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
+            - \p opt::gc - garbage collector used.
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < typename... Options >
         struct base_hook: public hook< opt::base_hook_tag, Options... >
@@ -101,8 +101,8 @@ namespace cds { namespace intrusive {
             Use \p offsetof macro to define \p MemberOffset
 
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
+            - \p opt::gc - garbage collector used.
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template < size_t MemberOffset, typename... Options >
         struct member_hook: public hook< opt::member_hook_tag, Options... >
@@ -118,8 +118,8 @@ namespace cds { namespace intrusive {
             See \ref node_traits for \p NodeTraits interface description
 
             \p Options are:
-            - opt::gc - garbage collector used.
-            - opt::tag - a \ref cds_intrusive_hook_tag "tag"
+            - \p opt::gc - garbage collector used.
+            - \p opt::tag - a \ref cds_intrusive_hook_tag "tag"
         */
         template <typename NodeTraits, typename... Options >
         struct traits_hook: public hook< opt::traits_hook_tag, Options... >
@@ -174,11 +174,10 @@ namespace cds { namespace intrusive {
         };
         //@endcond
 
-        /// OptimisticQueue internal statistics. May be used for debugging or profiling
+        /// \p OptimisticQueue internal statistics. May be used for debugging or profiling
         /**
             Template argument \p Counter defines type of counter.
-            Default is \p cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
-            strict event counting.
+            Default is \p cds::atomicity::event_counter.
             You may use stronger type of counter like as \p cds::atomicity::item_counter,
             or even integral type, for example, \p int.
         */
@@ -242,7 +241,7 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Dummy OptimisticQueue statistics - no counting is performed. Support interface like \ref optimistic_queue::stat
+        /// Dummy \p OptimisticQueue statistics - no counting is performed. Support interface like \p optimistic_queue::stat
         struct empty_stat
         {
             //@cond
@@ -263,7 +262,7 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// OptimisticQueue default type traits
+        /// \p OptimisticQueue default type traits
         struct traits
         {
             /// Back-off strategy
@@ -447,6 +446,8 @@ namespace cds { namespace intrusive {
             typedef OptimisticQueue< GC2, T2, Traits2 > other   ;   ///< Rebinding result
         };
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 5; ///< Count of hazard pointer required for the algorithm
+
     protected:
         //@cond
         typedef typename node_type::atomic_node_ptr atomic_node_ptr;
@@ -469,8 +470,6 @@ namespace cds { namespace intrusive {
         //@endcond
         item_counter        m_ItemCounter   ;   ///< Item counter
         stat                m_Stat          ;   ///< Internal statistics
-
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 5 ; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond
@@ -646,10 +645,10 @@ namespace cds { namespace intrusive {
             |       ...        |
             \endcode
 
-            \p dequeue function returns Item 2, that becomes new top of queue, and calls
+            \p %dequeue() function returns Item 2, that becomes new top of queue, and calls
             the disposer for Item 1, that was queue's top on function entry.
             Thus, you cannot manually delete item returned because it is still included in
-            item sequence and it has valuable link field that must not be zeroed.
+            the queue and it has valuable link field that must not be zeroed.
             The item may be deleted only in disposer call.
         */
         value_type * dequeue()

@@ -259,7 +259,17 @@ namespace cds { namespace container {
         {}
 
     public:
-        /// Iterator type
+    ///@name Forward ordered iterators (thread-safe under RCU lock)
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator has some features:
+            - it has no post-increment operator
+            - it depends on iterator of underlying \p OrderedList
+
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
+        */
         typedef skip_list::details::iterator< typename base_class::iterator >  iterator;
 
         /// Const iterator type
@@ -272,16 +282,16 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return const_iterator( base_class::begin() );
         }
+
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return const_iterator( base_class::cbegin() );
         }
-        //@}
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a set.
         iterator end()
@@ -290,16 +300,17 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
-        //@{
         const_iterator end() const
         {
             return const_iterator( base_class::end() );
         }
+
+        /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator cend() const
         {
             return const_iterator( base_class::cend() );
         }
-        //@}
+    //@}
 
     public:
         /// Inserts new node
@@ -621,7 +632,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             return base_class::find_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >(),
-                                          [&f]( node_type& node, Q& v ) { f( node.m_Value, v ); } );
+                                          [&f]( node_type& node, Q const& v ) { f( node.m_Value, v ); } );
         }
         //@endcond
 

@@ -156,11 +156,44 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
+    ///@name Forward iterators (thread-safe under RCU lock)
+    //@{
         /// Forward iterator
         /**
             The forward iterator for Michael's set is based on \p OrderedList forward iterator and has some features:
             - it has no post-increment operator
             - it iterates items in unordered fashion
+
+            You may safely use iterators in multi-threaded environment only under RCU lock.
+            Otherwise, a crash is possible if another thread deletes the element the iterator points to.
+
+            The iterator interface:
+            \code
+            class iterator {
+            public:
+                // Default constructor
+                iterator();
+
+                // Copy construtor
+                iterator( iterator const& src );
+
+                // Dereference operator
+                value_type * operator ->() const;
+
+                // Dereference operator
+                value_type& operator *() const;
+
+                // Preincrement operator
+                iterator& operator ++();
+
+                // Assignment operator
+                iterator& operator = (iterator const& src);
+
+                // Equality operators
+                bool operator ==(iterator const& i ) const;
+                bool operator !=(iterator const& i ) const;
+            };
+            \endcode
         */
         typedef michael_set::details::iterator< bucket_type, false >    iterator;
 
@@ -191,28 +224,29 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns a forward const iterator addressing the first element in a set
-        //@{
         const_iterator begin() const
         {
             return cbegin();
         }
+
+        /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
             return const_iterator( m_Buckets[0].cbegin(), m_Buckets, m_Buckets + bucket_count() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
-        //@{
         const_iterator end() const
         {
             return cend();
         }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
             return const_iterator( m_Buckets[bucket_count() - 1].cend(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
         }
-        //@}
+    //@}
 
     public:
         /// Initialize hash set
@@ -439,6 +473,7 @@ namespace cds { namespace intrusive {
             Depends on \p bucket_type you should or should not lock RCU before calling of this function:
             - for the set based on \ref cds_intrusive_MichaelList_rcu "MichaelList" RCU should not be locked
             - for the set based on \ref cds_intrusive_LazyList_rcu "LazyList" RCU should be locked
+
             See ordered list implementation for details.
 
             \code

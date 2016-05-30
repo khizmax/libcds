@@ -164,7 +164,7 @@ namespace cds { namespace container {
     public:
         /// Constructs empty priority queue
         /**
-            For cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            For \p cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
         */
         MSPriorityQueue( size_t nCapacity )
             : base_class( nCapacity )
@@ -251,7 +251,7 @@ namespace cds { namespace container {
         */
         bool pop( value_type& dest )
         {
-            return pop_with( [&dest]( value_type& src ) { move_policy()(dest, src); } );
+            return pop_with( [&dest]( value_type& src ) { move_policy()(dest, std::move(src)); });
         }
 
         /// Extracts an item with high priority

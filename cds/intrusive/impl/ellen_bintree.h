@@ -66,7 +66,7 @@ namespace cds { namespace intrusive {
         the operation done. Such solution allows greatly simplify implementation of the tree.
 
         @attention Recall the tree is <b>unbalanced</b>. The complexity of operations is <tt>O(log N)</tt>
-        for uniformly distributed random keys, but in worst case the complexity is <tt>O(N)</tt>.
+        for uniformly distributed random keys, but in the worst case the complexity is <tt>O(N)</tt>.
 
         @note Do not include <tt><cds/intrusive/impl/ellen_bintree.h></tt> header file explicitly.
         There are header file for each GC type:
@@ -437,7 +437,7 @@ namespace cds { namespace intrusive {
                     func( false, *node_traits::to_value_ptr( res.pLeaf ), val );
                     if ( pNewInternal.get() )
                         m_Stat.onInternalNodeDeleted() ;    // unique_internal_node_ptr deletes internal node
-                    m_Stat.onEnsureExist();
+                    m_Stat.onUpdateExist();
                     return std::make_pair( true, false );
                 }
 
@@ -456,11 +456,11 @@ namespace cds { namespace intrusive {
                 }
 
                 bkoff();
-                m_Stat.onEnsureRetry();
+                m_Stat.onUpdateRetry();
             }
 
             ++m_ItemCounter;
-            m_Stat.onEnsureNew();
+            m_Stat.onUpdateNew();
             return std::make_pair( true, true );
         }
         //@cond
@@ -499,7 +499,8 @@ namespace cds { namespace intrusive {
             unlinks it from the tree, and returns \p true.
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            that can be not the same as \p value_type.
         */
         template <typename Q>
         bool erase( const Q& key )
@@ -549,7 +550,8 @@ namespace cds { namespace intrusive {
 
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the hash functor should accept a parameter of type \p Q that can be not the same as \p value_type.
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            that can be not the same as \p value_type.
         */
         template <typename Q, typename Func>
         bool erase( Q const& key, Func f )

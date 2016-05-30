@@ -302,7 +302,13 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
+        /**
+            You may safely use iterators in multi-threaded environment only under external RCU lock.
+            Otherwise, a program crash is possible if another thread deletes the item the iterator points to.
+        */
         typedef iterator_type<false>    iterator;
 
         /// Const forward iterator
@@ -331,28 +337,27 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        //@{
         const_iterator begin() const
         {
             return const_iterator( head() );
         }
+        /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
             return const_iterator( head() );
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        //@{
         const_iterator end() const
         {
             return const_iterator();
         }
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return const_iterator();
         }
-        //@}
+    //@}
 
     public:
         /// Default constructor
@@ -443,7 +448,7 @@ namespace cds { namespace container {
             return insert_with_at( head(), key, func );
         }
 
-        /// Ensures that the \p key exists in the list
+        /// Updates an element with given \p key
         /**
             The operation performs inserting or changing data with lock-free manner.
 

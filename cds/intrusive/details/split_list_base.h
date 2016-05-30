@@ -94,8 +94,8 @@ namespace cds { namespace intrusive {
 
             counter_type    m_nInsertSuccess;        ///< Count of success inserting
             counter_type    m_nInsertFailed;         ///< Count of failed inserting
-            counter_type    m_nEnsureNew;            ///< Count of new item created by \p ensure() member function
-            counter_type    m_nEnsureExist;          ///< Count of \p ensure() call for existing item
+            counter_type    m_nUpdateNew;            ///< Count of new item created by \p ensure() member function
+            counter_type    m_nUpdateExist;          ///< Count of \p ensure() call for existing item
             counter_type    m_nEraseSuccess;         ///< Count of success erasing of items
             counter_type    m_nEraseFailed;          ///< Count of attempts to erase unknown item
             counter_type    m_nExtractSuccess;       ///< Count of success extracting of items
@@ -112,8 +112,8 @@ namespace cds { namespace intrusive {
             //@cond
             void onInsertSuccess()       { ++m_nInsertSuccess; }
             void onInsertFailed()        { ++m_nInsertFailed; }
-            void onEnsureNew()           { ++m_nEnsureNew; }
-            void onEnsureExist()         { ++m_nEnsureExist; }
+            void onUpdateNew()           { ++m_nUpdateNew; }
+            void onUpdateExist()         { ++m_nUpdateExist; }
             void onEraseSuccess()        { ++m_nEraseSuccess; }
             void onEraseFailed()         { ++m_nEraseFailed; }
             void onExtractSuccess()      { ++m_nExtractSuccess; }
@@ -142,8 +142,8 @@ namespace cds { namespace intrusive {
             //@cond
             void onInsertSuccess()       const {}
             void onInsertFailed()        const {}
-            void onEnsureNew()           const {}
-            void onEnsureExist()         const {}
+            void onUpdateNew()           const {}
+            void onUpdateExist()         const {}
             void onEraseSuccess()        const {}
             void onEraseFailed()         const {}
             void onExtractSuccess()      const {}
@@ -781,7 +781,7 @@ namespace cds { namespace intrusive {
                     opt::compare< key_compare >
                     ,opt::disposer< wrapped_disposer >
                     ,opt::boundary_node_type< splitlist_node_type >
-                >::type    result;
+                >::type result;
             };
 
             template <typename OrderedList, bool IsConst>
@@ -835,7 +835,6 @@ namespace cds { namespace intrusive {
                     while ( m_itCur != m_itEnd && node_traits::to_node_ptr( *m_itCur )->is_dummy() )
                         ++m_itCur;
                 }
-
 
                 value_ptr operator ->() const
                 {

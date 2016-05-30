@@ -218,6 +218,8 @@ namespace cds { namespace container {
         typedef typename base_class::stat           stat;           ///< Internal statistics policy used
         typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+
     protected:
         //@cond
         typedef typename maker::node_type  node_type;   ///< queue node type (derived from \p intrusive::msqueue::node)
@@ -268,12 +270,23 @@ namespace cds { namespace container {
         /// Enqueues \p val value into the queue.
         /**
             The function makes queue node in dynamic memory calling copy constructor for \p val
-            and then it calls intrusive::MSQueue::enqueue.
+            and then it calls \p intrusive::MSQueue::enqueue.
             Returns \p true if success, \p false otherwise.
         */
         bool enqueue( value_type const& val )
         {
             scoped_node_ptr p( alloc_node(val) );
+            if ( base_class::enqueue( *p ) ) {
+                p.release();
+                return true;
+            }
+            return false;
+        }
+
+        /// Enqueues \p val in the queue, move semantics
+        bool enqueue( value_type&& val )
+        {
+            scoped_node_ptr p( alloc_node_move( std::move( val )));
             if ( base_class::enqueue( *p ) ) {
                 p.release();
                 return true;
@@ -321,6 +334,12 @@ namespace cds { namespace container {
             return enqueue( val );
         }
 
+        /// Synonym for \p enqueue() function
+        bool push( value_type&& val )
+        {
+            return enqueue( std::move( val ));
+        }
+
         /// Synonym for \p enqueue_with() function
         template <typename Func>
         bool push_with( Func f )
@@ -336,7 +355,7 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            return dequeue_with( [&dest]( value_type& src ) { dest = src;  } );
+            return dequeue_with( [&dest]( value_type& src ) { dest = std::move( src );});
         }
 
         /// Dequeues a value using a functor

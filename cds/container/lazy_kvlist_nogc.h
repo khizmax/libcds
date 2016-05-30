@@ -240,17 +240,21 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+    ///@name Forward iterators
+    //@{
         /// Forward iterator
         /**
-            The forward iterator for lazy list based on gc::nogc has pre- and post-increment operators.
+        The forward iterator is safe: you may use it in multi-threaded enviromnent without any synchronization.
+
+        The forward iterator for lazy list based on \p gc::nogc has pre- and post-increment operators.
 
             The iterator interface to access item data:
-            - <tt> operator -> </tt> - returns a pointer to \ref value_type for iterator
-            - <tt> operator *</tt> - returns a reference (a const reference for \p const_iterator) to \ref value_type for iterator
+            - <tt> operator -> </tt> - returns a pointer to \p value_type
+            - <tt> operator *</tt> - returns a reference (a const reference for \p const_iterator) to \p value_type
             - <tt> const key_type& key() </tt> - returns a key reference for iterator
             - <tt> mapped_type& val() </tt> - retuns a value reference for iterator (const reference for \p const_iterator)
 
-            For both functions the iterator should not be equal to <tt> end() </tt>
+            For both functions the iterator should not be equal to \p end()
         */
         typedef iterator_type<false>    iterator;
 
@@ -285,32 +289,31 @@ namespace cds { namespace container {
         }
 
         /// Returns a forward const iterator addressing the first element in a list
-        //@{
         const_iterator begin() const
         {
             const_iterator it( head() );
             ++it ;  // skip dummy head
             return it;
         }
+        /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
             const_iterator it( head() );
             ++it ;  // skip dummy head
             return it;
         }
-        //@}
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
-        //@{
         const_iterator end() const
         {
             return const_iterator( tail());
         }
+        /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
             return const_iterator( tail());
         }
-        //@}
+    //@}
 
     protected:
         //@cond
