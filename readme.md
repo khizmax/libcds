@@ -40,6 +40,10 @@ Download the latest release from http://sourceforge.net/projects/libcds/files/
 
 See online doxygen-generated doc here: http://libcds.sourceforge.net/doc/cds-api/index.html
 
+**How to build**
+   - *nix: [use CMake](build/cmake/readme.md)
+   - Windows: use MS Visual C++ 2015 project
+
 **Pull request requirements**
 - Pull-request to *master* branch will be unconditionally rejected
 - *integration* branch is intended for pull-request. Usually, *integration* branch is the same as *master*

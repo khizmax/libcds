@@ -92,7 +92,6 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/cds DESTINATION include COMPONENT ${HEAD
 
 if(WITH_TESTS)
   enable_testing()
-  add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
   add_subdirectory(${PROJECT_SOURCE_DIR}/test)
   message(STATUS "Build tests: activated")
 endif(WITH_TESTS)
