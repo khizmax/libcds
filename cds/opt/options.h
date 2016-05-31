@@ -38,7 +38,7 @@
         2011.01.23 khizmax  Created
 */
 
-#include <stdlib.h> // rand, srand
+#include <cstdlib> // rand, srand
 
 #include <cds/details/aligned_type.h>
 #include <cds/user_setup/allocator.h>
@@ -869,16 +869,16 @@ namespace cds { namespace opt {
         struct c_rand {
             typedef unsigned int result_type; ///< Result type
 
-            /// Constructor initializes object calling \p srand()
+            /// Constructor initializes object calling \p std::srand()
             c_rand()
             {
-                srand(1);
+                std::srand(1);
             }
 
-            /// Returns next random number calling \p rand()
+            /// Returns next random number calling \p std::rand()
             result_type operator()()
             {
-                return (result_type) rand();
+                return (result_type) std::rand();
             }
         };
 

@@ -31,7 +31,8 @@
 #ifndef CDSLIB_DETAILS_BITOP_GENERIC_H
 #define CDSLIB_DETAILS_BITOP_GENERIC_H
 
-#include <stdlib.h>     // rand()
+#include <cstdlib>     // rand()
+
 namespace cds {
     namespace bitop { namespace platform {
         // Return true if x = 2 ** k, k >= 0
@@ -277,7 +278,7 @@ namespace cds {
             //static uint32_t xRandom = 2463534242UL    ;    //rand() | 0x0100    ;    // must be nonzero
             //uint32_t x = xRandom;
             if ( !x )
-                x = ((rand() + 1) << 16) + rand() + 1;
+                x = (( std::rand() + 1) << 16 ) + std::rand() + 1;
             x ^= x << 13;
             x ^= x >> 15;
             return x ^= x << 5;

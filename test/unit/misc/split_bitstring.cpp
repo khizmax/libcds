@@ -108,7 +108,7 @@ namespace {
                     while ( splitter ) {
                         ASSERT_FALSE( splitter.eos() );
                         ASSERT_FALSE( !splitter );
-                        int bits = rand() % 16;
+                        int bits = std::rand() % 16;
                         res = res + ( splitter.safe_cut( bits ) << shift );
                         shift += bits;
                     }
@@ -180,7 +180,7 @@ namespace {
                     while ( splitter ) {
                         ASSERT_FALSE( splitter.eos() );
                         ASSERT_FALSE( !splitter );
-                        int bits = rand() % 16;
+                        int bits = std::rand() % 16;
                         res = (res << bits) + splitter.safe_cut( bits );
                     }
                     ASSERT_TRUE( splitter.eos() );
@@ -234,7 +234,7 @@ namespace {
                     while ( splitter ) {
                         ASSERT_FALSE( splitter.eos() );
                         ASSERT_FALSE( !splitter );
-                        int bits = rand() % 16;
+                        int bits = std::rand() % 16;
                         res = res + ( static_cast<uint64_t>(splitter.safe_cut( bits )) << shift );
                         shift += bits;
                     }
@@ -288,7 +288,7 @@ namespace {
                     while ( splitter ) {
                         ASSERT_FALSE( splitter.eos() );
                         ASSERT_FALSE( !splitter );
-                        int bits = rand() % 16;
+                        int bits = std::rand() % 16;
                         res = (res << bits) + splitter.safe_cut( bits );
                     }
                     ASSERT_TRUE( splitter.eos() );
