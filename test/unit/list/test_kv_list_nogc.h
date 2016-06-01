@@ -167,7 +167,7 @@ namespace cds_test {
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             // insert/find
-            for ( auto const& i : arr ) {
+            for ( key_val const& i : arr ) {
                 EXPECT_TRUE( l.contains( i.key ) == l.end());
                 EXPECT_TRUE( l.contains( key_type( i.key )) == l.end());
                 EXPECT_TRUE( l.contains( other_key( i.key ), other_less()) == l.end());
