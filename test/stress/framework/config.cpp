@@ -133,7 +133,12 @@ namespace cds_test {
             }
         }
 
-        if ( !cfg_file )
+        if ( !cfg_file ) {
+            // Get cfg filename from environment variable
+            cfg_file = getenv( "CDSTEST_CFG" );
+        }
+
+        if ( !cfg_file || *cfg_file == 0 )
             cfg_file = default_cfg_file;
 
         ::testing::Test::RecordProperty( "config_file", cfg_file );
