@@ -89,7 +89,7 @@ namespace {
                 value_type node;
 
                 while ( m_nPushCount < nTotalPush ) {
-                    if ( (rand() & 3) != 3 ) {
+                    if ( ( std::rand() & 3) != 3 ) {
                         node.nThread = id();
                         node.nNo = ++m_nPushCount;
                         if ( !m_Queue.push( node )) {

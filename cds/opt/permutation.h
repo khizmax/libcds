@@ -31,7 +31,7 @@
 #ifndef CDSLIB_OPT_PERMUTATION_H
 #define CDSLIB_OPT_PERMUTATION_H
 
-#include <stdlib.h> // rand, srand
+#include <cstdlib> // rand, srand
 #include <random>
 #include <algorithm> // std::shuffle
 #include <numeric>   // std::iota
@@ -146,7 +146,7 @@ namespace cds { namespace opt {
             /// Resets the generator to produce new sequence
             void reset()
             {
-                m_nCur = m_nStart = integer_type( rand() ) % m_nMod;
+                m_nCur = m_nStart = integer_type( std::rand() ) % m_nMod;
             }
         };
 
@@ -204,7 +204,7 @@ namespace cds { namespace opt {
             /// Resets the generator to produce new sequence
             void reset()
             {
-                m_nCur = m_nStart = integer_type( rand() ) & m_nMask;
+                m_nCur = m_nStart = integer_type( std::rand() ) & m_nMask;
             }
         };
 
