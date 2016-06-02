@@ -8,6 +8,13 @@ set(CDSSTRESS_FRAMEWORK_SOURCES
     framework/stress_test.cpp
 )
 
+add_custom_command(
+    OUTPUT ${EXECUTABLE_OUTPUT_PATH}/dictionary.txt
+    MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/test/stress/data/text.txt
+    COMMAND perl -X ${PROJECT_SOURCE_DIR}/test/stress/data/split.pl ${PROJECT_SOURCE_DIR}/test/stress/data/text.txt ${EXECUTABLE_OUTPUT_PATH}/dictionary.txt
+)
+set_property(SOURCE framework/stress_test.cpp APPEND PROPERTY OBJECT_DEPENDS ${EXECUTABLE_OUTPUT_PATH}/dictionary.txt)
+
 add_library(${CDSSTRESS_FRAMEWORK_LIBRARY} OBJECT ${CDSSTRESS_FRAMEWORK_SOURCES}) 
 
 include_directories(

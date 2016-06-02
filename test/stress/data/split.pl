@@ -2,7 +2,10 @@
 
 my %words ;
 
-open( my $f, "text.txt" ) ;
+my $input_file = shift;
+my $output_file = shift;
+
+open( my $f, $input_file ) or die "Cannot open input file $input_file";
 binmode $f ;
 
 my $text = ''	;
@@ -26,14 +29,14 @@ for (my $j = 1; $j < 30; ++$j ) {
 	}
 }
 
-open (my $dst, ">dictionary.txt") ;
+open (my $dst, ">$output_file") or die "Cannot open output file $output_file";
 binmode $dst ;
 
 my $nCount = 0 ;
 $nCount++ foreach (keys %words) ;
 print $dst $nCount, "\n" ;
 
-print "Generate test dictionary...\n" ;
+print "Generate test dictionary $output_file ...\n" ;
 print $dst $_, "\n" foreach (keys %words)	;
 
 close $dst  ;

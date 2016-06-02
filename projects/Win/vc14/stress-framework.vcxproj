@@ -54,12 +54,12 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\test\stress\data\text.txt">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl  &amp;&amp; copy %(RootDir)%(Directory)\dictionary.txt $(TargetDir)\dictionary.txt</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl  &amp;&amp; copy %(RootDir)%(Directory)\dictionary.txt $(TargetDir)\dictionary.txt</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl  &amp;&amp; copy %(RootDir)%(Directory)\dictionary.txt $(TargetDir)\dictionary.txt</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl  &amp;&amp; copy %(RootDir)%(Directory)\dictionary.txt $(TargetDir)\dictionary.txt</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl  &amp;&amp; copy %(RootDir)%(Directory)\dictionary.txt $(TargetDir)\dictionary.txt</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl  &amp;&amp; copy %(RootDir)%(Directory)\dictionary.txt $(TargetDir)\dictionary.txt</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl text.txt $(TargetDir)\dictionary.txt</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl text.txt $(TargetDir)\dictionary.txt</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl text.txt $(TargetDir)\dictionary.txt</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl text.txt $(TargetDir)\dictionary.txt</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl text.txt $(TargetDir)\dictionary.txt</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">cd %(RootDir)%(Directory) &amp;&amp; perl -X split.pl text.txt $(TargetDir)\dictionary.txt</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build text dictionary</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">Build text dictionary</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build text dictionary</Message>
