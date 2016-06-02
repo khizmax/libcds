@@ -172,7 +172,7 @@ namespace pqueue {
     CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_less )
     CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_less_stat )
     CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_cmp )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_mutex )
+    //CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_mutex ) // too slow
 
 #define CDSSTRESS_MSPriorityQueue_static( fixture_t, pqueue_t ) \
     TEST_F( fixture_t, pqueue_t ) \
