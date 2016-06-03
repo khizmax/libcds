@@ -195,6 +195,7 @@ namespace cds_test {
             m_bRunning = false;
             m_bStopped = false;
             m_doneCount = 0;
+            m_readyCount = 0;
         }
 
     protected: // thread interface
