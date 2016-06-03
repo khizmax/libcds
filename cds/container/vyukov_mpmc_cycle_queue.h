@@ -59,7 +59,7 @@ namespace cds { namespace container {
             /**
                 The functor calls the destructor for queue item.
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
-                If \p T is a complex type, \p value_cleaner may be the useful feature.
+                If \p T is a complex type, \p value_cleaner may be useful feature.
 
                 Default value is \ref opt::v::destruct_cleaner
             */
@@ -71,7 +71,7 @@ namespace cds { namespace container {
             /// C++ memory ordering model
             /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
             */
             typedef opt::v::relaxed_ordering    memory_model;
 
@@ -84,7 +84,6 @@ namespace cds { namespace container {
             /// Single-consumer version
             /**
                 For single-consumer version of algorithm some additional functions
-
                 (\p front(), \p pop_front()) is available.
 
                 Default is \p false
@@ -179,7 +178,7 @@ namespace cds { namespace container {
         typedef T value_type;   ///< Value type to be stored in the queue
         typedef Traits traits;  ///< Queue traits
         typedef typename traits::item_counter  item_counter;  ///< Item counter type
-        typedef typename traits::memory_model  memory_model;  ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::memory_model  memory_model;  ///< Memory ordering. See \p cds::opt::memory_model option
         typedef typename traits::value_cleaner value_cleaner; ///< Value cleaner, see \p vyukov_queue::traits::value_cleaner
         typedef typename traits::back_off  back_off;          ///< back-off strategy
 
@@ -337,9 +336,10 @@ namespace cds { namespace container {
         {
 #if (CDS_COMPILER == CDS_COMPILER_GCC) && (CDS_COMPILER_VERSION < 40900)
             //work around unsupported feature in g++ 4.8 for forwarding parameter packs to lambda.
-            return enqueue_with ( std::bind([]( value_type& dest,Args ... args ){ new ( &dest ) value_type( std::forward<Args>(args)... );}, std::placeholders::_1 ,args...));
+            value_type val( std::forward<Args>(args)... );
+            return enqueue_with( [&val]( value_type& dest ){ new ( &dest ) value_type( std::move( val )); });
 #else
-            return enqueue_with( [&args ...]( value_type& dest ){ new ( &dest ) value_type( std::forward<Args>(args)... ); });
+            return enqueue_with( [&args ...]( value_type& dest ){ new ( &dest ) value_type( std::forward<Args>( args )... ); });
 #endif
         }
 
@@ -511,7 +511,6 @@ namespace cds { namespace container {
     //@endcond
 
     /// Vyukov's queue multiple producer - single consumer version
-
     template <typename T, typename Traits = vyukov_queue::traits >
     using VyukovMPSCCycleQueue = VyukovMPMCCycleQueue< T, vyukov_queue::single_consumer_traits<Traits> >;
 
