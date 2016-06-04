@@ -274,7 +274,11 @@ namespace cds { namespace intrusive {
 
             marked_node_ptr cur(pos.pCur);
             pNode->m_pNext.store( cur, memory_model::memory_order_release );
-            return pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed );
+            if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                return true;
+
+            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+            return false;
         }
 
         static bool unlink_node( position& pos )

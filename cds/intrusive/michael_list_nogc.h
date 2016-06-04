@@ -154,7 +154,11 @@ namespace cds { namespace intrusive {
             link_checker::is_empty( pNode );
 
             pNode->m_pNext.store( pos.pCur, memory_model::memory_order_relaxed );
-            return pos.pPrev->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed );
+            if ( pos.pPrev->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                return true;
+
+            pNode->m_pNext.store( nullptr, memory_model::memory_order_relaxed );
+            return false;
         }
         //@endcond
 
