@@ -218,12 +218,12 @@ namespace cds { namespace intrusive {
 
             /// Buffer type for elimination array
             /**
-                Possible types are \p opt::v::static_buffer, \p opt::v::dynamic_buffer.
+                Possible types are \p opt::v::initialized_static_buffer, \p opt::v::initialized_dynamic_buffer.
                 The buffer can be any size: \p Exp2 template parameter of those classes can be \p false.
                 The size should be selected empirically for your application and hardware, there are no common rules for that.
-                Default is <tt> %opt::v::static_buffer< any_type, 4 > </tt>.
+                Default is <tt> %opt::v::initialized_static_buffer< any_type, 4 > </tt>.
             */
-            typedef opt::v::static_buffer< int, 4 > buffer;
+            typedef opt::v::initialized_static_buffer< int, 4 > buffer;
 
             /// Random engine to generate a random position in elimination array
             typedef opt::v::c_rand  random_engine;
@@ -237,30 +237,30 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to \p treiber_stack::traits
         /**
             Supported \p Options are:
-            - opt::hook - hook used. Possible hooks are: \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook.
+            - \p opt::hook - hook used. Possible hooks are: \p treiber_stack::base_hook, \p treiber_stack::member_hook, \p treiber_stack::traits_hook.
                 If the option is not specified, \p %treiber_stack::base_hook<> is used.
-            - opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
-            - opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used only
+            - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
+            - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used only
                 in \p TreiberStack::clear function.
-            - opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link.
-            - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+            - \p opt::link_checker - the type of node's link fields checking. Default is \ref opt::debug_check_link.
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-            - opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter, i.e.
+            - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter, i.e.
                 no item counting. Use \p cds::atomicity::item_counter to enable item counting.
-            - opt::stat - the type to gather internal statistics.
+            - \p opt::stat - the type to gather internal statistics.
                 Possible option value are: \p treiber_stack::stat, \p treiber_stack::empty_stat (the default),
                 user-provided class that supports \p treiber_stack::stat interface.
-            - opt::enable_elimination - enable elimination back-off for the stack. Default value is \p false.
+            - \p opt::enable_elimination - enable elimination back-off for the stack. Default value is \p false.
 
             If elimination back-off is enabled, additional options can be specified:
-            - opt::buffer - a buffer type for elimination array, see \p opt::v::static_buffer, \p opt::v::dynamic_buffer.
+            - \p opt::buffer - a buffer type for elimination array, see \p opt::v::initialized_static_buffer, \p opt::v::initialized_dynamic_buffer.
                 The buffer can be any size: \p Exp2 template parameter of those classes can be \p false.
                 The size should be selected empirically for your application and hardware, there are no common rules for that.
-                Default is <tt> %opt::v::static_buffer< any_type, 4 > </tt>.
-            - opt::random_engine - a random engine to generate a random position in elimination array.
+                Default is <tt> %opt::v::initialized_static_buffer< any_type, 4 > </tt>.
+            - \p opt::random_engine - a random engine to generate a random position in elimination array.
                 Default is \p opt::v::c_rand.
-            - opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
-            - opt::lock_type - a lock type used in elimination back-off, default is \p cds::sync::spin
+            - \p opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
+            - \p opt::lock_type - a lock type used in elimination back-off, default is \p cds::sync::spin
 
             Example: declare \p %TreiberStack with elimination enabled and internal statistics
             \code
@@ -710,7 +710,7 @@ namespace cds { namespace intrusive {
         /// Constructs empty stack and initializes elimination back-off data
         /**
             This form should be used if you use elimination back-off with dynamically allocated collision array, i.e
-            \p Traits contains <tt>typedef cds::opt::v::dynamic_buffer buffer</tt>.
+            \p Traits contains <tt>typedef cds::opt::v::initialized_dynamic_buffer buffer</tt>.
             \p nCollisionCapacity parameter specifies the capacity of collision array.
         */
         TreiberStack( size_t nCollisionCapacity )

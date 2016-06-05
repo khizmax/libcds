@@ -86,13 +86,13 @@ namespace cds { namespace intrusive {
         struct traits {
             /// Storage type
             /**
-                The storage type for the heap array. Default is \p cds::opt::v::dynamic_buffer.
+                The storage type for the heap array. Default is \p cds::opt::v::initialized_dynamic_buffer.
 
                 You may specify any type of buffer's value since at instantiation time
                 the \p buffer::rebind member metafunction is called to change type
                 of values stored in the buffer.
             */
-            typedef opt::v::dynamic_buffer<void *>  buffer;
+            typedef opt::v::initialized_dynamic_buffer<void *>  buffer;
 
             /// Priority compare functor
             /**
@@ -123,9 +123,9 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to traits
         /**
             \p Options:
-            - \p opt::buffer - the buffer type for heap array. Possible type are: \p opt::v::static_buffer, \p opt::v::dynamic_buffer.
-                Default is \p %opt::v::dynamic_buffer.
-                You may specify any type of values for the buffer since at instantiation time
+            - \p opt::buffer - the buffer type for heap array. Possible type are: \p opt::v::initialized_static_buffer, \p opt::v::initialized_dynamic_buffer.
+                Default is \p %opt::v::initialized_dynamic_buffer.
+                You may specify any type of value for the buffer since at instantiation time
                 the \p buffer::rebind member metafunction is called to change the type of values stored in the buffer.
             - \p opt::compare - priority compare functor. No default functor is provided.
                 If the option is not specified, the \p opt::less is used.
@@ -187,9 +187,9 @@ namespace cds { namespace intrusive {
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
 
-        typedef typename traits::lock_type lock_type       ;   ///< heap's size lock type
-        typedef typename traits::back_off  back_off        ;   ///< Back-off strategy
-        typedef typename traits::stat          stat        ;   ///< internal statistics type
+        typedef typename traits::lock_type lock_type;   ///< heap's size lock type
+        typedef typename traits::back_off  back_off;    ///< Back-off strategy
+        typedef typename traits::stat      stat;        ///< internal statistics type
 
     protected:
         //@cond
@@ -245,7 +245,7 @@ namespace cds { namespace intrusive {
     public:
         /// Constructs empty priority queue
         /**
-            For \p cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            For \p cds::opt::v::initialized_static_buffer the \p nCapacity parameter is ignored.
         */
         MSPriorityQueue( size_t nCapacity )
             : m_Heap( nCapacity )

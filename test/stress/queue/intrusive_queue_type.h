@@ -247,13 +247,13 @@ namespace queue {
         class TsigasCycleQueue_dyn
             : public cds::intrusive::TsigasCycleQueue< T,
                 typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
                 >::type
             >
         {
             typedef cds::intrusive::TsigasCycleQueue< T,
                 typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
                 >::type
             > base_class;
         public:
@@ -274,14 +274,14 @@ namespace queue {
         class TsigasCycleQueue_dyn_ic
             : public cds::intrusive::TsigasCycleQueue< T,
                 typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
                     ,cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             >
         {
             typedef cds::intrusive::TsigasCycleQueue< T,
                 typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::dynamic_buffer< int > >
+                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
                     ,cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > base_class;
@@ -302,7 +302,7 @@ namespace queue {
         // VyukovMPMCCycleQueue
         struct traits_VyukovMPMCCycleQueue_dyn : public cds::intrusive::vyukov_queue::traits
         {
-            typedef cds::opt::v::dynamic_buffer< int > buffer;
+            typedef cds::opt::v::uninitialized_dynamic_buffer< int > buffer;
         };
         class VyukovMPMCCycleQueue_dyn
             : public cds::intrusive::VyukovMPMCCycleQueue< T, traits_VyukovMPMCCycleQueue_dyn >

@@ -45,7 +45,7 @@ namespace ellen_bintree_pool {
     // Update descriptor pool based on Vyukov's queue
     struct update_desc_pool_traits : public cds::memory::vyukov_queue_pool_traits
     {
-        typedef cds::opt::v::static_buffer< cds::any_type, 4096 > buffer;
+        typedef cds::opt::v::initialized_static_buffer< cds::any_type, 4096 > buffer;
     };
 
     typedef cds::memory::vyukov_queue_pool< update_desc, update_desc_pool_traits > update_desc_pool_type;
@@ -63,7 +63,7 @@ namespace ellen_bintree_pool {
     // Update descriptor pool based on bounded Vyukov's queue
     struct bounded_update_desc_pool_traits : public cds::memory::vyukov_queue_pool_traits
     {
-        typedef cds::opt::v::static_buffer< cds::any_type, 4096 > buffer;
+        typedef cds::opt::v::initialized_static_buffer< cds::any_type, 4096 > buffer;
     };
     typedef cds::memory::bounded_vyukov_queue_pool< update_desc, bounded_update_desc_pool_traits > bounded_update_desc_pool_type;
     extern bounded_update_desc_pool_type s_BoundedUpdateDescPool;

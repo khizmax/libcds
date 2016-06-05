@@ -363,21 +363,21 @@ namespace pqueue {
         // MSPriorityQueue
         struct traits_MSPriorityQueue_static_less : public
             cc::mspriority_queue::make_traits <
-                co::buffer < co::v::static_buffer< char, c_nBoundedCapacity > >
+                co::buffer < co::v::initialized_static_buffer< char, c_nBoundedCapacity > >
             > ::type
         {};
         typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_static_less > MSPriorityQueue_static_less;
 
         struct traits_MSPriorityQueue_static_less_stat : public cc::mspriority_queue::traits
         {
-            typedef co::v::static_buffer< char, c_nBoundedCapacity > buffer;
+            typedef co::v::initialized_static_buffer< char, c_nBoundedCapacity > buffer;
             typedef cc::mspriority_queue::stat<> stat;
         };
         typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_static_less_stat > MSPriorityQueue_static_less_stat;
 
         struct traits_MSPriorityQueue_static_cmp : public
             cc::mspriority_queue::make_traits <
-                co::buffer< co::v::static_buffer< char, c_nBoundedCapacity > >
+                co::buffer< co::v::initialized_static_buffer< char, c_nBoundedCapacity > >
                 , co::compare < cmp >
             > ::type
         {};
@@ -385,7 +385,7 @@ namespace pqueue {
 
         struct traits_MSPriorityQueue_static_mutex : public
             cc::mspriority_queue::make_traits<
-                co::buffer< co::v::static_buffer< char, c_nBoundedCapacity > >
+                co::buffer< co::v::initialized_static_buffer< char, c_nBoundedCapacity > >
                 , co::lock_type<std::mutex>
             >::type
         {};
@@ -393,14 +393,14 @@ namespace pqueue {
 
         struct traits_MSPriorityQueue_dyn_less : public
             cc::mspriority_queue::make_traits<
-                co::buffer< co::v::dynamic_buffer< char > >
+                co::buffer< co::v::initialized_dynamic_buffer< char > >
             >::type
         {};
         typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_less > MSPriorityQueue_dyn_less;
 
         struct traits_MSPriorityQueue_dyn_less_stat : public
             cc::mspriority_queue::make_traits <
-                co::buffer< co::v::dynamic_buffer< char > >
+                co::buffer< co::v::initialized_dynamic_buffer< char > >
                 , co::stat < cc::mspriority_queue::stat<> >
             > ::type
         {};
@@ -408,7 +408,7 @@ namespace pqueue {
 
         struct traits_MSPriorityQueue_dyn_cmp : public
             cc::mspriority_queue::make_traits <
-                co::buffer< co::v::dynamic_buffer< char > >
+                co::buffer< co::v::initialized_dynamic_buffer< char > >
                 , co::compare < cmp >
             > ::type
         {};
@@ -416,7 +416,7 @@ namespace pqueue {
 
         struct traits_MSPriorityQueue_dyn_mutex : public
             cc::mspriority_queue::make_traits <
-                co::buffer< co::v::dynamic_buffer< char > >
+                co::buffer< co::v::initialized_dynamic_buffer< char > >
                 , co::lock_type < std::mutex >
             > ::type
         {};

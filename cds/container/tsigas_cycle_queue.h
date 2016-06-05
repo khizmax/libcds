@@ -51,8 +51,10 @@ namespace cds { namespace container {
                 buffer for required type via \p rebind metafunction.
 
                 For \p TsigasCycleQueue queue the buffer size should have power-of-2 size.
+
+                You should use any initialized buffer type, see \p opt::buffer.
             */
-            typedef cds::opt::v::dynamic_buffer< void * > buffer;
+            typedef cds::opt::v::initialized_dynamic_buffer< void * > buffer;
 
             /// Node allocator
             typedef CDS_DEFAULT_ALLOCATOR       allocator;
@@ -78,7 +80,7 @@ namespace cds { namespace container {
         /**
             Supported \p Options are:
             - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
-                \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
+                \p opt::v::initialized_dynamic_buffer (the default), \p opt::v::initialized_static_buffer. The type of
                 element in the buffer is not important: it will be changed via \p rebind metafunction.
             - \p opt::allocator - allocator (like \p std::allocator) used for allocating queue items. Default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
@@ -92,7 +94,7 @@ namespace cds { namespace container {
             \code
             typedef cds::container::TsigasCycleQueue< Foo,
                 typename cds::container::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
+                    cds::opt::buffer< cds::opt::v::initialized_static_buffer< void *, 1024 >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;
@@ -179,7 +181,7 @@ namespace cds { namespace container {
         // Queue of Foo, capacity is 1024, statically allocated buffer:
         typedef cds::container::TsigasCycleQueue< Foo,
             typename cds::container::tsigas_queue::make_traits<
-                cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > >
+                cds::opt::buffer< cds::opt::v::initialized_static_buffer< Foo, 1024 > >
             >::type
         > static_queue;
         static_queue    stQueue;
@@ -187,7 +189,7 @@ namespace cds { namespace container {
         // Queue of Foo, capacity is 1024, dynamically allocated buffer:
         typedef cds::container::TsigasCycleQueue< Foo
             typename cds::container::tsigas_queue::make_traits<
-                cds::opt::buffer< cds::opt::v::dynamic_buffer< Foo > >
+                cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< Foo > >
             >::type
         > dynamic_queue;
         dynamic_queue    dynQueue( 1024 );
@@ -259,7 +261,7 @@ namespace cds { namespace container {
     public:
         /// Initialize empty queue of capacity \p nCapacity
         /**
-            If internal buffer type is \p cds::opt::v::static_buffer, the \p nCapacity parameter is ignored.
+            If internal buffer type is \p cds::opt::v::initialized_static_buffer, the \p nCapacity parameter is ignored.
 
             Note, the real capacity of queue is \p nCapacity - 2.
         */

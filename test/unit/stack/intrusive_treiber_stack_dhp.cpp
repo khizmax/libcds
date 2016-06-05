@@ -204,7 +204,7 @@ namespace {
                         ci::opt::gc<gc_type>
                     >
                 >
-                ,ci::opt::buffer< ci::opt::v::dynamic_buffer<void *> >
+                ,ci::opt::buffer< ci::opt::v::initialized_dynamic_buffer<void *> >
             >::type
         > stack_type;
 
@@ -257,7 +257,7 @@ namespace {
                         ci::opt::gc<gc_type>
                     >
                 >
-                ,ci::opt::buffer< ci::opt::v::dynamic_buffer<void *> >
+                ,ci::opt::buffer< ci::opt::v::initialized_dynamic_buffer<void *> >
             >::type
         > stack_type;
 
@@ -276,7 +276,7 @@ namespace {
                         ci::opt::gc<gc_type>
                     >
                 >
-                ,ci::opt::buffer< ci::opt::v::dynamic_buffer<void *> >
+                ,ci::opt::buffer< ci::opt::v::initialized_dynamic_buffer<void *> >
                 , ci::opt::disposer< mock_disposer >
             >::type
         > stack_type;

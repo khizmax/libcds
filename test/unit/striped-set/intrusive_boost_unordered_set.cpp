@@ -50,9 +50,9 @@ namespace {
     };
 
     template <size_t Capacity, typename T, class Alloc = CDS_DEFAULT_ALLOCATOR>
-    struct dyn_buffer: public ci::opt::v::dynamic_buffer< T, Alloc >
+    struct dyn_buffer: public ci::opt::v::initialized_dynamic_buffer< T, Alloc >
     {
-        typedef ci::opt::v::dynamic_buffer< T, Alloc >   base_class;
+        typedef ci::opt::v::initialized_dynamic_buffer< T, Alloc >   base_class;
     public:
         template <typename Q>
         struct rebind {
@@ -93,7 +93,7 @@ namespace {
                 , bi::incremental<true>
             >
             ,cds::intrusive::opt::hash< hash2 >
-            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::static_buffer< cds::any_type, 64 > >
+            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::initialized_static_buffer< cds::any_type, 64 > >
             ,cds::intrusive::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<256> >
         > set_type;
 
@@ -156,7 +156,7 @@ namespace {
                 , bi::incremental<true>
             >
             ,cds::intrusive::opt::hash< hash2 >
-            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::static_buffer< cds::any_type, 64 > >
+            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::initialized_static_buffer< cds::any_type, 64 > >
             ,cds::intrusive::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<256> >
         > set_type;
 
@@ -220,7 +220,7 @@ namespace {
             >
             ,ci::opt::mutex_policy< ci::striped_set::refinable<> >
             ,cds::intrusive::opt::hash< hash2 >
-            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::static_buffer< cds::any_type, 64 > >
+            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::initialized_static_buffer< cds::any_type, 64 > >
             ,cds::intrusive::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<256> >
         > set_type;
 
@@ -286,7 +286,7 @@ namespace {
             >
             ,cds::intrusive::opt::hash< hash2 >
             ,ci::opt::mutex_policy< ci::striped_set::refinable<> >
-            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::static_buffer< cds::any_type, 64 > >
+            ,cds::intrusive::opt::buffer< cds::intrusive::opt::v::initialized_static_buffer< cds::any_type, 64 > >
             ,cds::intrusive::opt::resizing_policy< ci::striped_set::single_bucket_size_threshold<256> >
         > set_type;
 

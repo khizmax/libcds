@@ -248,7 +248,7 @@ namespace istack {
             cds::intrusive::treiber_stack::make_traits <
                 cds::intrusive::opt::hook< base_hook<GC> >
                 , cds::opt::enable_elimination<true>
-                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+                , cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer<int> >
             > ::type
         {};
         typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn<cds::gc::HP>  > Elimination_HP_dyn;
@@ -268,7 +268,7 @@ namespace istack {
             cds::intrusive::treiber_stack::make_traits <
                 cds::intrusive::opt::hook< base_hook<GC> >
                 , cds::opt::enable_elimination<true>
-                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+                , cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer<int> >
                 , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
             > ::type
         {};

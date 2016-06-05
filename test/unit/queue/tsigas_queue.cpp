@@ -50,7 +50,7 @@ namespace {
     {
         struct traits: public cds::container::tsigas_queue::traits
         {
-            typedef cds::opt::v::static_buffer<int, 128> buffer;
+            typedef cds::opt::v::initialized_static_buffer<int, 128> buffer;
         };
         typedef cds::container::TsigasCycleQueue< int, traits > test_queue;
 
@@ -63,7 +63,7 @@ namespace {
         
         typedef cds::container::TsigasCycleQueue< int,
             cds::container::tsigas_queue::make_traits<
-                cds::opt::buffer< cds::opt::v::static_buffer<int, 128>>
+                cds::opt::buffer< cds::opt::v::initialized_static_buffer<int, 128>>
                 , cds::opt::item_counter< cds::atomicity::item_counter>
             >::type
         > test_queue;
@@ -76,7 +76,7 @@ namespace {
     {
         struct traits : public cds::container::tsigas_queue::traits
         {
-            typedef cds::opt::v::dynamic_buffer<int> buffer;
+            typedef cds::opt::v::initialized_dynamic_buffer<int> buffer;
         };
         typedef cds::container::TsigasCycleQueue< int, traits > test_queue;
 
@@ -88,7 +88,7 @@ namespace {
     {
         typedef cds::container::TsigasCycleQueue< int,
             cds::container::tsigas_queue::make_traits<
-                cds::opt::buffer< cds::opt::v::dynamic_buffer<int>>
+                cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer<int>>
                 , cds::opt::item_counter< cds::atomicity::item_counter>
             >::type
         > test_queue;
@@ -101,7 +101,7 @@ namespace {
     {
         struct traits : public cds::container::tsigas_queue::traits
         {
-            typedef cds::opt::v::dynamic_buffer<int> buffer;
+            typedef cds::opt::v::initialized_dynamic_buffer<int> buffer;
             enum { padding = 16 };
         };
         typedef cds::container::TsigasCycleQueue< int, traits > test_queue;

@@ -51,8 +51,8 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to \p vyukov_queue::traits
         /**
             Supported \p Options are:
-            - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
-                \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
+            - \p opt::buffer - an uninitialized buffer type for internal cyclic array. Possible types are:
+                \p opt::v::uninitialized_dynamic_buffer (the default), \p opt::v::uninitialized_static_buffer. The type of
                 element in the buffer is not important: it will be changed via \p rebind metafunction.
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer.
                 This option is used only in \p clear() member function.
@@ -61,13 +61,13 @@ namespace cds { namespace intrusive {
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
 
-            Example: declare \p %VyukovMPMCCycleQueue with item counting and static iternal buffer of size 1024:
+            Example: declare \p %VyukovMPMCCycleQueue with item counting and static internal buffer of size 1024:
             \code
             typedef cds::intrusive::VyukovMPMCCycleQueue< Foo,
                 typename cds::intrusive::vyukov_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
+                    cds::opt::buffer< cds::opt::v::uninitialized_static_buffer< void *, 1024 >,
                     cds::opt::item_counter< cds::atomicity::item_counter >
                 >::type
             > myQueue;
@@ -124,7 +124,7 @@ namespace cds { namespace intrusive {
         // Queue of Foo pointers, capacity is 1024, statically allocated buffer:
         typedef cds::intrusive::VyukovMPMCCycleQueue< Foo,
             typename cds::intrusive::vyukov_queue::make_traits<
-                cds::opt::buffer< cds::opt::v::static_buffer< Foo, 1024 > >
+                cds::opt::buffer< cds::opt::v::uninitialized_static_buffer< Foo, 1024 > >
             >::type
         > static_queue;
         static_queue    stQueue;
@@ -132,7 +132,7 @@ namespace cds { namespace intrusive {
         // Queue of Foo pointers, capacity is 1024, dynamically allocated buffer:
         struct queue_traits: public cds::intrusive::vyukov_queue::traits
         {
-            typedef cds::opt::v::dynamic_buffer< Foo > buffer;
+            typedef cds::opt::v::uninitialized_dynamic_buffer< Foo > buffer;
         };
         typedef cds::intrusive::VyukovMPMCCycleQueue< Foo, queue_traits > dynamic_queue;
         dynamic_queue    dynQueue( 1024 );
@@ -163,7 +163,7 @@ namespace cds { namespace intrusive {
     public:
         /// Constructs the queue of capacity \p nCapacity
         /**
-            For \p cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            For \p cds::opt::v::uninitialized_static_buffer the \p nCapacity parameter is ignored.
         */
         VyukovMPMCCycleQueue( size_t nCapacity = 0 )
             : base_class( nCapacity )

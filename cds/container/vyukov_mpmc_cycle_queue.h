@@ -49,11 +49,15 @@ namespace cds { namespace container {
             /// Buffer type for internal array
             /*
                 The type of element for the buffer is not important: the queue rebinds
-                buffer for required type via \p rebind metafunction.
+                the buffer for required type via \p rebind metafunction.
 
                 For \p VyukovMPMCCycleQueue queue the buffer size should have power-of-2 size.
+
+                You should use only uninitialized buffer for the queue -
+                \p cds::opt::v::uninitialized_dynamic_buffer (the default),
+                \p cds::opt::v::uninitialized_static_buffer.
             */
-            typedef cds::opt::v::dynamic_buffer< void * > buffer;
+            typedef cds::opt::v::uninitialized_dynamic_buffer< void * > buffer;
 
             /// A functor to clean item dequeued.
             /**
@@ -94,8 +98,8 @@ namespace cds { namespace container {
         /// Metafunction converting option list to \p vyukov_queue::traits
         /**
             Supported \p Options are:
-            - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
-                \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
+            - \p opt::buffer - an uninitialized buffer type for internal cyclic array. Possible types are:
+                \p opt::v::uninitialized_dynamic_buffer (the default), \p opt::v::uninitialized_static_buffer. The type of
                 element in the buffer is not important: it will be changed via \p rebind metafunction.
             - \p opt::value_cleaner - a functor to clean item dequeued.
                 The functor calls the destructor for queue item.
@@ -113,7 +117,7 @@ namespace cds { namespace container {
             \code
             typedef cds::container::VyukovMPMCCycleQueue< Foo,
                 typename cds::container::vyukov_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
+                    cds::opt::buffer< cds::opt::v::uninitialized_static_buffer< void *, 1024 >,
                     cds::opt::item_counte< cds::atomicity::item_counter >
                 >::type
             > myQueue;
@@ -221,7 +225,7 @@ namespace cds { namespace container {
     public:
         /// Constructs the queue of capacity \p nCapacity
         /**
-            For \p cds::opt::v::static_buffer the \p nCapacity parameter is ignored.
+            For \p cds::opt::v::uninitialized_static_buffer the \p nCapacity parameter is ignored.
 
             The buffer capacity must be the power of two.
         */

@@ -76,7 +76,7 @@ namespace cds { namespace memory {
         // Pool of Foo object of size 1024.
         struct pool_traits: public cds::memory::vyukov_queue_pool_traits
         {
-            typedef cds::opt::v::static_buffer< Foo, 1024 > buffer;
+            typedef cds::opt::v::uninitialized_static_buffer< Foo, 1024 > buffer;
         };
         typedef cds::memory::vyukov_queue_pool< Foo, pool_traits > pool_type;
         static pool_type thePool;
@@ -387,7 +387,7 @@ namespace cds { namespace memory {
         // Pool of Foo object of size 1024.
         struct pool_traits: public cds::memory::vyukov_queue_pool_traits
         {
-            typedef cds::opt::v::static_buffer< Foo, 1024 > buffer;
+            typedef cds::opt::v::uninitialized_static_buffer< Foo, 1024 > buffer;
         };
         typedef cds::memory::bounded_vyukov_queue_pool< Foo, pool_traits > pool_type;
         static pool_type thePool;

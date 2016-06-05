@@ -55,11 +55,11 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 typedef typename opt::value <
                     typename opt::find_option <
-                    opt::buffer< opt::v::static_buffer< cds::any_type, 256 > >,
-                    Options...
+                        opt::buffer< opt::v::initialized_static_buffer< cds::any_type, 256 > >,
+                        Options...
                     > ::type
                 > ::buffer    initial_buffer_type;
-                typedef typename initial_buffer_type::template rebind< typename container_type::bucket_type >::other    buffer_type;
+                typedef typename initial_buffer_type::template rebind< typename container_type::bucket_type >::other buffer_type;
                 typedef cds::intrusive::striped_set::load_factor_resizing<256>   default_resizing_policy;
 
             private:

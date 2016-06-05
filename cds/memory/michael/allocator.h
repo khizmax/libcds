@@ -176,7 +176,7 @@ namespace michael {
 #endif
         struct free_list_traits : public cds::container::vyukov_queue::traits
         {
-            typedef opt::v::static_buffer<void *, FreeListCapacity> buffer;
+            typedef opt::v::initialized_static_buffer<void *, FreeListCapacity> buffer;
 #ifdef _DEBUG
             typedef make_null_ptr value_cleaner;
 #endif

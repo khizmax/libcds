@@ -142,7 +142,7 @@ namespace {
         typedef cc::TreiberStack< gc_type, int
             , typename cc::treiber_stack::make_traits<
                 cds::opt::enable_elimination<true>
-                , cds::opt::buffer< cds::opt::v::dynamic_buffer<void *> >
+                , cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer<void *> >
             >::type
         > stack_type;
 
@@ -168,7 +168,7 @@ namespace {
             enum {
                 enable_elimination = true
             };
-            typedef cds::opt::v::dynamic_buffer<void *> buffer;
+            typedef cds::opt::v::initialized_dynamic_buffer<void *> buffer;
             typedef cds::backoff::yield back_off;
         };
         typedef cc::TreiberStack< gc_type, int, traits > stack_type;

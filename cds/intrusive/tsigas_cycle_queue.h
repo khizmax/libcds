@@ -52,8 +52,10 @@ namespace cds { namespace intrusive {
                 buffer for required type via \p rebind metafunction.
 
                 For \p TsigasCycleQueue queue the buffer size should have power-of-2 size.
+
+                You should use any initialized buffer type, see \p opt::buffer.
             */
-            typedef cds::opt::v::dynamic_buffer< void * > buffer;
+            typedef cds::opt::v::initialized_dynamic_buffer< void * > buffer;
 
             /// Back-off strategy
             typedef cds::backoff::empty         back_off;
@@ -79,7 +81,7 @@ namespace cds { namespace intrusive {
         /**
             Supported \p Options are:
             - \p opt::buffer - the buffer type for internal cyclic array. Possible types are:
-                \p opt::v::dynamic_buffer (the default), \p opt::v::static_buffer. The type of
+                \p opt::v::initialized_dynamic_buffer (the default), \p opt::v::initialized_static_buffer. The type of
                 element in the buffer is not important: it will be changed via \p rebind metafunction.
             - \p opt::back_off - back-off strategy used, default is \p cds::backoff::empty.
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
@@ -94,7 +96,7 @@ namespace cds { namespace intrusive {
             \code
             typedef cds::intrusive::TsigasCycleQueue< Foo,
                 typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::static_buffer< void *, 1024 >,
+                    cds::opt::buffer< cds::opt::v::initialized_static_buffer< void *, 1024 >,
                     cds::opt::item_counte< cds::atomicity::item_counter >
                 >::type
             > myQueue;
@@ -156,7 +158,7 @@ namespace cds { namespace intrusive {
         // Queue of Foo pointers, capacity is 1024, statically allocated buffer:
         struct queue_traits: public cds::intrusive::tsigas_queue::traits
         {
-            typedef cds::opt::v::static_buffer< Foo, 1024 > buffer;
+            typedef cds::opt::v::initialized_static_buffer< Foo, 1024 > buffer;
         };
         typedef cds::intrusive::TsigasCycleQueue< Foo, queue_traits > static_queue;
         static_queue    stQueue;
@@ -164,7 +166,7 @@ namespace cds { namespace intrusive {
         // Queue of Foo pointers, capacity is 1024, dynamically allocated buffer, with item counting:
         typedef cds::intrusive::TsigasCycleQueue< Foo,
             typename cds::intrusive::tsigas_queue::make_traits<
-                cds::opt::buffer< cds::opt::v::dynamic_buffer< Foo > >,
+                cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< Foo > >,
                 cds::opt::item_counter< cds::atomicity::item_counter >
             >::type
         > dynamic_queue;
@@ -230,7 +232,7 @@ namespace cds { namespace intrusive {
     public:
         /// Initialize empty queue of capacity \p nCapacity
         /**
-            If internal buffer type is \p cds::opt::v::static_buffer, the \p nCapacity parameter is ignored.
+            If internal buffer type is \p cds::opt::v::initialized_static_buffer, the \p nCapacity parameter is ignored.
 
             Note that the real capacity of queue is \p nCapacity - 2.
         */

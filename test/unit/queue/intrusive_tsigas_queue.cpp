@@ -71,7 +71,7 @@ namespace {
     {
         struct traits : public cds::intrusive::tsigas_queue::traits
         {
-            typedef cds::opt::v::static_buffer< int, c_Capacity > buffer;
+            typedef cds::opt::v::initialized_static_buffer< int, c_Capacity > buffer;
             typedef IntrusiveTsigasQueue::disposer disposer;
         };
 
@@ -83,7 +83,7 @@ namespace {
     TEST_F( IntrusiveTsigasQueue, dynamic_buffer )
     {
         typedef typename cds::intrusive::tsigas_queue::make_traits<
-            cds::opt::buffer< cds::opt::v::dynamic_buffer< int >>
+            cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int >>
             ,cds::opt::item_counter< cds::atomicity::item_counter >
             ,cds::opt::back_off< cds::backoff::pause >
             ,cds::intrusive::opt::disposer< disposer >
@@ -98,7 +98,7 @@ namespace {
     {
         struct traits : public cds::intrusive::tsigas_queue::traits
         {
-            typedef cds::opt::v::static_buffer< int, c_Capacity > buffer;
+            typedef cds::opt::v::initialized_static_buffer< int, c_Capacity > buffer;
             typedef IntrusiveTsigasQueue::disposer disposer;
             enum { padding = 16 | cds::opt::padding_tiny_data_only };
         };

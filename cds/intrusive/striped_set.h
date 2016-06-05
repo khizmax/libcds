@@ -92,8 +92,8 @@ namespace cds { namespace intrusive {
             Note that the choose of resizing policy depends of \p Container type:
             for sequential containers like \p boost::intrusive::list the right policy can significantly improve performance.
             For other, non-sequential types of \p Container (like a \p boost::intrusive::set) the resizing policy is not so important.
-        - \p cds::opt::buffer - a buffer type used only for \p boost::intrusive::unordered_set.
-            Default is <tt>cds::opt::v::static_buffer< cds::any_type, 256 > </tt>.
+        - \p cds::opt::buffer - an initialized buffer type used only for \p boost::intrusive::unordered_set.
+            Default is <tt>cds::opt::v::initialized_static_buffer< cds::any_type, 256 > </tt>.
 
             \p opt::compare or \p opt::less options are used in some \p Container class for ordering.
             \p %opt::compare option has the highest priority: if \p %opt::compare is specified, \p %opt::less is not used.
@@ -195,7 +195,8 @@ namespace cds { namespace intrusive {
                         You should provide two different hash function \p h1 and \p h2 - one for \p boost::intrusive::unordered_set
                         and other for \p %StripedSet. For the best result, \p h1 and \p h2 must be orthogonal i.e. <tt>h1(X) != h2(X)</tt> for any value \p X
 
-                        The option \p opt::buffer is used for \p boost::intrusive::bucket_traits. Default is <tt> cds::opt::v::static_buffer< cds::any_type, 256 > </tt>.
+                        The option \p opt::buffer is used for \p boost::intrusive::bucket_traits. 
+                        Default is <tt> cds::opt::v::initialized_static_buffer< cds::any_type, 256 > </tt>.
                         The resizing policy should correlate with the buffer capacity.
                         The default resizing policy is <tt>cds::container::striped_set::load_factor_resizing<256> </tt> what gives load factor 1 for
                         default bucket buffer that is the best for \p boost::intrusive::unordered_set.

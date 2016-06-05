@@ -275,7 +275,7 @@ namespace stack {
         struct traits_Elimination_dyn: public
             cds::container::treiber_stack::make_traits <
                 cds::opt::enable_elimination<true>
-                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+                , cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer<int> >
             > ::type
         {};
         typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn > Elimination_HP_dyn;
@@ -294,7 +294,7 @@ namespace stack {
             cds::container::treiber_stack::make_traits <
                 cds::opt::enable_elimination<true>
                 , cds::opt::stat<cds::intrusive::treiber_stack::stat<> >
-                , cds::opt::buffer< cds::opt::v::dynamic_buffer<int> >
+                , cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer<int> >
             > ::type
         {};
         typedef cds::container::TreiberStack< cds::gc::HP,  T, traits_Elimination_dyn_stat > Elimination_HP_dyn_stat;

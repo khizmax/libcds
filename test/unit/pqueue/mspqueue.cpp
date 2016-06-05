@@ -162,8 +162,8 @@ namespace {
         }
     };
 
-    typedef cds::opt::v::dynamic_buffer< char > dyn_buffer_type;
-    typedef cds::opt::v::static_buffer< char, MSPQueue::c_nCapacity > static_buffer_type;
+    typedef cds::opt::v::initialized_dynamic_buffer< char > dyn_buffer_type;
+    typedef cds::opt::v::initialized_static_buffer< char, MSPQueue::c_nCapacity > static_buffer_type;
 
     TEST_F( MSPQueue, dynamic )
     {
