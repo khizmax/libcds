@@ -60,7 +60,7 @@ namespace cds { namespace opt {
         Initialized buffer contains default-constructed elements. Element destructor is called automatically
         when the buffer is destroyed.
 
-        Initialized and uninitialized buffers are not 
+        @note Usually, initialized and uninitialized buffers are not interchangeable.
     */
     template <typename Type>
     struct buffer {
