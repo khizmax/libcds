@@ -18,6 +18,11 @@
       are removed.
     - Fixed: use-after-free bug in VyukovMPMCCycleQueue internal buffer.
       To prevent this bug the queue uses an uninitialized buffer now.
+    - Added: for minimizing runtime of stress test the detail level for some test is added.
+      Command line argument --detail-level=N specifies what test should be ran: each
+      test with level not great than N will be ran. Instead of command line arg
+      the enviromnent variable CDSTEST_DETAIL_LEVEL=N can be used.
+      By default, the detail level is 0 that means only small set of the some test will be ran.
 
 2.1.0 06.01.2016
     General release
