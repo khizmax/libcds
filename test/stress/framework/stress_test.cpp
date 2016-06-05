@@ -71,4 +71,40 @@ namespace cds_test {
         return arrString;
     }
 
+
+    static int s_nDetailLevel = 0;
+
+    /*static*/ void stress_fixture::init_detail_level( int argc, char **argv )
+    {
+        bool found = false;
+        for ( int i = 0; i < argc; ++i ) {
+            char * arg = argv[i];
+            char * eq = strchr( arg, '=' );
+            if ( eq ) {
+                if ( strncmp( arg, "--detail_level", eq - arg ) == 0 || strncmp( arg, "--detail-level", eq - arg ) == 0 ) {
+                    s_nDetailLevel = atoi( eq + 1 );
+                    found = true;
+                }
+            }
+        }
+
+        if ( !found ) {
+            // Get detail level from environment variable
+            char const * env = getenv( "CDSTEST_DETAIL_LEVEL" );
+            if ( env && env[0] )
+                s_nDetailLevel = atoi( env );
+        }
+
+        std::cout << "Stress test detail level=" << s_nDetailLevel << std::endl;
+    }
+
+    /*static*/ bool stress_fixture::check_detail_level( int nLevel )
+    {
+        if ( nLevel <= s_nDetailLevel )
+            return true;
+
+        std::cout << "Skipped (detail level=" << nLevel << ")" << std::endl;
+        return false;
+    }
+
 } // namespace

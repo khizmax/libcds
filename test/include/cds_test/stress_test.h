@@ -169,6 +169,9 @@ namespace cds_test {
 
         static std::vector<std::string> load_dictionary();
 
+        static void init_detail_level( int argc, char **argv );
+        static bool check_detail_level( int nLevel );
+
     private:
         thread_pool     m_thread_pool;
     };

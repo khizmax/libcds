@@ -222,120 +222,121 @@ namespace map {
     };
 }   // namespace map
 
-#define CDSSTRESS_MichaelMap_case( fixture, test_case, michael_map_type, key_type, value_type ) \
+#define CDSSTRESS_MichaelMap_case( fixture, test_case, michael_map_type, key_type, value_type, level ) \
     TEST_P( fixture, michael_map_type ) \
     { \
+        if ( !check_detail_level( level )) return; \
         typedef map::map_type< tag_MichaelHashMap, key_type, value_type >::michael_map_type map_type; \
         test_case<map_type>(); \
     }
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSSTRESS_MichaelMap_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_cmp_stdAlloc,              key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_cmp_stdAlloc,              key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_less_stdAlloc,             key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_less_stdAlloc,             key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_cmp_stdAlloc_seqcst,       key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_cmp_stdAlloc_seqcst,       key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_less_stdAlloc_seqcst,      key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_less_stdAlloc_seqcst,      key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_cmp_michaelAlloc,          key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_cmp_michaelAlloc,          key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_less_michaelAlloc,         key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_less_michaelAlloc,         key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc,         key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc,         key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_less_stdAlloc,        key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_stdAlloc,        key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc_seqcst,  key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc_seqcst,  key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_less_stdAlloc_seqcst, key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_stdAlloc_seqcst, key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_cmp_michaelAlloc,     key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_cmp_michaelAlloc,     key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_less_michaelAlloc,    key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_michaelAlloc,    key_type, value_type ) 
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_cmp_stdAlloc,              key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_cmp_stdAlloc,              key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_less_stdAlloc,             key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_less_stdAlloc,             key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_cmp_stdAlloc_seqcst,       key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_cmp_stdAlloc_seqcst,       key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_less_stdAlloc_seqcst,      key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_less_stdAlloc_seqcst,      key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_cmp_michaelAlloc,          key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_cmp_michaelAlloc,          key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHB_less_michaelAlloc,         key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_SHT_less_michaelAlloc,         key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc,         key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc,         key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_less_stdAlloc,        key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_stdAlloc,        key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc_seqcst,  key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc_seqcst,  key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_less_stdAlloc_seqcst, key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_stdAlloc_seqcst, key_type, value_type, 2 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_cmp_michaelAlloc,     key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_cmp_michaelAlloc,     key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_less_michaelAlloc,    key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_michaelAlloc,    key_type, value_type, 0 ) 
 #else
 #   define CDSSTRESS_MichaelMap_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
 #define CDSSTRESS_MichaelMap( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stdAlloc,                      key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_stdAlloc,                     key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_stdAlloc,                 key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp_stdAlloc,                 key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_cmp_stdAlloc,                 key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_stdAlloc,                     key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_stdAlloc,                    key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_stdAlloc,                key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_stdAlloc,                key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_stdAlloc,                key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stdAlloc_seqcst,               key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_stdAlloc_seqcst,              key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_stdAlloc_seqcst,          key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp_stdAlloc_seqcst,          key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_cmp_stdAlloc_seqcst,          key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_stdAlloc_seqcst,              key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_stdAlloc_seqcst,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_stdAlloc_seqcst,         key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_stdAlloc_seqcst,         key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_stdAlloc_seqcst,         key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_michaelAlloc,                  key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_michaelAlloc,                 key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_michaelAlloc,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp_michaelAlloc,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_cmp_michaelAlloc,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_michaelAlloc,                 key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_michaelAlloc,                key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_michaelAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_michaelAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_michaelAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_stdAlloc,                 key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_stdAlloc,                key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stdAlloc,                key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_stdAlloc,               key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_stdAlloc,           key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_stdAlloc,           key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_stdAlloc,           key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_stdAlloc_seqcst,          key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_stdAlloc_seqcst,         key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc_seqcst,     key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc_seqcst,     key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc_seqcst,     key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stdAlloc_seqcst,         key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_stdAlloc_seqcst,        key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_stdAlloc_seqcst,    key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_stdAlloc_seqcst,    key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_stdAlloc_seqcst,    key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_michaelAlloc,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_michaelAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_cmp_michaelAlloc,        key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp_michaelAlloc,        key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_cmp_michaelAlloc,        key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_michaelAlloc,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_michaelAlloc,           key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_michaelAlloc,       key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_michaelAlloc,       key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_michaelAlloc,       key_type, value_type ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stdAlloc,                      key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_stdAlloc,                     key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_stdAlloc,                 key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp_stdAlloc,                 key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_cmp_stdAlloc,                 key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_stdAlloc,                     key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_stdAlloc,                    key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_stdAlloc,                key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_stdAlloc,                key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_stdAlloc,                key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stdAlloc_seqcst,               key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_stdAlloc_seqcst,              key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_stdAlloc_seqcst,          key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp_stdAlloc_seqcst,          key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_cmp_stdAlloc_seqcst,          key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_stdAlloc_seqcst,              key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_stdAlloc_seqcst,             key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_stdAlloc_seqcst,         key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_stdAlloc_seqcst,         key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_stdAlloc_seqcst,         key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_michaelAlloc,                  key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_michaelAlloc,                 key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_michaelAlloc,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp_michaelAlloc,             key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_cmp_michaelAlloc,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_michaelAlloc,                 key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_michaelAlloc,                key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_michaelAlloc,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_michaelAlloc,            key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_michaelAlloc,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_stdAlloc,                 key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_stdAlloc,                key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc,            key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc,            key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stdAlloc,                key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_stdAlloc,               key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_stdAlloc,           key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_stdAlloc,           key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_stdAlloc,           key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_stdAlloc_seqcst,          key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_stdAlloc_seqcst,         key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc_seqcst,     key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc_seqcst,     key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc_seqcst,     key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stdAlloc_seqcst,         key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_stdAlloc_seqcst,        key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_stdAlloc_seqcst,    key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_stdAlloc_seqcst,    key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_stdAlloc_seqcst,    key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_michaelAlloc,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_michaelAlloc,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_cmp_michaelAlloc,        key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp_michaelAlloc,        key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_cmp_michaelAlloc,        key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_michaelAlloc,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_michaelAlloc,           key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_michaelAlloc,       key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_michaelAlloc,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_michaelAlloc,       key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_MichaelMap_nogc( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_cmp_stdAlloc,                    key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_less_stdAlloc,                   key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_cmp_stdAlloc_seqcst,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_less_stdAlloc_seqcst,            key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_cmp_michaelAlloc,                key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_less_michaelAlloc,               key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_cmp_stdAlloc,               key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_unord_stdAlloc,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_less_stdAlloc,              key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_cmp_stdAlloc_seqcst,        key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_less_stdAlloc_seqcst,       key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_cmp_michaelAlloc,           key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_less_michaelAlloc,          key_type, value_type ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_cmp_stdAlloc,                    key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_less_stdAlloc,                   key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_cmp_stdAlloc_seqcst,             key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_less_stdAlloc_seqcst,            key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_cmp_michaelAlloc,                key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_NOGC_less_michaelAlloc,               key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_cmp_stdAlloc,               key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_unord_stdAlloc,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_less_stdAlloc,              key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_cmp_stdAlloc_seqcst,        key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_less_stdAlloc_seqcst,       key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_cmp_michaelAlloc,           key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_NOGC_less_michaelAlloc,          key_type, value_type, 0 ) \
 
 
 #endif // ifndef CDSUNIT_MAP_TYPE_MICHAEL_H
