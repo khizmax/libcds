@@ -104,6 +104,7 @@ namespace cds_test {
             return true;
 
         std::cout << "Skipped (detail level=" << nLevel << ")" << std::endl;
+        propout() << std::make_pair( "skipped", 1 );
         return false;
     }
 
