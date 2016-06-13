@@ -84,13 +84,8 @@ namespace cds { namespace container {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
-            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::delay_of<2>
-            - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
+            - any \p cds::algo::flat_combining::make_traits options
             - \p opt::stat - internal statistics, possible type: \p fcqueue::stat, \p fcqueue::empty_stat (the default)
-            - \p opt::memory_model - C++ memory ordering model.
-                List of all available memory ordering see \p opt::memory_model.
-                Default is \p cds::opt::v:relaxed_ordering
             - \p opt::enable_elimination - enable/disable operation \ref cds_elimination_description "elimination"
                 By default, the elimination is disabled. For queue, the elimination is possible if the queue
                 is empty.
@@ -147,8 +142,7 @@ namespace cds { namespace container {
             op_enq = cds::algo::flat_combining::req_Operation, ///< Enqueue
             op_enq_move,    ///< Enqueue (move semantics)
             op_deq,         ///< Dequeue
-            op_clear,       ///< Clear
-            op_empty        ///< Empty
+            op_clear        ///< Clear
         };
 
         /// Flat combining publication list record
@@ -167,8 +161,8 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        fc_kernel   m_FlatCombining;
-        queue_type  m_Queue;
+        mutable fc_kernel m_FlatCombining;
+        queue_type        m_Queue;
         //@endcond
 
     public:
@@ -192,7 +186,7 @@ namespace cds { namespace container {
         */
         bool enqueue( value_type const& val )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValEnq = &val;
 
             if ( c_bEliminationEnabled )
@@ -218,7 +212,7 @@ namespace cds { namespace container {
         */
         bool enqueue( value_type&& val )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValEnq = &val;
 
             if ( c_bEliminationEnabled )
@@ -245,7 +239,7 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& val )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValDeq = &val;
 
             if ( c_bEliminationEnabled )
@@ -269,7 +263,7 @@ namespace cds { namespace container {
         /// Clears the queue
         void clear()
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
 
             if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_clear, pRec, *this );
@@ -295,18 +289,12 @@ namespace cds { namespace container {
         /**
             If the combining is in process the function waits while combining done.
         */
-        bool empty()
+        bool empty() const
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
-
-            if ( c_bEliminationEnabled )
-                m_FlatCombining.batch_combine( op_empty, pRec, *this );
-            else
-                m_FlatCombining.combine( op_empty, pRec, *this );
-
-            assert( pRec->is_done() );
-            m_FlatCombining.release_record( pRec );
-            return pRec->bEmpty;
+            bool bRet = false;
+            auto const& queue = m_Queue;
+            m_FlatCombining.invoke_exclusive( [&queue, &bRet]() { bRet = queue.empty(); } );
+            return bRet;
         }
 
         /// Internal statistics
@@ -350,9 +338,6 @@ namespace cds { namespace container {
             case op_clear:
                 while ( !m_Queue.empty() )
                     m_Queue.pop();
-                break;
-            case op_empty:
-                pRec->bEmpty = m_Queue.empty();
                 break;
             default:
                 assert(false);

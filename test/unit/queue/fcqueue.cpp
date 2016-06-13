@@ -154,6 +154,30 @@ namespace {
         test_string( q );
     }
 
+    TEST_F( FCQueue, std_empty_wait_strategy )
+    {
+        typedef cds::container::FCQueue<int, std::queue< int, std::deque<int>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_single_mutex_single_condvar )
+    {
+        typedef cds::container::FCQueue<int, std::queue< int, std::deque<int>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
     TEST_F( FCQueue, std_deque_elimination )
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::deque<int>>,
@@ -166,11 +190,37 @@ namespace {
         test( q );
     }
 
+    TEST_F( FCQueue, std_deque_elimination_single_mutex_multi_condvar )
+    {
+        typedef cds::container::FCQueue<int, std::queue< int, std::deque<int>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::enable_elimination< true >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<2>>
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
     TEST_F( FCQueue, std_deque_elimination_move )
     {
         typedef cds::container::FCQueue<std::string, std::queue< std::string, std::deque<std::string>>,
             cds::container::fcqueue::make_traits<
                 cds::opt::enable_elimination< true >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test_string( q );
+    }
+
+    TEST_F( FCQueue, std_deque_elimination_move_multi_mutex_multi_condvar )
+    {
+        typedef cds::container::FCQueue<std::string, std::queue< std::string, std::deque<std::string>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::enable_elimination< true >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
             >::type
         > queue_type;
 
@@ -206,11 +256,48 @@ namespace {
         test_string( q );
     }
 
+    TEST_F( FCQueue, std_list_empty_wait_strategy )
+    {
+        typedef cds::container::FCQueue<int, std::queue< int, std::list<int> >,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_list_single_mutex_single_condvar )
+    {
+        typedef cds::container::FCQueue<int, std::queue< int, std::list<int> >,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<5>>
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
     TEST_F( FCQueue, std_list_elimination )
     {
         typedef cds::container::FCQueue<int, std::queue< int, std::list<int> >,
             cds::container::fcqueue::make_traits<
                 cds::opt::enable_elimination< true >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_list_elimination_multi_mutex_multi_condvar )
+    {
+        typedef cds::container::FCQueue<int, std::queue< int, std::list<int> >,
+            cds::container::fcqueue::make_traits<
+                cds::opt::enable_elimination< true >
+                ,cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<5>>
             >::type
         > queue_type;
 

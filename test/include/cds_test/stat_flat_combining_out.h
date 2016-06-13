@@ -25,12 +25,40 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
 */
 
-#ifndef CDSLIB_ALGO_FLAT_COMBINING_H
-#define CDSLIB_ALGO_FLAT_COMBINING_H
+#ifndef CDSTEST_STAT_FLAT_COMBINING_OUT_H
+#define CDSTEST_STAT_FLAT_COMBINING_OUT_H
 
-#include <cds/algo/flat_combining/kernel.h>
+#include <cds/algo/flat_combining.h>
 
-#endif // #ifndef CDSLIB_ALGO_FLAT_COMBINING_H
+namespace cds_test {
+
+    static inline property_stream& operator <<( property_stream& o, cds::algo::flat_combining::empty_stat const& /*s*/ )
+    {
+        return o;
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::algo::flat_combining::stat<> const& s )
+    {
+        return o
+            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
+            << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
+            << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
+            << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
+            << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
+            << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
+            << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
+            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
+            << CDSSTRESS_STAT_OUT( s, m_nPassiveWaitCall )
+            << CDSSTRESS_STAT_OUT( s, m_nPassiveWaitIteration )
+            << CDSSTRESS_STAT_OUT( s, m_nPassiveWaitWakeup )
+            << CDSSTRESS_STAT_OUT( s, m_nInvokeExclusive )
+            << CDSSTRESS_STAT_OUT( s, m_nWakeupByNotifying )
+            << CDSSTRESS_STAT_OUT( s, m_nPassiveToCombiner );
+    }
+
+} // namespace cds_test
+
+#endif // #ifndef CDSTEST_STAT_SPLITLIST_OUT_H

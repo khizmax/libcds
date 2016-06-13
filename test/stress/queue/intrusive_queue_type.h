@@ -46,6 +46,7 @@
 #include <boost/intrusive/slist.hpp>
 
 #include <cds_test/stress_test.h>
+#include <cds_test/stat_flat_combining_out.h>
 #include "print_stat.h"
 
 namespace queue {
@@ -412,18 +413,18 @@ namespace queue {
         // FCQueue
         class traits_FCQueue_delay2:
             public cds::intrusive::fcqueue::make_traits<
-                cds::opt::back_off< cds::backoff::delay_of<2> >
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::backoff< cds::backoff::delay_of<2>>>
             >::type
         {};
         class traits_FCQueue_delay2_elimination:
             public cds::intrusive::fcqueue::make_traits<
-                cds::opt::back_off< cds::backoff::delay_of<2> >
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::backoff< cds::backoff::delay_of<2>>>
                 ,cds::opt::enable_elimination< true >
             >::type
         {};
         class traits_FCQueue_delay2_elimination_stat:
             public cds::intrusive::fcqueue::make_traits<
-                cds::opt::back_off< cds::backoff::delay_of<2> >
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::backoff< cds::backoff::delay_of<2>>>
                 ,cds::opt::stat< cds::intrusive::fcqueue::stat<> >
                 ,cds::opt::enable_elimination< true >
             >::type
@@ -442,11 +443,45 @@ namespace queue {
             >::type
         {};
 
+        class traits_FCQueue_wait_ss:
+            public cds::intrusive::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
+            >::type
+        {};
+        struct traits_FCQueue_wait_ss_stat: traits_FCQueue_wait_ss
+        {
+            typedef cds::intrusive::fcqueue::stat<> stat;
+        };
+        class traits_FCQueue_wait_sm:
+            public cds::intrusive::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<>>
+            >::type
+        {};
+        struct traits_FCQueue_wait_sm_stat: traits_FCQueue_wait_sm
+        {
+            typedef cds::intrusive::fcqueue::stat<> stat;
+        };
+        class traits_FCQueue_wait_mm:
+            public cds::intrusive::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
+            >::type
+        {};
+        struct traits_FCQueue_wait_mm_stat: traits_FCQueue_wait_mm
+        {
+            typedef cds::intrusive::fcqueue::stat<> stat;
+        };
+
         typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_delay2 > FCQueue_list_delay2;
         typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_delay2_elimination > FCQueue_list_delay2_elimination;
         typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_delay2_elimination_stat > FCQueue_list_delay2_elimination_stat;
         typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_expbackoff_elimination > FCQueue_list_expbackoff_elimination;
         typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_expbackoff_elimination_stat > FCQueue_list_expbackoff_elimination_stat;
+        typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_wait_ss > FCQueue_list_wait_ss;
+        typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_wait_ss_stat > FCQueue_list_wait_ss_stat;
+        typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_wait_sm > FCQueue_list_wait_sm;
+        typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_wait_sm_stat > FCQueue_list_wait_sm_stat;
+        typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_wait_mm > FCQueue_list_wait_mm;
+        typedef cds::intrusive::FCQueue< T, boost::intrusive::list<T>, traits_FCQueue_wait_mm_stat > FCQueue_list_wait_mm_stat;
 
         // SegmentedQueue
         class traits_SegmentedQueue_spin_stat:
@@ -508,16 +543,7 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nDequeue )
             << CDSSTRESS_STAT_OUT( s, m_nFailedDeq )
             << CDSSTRESS_STAT_OUT( s, m_nCollided )
-            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
-            << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
-            << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
-            << CDSSTRESS_STAT_OUT( s, m_nAcquirePubRecCount )
-            << CDSSTRESS_STAT_OUT( s, m_nReleasePubRecCount );
+            << static_cast<cds::algo::flat_combining::stat<> const&>(s);
     }
 
     static inline property_stream& operator <<( property_stream& o, cds::intrusive::fcqueue::empty_stat const& /*s*/ )

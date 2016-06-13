@@ -143,6 +143,83 @@ namespace {
         test<stack_type>();
     }
 
+    TEST_F( IntrusiveFCStack, slist_empty_wait_strategy )
+    {
+        typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::empty wait_strategy;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_single_mutex_single_condvar )
+    {
+        typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<> wait_strategy;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_single_mutex_multi_condvar )
+    {
+        typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> wait_strategy;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_multi_mutex_multi_condvar )
+    {
+        typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<> wait_strategy;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_single_mutex_single_condvar_2ms )
+    {
+        typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<2> wait_strategy;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_single_mutex_multi_condvar_3ms )
+    {
+        typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<3> wait_strategy;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_multi_mutex_multi_condvar_2ms )
+    {
+        typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<2> wait_strategy;
+        };
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
     TEST_F( IntrusiveFCStack, slist_disposer )
     {
         typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
@@ -183,7 +260,8 @@ namespace {
         struct stack_traits : public
             cds::intrusive::fcstack::make_traits <
                 cds::opt::enable_elimination < true >,
-                cds::intrusive::opt::disposer< mock_disposer >
+                cds::intrusive::opt::disposer< mock_disposer >,
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
             > ::type
         {};
         typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
@@ -195,8 +273,9 @@ namespace {
         typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
         typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >,
             cds::intrusive::fcstack::make_traits<
-            cds::opt::enable_elimination< true >
-            , cds::opt::stat< cds::intrusive::fcstack::stat<> >
+                cds::opt::enable_elimination< true >
+                , cds::opt::stat< cds::intrusive::fcstack::stat<> >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<>>
             >::type
         > stack_type;
         test<stack_type>();
@@ -208,6 +287,58 @@ namespace {
         typedef boost::intrusive::member_hook<value_type, boost::intrusive::slist_member_hook<>, &value_type::hMember> member_option;
 
         typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type, member_option > > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_member_empty_wait_strategy )
+    {
+        typedef member_hook_item< boost::intrusive::slist_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::slist_member_hook<>, &value_type::hMember> member_option;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::empty wait_strategy;
+        };
+
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type, member_option >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_member_single_mutex_single_condvar )
+    {
+        typedef member_hook_item< boost::intrusive::slist_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::slist_member_hook<>, &value_type::hMember> member_option;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<> wait_strategy;
+        };
+
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type, member_option >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_member_single_mutex_multi_condvar )
+    {
+        typedef member_hook_item< boost::intrusive::slist_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::slist_member_hook<>, &value_type::hMember> member_option;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> wait_strategy;
+        };
+
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type, member_option >, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( IntrusiveFCStack, slist_member_multi_mutex_multi_condvar )
+    {
+        typedef member_hook_item< boost::intrusive::slist_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::slist_member_hook<>, &value_type::hMember> member_option;
+        struct stack_traits: public cds::intrusive::fcstack::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<> wait_strategy;
+        };
+
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type, member_option >, stack_traits > stack_type;
         test<stack_type>();
     }
 
@@ -246,6 +377,7 @@ namespace {
             cds::intrusive::fcstack::make_traits<
             cds::opt::enable_elimination< true >
             , cds::opt::stat< cds::intrusive::fcstack::stat<> >
+            , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<>>
             >::type
         > stack_type;
         test<stack_type>();
@@ -288,6 +420,7 @@ namespace {
             cds::intrusive::fcstack::make_traits<
             cds::opt::enable_elimination< true >
             , cds::opt::stat< cds::intrusive::fcstack::stat<> >
+            , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
             >::type
         > stack_type;
         test<stack_type>();
@@ -324,6 +457,7 @@ namespace {
             cds::intrusive::fcstack::make_traits<
             cds::opt::enable_elimination< true >
             , cds::opt::stat< cds::intrusive::fcstack::stat<> >
+            , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
             >::type
         > stack_type;
         test<stack_type>();

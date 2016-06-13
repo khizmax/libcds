@@ -359,76 +359,6 @@ namespace {
 
             propout() << q.statistics();
         }
-
-/*
-        template <typename Queue>
-        void test( Queue& q )
-        {
-            value_array<typename Queue::value_type> arrValue( s_nQueueSize );
-            {
-                {
-                    Queue q;
-                    test_with( q, arrValue, 0, 0 );
-                }
-                Queue::gc::force_dispose();
-            }
-        }
-
-        template <typename Queue>
-        void test_boost()
-        {
-            value_array<typename Queue::value_type> arrValue( s_nQueueSize );
-            {
-                Queue q;
-                test_with(q, arrValue, 0, 0);
-            }
-        }
-
-        template <typename Queue>
-        void test_bounded()
-        {
-            value_array<typename Queue::value_type> arrValue( s_nQueueSize );
-            Queue q;
-            test_with(q, arrValue, 0, 0);
-        }
-
-        template <typename Queue>
-        void test_fcqueue()
-        {
-            value_array<typename Queue::value_type> arrValue( s_nQueueSize );
-            CPPUNIT_MSG( "Combining pass count: " << s_nFCPassCount << ", compact factor: " << s_nFCCompactFactor );
-            Queue q( s_nFCCompactFactor, s_nFCPassCount );
-            test_with(q, arrValue, 0, 0);
-        }
-
-        template <typename Queue>
-        void test_segmented()
-        {
-            value_array<typename Queue::value_type> arrValue( s_nQueueSize );
-            for ( size_t nSegmentSize = 4; nSegmentSize <= 256; nSegmentSize *= 4 ) {
-                CPPUNIT_MSG( "Segment size: " << nSegmentSize );
-                {
-                    Queue q( nSegmentSize );
-                    test_with( q, arrValue, nSegmentSize * 2, nSegmentSize );
-                }
-                Queue::gc::force_dispose();
-            }
-        }
-
-        template <typename Queue>
-        void test_spqueue()
-        {
-            value_array<typename Queue::value_type> arrValue( s_nQueueSize );
-            for ( size_t nArraySize = 2; nArraySize <= 64; nArraySize *= 2 ) {
-                CPPUNIT_MSG( "Array size: " << nArraySize );
-                {
-                    Queue q( nArraySize );
-                    test_with( q, arrValue, 0, 0 );
-                }
-                Queue::gc::force_dispose();
-            }
-        }
-*/
     };
 
 #define CDSSTRESS_QUEUE_F( QueueType, NodeType ) \
@@ -489,6 +419,12 @@ namespace {
     CDSSTRESS_QUEUE_F(FCQueue_list_delay2_elimination_stat,     boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_expbackoff_elimination,      boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_expbackoff_elimination_stat, boost::intrusive::list_base_hook<> )
+    CDSSTRESS_QUEUE_F(FCQueue_list_wait_ss,                     boost::intrusive::list_base_hook<> )
+    CDSSTRESS_QUEUE_F(FCQueue_list_wait_ss_stat,                boost::intrusive::list_base_hook<> )
+    CDSSTRESS_QUEUE_F(FCQueue_list_wait_sm,                     boost::intrusive::list_base_hook<> )
+    CDSSTRESS_QUEUE_F(FCQueue_list_wait_sm_stat,                boost::intrusive::list_base_hook<> )
+    CDSSTRESS_QUEUE_F(FCQueue_list_wait_mm,                     boost::intrusive::list_base_hook<> )
+    CDSSTRESS_QUEUE_F(FCQueue_list_wait_mm_stat,                boost::intrusive::list_base_hook<> )
 #undef CDSSTRESS_QUEUE_F
 
 

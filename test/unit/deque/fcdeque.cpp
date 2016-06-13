@@ -114,6 +114,30 @@ namespace {
         test( dq );
     }
 
+    TEST_F( FCDeque, std_empty_wait_strategy )
+    {
+        typedef cds::container::FCDeque<int, std::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
+    TEST_F( FCDeque, std_multi_mutex_multi_condvar )
+    {
+        typedef cds::container::FCDeque<int, std::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
     TEST_F( FCDeque, std_elimination )
     {
         typedef cds::container::FCDeque<int, std::deque<int>,
@@ -126,11 +150,37 @@ namespace {
         test( dq );
     }
 
+    TEST_F( FCDeque, std_elimination_single_mutex_single_condvar )
+    {
+        typedef cds::container::FCDeque<int, std::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::enable_elimination< true >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<3>>
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
     TEST_F( FCDeque, std_statistics )
     {
         typedef cds::container::FCDeque<int, std::deque<int>,
             cds::container::fcdeque::make_traits<
                 cds::opt::stat< cds::container::fcdeque::stat<> >
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
+    TEST_F( FCDeque, std_stat_single_mutex_multi_condvar )
+    {
+        typedef cds::container::FCDeque<int, std::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::stat< cds::container::fcdeque::stat<> >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<2>>
             >::type
         > deque_type;
 
@@ -161,11 +211,48 @@ namespace {
         test( dq );
     }
 
+    TEST_F( FCDeque, boost_empty_wait_strategy )
+    {
+        typedef cds::container::FCDeque<int, boost::container::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
+    TEST_F( FCDeque, boost_single_mutex_single_condvar )
+    {
+        typedef cds::container::FCDeque<int, boost::container::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
     TEST_F( FCDeque, boost_elimination )
     {
         typedef cds::container::FCDeque<int, boost::container::deque<int>,
             cds::container::fcdeque::make_traits<
                 cds::opt::enable_elimination< true >
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
+    TEST_F( FCDeque, boost_elimination_single_mutex_multi_condvar )
+    {
+        typedef cds::container::FCDeque<int, boost::container::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::enable_elimination< true >
+                ,cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<5>>
             >::type
         > deque_type;
 
@@ -191,6 +278,20 @@ namespace {
             cds::container::fcdeque::make_traits<
                 cds::opt::enable_elimination< true >
                 ,cds::opt::lock_type< std::mutex >
+            >::type
+        > deque_type;
+
+        deque_type dq;
+        test( dq );
+    }
+
+    TEST_F( FCDeque, boost_mutex_multi_mutex_multi_condvar )
+    {
+        typedef cds::container::FCDeque<int, boost::container::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::enable_elimination< true >
+                , cds::opt::lock_type< std::mutex >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
             >::type
         > deque_type;
 

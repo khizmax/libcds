@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cds_test", "cds_test", "{3A
 		..\..\..\test\include\cds_test\stat_cuckoo_out.h = ..\..\..\test\include\cds_test\stat_cuckoo_out.h
 		..\..\..\test\include\cds_test\stat_ellenbintree_out.h = ..\..\..\test\include\cds_test\stat_ellenbintree_out.h
 		..\..\..\test\include\cds_test\stat_feldman_hashset_out.h = ..\..\..\test\include\cds_test\stat_feldman_hashset_out.h
+		..\..\..\test\include\cds_test\stat_flat_combining_out.h = ..\..\..\test\include\cds_test\stat_flat_combining_out.h
 		..\..\..\test\include\cds_test\stat_skiplist_out.h = ..\..\..\test\include\cds_test\stat_skiplist_out.h
 		..\..\..\test\include\cds_test\stat_splitlist_out.h = ..\..\..\test\include\cds_test\stat_splitlist_out.h
 		..\..\..\test\include\cds_test\stat_sync_monitor_out.h = ..\..\..\test\include\cds_test\stat_sync_monitor_out.h

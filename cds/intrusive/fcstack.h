@@ -81,15 +81,10 @@ namespace cds { namespace intrusive {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
-            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
+            - any \p cds::algo::flat_combining::make_traits options
             - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::intrusive::v::empty_disposer.
                 This option is used only in \p FCStack::clear() function.
-            - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::stat - internal statistics, possible type: \p fcstack::stat, \p fcstack::empty_stat (the default)
-            - \p opt::memory_model - C++ memory ordering model.
-                List of all available memory ordering see \p opt::memory_model.
-                Default is \p cds::opt::v:relaxed_ordering
             - \p opt::enable_elimination - enable/disable operation \ref cds_elimination_description "elimination"
                 By default, the elimination is disabled.
         */
@@ -162,8 +157,8 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        fc_kernel       m_FlatCombining;
-        container_type  m_Stack;
+        mutable fc_kernel m_FlatCombining;
+        container_type    m_Stack;
         //@endcond
 
     public:
@@ -185,7 +180,7 @@ namespace cds { namespace intrusive {
         */
         bool push( value_type& val )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pVal = &val;
 
             if ( c_bEliminationEnabled )
@@ -202,7 +197,7 @@ namespace cds { namespace intrusive {
         /// Removes the element on top of the stack
         value_type * pop()
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pVal = nullptr;
 
             if ( c_bEliminationEnabled )
@@ -224,7 +219,7 @@ namespace cds { namespace intrusive {
         */
         void clear( bool bDispose = false )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
 
             if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( bDispose ? op_clear_and_dispose : op_clear, pRec, *this );
@@ -252,8 +247,10 @@ namespace cds { namespace intrusive {
         */
         bool empty() const
         {
-            m_FlatCombining.wait_while_combining();
-            return m_Stack.empty();
+            bool bRet = false;
+            auto const& stack = m_Stack;
+            m_FlatCombining.invoke_exclusive( [&stack, &bRet]() { bRet = stack.empty(); } );
+            return bRet;
         }
 
         /// Internal statistics
@@ -271,7 +268,7 @@ namespace cds { namespace intrusive {
             object if the current thread becomes a combiner. Invocation of the function means that
             the stack should perform an action recorded in \p pRec.
         */
-        void fc_apply( fc_record * pRec )
+        void fc_apply( fc_record* pRec )
         {
             assert( pRec );
 

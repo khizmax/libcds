@@ -80,13 +80,8 @@ namespace cds { namespace container {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
-            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::delay_of<2>
-            - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
+            - any \p cds::algo::flat_combining::make_traits options
             - \p opt::stat - internal statistics, possible type: \p fcpqueue::stat, \p fcpqueue::empty_stat (the default)
-            - \p opt::memory_model - C++ memory ordering model.
-                List of all available memory ordering see \p opt::memory_model.
-                Default is \p cds::opt::v:relaxed_ordering
         */
         template <typename... Options>
         struct make_traits {
@@ -139,8 +134,7 @@ namespace cds { namespace container {
             op_push = cds::algo::flat_combining::req_Operation,
             op_push_move,
             op_pop,
-            op_clear,
-            op_empty
+            op_clear
         };
 
         // Flat combining publication list record
@@ -159,8 +153,8 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        fc_kernel               m_FlatCombining;
-        priority_queue_type     m_PQueue;
+        mutable fc_kernel   m_FlatCombining;
+        priority_queue_type m_PQueue;
         //@endcond
 
     public:
@@ -184,7 +178,7 @@ namespace cds { namespace container {
             value_type const& val ///< Value to be copied to inserted element
         )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPush = &val;
 
             m_FlatCombining.combine( op_push, pRec, *this );
@@ -203,7 +197,7 @@ namespace cds { namespace container {
             value_type&& val ///< Value to be moved to inserted element
         )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPush = &val;
 
             m_FlatCombining.combine( op_push_move, pRec, *this );
@@ -223,7 +217,7 @@ namespace cds { namespace container {
             value_type& val ///< Target to be received the copy of top element
         )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPop = &val;
 
             m_FlatCombining.combine( op_pop, pRec, *this );
@@ -237,7 +231,7 @@ namespace cds { namespace container {
         /// Clears the priority queue
         void clear()
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
 
            m_FlatCombining.combine( op_clear, pRec, *this );
 
@@ -262,12 +256,10 @@ namespace cds { namespace container {
         */
         bool empty()
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
-
-            m_FlatCombining.combine( op_empty, pRec, *this );
-            assert( pRec->is_done() );
-            m_FlatCombining.release_record( pRec );
-            return pRec->bEmpty;
+            bool bRet = false;
+            auto const& pq = m_PQueue;
+            m_FlatCombining.invoke_exclusive( [&pq, &bRet]() { bRet = pq.empty(); } );
+            return bRet;
         }
 
         /// Internal statistics
@@ -310,9 +302,6 @@ namespace cds { namespace container {
             case op_clear:
                 while ( !m_PQueue.empty() )
                     m_PQueue.pop();
-                break;
-            case op_empty:
-                pRec->bEmpty = m_PQueue.empty();
                 break;
             default:
                 assert(false);

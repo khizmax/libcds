@@ -45,6 +45,7 @@
 #include <vector>
 
 #include <cds_test/stress_test.h>
+#include <cds_test/stat_flat_combining_out.h>
 
 namespace stack {
 
@@ -455,16 +456,7 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nPop )
             << CDSSTRESS_STAT_OUT( s, m_nFailedPop )
             << CDSSTRESS_STAT_OUT( s, m_nCollided )
-            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor())
-            << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
-            << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
-            << CDSSTRESS_STAT_OUT( s, m_nAcquirePubRecCount )
-            << CDSSTRESS_STAT_OUT( s, m_nReleasePubRecCount );
+            << static_cast<cds::algo::flat_combining::stat<> const&>( s );
     }
 
     static inline property_stream& operator <<( property_stream& o, cds::container::fcdeque::empty_stat const& /*s*/ )
@@ -484,16 +476,7 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nPopBack )
             << CDSSTRESS_STAT_OUT( s, m_nFailedPopBack )
             << CDSSTRESS_STAT_OUT( s, m_nCollided )
-            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
-            << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
-            << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
-            << CDSSTRESS_STAT_OUT( s, m_nAcquirePubRecCount )
-            << CDSSTRESS_STAT_OUT( s, m_nReleasePubRecCount );
+            << static_cast<cds::algo::flat_combining::stat<> const&>(s);
     }
 } // namespace cds_test
 

@@ -61,6 +61,7 @@
 #include <cds_test/stress_test.h>
 #include <cds_test/stat_ellenbintree_out.h>
 #include <cds_test/stat_skiplist_out.h>
+#include <cds_test/stat_flat_combining_out.h>
 
 namespace pqueue {
     namespace cc = cds::container;
@@ -599,16 +600,6 @@ namespace pqueue {
         typedef details::StdPQueue< Value, std::deque<Value>,  std::mutex >  StdPQueue_deque_mutex;
     };
 
-
-    //template <typename Stat>
-    //static inline void check_statistics( Stat const& /*s*/ )
-    //{}
-
-    //static inline void check_statistics( cds::container::ellen_bintree::stat<> const& s )
-    //{
-    //    CPPUNIT_CHECK_CURRENT( s.m_nInternalNodeCreated.get() == s.m_nInternalNodeDeleted.get() );
-    //    CPPUNIT_CHECK_CURRENT( s.m_nUpdateDescCreated.get() == s.m_nUpdateDescDeleted.get() );
-    //}
 }   // namespace pqueue
 
 
@@ -633,16 +624,7 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nPushMove )
             << CDSSTRESS_STAT_OUT( s, m_nPop )
             << CDSSTRESS_STAT_OUT( s, m_nFailedPop )
-            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
-            << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
-            << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )
-            << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
-            << CDSSTRESS_STAT_OUT( s, m_nAcquirePubRecCount )
-            << CDSSTRESS_STAT_OUT( s, m_nReleasePubRecCount );
+            << static_cast<cds::algo::flat_combining::stat<> const&>(s);
     }
 
     static inline property_stream& operator <<( property_stream& o, cds::container::mspriority_queue::empty_stat const& /*s*/ )

@@ -84,13 +84,8 @@ namespace cds { namespace container {
         /// Metafunction converting option list to traits
         /**
             \p Options are:
-            - \p opt::lock_type - mutex type, default is \p cds::sync::spin
-            - \p opt::back_off - back-off strategy, defalt is \p cds::backoff::Default
-            - \p opt::allocator - allocator type, default is \ref CDS_DEFAULT_ALLOCATOR
+            - any \p cds::algo::flat_combining::make_traits options
             - \p opt::stat - internal statistics, possible type: \p fcstack::stat, \p fcstack::empty_stat (the default)
-            - \p opt::memory_model - C++ memory ordering model.
-                List of all available memory ordering see \p opt::memory_model.
-                Default is \p cds::opt::v:relaxed_ordering
             - \p opt::enable_elimination - enable/disable operation \ref cds_elimination_description "elimination"
                 By default, the elimination is disabled.
         */
@@ -165,8 +160,8 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        fc_kernel   m_FlatCombining;
-        stack_type  m_Stack;
+        mutable fc_kernel m_FlatCombining;
+        stack_type        m_Stack;
         //@endcond
 
     public:
@@ -188,7 +183,7 @@ namespace cds { namespace container {
         */
         bool push( value_type const& val )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPush = &val;
 
             if ( c_bEliminationEnabled )
@@ -208,7 +203,7 @@ namespace cds { namespace container {
         */
         bool push( value_type&& val )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPush = &val;
 
             if ( c_bEliminationEnabled )
@@ -229,7 +224,7 @@ namespace cds { namespace container {
         */
         bool pop( value_type& val )
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPop = &val;
 
             if ( c_bEliminationEnabled )
@@ -247,7 +242,7 @@ namespace cds { namespace container {
         /// Clears the stack
         void clear()
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
 
             if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_clear, pRec, *this );
@@ -275,7 +270,7 @@ namespace cds { namespace container {
         */
         bool empty()
         {
-            fc_record * pRec = m_FlatCombining.acquire_record();
+            auto pRec = m_FlatCombining.acquire_record();
 
             if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_empty, pRec, *this );

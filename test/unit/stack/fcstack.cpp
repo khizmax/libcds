@@ -101,6 +101,83 @@ namespace {
         test<stack_type>();
     }
 
+    TEST_F( FCStack, deque_empty_wait_strategy )
+    {
+        struct stack_traits: public
+            cds::container::fcstack::make_traits <
+                cds::opt::wait_strategy<cds::algo::flat_combining::wait_strategy::empty>
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_single_mutex_single_condvar )
+    {
+        struct stack_traits: public
+            cds::container::fcstack::make_traits <
+            cds::opt::wait_strategy<cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_single_mutex_multi_condvar )
+    {
+        struct stack_traits: public
+            cds::container::fcstack::make_traits <
+            cds::opt::wait_strategy<cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<>>
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_multi_mutex_multi_condvar )
+    {
+        struct stack_traits: public
+            cds::container::fcstack::make_traits <
+            cds::opt::wait_strategy<cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_single_mutex_single_condvar_2ms )
+    {
+        struct stack_traits: public
+            cds::container::fcstack::make_traits <
+            cds::opt::wait_strategy<cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<2>>
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_single_mutex_multi_condvar_2ms )
+    {
+        struct stack_traits: public
+            cds::container::fcstack::make_traits <
+            cds::opt::wait_strategy<cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<2>>
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, deque_multi_mutex_multi_condvar_3ms )
+    {
+        struct stack_traits: public
+            cds::container::fcstack::make_traits <
+            cds::opt::wait_strategy<cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<3>>
+            > ::type
+        {};
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::deque<unsigned int>>, stack_traits > stack_type;
+        test<stack_type>();
+    }
+
     TEST_F( FCStack, deque_elimination )
     {
         struct stack_traits : public
@@ -115,6 +192,46 @@ namespace {
     TEST_F( FCStack, vector_based )
     {
         typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::vector<unsigned int>>> stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, vector_empty_wait_strategy )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::vector<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, vector_multi_mutex_multi_condvar )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::vector<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, vector_single_mutex_multi_condvar )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::vector<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<>>
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, vector_single_mutex_single_condvar )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::vector<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
+            >::type
+        > stack_type;
         test<stack_type>();
     }
 
@@ -134,11 +251,52 @@ namespace {
         test<stack_type>();
     }
 
+    TEST_F( FCStack, list_empty_wait_strategy )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::list<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, list_single_mutex_single_condvar )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::list<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, list_single_mutex_multi_condvar )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::list<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<>>
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
+    TEST_F( FCStack, list_multi_mutex_multi_condvar )
+    {
+        typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::list<unsigned int>>,
+            cds::container::fcstack::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
+            >::type
+        > stack_type;
+        test<stack_type>();
+    }
+
     TEST_F( FCStack, list_elimination )
     {
         typedef cds::container::FCStack< unsigned int, std::stack<unsigned int, std::list<unsigned int>>,
             cds::container::fcstack::make_traits<
-            cds::opt::enable_elimination< true >
+                cds::opt::enable_elimination< true >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<2>>
             >::type
         > stack_type;
         test<stack_type>();

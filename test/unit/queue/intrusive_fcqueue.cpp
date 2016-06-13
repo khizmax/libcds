@@ -169,6 +169,36 @@ namespace {
         test( q );
     }
 
+    TEST_F( IntrusiveFCQueue, base_empty_wait_strategy )
+    {
+        typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
+        struct traits: public cds::intrusive::fcqueue::traits
+        {
+            typedef IntrusiveFCQueue::disposer disposer;
+            typedef cds::algo::flat_combining::wait_strategy::empty wait_strategy;
+            typedef cds::intrusive::fcqueue::stat<> stat;
+        };
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, traits > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( IntrusiveFCQueue, base_single_mutex_single_condvar )
+    {
+        typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
+        struct traits: public cds::intrusive::fcqueue::traits
+        {
+            typedef IntrusiveFCQueue::disposer disposer;
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<> wait_strategy;
+            typedef cds::intrusive::fcqueue::stat<> stat;
+        };
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, traits > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
     TEST_F( IntrusiveFCQueue, base_mutex )
     {
         typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
@@ -184,6 +214,22 @@ namespace {
         test( q );
     }
 
+    TEST_F( IntrusiveFCQueue, base_mutex_single_mutex_multi_condvar )
+    {
+        typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
+        struct traits: public cds::intrusive::fcqueue::traits
+        {
+            typedef IntrusiveFCQueue::disposer disposer;
+            typedef std::mutex lock_type;
+            typedef cds::intrusive::fcqueue::stat<> stat;
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> wait_strategy;
+        };
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, traits > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
     TEST_F( IntrusiveFCQueue, base_elimination )
     {
         typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
@@ -191,6 +237,22 @@ namespace {
             cds::intrusive::fcqueue::make_traits <
                 cds::intrusive::opt::disposer< disposer >
                 , cds::opt::enable_elimination < true >
+            > ::type
+        {};
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, traits > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( IntrusiveFCQueue, base_elimination_multi_mutex_multi_condvar )
+    {
+        typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
+        struct traits: public
+            cds::intrusive::fcqueue::make_traits <
+                cds::intrusive::opt::disposer< disposer >
+                , cds::opt::enable_elimination < true >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<>>
             > ::type
         {};
         typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, traits > queue_type;
@@ -231,6 +293,54 @@ namespace {
         test( q );
     }
 
+    TEST_F( IntrusiveFCQueue, member_empty_wait_strategy )
+    {
+        typedef member_hook_item< boost::intrusive::list_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::list_member_hook<>, &value_type::hMember> member_option;
+
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type, member_option >,
+            cds::intrusive::fcqueue::make_traits<
+                cds::intrusive::opt::disposer< disposer >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( IntrusiveFCQueue, member_single_mutex_single_condvar )
+    {
+        typedef member_hook_item< boost::intrusive::list_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::list_member_hook<>, &value_type::hMember> member_option;
+
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type, member_option >,
+            cds::intrusive::fcqueue::make_traits<
+                cds::intrusive::opt::disposer< disposer >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<2>>
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( IntrusiveFCQueue, member_multi_mutex_multi_condvar )
+    {
+        typedef member_hook_item< boost::intrusive::list_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::list_member_hook<>, &value_type::hMember> member_option;
+
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type, member_option >,
+            cds::intrusive::fcqueue::make_traits<
+                cds::intrusive::opt::disposer< disposer >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
     TEST_F( IntrusiveFCQueue, member_elimination )
     {
         typedef member_hook_item< boost::intrusive::list_member_hook<> > value_type;
@@ -240,6 +350,23 @@ namespace {
             cds::intrusive::fcqueue::make_traits<
                 cds::intrusive::opt::disposer< disposer >
                 ,cds::opt::enable_elimination< true >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( IntrusiveFCQueue, member_elimination_single_mutex_multi_condvar )
+    {
+        typedef member_hook_item< boost::intrusive::list_member_hook<> > value_type;
+        typedef boost::intrusive::member_hook<value_type, boost::intrusive::list_member_hook<>, &value_type::hMember> member_option;
+
+        typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type, member_option >,
+            cds::intrusive::fcqueue::make_traits<
+                cds::intrusive::opt::disposer< disposer >
+                ,cds::opt::enable_elimination< true >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<2>>
             >::type
         > queue_type;
 

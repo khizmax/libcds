@@ -154,6 +154,9 @@
     <Filter Include="Header Files\cds\sync">
       <UniqueIdentifier>{03d212fb-73f8-4f0e-9aff-f22b0783fee8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\cds\algo\flat_combining">
+      <UniqueIdentifier>{fe703227-44ad-4ad6-bae4-b6c9f5c65355}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\dllmain.cpp">
@@ -1231,6 +1234,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\free_list_tagged.h">
       <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\flat_combining\defs.h">
+      <Filter>Header Files\cds\algo\flat_combining</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\flat_combining\wait_strategy.h">
+      <Filter>Header Files\cds\algo\flat_combining</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\flat_combining\kernel.h">
+      <Filter>Header Files\cds\algo\flat_combining</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
