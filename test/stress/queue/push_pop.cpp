@@ -174,10 +174,9 @@ namespace {
                         else
                             ++m_nBadWriter;
                     }
-                    else
+                    else {
                         ++m_nPopEmpty;
 
-                    if ( m_Queue.empty() ) {
                         if ( s_nProducerDone.load() >= nTotalWriters ) {
                             if ( m_Queue.empty() )
                                 break;

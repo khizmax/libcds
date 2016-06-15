@@ -418,6 +418,11 @@ namespace queue {
         typedef cds::container::RWQueue< Value, traits_RWQueue_mutex > RWQueue_mutex;
 
         // FCQueue
+        struct traits_FCQueue_stat:
+            public cds::container::fcqueue::make_traits<
+                cds::opt::stat< cds::container::fcqueue::stat<> >
+            >::type
+        {};
         struct traits_FCQueue_single_mutex_single_condvar:
             public cds::container::fcqueue::make_traits<
                 cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<>>
@@ -458,6 +463,7 @@ namespace queue {
         {};
 
         typedef cds::container::FCQueue< Value > FCQueue_deque;
+        typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_stat > FCQueue_deque_stat;
         typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_single_mutex_single_condvar> FCQueue_deque_wait_ss;
         typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_single_mutex_single_condvar_stat> FCQueue_deque_wait_ss_stat;
         typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_single_mutex_multi_condvar> FCQueue_deque_wait_sm;
@@ -468,7 +474,8 @@ namespace queue {
         typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination > FCQueue_deque_elimination;
         typedef cds::container::FCQueue< Value, std::queue<Value>, traits_FCQueue_elimination_stat > FCQueue_deque_elimination_stat;
 
-        typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> >> FCQueue_list;
+        typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value>>> FCQueue_list;
+        typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value>>, traits_FCQueue_stat> FCQueue_list_stat;
         typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value>>, traits_FCQueue_single_mutex_single_condvar> FCQueue_list_wait_ss;
         typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value>>, traits_FCQueue_single_mutex_single_condvar_stat> FCQueue_list_wait_ss_stat;
         typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value>>, traits_FCQueue_single_mutex_multi_condvar> FCQueue_list_wait_sm;
@@ -721,6 +728,7 @@ namespace cds_test {
 
 #define CDSSTRESS_FCQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_deque ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_stat ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_wait_ss ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_wait_ss_stat ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_wait_sm ) \
@@ -730,6 +738,7 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_elimination ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_deque_elimination_stat ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_list ) \
+    CDSSTRESS_Queue_F( test_fixture, FCQueue_list_stat ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_list_wait_ss ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_list_wait_ss_stat ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_list_wait_sm ) \
