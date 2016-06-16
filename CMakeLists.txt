@@ -85,7 +85,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 message("Build type -- ${CMAKE_BUILD_TYPE}")
 message("Compiler version: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-message("Compiler flags: ${CMAKE_CXX_FLAGS}")
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+  message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+else()
+  message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 
