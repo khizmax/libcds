@@ -74,8 +74,6 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type to Debug" FORCE)
 endif()
 
-message("Build type -- ${CMAKE_BUILD_TYPE}")
-
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")  
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -fno-strict-aliasing")
@@ -84,6 +82,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+
+message("Build type -- ${CMAKE_BUILD_TYPE}")
+message("Compiler version: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+message("Compiler flags: ${CMAKE_CXX_FLAGS}")
 
 include_directories(${PROJECT_SOURCE_DIR})
 
