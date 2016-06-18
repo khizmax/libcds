@@ -50,7 +50,7 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nDeactivatePubRecord )
             << CDSSTRESS_STAT_OUT( s, m_nActivatePubRecord )
             << CDSSTRESS_STAT_OUT( s, m_nPubRecordCreated )
-            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeteted )
+            << CDSSTRESS_STAT_OUT( s, m_nPubRecordDeleted )
             << CDSSTRESS_STAT_OUT( s, m_nPassiveWaitCall )
             << CDSSTRESS_STAT_OUT( s, m_nPassiveWaitIteration )
             << CDSSTRESS_STAT_OUT( s, m_nPassiveWaitWakeup )

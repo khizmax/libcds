@@ -111,7 +111,7 @@ namespace cds { namespace algo {
             counter_type    m_nDeactivatePubRecord; ///< How many publication records were deactivated during compacting
             counter_type    m_nActivatePubRecord;   ///< Count of publication record activating
             counter_type    m_nPubRecordCreated ;   ///< Count of created publication records
-            counter_type    m_nPubRecordDeteted ;   ///< Count of deleted publication records
+            counter_type    m_nPubRecordDeleted ;   ///< Count of deleted publication records
             counter_type    m_nPassiveWaitCall;     ///< Count of passive waiting call (\p kernel::wait_for_combining())
             counter_type    m_nPassiveWaitIteration;///< Count of iteration inside passive waiting
             counter_type    m_nPassiveWaitWakeup;   ///< Count of forcing wake-up of passive wait cycle
@@ -136,7 +136,7 @@ namespace cds { namespace algo {
             void    onDeactivatePubRecord()     { ++m_nDeactivatePubRecord;     }
             void    onActivatePubRecord()       { ++m_nActivatePubRecord;       }
             void    onCreatePubRecord()         { ++m_nPubRecordCreated;        }
-            void    onDeletePubRecord()         { ++m_nPubRecordDeteted;        }
+            void    onDeletePubRecord()         { ++m_nPubRecordDeleted;        }
             void    onPassiveWait()             { ++m_nPassiveWaitCall;         }
             void    onPassiveWaitIteration()    { ++m_nPassiveWaitIteration;    }
             void    onPassiveWaitWakeup()       { ++m_nPassiveWaitWakeup;       }
