@@ -602,7 +602,7 @@ namespace cds { namespace algo {
             {
                 assert( pRec->nState.load( memory_model::memory_order_relaxed ) == inactive );
 
-                pRec->nAge.store( m_nCount.load(memory_model::memory_order_acquire), memory_model::memory_order_release );
+                pRec->nAge.store( m_nCount.load(memory_model::memory_order_relaxed), memory_model::memory_order_release );
                 pRec->nState.store( active, memory_model::memory_order_release );
 
                 // Insert record to publication list
@@ -689,11 +689,14 @@ namespace cds { namespace algo {
                 // The thread is a combiner
                 assert( !m_Mutex.try_lock() );
 
-                unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_release ) + 1;
+                unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_relaxed ) + 1;
 
-                for ( unsigned int nPass = 0; nPass < m_nCombinePassCount; ++nPass )
+                unsigned int nEmptyPass = 0;
+                for ( unsigned int nPass = 0; nPass < m_nCombinePassCount; ++nPass ) {
                     if ( !combining_pass( owner, nCurAge ))
-                        break;
+                        if ( ++nEmptyPass > 2 )
+                            break;
+                }
 
                 m_Stat.onCombining();
                 if ( (nCurAge & m_nCompactFactor) == 0 )
@@ -740,7 +743,7 @@ namespace cds { namespace algo {
                 // The thread is a combiner
                 assert( !m_Mutex.try_lock() );
 
-                unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_release ) + 1;
+                unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_relaxed ) + 1;
 
                 for ( unsigned int nPass = 0; nPass < m_nCombinePassCount; ++nPass )
                     owner.fc_process( begin(), end() );
