@@ -266,12 +266,12 @@ namespace cds { namespace algo {
         public:
             /// Initializes the object
             /**
-                Compact factor = 64
+                Compact factor = 1024
 
                 Combiner pass count = 8
             */
             kernel()
-                : kernel( 64, 8 )
+                : kernel( 1024, 8 )
             {}
 
             /// Initializes the object
@@ -691,11 +691,13 @@ namespace cds { namespace algo {
 
                 unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_relaxed ) + 1;
 
-                unsigned int nEmptyPass = 0;
+                unsigned int nEmptyPassCount = 0;
+                unsigned int nUsefulPassCount = 0;
                 for ( unsigned int nPass = 0; nPass < m_nCombinePassCount; ++nPass ) {
-                    if ( !combining_pass( owner, nCurAge ))
-                        if ( ++nEmptyPass > 2 )
-                            break;
+                    if ( combining_pass( owner, nCurAge ))
+                        ++nUsefulPassCount;
+                    else if ( ++nEmptyPassCount > nUsefulPassCount )
+                        break;
                 }
 
                 m_Stat.onCombining();
