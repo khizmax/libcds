@@ -242,7 +242,7 @@ namespace cds { namespace algo { namespace flat_combining {
             Template parameter \p Milliseconds specifies waiting duration;
             the minimal value is 1.
         */
-        template <int Milliseconds = 10>
+        template <int Milliseconds = 2>
         class multi_mutex_multi_condvar
         {
         //@cond
