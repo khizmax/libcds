@@ -1566,8 +1566,21 @@ namespace michael {
         {
             const size_t nPageHeapCount = m_SizeClassSelector.pageTypeCount();
 
-            for (unsigned int j = 0; j < m_SizeClassSelector.size(); ++j )
-                free_processor_heap( pDesc->arrProcHeap + j );
+            {
+                processor_heap * const pProcHeapEnd = pDesc->arrProcHeap + m_SizeClassSelector.size();
+
+                // In first, free small blocks
+                for ( processor_heap * pProcHeap = pDesc->arrProcHeap; pProcHeap < pProcHeapEnd; ++pProcHeap ) {
+                    if ( pProcHeap->nPageIdx == processor_heap::c_nPageSelfAllocation )
+                        free_processor_heap( pProcHeap );
+                }
+
+                // free large blocks
+                for ( processor_heap * pProcHeap = pDesc->arrProcHeap; pProcHeap < pProcHeapEnd; ++pProcHeap ) {
+                    if ( pProcHeap->nPageIdx != processor_heap::c_nPageSelfAllocation )
+                        free_processor_heap( pProcHeap );
+                }
+            }
 
             for ( superblock_desc * pSBDesc = pDesc->listSBDescFree.pop(); pSBDesc; pSBDesc = pDesc->listSBDescFree.pop())
                 m_AlignedHeap.free( pSBDesc );
