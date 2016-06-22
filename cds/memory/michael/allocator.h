@@ -1558,7 +1558,6 @@ namespace michael {
                     m_AlignedHeap.free( pDesc );
                 }
             }
-            pProcHeap->~processor_heap();
         }
 
         /// Frees processor descriptor
@@ -1579,6 +1578,8 @@ namespace michael {
                 for ( processor_heap * pProcHeap = pDesc->arrProcHeap; pProcHeap < pProcHeapEnd; ++pProcHeap ) {
                     if ( pProcHeap->nPageIdx != processor_heap::c_nPageSelfAllocation )
                         free_processor_heap( pProcHeap );
+
+                    pProcHeap->~processor_heap();
                 }
             }
 
@@ -1588,7 +1589,6 @@ namespace michael {
             for (size_t i = 0; i < nPageHeapCount; ++i )
                 (pDesc->pageHeaps + i)->page_heap::~page_heap();
 
-            //m_IntHeap.free( pDesc->pageHeaps );
             pDesc->pageHeaps = nullptr;
 
             pDesc->processor_desc::~processor_desc();
@@ -1640,12 +1640,10 @@ namespace michael {
             pDesc->pProcHeap->stat.incBlockDeallocated();
             processor_desc * pProcDesc = pDesc->pProcHeap->pProcDesc;
             if ( pDesc->pSB ) {
-                if ( pDesc->pProcHeap->nPageIdx == processor_heap::c_nPageSelfAllocation ) {
+                if ( pDesc->pProcHeap->nPageIdx == processor_heap::c_nPageSelfAllocation )
                     free( pDesc->pSB );
-                }
-                else {
+                else
                     pProcDesc->pageHeaps[pDesc->pProcHeap->nPageIdx].free( pDesc->pSB );
-                }
             }
             pProcDesc->listSBDescFree.push( pDesc );
         }
