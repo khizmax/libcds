@@ -81,6 +81,7 @@ namespace set {
                 , nUpdateCall(s.nUpdateCall.load(atomics::memory_order_relaxed))
                 , bInitialized( s.bInitialized )
                 , threadId( cds::OS::get_current_thread_id() )
+                , m_access()
             {}
 
             // boost::container::flat_map requires operator =
@@ -88,6 +89,7 @@ namespace set {
             {
                 nKey = v.nKey;
                 nData = v.nData;
+                threadId = v.threadId;
                 nUpdateCall.store( v.nUpdateCall.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed );
                 bInitialized = v.bInitialized;
 

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "set_type.h"
@@ -45,6 +45,9 @@ namespace set {
         {}
 
         key_thread()
+            : nKey()
+            , nThread()
+            , pad_( 0 )
         {}
     };
 
@@ -103,6 +106,7 @@ namespace set {
         {
             return std::hash<size_t>()(k.nKey);
         }
+
         size_t operator()( size_t k ) const
         {
             return std::hash<size_t>()(k);
@@ -156,10 +160,10 @@ namespace set {
             struct update_functor
             {
                 template <typename Q>
-                void operator()( bool /*bNew*/, key_value_pair const&, Q const& )
+                void operator()( bool /*bNew*/, key_value_pair const&, Q const& ) const
                 {}
 
-                void operator()(key_value_pair& /*cur*/, key_value_pair * /*prev*/)
+                void operator()(key_value_pair& /*cur*/, key_value_pair * /*prev*/) const
                 {}
             };
         public:

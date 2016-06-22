@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "map_type.h"
@@ -46,6 +46,8 @@ namespace map {
             {}
 
             key_thread()
+                : nKey()
+                , nThread()
             {}
         };
     }
@@ -156,15 +158,16 @@ namespace map {
             struct ensure_func
             {
                 template <typename Q>
-                void operator()( bool /*bNew*/, Q const& )
+                void operator()( bool /*bNew*/, Q const& ) const
                 {}
+
                 template <typename Q, typename V>
-                void operator()( bool /*bNew*/, Q const&, V& )
+                void operator()( bool /*bNew*/, Q const&, V& ) const
                 {}
 
                 // FeldmanHashMap
                 template <typename Q>
-                void operator()( Q&, Q*)
+                void operator()( Q&, Q*) const
                 {}
             };
         public:

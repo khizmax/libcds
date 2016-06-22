@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "map_type.h"
@@ -72,27 +72,28 @@ namespace map {
 
             struct update_func
             {
-                void operator()( bool bNew, std::pair<key_type const, value_type>& item )
+                void operator()( bool bNew, std::pair<key_type const, value_type>& item ) const
                 {
                     if ( bNew )
                         item.second = item.first;
                 }
+
                 // for boost::container::flat_map
-                void operator()( bool bNew, std::pair<key_type, value_type>& item )
+                void operator()( bool bNew, std::pair<key_type, value_type>& item ) const
                 {
                     if ( bNew )
                         item.second = item.first;
                 }
 
                 // for BronsonAVLTreeMap
-                void operator()( bool bNew, key_type key, value_type& val )
+                void operator()( bool bNew, key_type key, value_type& val ) const
                 {
                     if ( bNew )
                         val = key;
                 }
 
                 // for FeldmanHashMap
-                void operator()( std::pair<key_type const, value_type>& item, std::pair<key_type const, value_type> * pOld )
+                void operator()( std::pair<key_type const, value_type>& item, std::pair<key_type const, value_type>* pOld ) const
                 {
                     if ( !pOld )
                         item.second = item.first;

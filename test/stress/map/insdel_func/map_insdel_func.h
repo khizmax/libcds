@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "map_type.h"
@@ -79,6 +79,7 @@ namespace map {
                 , nUpdateCall( s.nUpdateCall )
                 , bInitialized( s.bInitialized.load(atomics::memory_order_relaxed))
                 , threadId( cds::OS::get_current_thread_id())
+                , m_access()
             {}
 
             // boost::container::flat_map requires operator =
@@ -87,6 +88,7 @@ namespace map {
                 nKey = v.nKey;
                 nData = v.nData;
                 nUpdateCall = v.nUpdateCall;
+                threadId = v.threadId;
                 bInitialized.store(v.bInitialized.load(atomics::memory_order_relaxed), atomics::memory_order_relaxed);
 
                 return *this;
@@ -324,7 +326,8 @@ namespace map {
                 size_t      nFailedItem;
 
                 value_container()
-                    : nSuccessItem(0)
+                    : nKeyExpected()
+                    , nSuccessItem(0)
                     , nFailedItem(0)
                 {}
             };

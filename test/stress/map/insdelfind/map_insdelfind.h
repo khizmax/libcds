@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "map_type.h"
@@ -103,19 +103,19 @@ namespace map {
 
             struct update_functor {
                 template <typename Q>
-                void operator()( bool /*bNew*/, map_value_type& /*cur*/, Q const& /*val*/ )
+                void operator()( bool /*bNew*/, map_value_type& /*cur*/, Q const& /*val*/ ) const
                 {}
 
                 // FeldmanHashMap
-                void operator()( map_value_type& /*cur*/, map_value_type * /*old*/)
+                void operator()( map_value_type& /*cur*/, map_value_type* /*old*/) const
                 {}
 
                 // MichaelMap
-                void operator()( bool /*bNew*/, map_value_type& /*cur*/ )
+                void operator()( bool /*bNew*/, map_value_type& /*cur*/ ) const
                 {}
 
                 // BronsonAVLTreeMap
-                void operator()( bool /*bNew*/, key_type /*key*/, value_type& /*val*/ )
+                void operator()( bool /*bNew*/, key_type /*key*/, value_type& /*val*/ ) const
                 {}
             };
 
