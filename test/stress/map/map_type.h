@@ -49,12 +49,12 @@ namespace map {
     namespace cc = cds::container;
     namespace co = cds::opt;
 
-    typedef cds::urcu::gc< cds::urcu::general_instant<> >   rcu_gpi;
-    typedef cds::urcu::gc< cds::urcu::general_buffered<> >  rcu_gpb;
-    typedef cds::urcu::gc< cds::urcu::general_threaded<> >  rcu_gpt;
+    typedef cds::urcu::gc< cds::urcu::general_instant_stripped >   rcu_gpi;
+    typedef cds::urcu::gc< cds::urcu::general_buffered_stripped >  rcu_gpb;
+    typedef cds::urcu::gc< cds::urcu::general_threaded_stripped >  rcu_gpt;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-    typedef cds::urcu::gc< cds::urcu::signal_buffered<> >  rcu_shb;
-    typedef cds::urcu::gc< cds::urcu::signal_threaded<> >  rcu_sht;
+    typedef cds::urcu::gc< cds::urcu::signal_buffered_stripped >  rcu_shb;
+    typedef cds::urcu::gc< cds::urcu::signal_threaded_stripped >  rcu_sht;
 #endif
 
     template <typename Key>
