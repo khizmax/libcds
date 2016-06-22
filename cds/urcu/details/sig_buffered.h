@@ -266,6 +266,18 @@ namespace cds { namespace urcu {
         }
     };
 
+
+    /// User-space signal-handled RCU with deferred (buffered) reclamation (stripped version)
+    /**
+        @headerfile cds/urcu/signal_buffered.h
+
+        This short version of \p signal_buffered is intended for stripping debug info.
+        If you use \p %signal_buffered with default template arguments you may use
+        this stripped version. All functionality of both classes are identical.
+    */
+    class signal_buffered_stripped: public signal_buffered<>
+    {};
+
 }} // namespace cds::urcu
 
 #endif // #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED

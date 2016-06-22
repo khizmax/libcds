@@ -168,6 +168,12 @@ namespace cds { namespace urcu {
         {}
     };
 
+    //@cond
+    template<>
+    class gc< general_instant_stripped >: public gc< general_instant<>>
+    {};
+    //@endcond
+
 }} // namespace cds::urcu
 
 #endif // #ifndef CDSLIB_URCU_GENERAL_INSTANT_H

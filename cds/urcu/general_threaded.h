@@ -187,6 +187,12 @@ namespace cds { namespace urcu {
         }
     };
 
+    //@cond
+    template<>
+    class gc< general_threaded_stripped >: public gc< general_threaded<>>
+    {};
+    //@endcond
+
 }} // namespace cds::urcu
 
 #endif // #ifndef CDSLIB_URCU_GENERAL_THREADED_H

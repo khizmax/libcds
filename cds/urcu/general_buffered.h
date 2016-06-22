@@ -180,6 +180,12 @@ namespace cds { namespace urcu {
         }
     };
 
+    //@cond
+    template<>
+    class gc< general_buffered_stripped >: public gc< general_buffered<>>
+    {};
+    //@endcond
+
 }} // namespace cds::urcu
 
 #endif // #ifndef CDSLIB_URCU_GENERAL_BUFFERED_H

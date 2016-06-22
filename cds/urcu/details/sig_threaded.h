@@ -270,6 +270,19 @@ namespace cds { namespace urcu {
             return base_class::signal_no();
         }
     };
+
+
+    /// User-space signal-handled RCU with deferred threaded reclamation (stripped version)
+    /**
+        @headerfile cds/urcu/signal_threaded.h
+
+        This short version of \p signal_threaded is intended for stripping debug info.
+        If you use \p %signal_threaded with default template arguments you may use
+        this stripped version. All functionality of both classes are identical.
+    */
+    class signal_threaded_stripped: public signal_threaded<>
+    {};
+
 }} // namespace cds::urcu
 
 #endif // #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED

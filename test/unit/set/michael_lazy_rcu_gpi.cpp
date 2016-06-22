@@ -35,7 +35,9 @@
 namespace {
 
     typedef cds::urcu::general_instant<> rcu_implementation;
+    typedef cds::urcu::general_instant_stripped rcu_implementation_stripped;
 
 } // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPI, MichaelLazySet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPI,       MichaelLazySet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPI_stripped, MichaelLazySet, rcu_implementation_stripped );

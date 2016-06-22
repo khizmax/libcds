@@ -254,6 +254,17 @@ namespace cds { namespace urcu {
         }
     };
 
+    /// User-space general-purpose RCU with deferred (buffered) reclamation (stripped version)
+    /**
+        @headerfile cds/urcu/general_buffered.h
+
+        This short version of \p general_buffered is intended for stripping debug info.
+        If you use \p %general_buffered with default template arguments you may use
+        this stripped version. All functionality of both classes are identical.
+    */
+    class general_buffered_stripped: public general_buffered<>
+    {};
+
 }} // namespace cds::urcu
 
 #endif // #ifndef CDSLIB_URCU_DETAILS_GPB_H

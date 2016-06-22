@@ -101,6 +101,7 @@ namespace cds { namespace urcu {
         //@cond
         general_instant()
         {}
+
         ~general_instant()
         {}
 
@@ -190,6 +191,17 @@ namespace cds { namespace urcu {
         }
         //@endcond
     };
+
+    /// User-space general-purpose RCU with immediate reclamation (stripped version)
+    /**
+        @headerfile cds/urcu/general_instant.h
+
+        This short version of \p general_instant is intended for stripping debug info.
+        If you use \p %general_instant with default template arguments you may use
+        this stripped version. All functionality of both classes are identical.
+    */
+    class general_instant_stripped: public general_instant<>
+    {};
 
 }} // namespace cds::urcu
 

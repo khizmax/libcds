@@ -200,6 +200,12 @@ namespace cds { namespace urcu {
         }
     };
 
+    //@cond
+    template<>
+    class gc< signal_threaded_stripped >: public gc< signal_threaded<>>
+    {};
+    //@endcond
+
 }} // namespace cds::urcu
 
 #endif // #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED

@@ -265,6 +265,18 @@ namespace cds { namespace urcu {
             return m_nCapacity;
         }
     };
+
+    /// User-space general-purpose RCU with deferred threaded reclamation (stripped version)
+    /**
+        @headerfile cds/urcu/general_threaded.h
+
+        This short version of \p general_threaded is intended for stripping debug info.
+        If you use \p %general_threaded with default template arguments you may use
+        this stripped version. All functionality of both classes are identical.
+    */
+    class general_threaded_stripped: public general_threaded<>
+    {};
+
 }} // namespace cds::urcu
 
 #endif // #ifndef CDSLIB_URCU_DETAILS_GPT_H

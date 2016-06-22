@@ -192,6 +192,13 @@ namespace cds { namespace urcu {
         }
     };
 
+    //@cond
+    template<>
+    class gc< signal_buffered_stripped >: public gc< signal_buffered<>>
+    {};
+    //@endcond
+
+
 }} // namespace cds::urcu
 
 #endif // #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
