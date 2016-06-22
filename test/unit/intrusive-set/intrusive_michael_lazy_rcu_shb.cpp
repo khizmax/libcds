@@ -36,11 +36,13 @@
 
 namespace {
 
-    typedef cds::urcu::signal_buffered<> rcu_implementation;
+    typedef cds::urcu::signal_buffered<>        rcu_implementation;
+    typedef cds::urcu::signal_buffered_stripped rcu_implementation_stripped;
 
 } // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHB, IntrusiveMichaelLazySet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHB,          IntrusiveMichaelLazySet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHB_stripped, IntrusiveMichaelLazySet, rcu_implementation_stripped );
 
 #endif // #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 

@@ -36,10 +36,12 @@
 
 namespace {
 
-    typedef cds::urcu::signal_threaded<> rcu_implementation;
+    typedef cds::urcu::signal_threaded<>        rcu_implementation;
+    typedef cds::urcu::signal_threaded_stripped rcu_implementation_stripped;
 
 } // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHT, SplitListMichaelSet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHT,          SplitListMichaelSet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHT_stripped, SplitListMichaelSet, rcu_implementation_stripped );
 
 #endif // CDS_URCU_SIGNAL_HANDLING_ENABLED

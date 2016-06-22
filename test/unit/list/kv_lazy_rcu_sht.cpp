@@ -35,10 +35,12 @@
 
 namespace {
 
-    typedef cds::urcu::signal_threaded<> rcu_implementation;
+    typedef cds::urcu::signal_threaded<>        rcu_implementation;
+    typedef cds::urcu::signal_threaded_stripped rcu_implementation_stripped;
 
 } // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHT, LazyKVList, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHT,          LazyKVList, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHT_stripped, LazyKVList, rcu_implementation_stripped );
 
 #endif

@@ -34,8 +34,11 @@
 
 namespace {
 
-    typedef cds::urcu::general_buffered<> rcu_implementation;
+    typedef cds::urcu::general_buffered<>        rcu_implementation;
+    typedef cds::urcu::general_buffered_stripped rcu_implementation_stripped;
 
 } // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPB, IntrusiveFeldmanHashSet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPB,          IntrusiveFeldmanHashSet, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPB_stripped, IntrusiveFeldmanHashSet, rcu_implementation_stripped );
+

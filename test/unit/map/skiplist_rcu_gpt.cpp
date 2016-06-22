@@ -34,8 +34,10 @@
 
 namespace {
 
-    typedef cds::urcu::general_threaded<> rcu_implementation;
+    typedef cds::urcu::general_threaded<>        rcu_implementation;
+    typedef cds::urcu::general_threaded_stripped rcu_implementation_stripped;
 
 } // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPT, SkipListMap, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPT,          SkipListMap, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_GPT_stripped, SkipListMap, rcu_implementation_stripped );

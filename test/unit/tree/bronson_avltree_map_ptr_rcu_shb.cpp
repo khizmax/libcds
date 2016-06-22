@@ -36,10 +36,12 @@
 
 namespace {
 
-    typedef cds::urcu::signal_buffered<> rcu_implementation;
+    typedef cds::urcu::signal_buffered<>        rcu_implementation;
+    typedef cds::urcu::signal_buffered_stripped rcu_implementation_stripped;
 
 } // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHB, BronsonAVLTreeMapPtr, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHB,          BronsonAVLTreeMapPtr, rcu_implementation );
+INSTANTIATE_TYPED_TEST_CASE_P( RCU_SHB_stripped, BronsonAVLTreeMapPtr, rcu_implementation_stripped );
 
 #endif
