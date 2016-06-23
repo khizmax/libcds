@@ -98,11 +98,15 @@ namespace map {
             Worker( cds_test::thread_pool& pool, Map& map )
                 : base_class( pool )
                 , m_Map( map )
+                , m_KeyExists()
+                , m_KeyNotExists()
             {}
 
             Worker( Worker& src )
                 : base_class( src )
                 , m_Map( src.m_Map )
+                , m_KeyExists()
+                , m_KeyNotExists()
             {}
 
             virtual thread * clone()
