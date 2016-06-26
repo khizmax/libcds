@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_ALGO_FLAT_COMBINING_KERNEL_H
@@ -55,10 +55,10 @@ namespace cds { namespace algo {
         of a <i>publication list</i>. The publication list is a list of thread-local records
         of a size proportional to the number of threads that are concurrently accessing the shared object.
 
-        Each thread \p t accessing the structure to perform an invocation of some method \p m
+        Each thread \p t accessing the structure to perform an invocation of some method \p f()
         on the shared object executes the following sequence of steps:
         <ol>
-        <li>Write the invocation opcode and parameters (if any) of the method \p m to be applied
+        <li>Write the invocation opcode and parameters (if any) of the method \p f() to be applied
         sequentially to the shared object in the <i>request</i> field of your thread local publication
         record (there is no need to use a load-store memory barrier). The <i>request</i> field will later
         be used to receive the response. If your thread local publication record is marked as active
@@ -66,15 +66,15 @@ namespace cds { namespace algo {
         <li>Check if the global lock is taken. If so (another thread is an active combiner), spin on the <i>request</i>
         field waiting for a response to the invocation (one can add a yield at this point to allow other threads
         on the same core to run). Once in a while while spinning check if the lock is still taken and that your
-        record is active. If your record is inactive proceed to step 5. Once the response is available,
-        reset the request field to null and return the response.</li>
+        record is active (you may use any of \p wait_strategy instead of spinning). If your record is inactive proceed to step 5.
+        Once the response is available, reset the request field to null and return the response.</li>
         <li>If the lock is not taken, attempt to acquire it and become a combiner. If you fail,
         return to spinning in step 2.</li>
         <li>Otherwise, you hold the lock and are a combiner.
         <ul>
             <li>Increment the combining pass count by one.</li>
             <li>Execute a \p fc_apply() by traversing the publication list from the head,
-            combining all nonnull method call invocations, setting the <i>age</i> of each of these records
+            combining all non-null method call invocations, setting the <i>age</i> of each of these records
             to the current <i>count</i>, applying the combined method calls to the structure D, and returning
             responses to all the invocations. This traversal is guaranteed to be wait-free.</li>
             <li>If the <i>count</i> is such that a cleanup needs to be performed, traverse the publication

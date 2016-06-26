@@ -56,58 +56,133 @@ namespace cds { namespace opt {
 namespace cds { namespace algo { namespace flat_combining {
 
     /// Wait strategies for \p flat_combining technique
+    /**
+        Wait strategy specifies how a thread waits until its request is performed by the combiner.
+        See \p wait_strategy::empty wait strategy to explain the interface.
+    */
     namespace wait_strategy {
 
         /// Empty wait strategy
+        /**
+            Empty wait strategy is just spinning on request field.
+            All functions are empty.
+        */
         struct empty
         {
-        //@cond
+            /// Metafunction for defining a publication record for flat combining technique
+            /**
+                Any wait strategy may expand the publication record for storing
+                its own private data.
+                \p PublicationRecord is the type specified by \p flat_combining::kernel.
+                - If the strategy has no thread-private data, it should typedef \p PublicationRecord
+                  as a return \p type of metafunction.
+                - Otherwise, if the strategy wants to store anything in thread-local data,
+                  it should expand \p PublicationRecord, for example:
+                  \code
+                  template <typename PublicationRecord>
+                  struct make_publication_record {
+                    struct type: public PublicationRecord
+                    {
+                        int strategy_data;
+                    };
+                  };
+                  \endcode
+            */
             template <typename PublicationRecord>
             struct make_publication_record {
-                typedef PublicationRecord type;
+                typedef PublicationRecord type; ///< Metafunction result
             };
 
-            template <typename PublicationRecord>
-            void prepare( PublicationRecord& /*rec*/ )
-            {}
+            /// Prepares the strategy
+            /**
+                This function is called before enter to waiting cycle.
+                Some strategies need to prepare its thread-local data in \p rec.
 
-            template <typename FCKernel, typename PublicationRecord>
-            bool wait( FCKernel& /*fc*/, PublicationRecord& /*rec*/ )
+                \p PublicationRecord is thread's publication record of type \p make_publication_record::type
+            */
+            template <typename PublicationRecord>
+            void prepare( PublicationRecord& rec )
             {
+                CDS_UNUSED( rec );
+            }
+
+            /// Waits for the combiner
+            /**
+                The thread calls this function to wait for the combiner process
+                the request.
+                The function returns \p true if the thread was waked up by the combiner,
+                otherwise it should return \p false.
+
+                \p FCKernel is a \p flat_combining::kernel object,
+                \p PublicationRecord is thread's publication record of type \p make_publication_record::type
+            */
+            template <typename FCKernel, typename PublicationRecord>
+            bool wait( FCKernel& fc, PublicationRecord& rec )
+            {
+                CDS_UNUSED( fc );
+                CDS_UNUSED( rec );
                 return false;
             }
 
-            template <typename FCKernel, typename PublicationRecord>
-            void notify( FCKernel& /*fc*/, PublicationRecord& /*rec*/ )
-            {}
+            /// Wakes up the thread
+            /**
+                The combiner calls \p %notify() when it has been processed the request.
 
+                \p FCKernel is a \p flat_combining::kernel object,
+                \p PublicationRecord is thread's publication record of type \p make_publication_record::type
+            */
+            template <typename FCKernel, typename PublicationRecord>
+            void notify( FCKernel& fc, PublicationRecord& rec )
+            {
+                CDS_UNUSED( fc );
+                CDS_UNUSED( rec );
+            }
+
+            /// Moves control to other thread
+            /**
+                This function is called when the thread becomes the combiner
+                but the request of the thread is already processed.
+                The strategy may call \p fc.wakeup_any() instructs the kernel
+                to wake up any pending thread.
+
+                \p FCKernel is a \p flat_combining::kernel object,
+            */
             template <typename FCKernel>
-            void wakeup( FCKernel& /*fc*/ )
-            {}
-        //@endcond
+            void wakeup( FCKernel& fc )
+            {
+                CDS_UNUSED( fc );
+            }
         };
 
         /// Back-off wait strategy
+        /**
+            Template argument \p Backoff specifies back-off strategy, default is cds::backoff::delay_of<2>
+        */
         template <typename BackOff = cds::backoff::delay_of<2>>
         struct backoff
         {
-        //@cond
-            typedef BackOff back_off;
+            typedef BackOff back_off;   ///< Back-off strategy
 
+            /// Incorporates back-off strategy into publication record
             template <typename PublicationRecord>
-            struct make_publication_record {
+            struct make_publication_record 
+            {
+                //@cond
                 struct type: public PublicationRecord
                 {
                     back_off bkoff;
                 };
+                //@endcond
             };
 
+            /// Resets back-off strategy in \p rec
             template <typename PublicationRecord>
             void prepare( PublicationRecord& rec )
             {
                 rec.bkoff.reset();
             }
 
+            /// Calls back-off strategy
             template <typename FCKernel, typename PublicationRecord>
             bool wait( FCKernel& /*fc*/, PublicationRecord& rec )
             {
@@ -115,14 +190,15 @@ namespace cds { namespace algo { namespace flat_combining {
                 return false;
             }
 
+            /// Does nothing
             template <typename FCKernel, typename PublicationRecord>
             void notify( FCKernel& /*fc*/, PublicationRecord& /*rec*/ )
             {}
 
+            /// Does nothing
             template <typename FCKernel>
             void wakeup( FCKernel& )
             {}
-        //@endcond
         };
 
         /// Wait strategy based on the single mutex and the condition variable
@@ -140,21 +216,25 @@ namespace cds { namespace algo { namespace flat_combining {
             std::condition_variable m_condvar;
 
             typedef std::unique_lock< std::mutex > unique_lock;
+        //@endcond
 
         public:
             enum {
-                c_nWaitMilliseconds = Milliseconds < 1 ? 1 : Milliseconds
+                c_nWaitMilliseconds = Milliseconds < 1 ? 1 : Milliseconds ///< Waiting duration
             };
 
+            /// Empty metafunction
             template <typename PublicationRecord>
             struct make_publication_record {
-                typedef PublicationRecord type;
+                typedef PublicationRecord type; ///< publication record type
             };
 
+            /// Does nothing
             template <typename PublicationRecord>
             void prepare( PublicationRecord& /*rec*/ )
             {}
 
+            /// Sleeps on condition variable waiting for notification from combiner
             template <typename FCKernel, typename PublicationRecord>
             bool wait( FCKernel& fc, PublicationRecord& rec )
             {
@@ -166,18 +246,19 @@ namespace cds { namespace algo { namespace flat_combining {
                 return false;
             }
 
+            /// Calls condition variable function \p notify_all()
             template <typename FCKernel, typename PublicationRecord>
             void notify( FCKernel& fc, PublicationRecord& rec )
             {
                 m_condvar.notify_all();
             }
 
+            /// Calls condition variable function \p notify_all()
             template <typename FCKernel>
             void wakeup( FCKernel& /*fc*/ )
             {
                 m_condvar.notify_all();
             }
-        //@endcond
         };
 
         /// Wait strategy based on the single mutex and thread-local condition variables
@@ -194,24 +275,31 @@ namespace cds { namespace algo { namespace flat_combining {
             std::mutex m_mutex;
 
             typedef std::unique_lock< std::mutex > unique_lock;
+        //@endcond
 
         public:
             enum {
-                c_nWaitMilliseconds = Milliseconds < 1 ? 1 : Milliseconds
+                c_nWaitMilliseconds = Milliseconds < 1 ? 1 : Milliseconds  ///< Waiting duration
             };
 
+            /// Incorporates a condition variable into \p PublicationRecord
             template <typename PublicationRecord>
             struct make_publication_record {
+                /// Metafunction result
                 struct type: public PublicationRecord
                 {
+                    //@cond
                     std::condition_variable m_condvar;
+                    //@endcond
                 };
             };
 
+            /// Does nothing
             template <typename PublicationRecord>
             void prepare( PublicationRecord& /*rec*/ )
             {}
 
+            /// Sleeps on condition variable waiting for notification from combiner
             template <typename FCKernel, typename PublicationRecord>
             bool wait( FCKernel& fc, PublicationRecord& rec )
             {
@@ -223,18 +311,19 @@ namespace cds { namespace algo { namespace flat_combining {
                 return false;
             }
 
+            /// Calls condition variable function \p notify_one()
             template <typename FCKernel, typename PublicationRecord>
             void notify( FCKernel& fc, PublicationRecord& rec )
             {
                 rec.m_condvar.notify_one();
             }
 
+            /// Calls \p fc.wakeup_any() to wake up any pending thread
             template <typename FCKernel>
             void wakeup( FCKernel& fc )
             {
                 fc.wakeup_any();
             }
-        //@endcond
         };
 
         /// Wait strategy where each thread has a mutex and a condition variable
@@ -247,25 +336,31 @@ namespace cds { namespace algo { namespace flat_combining {
         {
         //@cond
             typedef std::unique_lock< std::mutex > unique_lock;
-
+        //@endcond
         public:
             enum {
-                c_nWaitMilliseconds = Milliseconds < 1 ? 1 : Milliseconds
+                c_nWaitMilliseconds = Milliseconds < 1 ? 1 : Milliseconds   ///< Waiting duration
             };
 
+            /// Incorporates a condition variable and a mutex into \p PublicationRecord
             template <typename PublicationRecord>
             struct make_publication_record {
+                /// Metafunction result
                 struct type: public PublicationRecord
                 {
+                    //@cond
                     std::mutex              m_mutex;
                     std::condition_variable m_condvar;
+                    //@endcond
                 };
             };
 
+            /// Does nothing
             template <typename PublicationRecord>
             void prepare( PublicationRecord& /*rec*/ )
             {}
 
+            /// Sleeps on condition variable waiting for notification from combiner
             template <typename FCKernel, typename PublicationRecord>
             bool wait( FCKernel& fc, PublicationRecord& rec )
             {
@@ -277,18 +372,19 @@ namespace cds { namespace algo { namespace flat_combining {
                 return false;
             }
 
+            /// Calls condition variable function \p notify_one()
             template <typename FCKernel, typename PublicationRecord>
             void notify( FCKernel& /*fc*/, PublicationRecord& rec )
             {
                 rec.m_condvar.notify_one();
             }
 
+            /// Calls \p fc.wakeup_any() to wake up any pending thread
             template <typename FCKernel>
             void wakeup( FCKernel& fc )
             {
                 fc.wakeup_any();
             }
-        //@endcond
         };
 
     } // namespace wait_strategy
