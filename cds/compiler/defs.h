@@ -65,6 +65,11 @@
 #   define CDS_EXPORT_API
 #endif
 
+#ifndef cds_likely
+#   define cds_likely( expr )   expr
+#   define cds_unlikely( expr ) expr
+#endif
+
 // Features
 #include <cds/compiler/feature_tsan.h>
 

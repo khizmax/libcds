@@ -122,6 +122,11 @@
 #define CDS_DATA_ALIGNMENT(n)   __attribute__ ((aligned (n)))
 
 
+// likely/unlikely
+
+#define cds_likely( expr )   __builtin_expect( !!( expr ), 1 )
+#define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
+
 #include <cds/compiler/gcc/compiler_barriers.h>
 
 #endif // #ifndef CDSLIB_COMPILER_GCC_DEFS_H
