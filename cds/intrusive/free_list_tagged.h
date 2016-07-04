@@ -119,7 +119,7 @@ namespace cds { namespace intrusive {
             do {
                 newHead.tag = currentHead.tag + 1;
                 pNode->m_freeListNext.store( currentHead.ptr, atomics::memory_order_relaxed );
-            } while ( !m_Head.compare_exchange_weak( currentHead, newHead, atomics::memory_order_release, atomics::memory_order_relaxed ));
+            } while ( cds_unlikely( !m_Head.compare_exchange_weak( currentHead, newHead, atomics::memory_order_release, atomics::memory_order_relaxed )));
         }
 
         /// Gets a node from the free list. If the list is empty, returns \p nullptr
@@ -130,7 +130,7 @@ namespace cds { namespace intrusive {
             while ( currentHead.ptr != nullptr ) {
                 newHead.ptr = currentHead.ptr->m_freeListNext.load( atomics::memory_order_relaxed );
                 newHead.tag = currentHead.tag + 1;
-                if ( m_Head.compare_exchange_weak( currentHead, newHead, atomics::memory_order_release, atomics::memory_order_acquire ) )
+                if ( cds_likely( m_Head.compare_exchange_weak( currentHead, newHead, atomics::memory_order_release, atomics::memory_order_acquire )))
                     break;
             }
             return currentHead.ptr;

@@ -39,7 +39,7 @@ namespace cds { namespace intrusive {
     /** @ingroup cds_intrusive_helper
 
         Free list is a helper class intended for reusing objects instead of freeing them completely; 
-        this avoids the overhead of \p malloc(), and also avoids its worst-case behaviour of taking an operating system lock.
+        this avoids the overhead of \p malloc(), and also avoids its worst-case behavior of taking an operating system lock.
         So, the free list can be considered as a specialized allocator for objects of some type.
 
         The algorithm is taken from <a href="http://moodycamel.com/blog/2014/solving-the-aba-problem-for-lock-free-free-lists">this article</a>.
@@ -137,8 +137,9 @@ namespace cds { namespace intrusive {
             while ( head != nullptr ) {
                 auto prevHead = head;
                 auto refs = head->m_freeListRefs.load( atomics::memory_order_relaxed );
-                if ( (refs & c_RefsMask) == 0 || !head->m_freeListRefs.compare_exchange_strong( refs, refs + 1,
-                    atomics::memory_order_acquire, atomics::memory_order_relaxed )) 
+
+                if ( cds_unlikely( (refs & c_RefsMask) == 0 || !head->m_freeListRefs.compare_exchange_strong( refs, refs + 1,
+                    atomics::memory_order_acquire, atomics::memory_order_relaxed )))
                 {
                     head = m_Head.load( atomics::memory_order_acquire );
                     continue;
@@ -148,7 +149,7 @@ namespace cds { namespace intrusive {
                 // we can read the next and not worry about it changing between now and the time
                 // we do the CAS
                 node * next = head->m_freeListNext.load( atomics::memory_order_relaxed );
-                if ( m_Head.compare_exchange_strong( head, next, atomics::memory_order_acquire, atomics::memory_order_relaxed )) {
+                if ( cds_likely( m_Head.compare_exchange_strong( head, next, atomics::memory_order_acquire, atomics::memory_order_relaxed ))) {
                     // Yay, got the node. This means it was on the list, which means
                     // shouldBeOnFreeList must be false no matter the refcount (because
                     // nobody else knows it's been taken off yet, it can't have been put back on).
@@ -218,7 +219,7 @@ namespace cds { namespace intrusive {
             while ( true ) {
                 pNode->m_freeListNext.store( head, atomics::memory_order_relaxed );
                 pNode->m_freeListRefs.store( 1, atomics::memory_order_release );
-                if ( !m_Head.compare_exchange_strong( head, pNode, atomics::memory_order_release, atomics::memory_order_relaxed )) {
+                if ( cds_unlikely( !m_Head.compare_exchange_strong( head, pNode, atomics::memory_order_release, atomics::memory_order_relaxed ))) {
                     // Hmm, the add failed, but we can only try again when the refcount goes back to zero
                     if ( pNode->m_freeListRefs.fetch_add( c_ShouldBeOnFreeList - 1, atomics::memory_order_release ) == 1 )
                         continue;
