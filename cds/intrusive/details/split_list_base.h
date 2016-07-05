@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_DETAILS_SPLIT_LIST_BASE_H
@@ -47,7 +47,7 @@ namespace cds { namespace intrusive {
         /// Split-ordered list node
         /**
             Template parameter:
-            - OrderedListNode - node type for underlying ordered list
+            - \p OrderedListNode - node type for underlying ordered list
         */
         template <typename OrderedListNode>
         struct node: public OrderedListNode
@@ -79,13 +79,9 @@ namespace cds { namespace intrusive {
             }
         };
 
-        /// SplitListSet internal statistics. May be used for debugging or profiling
+        /// \p SplitListSet internal statistics. May be used for debugging or profiling
         /**
-            Template argument \p Counter defines type of counter.
-            Default is \p cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
-            strict event counting.
-            You may use stronger type of counter like as \p cds::atomicity::item_counter,
-            or even integral type, for example, \p int.
+            Template argument \p Counter defines type of counter, default is \p cds::atomicity::event_counter.
         */
         template <typename Counter = cds::atomicity::event_counter >
         struct stat
@@ -244,11 +240,11 @@ namespace cds { namespace intrusive {
                 for default type.
             - \p opt::memory_model - C++ memory model for atomic operations.
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
             - \p opt::allocator - optional, bucket table allocator. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \p split_list::dynamic_bucket_table - use dynamic or static bucket table implementation.
                 Dynamic bucket table expands its size up to maximum bucket count when necessary
-            - \p opt::back_off - back-off strategy used for spinning, defult is \p cds::backoff::Default.
+            - \p opt::back_off - back-off strategy used for spinning, default is \p cds::backoff::Default.
             - \p opt::stat - internal statistics, default is \p split_list::empty_stat (disabled).
                 To enable internal statistics use \p split_list::stat.
         */
@@ -615,7 +611,7 @@ namespace cds { namespace intrusive {
                 return static_cast<node_type const *>( base_class::to_node_ptr( v ) );
             }
 
-            /// Convert node refernce to value pointer
+            /// Convert node reference to value pointer
             static value_type * to_value_ptr( node_type&  n )
             {
                 return base_class::to_value_ptr( static_cast<base_node_type &>( n ) );

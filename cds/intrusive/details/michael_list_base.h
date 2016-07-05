@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_DETAILS_MICHAEL_LIST_BASE_H
@@ -261,7 +261,7 @@ namespace cds { namespace intrusive {
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
                  To enable item counting use \p atomicity::item_counter.
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
             - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
                 Default is \p opt::v::rcu_throw_deadlock
         */
