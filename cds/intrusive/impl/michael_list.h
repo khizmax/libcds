@@ -274,7 +274,7 @@ namespace cds { namespace intrusive {
 
             marked_node_ptr cur(pos.pCur);
             pNode->m_pNext.store( cur, memory_model::memory_order_release );
-            if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+            if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed )))
                 return true;
 
             pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
@@ -288,11 +288,11 @@ namespace cds { namespace intrusive {
 
             // Mark the node (logical deleting)
             marked_node_ptr next(pos.pNext, 0);
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, atomics::memory_order_relaxed ))) {
                 // physical deletion may be performed by search function if it detects that a node is logically deleted (marked)
                 // CAS may be successful here or in other thread that searching something
                 marked_node_ptr cur(pos.pCur);
-                if ( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )))
                     retire_node( pos.pCur );
                 return true;
             }
@@ -321,7 +321,7 @@ namespace cds { namespace intrusive {
                     do {
                         pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
                         g.assign( node_traits::to_value_ptr( pNext.ptr()));
-                    } while ( pNext != pCur->m_pNext.load(memory_model::memory_order_acquire));
+                    } while ( cds_unlikely( pNext != pCur->m_pNext.load(memory_model::memory_order_acquire)));
 
                     if ( pNext.ptr())
                         m_pNode = m_Guard.assign( g.template get<value_type>());
@@ -343,7 +343,7 @@ namespace cds { namespace intrusive {
                         m_pNode = nullptr;
                         m_Guard.clear();
                     }
-                    if ( p == pNode.load(memory_model::memory_order_acquire))
+                    if ( cds_likely( p == pNode.load(memory_model::memory_order_acquire)))
                         break;
                 }
             }
@@ -904,7 +904,7 @@ namespace cds { namespace intrusive {
                 head = m_pHead.load(memory_model::memory_order_relaxed);
                 if ( head.ptr())
                     guard.assign( node_traits::to_value_ptr( *head.ptr()));
-                if ( m_pHead.load(memory_model::memory_order_acquire) == head ) {
+                if ( cds_likely( m_pHead.load(memory_model::memory_order_acquire) == head )) {
                     if ( head.ptr() == nullptr )
                         break;
                     value_type& val = *node_traits::to_value_ptr( *head.ptr());
@@ -1001,7 +1001,7 @@ namespace cds { namespace intrusive {
             node_type * pNode = node_traits::to_node_ptr( val );
             while ( true ) {
                 if ( search( refHead, val, pos, key_comparator())) {
-                    if ( pos.pCur->m_pNext.load(memory_model::memory_order_acquire).bits()) {
+                    if ( cds_unlikely( pos.pCur->m_pNext.load(memory_model::memory_order_acquire).bits())) {
                         back_off()();
                         continue;       // the node found is marked as deleted
                     }
@@ -1160,7 +1160,7 @@ namespace cds { namespace intrusive {
                         {
                             return node_traits::to_value_ptr( p.ptr());
                         });
-                if ( pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr()) {
+                if ( cds_unlikely( pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr())) {
                     bkoff();
                     goto try_again;
                 }
@@ -1169,7 +1169,7 @@ namespace cds { namespace intrusive {
                 if ( pNext.bits() == 1 ) {
                     // pCur marked i.e. logically deleted. Help the erase/unlink function to unlink pCur node
                     marked_node_ptr cur( pCur.ptr());
-                    if ( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr()), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
+                    if ( cds_unlikely( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr()), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
                         retire_node( pCur.ptr());
                     }
                     else {

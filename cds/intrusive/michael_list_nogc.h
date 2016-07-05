@@ -154,7 +154,7 @@ namespace cds { namespace intrusive {
             link_checker::is_empty( pNode );
 
             pNode->m_pNext.store( pos.pCur, memory_model::memory_order_relaxed );
-            if ( pos.pPrev->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed ))
+            if ( cds_likely( pos.pPrev->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed )))
                 return true;
 
             pNode->m_pNext.store( nullptr, memory_model::memory_order_relaxed );
@@ -475,7 +475,7 @@ namespace cds { namespace intrusive {
         void clear( Disposer disp )
         {
             node_type * pHead = m_pHead.load(memory_model::memory_order_relaxed);
-            do {} while ( !m_pHead.compare_exchange_weak( pHead, nullptr, memory_model::memory_order_relaxed ) );
+            do {} while ( cds_unlikely( !m_pHead.compare_exchange_weak( pHead, nullptr, memory_model::memory_order_relaxed )));
 
             while ( pHead ) {
                 node_type * p = pHead->m_pNext.load(memory_model::memory_order_relaxed);
@@ -648,12 +648,12 @@ namespace cds { namespace intrusive {
                 }
 
                 pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
-                if ( pCur->m_pNext.load(memory_model::memory_order_acquire) != pNext ) {
+                if ( cds_unlikely( pCur->m_pNext.load(memory_model::memory_order_acquire) != pNext )) {
                     bkoff();
                     goto try_again;
                 }
 
-                if ( pPrev->load(memory_model::memory_order_acquire) != pCur ) {
+                if ( cds_unlikely( pPrev->load(memory_model::memory_order_acquire) != pCur )) {
                     bkoff();
                     goto try_again;
                 }

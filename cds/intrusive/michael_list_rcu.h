@@ -247,7 +247,7 @@ namespace cds { namespace intrusive {
 
             marked_node_ptr p( pos.pCur );
             pNode->m_pNext.store( p, memory_model::memory_order_release );
-            if ( pos.pPrev->compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+            if ( cds_likely( pos.pPrev->compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed )))
                 return true;
 
             pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
@@ -269,11 +269,11 @@ namespace cds { namespace intrusive {
             // Mark the node (logical deletion)
             marked_node_ptr next(pos.pNext, 0);
 
-            if ( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed ))) {
 
                 // Try physical removal - fast path
                 marked_node_ptr cur(pos.pCur);
-                if ( pos.pPrev->compare_exchange_strong(cur, marked_node_ptr(pos.pNext), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
+                if ( cds_likely( pos.pPrev->compare_exchange_strong(cur, marked_node_ptr(pos.pNext), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
                     if ( nMask == erase_mask )
                         link_to_remove_chain( pos, pos.pCur );
                 }
@@ -850,7 +850,7 @@ namespace cds { namespace intrusive {
             RCU \p synchronize method can be called.
             Note that depending on RCU type used the \ref disposer invocation can be deferred.
 
-            The function can throw \p cds::urcu::rcu_deadlock exception if an deadlock is encountered and
+            The function can throw \p cds::urcu::rcu_deadlock exception if a deadlock is encountered and
             deadlock checking policy is \p opt::v::rcu_throw_deadlock.
         */
         void clear()
@@ -866,9 +866,9 @@ namespace cds { namespace intrusive {
                         if ( !pHead.ptr() )
                             break;
                         marked_node_ptr pNext( pHead->m_pNext.load(memory_model::memory_order_relaxed) );
-                        if ( !pHead->m_pNext.compare_exchange_weak( pNext, pNext | 1, memory_model::memory_order_acquire, memory_model::memory_order_relaxed ))
+                        if ( cds_unlikely( !pHead->m_pNext.compare_exchange_weak( pNext, pNext | 1, memory_model::memory_order_acquire, memory_model::memory_order_relaxed )))
                             continue;
-                        if ( !m_pHead.compare_exchange_weak( pHead, marked_node_ptr(pNext.ptr()), memory_model::memory_order_release, memory_model::memory_order_relaxed ))
+                        if ( cds_unlikely( !m_pHead.compare_exchange_weak( pHead, marked_node_ptr(pNext.ptr()), memory_model::memory_order_release, memory_model::memory_order_relaxed )))
                             continue;
                     }
 
@@ -1138,8 +1138,8 @@ namespace cds { namespace intrusive {
 
                 pNext = pCur->m_pNext.load(memory_model::memory_order_acquire);
 
-                if ( pPrev->load(memory_model::memory_order_acquire) != pCur
-                    || pNext != pCur->m_pNext.load(memory_model::memory_order_acquire))
+                if ( cds_unlikely( pPrev->load(memory_model::memory_order_acquire) != pCur
+                    || pNext != pCur->m_pNext.load(memory_model::memory_order_acquire )))
                 {
                     bkoff();
                     goto try_again;
@@ -1147,7 +1147,7 @@ namespace cds { namespace intrusive {
 
                 if ( pNext.bits() ) {
                     // pCur is marked as deleted. Try to unlink it from the list
-                    if ( pPrev->compare_exchange_weak( pCur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                    if ( cds_likely( pPrev->compare_exchange_weak( pCur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
                         if ( pNext.bits() == erase_mask )
                             link_to_remove_chain( pos, pCur.ptr() );
                     }
