@@ -985,23 +985,23 @@ namespace cds { namespace intrusive {
             counter_type    m_nRelocateCallCount    ; ///< Count of \p relocate() function call
             counter_type    m_nRelocateRoundCount   ; ///< Count of attempts to relocate items
             counter_type    m_nFalseRelocateCount   ; ///< Count of unneeded attempts of \p relocate call
-            counter_type    m_nSuccessRelocateCount ; ///< Count of successfull item relocating
+            counter_type    m_nSuccessRelocateCount ; ///< Count of successful item relocating
             counter_type    m_nRelocateAboveThresholdCount; ///< Count of item relocating above probeset threshold
             counter_type    m_nFailedRelocateCount  ;   ///< Count of failed relocation attemp (when all probeset is full)
 
             counter_type    m_nResizeCallCount      ;   ///< Count of \p resize() function call
             counter_type    m_nFalseResizeCount     ;   ///< Count of false \p resize() function call (when other thread has been resized the set)
-            counter_type    m_nResizeSuccessNodeMove;   ///< Count of successfull node moving when resizing
+            counter_type    m_nResizeSuccessNodeMove;   ///< Count of successful node moving when resizing
             counter_type    m_nResizeRelocateCall   ;   ///< Count of \p relocate() function call from \p resize function
 
-            counter_type    m_nInsertSuccess        ;   ///< Count of successfull \p insert() function call
+            counter_type    m_nInsertSuccess        ;   ///< Count of successful \p insert() function call
             counter_type    m_nInsertFailed         ;   ///< Count of failed \p insert() function call
             counter_type    m_nInsertResizeCount    ;   ///< Count of \p resize() function call from \p insert()
             counter_type    m_nInsertRelocateCount  ;   ///< Count of \p relocate() function call from \p insert()
             counter_type    m_nInsertRelocateFault  ;   ///< Count of failed \p relocate() function call from \p insert()
 
             counter_type    m_nUpdateExistCount     ;   ///< Count of call \p update() function for existing node
-            counter_type    m_nUpdateSuccessCount   ;   ///< Count of successfull \p insert() function call for new node
+            counter_type    m_nUpdateSuccessCount   ;   ///< Count of successful \p insert() function call for new node
             counter_type    m_nUpdateResizeCount    ;   ///< Count of \p resize() function call from \p update()
             counter_type    m_nUpdateRelocateCount  ;   ///< Count of \p relocate() function call from \p update()
             counter_type    m_nUpdateRelocateFault  ;   ///< Count of failed \p relocate() function call from \p update()
@@ -2455,7 +2455,7 @@ namespace cds { namespace intrusive {
 
             The functor may change non-key fields of the \p item.
 
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
             i.e. the node has been inserted or updated,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already exists.

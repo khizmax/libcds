@@ -348,7 +348,7 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \ref value_type.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if \p key already exists.
 
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"

@@ -616,7 +616,7 @@ namespace cds { namespace intrusive {
 
             The function applies RCU lock internally.
 
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the list.
 

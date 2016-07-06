@@ -672,7 +672,7 @@ namespace cds { namespace intrusive {
             - If hash value is not found and \p bInsert is \p false then the set is unchanged,
               the function returns <tt> std::pair<false, false> </tt>
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful
             (i.e. the item has been inserted or updated),
             \p second is \p true if new item has been added or \p false if the set contains that hash.
         */

@@ -372,7 +372,7 @@ namespace cds { namespace container {
             The functor may change non-key fields of the \p item; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             i.e. the item has been inserted or updated,
             \p second is \p true if the new item has been added or \p false if the item with key equal to \p val
             already exists.

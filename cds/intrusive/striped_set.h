@@ -562,7 +562,7 @@ namespace cds { namespace intrusive {
 
             The functor may change non-key fields of the \p item.
 
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p val
             already is in the set.
         */

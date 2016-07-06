@@ -397,7 +397,7 @@ namespace cds { namespace container {
 
             The function applies RCU lock internally.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
             \p second is true if new item has been added or \p false if the item with \p key
             already exists.
 

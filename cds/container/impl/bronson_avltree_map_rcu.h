@@ -306,7 +306,7 @@ namespace cds { namespace container {
 
             RCU \p synchronize() method can be called. RCU should not be locked.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successfull,
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new node has been added or \p false if the node with \p key
             already exists.
         */

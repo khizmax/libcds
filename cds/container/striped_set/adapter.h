@@ -128,7 +128,7 @@ namespace cds { namespace container {
                 The type \p Q can differ from \ref value_type of items storing in the container.
                 Therefore, the \p value_type should be comparable with type \p Q and constructible from type \p Q,
 
-                Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
+                Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
                 \p second is true if new item has been added or \p false if the item with \p val key
                 already exists.
                 <hr>

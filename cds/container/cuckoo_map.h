@@ -526,7 +526,7 @@ namespace cds { namespace container {
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - an item of the map for \p key
 
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successfull,
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
             i.e. the node has been inserted or updated,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already exists.

@@ -521,7 +521,7 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \p mapped_type.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successfull,
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
             \p second is true if new item has been added or \p false if the item with \p key
             already exists.
 
