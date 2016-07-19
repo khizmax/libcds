@@ -246,7 +246,7 @@ namespace cds_test {
                 EXPECT_FALSE( l.find_with( other_item( i.nKey ), other_less(), []( value_type& item, other_item const& ) { ++item.s.nFindCall; } ));
                 EXPECT_EQ( i.s.nFindCall, 0 );
 
-                switch ( i.nKey % 3 ) {
+                switch ( i.nKey % 4 ) {
                 case 0:
                     EXPECT_TRUE( l.insert( i ));
                     break;
@@ -272,6 +272,17 @@ namespace cds_test {
                             ++i.s.nUpdateNewCall;
                         }, true );
                         EXPECT_EQ( i.s.nUpdateNewCall, 1 );
+                        EXPECT_EQ( ret.first, true );
+                        EXPECT_EQ( ret.second, true );
+                    }
+                    break;
+                case 3:
+                    {
+                        std::pair<bool, bool> ret = l.update( i, false );
+                        EXPECT_EQ( ret.first, false );
+                        EXPECT_EQ( ret.second, false );
+
+                        ret = l.update( i );
                         EXPECT_EQ( ret.first, true );
                         EXPECT_EQ( ret.second, true );
                     }

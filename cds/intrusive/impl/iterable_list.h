@@ -464,7 +464,7 @@ namespace cds { namespace intrusive {
         */
         std::pair<bool, bool> update( value_type& val, bool bInsert = true )
         {
-            return update_at( m_pHead, val, []( value_type&, value_type* ) {}, bINsert );
+            return update_at( m_pHead, val, []( value_type&, value_type* ) {}, bInsert );
         }
 
         /// Unlinks the item \p val from the list
