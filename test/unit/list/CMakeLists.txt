@@ -2,6 +2,8 @@ set(PACKAGE_NAME unit-list)
 
 set(CDSGTEST_LIST_SOURCES
     ../main.cpp
+    intrusive_iterable_dhp.cpp
+    intrusive_iterable_hp.cpp
     intrusive_lazy_hp.cpp
     intrusive_lazy_dhp.cpp
     intrusive_lazy_nogc.cpp

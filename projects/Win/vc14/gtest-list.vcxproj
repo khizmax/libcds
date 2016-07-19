@@ -27,6 +27,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\list\test_intrusive_iterable_list.h" />
+    <ClInclude Include="..\..\..\test\unit\list\test_intrusive_iterable_list_hp.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_list.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_list_hp.h" />
@@ -47,6 +49,8 @@
     <ClInclude Include="..\..\..\test\unit\list\test_michael_rcu.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_iterable_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_iterable_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_nogc.cpp" />
