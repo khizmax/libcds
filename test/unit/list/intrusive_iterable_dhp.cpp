@@ -136,4 +136,37 @@ namespace {
         test_hp( l );
     }
 
+    TEST_F( IntrusiveIterableList_DHP, stat )
+    {
+        struct traits: public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::iterable_list::stat<> stat;
+        };
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
+
+        list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
+    TEST_F( IntrusiveIterableList_DHP, wrapped_stat )
+    {
+        struct traits: public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::iterable_list::wrapped_stat<> stat;
+        };
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
+
+        traits::stat::stat_type st;
+        list_type l( st );
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
 } // namespace

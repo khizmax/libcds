@@ -67,6 +67,97 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+        /// \p IterableList internal statistics
+        template <typename EventCounter = cds::atomicity::event_counter>
+        struct stat {
+            typedef EventCounter event_counter; ///< Event counter type
+
+            event_counter   m_nInsertSuccess;   ///< Number of success \p insert() operations
+            event_counter   m_nInsertFailed;    ///< Number of failed \p insert() operations
+            event_counter   m_nInsertRetry;     ///< Number of attempts to insert new item
+            event_counter   m_nUpdateNew;       ///< Number of new item inserted for \p update()
+            event_counter   m_nUpdateExisting;  ///< Number of existing item updates
+            event_counter   m_nUpdateFailed;    ///< Number of failed \p update() call
+            event_counter   m_nUpdateRetry;     ///< Number of attempts to update the item
+            event_counter   m_nEraseSuccess;    ///< Number of successful \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseFailed;     ///< Number of failed \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseRetry;      ///< Number of attempts to \p erase() an item
+            event_counter   m_nFindSuccess;     ///< Number of successful \p find() and \p get() operations
+            event_counter   m_nFindFailed;      ///< Number of failed \p find() and \p get() operations
+
+            event_counter   m_nNodeCreated;     ///< Number of created internal nodes
+            event_counter   m_nNodeRemoved;     ///< Number of removed internal nodes
+
+            //@cond
+            void onInsertSuccess()      { ++m_nInsertSuccess;   }
+            void onInsertFailed()       { ++m_nInsertFailed;    }
+            void onInsertRetry()        { ++m_nInsertRetry;     }
+            void onUpdateNew()          { ++m_nUpdateNew;       }
+            void onUpdateExisting()     { ++m_nUpdateExisting;  }
+            void onUpdateFailed()       { ++m_nUpdateFailed;    }
+            void onUpdateRetry()        { ++m_nUpdateRetry;     }
+            void onEraseSuccess()       { ++m_nEraseSuccess;    }
+            void onEraseFailed()        { ++m_nEraseFailed;     }
+            void onEraseRetry()         { ++m_nEraseRetry;      }
+            void onFindSuccess()        { ++m_nFindSuccess;     }
+            void onFindFailed()         { ++m_nFindFailed;      }
+
+            void onNodeCreated()        { ++m_nNodeCreated;     }
+            void onNodeRemoved()        { ++m_nNodeRemoved;     }
+            //@endcond
+        };
+
+        /// \p IterableList empty internal statistics
+        struct empty_stat {
+            //@cond
+            void onInsertSuccess()              const {}
+            void onInsertFailed()               const {}
+            void onInsertRetry()                const {}
+            void onUpdateNew()                  const {}
+            void onUpdateExisting()             const {}
+            void onUpdateFailed()               const {}
+            void onUpdateRetry()                const {}
+            void onEraseSuccess()               const {}
+            void onEraseFailed()                const {}
+            void onEraseRetry()                 const {}
+            void onFindSuccess()                const {}
+            void onFindFailed()                 const {}
+
+            void onNodeCreated()                const {}
+            void onNodeRemoved()                const {}
+            //@endcond
+        };
+
+        //@cond
+        template <typename Stat = iterable_list::stat<>>
+        struct wrapped_stat {
+            typedef Stat stat_type;
+
+            wrapped_stat( stat_type& st )
+                : m_stat( st )
+            {}
+
+            void onInsertSuccess()   { m_stat.onInsertSuccess(); }
+            void onInsertFailed()    { m_stat.onInsertFailed();  }
+            void onInsertRetry()     { m_stat.onInsertRetry();   }
+            void onUpdateNew()       { m_stat.onUpdateNew();     }
+            void onUpdateExisting()  { m_stat.onUpdateExisting();}
+            void onUpdateFailed()    { m_stat.onUpdateFailed();  }
+            void onUpdateRetry()     { m_stat.onUpdateRetry();   }
+            void onEraseSuccess()    { m_stat.onEraseSuccess();  }
+            void onEraseFailed()     { m_stat.onEraseFailed();   }
+            void onEraseRetry()      { m_stat.onEraseRetry();    }
+            void onFindSuccess()     { m_stat.onFindSuccess();   }
+            void onFindFailed()      { m_stat.onFindFailed();    }
+
+            void onNodeCreated()     { m_stat.onNodeCreated();   }
+            void onNodeRemoved()     { m_stat.onNodeRemoved();   }
+
+            stat_type& m_stat;
+        };
+        //@endcond
+
+
         /// \p IterableList traits
         struct traits
         {
@@ -90,6 +181,13 @@ namespace cds { namespace intrusive {
 
             /// Disposer for removing items
             typedef opt::v::empty_disposer          disposer;
+
+            /// Internal statistics
+            /**
+                By default, internal statistics is disabled (\p iterable_list::empty_stat).
+                Use \p iterable_list::stat to enable it.
+            */
+            typedef empty_stat                      stat;
 
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
@@ -120,6 +218,8 @@ namespace cds { namespace intrusive {
                 of GC schema the disposer may be called asynchronously.
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
                  To enable item counting use \p atomicity::item_counter.
+            - \p opt::stat - internal statistics. By default, it is disabled (\p iterable_list::empty_stat).
+                To enable it use \p iterable_list::stat
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consistent memory model).
             - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_IterableList_rcu "RCU-based IterableList"

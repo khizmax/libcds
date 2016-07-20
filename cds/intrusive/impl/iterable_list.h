@@ -45,6 +45,13 @@ namespace cds { namespace intrusive {
         any hook in \p T to be stored in the list.
 
         Usually, ordered single-linked list is used as a building block for the hash table implementation.
+        Iterable list is suitable for almost append-only hash table because the list doesn't delete
+        its internal node when erasing a key but it is marked them as empty to be reused in the future.
+        However, plenty of empty nodes degrades performance.
+        Separation of internal nodes and user data implies the need for an allocator for internal node
+        so the iterable list is not fully intrusive. Nevertheless, if you need thread-safe iterator,
+        the iterable list is good choice.
+
         The complexity of searching is <tt>O(N)</tt>.
 
         Template arguments:
@@ -130,6 +137,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::item_counter   item_counter;   ///< Item counting policy used
         typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
         typedef typename traits::node_allocator node_allocator; ///< Node allocator
+        typedef typename traits::stat           stat;           ///< Internal statistics
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
@@ -153,6 +161,7 @@ namespace cds { namespace intrusive {
 
         atomic_node_ptr m_pHead;        ///< Head pointer
         item_counter    m_ItemCounter;  ///< Item counter
+        mutable stat    m_Stat;         ///< Internal statistics
 
         //@cond
         typedef cds::details::Allocator< node_type, node_allocator > cxx_node_allocator;
@@ -380,6 +389,14 @@ namespace cds { namespace intrusive {
             : m_pHead( nullptr )
         {}
 
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, iterable_list::wrapped_stat<Stat>>::value >>
+        explicit IterableList( Stat& st )
+            : m_pHead( nullptr )
+            , m_Stat( st )
+        {}
+        //@endcond
+
         /// Destroys the list object
         ~IterableList()
         {
@@ -455,7 +472,7 @@ namespace cds { namespace intrusive {
 
             If the item \p val is not found in the list, then \p val is inserted
             iff \p bInsert is \p true.
-            Otherwise, the current element is changed to \p val, the element will be retired later
+            Otherwise, the current element is changed to \p val, the old element will be retired later
             by call \p Traits::disposer.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
@@ -841,13 +858,18 @@ namespace cds { namespace intrusive {
             position pos;
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator() ) )
+                if ( search( refHead, val, pos, key_comparator() )) {
+                    m_Stat.onInsertFailed();
                     return false;
+                }
 
                 if ( link_node( &val, pos ) ) {
                     ++m_ItemCounter;
+                    m_Stat.onInsertSuccess();
                     return true;
                 }
+
+                m_Stat.onInsertRetry();
             }
         }
 
@@ -860,14 +882,19 @@ namespace cds { namespace intrusive {
             guard.assign( &val );
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator() ) )
+                if ( search( refHead, val, pos, key_comparator() ) ) {
+                    m_Stat.onInsertFailed();
                     return false;
+                }
 
                 if ( link_node( &val, pos ) ) {
                     f( val );
                     ++m_ItemCounter;
+                    m_Stat.onInsertSuccess();
                     return true;
                 }
+
+                m_Stat.onInsertRetry();
             }
         }
 
@@ -890,19 +917,25 @@ namespace cds { namespace intrusive {
                             retire_data( pos.pFound );
                             func( val, pos.pFound );
                         }
+                        m_Stat.onUpdateExisting();
                         return std::make_pair( true, false );
                     }
                 }
                 else {
-                    if ( !bInsert )
+                    if ( !bInsert ) {
+                        m_Stat.onUpdateFailed();
                         return std::make_pair( false, false );
+                    }
 
-                    if ( link_node( &val, pos ) ) {
+                    if ( link_node( &val, pos )) {
                         func( val, static_cast<value_type*>( nullptr ));
                         ++m_ItemCounter;
+                        m_Stat.onUpdateNew();
                         return std::make_pair( true, true );
                     }
                 }
+
+                m_Stat.onUpdateRetry();
             }
         }
 
@@ -915,6 +948,7 @@ namespace cds { namespace intrusive {
                 if ( pos.pFound == &val ) {
                     if ( unlink_node( pos )) {
                         --m_ItemCounter;
+                        m_Stat.onEraseSuccess();
                         return true;
                     }
                     else
@@ -922,7 +956,11 @@ namespace cds { namespace intrusive {
                 }
                 else
                     break;
+
+                m_Stat.onEraseRetry();
             }
+
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -934,11 +972,16 @@ namespace cds { namespace intrusive {
                 if ( unlink_node( pos )) {
                     f( *pos.pFound );
                     --m_ItemCounter;
+                    m_Stat.onEraseSuccess();
                     return true;
                 }
                 else
                     bkoff();
+
+                m_Stat.onEraseRetry();
             }
+
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -965,11 +1008,16 @@ namespace cds { namespace intrusive {
                 if ( unlink_node( pos )) {
                     dest.set( pos.pFound );
                     --m_ItemCounter;
+                    m_Stat.onEraseSuccess();
                     return true;
                 }
                 else
                     bkoff();
+
+                m_Stat.onEraseRetry();
             }
+
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -977,7 +1025,13 @@ namespace cds { namespace intrusive {
         bool find_at( atomic_node_ptr const& refHead, Q const& val, Compare cmp ) const
         {
             position pos;
-            return search( refHead, val, pos, cmp );
+            if ( search( refHead, val, pos, cmp ) ) {
+                m_Stat.onFindSuccess();
+                return true;
+            }
+
+            m_Stat.onFindFailed();
+            return false;
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -987,8 +1041,11 @@ namespace cds { namespace intrusive {
             if ( search( refHead, val, pos, cmp )) {
                 assert( pos.pFound != nullptr );
                 f( *pos.pFound, val );
+                m_Stat.onFindSuccess();
                 return true;
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
 
@@ -999,8 +1056,11 @@ namespace cds { namespace intrusive {
             if ( search( refHead, val, pos, cmp )) {
                 assert( pos.pCur != nullptr );
                 assert( pos.pFound != nullptr );
+                m_Stat.onFindSuccess();
                 return iterator( pos.pCur, pos.pFound );
             }
+
+            m_Stat.onFindFailed();
             return iterator{};
         }
 
@@ -1010,8 +1070,11 @@ namespace cds { namespace intrusive {
             position pos;
             if ( search( refHead, val, pos, cmp )) {
                 guard.set( pos.pFound );
+                m_Stat.onFindSuccess();
                 return true;
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
         //@endcond
@@ -1058,13 +1121,15 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
-        static node_type * alloc_node( value_type * pVal )
+        node_type * alloc_node( value_type * pVal )
         {
+            m_Stat.onNodeCreated();
             return cxx_node_allocator().New( pVal );
         }
 
-        static void delete_node( node_type * pNode )
+        void delete_node( node_type * pNode )
         {
+            m_Stat.onNodeRemoved();
             cxx_node_allocator().Delete( pNode );
         }
 
@@ -1087,7 +1152,7 @@ namespace cds { namespace intrusive {
             }
         }
 
-        static bool link_node( value_type * pVal, position& pos )
+        bool link_node( value_type * pVal, position& pos )
         {
             if ( pos.pPrev ) {
                 if ( pos.pPrev->data.load( memory_model::memory_order_relaxed ) == nullptr ) {
