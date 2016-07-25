@@ -49,7 +49,7 @@ namespace {
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::hp::GarbageCollector::Destruct();
+            cds::gc::dhp::GarbageCollector::Destruct();
         }
     };
 

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_LAZY_LIST_NOGC_H
@@ -119,10 +119,13 @@ namespace cds { namespace intrusive {
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;    ///< node traits
         typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
-        typedef typename traits::item_counter item_counter;  ///< Item counting policy used
-        typedef typename traits::memory_model memory_model; ///< C++ memory ordering (see lazy_list::traits::memory_model)
+        typedef typename traits::item_counter item_counter; ///< Item counting policy used
+        typedef typename traits::memory_model memory_model; ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
+        typedef typename traits::stat         stat;         ///< Internal statistics
 
         //@cond
+        static_assert((std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type");
+
         // Rebind traits (split-list support)
         template <typename... Options>
         struct rebind_traits {
@@ -141,6 +144,7 @@ namespace cds { namespace intrusive {
         node_type       m_Head;        ///< List head (dummy node)
         node_type       m_Tail;        ///< List tail (dummy node)
         item_counter    m_ItemCounter; ///< Item counter
+        mutable stat    m_Stat;        ///< Internal statistics
 
         //@cond
 
@@ -348,9 +352,17 @@ namespace cds { namespace intrusive {
         /// Default constructor initializes empty list
         LazyList()
         {
-            static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
             m_Head.m_pNext.store( &m_Tail, memory_model::memory_order_relaxed );
         }
+
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, lazy_list::wrapped_stat<Stat>>::value >>
+        explicit LazyList( Stat& st )
+            : m_Stat( st )
+        {
+            m_Head.m_pNext.store( &m_Tail, memory_model::memory_order_relaxed );
+        }
+        //@endcond
 
         /// Destroys the list object
         ~LazyList()
@@ -592,6 +604,12 @@ namespace cds { namespace intrusive {
             return m_ItemCounter.value();
         }
 
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
     protected:
         //@cond
         // split-list support
@@ -624,16 +642,22 @@ namespace cds { namespace intrusive {
                     if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) ) {
                             // failed: key already in list
+                            m_Stat.onInsertFailed();
                             return false;
                         }
                         else {
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
-                            ++m_ItemCounter;
-                            return true;
+                            break;
                         }
                     }
                 }
+
+                m_Stat.onInsertRetry();
             }
+
+            ++m_ItemCounter;
+            m_Stat.onInsertSuccess();
+            return true;
         }
 
         iterator insert_at_( node_type * pHead, value_type& val )
@@ -659,21 +683,29 @@ namespace cds { namespace intrusive {
                             // key already in the list
 
                             func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
+                            m_Stat.onUpdateExisting();
                             return std::make_pair( iterator( pos.pCur ), false );
                         }
                         else {
                             // new key
-                            if ( !bAllowInsert )
+                            if ( !bAllowInsert ) {
+                                m_Stat.onUpdateFailed();
                                 return std::make_pair( end(), false );
+                            }
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             func( true, val, val );
-                            ++m_ItemCounter;
-                            return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
+                            break;
                         }
                     }
+
+                    m_Stat.onUpdateRetry();
                 }
             }
+
+            ++m_ItemCounter;
+            m_Stat.onUpdateNew();
+            return std::make_pair( iterator( node_traits::to_node_ptr( val ) ), true );
         }
 
         template <typename Func>
@@ -694,9 +726,12 @@ namespace cds { namespace intrusive {
                 if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) )
                 {
                     f( *node_traits::to_value_ptr( *pos.pCur ), val );
+                    m_Stat.onFindSuccess();
                     return true;
                 }
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
 
@@ -716,9 +751,13 @@ namespace cds { namespace intrusive {
 
             search( pHead, val, pos, pred );
             if ( pos.pCur != &m_Tail ) {
-                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ))
+                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred )) {
+                    m_Stat.onFindSuccess();
                     return iterator( pos.pCur );
+                }
             }
+
+            m_Stat.onFindFailed();
             return end();
         }
 
@@ -772,9 +811,15 @@ namespace cds { namespace intrusive {
             return cmp(l, r) == 0;
         }
 
-        static bool validate( node_type * pPred, node_type * pCur )
+        bool validate( node_type * pPred, node_type * pCur )
         {
-            return pPred->m_pNext.load(memory_model::memory_order_acquire) == pCur;
+            if ( pPred->m_pNext.load(memory_model::memory_order_acquire) == pCur ) {
+                m_Stat.onValidationSuccess();
+                return true;
+            }
+
+            m_Stat.onValidationFailed();
+            return false;
         }
 
         // for split-list

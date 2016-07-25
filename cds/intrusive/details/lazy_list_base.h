@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_DETAILS_LAZY_LIST_BASE_H
@@ -215,6 +215,101 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+        /// \p LazyList internal statistics
+        template <typename EventCounter = cds::atomicity::event_counter>
+        struct stat {
+            typedef EventCounter event_counter; ///< Event counter type
+
+            event_counter   m_nInsertSuccess;   ///< Number of success \p insert() operations
+            event_counter   m_nInsertFailed;    ///< Number of failed \p insert() operations
+            event_counter   m_nInsertRetry;     ///< Number of attempts to insert new item
+            event_counter   m_nUpdateNew;       ///< Number of new item inserted for \p update()
+            event_counter   m_nUpdateExisting;  ///< Number of existing item updates
+            event_counter   m_nUpdateFailed;    ///< Number of failed \p update() call
+            event_counter   m_nUpdateRetry;     ///< Number of attempts to \p update() the item
+            event_counter   m_nUpdateMarked;    ///< Number of attempts to \p update() logically deleted (marked) items
+            event_counter   m_nEraseSuccess;    ///< Number of successful \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseFailed;     ///< Number of failed \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseRetry;      ///< Number of attempts to \p erase() an item
+            event_counter   m_nFindSuccess;     ///< Number of successful \p find() and \p get() operations
+            event_counter   m_nFindFailed;      ///< Number of failed \p find() and \p get() operations
+
+            event_counter   m_nValidationSuccess;   ///< Number of successful validating of search result
+            event_counter   m_nValidationFailed;    ///< Number of failed validating of search result
+
+            //@cond
+            void onInsertSuccess()  { ++m_nInsertSuccess;   }
+            void onInsertFailed()   { ++m_nInsertFailed;    }
+            void onInsertRetry()    { ++m_nInsertRetry;     }
+            void onUpdateNew()      { ++m_nUpdateNew;       }
+            void onUpdateExisting() { ++m_nUpdateExisting;  }
+            void onUpdateFailed()   { ++m_nUpdateFailed;    }
+            void onUpdateRetry()    { ++m_nUpdateRetry;     }
+            void onUpdateMarked()   { ++m_nUpdateMarked;    }
+            void onEraseSuccess()   { ++m_nEraseSuccess;    }
+            void onEraseFailed()    { ++m_nEraseFailed;     }
+            void onEraseRetry()     { ++m_nEraseRetry;      }
+            void onFindSuccess()    { ++m_nFindSuccess;     }
+            void onFindFailed()     { ++m_nFindFailed;      }
+
+            void onValidationSuccess()  { ++m_nValidationSuccess;   }
+            void onValidationFailed()   { ++m_nValidationFailed;    }
+            //@endcond
+        };
+
+        /// \p LazyList empty internal statistics
+        struct empty_stat {
+            //@cond
+            void onInsertSuccess()              const {}
+            void onInsertFailed()               const {}
+            void onInsertRetry()                const {}
+            void onUpdateNew()                  const {}
+            void onUpdateExisting()             const {}
+            void onUpdateFailed()               const {}
+            void onUpdateRetry()                const {}
+            void onUpdateMarked()               const {}
+            void onEraseSuccess()               const {}
+            void onEraseFailed()                const {}
+            void onEraseRetry()                 const {}
+            void onFindSuccess()                const {}
+            void onFindFailed()                 const {}
+
+            void onValidationSuccess()          const {}
+            void onValidationFailed()           const {}
+            //@endcond
+        };
+
+        //@cond
+        template <typename Stat = lazy_list::stat<>>
+        struct wrapped_stat {
+            typedef Stat stat_type;
+
+            wrapped_stat( stat_type& st )
+                : m_stat( st )
+            {}
+
+            void onInsertSuccess()      { m_stat.onInsertSuccess();     }
+            void onInsertFailed()       { m_stat.onInsertFailed();      }
+            void onInsertRetry()        { m_stat.onInsertRetry();       }
+            void onUpdateNew()          { m_stat.onUpdateNew();         }
+            void onUpdateExisting()     { m_stat.onUpdateExisting();    }
+            void onUpdateFailed()       { m_stat.onUpdateFailed();      }
+            void onUpdateRetry()        { m_stat.onUpdateRetry();       }
+            void onUpdateMarked()       { m_stat.onUpdateMarked();      }
+            void onEraseSuccess()       { m_stat.onEraseSuccess();      }
+            void onEraseFailed()        { m_stat.onEraseFailed();       }
+            void onEraseRetry()         { m_stat.onEraseRetry();        }
+            void onFindSuccess()        { m_stat.onFindSuccess();       }
+            void onFindFailed()         { m_stat.onFindFailed();        }
+
+            void onValidationSuccess()  { m_stat.onValidationSuccess(); }
+            void onValidationFailed()   { m_stat.onValidationFailed();  }
+
+            stat_type& m_stat;
+        };
+        //@endcond
+
+
         /// LazyList traits
         struct traits
         {
@@ -260,6 +355,13 @@ namespace cds { namespace intrusive {
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
 
+            /// Internal statistics
+            /**
+                By default, internal statistics is disabled (\p lazy_list::empty_stat).
+                Use \p lazy_list::stat to enable it.
+            */
+            typedef empty_stat                      stat;
+
             /// Link fields checking feature
             /**
                 Default is \p opt::debug_check_link
@@ -298,6 +400,8 @@ namespace cds { namespace intrusive {
             - \p opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
                  To enable item counting use \p atomicity::item_counter.
+            - \p opt::stat - internal statistics. By default, it is disabled (\p lazy_list::empty_stat).
+                To enable it use \p lazy_list::stat
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
@@ -321,6 +425,22 @@ namespace cds { namespace intrusive {
     // Forward declaration
     template < class GC, typename T, class Traits = lazy_list::traits >
     class LazyList;
+    //@endcond
+
+    //@cond
+    template <typename List>
+    struct is_lazy_list {
+        enum {
+            value = false
+        };
+    };
+
+    template <typename GC, typename T, typename Traits>
+    struct is_lazy_list< LazyList< GC, T, Traits >> {
+        enum {
+            value = true
+        };
+    };
     //@endcond
 
 }}   // namespace cds::intrusive

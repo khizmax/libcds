@@ -390,8 +390,21 @@ namespace cds { namespace intrusive {
     //@endcond
 
 
-    /// Tag for selecting Michael list
-    //class michael_list_tag;
+    //@cond
+    template <typename List>
+    struct is_michael_list {
+        enum {
+            value = false
+        };
+    };
+
+    template <typename GC, typename T, typename Traits>
+    struct is_michael_list< MichaelList< GC, T, Traits >> {
+        enum {
+            value = true
+        };
+    };
+    //@endcond
 
 }}   // namespace cds::intrusive
 
