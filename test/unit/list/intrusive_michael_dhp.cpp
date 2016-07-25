@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_intrusive_list_hp.h"
@@ -145,6 +145,40 @@ namespace {
         test_ordered_iterator( l );
         test_hp( l );
     }
+    TEST_F( IntrusiveMichaelList_DHP, base_hook_stat )
+    {
+        struct traits: public ci::michael_list::traits {
+            typedef ci::michael_list::base_hook< cds::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp< base_item > compare;
+            typedef intrusive_list_common::less< base_item > less;
+            typedef cds::intrusive::michael_list::stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, base_item, traits > list_type;
+
+        list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
+    TEST_F( IntrusiveMichaelList_DHP, base_hook_wrapped_stat )
+    {
+        struct traits: public ci::michael_list::traits {
+            typedef ci::michael_list::base_hook< cds::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp< base_item > compare;
+            typedef cds::intrusive::michael_list::wrapped_stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, base_item, traits > list_type;
+
+        cds::intrusive::michael_list::stat<> st;
+        list_type l( st );
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
 
     TEST_F( IntrusiveMichaelList_DHP, member_hook )
     {
@@ -226,6 +260,40 @@ namespace {
         typedef ci::MichaelList< gc_type, member_item, traits > list_type;
 
         list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
+    TEST_F( IntrusiveMichaelList_DHP, member_hook_stat )
+    {
+        struct traits: public ci::michael_list::traits {
+            typedef ci::michael_list::member_hook< offsetof( member_item, hMember ), cds::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp< member_item > compare;
+            typedef intrusive_list_common::less< member_item > less;
+            typedef cds::intrusive::michael_list::stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, member_item, traits > list_type;
+
+        list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
+    TEST_F( IntrusiveMichaelList_DHP, member_hook_wrapped_stat )
+    {
+        struct traits: public ci::michael_list::traits {
+            typedef ci::michael_list::member_hook< offsetof( member_item, hMember ), cds::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp< member_item > compare;
+            typedef cds::intrusive::michael_list::wrapped_stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, member_item, traits > list_type;
+
+        cds::intrusive::michael_list::stat<> st;
+        list_type l( st );
         test_common( l );
         test_ordered_iterator( l );
         test_hp( l );

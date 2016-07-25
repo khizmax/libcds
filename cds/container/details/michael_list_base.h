@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H
@@ -41,10 +41,23 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_helper
     */
     namespace michael_list {
+
+        /// \p MichaelList internal statistics, see \p cds::intrusive::michael_list::stat
+        template <typename EventCounter = cds::atomicity::event_counter>
+        using stat = cds::intrusive::michael_list::stat< EventCounter >;
+
+        /// \p MichaelList empty internal statistics, see \p cds::intrusive::michael_list::empty_stat
+        typedef cds::intrusive::michael_list::empty_stat empty_stat;
+
+        //@cond
+        template <typename Stat = michael_list::stat<>>
+        using wrapped_stat = cds::intrusive::michael_list::wrapped_stat< Stat >;
+        //@endif
+
         /// MichaelList traits
         struct traits
         {
-            typedef CDS_DEFAULT_ALLOCATOR   allocator       ;   ///< allocator used to allocate new node
+            typedef CDS_DEFAULT_ALLOCATOR   allocator;   ///< allocator used to allocate new node
 
             /// Key comparison functor
             /**
@@ -63,6 +76,13 @@ namespace cds { namespace container {
 
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
+
+            /// Internal statistics
+            /**
+                By default, internal statistics is disabled (\p michael_list::empty_stat).
+                Use \p michael_list::stat to enable it.
+            */
+            typedef empty_stat                      stat;
 
             /// C++ memory ordering model
             /**
@@ -86,6 +106,20 @@ namespace cds { namespace container {
 
         /// Metafunction converting option list to \p michael_list::traits
         /**
+            Supported \p Options are:
+            - \p opt::compare - key comparison functor. No default functor is provided.
+                If the option is not specified, the \p opt::less is used.
+            - \p opt::less - specifies binary predicate used for key comparison. Default is \p std::less<T>.
+            - \p opt::allocator - an allocator, default is \p CDS_DEFAULT_ALLOCATOR
+            - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
+            - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
+                 To enable item counting use \p atomicity::item_counter.
+            - \p opt::stat - internal statistics. By default, it is disabled (\p michael_list::empty_stat).
+                To enable it use \p michael_list::stat
+            - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
+            - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
+                Default is \p opt::v::rcu_throw_deadlock
         */
         template <typename... Options>
         struct make_traits {

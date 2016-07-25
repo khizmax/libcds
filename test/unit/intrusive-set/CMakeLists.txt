@@ -11,6 +11,8 @@ set(CDSGTEST_SET_SOURCES
     intrusive_feldman_hashset_rcu_gpt.cpp
     intrusive_feldman_hashset_rcu_shb.cpp
     intrusive_feldman_hashset_rcu_sht.cpp
+    intrusive_michael_iterable_dhp.cpp
+    intrusive_michael_iterable_hp.cpp
     intrusive_michael_lazy_hp.cpp
     intrusive_michael_lazy_dhp.cpp
     intrusive_michael_lazy_nogc.cpp

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_MICHAEL_LIST_NOGC_H
@@ -34,7 +34,6 @@
 #include <cds/intrusive/details/michael_list_base.h>
 #include <cds/gc/nogc.h>
 #include <cds/details/make_const_type.h>
-
 
 namespace cds { namespace intrusive {
 
@@ -96,11 +95,14 @@ namespace cds { namespace intrusive {
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
         typedef typename michael_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
-        typedef typename traits::back_off     back_off;      ///< back-off strategy
-        typedef typename traits::item_counter item_counter;  ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::back_off     back_off;     ///< back-off strategy
+        typedef typename traits::item_counter item_counter; ///< Item counting policy used
+        typedef typename traits::memory_model memory_model; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::stat         stat;         ///< Internal statistics
 
         //@cond
+        static_assert((std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type");
+
         // Rebind traits (split-list support)
         template <typename... Options>
         struct rebind_traits {
@@ -118,6 +120,7 @@ namespace cds { namespace intrusive {
 
         atomic_node_ptr     m_pHead;        ///< Head pointer
         item_counter        m_ItemCounter;  ///< Item counter
+        stat                m_Stat;         ///< Internal statistics
 
         //@cond
         /// Position pointer for item search
@@ -309,9 +312,15 @@ namespace cds { namespace intrusive {
         /// Default constructor initializes empty list
         MichaelList()
             : m_pHead( nullptr )
-        {
-            static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
-        }
+        {}
+
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, michael_list::wrapped_stat<Stat>>::value >>
+        explicit MichaelList( Stat& st )
+            : m_pHead( nullptr )
+            , m_Stat( st )
+        {}
+        //@endcond
 
         /// Destroys the list objects
         ~MichaelList()
@@ -513,6 +522,12 @@ namespace cds { namespace intrusive {
             return m_ItemCounter.value();
         }
 
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
     protected:
         //@cond
         // split-list support
@@ -537,13 +552,18 @@ namespace cds { namespace intrusive {
             position pos;
 
             while ( true ) {
-                if ( search( refHead, val, key_comparator(), pos ) )
+                if ( search( refHead, val, key_comparator(), pos )) {
+                    m_Stat.onInsertFailed();
                     return false;
+                }
 
                 if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                     ++m_ItemCounter;
+                    m_Stat.onInsertSuccess();
                     return true;
                 }
+
+                m_Stat.onInsertRetry();
             }
         }
 
@@ -564,18 +584,24 @@ namespace cds { namespace intrusive {
                     assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur ) ) == 0 );
 
                     func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
+                    m_Stat.onUpdateExisting();
                     return std::make_pair( iterator( pos.pCur ), false );
                 }
                 else {
-                    if ( !bAllowInsert )
+                    if ( !bAllowInsert ) {
+                        m_Stat.onUpdateFailed();
                         return std::make_pair( end(), false );
+                    }
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         ++m_ItemCounter;
                         func( true, val , val );
+                        m_Stat.onUpdateNew();
                         return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
                     }
                 }
+
+                m_Stat.onUpdateRetry();
             }
         }
 
@@ -594,8 +620,11 @@ namespace cds { namespace intrusive {
             if ( search( refHead, val, cmp, pos ) ) {
                 assert( pos.pCur != nullptr );
                 f( *node_traits::to_value_ptr( *pos.pCur ), val );
+                m_Stat.onFindSuccess();
                 return true;
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
 
@@ -603,8 +632,12 @@ namespace cds { namespace intrusive {
         value_type * find_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
             iterator it = find_at_( refHead, val, cmp );
-            if ( it != end() )
+            if ( it != end() ) {
+                m_Stat.onFindSuccess();
                 return &*it;
+            }
+
+            m_Stat.onFindFailed();
             return nullptr;
         }
 
@@ -615,8 +648,11 @@ namespace cds { namespace intrusive {
 
             if ( search( refHead, val, cmp, pos ) ) {
                 assert( pos.pCur != nullptr );
+                m_Stat.onFindSuccess();
                 return iterator( pos.pCur );
             }
+
+            m_Stat.onFindFailed();
             return end();
         }
 

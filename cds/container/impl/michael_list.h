@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_IMPL_MICHAEL_LIST_H
@@ -136,6 +136,7 @@ namespace cds { namespace container {
         typedef typename base_class::item_counter   item_counter;   ///< Item counting policy used
         typedef typename maker::key_comparator      key_comparator; ///< key comparison functor
         typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
+        typedef typename base_class::stat           stat;           ///< Internal statistics
 
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
 
@@ -334,6 +335,13 @@ namespace cds { namespace container {
         */
         MichaelList()
         {}
+
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, michael_list::wrapped_stat<Stat>>::value >>
+        explicit MichaelList( Stat& st )
+            : base_class( st )
+        {}
+        //@endcond
 
         /// List destructor
         /**
@@ -731,6 +739,12 @@ namespace cds { namespace container {
         void clear()
         {
             base_class::clear();
+        }
+
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return base_class::statistics();
         }
 
     protected:

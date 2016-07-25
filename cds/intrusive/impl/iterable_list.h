@@ -466,9 +466,9 @@ namespace cds { namespace intrusive {
             return update_at( m_pHead, val, func, bInsert );
         }
 
-        /// Updates the node
+        /// Insert or update
         /**
-            The operation performs inserting or changing data with lock-free manner.
+            The operation performs inserting or updating data with lock-free manner.
 
             If the item \p val is not found in the list, then \p val is inserted
             iff \p bInsert is \p true.
@@ -479,7 +479,7 @@ namespace cds { namespace intrusive {
             \p second is \p true if \p val has been added or \p false if the item with that key
             already in the list.
         */
-        std::pair<bool, bool> update( value_type& val, bool bInsert = true )
+        std::pair<bool, bool> upsert( value_type& val, bool bInsert = true )
         {
             return update_at( m_pHead, val, []( value_type&, value_type* ) {}, bInsert );
         }
@@ -830,6 +830,12 @@ namespace cds { namespace intrusive {
         size_t size() const
         {
             return m_ItemCounter.value();
+        }
+
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
         }
 
     protected:

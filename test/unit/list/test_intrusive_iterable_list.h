@@ -278,11 +278,11 @@ namespace cds_test {
                     break;
                 case 3:
                     {
-                        std::pair<bool, bool> ret = l.update( i, false );
+                        std::pair<bool, bool> ret = l.upsert( i, false );
                         EXPECT_EQ( ret.first, false );
                         EXPECT_EQ( ret.second, false );
 
-                        ret = l.update( i );
+                        ret = l.upsert( i );
                         EXPECT_EQ( ret.first, true );
                         EXPECT_EQ( ret.second, true );
                     }

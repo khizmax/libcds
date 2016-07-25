@@ -201,6 +201,7 @@ namespace cds { namespace intrusive {
 #   endif
 
         typedef typename traits::disposer  disposer; ///< disposer used
+        typedef typename traits::stat      stat;     ///< Internal statistics
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
         typedef typename michael_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
@@ -231,8 +232,9 @@ namespace cds { namespace intrusive {
 
         typedef atomic_node_ptr     auxiliary_head;   ///< Auxiliary head type (for split-list support)
 
-        atomic_node_ptr     m_pHead;        ///< Head pointer
-        item_counter        m_ItemCounter;  ///< Item counter
+        atomic_node_ptr m_pHead;        ///< Head pointer
+        item_counter    m_ItemCounter;  ///< Item counter
+        stat            m_Stat;         ///< Internal statistics
 
         //@cond
         /// Position pointer for item search
@@ -517,6 +519,14 @@ namespace cds { namespace intrusive {
         {
             static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
         }
+
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, michael_list::wrapped_stat<Stat>>::value >>
+        explicit MichaelList( Stat& st )
+            : m_pHead( nullptr )
+            , m_Stat( st )
+        {}
+        //@endcond
 
         /// Destroys the list object
         ~MichaelList()
@@ -925,11 +935,17 @@ namespace cds { namespace intrusive {
             this function always returns 0.
 
             @note Even if you use real item counter and it returns 0, this fact does not mean that the list
-            is empty. To check list emptyness use \p empty() method.
+            is empty. To check list emptiness use \p empty() method.
         */
         size_t size() const
         {
             return m_ItemCounter.value();
+        }
+
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
         }
 
     protected:
@@ -957,16 +973,18 @@ namespace cds { namespace intrusive {
             position pos;
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator()))
+                if ( search( refHead, val, pos, key_comparator())) {
+                    m_Stat.onInsertFailed();
                     return false;
+                }
 
                 if ( link_node( pNode, pos )) {
                     ++m_ItemCounter;
+                    m_Stat.onInsertSuccess();
                     return true;
                 }
 
-                // clear next field
-                pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+                m_Stat.onInsertRetry();
             }
         }
 
@@ -977,19 +995,21 @@ namespace cds { namespace intrusive {
             position pos;
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator()))
+                if ( search( refHead, val, pos, key_comparator())) {
+                    m_Stat.onInsertFailed();
                     return false;
+                }
 
                 typename gc::Guard guard;
                 guard.assign( &val );
                 if ( link_node( pNode, pos )) {
                     f( val );
                     ++m_ItemCounter;
+                    m_Stat.onInsertSuccess();
                     return true;
                 }
 
-                // clear next field
-                pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+                m_Stat.onInsertRetry();
             }
         }
 
@@ -1003,27 +1023,32 @@ namespace cds { namespace intrusive {
                 if ( search( refHead, val, pos, key_comparator())) {
                     if ( cds_unlikely( pos.pCur->m_pNext.load(memory_model::memory_order_acquire).bits())) {
                         back_off()();
+                        m_Stat.onUpdateMarked();
                         continue;       // the node found is marked as deleted
                     }
                     assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur )) == 0 );
 
                     func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
+                    m_Stat.onUpdateExisting();
                     return std::make_pair( true, false );
                 }
                 else {
-                    if ( !bInsert )
+                    if ( !bInsert ) {
+                        m_Stat.onUpdateFailed();
                         return std::make_pair( false, false );
+                    }
 
                     typename gc::Guard guard;
                     guard.assign( &val );
                     if ( link_node( pNode, pos )) {
                         ++m_ItemCounter;
                         func( true, val, val );
+                        m_Stat.onUpdateNew();
                         return std::make_pair( true, true );
                     }
-                    // clear next field
-                    pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
                 }
+
+                m_Stat.onUpdateRetry();
             }
         }
 
@@ -1036,14 +1061,21 @@ namespace cds { namespace intrusive {
                 if ( node_traits::to_value_ptr( *pos.pCur ) == &val ) {
                     if ( unlink_node( pos )) {
                         --m_ItemCounter;
+                        m_Stat.onEraseSuccess();
                         return true;
                     }
                     else
                         bkoff();
                 }
-                else
+                else {
+                    m_Stat.onUpdateFailed();
                     break;
+                }
+
+                m_Stat.onEraseRetry();
             }
+
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -1055,11 +1087,16 @@ namespace cds { namespace intrusive {
                 if ( unlink_node( pos )) {
                     f( *node_traits::to_value_ptr( *pos.pCur ));
                     --m_ItemCounter;
+                    m_Stat.onEraseSuccess();
                     return true;
                 }
                 else
                     bkoff();
+
+                m_Stat.onEraseRetry();
             }
+
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -1086,11 +1123,15 @@ namespace cds { namespace intrusive {
                 if ( unlink_node( pos )) {
                     dest.set( pos.guards.template get<value_type>( position::guard_current_item ));
                     --m_ItemCounter;
+                    m_Stat.onEraseSuccess();
                     return true;
                 }
                 else
                     bkoff();
+                m_Stat.onEraseRetry();
             }
+
+            m_Stat.onEraseFailed();
             return false;
         }
 
@@ -1098,7 +1139,13 @@ namespace cds { namespace intrusive {
         bool find_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
             position pos;
-            return search( refHead, val, pos, cmp );
+            if ( search( refHead, val, pos, cmp ) ) {
+                m_Stat.onFindSuccess();
+                return true;
+            }
+
+            m_Stat.onFindFailed();
+            return false;
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -1107,8 +1154,11 @@ namespace cds { namespace intrusive {
             position pos;
             if ( search( refHead, val, pos, cmp )) {
                 f( *node_traits::to_value_ptr( *pos.pCur ), val );
+                m_Stat.onFindSuccess();
                 return true;
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
 
@@ -1118,8 +1168,11 @@ namespace cds { namespace intrusive {
             position pos;
             if ( search( refHead, val, pos, cmp )) {
                 guard.set( pos.guards.template get<value_type>( position::guard_current_item ));
+                m_Stat.onFindSuccess();
                 return true;
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
 
@@ -1171,9 +1224,11 @@ namespace cds { namespace intrusive {
                     marked_node_ptr cur( pCur.ptr());
                     if ( cds_unlikely( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr()), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
                         retire_node( pCur.ptr());
+                        m_Stat.onHelpingSuccess();
                     }
                     else {
                         bkoff();
+                        m_Stat.onHelpingFailed();
                         goto try_again;
                     }
                 }

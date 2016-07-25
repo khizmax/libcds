@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_MICHAEL_SET_H
@@ -33,6 +33,7 @@
 
 #include <cds/intrusive/details/michael_set_base.h>
 #include <cds/details/allocator.h>
+#include <cds/intrusive/details/iterable_list_base.h>
 
 namespace cds { namespace intrusive {
 
@@ -295,7 +296,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-    ///@name Forward iterators (only for debugging purpose)
+    ///@name Forward iterators
     //@{
         /// Forward iterator
         /**
@@ -303,19 +304,23 @@ namespace cds { namespace intrusive {
             - it has no post-increment operator
             - it iterates items in unordered fashion
             - The iterator cannot be moved across thread boundary because it may contain GC's guard that is thread-private GC data.
-            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the set.
-              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            @warning Use this iterator on the concurrent container for debugging purpose only.
+            Iterator thread safety depends on type of \p OrderedList:
+            - for \p MichaelList and \p LazyList: iterator guarantees safety even if you delete the item that iterator points to
+              because that item is guarded by hazard pointer.
+              However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the set.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+              Use this iterator on the concurrent container for debugging purpose only.
+            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
+              
         */
-        typedef michael_set::details::iterator< bucket_type, false >    iterator;
+        typedef michael_set::details::iterator< bucket_type, false > iterator;
 
         /// Const forward iterator
         /**
             For iterator's features and requirements see \ref iterator
         */
-        typedef michael_set::details::iterator< bucket_type, true >     const_iterator;
+        typedef michael_set::details::iterator< bucket_type, true > const_iterator;
 
         /// Returns a forward iterator addressing the first element in a set
         /**
@@ -323,7 +328,7 @@ namespace cds { namespace intrusive {
         */
         iterator begin()
         {
-            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[0].begin(), bucket_begin(), bucket_end() );
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a set
@@ -334,7 +339,7 @@ namespace cds { namespace intrusive {
         */
         iterator end()
         {
-            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[bucket_count() - 1].end(), bucket_end() + 1, bucket_end() );
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -364,13 +369,23 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
+        bucket_type * bucket_begin() const
+        {
+            return m_Buckets;
+        }
+
+        bucket_type * bucket_end() const
+        {
+            return m_Buckets + bucket_count();
+        }
+
         const_iterator get_const_begin() const
         {
-            return const_iterator( m_Buckets[0].cbegin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( m_Buckets[0].cbegin(), bucket_begin(), bucket_end() );
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( m_Buckets[bucket_count() - 1].cend(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( m_Buckets[bucket_count() - 1].cend(), bucket_end() - 1, bucket_end() );
         }
         //@endcond
 
@@ -456,28 +471,38 @@ namespace cds { namespace intrusive {
 
             If the item \p val not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor signature is:
-            \code
-                struct functor {
-                    void operator()( bool bNew, value_type& item, value_type& val );
-                };
-            \endcode
-            with arguments:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the set
-            - \p val - argument \p val passed into the \p %update() function
-            If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
-            refers to the same thing.
 
-            The functor may change non-key fields of the \p item.
+            The functor signature depends of the type of \p OrderedList:
+
+            <b>for \p MichaelList, \p LazyList</b>
+                \code
+                    struct functor {
+                        void operator()( bool bNew, value_type& item, value_type& val );
+                    };
+                \endcode
+                with arguments:
+                - \p bNew - \p true if the item has been inserted, \p false otherwise
+                - \p item - item of the set
+                - \p val - argument \p val passed into the \p %update() function
+                If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
+                refers to the same thing.
+
+                The functor may change non-key fields of the \p item.
+                @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+                \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
+                synchronization.
+
+            <b>for \p IterableList</b>
+                \code
+                void func( value_type& val, value_type * old );
+                \endcode
+                where
+                - \p val - argument \p val passed into the \p %update() function
+                - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
 
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
-
-            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
-            synchronization.
         */
         template <typename Func>
         std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
@@ -495,6 +520,35 @@ namespace cds { namespace intrusive {
             return update( val, func, true );
         }
         //@endcond
+
+        /// Inserts or updates the node (only for \p IterableList)
+        /**
+            The operation performs inserting or changing data with lock-free manner.
+
+            If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
+            Otherwise, the current element is changed to \p val, the old element will be retired later
+            by call \p Traits::disposer.
+
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+            \p second is \p true if \p val has been added or \p false if the item with that key
+            already in the set.
+        */
+#ifdef CDS_DOXYGEN_INVOKED
+        std::pair<bool, bool> upsert( value_type& val, bool bAllowInsert = true )
+#else
+        template <typename Q>
+        typename std::enable_if< 
+            std::is_same< Q, value_type>::value && is_iterable_list< ordered_list >::value,
+            std::pair<bool, bool>
+        >::type
+        upsert( Q& val, bool bAllowInsert = true )
+#endif
+        {
+            std::pair<bool, bool> bRet = bucket( val ).upsert( val, bAllowInsert );
+            if ( bRet.second )
+                ++m_ItemCounter;
+            return bRet;
+        }
 
         /// Unlinks the item \p val from the set
         /**
@@ -682,6 +736,40 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
+        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for the set based on \p IterableList
+        */
+        template <typename Q>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<Q,Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find( Q& key )
+        {
+            bucket_type& b = bucket( key );
+            typename ordered_list::iterator it = b.find( key );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end());
+        }
+        //@cond
+        template <typename Q>
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+        find( Q const& key )
+        {
+            bucket_type& b = bucket( key );
+            typename ordered_list::iterator it = b.find( key );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end() );
+        }
+        //@endcond
+
+
         /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_intrusive_MichaelHashSet_hp_find_func "find(Q&, Func)"
@@ -702,6 +790,43 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
+        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p pred must imply the same element order as the comparator used for building the set.
+
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for the set based on \p IterableList
+        */
+        template <typename Q, typename Less>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find_with( Q& key, Less pred )
+        {
+            bucket_type& b = bucket( key );
+            typename ordered_list::iterator it = b.find_with( key, pred );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end() );
+        }
+        //@cond
+        template <typename Q, typename Less>
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+        find_with( Q const& key, Less pred )
+        {
+            bucket_type& b = bucket( key );
+            typename ordered_list::iterator it = b.find_with( key, pred );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end() );
+        }
+        //@endcond
+
         /// Checks whether the set contains \p key
         /**
 
@@ -716,14 +841,6 @@ namespace cds { namespace intrusive {
         {
             return bucket( key ).contains( key );
         }
-        //@cond
-        template <typename Q>
-        CDS_DEPRECATED("use contains()")
-        bool find( Q const& key )
-        {
-            return contains( key );
-        }
-        //@endcond
 
         /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
@@ -736,14 +853,6 @@ namespace cds { namespace intrusive {
         {
             return bucket( key ).contains( key, pred );
         }
-        //@cond
-        template <typename Q, typename Less>
-        CDS_DEPRECATED("use contains()")
-        bool find_with( Q const& key, Less pred )
-        {
-            return contains( key, pred );
-        }
-        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_MichaelHashSet_hp_get
