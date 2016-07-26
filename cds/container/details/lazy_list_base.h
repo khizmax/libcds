@@ -149,7 +149,7 @@ namespace cds { namespace container {
                 To enable it use \p lazy_list::stat
             - \p opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
         */
         template <typename... Options>
         struct make_traits {
@@ -175,7 +175,7 @@ namespace cds { namespace container {
 
     // Tag for selecting lazy list implementation
     /**
-        This struct is empty and it is used only as a tag for selecting LazyList
+        This empty struct is used only as a tag for selecting \p LazyList
         as ordered list implementation in declaration of some classes.
 
         See \p split_list::traits::ordered_list as an example.

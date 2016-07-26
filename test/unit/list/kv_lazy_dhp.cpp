@@ -159,4 +159,37 @@ namespace {
         test_hp( l );
     }
 
+    TEST_F( LazyKVList_DHP, stat )
+    {
+        struct traits: public cc::lazy_list::traits
+        {
+            typedef lt less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::container::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyKVList<gc_type, key_type, value_type, traits > list_type;
+
+        list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
+    TEST_F( LazyKVList_DHP, wrapped_stat )
+    {
+        struct traits: public cc::lazy_list::traits
+        {
+            typedef lt less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::container::lazy_list::wrapped_stat<> stat;
+        };
+        typedef cc::LazyKVList<gc_type, key_type, value_type, traits > list_type;
+
+        cds::container::lazy_list::stat<> st;
+        list_type l( st );
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
 } // namespace
