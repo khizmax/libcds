@@ -83,6 +83,7 @@ namespace map {
             {}
 
             // boost::container::flat_map requires operator =
+            // cppcheck-suppress operatorEqVarError
             value_type& operator=( value_type const& v )
             {
                 nKey = v.nKey;
