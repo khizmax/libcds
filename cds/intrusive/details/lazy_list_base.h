@@ -419,6 +419,32 @@ namespace cds { namespace intrusive {
 #   endif
         };
 
+        //@cond
+        template <typename Stat>
+        struct select_stat_wrapper
+        {
+            typedef Stat stat;
+            typedef lazy_list::wrapped_stat<Stat> wrapped_stat;
+            enum {
+                empty = false
+            };
+        };
+
+        template <>
+        struct select_stat_wrapper< empty_stat >
+        {
+            typedef empty_stat stat;
+            typedef empty_stat wrapped_stat;
+            enum {
+                empty = true
+            };
+        };
+
+        template <typename Stat>
+        struct select_stat_wrapper< lazy_list::wrapped_stat<Stat>>: public select_stat_wrapper< Stat >
+        {};
+        //@endcond
+
     } // namespace lazy_list
 
     //@cond

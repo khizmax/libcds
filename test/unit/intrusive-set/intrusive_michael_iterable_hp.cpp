@@ -124,4 +124,48 @@ namespace {
         test( s );
     }
 
+    TEST_F( IntrusiveMichaelIterableSet_HP, stat )
+    {
+        struct list_traits: public ci::iterable_list::traits
+        {
+            typedef base_class::less<item_type> less;
+            typedef cmp<item_type> compare;
+            typedef mock_disposer disposer;
+            typedef ci::iterable_list::stat<> stat;
+        };
+        typedef ci::IterableList< gc_type, item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+        };
+        typedef ci::MichaelHashSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveMichaelIterableSet_HP, wrapped_stat )
+    {
+        struct list_traits: public ci::iterable_list::traits
+        {
+            typedef base_class::less<item_type> less;
+            typedef cmp<item_type> compare;
+            typedef mock_disposer disposer;
+            typedef ci::iterable_list::wrapped_stat<> stat;
+        };
+        typedef ci::IterableList< gc_type, item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+        };
+        typedef ci::MichaelHashSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
 } // namespace

@@ -135,6 +135,10 @@ namespace cds { namespace intrusive {
                 , typename cds::opt::make_options< traits, Options...>::type
             >   type;
         };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = lazy_list::select_stat_wrapper< Stat >;
         //@endcond
 
     protected:

@@ -32,7 +32,6 @@
 #define CDSLIB_INTRUSIVE_MICHAEL_SET_H
 
 #include <cds/intrusive/details/michael_set_base.h>
-#include <cds/details/allocator.h>
 #include <cds/intrusive/details/iterable_list_base.h>
 
 namespace cds { namespace intrusive {
@@ -51,7 +50,7 @@ namespace cds { namespace intrusive {
 
         Template parameters are:
         - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for \p OrderedList
-        - \p OrderedList - ordered list implementation used as bucket for hash set, for example, \p MichaelList, \p LazyList.
+        - \p OrderedList - ordered list implementation used as bucket for hash set, for example, \p MichaelList, \p LazyList, \p IterableList.
             The intrusive ordered list implementation specifies the type \p T stored in the hash-set, the reclamation
             schema \p GC used by hash-set, the comparison functor for the type \p T and other features specific for
             the ordered list.
@@ -72,7 +71,7 @@ namespace cds { namespace intrusive {
         \code
         // Our node type
         struct Foo {
-            std::string     key_; // key field
+            std::string key_; // key field
             // ... other fields
         };
 
@@ -249,50 +248,46 @@ namespace cds { namespace intrusive {
     public:
         typedef GC           gc;            ///< Garbage collector
         typedef OrderedList  ordered_list;  ///< type of ordered list used as a bucket implementation
-        typedef ordered_list bucket_type;   ///< bucket type
-        typedef Traits       traits;       ///< Set traits
+        typedef Traits       traits;        ///< Set traits
 
-        typedef typename ordered_list::value_type       value_type      ;   ///< type of value to be stored in the set
-        typedef typename ordered_list::key_comparator   key_comparator  ;   ///< key comparing functor
-        typedef typename ordered_list::disposer         disposer        ;   ///< Node disposer functor
+        typedef typename ordered_list::value_type       value_type      ; ///< type of value to be stored in the set
+        typedef typename ordered_list::key_comparator   key_comparator  ; ///< key comparing functor
+        typedef typename ordered_list::disposer         disposer        ; ///< Node disposer functor
+        typedef typename ordered_list::stat             stat            ; ///< Internal statistics
 
         /// Hash functor for \p value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter item_counter;   ///< Item counter type
+        typedef typename traits::allocator    allocator;      ///< Bucket table allocator
 
         typedef typename ordered_list::guarded_ptr guarded_ptr; ///< Guarded pointer
-
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator > bucket_table_allocator;
 
         /// Count of hazard pointer required for the algorithm
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount;
 
-    protected:
-        item_counter    m_ItemCounter;   ///< Item counter
-        hash            m_HashFunctor;   ///< Hash functor
-        bucket_type *   m_Buckets;      ///< bucket table
+        // GC and OrderedList::gc must be the same
+        static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
-    private:
-        //@cond
-        const size_t    m_nHashBitmask;
-        //@endcond
+        // atomicity::empty_item_counter is not allowed as a item counter
+        static_assert(!std::is_same<item_counter, atomicity::empty_item_counter>::value,
+            "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
     protected:
         //@cond
-        /// Calculates hash value of \p key
-        template <typename Q>
-        size_t hash_value( const Q& key ) const
-        {
-            return m_HashFunctor( key ) & m_nHashBitmask;
-        }
+        typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
 
-        /// Returns the bucket (ordered list) for \p key
-        template <typename Q>
-        bucket_type&    bucket( const Q& key )
-        {
-            return m_Buckets[ hash_value( key ) ];
-        }
+        typedef typename ordered_list::template rebind_traits<
+            cds::opt::item_counter< cds::atomicity::empty_item_counter >
+            , cds::opt::stat< typename bucket_stat::wrapped_stat >
+        >::type internal_bucket_type;
+
+        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+
+        hash                        m_HashFunctor;   ///< Hash functor
+        size_t const                m_nHashBitmask;
+        internal_bucket_type*       m_Buckets;       ///< bucket table
+        item_counter                m_ItemCounter;   ///< Item counter
+        typename bucket_stat::stat  m_Stat;          ///< Internal statistics
         //@endcond
 
     public:
@@ -314,13 +309,13 @@ namespace cds { namespace intrusive {
             - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
               
         */
-        typedef michael_set::details::iterator< bucket_type, false > iterator;
+        typedef michael_set::details::iterator< internal_bucket_type, false > iterator;
 
         /// Const forward iterator
         /**
             For iterator's features and requirements see \ref iterator
         */
-        typedef michael_set::details::iterator< bucket_type, true > const_iterator;
+        typedef michael_set::details::iterator< internal_bucket_type, true > const_iterator;
 
         /// Returns a forward iterator addressing the first element in a set
         /**
@@ -339,7 +334,7 @@ namespace cds { namespace intrusive {
         */
         iterator end()
         {
-            return iterator( m_Buckets[bucket_count() - 1].end(), bucket_end() + 1, bucket_end() );
+            return iterator( bucket_end()[-1].end(), bucket_end() - 1, bucket_end() );
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -367,28 +362,6 @@ namespace cds { namespace intrusive {
         }
     //@}
 
-    private:
-        //@cond
-        bucket_type * bucket_begin() const
-        {
-            return m_Buckets;
-        }
-
-        bucket_type * bucket_end() const
-        {
-            return m_Buckets + bucket_count();
-        }
-
-        const_iterator get_const_begin() const
-        {
-            return const_iterator( m_Buckets[0].cbegin(), bucket_begin(), bucket_end() );
-        }
-        const_iterator get_const_end() const
-        {
-            return const_iterator( m_Buckets[bucket_count() - 1].cend(), bucket_end() - 1, bucket_end() );
-        }
-        //@endcond
-
     public:
         /// Initializes hash set
         /** @anchor cds_intrusive_MichaelHashSet_hp_ctor
@@ -402,22 +375,20 @@ namespace cds { namespace intrusive {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket. Small integer up to 10.
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count()))
         {
-            // GC and OrderedList::gc must be the same
-            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
-
-            // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
-                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
-
-            m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                construct_bucket<bucket_stat>( it );
         }
 
         /// Clears hash set object and destroys it
         ~MichaelHashSet()
         {
             clear();
-            bucket_table_allocator().Delete( m_Buckets, bucket_count() );
+
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                it->~internal_bucket_type();
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
         }
 
         /// Inserts new node
@@ -750,8 +721,8 @@ namespace cds { namespace intrusive {
 #endif
         find( Q& key )
         {
-            bucket_type& b = bucket( key );
-            typename ordered_list::iterator it = b.find( key );
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find( key );
             if ( it == b.end() )
                 return end();
             return iterator( it, &b, bucket_end());
@@ -761,8 +732,8 @@ namespace cds { namespace intrusive {
         typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
         find( Q const& key )
         {
-            bucket_type& b = bucket( key );
-            typename ordered_list::iterator it = b.find( key );
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find( key );
             if ( it == b.end() )
                 return end();
             return iterator( it, &b, bucket_end() );
@@ -808,8 +779,8 @@ namespace cds { namespace intrusive {
 #endif
         find_with( Q& key, Less pred )
         {
-            bucket_type& b = bucket( key );
-            typename ordered_list::iterator it = b.find_with( key, pred );
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find_with( key, pred );
             if ( it == b.end() )
                 return end();
             return iterator( it, &b, bucket_end() );
@@ -819,8 +790,8 @@ namespace cds { namespace intrusive {
         typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
         find_with( Q const& key, Less pred )
         {
-            bucket_type& b = bucket( key );
-            typename ordered_list::iterator it = b.find_with( key, pred );
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find_with( key, pred );
             if ( it == b.end() )
                 return end();
             return iterator( it, &b, bucket_end() );
@@ -934,6 +905,12 @@ namespace cds { namespace intrusive {
             return m_ItemCounter;
         }
 
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
         /// Returns the size of hash table
         /**
             Since \p %MichaelHashSet cannot dynamically extend the hash table size,
@@ -944,6 +921,54 @@ namespace cds { namespace intrusive {
         {
             return m_nHashBitmask + 1;
         }
+
+    private:
+        //@cond
+        internal_bucket_type * bucket_begin() const
+        {
+            return m_Buckets;
+        }
+
+        internal_bucket_type * bucket_end() const
+        {
+            return m_Buckets + bucket_count();
+        }
+
+        const_iterator get_const_begin() const
+        {
+            return const_iterator( m_Buckets[0].cbegin(), bucket_begin(), bucket_end() );
+        }
+        const_iterator get_const_end() const
+        {
+            return const_iterator( bucket_end()[-1].cend(), bucket_end() - 1, bucket_end() );
+        }
+
+        template <typename Stat>
+        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type * bucket )
+        {
+            new (bucket) internal_bucket_type;
+        }
+
+        template <typename Stat>
+        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type * bucket )
+        {
+            new (bucket) internal_bucket_type( m_Stat );
+        }
+
+        /// Calculates hash value of \p key
+        template <typename Q>
+        size_t hash_value( const Q& key ) const
+        {
+            return m_HashFunctor( key ) & m_nHashBitmask;
+        }
+
+        /// Returns the bucket (ordered list) for \p key
+        template <typename Q>
+        internal_bucket_type& bucket( const Q& key )
+        {
+            return m_Buckets[hash_value( key )];
+        }
+        //@endcond
     };
 
 }}  // namespace cds::intrusive
