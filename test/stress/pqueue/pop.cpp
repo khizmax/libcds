@@ -119,10 +119,14 @@ namespace {
                     while ( !m_Queue.empty() ) {
                         if ( m_Queue.pop( val )) {
                             ++m_nPopSuccess;
-                            if ( val.key > nPrevKey )
+                            if ( val.key > nPrevKey ) {
                                 ++m_nPopError;
-                            else if ( val.key == nPrevKey )
+                                m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key } );
+                            }
+                            else if ( val.key == nPrevKey ) {
                                 ++m_nPopErrorEq;
+                                m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key } );
+                            }
                             nPrevKey = val.key;
                         }
                         else
@@ -139,6 +143,12 @@ namespace {
             size_t              m_nPopErrorEq = 0;
             size_t              m_nPopSuccess = 0;
             size_t              m_nPopFailed = 0;
+
+            struct failed_pops {
+                size_t prev_key;
+                size_t popped_key;
+            };
+            std::vector< failed_pops > m_arrFailedPops;
         };
 
     protected:
@@ -188,6 +198,14 @@ namespace {
                     nTotalError   += cons.m_nPopError;
                     nTotalErrorEq += cons.m_nPopErrorEq;
                     nTotalFailed  += cons.m_nPopFailed;
+
+                    if ( !cons.m_arrFailedPops.empty() ) {
+                        std::cerr << "Failed pop:";
+                        for ( size_t k = 0; k < cons.m_arrFailedPops.size(); ++k ) {
+                            std::cerr << "\nThread " << i << ": prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key;
+                        }
+                        std::cerr << std::endl;
+                    }
                 }
 
                 propout()
