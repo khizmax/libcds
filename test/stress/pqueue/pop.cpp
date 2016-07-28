@@ -200,9 +200,9 @@ namespace {
                     nTotalFailed  += cons.m_nPopFailed;
 
                     if ( !cons.m_arrFailedPops.empty() ) {
-                        std::cerr << "Failed pop:";
+                        std::cerr << "Priority violations, thread " << i;
                         for ( size_t k = 0; k < cons.m_arrFailedPops.size(); ++k ) {
-                            std::cerr << "\nThread " << i << ": prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key;
+                            std::cerr << "\n    " << "prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key;
                         }
                         std::cerr << std::endl;
                     }
