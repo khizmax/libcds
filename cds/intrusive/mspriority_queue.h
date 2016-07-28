@@ -53,12 +53,15 @@ namespace cds { namespace intrusive {
         struct stat {
             typedef Counter   event_counter ; ///< Event counter type
 
-            event_counter   m_nPushCount            ;   ///< Count of success push operation
-            event_counter   m_nPopCount             ;   ///< Count of success pop operation
-            event_counter   m_nPushFailCount        ;   ///< Count of failed ("the queue is full") push operation
-            event_counter   m_nPopFailCount         ;   ///< Count of failed ("the queue is empty") pop operation
-            event_counter   m_nPushHeapifySwapCount ;   ///< Count of item swapping when heapifying in push
-            event_counter   m_nPopHeapifySwapCount  ;   ///< Count of item swapping when heapifying in pop
+            event_counter   m_nPushCount;            ///< Count of success push operation
+            event_counter   m_nPopCount;             ///< Count of success pop operation
+            event_counter   m_nPushFailCount;        ///< Count of failed ("the queue is full") push operation
+            event_counter   m_nPopFailCount;         ///< Count of failed ("the queue is empty") pop operation
+            event_counter   m_nPushHeapifySwapCount; ///< Count of item swapping when heapifying in push
+            event_counter   m_nPopHeapifySwapCount;  ///< Count of item swapping when heapifying in pop
+            event_counter   m_nItemMovedTop;         ///< Count of events when \p push() encountered that inserted item was moved to top by a concurrent \p pop()
+            event_counter   m_nItemMovedUp;          ///< Count of events when \p push() encountered that inserted item was moved upwards by a concurrent \p pop()
+            event_counter   m_nPushEmptyPass;        ///< Count of empty pass during heapify via concurrent operations
 
             //@cond
             void onPushSuccess()            { ++m_nPushCount            ;}
@@ -67,18 +70,26 @@ namespace cds { namespace intrusive {
             void onPopFailed()              { ++m_nPopFailCount         ;}
             void onPushHeapifySwap()        { ++m_nPushHeapifySwapCount ;}
             void onPopHeapifySwap()         { ++m_nPopHeapifySwapCount  ;}
+
+            void onItemMovedTop()           { ++m_nItemMovedTop         ;}
+            void onItemMovedUp()            { ++m_nItemMovedUp          ;}
+            void onPushEmptyPass()          { ++m_nPushEmptyPass        ;}
             //@endcond
         };
 
         /// MSPriorityQueue empty statistics
         struct empty_stat {
             //@cond
-            void onPushSuccess()            {}
-            void onPopSuccess()             {}
-            void onPushFailed()             {}
-            void onPopFailed()              {}
-            void onPushHeapifySwap()        {}
-            void onPopHeapifySwap()         {}
+            void onPushSuccess()            const {}
+            void onPopSuccess()             const {}
+            void onPushFailed()             const {}
+            void onPopFailed()              const {}
+            void onPushHeapifySwap()        const {}
+            void onPopHeapifySwap()         const {}
+
+            void onItemMovedTop()           const {}
+            void onItemMovedUp()            const {}
+            void onPushEmptyPass()          const {}
             //@endcond
         };
 
@@ -438,12 +449,18 @@ namespace cds { namespace intrusive {
                         i = 0;
                     }
                 }
-                else if ( refParent.m_nTag == tag_type(Empty) )
+                else if ( refParent.m_nTag == tag_type( Empty ) ) {
+                    m_Stat.onItemMovedTop();
                     i = 0;
-                else if ( refItem.m_nTag != curId )
+                }
+                else if ( refItem.m_nTag != curId ) {
+                    m_Stat.onItemMovedUp();
                     i = nParent;
-                else
+                }
+                else {
+                    m_Stat.onPushEmptyPass();
                     bProgress = false;
+                }
 
                 refItem.unlock();
                 refParent.unlock();

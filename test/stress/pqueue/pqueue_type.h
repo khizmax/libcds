@@ -640,7 +640,10 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nPushFailCount )
             << CDSSTRESS_STAT_OUT( s, m_nPopFailCount )
             << CDSSTRESS_STAT_OUT( s, m_nPushHeapifySwapCount )
-            << CDSSTRESS_STAT_OUT( s, m_nPopHeapifySwapCount );
+            << CDSSTRESS_STAT_OUT( s, m_nPopHeapifySwapCount )
+            << CDSSTRESS_STAT_OUT( s, m_nItemMovedTop )
+            << CDSSTRESS_STAT_OUT( s, m_nItemMovedUp )
+            << CDSSTRESS_STAT_OUT( s, m_nPushEmptyPass );
     }
 
 } // namespace cds_test
