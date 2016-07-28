@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_SYNC_SPINLOCK_H
@@ -49,18 +49,18 @@ namespace cds {
                 [1984] L. Rudolph, Z. Segall. Dynamic Decentralized Cache Schemes for MIMD Parallel Processors.
 
             No serialization performed - any of waiting threads may owns the spin-lock.
-            This spin-lock is NOT recursive: the thread owned the lock cannot call lock() method withod deadlock.
-            The method unlock() can call any thread
+            This spin-lock is NOT recursive: the thread owned the lock cannot call \p lock() method without deadlock.
+            The method \p unlock() can call any thread
 
             DEBUG version: The spinlock stores owner thead id. Assertion is raised when:
                 - double lock attempt encountered by same thread (deadlock)
                 - unlock by another thread
 
-            If spin-lock is locked the Backoff algorithm is called. Predefined backoff::LockDefault class yields current
+            If spin-lock is locked the \p Backoff algorithm is called. Predefined \p backoff::LockDefault class yields current
             thread and repeats lock attempts later
 
             Template parameters:
-                - @p Backoff    backoff strategy. Used when spin lock is locked
+                - \p Backoff - backoff strategy. Used when spin lock is locked
         */
         template <typename Backoff >
         class spin_lock
@@ -140,7 +140,7 @@ namespace cds {
                 return !bCurrent;
             }
 
-            /// Try to lock the object, repeat @p nTryCount times if failed
+            /// Try to lock the object, repeat \p nTryCount times if failed
             /**
                 Returns \p true if locking is succeeded
                 otherwise (if the spin is already locked) returns \p false
@@ -193,8 +193,8 @@ namespace cds {
             Allows recursive calls: the owner thread may recursive enter to critical section guarded by the spin-lock.
 
             Template parameters:
-                - @p Integral       one of integral atomic type: <tt>unsigned int</tt>, <tt>int</tt>, and others
-                - @p Backoff        backoff strategy. Used when spin lock is locked
+                - \p Integral       one of integral atomic type: <tt>unsigned int</tt>, \p int, and others
+                - \p Backoff        backoff strategy. Used when spin lock is locked
         */
         template <typename Integral, class Backoff>
         class reentrant_spin_lock
@@ -207,7 +207,7 @@ namespace cds {
 
         private:
             atomics::atomic<integral_type>   m_spin      ; ///< spin-lock atomic
-            thread_id                        m_OwnerId   ; ///< Owner thread id. If spin-lock is not locked it usually equals to OS::c_NullThreadId
+            thread_id                        m_OwnerId   ; ///< Owner thread id. If spin-lock is not locked it usually equals to \p OS::c_NullThreadId
 
         private:
             //@cond
@@ -301,7 +301,7 @@ namespace cds {
                 return !( m_spin.load( atomics::memory_order_relaxed ) == 0 || is_taken( cds::OS::get_current_thread_id() ));
             }
 
-            /// Try to lock the spin-lock (synonym for \ref try_lock)
+            /// Try to lock the spin-lock (synonym for \p try_lock())
             bool try_lock() CDS_NOEXCEPT
             {
                 thread_id tid = OS::get_current_thread_id();
@@ -337,7 +337,7 @@ namespace cds {
                 }
             }
 
-            /// Unlock the spin-lock. Return @p true if the current thread is owner of spin-lock @p false otherwise
+            /// Unlock the spin-lock. Return \p true if the current thread is owner of spin-lock \p false otherwise
             bool unlock() CDS_NOEXCEPT
             {
                 if ( is_taken( OS::get_current_thread_id() ) ) {
