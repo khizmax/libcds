@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_MSPRIORITY_QUEUE_H
@@ -393,8 +393,7 @@ namespace cds { namespace intrusive {
         size_t size() const
         {
             std::unique_lock<lock_type> l( m_Lock );
-            size_t nSize = (size_t) m_ItemCounter.value();
-            return nSize;
+            return static_cast<size_t>( m_ItemCounter.value());
         }
 
         /// Return capacity of the priority queue
