@@ -323,9 +323,7 @@ namespace cds { namespace intrusive {
             }
             counter_type nBottom = m_ItemCounter.reversed_value();
             m_ItemCounter.dec();
-            // Since m_Heap[0] is not used, capacity() returns m_Heap.capacity() - 1
-            // Consequently, "<=" is here
-            assert( nBottom <= capacity() );
+            assert( nBottom < m_Heap.capacity() );
             assert( nBottom > 0 );
 
             node& refBottom = m_Heap[ nBottom ];
@@ -349,7 +347,7 @@ namespace cds { namespace intrusive {
             refTop.m_nTag = tag_type( Available );
 
             // refTop will be unlocked inside heapify_after_pop
-            heapify_after_pop( 1, &refTop );
+            heapify_after_pop( &refTop );
 
             m_Stat.onPopSuccess();
             return pVal;
@@ -480,34 +478,34 @@ namespace cds { namespace intrusive {
             }
         }
 
-        void heapify_after_pop( counter_type nParent, node * pParent )
+        void heapify_after_pop( node * pParent )
         {
             key_comparator cmp;
+            counter_type const nCapacity = m_Heap.capacity();
 
-            while ( nParent < m_Heap.capacity() / 2 ) {
-                counter_type nLeft = nParent * 2;
-                counter_type nRight = nLeft + 1;
-                node& refLeft = m_Heap[nLeft];
-                node& refRight = m_Heap[nRight];
-                refLeft.lock();
-                refRight.lock();
+            counter_type nParent = 1;
+            for ( counter_type nChild = nParent * 2; nChild < nCapacity; nChild *= 2 ) {
+                node* pChild = &m_Heap[ nChild ];
+                pChild->lock();
 
-                counter_type nChild;
-                node * pChild;
-                if ( refLeft.m_nTag == tag_type(Empty) ) {
-                    refRight.unlock();
-                    refLeft.unlock();
+                if ( pChild->m_nTag == tag_type( Empty )) {
+                    pChild->unlock();
                     break;
                 }
-                else if ( refRight.m_nTag == tag_type(Empty) || cmp( *refLeft.m_pVal, *refRight.m_pVal ) > 0 ) {
-                    refRight.unlock();
-                    nChild = nLeft;
-                    pChild = &refLeft;
-                }
-                else {
-                    refLeft.unlock();
-                    nChild = nRight;
-                    pChild = &refRight;
+
+                counter_type const nRight = nChild + 1;
+                if ( nRight < nCapacity ) {
+                    node& refRight = m_Heap[nRight];
+                    refRight.lock();
+
+                    if ( refRight.m_nTag != tag_type( Empty ) && cmp( *refRight.m_pVal, *pChild->m_pVal ) > 0 ) {
+                        // get right child
+                        pChild->unlock();
+                        nChild = nRight;
+                        pChild = &refRight;
+                    }
+                    else
+                        refRight.unlock();
                 }
 
                 // If child has higher priority that parent then swap
