@@ -386,11 +386,9 @@ namespace cds { namespace intrusive {
         template <typename Func>
         void clear_with( Func f )
         {
-            while ( !empty() ) {
-                value_type * pVal = pop();
-                if ( pVal )
-                    f( *pVal );
-            }
+            value_type * pVal;
+            while (( pVal = pop()) != nullptr )
+                f( *pVal );
         }
 
         /// Checks is the priority queue is empty
