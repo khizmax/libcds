@@ -296,11 +296,13 @@ namespace cds { namespace intrusive {
             node& refNode = m_Heap[i];
             refNode.lock();
             m_Lock.unlock();
+            assert( refNode.m_nTag == tag_type( Empty ));
+            assert( refNode.m_pVal == nullptr );
             refNode.m_pVal = &val;
             refNode.m_nTag = curId;
             refNode.unlock();
 
-            // Move item towards top of the heap while it has higher priority than parent
+            // Move item towards top of heap while it has a higher priority than its parent
             heapify_after_push( i, curId );
 
             m_Stat.onPushSuccess();
@@ -321,8 +323,7 @@ namespace cds { namespace intrusive {
                 m_Stat.onPopFailed();
                 return nullptr;
             }
-            counter_type nBottom = m_ItemCounter.reversed_value();
-            m_ItemCounter.dec();
+            counter_type nBottom = m_ItemCounter.dec();
             assert( nBottom < m_Heap.capacity() );
             assert( nBottom > 0 );
 
@@ -508,7 +509,7 @@ namespace cds { namespace intrusive {
                         refRight.unlock();
                 }
 
-                // If child has higher priority that parent then swap
+                // If child has higher priority than parent then swap
                 // Otherwise stop
                 if ( cmp( *pChild->m_pVal, *pParent->m_pVal ) > 0 ) {
                     std::swap( pParent->m_nTag, pChild->m_nTag );
