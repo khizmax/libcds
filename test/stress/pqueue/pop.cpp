@@ -70,15 +70,22 @@ namespace {
                     ++m_nPopSuccess;
                     nPrevKey = val.key;
 
+                    bool prevPopFailed = false;
                     while ( m_Queue.pop( val )) {
                         ++m_nPopSuccess;
                         if ( val.key > nPrevKey ) {
                             ++m_nPopError;
-                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key } );
+                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key, static_cast<size_t>(-1) } );
+                            prevPopFailed = true;
                         }
                         else if ( val.key == nPrevKey ) {
                             ++m_nPopErrorEq;
-                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key } );
+                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key, static_cast<size_t>(-1) } );
+                        }
+                        else {
+                            if ( prevPopFailed )
+                                m_arrFailedPops.back().next_key = val.key;
+                            prevPopFailed = false;
                         }
                         nPrevKey = val.key;
                     }
@@ -98,6 +105,7 @@ namespace {
             struct failed_pops {
                 size_t prev_key;
                 size_t popped_key;
+                size_t next_key;
             };
             std::vector< failed_pops > m_arrFailedPops;
         };
@@ -152,7 +160,8 @@ namespace {
                     if ( !cons.m_arrFailedPops.empty() ) {
                         std::cerr << "Priority violations, thread " << i;
                         for ( size_t k = 0; k < cons.m_arrFailedPops.size(); ++k ) {
-                            std::cerr << "\n    " << "prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key;
+                            std::cerr << "\n    " << "prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key
+                                << " next_key=" << cons.m_arrFailedPops[k].next_key;
                         }
                         std::cerr << std::endl;
                     }
