@@ -291,7 +291,12 @@ namespace cds { namespace intrusive {
             }
 
             counter_type i = m_ItemCounter.inc();
-            assert( i < m_Heap.capacity() );
+            if ( i >= m_Heap.capacity() ) {
+                // the heap is full
+                m_Lock.unlock();
+                m_Stat.onPushFailed();
+                return false;
+            }
 
             node& refNode = m_Heap[i];
             refNode.lock();
