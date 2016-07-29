@@ -103,7 +103,7 @@ namespace cds { namespace intrusive {
                 the \p buffer::rebind member metafunction is called to change type
                 of values stored in the buffer.
             */
-            typedef opt::v::initialized_dynamic_buffer<void *>  buffer;
+            typedef opt::v::initialized_dynamic_buffer<void *, CDS_DEFAULT_ALLOCATOR, false>  buffer;
 
             /// Priority compare functor
             /**
@@ -240,7 +240,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef typename traits::buffer::template rebind<node, typename traits::buffer::allocator, false>::other   buffer_type ;   ///< Heap array buffer type
+        typedef typename traits::buffer::template rebind<node>::other   buffer_type ;   ///< Heap array buffer type
 
         //@cond
         typedef cds::bitop::bit_reverse_counter<>           item_counter_type;
