@@ -123,9 +123,13 @@ namespace {
                     arr.push_back( i );
                 shuffle( arr.begin(), arr.end() );
 
+                size_t nPushError = 0;
                 typedef typename PQueue::value_type value_type;
-                for ( auto it = arr.begin(); it != arr.end(); ++it )
-                    q.push( value_type( *it ));
+                for ( auto it = arr.begin(); it != arr.end(); ++it ) {
+                    if ( !q.push( value_type( *it ) ))
+                        ++nPushError;
+                }
+                s_nQueueSize -= nPushError;
             }
 
             // pop
@@ -163,8 +167,8 @@ namespace {
                     << std::make_pair( "error_priority_violation", nTotalError );
 
                 EXPECT_EQ( nTotalPopped, s_nQueueSize );
-                EXPECT_EQ( nTotalError, 0 );
-                EXPECT_EQ( nTotalErrorEq, 0 );
+                EXPECT_EQ( nTotalError, 0 ) << "priority violations";
+                EXPECT_EQ( nTotalErrorEq, 0 ) << "double key";
             }
 
             propout() << q.statistics();
