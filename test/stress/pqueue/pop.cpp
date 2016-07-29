@@ -160,8 +160,11 @@ namespace {
                     if ( !cons.m_arrFailedPops.empty() ) {
                         std::cerr << "Priority violations, thread " << i;
                         for ( size_t k = 0; k < cons.m_arrFailedPops.size(); ++k ) {
-                            std::cerr << "\n    " << "prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key
-                                << " next_key=" << cons.m_arrFailedPops[k].next_key;
+                            std::cerr << "\n    " << "prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key;
+                            if ( cons.m_arrFailedPops[k].next_key != static_cast<size_t>(-1) )
+                                std::cerr << " next_key=" << cons.m_arrFailedPops[k].next_key;
+                            else
+                                std::cerr << " next_key unspecified";
                         }
                         std::cerr << std::endl;
                     }
