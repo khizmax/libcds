@@ -240,7 +240,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-        typedef typename traits::buffer::template rebind<node>::other   buffer_type ;   ///< Heap array buffer type
+        typedef typename traits::buffer::template rebind<node, typename traits::buffer::allocator, false>::other   buffer_type ;   ///< Heap array buffer type
 
         //@cond
         typedef cds::bitop::bit_reverse_counter<>           item_counter_type;

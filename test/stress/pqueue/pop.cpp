@@ -70,6 +70,7 @@ namespace {
                     ++m_nPopSuccess;
                     nPrevKey = val.key;
 
+                    /*
                     while ( !m_Queue.empty() ) {
                         if ( m_Queue.pop( val )) {
                             ++m_nPopSuccess;
@@ -86,6 +87,21 @@ namespace {
                         else
                             ++m_nPopFailed;
                     }
+                    */
+
+                    while ( m_Queue.pop( val )) {
+                        ++m_nPopSuccess;
+                        if ( val.key > nPrevKey ) {
+                            ++m_nPopError;
+                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key } );
+                        }
+                        else if ( val.key == nPrevKey ) {
+                            ++m_nPopErrorEq;
+                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key } );
+                        }
+                        nPrevKey = val.key;
+                    }
+
                 }
                 else
                     ++m_nPopFailed;

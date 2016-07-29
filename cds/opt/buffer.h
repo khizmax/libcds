@@ -286,17 +286,18 @@ namespace cds { namespace opt {
         class uninitialized_dynamic_buffer
         {
         public:
-            typedef T   value_type;   ///< Value type
+            typedef T     value_type;   ///< Value type
+            typedef Alloc allocator;    ///< Allocator type;
             static CDS_CONSTEXPR const bool c_bExp2 = Exp2; ///< \p Exp2 flag
 
             /// Rebind buffer for other template parameters
-            template <typename Q, typename Alloc2=Alloc, bool Exp22 = c_bExp2>
+            template <typename Q, typename Alloc2= allocator, bool Exp22 = c_bExp2>
             struct rebind {
                 typedef uninitialized_dynamic_buffer<Q, Alloc2, Exp22> other;  ///< Rebinding result type
             };
 
             //@cond
-            typedef typename Alloc::template rebind<value_type>::other allocator_type;
+            typedef typename allocator::template rebind<value_type>::other allocator_type;
             //@endcond
 
         private:
@@ -387,17 +388,18 @@ namespace cds { namespace opt {
         class initialized_dynamic_buffer
         {
         public:
-            typedef T   value_type;   ///< Value type
+            typedef T     value_type;   ///< Value type
+            typedef Alloc allocator;    ///< Allocator type
             static CDS_CONSTEXPR const bool c_bExp2 = Exp2; ///< \p Exp2 flag
 
             /// Rebind buffer for other template parameters
-            template <typename Q, typename Alloc2=Alloc, bool Exp22 = c_bExp2>
+            template <typename Q, typename Alloc2= allocator, bool Exp22 = c_bExp2>
             struct rebind {
                 typedef initialized_dynamic_buffer<Q, Alloc2, Exp22> other;  ///< Rebinding result type
             };
 
             //@cond
-            typedef cds::details::Allocator<value_type, Alloc>   allocator_type;
+            typedef cds::details::Allocator<value_type, allocator>   allocator_type;
             //@endcond
 
         private:
