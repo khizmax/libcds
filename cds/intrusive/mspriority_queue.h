@@ -323,7 +323,8 @@ namespace cds { namespace intrusive {
                 m_Stat.onPopFailed();
                 return nullptr;
             }
-            counter_type nBottom = m_ItemCounter.dec();
+            counter_type nBottom = m_ItemCounter.reversed_value();
+            m_ItemCounter.dec();
             assert( nBottom < m_Heap.capacity() );
             assert( nBottom > 0 );
 
