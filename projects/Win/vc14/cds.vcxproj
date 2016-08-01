@@ -414,7 +414,10 @@
     <ClInclude Include="..\..\..\cds\container\details\cuckoo_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h" />
+    <ClInclude Include="..\..\..\cds\container\details\iterable_list_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\lazy_list_base.h" />
+    <ClInclude Include="..\..\..\cds\container\details\make_iterable_kvlist.h" />
+    <ClInclude Include="..\..\..\cds\container\details\make_iterable_list.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h" />
@@ -434,6 +437,7 @@
     <ClInclude Include="..\..\..\cds\container\impl\bronson_avltree_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_map.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_set.h" />
+    <ClInclude Include="..\..\..\cds\container\impl\iterable_list.h" />
     <ClInclude Include="..\..\..\cds\container\impl\lazy_kvlist.h" />
     <ClInclude Include="..\..\..\cds\container\impl\lazy_list.h" />
     <ClInclude Include="..\..\..\cds\container\impl\michael_kvlist.h" />
@@ -442,6 +446,8 @@
     <ClInclude Include="..\..\..\cds\container\impl\feldman_hashset.h" />
     <ClInclude Include="..\..\..\cds\container\impl\skip_list_map.h" />
     <ClInclude Include="..\..\..\cds\container\impl\skip_list_set.h" />
+    <ClInclude Include="..\..\..\cds\container\iterable_list_dhp.h" />
+    <ClInclude Include="..\..\..\cds\container\iterable_list_hp.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_kvlist_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\lazy_list_dhp.h" />

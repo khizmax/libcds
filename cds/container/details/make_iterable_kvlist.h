@@ -1,0 +1,96 @@
+/*
+    This file is a part of libcds - Concurrent Data Structures library
+
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
+
+    Source code repo: http://github.com/khizmax/libcds/
+    Download: http://sourceforge.net/projects/libcds/files/
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this
+      list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#ifndef CDSLIB_CONTAINER_DETAILS_MAKE_ITERABLE_KVLIST_H
+#define CDSLIB_CONTAINER_DETAILS_MAKE_ITERABLE_KVLIST_H
+
+#include <cds/details/binary_functor_wrapper.h>
+
+namespace cds { namespace container {
+
+    //@cond
+    namespace details {
+
+        template <class GC, typename K, typename T, class Traits>
+        struct make_iterable_kvlist
+        {
+            typedef Traits original_type_traits;
+
+            typedef GC       gc;
+            typedef K        key_type;
+            typedef T        value_type;
+            typedef std::pair<key_type const, value_type> pair_type;
+
+            typedef intrusive::iterable_list::node< pair_type > node_type;
+
+            typedef typename original_type_traits::allocator::template rebind<pair_type>::other data_allocator_type;
+            typedef cds::details::Allocator< pair_type, allocator_type > cxx_data_allocator;
+
+            typedef typename original_type_traits::memory_model memory_model;
+
+            struct node_disposer
+            {
+                void operator ()( node_type * pNode )
+                {
+                    cxx_data_allocator().Delete( pNode->data.load( memory_model::memory_order_relaxed ) );
+                }
+            };
+
+            struct key_field_accessor {
+                key_type const& operator()( node_type const& node )
+                {
+                    pair_type const* p = node.data.load( memory_model::memory_order_relaxed );
+                    assert( p != nullptr )
+                    return p->first;
+                }
+            };
+
+            typedef typename opt::details::make_comparator< key_type, original_type_traits >::type key_comparator;
+
+            template <typename Less>
+            struct less_wrapper {
+                typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, key_field_accessor > type;
+            };
+
+            struct intrusive_traits: public original_type_traits
+            {
+                typedef node_disposer disposer;
+                typedef cds::details::compare_wrapper< node_type, key_comparator, key_field_accessor > compare;
+                static const opt::link_check_type link_checker = intrusive::iterable_list::traits::link_checker;
+            };
+
+            typedef intrusive::IterableList<gc, node_type, intrusive_traits> type;
+        };
+    }   // namespace details
+    //@endcond
+
+}}  // namespace cds::container
+
+#endif  // #ifndef CDSLIB_CONTAINER_DETAILS_MAKE_ITERABLE_KVLIST_H

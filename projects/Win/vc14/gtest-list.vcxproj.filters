@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\iterable_list">
+      <UniqueIdentifier>{f6bc2494-0971-483b-98b2-7675d2aee7c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lazy_list">
+      <UniqueIdentifier>{b975977c-e055-46d0-95ea-bc94c66c6d50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\michael_list">
+      <UniqueIdentifier>{edd852ff-4431-4c46-9592-dbbba4d9846e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_list.h">
@@ -75,160 +84,172 @@
     <ClInclude Include="..\..\..\test\unit\list\test_intrusive_iterable_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\list\test_iterable_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\list\test_iterable_list_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_hp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_dhp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_hp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_dhp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_nogc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_nogc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_gpb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_gpi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_gpt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_shb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_sht.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_gpb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_gpi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_gpt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_shb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_sht.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_hp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_dhp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_hp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_dhp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_nogc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_nogc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_gpb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_gpi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_gpt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_shb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_sht.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_gpb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_gpi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_gpt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_shb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_sht.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_hp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_dhp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_hp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_dhp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_nogc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_nogc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_gpb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_gpi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_gpt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_shb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_sht.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_gpb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_gpi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_gpt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_shb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_sht.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_iterable_dhp.cpp">
+      <Filter>Source Files\iterable_list</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\list\intrusive_iterable_hp.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\iterable_list</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\list\intrusive_iterable_dhp.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_dhp.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_hp.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_nogc.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_shb.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_lazy_rcu_sht.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_dhp.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_hp.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_nogc.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_gpb.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_gpi.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_gpt.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_shb.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_rcu_sht.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_dhp.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_hp.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_nogc.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_gpb.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_gpi.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_gpt.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_shb.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_sht.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_dhp.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_hp.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_nogc.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_gpb.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_gpi.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_gpt.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_shb.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_sht.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_dhp.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_hp.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_nogc.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_gpb.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_gpi.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_gpt.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_shb.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\lazy_rcu_sht.cpp">
+      <Filter>Source Files\lazy_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_dhp.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_hp.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_nogc.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_gpb.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_gpi.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_gpt.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_shb.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_sht.cpp">
+      <Filter>Source Files\michael_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\iterable_hp.cpp">
+      <Filter>Source Files\iterable_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\iterable_dhp.cpp">
+      <Filter>Source Files\iterable_list</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

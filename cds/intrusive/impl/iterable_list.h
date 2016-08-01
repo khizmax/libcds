@@ -292,7 +292,7 @@ namespace cds { namespace intrusive {
               For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
               may be thrown if the limit of guard count per thread is exceeded.
             - The iterator cannot be moved across thread boundary since it contains thread-private GC's guard.
-            - Iterator is thread-safe: event if the element the iterator points to is removed, the iterator stays valid because
+            - Iterator is thread-safe: even if the element the iterator points to is removed, the iterator stays valid because
               it contains the guard keeping the value from to be recycled.
 
             The iterator interface:
