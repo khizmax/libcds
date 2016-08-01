@@ -28,22 +28,23 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "test_kv_list_hp.h"
-#include <cds/container/michael_kvlist_hp.h>
+#include "test_intrusive_iterable_list_hp.h"
+#include <cds/intrusive/iterable_list_hp.h>
 
 namespace {
-    namespace cc = cds::container;
+    namespace ci = cds::intrusive;
     typedef cds::gc::HP gc_type;
 
-    class MichaelKVList_HP : public cds_test::kv_list_hp
+    class IntrusiveIterableList_HP : public cds_test::intrusive_iterable_list_hp
     {
     protected:
         void SetUp()
         {
-            typedef cc::MichaelKVList< gc_type, key_type, value_type > list_type;
+            typedef ci::IterableList< gc_type, item_type > list_type;
 
             // +1 - for guarded_ptr
-            cds::gc::hp::GarbageCollector::Construct( list_type::c_nHazardPtrCount + 1, 1, 16 );
+            // +3 - for iterator test
+            cds::gc::hp::GarbageCollector::Construct( list_type::c_nHazardPtrCount + 3, 1, 16 );
             cds::threading::Manager::attachThread();
         }
 
@@ -54,11 +55,30 @@ namespace {
         }
     };
 
-    TEST_F( MichaelKVList_HP, less_ordered )
+    TEST_F( IntrusiveIterableList_HP, less )
     {
-        typedef cc::MichaelKVList< gc_type, key_type, value_type,
-            typename cc::michael_list::make_traits<
-                cds::opt::less< lt >
+        typedef ci::IterableList< gc_type, item_type,
+            typename ci::iterable_list::make_traits< 
+                ci::opt::disposer< mock_disposer >
+                ,cds::opt::less< less< item_type >>
+                ,cds::opt::item_counter< cds::atomicity::item_counter >
+
+            >::type 
+       > list_type;
+
+       list_type l;
+       test_common( l );
+       test_ordered_iterator( l );
+       test_hp( l );
+    }
+
+    TEST_F( IntrusiveIterableList_HP, compare )
+    {
+        typedef ci::IterableList< gc_type, item_type,
+            typename ci::iterable_list::make_traits<
+                ci::opt::disposer< mock_disposer >
+                , cds::opt::compare< cmp< item_type >>
+                , cds::opt::item_counter< cds::atomicity::item_counter >
             >::type
         > list_type;
 
@@ -68,43 +88,15 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( MichaelKVList_HP, compare_ordered )
+    TEST_F( IntrusiveIterableList_HP, item_counting )
     {
-        typedef cc::MichaelKVList< gc_type, key_type, value_type,
-            typename cc::michael_list::make_traits<
-                cds::opt::compare< cmp >
-            >::type
-        > list_type;
-
-        list_type l;
-        test_common( l );
-        test_ordered_iterator( l );
-        test_hp( l );
-    }
-
-    TEST_F( MichaelKVList_HP, mix_ordered )
-    {
-        typedef cc::MichaelKVList< gc_type, key_type, value_type,
-            typename cc::michael_list::make_traits<
-                cds::opt::compare< cmp >
-                ,cds::opt::less< lt >
-            >::type
-        > list_type;
-
-        list_type l;
-        test_common( l );
-        test_ordered_iterator( l );
-        test_hp( l );
-    }
-
-    TEST_F( MichaelKVList_HP, item_counting )
-    {
-        struct traits : public cc::michael_list::traits
-        {
-            typedef lt less;
+        struct traits : public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef cmp< item_type > compare;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
         };
-        typedef cc::MichaelKVList<gc_type, key_type, value_type, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -112,15 +104,16 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( MichaelKVList_HP, backoff )
+    TEST_F( IntrusiveIterableList_HP, backoff )
     {
-        struct traits : public cc::michael_list::traits
-        {
-            typedef lt less;
+        struct traits : public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef cmp< item_type > compare;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::backoff::empty back_off;
+            typedef cds::backoff::pause back_off;
         };
-        typedef cc::MichaelKVList<gc_type, key_type, value_type, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -128,15 +121,15 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( MichaelKVList_HP, seq_cst )
+    TEST_F( IntrusiveIterableList_HP, seqcst )
     {
-        struct traits : public cc::michael_list::traits
-        {
-            typedef lt less;
+        struct traits : public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cc::MichaelKVList<gc_type, key_type, value_type, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -144,15 +137,15 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( MichaelKVList_HP, stat )
+    TEST_F( IntrusiveIterableList_HP, stat )
     {
-        struct traits: public cc::michael_list::traits
-        {
-            typedef lt less;
+        struct traits: public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::container::michael_list::stat<> stat;
+            typedef cds::intrusive::iterable_list::stat<> stat;
         };
-        typedef cc::MichaelKVList<gc_type, key_type, value_type, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -160,17 +153,18 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( MichaelKVList_HP, wrapped_stat )
+    TEST_F( IntrusiveIterableList_HP, wrapped_stat )
     {
-        struct traits: public cc::michael_list::traits
-        {
-            typedef lt less;
+        struct traits: public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::container::michael_list::wrapped_stat<> stat;
+            typedef cds::intrusive::iterable_list::wrapped_stat<> stat;
         };
-        typedef cc::MichaelKVList<gc_type, key_type, value_type, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
-        cds::container::michael_list::stat<> st;
+        traits::stat::stat_type st;
+
         list_type l( st );
         test_common( l );
         test_ordered_iterator( l );

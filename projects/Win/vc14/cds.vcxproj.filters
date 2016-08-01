@@ -102,12 +102,6 @@
     <Filter Include="Header Files\cds\intrusive">
       <UniqueIdentifier>{7226715d-6777-4c01-8e66-83b3885c00c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\container">
-      <UniqueIdentifier>{84ca9e83-f6c9-4503-a45f-14f08317fd70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\cds\container\details">
-      <UniqueIdentifier>{4b79fe31-4f6c-4e05-8910-1151a26d51f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
@@ -117,12 +111,6 @@
     </Filter>
     <Filter Include="Header Files\cds\intrusive\striped_set">
       <UniqueIdentifier>{560b4d4c-71e1-443c-942e-dcc5a275c7c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\cds\container\striped_map">
-      <UniqueIdentifier>{6530b757-5bb7-4de0-b1c9-019acc8183ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\cds\container\striped_set">
-      <UniqueIdentifier>{d3f68c37-8c36-448e-9d4c-cd89a940d275}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\cds\urcu">
       <UniqueIdentifier>{32754dfc-727a-42ff-b243-9a8510bf5c4e}</UniqueIdentifier>
@@ -145,9 +133,6 @@
     <Filter Include="Header Files\cds\intrusive\impl">
       <UniqueIdentifier>{00a14aa8-3035-4b56-bc86-442ca9bf8f44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\container\impl">
-      <UniqueIdentifier>{0a2328b4-ff6f-4afb-8de0-9884ae172fa9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\cds\gc\impl">
       <UniqueIdentifier>{3195cce2-1710-4b79-a1cf-6c7cea085fa3}</UniqueIdentifier>
     </Filter>
@@ -156,6 +141,21 @@
     </Filter>
     <Filter Include="Header Files\cds\algo\flat_combining">
       <UniqueIdentifier>{fe703227-44ad-4ad6-bae4-b6c9f5c65355}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container">
+      <UniqueIdentifier>{84ca9e83-f6c9-4503-a45f-14f08317fd70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container\details">
+      <UniqueIdentifier>{4b79fe31-4f6c-4e05-8910-1151a26d51f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container\striped_map">
+      <UniqueIdentifier>{6530b757-5bb7-4de0-b1c9-019acc8183ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container\striped_set">
+      <UniqueIdentifier>{d3f68c37-8c36-448e-9d4c-cd89a940d275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\container\impl">
+      <UniqueIdentifier>{0a2328b4-ff6f-4afb-8de0-9884ae172fa9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1243,6 +1243,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\flat_combining\kernel.h">
       <Filter>Header Files\cds\algo\flat_combining</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\iterable_list_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\impl\iterable_list.h">
+      <Filter>Header Files\cds\intrusive\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\iterable_list_dhp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\iterable_list_hp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

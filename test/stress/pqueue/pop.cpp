@@ -41,52 +41,6 @@ namespace {
 
     protected:
         template <class PQueue>
-        class Producer: public cds_test::thread
-        {
-            typedef cds_test::thread base_class;
-
-        public:
-            Producer( cds_test::thread_pool& pool, PQueue& queue )
-                : base_class( pool )
-                , m_Queue( queue )
-            {}
-
-            Producer( Producer& src )
-                : base_class( src )
-                , m_Queue( src.m_Queue )
-            {}
-
-            virtual thread * clone()
-            {
-                return new Producer( *this );
-            }
-
-            virtual void test()
-            {
-                typedef typename PQueue::value_type value_type;
-                for ( array_type::const_iterator it = m_arr.begin(); it != m_arr.end(); ++it ) {
-                    if ( !m_Queue.push( value_type( *it ) ))
-                        ++m_nPushError;
-                }
-            }
-
-            void prepare( size_t nStart, size_t nEnd )
-            {
-                m_arr.reserve( nEnd - nStart );
-                for ( size_t i = nStart; i < nEnd; ++i )
-                    m_arr.push_back( i );
-                shuffle( m_arr.begin(), m_arr.end() );
-            }
-
-        public:
-            PQueue&             m_Queue;
-            size_t              m_nPushError = 0;
-
-            typedef std::vector<size_t> array_type;
-            array_type          m_arr;
-        };
-
-        template <class PQueue>
         class Consumer: public cds_test::thread
         {
             typedef cds_test::thread base_class;
@@ -116,18 +70,27 @@ namespace {
                     ++m_nPopSuccess;
                     nPrevKey = val.key;
 
-                    while ( !m_Queue.empty() ) {
-                        if ( m_Queue.pop( val )) {
-                            ++m_nPopSuccess;
-                            if ( val.key > nPrevKey )
-                                ++m_nPopError;
-                            else if ( val.key == nPrevKey )
-                                ++m_nPopErrorEq;
-                            nPrevKey = val.key;
+                    bool prevPopFailed = false;
+                    while ( m_Queue.pop( val )) {
+                        ++m_nPopSuccess;
+                        if ( val.key > nPrevKey ) {
+                            ++m_nPopError;
+                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key, static_cast<size_t>(-1) } );
+                            prevPopFailed = true;
                         }
-                        else
-                            ++m_nPopFailed;
+                        else if ( val.key == nPrevKey ) {
+                            ++m_nPopErrorEq;
+                            m_arrFailedPops.emplace_back( failed_pops{ nPrevKey, val.key, static_cast<size_t>(-1) } );
+                        }
+                        else {
+                            if ( prevPopFailed )
+                                m_arrFailedPops.back().next_key = val.key;
+                            prevPopFailed = false;
+                        }
+                        if ( nPrevKey > val.key )
+                            nPrevKey = val.key;
                     }
+
                 }
                 else
                     ++m_nPopFailed;
@@ -139,6 +102,13 @@ namespace {
             size_t              m_nPopErrorEq = 0;
             size_t              m_nPopSuccess = 0;
             size_t              m_nPopFailed = 0;
+
+            struct failed_pops {
+                size_t prev_key;
+                size_t popped_key;
+                size_t next_key;
+            };
+            std::vector< failed_pops > m_arrFailedPops;
         };
 
     protected:
@@ -146,31 +116,30 @@ namespace {
         template <class PQueue>
         void test( PQueue& q )
         {
-            size_t const nThreadItemCount = s_nQueueSize / s_nThreadCount;
-            s_nQueueSize = nThreadItemCount * s_nThreadCount;
-
             cds_test::thread_pool& pool = get_pool();
+
+            // push
+            {
+                std::vector< size_t > arr;
+                arr.reserve( s_nQueueSize );
+                for ( size_t i = 0; i < s_nQueueSize; ++i )
+                    arr.push_back( i );
+                shuffle( arr.begin(), arr.end() );
+
+                size_t nPushError = 0;
+                typedef typename PQueue::value_type value_type;
+                for ( auto it = arr.begin(); it != arr.end(); ++it ) {
+                    if ( !q.push( value_type( *it ) ))
+                        ++nPushError;
+                }
+                s_nQueueSize -= nPushError;
+            }
 
             propout() << std::make_pair( "thread_count", s_nThreadCount )
                 << std::make_pair( "push_count", s_nQueueSize );
 
-            // push
-            {
-                pool.add( new Producer<PQueue>( pool, q ), s_nThreadCount );
-
-                size_t nStart = 0;
-                for ( size_t i = 0; i < pool.size(); ++i ) {
-                    static_cast<Producer<PQueue>&>( pool.get(i) ).prepare( nStart, nStart + nThreadItemCount );
-                    nStart += nThreadItemCount;
-                }
-
-                std::chrono::milliseconds duration = pool.run();
-                propout() << std::make_pair( "producer_duration", duration );
-            }
-
             // pop
             {
-                pool.clear();
                 pool.add( new Consumer<PQueue>( pool, q ), s_nThreadCount );
 
                 std::chrono::milliseconds duration = pool.run();
@@ -188,6 +157,18 @@ namespace {
                     nTotalError   += cons.m_nPopError;
                     nTotalErrorEq += cons.m_nPopErrorEq;
                     nTotalFailed  += cons.m_nPopFailed;
+
+                    if ( !cons.m_arrFailedPops.empty() ) {
+                        std::cerr << "Priority violations, thread " << i;
+                        for ( size_t k = 0; k < cons.m_arrFailedPops.size(); ++k ) {
+                            std::cerr << "\n    " << "prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key;
+                            if ( cons.m_arrFailedPops[k].next_key != static_cast<size_t>(-1) )
+                                std::cerr << " next_key=" << cons.m_arrFailedPops[k].next_key;
+                            else
+                                std::cerr << " next_key unspecified";
+                        }
+                        std::cerr << std::endl;
+                    }
                 }
 
                 propout()
@@ -196,8 +177,8 @@ namespace {
                     << std::make_pair( "error_priority_violation", nTotalError );
 
                 EXPECT_EQ( nTotalPopped, s_nQueueSize );
-                EXPECT_EQ( nTotalError, 0 );
-                EXPECT_EQ( nTotalErrorEq, 0 );
+                EXPECT_EQ( nTotalError, 0 ) << "priority violations";
+                EXPECT_EQ( nTotalErrorEq, 0 ) << "double key";
             }
 
             propout() << q.statistics();
@@ -224,11 +205,13 @@ namespace {
     TEST_F( fixture_t, pqueue_t ) \
     { \
         typedef pqueue::Types<pqueue::simple_value>::pqueue_t pqueue_type; \
-        pqueue_type pq( s_nQueueSize ); \
+        pqueue_type pq( s_nQueueSize + 1 ); \
         test( pq ); \
     }
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_bitreverse_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_bitreverse_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_monotonic_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_monotonic_less_stat )
     CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_cmp )
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_mutex ) // too slow
 

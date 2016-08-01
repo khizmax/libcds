@@ -69,6 +69,12 @@
     <ClInclude Include="..\..\..\test\unit\list\test_kv_lazy_rcu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\list\test_intrusive_iterable_list_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\list\test_intrusive_iterable_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_hp.cpp">
@@ -216,6 +222,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\list\kv_lazy_rcu_sht.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_iterable_hp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\intrusive_iterable_dhp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

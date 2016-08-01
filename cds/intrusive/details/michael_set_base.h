@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_DETAILS_MICHAEL_SET_BASE_H
@@ -120,7 +120,8 @@ namespace cds { namespace intrusive {
             template <typename OrderedList, bool IsConst>
             class iterator
             {
-                friend class iterator < OrderedList, !IsConst >;
+                friend class iterator< OrderedList, !IsConst >;
+
             protected:
                 typedef OrderedList bucket_type;
                 typedef typename list_iterator_selector< bucket_type, IsConst>::bucket_ptr bucket_ptr;

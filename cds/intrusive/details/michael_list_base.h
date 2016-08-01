@@ -196,6 +196,101 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+
+        /// \p MichaelList internal statistics
+        template <typename EventCounter = cds::atomicity::event_counter>
+        struct stat {
+            typedef EventCounter event_counter; ///< Event counter type
+
+            event_counter   m_nInsertSuccess;   ///< Number of success \p insert() operations
+            event_counter   m_nInsertFailed;    ///< Number of failed \p insert() operations
+            event_counter   m_nInsertRetry;     ///< Number of attempts to insert new item
+            event_counter   m_nUpdateNew;       ///< Number of new item inserted for \p update()
+            event_counter   m_nUpdateExisting;  ///< Number of existing item updates
+            event_counter   m_nUpdateFailed;    ///< Number of failed \p update() call
+            event_counter   m_nUpdateRetry;     ///< Number of attempts to \p update() the item
+            event_counter   m_nUpdateMarked;    ///< Number of attempts to \p update() logically deleted (marked) items
+            event_counter   m_nEraseSuccess;    ///< Number of successful \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseFailed;     ///< Number of failed \p erase(), \p unlink(), \p extract() operations
+            event_counter   m_nEraseRetry;      ///< Number of attempts to \p erase() an item
+            event_counter   m_nFindSuccess;     ///< Number of successful \p find() and \p get() operations
+            event_counter   m_nFindFailed;      ///< Number of failed \p find() and \p get() operations
+
+            event_counter   m_nHelpingSuccess;  ///< Number of successful help attempts to remove marked item during searching
+            event_counter   m_nHelpingFailed;   ///< Number if failed help attempts to remove marked item during searching
+
+            //@cond
+            void onInsertSuccess()      { ++m_nInsertSuccess;   }
+            void onInsertFailed()       { ++m_nInsertFailed;    }
+            void onInsertRetry()        { ++m_nInsertRetry;     }
+            void onUpdateNew()          { ++m_nUpdateNew;       }
+            void onUpdateExisting()     { ++m_nUpdateExisting;  }
+            void onUpdateFailed()       { ++m_nUpdateFailed;    }
+            void onUpdateRetry()        { ++m_nUpdateRetry;     }
+            void onUpdateMarked()       { ++m_nUpdateMarked;    }
+            void onEraseSuccess()       { ++m_nEraseSuccess;    }
+            void onEraseFailed()        { ++m_nEraseFailed;     }
+            void onEraseRetry()         { ++m_nEraseRetry;      }
+            void onFindSuccess()        { ++m_nFindSuccess;     }
+            void onFindFailed()         { ++m_nFindFailed;      }
+
+            void onHelpingSuccess()     { ++m_nHelpingSuccess;  }
+            void onHelpingFailed()      { ++m_nHelpingFailed;   }
+            //@endcond
+        };
+
+        /// \p MichaelList empty internal statistics
+        struct empty_stat {
+            //@cond
+            void onInsertSuccess()              const {}
+            void onInsertFailed()               const {}
+            void onInsertRetry()                const {}
+            void onUpdateNew()                  const {}
+            void onUpdateExisting()             const {}
+            void onUpdateFailed()               const {}
+            void onUpdateRetry()                const {}
+            void onUpdateMarked()               const {}
+            void onEraseSuccess()               const {}
+            void onEraseFailed()                const {}
+            void onEraseRetry()                 const {}
+            void onFindSuccess()                const {}
+            void onFindFailed()                 const {}
+
+            void onHelpingSuccess()             const {}
+            void onHelpingFailed()              const {}
+            //@endcond
+        };
+
+        //@cond
+        template <typename Stat = michael_list::stat<>>
+        struct wrapped_stat {
+            typedef Stat stat_type;
+
+            wrapped_stat( stat_type& st )
+                : m_stat( st )
+            {}
+
+            void onInsertSuccess()      { m_stat.onInsertSuccess();     }
+            void onInsertFailed()       { m_stat.onInsertFailed();      }
+            void onInsertRetry()        { m_stat.onInsertRetry();       }
+            void onUpdateNew()          { m_stat.onUpdateNew();         }
+            void onUpdateExisting()     { m_stat.onUpdateExisting();    }
+            void onUpdateFailed()       { m_stat.onUpdateFailed();      }
+            void onUpdateRetry()        { m_stat.onUpdateRetry();       }
+            void onUpdateMarked()       { m_stat.onUpdateMarked();      }
+            void onEraseSuccess()       { m_stat.onEraseSuccess();      }
+            void onEraseFailed()        { m_stat.onEraseFailed();       }
+            void onEraseRetry()         { m_stat.onEraseRetry();        }
+            void onFindSuccess()        { m_stat.onFindSuccess();       }
+            void onFindFailed()         { m_stat.onFindFailed();        }
+
+            void onHelpingSuccess()     { m_stat.onHelpingSuccess();    }
+            void onHelpingFailed()      { m_stat.onHelpingFailed();     }
+
+            stat_type& m_stat;
+        };
+        //@endcond
+
         /// MichaelList traits
         struct traits
         {
@@ -224,7 +319,14 @@ namespace cds { namespace intrusive {
             typedef opt::v::empty_disposer          disposer;
 
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
-            typedef atomicity::empty_item_counter     item_counter;
+            typedef atomicity::empty_item_counter   item_counter;
+
+            /// Internal statistics
+            /**
+                By default, internal statistics is disabled (\p michael_list::empty_stat).
+                Use \p michael_list::stat to enable it.
+            */
+            typedef empty_stat                      stat;
 
             /// Link fields checking feature
             /**
@@ -260,6 +362,8 @@ namespace cds { namespace intrusive {
             - \p opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
                  To enable item counting use \p atomicity::item_counter.
+            - \p opt::stat - internal statistics. By default, it is disabled (\p michael_list::empty_stat).
+                To enable it use \p michael_list::stat
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consistent memory model).
             - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
@@ -277,6 +381,34 @@ namespace cds { namespace intrusive {
 #   endif
         };
 
+
+        //@cond
+        template <typename Stat>
+        struct select_stat_wrapper
+        {
+            typedef Stat stat;
+            typedef michael_list::wrapped_stat<Stat> wrapped_stat;
+            enum {
+                empty = false
+            };
+        };
+
+        template <>
+        struct select_stat_wrapper< empty_stat >
+        {
+            typedef empty_stat stat;
+            typedef empty_stat wrapped_stat;
+            enum {
+                empty = true
+            };
+        };
+
+        template <typename Stat>
+        struct select_stat_wrapper< michael_list::wrapped_stat<Stat>>: public select_stat_wrapper< Stat >
+        {};
+
+        //@endcond
+
     } // namespace michael_list
 
     //@cond
@@ -286,8 +418,21 @@ namespace cds { namespace intrusive {
     //@endcond
 
 
-    /// Tag for selecting Michael list
-    //class michael_list_tag;
+    //@cond
+    template <typename List>
+    struct is_michael_list {
+        enum {
+            value = false
+        };
+    };
+
+    template <typename GC, typename T, typename Traits>
+    struct is_michael_list< MichaelList< GC, T, Traits >> {
+        enum {
+            value = true
+        };
+    };
+    //@endcond
 
 }}   // namespace cds::intrusive
 

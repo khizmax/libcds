@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_intrusive_set_hp.h"
@@ -131,6 +131,51 @@ namespace {
         test( s );
     }
 
+    TEST_F( IntrusiveMichaelSet_DHP, base_stat )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<base_item_type> less;
+            typedef cmp<base_item_type> compare;
+            typedef mock_disposer disposer;
+            typedef ci::michael_list::stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+        };
+        typedef ci::MichaelHashSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveMichaelSet_DHP, base_wrapped_stat )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<base_item_type> less;
+            typedef cmp<base_item_type> compare;
+            typedef mock_disposer disposer;
+            typedef ci::michael_list::wrapped_stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+        };
+        typedef ci::MichaelHashSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
 
     TEST_F( IntrusiveMichaelSet_DHP, member_cmp )
     {
@@ -192,6 +237,52 @@ namespace {
         typedef ci::MichaelList< gc_type, member_item_type, list_traits > bucket_type;
 
         struct set_traits : public ci::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+        };
+        typedef ci::MichaelHashSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveMichaelSet_DHP, member_stat )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<member_item_type> less;
+            typedef cmp<member_item_type> compare;
+            typedef mock_disposer disposer;
+            typedef ci::michael_list::stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, member_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+        };
+        typedef ci::MichaelHashSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveMichaelSet_DHP, member_wrapped_stat )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<member_item_type> less;
+            typedef cmp<member_item_type> compare;
+            typedef mock_disposer disposer;
+            typedef ci::michael_list::wrapped_stat<> stat;
+        };
+        typedef ci::MichaelList< gc_type, member_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::michael_set::traits
         {
             typedef hash_int hash;
             typedef simple_item_counter item_counter;

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_DETAILS_LAZY_LIST_BASE_H
@@ -37,10 +37,23 @@
 
 namespace cds { namespace container {
 
-    /// LazyList ordered list related definitions
+    /// \p LazyList ordered list related definitions
     /** @ingroup cds_nonintrusive_helper
     */
     namespace lazy_list {
+
+        /// \p LazyList internal statistics, see \p cds::intrusive::lazy_list::stat
+        template <typename EventCounter = cds::atomicity::event_counter>
+        using stat = cds::intrusive::lazy_list::stat< EventCounter >;
+
+        /// \p LazyList empty internal statistics, see \p cds::intrusive::lazy_list::empty_stat
+        typedef cds::intrusive::lazy_list::empty_stat empty_stat;
+
+        //@cond
+        template <typename Stat = lazy_list::stat<>>
+        using wrapped_stat = cds::intrusive::lazy_list::wrapped_stat< Stat >;
+        //@endif
+
         /// LazyList traits
         /**
             Either \p compare or \p less or both must be specified.
@@ -88,10 +101,17 @@ namespace cds { namespace container {
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
 
+            /// Internal statistics
+            /**
+                By default, internal statistics is disabled (\p lazy_list::empty_stat).
+                Use \p lazy_list::stat to enable it.
+            */
+            typedef empty_stat                      stat;
+
             /// C++ memory ordering model
             /**
                 Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
             */
             typedef opt::v::relaxed_ordering        memory_model;
 
@@ -125,9 +145,11 @@ namespace cds { namespace container {
             - \p opt::back_off - back-off strategy used. If the option is not specified, \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
                 To enable item counting use \p atomicity::item_counter.
+            - \p opt::stat - internal statistics. By default, it is disabled (\p lazy_list::empty_stat).
+                To enable it use \p lazy_list::stat
             - \p opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                or \p opt::v::sequential_consistent (sequentially consistent memory model).
         */
         template <typename... Options>
         struct make_traits {
@@ -153,7 +175,7 @@ namespace cds { namespace container {
 
     // Tag for selecting lazy list implementation
     /**
-        This struct is empty and it is used only as a tag for selecting LazyList
+        This empty struct is used only as a tag for selecting \p LazyList
         as ordered list implementation in declaration of some classes.
 
         See \p split_list::traits::ordered_list as an example.

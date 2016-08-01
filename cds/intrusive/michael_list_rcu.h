@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_MICHAEL_LIST_RCU_H
@@ -118,11 +118,12 @@ namespace cds { namespace intrusive {
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
         typedef typename michael_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
 
-        typedef cds::urcu::gc<RCU>                     gc;           ///< RCU schema
-        typedef typename traits::back_off              back_off;     ///< back-off strategy
-        typedef typename traits::item_counter          item_counter; ///< Item counting policy used
-        typedef typename traits::memory_model          memory_model; ///< Memory ordering. See cds::opt::memory_model option
-        typedef typename traits::rcu_check_deadlock    rcu_check_deadlock; ///< Deadlock checking policy
+        typedef cds::urcu::gc<RCU>                  gc;           ///< RCU schema
+        typedef typename traits::back_off           back_off;     ///< back-off strategy
+        typedef typename traits::item_counter       item_counter; ///< Item counting policy used
+        typedef typename traits::memory_model       memory_model; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
+        typedef typename traits::stat               stat;     ///< Internal statistics
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions do not require external locking
@@ -137,15 +138,20 @@ namespace cds { namespace intrusive {
                 , typename cds::opt::make_options< traits, Options...>::type
             >   type;
         };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = michael_list::select_stat_wrapper< Stat >;
         //@endcond
 
     protected:
-        typedef typename node_type::marked_ptr         marked_node_ptr ; ///< Marked node pointer
-        typedef typename node_type::atomic_marked_ptr  atomic_node_ptr ; ///< Atomic node pointer
-        typedef atomic_node_ptr                 auxiliary_head      ;   ///< Auxiliary head type (for split-list support)
+        typedef typename node_type::marked_ptr        marked_node_ptr; ///< Marked node pointer
+        typedef typename node_type::atomic_marked_ptr atomic_node_ptr; ///< Atomic node pointer
+        typedef atomic_node_ptr                       auxiliary_head;  ///< Auxiliary head type (for split-list support)
 
-        atomic_node_ptr     m_pHead         ;   ///< Head pointer
-        item_counter        m_ItemCounter   ;   ///< Item counter
+        atomic_node_ptr m_pHead;        ///< Head pointer
+        item_counter    m_ItemCounter;  ///< Item counter
+        stat            m_Stat;         ///< Internal statistics
 
     protected:
         //@cond
@@ -439,6 +445,14 @@ namespace cds { namespace intrusive {
         {
             static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
         }
+
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, michael_list::wrapped_stat<Stat>>::value >>
+        explicit MichaelList( Stat& st )
+            : m_pHead( nullptr )
+            , m_Stat( st )
+        {}
+        //@endcond
 
         /// Destroy list
         ~MichaelList()
@@ -897,6 +911,11 @@ namespace cds { namespace intrusive {
             return m_ItemCounter.value();
         }
 
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
     protected:
         //@cond
         // split-list support
@@ -933,17 +952,21 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock l;
                 while ( true ) {
-                    if ( search( refHead, val, pos, key_comparator()))
+                    if ( search( refHead, val, pos, key_comparator())) {
+                        m_Stat.onInsertFailed();
                         return false;
+                    }
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         f( val );
                         ++m_ItemCounter;
+                        m_Stat.onInsertSuccess();
                         return true;
                     }
 
                     // clear next field
                     node_traits::to_node_ptr( val )->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+                    m_Stat.onInsertRetry();
                 }
             }
 
@@ -987,15 +1010,19 @@ namespace cds { namespace intrusive {
             for (;;) {
                 {
                     rcu_lock l;
-                    if ( !search( refHead, val, pos, key_comparator() ) || node_traits::to_value_ptr( *pos.pCur ) != &val )
+                    if ( !search( refHead, val, pos, key_comparator() ) || node_traits::to_value_ptr( *pos.pCur ) != &val ) {
+                        m_Stat.onEraseFailed();
                         return false;
+                    }
                     if ( !unlink_node( pos, erase_mask )) {
                         bkoff();
+                        m_Stat.onEraseRetry();
                         continue;
                     }
                 }
 
                 --m_ItemCounter;
+                m_Stat.onEraseSuccess();
                 return true;
             }
         }
@@ -1010,18 +1037,23 @@ namespace cds { namespace intrusive {
             for (;;) {
                 {
                     rcu_lock l;
-                    if ( !search( pos.refHead, val, pos, cmp ) )
+                    if ( !search( pos.refHead, val, pos, cmp ) ) {
+                        m_Stat.onEraseFailed();
                         return false;
+                    }
+
                     // store pCur since it may be changed by unlink_node() slow path
                     pDel = pos.pCur;
                     if ( !unlink_node( pos, erase_mask )) {
                         bkoff();
+                        m_Stat.onEraseRetry();
                         continue;
                     }
                 }
                 assert( pDel );
                 f( *node_traits::to_value_ptr( pDel ) );
                 --m_ItemCounter;
+                m_Stat.onEraseSuccess();
                 return true;
             }
         }
@@ -1051,18 +1083,23 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock l;
                 for (;;) {
-                    if ( !search( refHead, val, pos, cmp ) )
+                    if ( !search( refHead, val, pos, cmp )) {
+                        m_Stat.onEraseFailed();
                         return nullptr;
+                    }
+
                     // store pCur since it may be changed by unlink_node() slow path
                     pExtracted = pos.pCur;
                     if ( !unlink_node( pos, extract_mask )) {
                         bkoff();
+                        m_Stat.onEraseRetry();
                         continue;
                     }
 
                     --m_ItemCounter;
                     value_type * pRet = node_traits::to_value_ptr( pExtracted );
                     assert( pExtracted->m_pDelChain == nullptr );
+                    m_Stat.onEraseSuccess();
                     return pRet;
                 }
             }
@@ -1078,10 +1115,13 @@ namespace cds { namespace intrusive {
                 if ( search( refHead, val, pos, cmp ) ) {
                     assert( pos.pCur != nullptr );
                     f( *node_traits::to_value_ptr( *pos.pCur ), val );
+                    m_Stat.onFindSuccess();
                     return true;
                 }
-                return false;
-            }
+           }
+
+            m_Stat.onFindFailed();
+            return false;
         }
 
         template <typename Q, typename Compare>
@@ -1102,8 +1142,12 @@ namespace cds { namespace intrusive {
 
             position pos( refHead );
 
-            if ( search( refHead, val, pos, cmp ))
+            if ( search( refHead, val, pos, cmp )) {
+                m_Stat.onFindSuccess();
                 return raw_ptr( node_traits::to_value_ptr( pos.pCur ), raw_ptr_disposer( pos ));
+            }
+
+            m_Stat.onFindFailed();
             return raw_ptr( raw_ptr_disposer( pos ));
         }
         //@endcond
@@ -1150,8 +1194,10 @@ namespace cds { namespace intrusive {
                     if ( cds_likely( pPrev->compare_exchange_weak( pCur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
                         if ( pNext.bits() == erase_mask )
                             link_to_remove_chain( pos, pCur.ptr() );
+                        m_Stat.onHelpingSuccess();
                     }
 
+                    m_Stat.onHelpingFailed();
                     goto try_again;
                 }
 
@@ -1177,16 +1223,20 @@ namespace cds { namespace intrusive {
             assert( gc::is_locked() );
 
             while ( true ) {
-                if ( search( pos.refHead, val, pos, key_comparator() ) )
+                if ( search( pos.refHead, val, pos, key_comparator() )) {
+                    m_Stat.onInsertFailed();
                     return false;
+                }
 
                 if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                     ++m_ItemCounter;
+                    m_Stat.onInsertSuccess();
                     return true;
                 }
 
                 // clear next field
                 node_traits::to_node_ptr( val )->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+                m_Stat.onInsertRetry();
             }
         }
 
@@ -1201,20 +1251,25 @@ namespace cds { namespace intrusive {
                     assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur ) ) == 0 );
 
                     func( false, *node_traits::to_value_ptr( *pos.pCur ), val );
+                    m_Stat.onUpdateExisting();
                     return std::make_pair( iterator( pos.pCur ), false );
                 }
                 else {
-                    if ( !bInsert )
+                    if ( !bInsert ) {
+                        m_Stat.onUpdateFailed();
                         return std::make_pair( end(), false );
+                    }
 
                     if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
                         ++m_ItemCounter;
                         func( true, val , val );
+                        m_Stat.onUpdateNew();
                         return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
                     }
 
                     // clear the next field
                     node_traits::to_node_ptr( val )->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+                    m_Stat.onUpdateRetry();
                 }
             }
         }
@@ -1226,8 +1281,11 @@ namespace cds { namespace intrusive {
 
             if ( search( pos.refHead, val, pos, cmp ) ) {
                 assert( pos.pCur != nullptr );
+                m_Stat.onFindSuccess();
                 return const_iterator( pos.pCur );
             }
+
+            m_Stat.onFindFailed();
             return cend();
         }
         //@endcond

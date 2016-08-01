@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSSTRESS_PQUEUE_TYPES_H
@@ -392,20 +392,35 @@ namespace pqueue {
         {};
         typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_static_mutex > MSPriorityQueue_static_mutex;
 
-        struct traits_MSPriorityQueue_dyn_less : public
-            cc::mspriority_queue::make_traits<
-                co::buffer< co::v::initialized_dynamic_buffer< char > >
-            >::type
-        {};
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_less > MSPriorityQueue_dyn_less;
+        struct traits_MSPriorityQueue_dyn: public cc::mspriority_queue::traits
+        {
+            typedef co::v::initialized_dynamic_buffer< char > buffer;
+        };
 
-        struct traits_MSPriorityQueue_dyn_less_stat : public
-            cc::mspriority_queue::make_traits <
-                co::buffer< co::v::initialized_dynamic_buffer< char > >
-                , co::stat < cc::mspriority_queue::stat<> >
-            > ::type
-        {};
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_less_stat > MSPriorityQueue_dyn_less_stat;
+        struct traits_MSPriorityQueue_dyn_bitreverse_less : public traits_MSPriorityQueue_dyn
+        {
+            typedef cds::bitop::bit_reverse_counter<> item_counter;
+        };
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_bitreverse_less > MSPriorityQueue_dyn_bitreverse_less;
+
+        struct traits_MSPriorityQueue_dyn_bitreverse_less_stat: public traits_MSPriorityQueue_dyn_bitreverse_less
+        {
+            typedef cc::mspriority_queue::stat<> stat;
+        };
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_bitreverse_less_stat > MSPriorityQueue_dyn_bitreverse_less_stat;
+
+        struct traits_MSPriorityQueue_dyn_monotonic_less: public traits_MSPriorityQueue_dyn
+        {
+            typedef cds::intrusive::mspriority_queue::monotonic_counter item_counter;
+        };
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_monotonic_less > MSPriorityQueue_dyn_monotonic_less;
+
+        struct traits_MSPriorityQueue_dyn_monotonic_less_stat: public traits_MSPriorityQueue_dyn_monotonic_less
+        {
+            typedef cc::mspriority_queue::stat<> stat;
+        };
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_monotonic_less_stat > MSPriorityQueue_dyn_monotonic_less_stat;
+
 
         struct traits_MSPriorityQueue_dyn_cmp : public
             cc::mspriority_queue::make_traits <
@@ -640,7 +655,10 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nPushFailCount )
             << CDSSTRESS_STAT_OUT( s, m_nPopFailCount )
             << CDSSTRESS_STAT_OUT( s, m_nPushHeapifySwapCount )
-            << CDSSTRESS_STAT_OUT( s, m_nPopHeapifySwapCount );
+            << CDSSTRESS_STAT_OUT( s, m_nPopHeapifySwapCount )
+            << CDSSTRESS_STAT_OUT( s, m_nItemMovedTop )
+            << CDSSTRESS_STAT_OUT( s, m_nItemMovedUp )
+            << CDSSTRESS_STAT_OUT( s, m_nPushEmptyPass );
     }
 
 } // namespace cds_test

@@ -509,6 +509,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\details\iterable_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\lazy_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\michael_set_base.h" />
@@ -524,10 +525,13 @@
     <ClInclude Include="..\..\..\cds\intrusive\free_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\free_list_tagged.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\impl\iterable_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\lazy_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\michael_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\feldman_hashset.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\skip_list.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\iterable_list_dhp.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\iterable_list_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\michael_list_dhp.h" />

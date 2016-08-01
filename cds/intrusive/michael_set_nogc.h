@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_MICHAEL_SET_NOGC_H
@@ -33,7 +33,6 @@
 
 #include <cds/intrusive/details/michael_set_base.h>
 #include <cds/gc/nogc.h>
-#include <cds/details/allocator.h>
 
 namespace cds { namespace intrusive {
 
@@ -59,29 +58,43 @@ namespace cds { namespace intrusive {
     class MichaelHashSet< cds::gc::nogc, OrderedList, Traits >
     {
     public:
-        typedef cds::gc::nogc gc;        ///< Garbage collector
-        typedef OrderedList bucket_type; ///< Type of ordered list to be used as buckets
-        typedef Traits      traits;     ///< Set traits
+        typedef cds::gc::nogc gc;           ///< Garbage collector
+        typedef OrderedList   ordered_list; ///< type of ordered list used as a bucket implementation
+        typedef Traits        traits;       ///< Set traits
 
-        typedef typename bucket_type::value_type     value_type;     ///< type of value to be stored in the set
-        typedef typename bucket_type::key_comparator key_comparator; ///< key comparing functor
-        typedef typename bucket_type::disposer       disposer;       ///< Node disposer functor
+        typedef typename ordered_list::value_type     value_type;     ///< type of value to be stored in the set
+        typedef typename ordered_list::key_comparator key_comparator; ///< key comparing functor
+        typedef typename ordered_list::disposer       disposer;       ///< Node disposer functor
+        typedef typename ordered_list::stat           stat;           ///< Internal statistics
 
         /// Hash functor for \p value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter item_counter; ///< Item counter type
+        typedef typename traits::allocator    allocator;    ///< Bucket table allocator
 
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator > bucket_table_allocator;
+        // GC and OrderedList::gc must be the same
+        static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
+
+        // atomicity::empty_item_counter is not allowed as a item counter
+        static_assert(!std::is_same<item_counter, atomicity::empty_item_counter>::value,
+            "atomicity::empty_item_counter is not allowed as a item counter");
 
     protected:
-        item_counter    m_ItemCounter; ///< Item counter
-        hash            m_HashFunctor; ///< Hash functor
-        bucket_type *   m_Buckets;     ///< bucket table
-
-    private:
         //@cond
-        const size_t    m_nHashBitmask;
+        typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
+
+        typedef typename ordered_list::template rebind_traits<
+            cds::opt::item_counter< cds::atomicity::empty_item_counter >
+            , cds::opt::stat< typename bucket_stat::wrapped_stat >
+        >::type internal_bucket_type;
+
+        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+
+        hash                        m_HashFunctor; ///< Hash functor
+        const size_t                m_nHashBitmask;
+        internal_bucket_type *      m_Buckets;     ///< bucket table
+        item_counter                m_ItemCounter; ///< Item counter
+        typename bucket_stat::stat  m_Stat;        ///< Internal statistics
         //@endcond
 
     protected:
@@ -95,7 +108,7 @@ namespace cds { namespace intrusive {
 
         /// Returns the bucket (ordered list) for \p key
         template <typename Q>
-        bucket_type&    bucket( Q const & key )
+        internal_bucket_type&    bucket( Q const & key )
         {
             return m_Buckets[ hash_value( key ) ];
         }
@@ -138,13 +151,13 @@ namespace cds { namespace intrusive {
             };
             \endcode
         */
-        typedef michael_set::details::iterator< bucket_type, false >    iterator;
+        typedef michael_set::details::iterator< internal_bucket_type, false >    iterator;
 
         /// Const forward iterator
         /**
             For iterator's features and requirements see \ref iterator
         */
-        typedef michael_set::details::iterator< bucket_type, true >     const_iterator;
+        typedef michael_set::details::iterator< internal_bucket_type, true >     const_iterator;
 
         /// Returns a forward iterator addressing the first element in a set
         /**
@@ -202,22 +215,20 @@ namespace cds { namespace intrusive {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count() ) )
         {
-            // GC and OrderedList::gc must be the same
-            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
-
-            // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
-                           "atomicity::empty_item_counter is not allowed as a item counter");
-
-            m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                construct_bucket<bucket_stat>( it );
         }
 
         /// Clears hash set object and destroys it
         ~MichaelHashSet()
         {
             clear();
-            bucket_table_allocator().Delete( m_Buckets, bucket_count() );
+
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                it->~internal_bucket_type();
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
         }
 
         /// Inserts new node
@@ -425,6 +436,26 @@ namespace cds { namespace intrusive {
             return m_nHashBitmask + 1;
         }
 
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
+    private:
+        //@cond
+        template <typename Stat>
+        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type * bucket )
+        {
+            new (bucket) internal_bucket_type;
+        }
+
+        template <typename Stat>
+        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type * bucket )
+        {
+            new (bucket) internal_bucket_type( m_Stat );
+        }
+        //@endcond
     };
 
 }} // namespace cds::intrusive

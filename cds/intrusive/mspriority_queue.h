@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_MSPRIORITY_QUEUE_H
@@ -53,12 +53,15 @@ namespace cds { namespace intrusive {
         struct stat {
             typedef Counter   event_counter ; ///< Event counter type
 
-            event_counter   m_nPushCount            ;   ///< Count of success push operation
-            event_counter   m_nPopCount             ;   ///< Count of success pop operation
-            event_counter   m_nPushFailCount        ;   ///< Count of failed ("the queue is full") push operation
-            event_counter   m_nPopFailCount         ;   ///< Count of failed ("the queue is empty") pop operation
-            event_counter   m_nPushHeapifySwapCount ;   ///< Count of item swapping when heapifying in push
-            event_counter   m_nPopHeapifySwapCount  ;   ///< Count of item swapping when heapifying in pop
+            event_counter   m_nPushCount;            ///< Count of success push operation
+            event_counter   m_nPopCount;             ///< Count of success pop operation
+            event_counter   m_nPushFailCount;        ///< Count of failed ("the queue is full") push operation
+            event_counter   m_nPopFailCount;         ///< Count of failed ("the queue is empty") pop operation
+            event_counter   m_nPushHeapifySwapCount; ///< Count of item swapping when heapifying in push
+            event_counter   m_nPopHeapifySwapCount;  ///< Count of item swapping when heapifying in pop
+            event_counter   m_nItemMovedTop;         ///< Count of events when \p push() encountered that inserted item was moved to top by a concurrent \p pop()
+            event_counter   m_nItemMovedUp;          ///< Count of events when \p push() encountered that inserted item was moved upwards by a concurrent \p pop()
+            event_counter   m_nPushEmptyPass;        ///< Count of empty pass during heapify via concurrent operations
 
             //@cond
             void onPushSuccess()            { ++m_nPushCount            ;}
@@ -67,19 +70,58 @@ namespace cds { namespace intrusive {
             void onPopFailed()              { ++m_nPopFailCount         ;}
             void onPushHeapifySwap()        { ++m_nPushHeapifySwapCount ;}
             void onPopHeapifySwap()         { ++m_nPopHeapifySwapCount  ;}
+
+            void onItemMovedTop()           { ++m_nItemMovedTop         ;}
+            void onItemMovedUp()            { ++m_nItemMovedUp          ;}
+            void onPushEmptyPass()          { ++m_nPushEmptyPass        ;}
             //@endcond
         };
 
         /// MSPriorityQueue empty statistics
         struct empty_stat {
             //@cond
-            void onPushSuccess()            {}
-            void onPopSuccess()             {}
-            void onPushFailed()             {}
-            void onPopFailed()              {}
-            void onPushHeapifySwap()        {}
-            void onPopHeapifySwap()         {}
+            void onPushSuccess()            const {}
+            void onPopSuccess()             const {}
+            void onPushFailed()             const {}
+            void onPopFailed()              const {}
+            void onPushHeapifySwap()        const {}
+            void onPopHeapifySwap()         const {}
+
+            void onItemMovedTop()           const {}
+            void onItemMovedUp()            const {}
+            void onPushEmptyPass()          const {}
             //@endcond
+        };
+
+        /// Monotonic item counter, see \p traits::item_counter for explanation
+        class monotonic_counter
+        {
+        //@cond
+        public:
+            typedef size_t counter_type;
+
+            monotonic_counter()
+                : m_nCounter(0)
+            {}
+
+            size_t inc()
+            {
+                return ++m_nCounter;
+            }
+
+            size_t dec()
+            {
+                return m_nCounter--;
+            }
+
+            size_t value() const
+            {
+                return m_nCounter;
+            }
+
+        private:
+            size_t m_nCounter;
+        //@endcond
         };
 
         /// MSPriorityQueue traits
@@ -106,7 +148,7 @@ namespace cds { namespace intrusive {
             */
             typedef opt::none       less;
 
-            /// Type of mutual-exclusion lock
+            /// Type of mutual-exclusion lock. The lock is not need to be recursive.
             typedef cds::sync::spin lock_type;
 
             /// Back-off strategy
@@ -118,6 +160,20 @@ namespace cds { namespace intrusive {
                 or any other with interface like \p %mspriority_queue::stat
             */
             typedef empty_stat      stat;
+
+            /// Item counter type
+            /**
+                Two type are possible:
+                - \p cds::bitop::bit_reverse_counter - a counter described in <a href="http://www.research.ibm.com/people/m/michael/ipl-1996.pdf">original paper</a>,
+                  which was developed for reducing lock contention. However, bit-reversing technigue requires more memory than classic heapifying algorithm
+                  because of sparsing of elements: for priority queue of max size \p N the bit-reversing technique requires array size up to 2<sup>K</sup>
+                  where \p K - the nearest power of two such that <tt>2<sup>K</sup> >= N</tt>.
+                - \p mspriority_queue::monotonic_counter - a classic monotonic item counter. This counter can lead to false sharing under high contention.
+                  By the other hand, for priority queue of max size \p N it requires \p N array size.
+
+                By default, \p MSPriorityQueue uses \p %cds::bitop::bit_reverse_counter as described in original paper.
+            */
+            typedef cds::bitop::bit_reverse_counter<> item_counter;
         };
 
         /// Metafunction converting option list to traits
@@ -133,6 +189,8 @@ namespace cds { namespace intrusive {
             - \p opt::lock_type - lock type. Default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy. Default is \p cds::backoff::yield
             - \p opt::stat - internal statistics. Available types: \p mspriority_queue::stat, \p mspriority_queue::empty_stat (the default, no overhead)
+            - \p opt::item_counter - an item counter type for \p MSPriorityQueue. 
+                 Available type: \p cds::bitop::bit_reverse_counter, \p mspriority_queue::monotonic_counter. See \p traits::item_counter for details.
         */
         template <typename... Options>
         struct make_traits {
@@ -187,9 +245,10 @@ namespace cds { namespace intrusive {
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
 
-        typedef typename traits::lock_type lock_type;   ///< heap's size lock type
-        typedef typename traits::back_off  back_off;    ///< Back-off strategy
-        typedef typename traits::stat      stat;        ///< internal statistics type
+        typedef typename traits::lock_type      lock_type;   ///< heap's size lock type
+        typedef typename traits::back_off       back_off;    ///< Back-off strategy
+        typedef typename traits::stat           stat;        ///< internal statistics type, see \p mspriority_queue::traits::stat
+        typedef typename traits::item_counter   item_counter;///< Item counter type, see \p mspriority_queue::traits::item_counter
 
     protected:
         //@cond
@@ -232,12 +291,11 @@ namespace cds { namespace intrusive {
         typedef typename traits::buffer::template rebind<node>::other   buffer_type ;   ///< Heap array buffer type
 
         //@cond
-        typedef cds::bitop::bit_reverse_counter<>           item_counter_type;
-        typedef typename item_counter_type::counter_type    counter_type;
+        typedef typename item_counter::counter_type    counter_type;
         //@endcond
 
     protected:
-        item_counter_type   m_ItemCounter   ;   ///< Item counter
+        item_counter        m_ItemCounter   ;   ///< Item counter
         mutable lock_type   m_Lock          ;   ///< Heap's size lock
         buffer_type         m_Heap          ;   ///< Heap array
         stat                m_Stat          ;   ///< internal statistics accumulator
@@ -285,11 +343,13 @@ namespace cds { namespace intrusive {
             node& refNode = m_Heap[i];
             refNode.lock();
             m_Lock.unlock();
+            assert( refNode.m_nTag == tag_type( Empty ));
+            assert( refNode.m_pVal == nullptr );
             refNode.m_pVal = &val;
             refNode.m_nTag = curId;
             refNode.unlock();
 
-            // Move item towards top of the heap while it has higher priority than parent
+            // Move item towards top of heap while it has a higher priority than its parent
             heapify_after_push( i, curId );
 
             m_Stat.onPushSuccess();
@@ -303,6 +363,8 @@ namespace cds { namespace intrusive {
         */
         value_type * pop()
         {
+            node& refTop = m_Heap[1];
+
             m_Lock.lock();
             if ( m_ItemCounter.value() == 0 ) {
                 // the heap is empty
@@ -310,14 +372,22 @@ namespace cds { namespace intrusive {
                 m_Stat.onPopFailed();
                 return nullptr;
             }
-            counter_type nBottom = m_ItemCounter.reversed_value();
-            m_ItemCounter.dec();
-            // Since m_Heap[0] is not used, capacity() returns m_Heap.capacity() - 1
-            // Consequently, "<=" is here
-            assert( nBottom <= capacity() );
+            counter_type nBottom = m_ItemCounter.dec();
+            assert( nBottom < m_Heap.capacity() );
             assert( nBottom > 0 );
 
-            node& refBottom = m_Heap[ nBottom ];
+            refTop.lock();
+            if ( nBottom == 1 ) {
+                refTop.m_nTag = tag_type( Empty );
+                value_type * pVal = refTop.m_pVal;
+                refTop.m_pVal = nullptr;
+                refTop.unlock();
+                m_Lock.unlock();
+                m_Stat.onPopSuccess();
+                return pVal;
+            }
+
+            node& refBottom = m_Heap[nBottom];
             refBottom.lock();
             m_Lock.unlock();
             refBottom.m_nTag = tag_type(Empty);
@@ -325,8 +395,6 @@ namespace cds { namespace intrusive {
             refBottom.m_pVal = nullptr;
             refBottom.unlock();
 
-            node& refTop = m_Heap[ 1 ];
-            refTop.lock();
             if ( refTop.m_nTag == tag_type(Empty) ) {
                 // nBottom == nTop
                 refTop.unlock();
@@ -338,7 +406,7 @@ namespace cds { namespace intrusive {
             refTop.m_nTag = tag_type( Available );
 
             // refTop will be unlocked inside heapify_after_pop
-            heapify_after_pop( 1, &refTop );
+            heapify_after_pop( &refTop );
 
             m_Stat.onPopSuccess();
             return pVal;
@@ -370,11 +438,9 @@ namespace cds { namespace intrusive {
         template <typename Func>
         void clear_with( Func f )
         {
-            while ( !empty() ) {
-                value_type * pVal = pop();
-                if ( pVal )
-                    f( *pVal );
-            }
+            value_type * pVal;
+            while (( pVal = pop()) != nullptr )
+                f( *pVal );
         }
 
         /// Checks is the priority queue is empty
@@ -393,8 +459,7 @@ namespace cds { namespace intrusive {
         size_t size() const
         {
             std::unique_lock<lock_type> l( m_Lock );
-            size_t nSize = (size_t) m_ItemCounter.value();
-            return nSize;
+            return static_cast<size_t>( m_ItemCounter.value());
         }
 
         /// Return capacity of the priority queue
@@ -439,12 +504,18 @@ namespace cds { namespace intrusive {
                         i = 0;
                     }
                 }
-                else if ( refParent.m_nTag == tag_type(Empty) )
+                else if ( refParent.m_nTag == tag_type( Empty ) ) {
+                    m_Stat.onItemMovedTop();
                     i = 0;
-                else if ( refItem.m_nTag != curId )
+                }
+                else if ( refItem.m_nTag != curId ) {
+                    m_Stat.onItemMovedUp();
                     i = nParent;
-                else
+                }
+                else {
+                    m_Stat.onPushEmptyPass();
                     bProgress = false;
+                }
 
                 refItem.unlock();
                 refParent.unlock();
@@ -464,37 +535,37 @@ namespace cds { namespace intrusive {
             }
         }
 
-        void heapify_after_pop( counter_type nParent, node * pParent )
+        void heapify_after_pop( node * pParent )
         {
             key_comparator cmp;
+            counter_type const nCapacity = m_Heap.capacity();
 
-            while ( nParent < m_Heap.capacity() / 2 ) {
-                counter_type nLeft = nParent * 2;
-                counter_type nRight = nLeft + 1;
-                node& refLeft = m_Heap[nLeft];
-                node& refRight = m_Heap[nRight];
-                refLeft.lock();
-                refRight.lock();
+            counter_type nParent = 1;
+            for ( counter_type nChild = nParent * 2; nChild < nCapacity; nChild *= 2 ) {
+                node* pChild = &m_Heap[ nChild ];
+                pChild->lock();
 
-                counter_type nChild;
-                node * pChild;
-                if ( refLeft.m_nTag == tag_type(Empty) ) {
-                    refRight.unlock();
-                    refLeft.unlock();
+                if ( pChild->m_nTag == tag_type( Empty )) {
+                    pChild->unlock();
                     break;
                 }
-                else if ( refRight.m_nTag == tag_type(Empty) || cmp( *refLeft.m_pVal, *refRight.m_pVal ) > 0 ) {
-                    refRight.unlock();
-                    nChild = nLeft;
-                    pChild = &refLeft;
-                }
-                else {
-                    refLeft.unlock();
-                    nChild = nRight;
-                    pChild = &refRight;
+
+                counter_type const nRight = nChild + 1;
+                if ( nRight < nCapacity ) {
+                    node& refRight = m_Heap[nRight];
+                    refRight.lock();
+
+                    if ( refRight.m_nTag != tag_type( Empty ) && cmp( *refRight.m_pVal, *pChild->m_pVal ) > 0 ) {
+                        // get right child
+                        pChild->unlock();
+                        nChild = nRight;
+                        pChild = &refRight;
+                    }
+                    else
+                        refRight.unlock();
                 }
 
-                // If child has higher priority that parent then swap
+                // If child has higher priority than parent then swap
                 // Otherwise stop
                 if ( cmp( *pChild->m_pVal, *pParent->m_pVal ) > 0 ) {
                     std::swap( pParent->m_nTag, pChild->m_nTag );

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_IMPL_LAZY_LIST_H
@@ -57,7 +57,7 @@ namespace cds { namespace intrusive {
         - \p T - type to be stored in the list. The type must be based on lazy_list::node (for lazy_list::base_hook)
             or it must have a member of type lazy_list::node (for lazy_list::member_hook).
         - \p Traits - type traits. See lazy_list::traits for explanation.
-            It is possible to declare option-based list with cds::intrusive::lazy_list::make_traits metafunction istead of \p Traits template
+            It is possible to declare option-based list with cds::intrusive::lazy_list::make_traits metafunction instead of \p Traits template
             argument. For example, the following traits-based declaration of \p gc::HP lazy list
             \code
             #include <cds/intrusive/lazy_list_hp.h>
@@ -201,9 +201,12 @@ namespace cds { namespace intrusive {
         typedef typename get_node_traits< value_type, node_type, hook>::type node_traits; ///< node traits
         typedef typename lazy_list::get_link_checker< node_type, traits::link_checker >::type link_checker; ///< link checker
 
-        typedef typename traits::back_off  back_off;         ///< back-off strategy
+        typedef typename traits::back_off     back_off;      ///< back-off strategy
         typedef typename traits::item_counter item_counter;  ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model; ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
+        typedef typename traits::memory_model memory_model;  ///< C++ memory ordering (see \p lazy_list::traits::memory_model)
+        typedef typename traits::stat         stat;          ///< Internal statistics
+
+        static_assert((std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type");
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
@@ -219,6 +222,10 @@ namespace cds { namespace intrusive {
                 , typename cds::opt::make_options< traits, Options...>::type
             > type;
         };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = lazy_list::select_stat_wrapper< Stat >;
         //@endcond
 
     protected:
@@ -231,8 +238,8 @@ namespace cds { namespace intrusive {
         node_type   m_Tail;
 
         item_counter    m_ItemCounter;
+        stat            m_Stat; ///< Internal statistics
 
-        //@cond
         struct clean_disposer {
             void operator()( value_type * p )
             {
@@ -498,9 +505,17 @@ namespace cds { namespace intrusive {
         /// Default constructor initializes empty list
         LazyList()
         {
-            static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
             m_Head.m_pNext.store( marked_node_ptr( &m_Tail ), memory_model::memory_order_relaxed );
         }
+
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, lazy_list::wrapped_stat<Stat>>::value >>
+        explicit LazyList( Stat& st )
+            : m_Stat( st )
+        {
+            m_Head.m_pNext.store( marked_node_ptr( &m_Tail ), memory_model::memory_order_relaxed );
+        }
+        //@endcond
 
         /// Destroys the list object
         ~LazyList()
@@ -910,11 +925,17 @@ namespace cds { namespace intrusive {
             this function always returns 0.
 
             @note Even if you use real item counter and it returns 0, this fact does not mean that the list
-            is empty. To check list emptyness use \p empty() method.
+            is empty. To check list emptiness use \p empty() method.
         */
         size_t size() const
         {
             return m_ItemCounter.value();
+        }
+
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
         }
 
     protected:
@@ -948,16 +969,22 @@ namespace cds { namespace intrusive {
                     if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // failed: key already in list
+                            m_Stat.onInsertFailed();
                             return false;
                         }
                         else {
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
-                            ++m_ItemCounter;
-                            return true;
+                            break;
                         }
                     }
                 }
+
+                m_Stat.onInsertRetry();
             }
+
+            ++m_ItemCounter;
+            m_Stat.onInsertSuccess();
+            return true;
         }
 
         template <typename Func>
@@ -973,17 +1000,23 @@ namespace cds { namespace intrusive {
                     if ( validate( pos.pPred, pos.pCur )) {
                         if ( pos.pCur != &m_Tail && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
                             // failed: key already in list
+                            m_Stat.onInsertFailed();
                             return false;
                         }
                         else {
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             f( val );
-                            ++m_ItemCounter;
-                            return true;
+                            break;
                         }
                     }
                 }
+
+                m_Stat.onInsertRetry();
             }
+
+            ++m_ItemCounter;
+            m_Stat.onInsertSuccess();
+            return true;
         }
 
         template <typename Func>
@@ -1001,21 +1034,29 @@ namespace cds { namespace intrusive {
                             // key already in the list
 
                             func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
+                            m_Stat.onUpdateExisting();
                             return std::make_pair( true, false );
                         }
                         else {
                             // new key
-                            if ( !bAllowInsert )
+                            if ( !bAllowInsert ) {
+                                m_Stat.onUpdateFailed();
                                 return std::make_pair( false, false );
+                            }
 
                             link_node( node_traits::to_node_ptr( val ), pos.pPred, pos.pCur );
                             func( true, val, val );
-                            ++m_ItemCounter;
-                            return std::make_pair( true, true );
+                            break;
                         }
                     }
                 }
+
+                m_Stat.onUpdateRetry();
             }
+
+            ++m_ItemCounter;
+            m_Stat.onUpdateNew();
+            return std::make_pair( true, true );
         }
 
         bool unlink_at( node_type * pHead, value_type& val )
@@ -1036,21 +1077,27 @@ namespace cds { namespace intrusive {
                             {
                                 // item found
                                 unlink_node( pos.pPred, pos.pCur, pHead );
-                                --m_ItemCounter;
                                 nResult = 1;
                             }
                             else
                                 nResult = -1;
                         }
                     }
+
                     if ( nResult ) {
                         if ( nResult > 0 ) {
+                            --m_ItemCounter;
                             retire_node( pos.pCur );
+                            m_Stat.onEraseSuccess();
                             return true;
                         }
+
+                        m_Stat.onEraseFailed();
                         return false;
                     }
                 }
+
+                m_Stat.onEraseRetry();
             }
         }
 
@@ -1068,7 +1115,6 @@ namespace cds { namespace intrusive {
                                 // key found
                                 unlink_node( pos.pPred, pos.pCur, pHead );
                                 f( *node_traits::to_value_ptr( *pos.pCur ));
-                                --m_ItemCounter;
                                 nResult = 1;
                             }
                             else {
@@ -1078,12 +1124,18 @@ namespace cds { namespace intrusive {
                     }
                     if ( nResult ) {
                         if ( nResult > 0 ) {
+                            --m_ItemCounter;
                             retire_node( pos.pCur );
+                            m_Stat.onEraseSuccess();
                             return true;
                         }
+
+                        m_Stat.onEraseFailed();
                         return false;
                     }
                 }
+
+                m_Stat.onEraseRetry();
             }
         }
 
@@ -1124,9 +1176,12 @@ namespace cds { namespace intrusive {
                     && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
                 {
                     f( *node_traits::to_value_ptr( *pos.pCur ), val );
+                    m_Stat.onFindSuccess();
                     return true;
                 }
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
 
@@ -1136,9 +1191,13 @@ namespace cds { namespace intrusive {
             position pos;
 
             search( pHead, val, pos, cmp );
-            return pos.pCur != &m_Tail
-                && !pos.pCur->is_marked()
-                && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0;
+            if ( pos.pCur != &m_Tail && !pos.pCur->is_marked() && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 ) {
+                m_Stat.onFindSuccess();
+                return true;
+            }
+
+            m_Stat.onFindFailed();
+            return false;
         }
 
         template <typename Q, typename Compare>
@@ -1152,8 +1211,11 @@ namespace cds { namespace intrusive {
                 && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
             {
                 gp.set( pos.guards.template get<value_type>( position::guard_current_item ));
+                m_Stat.onFindSuccess();
                 return true;
             }
+
+            m_Stat.onFindFailed();
             return false;
         }
 
@@ -1190,7 +1252,18 @@ namespace cds { namespace intrusive {
             pos.pPred = pPrev.ptr();
         }
 
-        static bool validate( node_type * pPred, node_type * pCur )
+        bool validate( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
+        {
+            if ( validate_link( pPred, pCur )) {
+                m_Stat.onValidationSuccess();
+                return true;
+            }
+
+            m_Stat.onValidationFailed();
+            return true;
+        }
+
+        static bool validate_link( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
         {
             return !pPred->is_marked()
                 && !pCur->is_marked()

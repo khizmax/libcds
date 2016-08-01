@@ -25,13 +25,13 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <gtest/gtest.h>
 
 #include <cds/algo/int_algo.h>
-#include <cds/os/timer.h>
+//#include <cds/details/bit_reverse_counter.h>
 
 namespace {
     class bitop : public ::testing::Test
@@ -133,5 +133,28 @@ namespace {
             EXPECT_EQ( cds::beans::ceil2( n + 1 ), n * 2 );
         }
     }
+
+    /*
+    TEST_F( bitop, bit_reverse_counter )
+    {
+        cds::bitop::bit_reverse_counter<> c;
+
+        while ( c.value() < 8 ) {
+            size_t res = c.inc();
+            std::cout << "inc result: " << res
+                      << " value: " << c.value()
+                      << " reversed: " << c.reversed_value()
+                      << " high_bit: " << c.high_bit() << "\n";
+        }
+
+        while ( c.value() > 0 ) {
+            size_t res = c.dec();
+            std::cout << "dec result: " << res
+                << " value: " << c.value()
+                << " reversed: " << c.reversed_value()
+                << " high_bit: " << c.high_bit() << "\n";
+        }
+    }
+    */
 
 } // namespace

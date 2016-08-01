@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_LIST_TEST_LAZY_LIST_RCU_H
@@ -149,6 +149,39 @@ TYPED_TEST_P( LazyList, seq_cst )
     this->test_rcu( l );
 }
 
+TYPED_TEST_P( LazyList, stat )
+{
+    struct traits: public cc::lazy_list::traits
+    {
+        typedef typename TestFixture::template lt< typename TestFixture::item> less;
+        typedef cds::atomicity::item_counter item_counter;
+        typedef cds::container::lazy_list::stat<> stat;
+    };
+    typedef cc::LazyList<typename TestFixture::rcu_type, typename TestFixture::item, traits > list_type;
+
+    list_type l;
+    this->test_common( l );
+    this->test_ordered_iterator( l );
+    this->test_rcu( l );
+}
+
+TYPED_TEST_P( LazyList, wrapped_stat )
+{
+    struct traits: public cc::lazy_list::traits
+    {
+        typedef typename TestFixture::template lt< typename TestFixture::item> less;
+        typedef cds::atomicity::item_counter item_counter;
+        typedef cds::container::lazy_list::wrapped_stat<> stat;
+    };
+    typedef cc::LazyList<typename TestFixture::rcu_type, typename TestFixture::item, traits > list_type;
+
+    cds::container::lazy_list::stat<> st;
+    list_type l( st );
+    this->test_common( l );
+    this->test_ordered_iterator( l );
+    this->test_rcu( l );
+}
+
 TYPED_TEST_P( LazyList, mutex )
 {
     struct traits : public cc::lazy_list::traits
@@ -168,7 +201,7 @@ TYPED_TEST_P( LazyList, mutex )
 // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No test named <test_name> can be found in this test case"
 REGISTER_TYPED_TEST_CASE_P( LazyList,
-    less_ordered, compare_ordered, mix_ordered, item_counting, backoff, seq_cst, mutex
+    less_ordered, compare_ordered, mix_ordered, item_counting, backoff, seq_cst, mutex, stat, wrapped_stat
     );
 
 #endif // CDSUNIT_LIST_TEST_LAZY_LIST_RCU_H

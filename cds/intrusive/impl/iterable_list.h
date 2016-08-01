@@ -28,35 +28,42 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CDSLIB_INTRUSIVE_IMPL_MICHAEL_LIST_H
-#define CDSLIB_INTRUSIVE_IMPL_MICHAEL_LIST_H
+#ifndef CDSLIB_INTRUSIVE_IMPL_ITERABLE_LIST_H
+#define CDSLIB_INTRUSIVE_IMPL_ITERABLE_LIST_H
 
-#include <cds/intrusive/details/michael_list_base.h>
+#include <cds/intrusive/details/iterable_list_base.h>
 #include <cds/details/make_const_type.h>
 
 namespace cds { namespace intrusive {
 
-    /// Michael's lock-free ordered single-linked list
+    /// Iterable lock-free ordered single-linked list
     /** @ingroup cds_intrusive_list
-        \anchor cds_intrusive_MichaelList_hp
+        \anchor cds_intrusive_IterableList_hp
+
+        This lock-free list implementation supports thread-safe iterators.
+        Unlike \p cds::intrusive::MichaelList the iterable list does not require
+        any hook in \p T to be stored in the list.
 
         Usually, ordered single-linked list is used as a building block for the hash table implementation.
+        Iterable list is suitable for almost append-only hash table because the list doesn't delete
+        its internal node when erasing a key but it is marked them as empty to be reused in the future.
+        However, plenty of empty nodes degrades performance.
+        Separation of internal nodes and user data implies the need for an allocator for internal node
+        so the iterable list is not fully intrusive. Nevertheless, if you need thread-safe iterator,
+        the iterable list is good choice.
+
         The complexity of searching is <tt>O(N)</tt>.
 
-        Source:
-            - [2002] Maged Michael "High performance dynamic lock-free hash tables and list-based sets"
-
         Template arguments:
-        - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for item type \p T (see \p michael_list::node).
-        - \p T - type to be stored in the list. The type must be based on \p michael_list::node (for \p michael_list::base_hook)
-            or it must have a member of type \p michael_list::node (for \p michael_list::member_hook).
-        - \p Traits - type traits, default is \p michael_list::traits. It is possible to declare option-based
-             list with \p cds::intrusive::michael_list::make_traits metafunction:
-            For example, the following traits-based declaration of \p gc::HP Michael's list
+        - \p GC - Garbage collector used.
+        - \p T - type to be stored in the list.
+        - \p Traits - type traits, default is \p iterable_list::traits. It is possible to declare option-based
+             list with \p cds::intrusive::iterable_list::make_traits metafunction:
+            For example, the following traits-based declaration of \p gc::HP iterable list
             \code
-            #include <cds/intrusive/michael_list_hp.h>
+            #include <cds/intrusive/iterable_list_hp.h>
             // Declare item stored in your list
-            struct item: public cds::intrusive::michael_list::node< cds::gc::HP >
+            struct foo
             {
                 int nKey;
                 // .... other data
@@ -64,135 +71,58 @@ namespace cds { namespace intrusive {
 
             // Declare comparator for the item
             struct my_compare {
-                int operator()( item const& i1, item const& i2 ) const
+                int operator()( foo const& i1, foo const& i2 ) const
                 {
                     return i1.nKey - i2.nKey;
                 }
             };
 
             // Declare traits
-            struct my_traits: public cds::intrusive::michael_list::traits
+            struct my_traits: public cds::intrusive::iterable_list::traits
             {
-                typedef cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::HP > >   hook;
                 typedef my_compare compare;
             };
 
-            // Declare traits-based list
-            typedef cds::intrusive::MichaelList< cds::gc::HP, item, my_traits >     traits_based_list;
+            // Declare list
+            typedef cds::intrusive::IterableList< cds::gc::HP, foo, my_traits > list_type;
             \endcode
             is equivalent for the following option-based list
             \code
-            #include <cds/intrusive/michael_list_hp.h>
+            #include <cds/intrusive/iterable_list_hp.h>
 
-            // item struct and my_compare are the same
+            // foo struct and my_compare are the same
 
             // Declare option-based list
-            typedef cds::intrusive::MichaelList< cds::gc::HP, item,
-                typename cds::intrusive::michael_list::make_traits<
-                    cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::HP > > >    // hook option
-                    ,cds::intrusive::opt::compare< my_compare >     // item comparator option
+            typedef cds::intrusive::IterableList< cds::gc::HP, foo,
+                typename cds::intrusive::iterable_list::make_traits<
+                    cds::intrusive::opt::compare< my_compare >     // item comparator option
                 >::type
-            >     option_based_list;
+            > option_list_type;
             \endcode
 
         \par Usage
         There are different specializations of this template for each garbage collecting schema.
-        You should select GC needed and include appropriate .h-file:
-        - for \p gc::HP: <tt> <cds/intrusive/michael_list_hp.h> </tt>
-        - for \p gc::DHP: <tt> <cds/intrusive/michael_list_dhp.h> </tt>
-        - for \ref cds_urcu_gc "RCU type" - see \ref cds_intrusive_MichaelList_rcu "RCU-based MichaelList"
-        - for \p gc::nogc: <tt> <cds/intrusive/michael_list_nogc.h> </tt>
-            See \ref cds_intrusive_MichaelList_nogc "non-GC MichaelList"
-
-        Then, you should incorporate \p michael_list::node into your struct \p T and provide
-        appropriate \p michael_list::traits::hook in your \p Traits template parameters. Usually, for \p Traits you
-        define a struct based on \p michael_list::traits.
-
-        Example for \p gc::DHP and base hook:
-        \code
-        // Include GC-related Michael's list specialization
-        #include <cds/intrusive/michael_list_dhp.h>
-
-        // Data stored in Michael's list
-        struct my_data: public cds::intrusive::michael_list::node< cds::gc::DHP >
-        {
-            // key field
-            std::string     strKey;
-
-            // other data
-            // ...
-        };
-
-        // my_data comparing functor
-        struct my_data_cmp {
-            int operator()( const my_data& d1, const my_data& d2 )
-            {
-                return d1.strKey.compare( d2.strKey );
-            }
-
-            int operator()( const my_data& d, const std::string& s )
-            {
-                return d.strKey.compare(s);
-            }
-
-            int operator()( const std::string& s, const my_data& d )
-            {
-                return s.compare( d.strKey );
-            }
-        };
-
-
-        // Declare traits
-        struct my_traits: public cds::intrusive::michael_list::traits
-        {
-            typedef cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::DHP > >   hook;
-            typedef my_data_cmp compare;
-        };
-
-        // Declare list type
-        typedef cds::intrusive::MichaelList< cds::gc::DHP, my_data, my_traits >     traits_based_list;
-        \endcode
-
-        Equivalent option-based code:
-        \code
-        // GC-related specialization
-        #include <cds/intrusive/michael_list_dhp.h>
-
-        struct my_data {
-            // see above
-        };
-        struct compare {
-            // see above
-        };
-
-        // Declare option-based list
-        typedef cds::intrusive::MichaelList< cds::gc::DHP
-            ,my_data
-            , typename cds::intrusive::michael_list::make_traits<
-                cds::intrusive::opt::hook< cds::intrusive::michael_list::base_hook< cds::opt::gc< cds::gc::DHP > > >
-                ,cds::intrusive::opt::compare< my_data_cmp >
-            >::type
-        > option_based_list;
-
-        \endcode
+        You should select GC you want and include appropriate .h-file:
+        - for \p gc::HP: <tt> <cds/intrusive/iterable_list_hp.h> </tt>
+        - for \p gc::DHP: <tt> <cds/intrusive/iterable_list_dhp.h> </tt>
+        - for \ref cds_urcu_gc "RCU type" - see \ref cds_intrusive_IterableList_rcu "RCU-based IterableList"
     */
     template <
         class GC
         ,typename T
 #ifdef CDS_DOXYGEN_INVOKED
-        ,class Traits = michael_list::traits
+        ,class Traits = iterable_list::traits
 #else
         ,class Traits
 #endif
     >
-    class MichaelList
+    class IterableList
     {
     public:
         typedef T       value_type; ///< type of value stored in the list
         typedef Traits  traits;     ///< Traits template parameter
 
-        typedef typename traits::hook    hook;      ///< hook type
-        typedef typename hook::node_type node_type; ///< node type
+        typedef iterable_list::node< value_type > node_type; ///< node type
 
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator  ;    ///< key comparison functor based on opt::compare and opt::less option setter.
@@ -200,110 +130,55 @@ namespace cds { namespace intrusive {
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 #   endif
 
-        typedef typename traits::disposer  disposer; ///< disposer used
-        typedef typename traits::stat      stat;     ///< Internal statistics
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
-        typedef typename michael_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
+        typedef typename traits::disposer  disposer; ///< disposer for \p value_type
 
-        typedef GC  gc          ;   ///< Garbage collector
-        typedef typename traits::back_off  back_off;   ///< back-off strategy
-        typedef typename traits::item_counter item_counter;   ///< Item counting policy used
-        typedef typename traits::memory_model  memory_model;   ///< Memory ordering. See cds::opt::memory_model option
+        typedef GC  gc;   ///< Garbage collector
+        typedef typename traits::back_off       back_off;       ///< back-off strategy
+        typedef typename traits::item_counter   item_counter;   ///< Item counting policy used
+        typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
+        typedef typename traits::node_allocator node_allocator; ///< Node allocator
+        typedef typename traits::stat           stat;           ///< Internal statistics
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 2; ///< Count of hazard pointer required for the algorithm
 
         //@cond
         // Rebind traits (split-list support)
         template <typename... Options>
         struct rebind_traits {
-            typedef MichaelList<
+            typedef IterableList<
                 gc
                 , value_type
                 , typename cds::opt::make_options< traits, Options...>::type
-            >   type;
+            > type;
         };
 
         // Stat selector
         template <typename Stat>
-        using select_stat_wrapper = michael_list::select_stat_wrapper< Stat >;
+        using select_stat_wrapper = iterable_list::select_stat_wrapper< Stat >;
         //@endcond
 
     protected:
-        typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic node pointer
-        typedef typename node_type::marked_ptr          marked_node_ptr;   ///< Node marked pointer
-
-        typedef atomic_node_ptr     auxiliary_head;   ///< Auxiliary head type (for split-list support)
+        typedef atomics::atomic< node_type* > atomic_node_ptr;  ///< Atomic node pointer
+        typedef atomic_node_ptr               auxiliary_head;   ///< Auxiliary head type (for split-list support)
 
         atomic_node_ptr m_pHead;        ///< Head pointer
         item_counter    m_ItemCounter;  ///< Item counter
-        stat            m_Stat;         ///< Internal statistics
+        mutable stat    m_Stat;         ///< Internal statistics
 
         //@cond
+        typedef cds::details::Allocator< node_type, node_allocator > cxx_node_allocator;
+
         /// Position pointer for item search
         struct position {
-            atomic_node_ptr * pPrev ;   ///< Previous node
-            node_type * pCur        ;   ///< Current node
-            node_type * pNext       ;   ///< Next node
+            atomic_node_ptr * pHead; ///< Previous node (pointer to pPrev->next or to m_pHead)
+            node_type *       pPrev;  ///< Previous node
+            node_type *       pCur;   ///< Current node
 
-            typename gc::template GuardArray<3> guards  ;   ///< Guards array
-
-            enum {
-                guard_prev_item,
-                guard_current_item,
-                guard_next_item
-            };
+            value_type *      pFound; ///< Value of \p pCur->data, valid only if data found
+            typename gc::Guard guard; ///< guard for \p pFound
         };
-
-        struct clean_disposer {
-            void operator()( value_type * p )
-            {
-                michael_list::node_cleaner<gc, node_type, memory_model>()( node_traits::to_node_ptr( p ));
-                disposer()( p );
-            }
-        };
-        //@endcond
-
-    protected:
-        //@cond
-        static void retire_node( node_type * pNode )
-        {
-            assert( pNode != nullptr );
-            gc::template retire<clean_disposer>( node_traits::to_value_ptr( *pNode ));
-        }
-
-        static bool link_node( node_type * pNode, position& pos )
-        {
-            assert( pNode != nullptr );
-            link_checker::is_empty( pNode );
-
-            marked_node_ptr cur(pos.pCur);
-            pNode->m_pNext.store( cur, memory_model::memory_order_release );
-            if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed )))
-                return true;
-
-            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
-            return false;
-        }
-
-        static bool unlink_node( position& pos )
-        {
-            assert( pos.pPrev != nullptr );
-            assert( pos.pCur != nullptr );
-
-            // Mark the node (logical deleting)
-            marked_node_ptr next(pos.pNext, 0);
-            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, marked_node_ptr(pos.pNext, 1), memory_model::memory_order_release, atomics::memory_order_relaxed ))) {
-                // physical deletion may be performed by search function if it detects that a node is logically deleted (marked)
-                // CAS may be successful here or in other thread that searching something
-                marked_node_ptr cur(pos.pCur);
-                if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )))
-                    retire_node( pos.pCur );
-                return true;
-            }
-            return false;
-        }
         //@endcond
 
     protected:
@@ -311,46 +186,43 @@ namespace cds { namespace intrusive {
         template <bool IsConst>
         class iterator_type
         {
-            friend class MichaelList;
+            friend class IterableList;
 
         protected:
-            value_type * m_pNode;
-            typename gc::Guard  m_Guard;
+            node_type*  m_pNode;
+            value_type* m_pVal;
+            typename gc::Guard  m_Guard; // for m_pVal
 
             void next()
             {
-                if ( m_pNode ) {
-                    typename gc::Guard g;
-                    node_type * pCur = node_traits::to_node_ptr( *m_pNode );
-
-                    marked_node_ptr pNext;
-                    do {
-                        pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed);
-                        g.assign( node_traits::to_value_ptr( pNext.ptr()));
-                    } while ( cds_unlikely( pNext != pCur->m_pNext.load(memory_model::memory_order_acquire)));
-
-                    if ( pNext.ptr())
-                        m_pNode = m_Guard.assign( g.template get<value_type>());
-                    else {
-                        m_pNode = nullptr;
-                        m_Guard.clear();
-                    }
+                while ( m_pNode ) {
+                    m_pNode = m_pNode->next.load( memory_model::memory_order_relaxed );
+                    if ( !m_pNode )
+                        break;
+                    m_pVal = m_Guard.protect( m_pNode->data );
+                    if ( m_pVal )
+                        break;
                 }
             }
 
-            iterator_type( atomic_node_ptr const& pNode )
+            explicit iterator_type( atomic_node_ptr const& pNode )
+                : m_pNode( pNode.load( memory_model::memory_order_relaxed ))
+                , m_pVal( nullptr )
             {
-                for (;;) {
-                    marked_node_ptr p = pNode.load(memory_model::memory_order_relaxed);
-                    if ( p.ptr()) {
-                        m_pNode = m_Guard.assign( node_traits::to_value_ptr( p.ptr()));
-                    }
-                    else {
-                        m_pNode = nullptr;
-                        m_Guard.clear();
-                    }
-                    if ( cds_likely( p == pNode.load(memory_model::memory_order_acquire)))
-                        break;
+                if ( m_pNode ) {
+                    m_pVal = m_Guard.protect( m_pNode->data );
+                    if ( !m_pVal )
+                        next();
+                }
+            }
+
+            iterator_type( node_type* pNode, value_type* pVal )
+                : m_pNode( pNode )
+                , m_pVal( pVal )
+            {
+                if ( m_pNode ) {
+                    assert( pVal != nullptr );
+                    m_Guard.assign( pVal );
                 }
             }
 
@@ -360,26 +232,25 @@ namespace cds { namespace intrusive {
 
             iterator_type()
                 : m_pNode( nullptr )
+                , m_pVal( nullptr )
             {}
 
             iterator_type( iterator_type const& src )
+                : m_pNode( src.m_pNode )
+                , m_pVal( src.m_pVal )
             {
-                if ( src.m_pNode ) {
-                    m_pNode = m_Guard.assign( src.m_pNode );
-                }
-                else
-                    m_pNode = nullptr;
+                m_Guard.assign( m_pVal );
             }
 
             value_ptr operator ->() const
             {
-                return m_pNode;
+                return m_pVal;
             }
 
             value_ref operator *() const
             {
-                assert( m_pNode != nullptr );
-                return *m_pNode;
+                assert( m_pVal != nullptr );
+                return *m_pVal;
             }
 
             /// Pre-increment
@@ -392,17 +263,10 @@ namespace cds { namespace intrusive {
             iterator_type& operator = (iterator_type const& src)
             {
                 m_pNode = src.m_pNode;
-                m_Guard.assign( m_pNode );
+                m_pVal = src.m_pVal;
+                m_Guard.assign( m_pVal );
                 return *this;
             }
-
-            /*
-            /// Post-increment
-            void operator ++(int)
-            {
-                next();
-            }
-            */
 
             template <bool C>
             bool operator ==(iterator_type<C> const& i ) const
@@ -418,21 +282,18 @@ namespace cds { namespace intrusive {
         //@endcond
 
     public:
-    ///@name Forward iterators (only for debugging purpose)
+    ///@name Thread-safe forward iterators
     //@{
         /// Forward iterator
         /**
-            The forward iterator for Michael's list has some features:
+            The forward iterator for iterable list has some features:
             - it has no post-increment operator
-            - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
+            - to protect the value, the iterator contains a GC-specific guard.
               For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
               may be thrown if the limit of guard count per thread is exceeded.
             - The iterator cannot be moved across thread boundary since it contains thread-private GC's guard.
-            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
-              deleting operations there is no guarantee that you iterate all item in the list. 
-              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
-
-            @warning Use this iterator on the concurrent container for debugging purpose only.
+            - Iterator is thread-safe: event if the element the iterator points to is removed, the iterator stays valid because
+              it contains the guard keeping the value from to be recycled.
 
             The iterator interface:
             \code
@@ -461,6 +322,16 @@ namespace cds { namespace intrusive {
                 bool operator !=(iterator const& i ) const;
             };
             \endcode
+
+            @note For two iterators pointed to the same element the value can be different;
+            this code
+            \code
+                if ( it1 == it2 )
+                    assert( &(*it1) == &(*it2) );
+            \endcode
+            can throw assertion. The point is that the iterator stores the value of element which can be modified later by other thread.
+            The guard inside the iterator prevents recycling that value so the iterator's value remains valid even after such changing.
+            Other iterator can observe modified value of the element.
         */
         typedef iterator_type<false>    iterator;
         /// Const forward iterator
@@ -518,24 +389,22 @@ namespace cds { namespace intrusive {
 
     public:
         /// Default constructor initializes empty list
-        MichaelList()
+        IterableList()
             : m_pHead( nullptr )
-        {
-            static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
-        }
+        {}
 
         //@cond
-        template <typename Stat, typename = std::enable_if<std::is_same<stat, michael_list::wrapped_stat<Stat>>::value >>
-        explicit MichaelList( Stat& st )
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, iterable_list::wrapped_stat<Stat>>::value >>
+        explicit IterableList( Stat& st )
             : m_pHead( nullptr )
             , m_Stat( st )
         {}
         //@endcond
 
         /// Destroys the list object
-        ~MichaelList()
+        ~IterableList()
         {
-            clear();
+            destroy();
         }
 
         /// Inserts new node
@@ -581,26 +450,19 @@ namespace cds { namespace intrusive {
 
             If the item \p val is not found in the list, then \p val is inserted
             iff \p bInsert is \p true.
-            Otherwise, the functor \p func is called with item found.
-            The functor signature is:
+            Otherwise, the current element is changed to \p val, the element will be retired later
+            by call \p Traits::disposer.
+            The functor \p func is called after inserting or replacing, it signature is:
             \code
-                void func( bool bNew, value_type& item, value_type& val );
+                void func( value_type& val, value_type * old );
             \endcode
-            with arguments:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the list
-            - \p val - argument \p val passed into the \p update() function
-            If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
-            refers to the same thing.
-
-            The functor may change non-key fields of the \p item; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
+            where
+            - \p val - argument \p val passed into the \p %update() function
+            - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if new item has been added or \p false if the item with that key
+            \p second is \p true if \p val has been added or \p false if the item with that key
             already in the list.
-
-            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Func>
         std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
@@ -608,14 +470,23 @@ namespace cds { namespace intrusive {
             return update_at( m_pHead, val, func, bInsert );
         }
 
-        //@cond
-        template <typename Func>
-        CDS_DEPRECATED("ensure() is deprecated, use update()")
-        std::pair<bool, bool> ensure( value_type& val, Func func )
+        /// Insert or update
+        /**
+            The operation performs inserting or updating data with lock-free manner.
+
+            If the item \p val is not found in the list, then \p val is inserted
+            iff \p bInsert is \p true.
+            Otherwise, the current element is changed to \p val, the old element will be retired later
+            by call \p Traits::disposer.
+
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+            \p second is \p true if \p val has been added or \p false if the item with that key
+            already in the list.
+        */
+        std::pair<bool, bool> upsert( value_type& val, bool bInsert = true )
         {
-            return update( val, func, true );
+            return update_at( m_pHead, val, []( value_type&, value_type* ) {}, bInsert );
         }
-        //@endcond
 
         /// Unlinks the item \p val from the list
         /**
@@ -637,7 +508,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the list
-        /** \anchor cds_intrusive_MichaelList_hp_erase_val
+        /** \anchor cds_intrusive_IterableList_hp_erase_val
             The function searches an item with key equal to \p key in the list,
             unlinks it from the list, and returns \p true.
             If \p key is not found the function return \p false.
@@ -652,7 +523,7 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the list using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_erase_val "erase(Q const&)"
+            The function is an analog of \ref cds_intrusive_IterableList_hp_erase_val "erase(Q const&)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
@@ -667,7 +538,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Deletes the item from the list
-        /** \anchor cds_intrusive_MichaelList_hp_erase_func
+        /** \anchor cds_intrusive_IterableList_hp_erase_func
             The function searches an item with key equal to \p key in the list,
             call \p func functor with item found, unlinks it from the list, and returns \p true.
             The \p Func interface is
@@ -688,7 +559,7 @@ namespace cds { namespace intrusive {
 
         /// Deletes the item from the list using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_erase_func "erase(Q const&, Func)"
+            The function is an analog of \ref cds_intrusive_IterableList_hp_erase_func "erase(Q const&, Func)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
@@ -703,7 +574,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Extracts the item from the list with specified \p key
-        /** \anchor cds_intrusive_MichaelList_hp_extract
+        /** \anchor cds_intrusive_IterableList_hp_extract
             The function searches an item with key equal to \p key,
             unlinks it from the list, and returns it as \p guarded_ptr.
             If \p key is not found returns an empty guarded pointer.
@@ -716,7 +587,7 @@ namespace cds { namespace intrusive {
 
             Usage:
             \code
-            typedef cds::intrusive::MichaelList< cds::gc::HP, foo, my_traits >  ord_list;
+            typedef cds::intrusive::IterableList< cds::gc::HP, foo, my_traits >  ord_list;
             ord_list theList;
             // ...
             {
@@ -739,7 +610,7 @@ namespace cds { namespace intrusive {
 
         /// Extracts the item using compare functor \p pred
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_extract "extract(Q const&)"
+            The function is an analog of \ref cds_intrusive_IterableList_hp_extract "extract(Q const&)"
             but \p pred predicate is used for key comparing.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -756,7 +627,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Finds \p key in the list
-        /** \anchor cds_intrusive_MichaelList_hp_find_func
+        /** \anchor cds_intrusive_IterableList_hp_find_func
             The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
@@ -764,50 +635,87 @@ namespace cds { namespace intrusive {
                 void operator()( value_type& item, Q& key );
             };
             \endcode
-            where \p item is the item found, \p key is the <tt>find</tt> function argument.
+            where \p item is the item found, \p key is the \p %find() function argument.
 
             The functor may change non-key fields of \p item. Note that the function is only guarantee
             that \p item cannot be disposed during functor is executing.
             The function does not serialize simultaneous access to the \p item. If such access is
             possible you must provide your own synchronization schema to keep out unsafe item modifications.
 
-            The \p key argument is non-const since it can be used as \p f functor destination i.e., the functor
-            may modify both arguments.
-
             The function returns \p true if \p val is found, \p false otherwise.
         */
         template <typename Q, typename Func>
-        bool find( Q& key, Func f )
+        bool find( Q& key, Func f ) const
         {
             return find_at( m_pHead, key, key_comparator(), f );
         }
         //@cond
         template <typename Q, typename Func>
-        bool find( Q const& key, Func f )
+        bool find( Q const& key, Func f ) const
         {
             return find_at( m_pHead, key, key_comparator(), f );
         }
         //@endcond
 
+        /// Finds \p key in the list and returns iterator pointed to the item found
+        /**
+            If \p key is not found the function returns \p end().
+        */
+        template <typename Q>
+        iterator find( Q& key ) const
+        {
+            return find_iterator_at( m_pHead, key, key_comparator());
+        }
+        //@cond
+        template <typename Q>
+        iterator find( Q const& key ) const
+        {
+            return find_iterator_at( m_pHead, key, key_comparator() );
+        }
+        //@endcond
+
         /// Finds the \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_find_func "find(Q&, Func)"
+            The function is an analog of \ref cds_intrusive_IterableList_hp_find_func "find(Q&, Func)"
             but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& key, Less pred, Func f )
+        bool find_with( Q& key, Less pred, Func f ) const
         {
             CDS_UNUSED( pred );
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& key, Less pred, Func f )
+        bool find_with( Q const& key, Less pred, Func f ) const
         {
             CDS_UNUSED( pred );
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+        //@endcond
+
+        /// Finds \p key in the list using \p pred predicate for searching and returns iterator pointed to the item found
+        /**
+            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p pred must imply the same element order as the comparator used for building the list.
+
+            If \p key is not found the function returns \p end().
+        */
+        template <typename Q, typename Less>
+        iterator find_with( Q& key, Less pred ) const
+        {
+            CDS_UNUSED( pred );
+            return find_iterator_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
+        }
+        //@cond
+        template <typename Q, typename Less>
+        iterator find_with( Q const& key, Less pred ) const
+        {
+            CDS_UNUSED( pred );
+            return find_iterator_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
         //@endcond
 
@@ -817,18 +725,10 @@ namespace cds { namespace intrusive {
             and returns \p true if it is found, and \p false otherwise.
         */
         template <typename Q>
-        bool contains( Q const& key )
+        bool contains( Q const& key ) const
         {
             return find_at( m_pHead, key, key_comparator());
         }
-        //@cond
-        template <typename Q>
-        CDS_DEPRECATED("deprecated, use contains()")
-        bool find( Q const& key )
-        {
-            return contains( key );
-        }
-        //@endcond
 
         /// Checks whether the list contains \p key using \p pred predicate for searching
         /**
@@ -837,22 +737,14 @@ namespace cds { namespace intrusive {
             \p Less must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        bool contains( Q const& key, Less pred )
+        bool contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
             return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
-        //@cond
-        template <typename Q, typename Less>
-        CDS_DEPRECATED("deprecated, use contains()")
-        bool find_with( Q const& key, Less pred )
-        {
-            return contains( key, pred );
-        }
-        //@endcond
 
         /// Finds the \p key and return the item found
-        /** \anchor cds_intrusive_MichaelList_hp_get
+        /** \anchor cds_intrusive_IterableList_hp_get
             The function searches the item with key equal to \p key
             and returns it as \p guarded_ptr.
             If \p key is not found the function returns an empty guarded pointer.
@@ -864,7 +756,7 @@ namespace cds { namespace intrusive {
 
             Usage:
             \code
-            typedef cds::intrusive::MichaelList< cds::gc::HP, foo, my_traits >  ord_list;
+            typedef cds::intrusive::IterableList< cds::gc::HP, foo, my_traits >  ord_list;
             ord_list theList;
             // ...
             {
@@ -881,7 +773,7 @@ namespace cds { namespace intrusive {
             should accept a parameter of type \p Q that can be not the same as \p value_type.
         */
         template <typename Q>
-        guarded_ptr get( Q const& key )
+        guarded_ptr get( Q const& key ) const
         {
             guarded_ptr gp;
             get_at( m_pHead, gp.guard(), key, key_comparator());
@@ -890,7 +782,7 @@ namespace cds { namespace intrusive {
 
         /// Finds the \p key and return the item found
         /**
-            The function is an analog of \ref cds_intrusive_MichaelList_hp_get "get( Q const&)"
+            The function is an analog of \ref cds_intrusive_IterableList_hp_get "get( Q const&)"
             but \p pred is used for comparing the keys.
 
             \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
@@ -898,7 +790,7 @@ namespace cds { namespace intrusive {
             \p pred must imply the same element order as the comparator used for building the list.
         */
         template <typename Q, typename Less>
-        guarded_ptr get_with( Q const& key, Less pred )
+        guarded_ptr get_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
             guarded_ptr gp;
@@ -906,40 +798,38 @@ namespace cds { namespace intrusive {
             return gp;
         }
 
-        /// Clears the list
-        /**
-            The function unlink all items from the list.
-        */
+        /// Clears the list (thread safe, not atomic)
         void clear()
         {
-            typename gc::Guard guard;
-            marked_node_ptr head;
-            while ( true ) {
-                head = m_pHead.load(memory_model::memory_order_relaxed);
-                if ( head.ptr())
-                    guard.assign( node_traits::to_value_ptr( *head.ptr()));
-                if ( cds_likely( m_pHead.load(memory_model::memory_order_acquire) == head )) {
-                    if ( head.ptr() == nullptr )
+            position pos;
+            for ( pos.pCur = m_pHead.load( memory_model::memory_order_relaxed ); pos.pCur; pos.pCur = pos.pCur->next.load( memory_model::memory_order_relaxed )) {
+                while ( true ) {
+                    pos.pFound = pos.guard.protect( pos.pCur->data );
+                    if ( !pos.pFound )
                         break;
-                    value_type& val = *node_traits::to_value_ptr( *head.ptr());
-                    unlink( val );
+                    if ( cds_likely( unlink_node( pos ))) {
+                        --m_ItemCounter;
+                        break;
+                    }
                 }
             }
         }
 
-        /// Checks whether the list is empty
+        /// Checks if the list is empty
+        /**
+            Emptiness is checked by item counting: if item count is zero then the set is empty.
+            Thus, if you need to use \p %empty() you should provide appropriate (non-empty) \p iterable_list::traits::item_counter
+            feature.
+        */
         bool empty() const
         {
-            return m_pHead.load( memory_model::memory_order_relaxed ).all() == nullptr;
+            return size() == 0;
         }
 
         /// Returns list's item count
         /**
-            The value returned depends on item counter provided by \p Traits. For \p atomicity::empty_item_counter,
+            The value returned depends on item counter provided by \p iterable_list::traits::item_counter. For \p atomicity::empty_item_counter,
             this function always returns 0.
-
-            @note Even if you use real item counter and it returns 0, this fact does not mean that the list
-            is empty. To check list emptiness use \p empty() method.
         */
         size_t size() const
         {
@@ -954,6 +844,7 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
+#if 0
         // split-list support
         bool insert_aux_node( node_type * pNode )
         {
@@ -968,21 +859,21 @@ namespace cds { namespace intrusive {
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node can be non-reducible to value_type
             // We assume that comparator can correctly distinguish aux and regular node.
-            return insert_at( refHead, *node_traits::to_value_ptr( pNode ));
+            return insert_at( refHead, *node_traits::to_value_ptr( pNode ) );
         }
+#endif
 
         bool insert_at( atomic_node_ptr& refHead, value_type& val )
         {
-            node_type * pNode = node_traits::to_node_ptr( val );
             position pos;
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator())) {
+                if ( search( refHead, val, pos, key_comparator() )) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
 
-                if ( link_node( pNode, pos )) {
+                if ( link_node( &val, pos ) ) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -995,18 +886,18 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( atomic_node_ptr& refHead, value_type& val, Func f )
         {
-            node_type * pNode = node_traits::to_node_ptr( val );
             position pos;
 
+            typename gc::Guard guard;
+            guard.assign( &val );
+
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator())) {
+                if ( search( refHead, val, pos, key_comparator() ) ) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
 
-                typename gc::Guard guard;
-                guard.assign( &val );
-                if ( link_node( pNode, pos )) {
+                if ( link_node( &val, pos ) ) {
                     f( val );
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
@@ -1022,19 +913,23 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            node_type * pNode = node_traits::to_node_ptr( val );
-            while ( true ) {
-                if ( search( refHead, val, pos, key_comparator())) {
-                    if ( cds_unlikely( pos.pCur->m_pNext.load(memory_model::memory_order_acquire).bits())) {
-                        back_off()();
-                        m_Stat.onUpdateMarked();
-                        continue;       // the node found is marked as deleted
-                    }
-                    assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur )) == 0 );
+            typename gc::Guard guard;
+            guard.assign( &val );
 
-                    func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
-                    m_Stat.onUpdateExisting();
-                    return std::make_pair( true, false );
+            while ( true ) {
+                if ( search( refHead, val, pos, key_comparator() ) ) {
+                    // try to replace pCur->data with val
+                    assert( pos.pFound != nullptr );
+                    assert( key_comparator()(*pos.pFound, val) == 0 );
+
+                    if ( cds_likely( pos.pCur->data.compare_exchange_strong( pos.pFound, &val, memory_model::memory_order_release, atomics::memory_order_relaxed ))) {
+                        if ( pos.pFound != &val ) {
+                            retire_data( pos.pFound );
+                            func( val, pos.pFound );
+                        }
+                        m_Stat.onUpdateExisting();
+                        return std::make_pair( true, false );
+                    }
                 }
                 else {
                     if ( !bInsert ) {
@@ -1042,11 +937,9 @@ namespace cds { namespace intrusive {
                         return std::make_pair( false, false );
                     }
 
-                    typename gc::Guard guard;
-                    guard.assign( &val );
-                    if ( link_node( pNode, pos )) {
+                    if ( link_node( &val, pos )) {
+                        func( val, static_cast<value_type*>( nullptr ));
                         ++m_ItemCounter;
-                        func( true, val, val );
                         m_Stat.onUpdateNew();
                         return std::make_pair( true, true );
                     }
@@ -1062,7 +955,7 @@ namespace cds { namespace intrusive {
 
             back_off bkoff;
             while ( search( refHead, val, pos, key_comparator())) {
-                if ( node_traits::to_value_ptr( *pos.pCur ) == &val ) {
+                if ( pos.pFound == &val ) {
                     if ( unlink_node( pos )) {
                         --m_ItemCounter;
                         m_Stat.onEraseSuccess();
@@ -1071,10 +964,8 @@ namespace cds { namespace intrusive {
                     else
                         bkoff();
                 }
-                else {
-                    m_Stat.onUpdateFailed();
+                else
                     break;
-                }
 
                 m_Stat.onEraseRetry();
             }
@@ -1089,7 +980,7 @@ namespace cds { namespace intrusive {
             back_off bkoff;
             while ( search( refHead, val, pos, cmp )) {
                 if ( unlink_node( pos )) {
-                    f( *node_traits::to_value_ptr( *pos.pCur ));
+                    f( *pos.pFound );
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
                     return true;
@@ -1125,13 +1016,14 @@ namespace cds { namespace intrusive {
             back_off bkoff;
             while ( search( refHead, val, pos, cmp )) {
                 if ( unlink_node( pos )) {
-                    dest.set( pos.guards.template get<value_type>( position::guard_current_item ));
+                    dest.set( pos.pFound );
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
                     return true;
                 }
                 else
                     bkoff();
+
                 m_Stat.onEraseRetry();
             }
 
@@ -1140,7 +1032,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool find_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
+        bool find_at( atomic_node_ptr const& refHead, Q const& val, Compare cmp ) const
         {
             position pos;
             if ( search( refHead, val, pos, cmp ) ) {
@@ -1153,11 +1045,12 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool find_at( atomic_node_ptr& refHead, Q& val, Compare cmp, Func f )
+        bool find_at( atomic_node_ptr const& refHead, Q& val, Compare cmp, Func f ) const
         {
             position pos;
             if ( search( refHead, val, pos, cmp )) {
-                f( *node_traits::to_value_ptr( *pos.pCur ), val );
+                assert( pos.pFound != nullptr );
+                f( *pos.pFound, val );
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -1167,11 +1060,26 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_at( atomic_node_ptr& refHead, typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
+        iterator find_iterator_at( atomic_node_ptr const& refHead, Q const& val, Compare cmp ) const
         {
             position pos;
             if ( search( refHead, val, pos, cmp )) {
-                guard.set( pos.guards.template get<value_type>( position::guard_current_item ));
+                assert( pos.pCur != nullptr );
+                assert( pos.pFound != nullptr );
+                m_Stat.onFindSuccess();
+                return iterator( pos.pCur, pos.pFound );
+            }
+
+            m_Stat.onFindFailed();
+            return iterator{};
+        }
+
+        template <typename Q, typename Compare>
+        bool get_at( atomic_node_ptr const& refHead, typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp ) const
+        {
+            position pos;
+            if ( search( refHead, val, pos, cmp )) {
+                guard.set( pos.pFound );
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -1179,81 +1087,125 @@ namespace cds { namespace intrusive {
             m_Stat.onFindFailed();
             return false;
         }
-
         //@endcond
 
     protected:
 
         //@cond
         template <typename Q, typename Compare >
-        bool search( atomic_node_ptr& refHead, const Q& val, position& pos, Compare cmp )
+        bool search( atomic_node_ptr const& refHead, const Q& val, position& pos, Compare cmp ) const
         {
-            atomic_node_ptr * pPrev;
-            marked_node_ptr pNext;
-            marked_node_ptr pCur;
-
-            back_off        bkoff;
-
-        try_again:
-            pPrev = &refHead;
-            pNext = nullptr;
-
-            pCur = pos.guards.protect( position::guard_current_item, *pPrev,
-                   [](marked_node_ptr p) -> value_type *
-                    {
-                        return node_traits::to_value_ptr( p.ptr());
-                    });
+            atomic_node_ptr* pHead = const_cast<atomic_node_ptr*>( &refHead );
+            node_type * pPrev = nullptr;
 
             while ( true ) {
-                if ( pCur.ptr() == nullptr ) {
+                node_type * pCur = pHead->load( memory_model::memory_order_relaxed );
+
+                if ( pCur == nullptr ) {
+                    // end-of-list
+                    pos.pHead = pHead;
                     pos.pPrev = pPrev;
                     pos.pCur = nullptr;
-                    pos.pNext = nullptr;
+                    pos.pFound = nullptr;
                     return false;
                 }
 
-                pNext = pos.guards.protect( position::guard_next_item, pCur->m_pNext,
-                        [](marked_node_ptr p ) -> value_type *
-                        {
-                            return node_traits::to_value_ptr( p.ptr());
-                        });
-                if ( cds_unlikely( pPrev->load(memory_model::memory_order_acquire).all() != pCur.ptr())) {
-                    bkoff();
-                    goto try_again;
-                }
+                value_type * pVal = pos.guard.protect( pCur->data );
 
-                // pNext contains deletion mark for pCur
-                if ( pNext.bits() == 1 ) {
-                    // pCur marked i.e. logically deleted. Help the erase/unlink function to unlink pCur node
-                    marked_node_ptr cur( pCur.ptr());
-                    if ( cds_unlikely( pPrev->compare_exchange_strong( cur, marked_node_ptr( pNext.ptr()), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
-                        retire_node( pCur.ptr());
-                        m_Stat.onHelpingSuccess();
-                    }
-                    else {
-                        bkoff();
-                        m_Stat.onHelpingFailed();
-                        goto try_again;
-                    }
-                }
-                else {
-                    assert( pCur.ptr() != nullptr );
-                    int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
+                if ( pVal ) {
+                    int nCmp = cmp( *pVal, val );
                     if ( nCmp >= 0 ) {
+                        pos.pHead = pHead;
                         pos.pPrev = pPrev;
-                        pos.pCur = pCur.ptr();
-                        pos.pNext = pNext.ptr();
+                        pos.pCur = pCur;
+                        pos.pFound = pVal;
                         return nCmp == 0;
                     }
-                    pPrev = &( pCur->m_pNext );
-                    pos.guards.copy( position::guard_prev_item, position::guard_current_item );
                 }
-                pCur = pNext;
-                pos.guards.copy( position::guard_current_item, position::guard_next_item );
+
+                pPrev = pCur;
+                pHead = &( pCur->next );
             }
         }
+        //@endcond
+
+    private:
+        //@cond
+        node_type * alloc_node( value_type * pVal )
+        {
+            m_Stat.onNodeCreated();
+            return cxx_node_allocator().New( pVal );
+        }
+
+        void delete_node( node_type * pNode )
+        {
+            m_Stat.onNodeRemoved();
+            cxx_node_allocator().Delete( pNode );
+        }
+
+        static void retire_data( value_type * pVal )
+        {
+            assert( pVal != nullptr );
+            gc::template retire<disposer>( pVal );
+        }
+
+        void destroy()
+        {
+            node_type * pNode = m_pHead.load( memory_model::memory_order_relaxed );
+            while ( pNode ) {
+                value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed );
+                if ( pVal )
+                    retire_data( pVal );
+                node_type * pNext = pNode->next.load( memory_model::memory_order_relaxed );
+                delete_node( pNode );
+                pNode = pNext;
+            }
+        }
+
+        bool link_node( value_type * pVal, position& pos )
+        {
+            if ( pos.pPrev ) {
+                if ( pos.pPrev->data.load( memory_model::memory_order_relaxed ) == nullptr ) {
+                    // reuse pPrev
+                    value_type * p = nullptr;
+                    return pos.pPrev->data.compare_exchange_strong( p, pVal, memory_model::memory_order_release, atomics::memory_order_relaxed );
+                }
+                else {
+                    // insert new node between pos.pPrev and pos.pCur
+                    node_type * pNode = alloc_node( pVal );
+                    pNode->next.store( pos.pCur, memory_model::memory_order_relaxed );
+
+                    if ( cds_likely( pos.pPrev->next.compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed )))
+                        return true;
+
+                    delete_node( pNode );
+                }
+            }
+            else {
+                node_type * pNode = alloc_node( pVal );
+                pNode->next.store( pos.pCur, memory_model::memory_order_relaxed );
+                if ( cds_likely( pos.pHead->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) )
+                    return true;
+
+                delete_node( pNode );
+            }
+            return false;
+        }
+
+        static bool unlink_node( position& pos )
+        {
+            assert( pos.pCur != nullptr );
+            assert( pos.pFound != nullptr );
+
+            if ( pos.pCur->data.compare_exchange_strong( pos.pFound, nullptr, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                retire_data( pos.pFound );
+                return true;
+            }
+            return false;
+        }
+
         //@endcond
     };
 }} // namespace cds::intrusive
 
-#endif // #ifndef CDSLIB_INTRUSIVE_IMPL_MICHAEL_LIST_H
+#endif // #ifndef CDSLIB_INTRUSIVE_IMPL_ITERABLE_LIST_H

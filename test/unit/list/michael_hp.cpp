@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_list_hp.h"
@@ -139,6 +139,41 @@ namespace {
         typedef cc::MichaelList<gc_type, item, traits > list_type;
 
         list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
+    TEST_F( MichaelList_HP, stat )
+    {
+        struct traits: public cc::michael_list::traits
+        {
+            typedef lt<item> less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::container::michael_list::stat<> stat;
+
+        };
+        typedef cc::MichaelList<gc_type, item, traits > list_type;
+
+        list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
+    TEST_F( MichaelList_HP, wrapped_stat )
+    {
+        struct traits: public cc::michael_list::traits
+        {
+            typedef lt<item> less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::container::michael_list::wrapped_stat<> stat;
+
+        };
+        typedef cc::MichaelList<gc_type, item, traits > list_type;
+
+        cds::container::michael_list::stat<> st;
+        list_type l( st );
         test_common( l );
         test_ordered_iterator( l );
         test_hp( l );

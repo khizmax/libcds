@@ -28,20 +28,22 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "test_list_hp.h"
-#include <cds/container/lazy_list_dhp.h>
+#include "test_intrusive_iterable_list_hp.h"
+#include <cds/intrusive/iterable_list_dhp.h>
 
 namespace {
-    namespace cc = cds::container;
+    namespace ci = cds::intrusive;
     typedef cds::gc::DHP gc_type;
 
-    class LazyList_DHP : public cds_test::list_hp
+    class IntrusiveIterableList_DHP : public cds_test::intrusive_iterable_list_hp
     {
     protected:
         void SetUp()
         {
-            typedef cc::LazyList< gc_type, item > list_type;
+            typedef ci::IterableList< gc_type, item_type > list_type;
 
+            // +1 - for guarded_ptr
+            // +3 - for iterator test
             cds::gc::dhp::GarbageCollector::Construct( 16, list_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
@@ -53,11 +55,29 @@ namespace {
         }
     };
 
-    TEST_F( LazyList_DHP, less_ordered )
+    TEST_F( IntrusiveIterableList_DHP, less )
     {
-        typedef cc::LazyList< gc_type, item,
-            typename cc::lazy_list::make_traits<
-                cds::opt::less< lt<item> >
+        typedef ci::IterableList< gc_type, item_type,
+            typename ci::iterable_list::make_traits< 
+                ci::opt::disposer< mock_disposer >
+                ,cds::opt::less< less< item_type >>
+                , cds::opt::item_counter< cds::atomicity::item_counter >
+            >::type 
+       > list_type;
+
+       list_type l;
+       test_common( l );
+       test_ordered_iterator( l );
+       test_hp( l );
+    }
+
+    TEST_F( IntrusiveIterableList_DHP, compare )
+    {
+        typedef ci::IterableList< gc_type, item_type,
+            typename ci::iterable_list::make_traits<
+                ci::opt::disposer< mock_disposer >
+                , cds::opt::compare< cmp< item_type >>
+                , cds::opt::item_counter< cds::atomicity::item_counter >
             >::type
         > list_type;
 
@@ -67,43 +87,15 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( LazyList_DHP, compare_ordered )
+    TEST_F( IntrusiveIterableList_DHP, item_counting )
     {
-        typedef cc::LazyList< gc_type, item,
-            typename cc::lazy_list::make_traits<
-                cds::opt::compare< cmp<item> >
-            >::type
-        > list_type;
-
-        list_type l;
-        test_common( l );
-        test_ordered_iterator( l );
-        test_hp( l );
-    }
-
-    TEST_F( LazyList_DHP, mix_ordered )
-    {
-        typedef cc::LazyList< gc_type, item,
-            typename cc::lazy_list::make_traits<
-                cds::opt::compare< cmp<item> >
-                ,cds::opt::less< lt<item> >
-            >::type
-        > list_type;
-
-        list_type l;
-        test_common( l );
-        test_ordered_iterator( l );
-        test_hp( l );
-    }
-
-    TEST_F( LazyList_DHP, item_counting )
-    {
-        struct traits : public cc::lazy_list::traits
-        {
-            typedef lt<item> less;
+        struct traits : public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef cmp< item_type > compare;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
         };
-        typedef cc::LazyList<gc_type, item, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -111,15 +103,16 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( LazyList_DHP, backoff )
+    TEST_F( IntrusiveIterableList_DHP, backoff )
     {
-        struct traits : public cc::lazy_list::traits
-        {
-            typedef lt<item> less;
+        struct traits : public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef cmp< item_type > compare;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::backoff::empty back_off;
+            typedef cds::backoff::pause back_off;
         };
-        typedef cc::LazyList<gc_type, item, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -127,15 +120,15 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( LazyList_DHP, seq_cst )
+    TEST_F( IntrusiveIterableList_DHP, seqcst )
     {
-        struct traits : public cc::lazy_list::traits
-        {
-            typedef lt<item> less;
+        struct traits : public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cc::LazyList<gc_type, item, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -143,15 +136,15 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( LazyList_DHP, mutex )
+    TEST_F( IntrusiveIterableList_DHP, stat )
     {
-        struct traits : public cc::lazy_list::traits
-        {
-            typedef lt<item> less;
+        struct traits: public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef std::mutex lock_type;
+            typedef cds::intrusive::iterable_list::stat<> stat;
         };
-        typedef cc::LazyList<gc_type, item, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
         list_type l;
         test_common( l );
@@ -159,38 +152,21 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( LazyList_DHP, stat )
+    TEST_F( IntrusiveIterableList_DHP, wrapped_stat )
     {
-        struct traits: public cc::lazy_list::traits
-        {
-            typedef lt<item> less;
+        struct traits: public ci::iterable_list::traits {
+            typedef mock_disposer disposer;
+            typedef intrusive_iterable_list::less< item_type > less;
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::container::lazy_list::stat<> stat;
+            typedef cds::intrusive::iterable_list::wrapped_stat<> stat;
         };
-        typedef cc::LazyList<gc_type, item, traits > list_type;
+        typedef ci::IterableList< gc_type, item_type, traits > list_type;
 
-        list_type l;
-        test_common( l );
-        test_ordered_iterator( l );
-        test_hp( l );
-    }
-
-    TEST_F( LazyList_DHP, wrapped_stat )
-    {
-        struct traits: public cc::lazy_list::traits
-        {
-            typedef lt<item> less;
-            typedef cds::atomicity::item_counter item_counter;
-            typedef cds::container::lazy_list::wrapped_stat<> stat;
-        };
-        typedef cc::LazyList<gc_type, item, traits > list_type;
-
-        cds::container::lazy_list::stat<> st;
+        traits::stat::stat_type st;
         list_type l( st );
         test_common( l );
         test_ordered_iterator( l );
         test_hp( l );
     }
-
 
 } // namespace

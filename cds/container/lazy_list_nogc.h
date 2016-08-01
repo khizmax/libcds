@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_LAZY_LIST_NOGC_H
@@ -77,11 +77,13 @@ namespace cds { namespace container {
         typedef T      value_type; ///< Type of value stored in the list
         typedef Traits traits;     ///< List traits
 
-        typedef typename base_class::back_off       back_off;            ///< Back-off strategy used
-        typedef typename maker::allocator_type      allocator_type;      ///< Allocator type used for allocate/deallocate the nodes
-        typedef typename base_class::item_counter   item_counter;        ///< Item counting policy used
-        typedef typename maker::key_comparator      key_comparator;      ///< key comparing functor
-        typedef typename base_class::memory_model   memory_model;        ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::back_off     back_off;         ///< Back-off strategy used
+        typedef typename maker::allocator_type    allocator_type;   ///< Allocator type used for allocate/deallocate the nodes
+        typedef typename base_class::item_counter item_counter;     ///< Item counting policy used
+        typedef typename maker::key_comparator    key_comparator;   ///< key comparing functor
+        typedef typename base_class::memory_model memory_model;     ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename base_class::stat         stat;             ///< Internal statistics
+
         static CDS_CONSTEXPR bool const c_bSort = base_class::c_bSort; ///< List type: ordered (\p true) or unordered (\p false)
 
     protected:
@@ -303,6 +305,13 @@ namespace cds { namespace container {
         LazyList()
         {}
 
+        //@cond
+        template <typename Stat, typename = std::enable_if<std::is_same<stat, lazy_list::wrapped_stat<Stat>>::value >>
+        explicit LazyList( Stat& st )
+            : base_class( st )
+        {}
+        //@endcond
+
         /// Desctructor clears the list
         ~LazyList()
         {
@@ -436,6 +445,12 @@ namespace cds { namespace container {
         size_t size() const
         {
             return base_class::size();
+        }
+
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return base_class::statistics();
         }
 
         /// Clears the list
