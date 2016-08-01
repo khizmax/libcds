@@ -54,7 +54,7 @@ namespace cds { namespace container {
         - \p Value - value type stored in a list
         - \p Traits - type traits, default is \p michael_list::traits
 
-        It is possible to declare option-based list with \p cds::container::michael_list::make_traits metafunction istead of \p Traits template
+        It is possible to declare option-based list with \p cds::container::michael_list::make_traits metafunction instead of \p Traits template
         argument. For example, the following traits-based declaration of \p gc::HP Michael's list
         \code
         #include <cds/container/michael_kvlist_hp.h>
@@ -700,9 +700,6 @@ namespace cds { namespace container {
             and returns it as \p guarded_ptr.
             If \p key is not found the function returns an empty guarded pointer.
 
-            The \p disposer specified in \p Traits class template parameter is called
-            by garbage collector \p GC automatically when returned \p guarded_ptr object
-            will be destroyed or released.
             @note Each \p guarded_ptr object uses one GC's guard which can be limited resource.
 
             Usage:
