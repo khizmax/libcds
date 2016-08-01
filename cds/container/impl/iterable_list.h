@@ -141,7 +141,6 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        typedef typename base_class::value_type      node_type;
         typedef typename maker::cxx_data_allocator   cxx_data_allocator;
         typedef typename maker::data_disposer        data_disposer;
         typedef typename base_class::atomic_node_ptr head_type;
@@ -229,7 +228,7 @@ namespace cds { namespace container {
                 // Default constructor
                 iterator();
 
-                // Copy construtor
+                // Copy constructor
                 iterator( iterator const& src );
 
                 // Dereference operator
@@ -421,18 +420,20 @@ namespace cds { namespace container {
         /**
             The operation performs inserting or updating data with lock-free manner.
 
-            If the item \p val is not found in the list, then \p val is inserted
+            If the item \p key is not found in the list, then \p key is inserted
             iff \p bInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later.
+            Otherwise, the current element is changed to \p key, the old element will be retired later.
+
+            \p value_type should be constructible from \p key.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if \p val has been added or \p false if the item with that key
+            \p second is \p true if \p key has been added or \p false if the item with that key
             already in the list.
         */
         template <typename Q>
-        std::pair<bool, bool> upsert( Q const& key, bool bInsert = true )
+        std::pair<bool, bool> upsert( Q&& key, bool bInsert = true )
         {
-            return update_at( head(), key, []( value_type&, value_type* ) {}, bInsert );
+            return update_at( head(), std::forward<Q>( key ), []( value_type&, value_type* ) {}, bInsert );
         }
 
         /// Inserts data of type \p value_type constructed with <tt>std::forward<Args>(args)...</tt>

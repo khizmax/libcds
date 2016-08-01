@@ -32,6 +32,7 @@
 #define CDSLIB_CONTAINER_DETAILS_MAKE_ITERABLE_KVLIST_H
 
 #include <cds/details/binary_functor_wrapper.h>
+#include <cds/opt/compare.h>
 
 namespace cds { namespace container {
 
@@ -45,48 +46,54 @@ namespace cds { namespace container {
 
             typedef GC       gc;
             typedef K        key_type;
-            typedef T        value_type;
-            typedef std::pair<key_type const, value_type> pair_type;
+            typedef T        mapped_type;
+            typedef std::pair<key_type const, mapped_type> value_type;
 
-            typedef intrusive::iterable_list::node< pair_type > node_type;
-
-            typedef typename original_type_traits::allocator::template rebind<pair_type>::other data_allocator_type;
-            typedef cds::details::Allocator< pair_type, allocator_type > cxx_data_allocator;
+            typedef typename original_type_traits::allocator::template rebind<value_type>::other data_allocator_type;
+            typedef cds::details::Allocator< value_type, data_allocator_type > cxx_data_allocator;
 
             typedef typename original_type_traits::memory_model memory_model;
 
-            struct node_disposer
+            struct data_disposer
             {
-                void operator ()( node_type * pNode )
+                void operator ()( value_type * pData )
                 {
-                    cxx_data_allocator().Delete( pNode->data.load( memory_model::memory_order_relaxed ) );
+                    cxx_data_allocator().Delete( pData );
                 }
             };
 
             struct key_field_accessor {
-                key_type const& operator()( node_type const& node )
+                key_type const& operator()( value_type const& data )
                 {
-                    pair_type const* p = node.data.load( memory_model::memory_order_relaxed );
-                    assert( p != nullptr )
-                    return p->first;
+                    return data.first;
+                }
+            };
+
+            template <typename Less>
+            struct less_wrapper
+            {
+                template <typename Q>
+                bool operator()( value_type const& lhs, Q const& rhs ) const
+                {
+                    return Less()( lhs.first, rhs );
+                }
+
+                template <typename Q>
+                bool operator()( Q const& lhs, value_type const& rhs ) const
+                {
+                    return Less()( lhs, rhs.first );
                 }
             };
 
             typedef typename opt::details::make_comparator< key_type, original_type_traits >::type key_comparator;
 
-            template <typename Less>
-            struct less_wrapper {
-                typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, key_field_accessor > type;
-            };
-
-            struct intrusive_traits: public original_type_traits
+            struct base_traits: public original_type_traits
             {
-                typedef node_disposer disposer;
-                typedef cds::details::compare_wrapper< node_type, key_comparator, key_field_accessor > compare;
-                static const opt::link_check_type link_checker = intrusive::iterable_list::traits::link_checker;
+                typedef data_disposer disposer;
+                typedef cds::details::compare_wrapper< value_type, key_comparator, key_field_accessor > compare;
             };
 
-            typedef intrusive::IterableList<gc, node_type, intrusive_traits> type;
+            typedef container::IterableList<gc, value_type, base_traits> type;
         };
     }   // namespace details
     //@endcond

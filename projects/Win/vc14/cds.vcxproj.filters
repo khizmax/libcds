@@ -1274,5 +1274,14 @@
     <ClInclude Include="..\..\..\cds\container\iterable_list_hp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\impl\iterable_kvlist.h">
+      <Filter>Header Files\cds\container\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\iterable_kvlist_dhp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\iterable_kvlist_hp.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -22,6 +22,8 @@ set(CDSGTEST_LIST_SOURCES
     intrusive_michael_rcu_sht.cpp
     iterable_hp.cpp
     iterable_dhp.cpp
+    kv_iterable_hp.cpp
+    kv_iterable_dhp.cpp
     kv_lazy_hp.cpp
     kv_lazy_dhp.cpp
     kv_lazy_nogc.cpp
