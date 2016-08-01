@@ -43,14 +43,14 @@ namespace cds { namespace container {
     namespace lazy_list {
 
         /// \p LazyList internal statistics, see \p cds::intrusive::lazy_list::stat
-        template <typename EventCounter = cds::atomicity::event_counter>
+        template <typename EventCounter = cds::intrusive::lazy_list::stat<>::event_counter>
         using stat = cds::intrusive::lazy_list::stat< EventCounter >;
 
         /// \p LazyList empty internal statistics, see \p cds::intrusive::lazy_list::empty_stat
         typedef cds::intrusive::lazy_list::empty_stat empty_stat;
 
         //@cond
-        template <typename Stat = lazy_list::stat<>>
+        template <typename Stat = cds::intrusive::lazy_list::wrapped_stat<>::stat_type>
         using wrapped_stat = cds::intrusive::lazy_list::wrapped_stat< Stat >;
         //@endif
 

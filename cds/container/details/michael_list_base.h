@@ -43,14 +43,14 @@ namespace cds { namespace container {
     namespace michael_list {
 
         /// \p MichaelList internal statistics, see \p cds::intrusive::michael_list::stat
-        template <typename EventCounter = cds::atomicity::event_counter>
+        template <typename EventCounter = cds::intrusive::michael_list::stat<>::event_counter >
         using stat = cds::intrusive::michael_list::stat< EventCounter >;
 
         /// \p MichaelList empty internal statistics, see \p cds::intrusive::michael_list::empty_stat
         typedef cds::intrusive::michael_list::empty_stat empty_stat;
 
         //@cond
-        template <typename Stat = michael_list::stat<>>
+        template <typename Stat = cds::intrusive::michael_list::wrapped_stat<>::stat_type>
         using wrapped_stat = cds::intrusive::michael_list::wrapped_stat< Stat >;
         //@endif
 
