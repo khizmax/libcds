@@ -169,14 +169,10 @@ namespace pqueue {
         pqueue_type pq( s_nQueueSize ); \
         test( pq ); \
     }
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_bitreverse_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_bitreverse_less_stat )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_monotonic_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_monotonic_less_stat )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_bitreverse_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_bitreverse_less_stat )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_monotonic_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_monotonic_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_bitreverse_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_bitreverse_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_monotonic_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_monotonic_less_stat )
     CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_cmp )
     //CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_mutex ) // too slow
 

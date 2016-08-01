@@ -282,4 +282,32 @@ namespace {
         test( *pq );
     }
 
+    TEST_F( MSPQueue, bit_reverse_counter )
+    {
+        typedef cds::container::MSPriorityQueue< value_type,
+            cds::container::mspriority_queue::make_traits<
+                cds::opt::buffer< dyn_buffer_type >
+                ,cds::opt::less< less >
+                ,cds::opt::item_counter< cds::bitop::bit_reverse_counter<>>
+            >::type
+        > pqueue;
+
+        pqueue pq( c_nCapacity );
+        test( pq );
+    }
+
+    TEST_F( MSPQueue, monotonic_counter )
+    {
+        typedef cds::container::MSPriorityQueue< value_type,
+            cds::container::mspriority_queue::make_traits<
+            cds::opt::buffer< dyn_buffer_type >
+            , cds::opt::less< less >
+            , cds::opt::item_counter< cds::container::mspriority_queue::monotonic_counter>
+            >::type
+        > pqueue;
+
+        pqueue pq( c_nCapacity );
+        test( pq );
+    }
+
 } // namespace

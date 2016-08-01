@@ -396,63 +396,30 @@ namespace pqueue {
         {
             typedef co::v::initialized_dynamic_buffer< char > buffer;
         };
-        struct traits_MSPriorityQueue_dyn_fair: public traits_MSPriorityQueue_dyn
-        {
-            enum { fairness = true };
-        };
-        struct traits_MSPriorityQueue_dyn_unfair: public traits_MSPriorityQueue_dyn
-        {
-            enum { fairness = false };
-        };
 
-
-        struct traits_MSPriorityQueue_dyn_fair_bitreverse_less : public traits_MSPriorityQueue_dyn_fair
+        struct traits_MSPriorityQueue_dyn_bitreverse_less : public traits_MSPriorityQueue_dyn
         {
             typedef cds::bitop::bit_reverse_counter<> item_counter;
         };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_fair_bitreverse_less > MSPriorityQueue_dyn_fair_bitreverse_less;
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_bitreverse_less > MSPriorityQueue_dyn_bitreverse_less;
 
-        struct traits_MSPriorityQueue_dyn_fair_bitreverse_less_stat: public traits_MSPriorityQueue_dyn_fair_bitreverse_less
+        struct traits_MSPriorityQueue_dyn_bitreverse_less_stat: public traits_MSPriorityQueue_dyn_bitreverse_less
         {
             typedef cc::mspriority_queue::stat<> stat;
         };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_fair_bitreverse_less_stat > MSPriorityQueue_dyn_fair_bitreverse_less_stat;
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_bitreverse_less_stat > MSPriorityQueue_dyn_bitreverse_less_stat;
 
-        struct traits_MSPriorityQueue_dyn_fair_monotonic_less: public traits_MSPriorityQueue_dyn_fair
+        struct traits_MSPriorityQueue_dyn_monotonic_less: public traits_MSPriorityQueue_dyn
         {
             typedef cds::intrusive::mspriority_queue::monotonic_counter item_counter;
         };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_fair_monotonic_less > MSPriorityQueue_dyn_fair_monotonic_less;
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_monotonic_less > MSPriorityQueue_dyn_monotonic_less;
 
-        struct traits_MSPriorityQueue_dyn_fair_monotonic_less_stat: public traits_MSPriorityQueue_dyn_fair_monotonic_less
+        struct traits_MSPriorityQueue_dyn_monotonic_less_stat: public traits_MSPriorityQueue_dyn_monotonic_less
         {
             typedef cc::mspriority_queue::stat<> stat;
         };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_fair_monotonic_less_stat > MSPriorityQueue_dyn_fair_monotonic_less_stat;
-
-        struct traits_MSPriorityQueue_dyn_unfair_bitreverse_less: public traits_MSPriorityQueue_dyn_unfair
-        {
-            typedef cds::bitop::bit_reverse_counter<> item_counter;
-        };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_unfair_bitreverse_less > MSPriorityQueue_dyn_unfair_bitreverse_less;
-
-        struct traits_MSPriorityQueue_dyn_unfair_bitreverse_less_stat: public traits_MSPriorityQueue_dyn_unfair_bitreverse_less
-        {
-            typedef cc::mspriority_queue::stat<> stat;
-        };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_unfair_bitreverse_less_stat > MSPriorityQueue_dyn_unfair_bitreverse_less_stat;
-
-        struct traits_MSPriorityQueue_dyn_unfair_monotonic_less: public traits_MSPriorityQueue_dyn_unfair
-        {
-            typedef cds::intrusive::mspriority_queue::monotonic_counter item_counter;
-        };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_unfair_monotonic_less > MSPriorityQueue_dyn_unfair_monotonic_less;
-
-        struct traits_MSPriorityQueue_dyn_unfair_monotonic_less_stat: public traits_MSPriorityQueue_dyn_unfair_monotonic_less
-        {
-            typedef cc::mspriority_queue::stat<> stat;
-        };
-        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_unfair_monotonic_less_stat > MSPriorityQueue_dyn_unfair_monotonic_less_stat;
+        typedef cc::MSPriorityQueue< Value, traits_MSPriorityQueue_dyn_monotonic_less_stat > MSPriorityQueue_dyn_monotonic_less_stat;
 
 
         struct traits_MSPriorityQueue_dyn_cmp : public
