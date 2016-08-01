@@ -87,7 +87,8 @@ namespace {
                                 m_arrFailedPops.back().next_key = val.key;
                             prevPopFailed = false;
                         }
-                        nPrevKey = val.key;
+                        if ( nPrevKey > val.key )
+                            nPrevKey = val.key;
                     }
 
                 }
@@ -117,9 +118,6 @@ namespace {
         {
             cds_test::thread_pool& pool = get_pool();
 
-            propout() << std::make_pair( "thread_count", s_nThreadCount )
-                << std::make_pair( "push_count", s_nQueueSize );
-
             // push
             {
                 std::vector< size_t > arr;
@@ -136,6 +134,9 @@ namespace {
                 }
                 s_nQueueSize -= nPushError;
             }
+
+            propout() << std::make_pair( "thread_count", s_nThreadCount )
+                << std::make_pair( "push_count", s_nQueueSize );
 
             // pop
             {
@@ -207,8 +208,14 @@ namespace {
         pqueue_type pq( s_nQueueSize + 1 ); \
         test( pq ); \
     }
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_fair_bitreverse_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_fair_bitreverse_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_fair_monotonic_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_fair_monotonic_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_unfair_bitreverse_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_unfair_bitreverse_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_unfair_monotonic_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_unfair_monotonic_less_stat )
     CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_cmp )
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_mutex ) // too slow
 

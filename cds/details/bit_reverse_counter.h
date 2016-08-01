@@ -71,6 +71,7 @@ namespace cds { namespace bitop {
 
         counter_type dec()
         {
+            counter_type ret = m_nReversed;
             --m_nCounter;
             int nBit;
             for ( nBit = m_nHighBit - 1; nBit >= 0; --nBit ) {
@@ -81,7 +82,7 @@ namespace cds { namespace bitop {
                 m_nReversed = m_nCounter;
                 --m_nHighBit;
             }
-            return m_nReversed;
+            return ret;
         }
 
         counter_type    value() const
@@ -92,6 +93,11 @@ namespace cds { namespace bitop {
         counter_type    reversed_value() const
         {
             return m_nReversed;
+        }
+
+        int high_bit() const
+        {
+            return m_nHighBit;
         }
     };
 

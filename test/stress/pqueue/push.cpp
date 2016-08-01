@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "pqueue_type.h"
@@ -169,8 +169,14 @@ namespace pqueue {
         pqueue_type pq( s_nQueueSize ); \
         test( pq ); \
     }
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_bitreverse_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_bitreverse_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_monotonic_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_fair_monotonic_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_bitreverse_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_bitreverse_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_monotonic_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_unfair_monotonic_less_stat )
     CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_cmp )
     //CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_dyn_mutex ) // too slow
 
