@@ -1260,7 +1260,7 @@ namespace cds { namespace intrusive {
             }
 
             m_Stat.onValidationFailed();
-            return true;
+            return false;
         }
 
         static bool validate_link( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
