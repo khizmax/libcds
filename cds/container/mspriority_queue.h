@@ -48,13 +48,9 @@ namespace cds { namespace container {
 
         /// Synonym for \p cds::intrusive::mspriority_queue::empty_stat
         typedef cds::intrusive::mspriority_queue::empty_stat empty_stat;
-
-        /// Synonym for \p cds::intrusive::mspriority_queue::monotonic_counter
-        typedef cds::intrusive::mspriority_queue::monotonic_counter monotonic_counter;
 #else
         using cds::intrusive::mspriority_queue::stat;
         using cds::intrusive::mspriority_queue::empty_stat;
-        using cds::intrusive::mspriority_queue::monotonic_counter;
 #endif
 
         /// MSPriorityQueue traits
@@ -95,8 +91,6 @@ namespace cds { namespace container {
                 If the compiler supports move semantics it would be better to specify the move policy
                 based on the move semantics for type \p T.
             - \p opt::stat - internal statistics. Available types: \p mspriority_queue::stat, \p mspriority_queue::empty_stat (the default, no overhead)
-            - \p opt::item_counter - an item counter type for \p MSPriorityQueue.
-                Available type: \p cds::bitop::bit_reverse_counter, \p mspriority_queue::monotonic_counter. See \p cds::intrusive::mspriority_queue::traits::item_counter for details.
             */
         template <typename... Options>
         struct make_traits {
@@ -151,7 +145,7 @@ namespace cds { namespace container {
         typedef typename base_class::lock_type lock_type;   ///< heap's size lock type
         typedef typename base_class::back_off  back_off ;   ///< Back-off strategy
         typedef typename traits::stat          stat;        ///< internal statistics type, see \p intrusive::mspriority_queue::traits::stat
-        typedef typename traits::item_counter  item_counter;///< Item counter type, see \p intrusive::mspriority_queue::traits::item_counter
+        typedef typename base_class::item_counter  item_counter;///< Item counter type
         typedef typename traits::allocator::template rebind<value_type>::other allocator_type; ///< Value allocator
         typedef typename traits::move_policy   move_policy; ///< Move policy for type \p T
 

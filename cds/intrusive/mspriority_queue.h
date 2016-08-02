@@ -93,37 +93,6 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        /// Monotonic item counter, see \p traits::item_counter for explanation
-        class monotonic_counter
-        {
-        //@cond
-        public:
-            typedef size_t counter_type;
-
-            monotonic_counter()
-                : m_nCounter(0)
-            {}
-
-            size_t inc()
-            {
-                return ++m_nCounter;
-            }
-
-            size_t dec()
-            {
-                return m_nCounter--;
-            }
-
-            size_t value() const
-            {
-                return m_nCounter;
-            }
-
-        private:
-            size_t m_nCounter;
-        //@endcond
-        };
-
         /// MSPriorityQueue traits
         struct traits {
             /// Storage type
@@ -160,20 +129,6 @@ namespace cds { namespace intrusive {
                 or any other with interface like \p %mspriority_queue::stat
             */
             typedef empty_stat      stat;
-
-            /// Item counter type
-            /**
-                Two type are possible:
-                - \p cds::bitop::bit_reverse_counter - a counter described in <a href="http://www.research.ibm.com/people/m/michael/ipl-1996.pdf">original paper</a>,
-                  which was developed for reducing lock contention. However, bit-reversing technigue requires more memory than classic heapifying algorithm
-                  because of sparsing of elements: for priority queue of max size \p N the bit-reversing technique requires array size up to 2<sup>K</sup>
-                  where \p K - the nearest power of two such that <tt>2<sup>K</sup> >= N</tt>.
-                - \p mspriority_queue::monotonic_counter - a classic monotonic item counter. This counter can lead to false sharing under high contention.
-                  By the other hand, for priority queue of max size \p N it requires \p N array size.
-
-                By default, \p MSPriorityQueue uses \p %cds::bitop::bit_reverse_counter as described in original paper.
-            */
-            typedef cds::bitop::bit_reverse_counter<> item_counter;
         };
 
         /// Metafunction converting option list to traits
@@ -189,8 +144,6 @@ namespace cds { namespace intrusive {
             - \p opt::lock_type - lock type. Default is \p cds::sync::spin
             - \p opt::back_off - back-off strategy. Default is \p cds::backoff::yield
             - \p opt::stat - internal statistics. Available types: \p mspriority_queue::stat, \p mspriority_queue::empty_stat (the default, no overhead)
-            - \p opt::item_counter - an item counter type for \p MSPriorityQueue. 
-                 Available type: \p cds::bitop::bit_reverse_counter, \p mspriority_queue::monotonic_counter. See \p traits::item_counter for details.
         */
         template <typename... Options>
         struct make_traits {
@@ -248,7 +201,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::lock_type      lock_type;   ///< heap's size lock type
         typedef typename traits::back_off       back_off;    ///< Back-off strategy
         typedef typename traits::stat           stat;        ///< internal statistics type, see \p mspriority_queue::traits::stat
-        typedef typename traits::item_counter   item_counter;///< Item counter type, see \p mspriority_queue::traits::item_counter
+        typedef typename cds::bitop::bit_reverse_counter<> item_counter;///< Item counter type
 
     protected:
         //@cond
