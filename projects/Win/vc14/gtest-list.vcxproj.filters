@@ -260,5 +260,8 @@
     <ClCompile Include="..\..\..\test\unit\list\kv_iterable_hp.cpp">
       <Filter>Source Files\iterable_list</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\list\kv_iterable_dhp.cpp">
+      <Filter>Source Files\iterable_list</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

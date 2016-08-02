@@ -29,32 +29,31 @@
 */
 
 #include "test_kv_iterable_list_hp.h"
-#include <cds/container/iterable_kvlist_hp.h>
+#include <cds/container/iterable_kvlist_dhp.h>
 
 namespace {
     namespace cc = cds::container;
-    typedef cds::gc::HP gc_type;
+    typedef cds::gc::DHP gc_type;
 
-    class IterableKVList_HP : public cds_test::kv_iterable_list_hp
+    class IterableKVList_DHP : public cds_test::kv_iterable_list_hp
     {
     protected:
         void SetUp()
         {
             typedef cc::IterableKVList< gc_type, key_type, value_type > list_type;
 
-            // +3 - for guarded_ptr, iterators
-            cds::gc::hp::GarbageCollector::Construct( list_type::c_nHazardPtrCount + 3, 1, 16 );
+            cds::gc::dhp::GarbageCollector::Construct( 16, list_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::hp::GarbageCollector::Destruct( true );
+            cds::gc::dhp::GarbageCollector::Destruct();
         }
     };
 
-    TEST_F( IterableKVList_HP, less_ordered )
+    TEST_F( IterableKVList_DHP, less_ordered )
     {
         typedef cc::IterableKVList< gc_type, key_type, value_type,
             typename cc::iterable_list::make_traits<
@@ -69,7 +68,7 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( IterableKVList_HP, compare_ordered )
+    TEST_F( IterableKVList_DHP, compare_ordered )
     {
         typedef cc::IterableKVList< gc_type, key_type, value_type,
             typename cc::iterable_list::make_traits<
@@ -84,7 +83,7 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( IterableKVList_HP, mix_ordered )
+    TEST_F( IterableKVList_DHP, mix_ordered )
     {
         typedef cc::IterableKVList< gc_type, key_type, value_type,
             typename cc::iterable_list::make_traits<
@@ -100,7 +99,7 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( IterableKVList_HP, backoff )
+    TEST_F( IterableKVList_DHP, backoff )
     {
         struct traits : public cc::iterable_list::traits
         {
@@ -116,7 +115,7 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( IterableKVList_HP, seq_cst )
+    TEST_F( IterableKVList_DHP, seq_cst )
     {
         struct traits : public cc::iterable_list::traits
         {
@@ -132,7 +131,7 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( IterableKVList_HP, stat )
+    TEST_F( IterableKVList_DHP, stat )
     {
         struct traits: public cc::iterable_list::traits
         {
@@ -148,7 +147,7 @@ namespace {
         test_hp( l );
     }
 
-    TEST_F( IterableKVList_HP, wrapped_stat )
+    TEST_F( IterableKVList_DHP, wrapped_stat )
     {
         struct traits: public cc::iterable_list::traits
         {

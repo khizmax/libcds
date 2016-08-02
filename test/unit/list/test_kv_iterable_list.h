@@ -278,7 +278,7 @@ namespace cds_test {
                             EXPECT_TRUE( ret.second );
                             EXPECT_TRUE( l.contains( i.key ) );
 
-                            ret = l.upsert( i.key, i.val * 12 );
+                            ret = l.upsert( i.key, i.key * 12 );
                             EXPECT_TRUE( ret.first );
                             EXPECT_FALSE( ret.second );
                             EXPECT_TRUE( l.find( i.key, []( list_value_type& n ) {
@@ -303,8 +303,8 @@ namespace cds_test {
                 } ));
 
                 auto pair = l.update( i.key, []( list_value_type& n, list_value_type* old ) {
-                    EXPECT_FALSE( old == nullptr );
-                    EXPECT_EQ( n.first.nKey * 5, n.second.val );
+                    ASSERT_FALSE( old == nullptr );
+                    EXPECT_EQ( n.first.nKey * 5, old->second.val );
                     n.second.val = n.first.nKey * 3;
                 }, false );
                 EXPECT_TRUE( pair.first );

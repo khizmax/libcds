@@ -101,6 +101,7 @@
     <ClCompile Include="..\..\..\test\unit\list\intrusive_michael_nogc.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\iterable_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\iterable_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\list\kv_iterable_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\kv_iterable_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\kv_lazy_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\kv_lazy_hp.cpp" />

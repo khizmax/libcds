@@ -361,7 +361,7 @@ namespace cds { namespace container {
 #endif
         update( K const& key, Func f, bool bAllowInsert = true )
         {
-            return base_class::update( key, f, bAllowInsert );
+            return base_class::update( value_type( key, mapped_type()), f, bAllowInsert );
         }
 
         /// Insert or update
