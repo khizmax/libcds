@@ -559,6 +559,7 @@ static void CityHashCrc256Long(const char *s, size_t len,
   }
   if (len > 0) {
     s = s + len - 40;
+    // cppcheck-suppress uselessAssignmentPtrArg
     CHUNK(33);
     e ^= Rotate(a, 43);
     h += Rotate(b, 42);

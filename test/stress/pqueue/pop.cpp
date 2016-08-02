@@ -208,10 +208,8 @@ namespace {
         pqueue_type pq( s_nQueueSize + 1 ); \
         test( pq ); \
     }
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_bitreverse_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_bitreverse_less_stat )
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_monotonic_less )
-    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_monotonic_less_stat )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_less )
+    CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_less_stat )
     CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_cmp )
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_dyn_mutex ) // too slow
 
@@ -225,7 +223,7 @@ namespace {
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_static_less )
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_static_less_stat )
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_static_cmp )
-    //CDSSTRESS_MSPriorityQueue( pqueue_pop, 1MSPriorityQueue_static_mutex )
+    //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_static_mutex )
 
 
 #define CDSSTRESS_PriorityQueue( fixture_t, pqueue_t ) \

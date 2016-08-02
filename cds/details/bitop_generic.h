@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_DETAILS_BITOP_GENERIC_H
@@ -81,7 +81,7 @@ namespace cds {
                 r -= 2;
             }
             if (!(x & 0x80000000u)) {
-                x <<= 1;
+                //x <<= 1;
                 r -= 1;
             }
             return r;
@@ -143,7 +143,7 @@ namespace cds {
                 r += 2;
             }
             if (!(x & 1)) {
-                x >>= 1;
+                //x >>= 1;
                 r += 1;
             }
             return r;
