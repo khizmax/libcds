@@ -356,7 +356,7 @@ namespace cds { namespace container {
         template <typename Q, typename V >
         std::pair<bool, bool> upsert( Q&& key, V&& val, bool bInsert = true )
         {
-            return base_class::upsert( value_type( std::forward<Q>( key ), std::forward<V>( val )), bInsert );
+            return base_class::upsert( value_type( key_type( std::forward<Q>( key )), mapped_type( std::forward<V>( val ))), bInsert );
         }
 
         /// Inserts a new node using move semantics
