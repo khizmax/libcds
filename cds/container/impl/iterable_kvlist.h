@@ -249,15 +249,7 @@ namespace cds { namespace container {
             @note The function is supported only if \ref mapped_type is default constructible
         */
         template <typename K>
-#ifdef CDS_DOXYGEN_INVOKED
-        bool
-#else
-        typename std::enable_if<
-            std::is_same<K, K>::value && std::is_default_constructible< mapped_type >::value,
-            bool
-        >::type
-#endif
-        insert( K const& key )
+        bool insert( K const& key )
         {
             return base_class::emplace( key, mapped_type());
         }
@@ -309,15 +301,7 @@ namespace cds { namespace container {
             @note The function is supported only if \ref mapped_type is default constructible
         */
         template <typename K, typename Func>
-#ifdef CDS_DOXYGEN_INVOKED
-        bool
-#else
-        typename std::enable_if<
-            std::is_same<K, K>::value && std::is_default_constructible< mapped_type >::value,
-            bool
-        >::type
-#endif
-        insert_with( K const& key, Func func )
+        bool insert_with( K const& key, Func func )
         {
             return base_class::insert( value_type( key, mapped_type()), func );
         }
@@ -351,15 +335,7 @@ namespace cds { namespace container {
             @note The function is supported only if \ref mapped_type is default constructible
         */
         template <typename K, typename Func>
-#ifdef CDS_DOXYGEN_INVOKED
-        std::pair<bool, bool>
-#else
-        typename std::enable_if<
-            std::is_same<K, K>::value && std::is_default_constructible< mapped_type >::value,
-            std::pair<bool, bool>
-        >::type
-#endif
-        update( K const& key, Func f, bool bAllowInsert = true )
+        std::pair<bool, bool> update( K const& key, Func f, bool bAllowInsert = true )
         {
             return base_class::update( value_type( key, mapped_type()), f, bAllowInsert );
         }
