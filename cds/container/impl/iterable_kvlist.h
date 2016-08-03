@@ -251,7 +251,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K&& key )
         {
-            return base_class::emplace( std::forward<K>( key ), mapped_type());
+            return base_class::emplace( key_type( std::forward<K>( key )), mapped_type());
         }
 
         /// Inserts new node with a key and a value
@@ -267,7 +267,7 @@ namespace cds { namespace container {
         template <typename K, typename V>
         bool insert( K&& key, V&& val )
         {
-            return base_class::emplace( std::forward<K>( key ), std::forward<V>( val ));
+            return base_class::emplace( key_type( std::forward<K>( key )), mapped_type( std::forward<V>( val )));
         }
 
         /// Inserts new node and initialize it by a functor
@@ -369,7 +369,7 @@ namespace cds { namespace container {
         template <typename K, typename... Args>
         bool emplace( K&& key, Args&&... args )
         {
-            return base_class::emplace( std::forward<K>( key ), std::forward<Args>( args )... );
+            return base_class::emplace( key_type( std::forward<K>( key )), mapped_type( std::forward<Args>( args )... ));
         }
 
         /// Deletes \p key from the list
