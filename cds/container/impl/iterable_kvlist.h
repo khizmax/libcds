@@ -123,9 +123,9 @@ namespace cds { namespace container {
 
     public:
 #ifdef CDS_DOXYGEN_INVOKED
-        typedef Key                                 key_type        ;   ///< Key type
-        typedef Value                               mapped_type     ;   ///< Type of value stored in the list
-        typedef std::pair<key_type const, mapped_type> value_type   ;   ///< key/value pair stored in the list
+        typedef Key                                 key_type;      ///< Key type
+        typedef Value                               mapped_type;   ///< Type of value stored in the list
+        typedef std::pair<key_type const, mapped_type> value_type; ///< key/value pair stored in the list
 #else
         typedef typename maker::key_type    key_type;
         typedef typename maker::mapped_type mapped_type;
@@ -303,7 +303,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         bool insert_with( K const& key, Func func )
         {
-            return base_class::insert( value_type( key, mapped_type()), func );
+            return base_class::insert( value_type( key_type( key ), mapped_type()), func );
         }
 
         /// Updates data by \p key
@@ -337,7 +337,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         std::pair<bool, bool> update( K const& key, Func f, bool bAllowInsert = true )
         {
-            return base_class::update( value_type( key, mapped_type()), f, bAllowInsert );
+            return base_class::update( value_type( key_type( key ), mapped_type()), f, bAllowInsert );
         }
 
         /// Insert or update
@@ -650,21 +650,21 @@ namespace cds { namespace container {
         // Split-list support
 
         template <typename K>
-        bool insert_at( head_type& refHead, const K& key )
+        bool insert_at( head_type& refHead, K const& key )
         {
-            return base_class::insert_at( refHead, value_type( key, mapped_type() ));
+            return base_class::insert_at( refHead, value_type( key_type( key ), mapped_type() ));
         }
 
         template <typename K, typename V>
-        bool insert_at( head_type& refHead, const K& key, const V& val )
+        bool insert_at( head_type& refHead, const K& key, V const& val )
         {
-            return base_class::insert_at( refHead, value_type( key, val ));
+            return base_class::insert_at( refHead, value_type( key_type( key ), val ));
         }
 
         template <typename K, typename Func>
-        bool insert_with_at( head_type& refHead, const K& key, Func f )
+        bool insert_with_at( head_type& refHead, K const& key, Func f )
         {
-            return base_class::insert_at( refHead, value_type( key, mapped_type()), f );
+            return base_class::insert_at( refHead, value_type( key_type( key ), mapped_type()), f );
         }
 
         template <typename K, typename... Args>
@@ -676,7 +676,7 @@ namespace cds { namespace container {
         template <typename K, typename Func>
         std::pair<bool, bool> update_at( head_type& refHead, const K& key, Func f, bool bAllowInsert )
         {
-            return base_class::update_at( refHead, value_type( key, mapped_type()), f, bAllowInsert );
+            return base_class::update_at( refHead, value_type( key_type( key ), mapped_type()), f, bAllowInsert );
         }
 
         template <typename K, typename Compare>
