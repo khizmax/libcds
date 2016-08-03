@@ -348,9 +348,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename Q>
-        bool insert( Q const& val )
+        bool insert( Q&& val )
         {
-            return insert_at( head(), val );
+            return insert_at( head(), std::forward<Q>( val ));
         }
 
         /// Inserts new node
@@ -380,9 +380,9 @@ namespace cds { namespace container {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
-        bool insert( Q const& key, Func func )
+        bool insert( Q&& key, Func func )
         {
-            return insert_at( head(), key, func );
+            return insert_at( head(), std::forward<Q>( key ), func );
         }
 
         /// Updates data by \p key
@@ -411,9 +411,9 @@ namespace cds { namespace container {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
-        std::pair<bool, bool> update( Q const& key, Func func, bool bAllowInsert = true )
+        std::pair<bool, bool> update( Q&& key, Func func, bool bAllowInsert = true )
         {
-            return update_at( head(), key, func, bAllowInsert );
+            return update_at( head(), std::forward<Q>( key ), func, bAllowInsert );
         }
 
         /// Insert or update
@@ -750,11 +750,11 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        template <typename Q>
-        static value_type* alloc_data( Q const& v )
-        {
-            return cxx_data_allocator().New( v );
-        }
+        //template <typename Q>
+        //static value_type* alloc_data( Q const& v )
+        //{
+        //    return cxx_data_allocator().New( v );
+        //}
 
         template <typename... Args>
         static value_type* alloc_data( Args&&... args )
@@ -782,7 +782,7 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        bool insert_node( value_type * pData )
+        bool insert_node( value_type* pData )
         {
             return insert_node_at( head(), pData );
         }
@@ -800,15 +800,15 @@ namespace cds { namespace container {
         }
 
         template <typename Q>
-        bool insert_at( head_type& refHead, Q const& val )
+        bool insert_at( head_type& refHead, Q&& val )
         {
-            return insert_node_at( refHead, alloc_data( val ));
+            return insert_node_at( refHead, alloc_data( std::forward<Q>( val )));
         }
 
         template <typename Q, typename Func>
-        bool insert_at( head_type& refHead, Q const& key, Func f )
+        bool insert_at( head_type& refHead, Q&& key, Func f )
         {
-            scoped_data_ptr pNode( alloc_data( key ));
+            scoped_data_ptr pNode( alloc_data( std::forward<Q>( key )));
 
             if ( base_class::insert_at( refHead, *pNode, f )) {
                 pNode.release();
@@ -820,13 +820,13 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace_at( head_type& refHead, Args&&... args )
         {
-            return insert_node_at( refHead, alloc_data( std::forward<Args>(args) ... ));
+            return insert_node_at( refHead, alloc_data( std::forward<Args>(args)... ));
         }
 
         template <typename Q, typename Func>
-        std::pair<bool, bool> update_at( head_type& refHead, Q const& key, Func f, bool bAllowInsert )
+        std::pair<bool, bool> update_at( head_type& refHead, Q&& key, Func f, bool bAllowInsert )
         {
-            scoped_data_ptr pData( alloc_data( key ) );
+            scoped_data_ptr pData( alloc_data( std::forward<Q>( key )));
 
             std::pair<bool, bool> ret = base_class::update_at( refHead, *pData, f, bAllowInsert );
             if ( ret.first )

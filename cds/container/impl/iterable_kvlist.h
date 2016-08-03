@@ -249,9 +249,9 @@ namespace cds { namespace container {
             @note The function is supported only if \ref mapped_type is default constructible
         */
         template <typename K>
-        bool insert( K const& key )
+        bool insert( K&& key )
         {
-            return base_class::emplace( key, mapped_type());
+            return base_class::emplace( std::forward<K>( key ), mapped_type());
         }
 
         /// Inserts new node with a key and a value
@@ -265,9 +265,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename K, typename V>
-        bool insert( K const& key, V const& val )
+        bool insert( K&& key, V&& val )
         {
-            return base_class::emplace( key, val );
+            return base_class::emplace( std::forward<K>( key ), std::forward<V>( val ));
         }
 
         /// Inserts new node and initialize it by a functor
@@ -301,9 +301,9 @@ namespace cds { namespace container {
             @note The function is supported only if \ref mapped_type is default constructible
         */
         template <typename K, typename Func>
-        bool insert_with( K const& key, Func func )
+        bool insert_with( K&& key, Func func )
         {
-            return base_class::insert( value_type( key_type( key ), mapped_type()), func );
+            return base_class::insert( value_type( key_type( std::forward<K>( key )), mapped_type()), func );
         }
 
         /// Updates data by \p key
@@ -335,9 +335,9 @@ namespace cds { namespace container {
             @note The function is supported only if \ref mapped_type is default constructible
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> update( K const& key, Func f, bool bAllowInsert = true )
+        std::pair<bool, bool> update( K&& key, Func f, bool bAllowInsert = true )
         {
-            return base_class::update( value_type( key_type( key ), mapped_type()), f, bAllowInsert );
+            return base_class::update( value_type( key_type( std::forward<K>( key )), mapped_type()), f, bAllowInsert );
         }
 
         /// Insert or update
