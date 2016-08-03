@@ -582,7 +582,7 @@ namespace cds { namespace container {
             If \p key is not found the function returns \p end().
         */
         template <typename Q, typename Less>
-        iterator find_with( Q& key, Less pred ) const
+        iterator find_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
             return base_class::find_with( key, less_wrapper<Less>());

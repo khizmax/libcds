@@ -662,17 +662,10 @@ namespace cds { namespace intrusive {
             If \p key is not found the function returns \p end().
         */
         template <typename Q>
-        iterator find( Q& key ) const
+        iterator find( Q const& key ) const
         {
             return find_iterator_at( m_pHead, key, key_comparator());
         }
-        //@cond
-        template <typename Q>
-        iterator find( Q const& key ) const
-        {
-            return find_iterator_at( m_pHead, key, key_comparator() );
-        }
-        //@endcond
 
         /// Finds the \p key using \p pred predicate for searching
         /**
@@ -705,19 +698,11 @@ namespace cds { namespace intrusive {
             If \p key is not found the function returns \p end().
         */
         template <typename Q, typename Less>
-        iterator find_with( Q& key, Less pred ) const
-        {
-            CDS_UNUSED( pred );
-            return find_iterator_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
-        }
-        //@cond
-        template <typename Q, typename Less>
         iterator find_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
             return find_iterator_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
-        //@endcond
 
         /// Checks whether the list contains \p key
         /**
