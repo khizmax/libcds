@@ -151,7 +151,7 @@ namespace cds { namespace container {
         typedef typename maker::cxx_data_allocator cxx_data_allocator;
 
         template <typename Less>
-        using less_wrapper = typename maker::less_wrapper< Less >;
+        using less_wrapper = typename maker::template less_wrapper< Less >;
 
         template <bool IsConst>
         using iterator_type = typename base_class::template iterator_type<IsConst>;
