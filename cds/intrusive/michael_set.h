@@ -50,7 +50,8 @@ namespace cds { namespace intrusive {
 
         Template parameters are:
         - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for \p OrderedList
-        - \p OrderedList - ordered list implementation used as bucket for hash set, for example, \p MichaelList, \p LazyList, \p IterableList.
+        - \p OrderedList - ordered list implementation used as bucket for hash set, possible implementations:
+            \p MichaelList, \p LazyList, \p IterableList.
             The intrusive ordered list implementation specifies the type \p T stored in the hash-set, the reclamation
             schema \p GC used by hash-set, the comparison functor for the type \p T and other features specific for
             the ordered list.
@@ -364,7 +365,7 @@ namespace cds { namespace intrusive {
 
     public:
         /// Initializes hash set
-        /** @anchor cds_intrusive_MichaelHashSet_hp_ctor
+        /**
             The Michael's hash set is an unbounded container, but its hash table is non-expandable.
             At construction time you should pass estimated maximum item count and a load factor.
             The load factor is average size of one bucket - a small number between 1 and 10.

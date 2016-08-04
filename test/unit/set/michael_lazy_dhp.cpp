@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_set_hp.h"
@@ -180,6 +180,48 @@ namespace {
             typedef base_class::less less;
             typedef cds::backoff::pause back_off;
             typedef std::mutex lock_type;
+        };
+        typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
+
+        struct set_traits: public cc::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cc::MichaelHashSet< gc_type, list_type, set_traits >set_type;
+
+        set_type s( kSize, 4 );
+        test( s );
+    }
+
+    TEST_F( MichaelLazySet_DHP, stat )
+    {
+        struct list_traits: public cc::lazy_list::traits
+        {
+            typedef base_class::less less;
+            typedef cds::backoff::pause back_off;
+            typedef cc::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
+
+        struct set_traits: public cc::michael_set::traits
+        {
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cc::MichaelHashSet< gc_type, list_type, set_traits >set_type;
+
+        set_type s( kSize, 4 );
+        test( s );
+    }
+
+    TEST_F( MichaelLazySet_DHP, wrapped_stat )
+    {
+        struct list_traits: public cc::lazy_list::traits
+        {
+            typedef base_class::less less;
+            typedef cds::backoff::pause back_off;
+            typedef cc::lazy_list::wrapped_stat<> stat;
         };
         typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
 

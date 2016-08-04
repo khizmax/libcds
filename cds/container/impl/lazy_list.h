@@ -144,6 +144,22 @@ namespace cds { namespace container {
 
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
 
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef LazyList<
+                gc
+                , value_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
+
     protected:
         //@cond
         typedef typename base_class::value_type   node_type;
@@ -152,6 +168,15 @@ namespace cds { namespace container {
         typedef typename maker::intrusive_traits::compare  intrusive_key_comparator;
 
         typedef typename base_class::node_type head_type;
+
+        struct node_disposer {
+            void operator()( node_type * pNode )
+            {
+                free_node( pNode );
+            }
+        };
+        typedef std::unique_ptr< node_type, node_disposer > scoped_node_ptr;
+
         //@endcond
 
     public:
@@ -160,68 +185,10 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        static value_type& node_to_value( node_type& n )
-        {
-            return n.m_Value;
-        }
-
-        static value_type const& node_to_value( node_type const& n )
-        {
-            return n.m_Value;
-        }
-
-        template <typename Q>
-        static node_type * alloc_node( Q const& v )
-        {
-            return cxx_allocator().New( v );
-        }
-
-        template <typename... Args>
-        static node_type * alloc_node( Args&&... args )
-        {
-            return cxx_allocator().MoveNew( std::forward<Args>(args)... );
-        }
-
-        static void free_node( node_type * pNode )
-        {
-            cxx_allocator().Delete( pNode );
-        }
-
-        struct node_disposer {
-            void operator()( node_type * pNode )
-            {
-                free_node( pNode );
-            }
-        };
-        typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
-
-        head_type& head()
-        {
-            return base_class::m_Head;
-        }
-
-        head_type const& head() const
-        {
-            return base_class::m_Head;
-        }
-
-        head_type& tail()
-        {
-            return base_class::m_Tail;
-        }
-
-        head_type const&  tail() const
-        {
-            return base_class::m_Tail;
-        }
-        //@endcond
-
-    protected:
-                //@cond
         template <bool IsConst>
         class iterator_type: protected base_class::template iterator_type<IsConst>
         {
-            typedef typename base_class::template iterator_type<IsConst>    iterator_base;
+            typedef typename base_class::template iterator_type<IsConst> iterator_base;
 
             iterator_type( head_type const& pNode )
                 : iterator_base( const_cast<head_type *>( &pNode ))
@@ -240,7 +207,7 @@ namespace cds { namespace container {
             iterator_type()
             {}
 
-            iterator_type( const iterator_type& src )
+            iterator_type( iterator_type const& src )
                 : iterator_base( src )
             {}
 
@@ -382,9 +349,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename Q>
-        bool insert( Q const& val )
+        bool insert( Q&& val )
         {
-            return insert_at( head(), val );
+            return insert_at( head(), std::forward<Q>( val ));
         }
 
         /// Inserts new node
@@ -410,9 +377,9 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename Q, typename Func>
-        bool insert( Q const& key, Func func )
+        bool insert( Q&& key, Func func )
         {
-            return insert_at( head(), key, func );
+            return insert_at( head(), std::forward<Q>( key ), func );
         }
 
         /// Inserts data of type \p value_type constructed from \p args
@@ -436,14 +403,14 @@ namespace cds { namespace container {
             The functor \p Func signature is:
             \code
                 struct my_functor {
-                    void operator()( bool bNew, value_type& item, Q const& val );
+                    void operator()( bool bNew, value_type& item, Q const& key );
                 };
             \endcode
 
             with arguments:
             - \p bNew - \p true if the item has been inserted, \p false otherwise
             - \p item - item of the list
-            - \p val - argument \p key passed into the \p %update() function
+            - \p key - argument \p key passed into the \p %update() function
 
             The functor may change non-key fields of the \p item;
             during \p func call \p item is locked so it is safe to modify the item in
@@ -768,6 +735,53 @@ namespace cds { namespace container {
 
     protected:
         //@cond
+        static value_type& node_to_value( node_type& n )
+        {
+            return n.m_Value;
+        }
+
+        static value_type const& node_to_value( node_type const& n )
+        {
+            return n.m_Value;
+        }
+
+        template <typename Q>
+        static node_type * alloc_node( Q const& v )
+        {
+            return cxx_allocator().New( v );
+        }
+
+        template <typename... Args>
+        static node_type * alloc_node( Args&&... args )
+        {
+            return cxx_allocator().MoveNew( std::forward<Args>( args )... );
+        }
+
+        static void free_node( node_type * pNode )
+        {
+            cxx_allocator().Delete( pNode );
+        }
+
+        head_type& head()
+        {
+            return base_class::m_Head;
+        }
+
+        head_type const& head() const
+        {
+            return base_class::m_Head;
+        }
+
+        head_type& tail()
+        {
+            return base_class::m_Tail;
+        }
+
+        head_type const&  tail() const
+        {
+            return base_class::m_Tail;
+        }
+
         bool insert_node( node_type * pNode )
         {
             return insert_node_at( head(), pNode );
@@ -787,9 +801,9 @@ namespace cds { namespace container {
         }
 
         template <typename Q>
-        bool insert_at( head_type& refHead, const Q& val )
+        bool insert_at( head_type& refHead, Q&& val )
         {
-            return insert_node_at( refHead, alloc_node( val ));
+            return insert_node_at( refHead, alloc_node( std::forward<Q>( val )));
         }
 
         template <typename... Args>
@@ -799,9 +813,9 @@ namespace cds { namespace container {
         }
 
         template <typename Q, typename Func>
-        bool insert_at( head_type& refHead, const Q& key, Func f )
+        bool insert_at( head_type& refHead, Q&& key, Func f )
         {
-            scoped_node_ptr pNode( alloc_node( key ));
+            scoped_node_ptr pNode( alloc_node( std::forward<Q>( key )));
 
             if ( base_class::insert_at( &refHead, *pNode, [&f](node_type& node){ f( node_to_value(node) ); } )) {
                 pNode.release();
@@ -811,7 +825,7 @@ namespace cds { namespace container {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_at( head_type& refHead, const Q& key, Compare cmp, Func f )
+        bool erase_at( head_type& refHead, Q const& key, Compare cmp, Func f )
         {
             return base_class::erase_at( &refHead, key, cmp, [&f](node_type const& node){ f( node_to_value(node) ); } );
         }
@@ -823,12 +837,12 @@ namespace cds { namespace container {
         }
 
         template <typename Q, typename Func>
-        std::pair<bool, bool> update_at( head_type& refHead, const Q& key, Func f, bool bAllowInsert )
+        std::pair<bool, bool> update_at( head_type& refHead, Q const& key, Func f, bool bAllowInsert )
         {
             scoped_node_ptr pNode( alloc_node( key ));
 
             std::pair<bool, bool> ret = base_class::update_at( &refHead, *pNode,
-                [&f, &key](bool bNew, node_type& node, node_type&){f( bNew, node_to_value(node), key );},
+                [&f, &key](bool bNew, node_type& node, node_type&) { f( bNew, node_to_value(node), key );},
                 bAllowInsert );
             if ( ret.first && ret.second )
                 pNode.release();

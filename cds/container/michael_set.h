@@ -25,13 +25,14 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_MICHAEL_SET_H
 #define CDSLIB_CONTAINER_MICHAEL_SET_H
 
 #include <cds/container/details/michael_set_base.h>
+#include <cds/container/details/iterable_list_base.h>
 #include <cds/details/allocator.h>
 
 namespace cds { namespace container {
@@ -52,7 +53,8 @@ namespace cds { namespace container {
         - \p GC - Garbage collector used. You may use any \ref cds_garbage_collector "Garbage collector"
             from the \p libcds library.
             Note the \p GC must be the same as the \p GC used for \p OrderedList
-        - \p OrderedList - ordered list implementation used as bucket for hash set, for example, \p MichaelList.
+        - \p OrderedList - ordered list implementation used as bucket for hash set, possible implementations:
+            \p MichaelList, \p LazyList, \p IterableList.
             The ordered list implementation specifies the type \p T to be stored in the hash-set,
             the comparing functor for the type \p T and other features specific for the ordered list.
         - \p Traits - set traits, default is \p michael_set::traits.
@@ -75,7 +77,7 @@ namespace cds { namespace container {
         \code
         // Our node type
         struct Foo {
-            std::string     key_    ;   // key field
+            std::string     key_;   // key field
             // ... other fields
         };
 
@@ -98,8 +100,8 @@ namespace cds { namespace container {
         Suppose, we have the following type \p Foo that we want to store in our \p %MichaelHashSet:
         \code
         struct Foo {
-            int     nKey    ;   // key field
-            int     nVal    ;   // value field
+            int     nKey;   // key field
+            int     nVal;   // value field
         };
         \endcode
 
@@ -166,67 +168,64 @@ namespace cds { namespace container {
     class MichaelHashSet
     {
     public:
-        typedef GC          gc;          ///< Garbage collector
-        typedef OrderedList bucket_type; ///< type of ordered list used as a bucket implementation
-        typedef Traits      traits;      ///< Set traits
+        typedef GC          gc;           ///< Garbage collector
+        typedef OrderedList ordered_list; ///< type of ordered list used as a bucket implementation
+        typedef Traits      traits;       ///< Set traits
 
-        typedef typename bucket_type::value_type     value_type;     ///< type of value to be stored in the list
-        typedef typename bucket_type::key_comparator key_comparator; ///< key comparison functor
+        typedef typename ordered_list::value_type     value_type;     ///< type of value to be stored in the list
+        typedef typename ordered_list::key_comparator key_comparator; ///< key comparison functor
+        typedef typename ordered_list::stat           stat;           ///< Internal statistics
 
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter item_counter; ///< Item counter type
+        typedef typename traits::allocator    allocator;    ///< Bucket table allocator
 
-        typedef typename bucket_type::guarded_ptr  guarded_ptr; ///< Guarded pointer
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = bucket_type::c_nHazardPtrCount; ///< Count of hazard pointer required
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount; ///< Count of hazard pointer required
 
-    protected:
+        // GC and OrderedList::gc must be the same
+        static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
+
+        // atomicity::empty_item_counter is not allowed as a item counter
+        static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
+                        "cds::atomicity::empty_item_counter is not allowed as a item counter");
+
+#ifdef CDS_DOXYGEN_INVOKED
+        /// Wrapped internal statistics for \p ordered_list
+        typedef implementatin_specific bucket_stat;
+#else
+        typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
+#endif
+
+#ifdef CDS_DOXYGEN_INVOKED
+        /// Internal bucket type - rebind \p ordered_list with empty item counter and wrapped internal statistics
+        typedef modified_ordered_list internal_bucket_type;
+#else
+        typedef typename ordered_list::template rebind_traits<
+            cds::opt::item_counter< cds::atomicity::empty_item_counter >
+            , cds::opt::stat< typename bucket_stat::wrapped_stat >
+        >::type internal_bucket_type;
+#endif
+
+        /// Guarded pointer - a result of \p get() and \p extract() functions
+        typedef typename internal_bucket_type::guarded_ptr guarded_ptr;
+
         //@cond
-        class internal_bucket_type: public bucket_type
-        {
-            typedef bucket_type base_class;
-        public:
-            using base_class::node_type;
-            using base_class::alloc_node;
-            using base_class::insert_node;
-            using base_class::node_to_value;
-        };
-
         /// Bucket table allocator
-        typedef cds::details::Allocator< internal_bucket_type, typename traits::allocator >  bucket_table_allocator;
+        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
         //@endcond
 
     protected:
         //@cond
-        item_counter    m_ItemCounter; ///< Item counter
-        hash            m_HashFunctor; ///< Hash functor
-        internal_bucket_type *  m_Buckets;     ///< bucket table
-        //@endcond
-
-    private:
-        //@cond
-        const size_t    m_nHashBitmask;
-        //@endcond
-
-    protected:
-        //@cond
-        /// Calculates hash value of \p key
-        template <typename Q>
-        size_t hash_value( Q const& key ) const
-        {
-            return m_HashFunctor( key ) & m_nHashBitmask;
-        }
-
-        /// Returns the bucket (ordered list) for \p key
-        template <typename Q>
-        internal_bucket_type&    bucket( Q const& key )
-        {
-            return m_Buckets[ hash_value( key ) ];
-        }
+        size_t const           m_nHashBitmask;
+        internal_bucket_type * m_Buckets;     ///< bucket table
+        item_counter           m_ItemCounter; ///< Item counter
+        hash                   m_HashFunctor; ///< Hash functor
+        typename bucket_stat::stat  m_Stat;   ///< Internal statistics
         //@endcond
 
     public:
-    ///@name Forward iterators (only for debugging purpose)
+    ///@name Forward iterators
     //@{
         /// Forward iterator
         /**
@@ -236,11 +235,14 @@ namespace cds { namespace container {
               For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
               may be thrown if the limit of guard count per thread is exceeded.
             - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
-            - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
-              deleting operations there is no guarantee that you iterate all item in the set. 
-              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
-            @warning Use this iterator on the concurrent container for debugging purpose only.
+            Iterator thread safety depends on type of \p OrderedList:
+            - for \p MichaelList and \p LazyList: iterator guarantees safety even if you delete the item that iterator points to
+              because that item is guarded by hazard pointer.
+              However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the set.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+              Use this iterator on the concurrent container for debugging purpose only.
+            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
 
             The iterator interface:
             \code
@@ -272,10 +274,10 @@ namespace cds { namespace container {
         */
 
         /// Forward iterator
-        typedef michael_set::details::iterator< bucket_type, false >    iterator;
+        typedef michael_set::details::iterator< internal_bucket_type, false > iterator;
 
         /// Const forward iterator
-        typedef michael_set::details::iterator< bucket_type, true >     const_iterator;
+        typedef michael_set::details::iterator< internal_bucket_type, true > const_iterator;
 
         /// Returns a forward iterator addressing the first element in a set
         /**
@@ -283,7 +285,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
+            return iterator( bucket_begin()->begin(), bucket_begin(), bucket_end());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a set
@@ -294,7 +296,7 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return iterator( bucket_end()[-1].end(), bucket_end() - 1, bucket_end());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -322,21 +324,9 @@ namespace cds { namespace container {
         }
     //@}
 
-    private:
-        //@cond
-        const_iterator get_const_begin() const
-        {
-            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
-        }
-        const_iterator get_const_end() const
-        {
-            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
-        }
-        //@endcond
-
     public:
         /// Initialize hash set
-        /** @anchor cds_nonintrusive_MichaelHashSet_hp_ctor
+        /**
             The Michael's hash set is non-expandable container. You should point the average count of items \p nMaxItemCount
             when you create an object.
             \p nLoadFactor parameter defines average count of items per bucket and it should be small number between 1 and 10.
@@ -348,22 +338,20 @@ namespace cds { namespace container {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count() ) )
         {
-            // GC and OrderedList::gc must be the same
-            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
-
-            // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
-                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
-
-            m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                construct_bucket<bucket_stat>( it );
         }
 
         /// Clears hash set and destroys it
         ~MichaelHashSet()
         {
             clear();
-            bucket_table_allocator().Delete( m_Buckets, bucket_count() );
+
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                it->~internal_bucket_type();
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
         }
 
         /// Inserts new node
@@ -378,9 +366,9 @@ namespace cds { namespace container {
             Returns \p true if \p val is inserted into the set, \p false otherwise.
         */
         template <typename Q>
-        bool insert( Q const& val )
+        bool insert( Q&& val )
         {
-            const bool bRet = bucket( val ).insert( val );
+            const bool bRet = bucket( val ).insert( std::forward<Q>( val ));
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;
@@ -400,14 +388,15 @@ namespace cds { namespace container {
             where \p val is the item inserted.
             The user-defined functor is called only if the inserting is success.
 
-            @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" and \ref cds_nonintrusive_IterableList_gc "IterableList" 
+            as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             @ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename Q, typename Func>
-        bool insert( Q const& val, Func f )
+        bool insert( Q&& val, Func f )
         {
-            const bool bRet = bucket( val ).insert( val, f );
+            const bool bRet = bucket( val ).insert( std::forward<Q>( val ), f );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;
@@ -419,7 +408,10 @@ namespace cds { namespace container {
 
             If the item \p val not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor signature is:
+
+            The functor \p func signature depends of \p OrderedList:
+
+            <b>for \p MichaelList, \p LazyList</b>
             \code
                 struct functor {
                     void operator()( bool bNew, value_type& item, Q const& val );
@@ -432,18 +424,27 @@ namespace cds { namespace container {
 
             The functor may change non-key fields of the \p item.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
+            <b>for \p IterableList</b>
+            \code
+                void func( value_type& val, value_type * old );
+            \endcode
+            where
+            - \p val - a new data constructed from \p key
+            - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
+
+            @return <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
 
-            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" and \ref cds_nonintrusive_IterableList_gc "IterableList"
+            as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename Q, typename Func>
-        std::pair<bool, bool> update( const Q& val, Func func, bool bAllowUpdate = true )
+        std::pair<bool, bool> update( Q&& val, Func func, bool bAllowUpdate = true )
         {
-            std::pair<bool, bool> bRet = bucket( val ).update( val, func, bAllowUpdate );
+            std::pair<bool, bool> bRet = bucket( val ).update( std::forward<Q>( val ), func, bAllowUpdate );
             if ( bRet.second )
                 ++m_ItemCounter;
             return bRet;
@@ -457,6 +458,35 @@ namespace cds { namespace container {
         }
         //@endcond
 
+        /// Inserts or updates the node (only for \p IterableList)
+        /**
+            The operation performs inserting or changing data with lock-free manner.
+
+            If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
+            Otherwise, the current element is changed to \p val, the old element will be retired later
+            by call \p Traits::disposer.
+
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+            \p second is \p true if \p val has been added or \p false if the item with that key
+            already in the set.
+        */
+        template <typename Q>
+#ifdef CDS_DOXYGEN_INVOKED
+        std::pair<bool, bool>
+#else
+        typename std::enable_if< 
+            std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
+            std::pair<bool, bool>
+        >::type
+#endif
+        upsert( Q&& val, bool bAllowInsert = true )
+        {
+            std::pair<bool, bool> bRet = bucket( val ).upsert( std::forward<Q>( val ), bAllowInsert );
+            if ( bRet.second )
+                ++m_ItemCounter;
+            return bRet;
+        }
+
         /// Inserts data of type \p value_type constructed from \p args
         /**
             Returns \p true if inserting successful, \p false otherwise.
@@ -464,22 +494,20 @@ namespace cds { namespace container {
         template <typename... Args>
         bool emplace( Args&&... args )
         {
-            typename internal_bucket_type::node_type * pNode = internal_bucket_type::alloc_node( std::forward<Args>( args )... );
-            bool bRet = bucket( internal_bucket_type::node_to_value( *pNode )).insert_node( pNode );
+            bool bRet = bucket_emplace<internal_bucket_type>( std::forward<Args>(args)... );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;
         }
 
         /// Deletes \p key from the set
-        /** \anchor cds_nonintrusive_MichaelSet_erase_val
-
-            Since the key of MichaelHashSet's item type \ref value_type is not explicitly specified,
+        /**
+            Since the key of MichaelHashSet's item type \p value_type is not explicitly specified,
             template parameter \p Q defines the key type searching in the list.
             The set item comparator should be able to compare the type \p value_type
             and the type \p Q.
 
-            Return \p true if key is found and deleted, \p false otherwise
+            Return \p true if key is found and deleted, \p false otherwise.
         */
         template <typename Q>
         bool erase( Q const& key )
@@ -492,8 +520,7 @@ namespace cds { namespace container {
 
         /// Deletes the item from the set using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelSet_erase_val "erase(Q const&)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p erase(Q const&) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
@@ -507,8 +534,7 @@ namespace cds { namespace container {
         }
 
         /// Deletes \p key from the set
-        /** \anchor cds_nonintrusive_MichaelSet_erase_func
-
+        /**
             The function searches an item with key \p key, calls \p f functor
             and deletes the item. If \p key is not found, the functor is not called.
 
@@ -538,8 +564,7 @@ namespace cds { namespace container {
 
         /// Deletes the item from the set using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelSet_erase_func "erase(Q const&, Func)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p erase(Q const&, Func) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
@@ -569,7 +594,7 @@ namespace cds { namespace container {
             michael_set theSet;
             // ...
             {
-                michael_set::guarded_ptr gp( theSet.extract( 5 ));
+                typename michael_set::guarded_ptr gp( theSet.extract( 5 ));
                 if ( gp ) {
                     // Deal with gp
                     // ...
@@ -589,11 +614,11 @@ namespace cds { namespace container {
 
         /// Extracts the item using compare functor \p pred
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelHashSet_hp_extract "extract(Q const&)"
+            The function is an analog of \p extract(Q const&)
             but \p pred predicate is used for key comparing.
 
-            \p Less functor has the semantics like \p std::less but should take arguments of type \ref value_type and \p Q
-            in any order.
+            \p Less functor has the semantics like \p std::less but should take arguments
+            of type \p value_type and \p Q in any order.
             \p pred must imply the same element order as the comparator used for building the set.
         */
         template <typename Q, typename Less>
@@ -606,8 +631,7 @@ namespace cds { namespace container {
         }
 
         /// Finds the key \p key
-        /** \anchor cds_nonintrusive_MichaelSet_find_func
-
+        /**
             The function searches the item with key equal to \p key and calls the functor \p f for item found.
             The interface of \p Func functor is:
             \code
@@ -643,10 +667,42 @@ namespace cds { namespace container {
         }
         //@endcond
 
+        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for the set based on \p IterableList
+        */
+        template <typename Q>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<Q,Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find( Q& key )
+        {
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find( key );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end());
+        }
+        //@cond
+        template <typename Q>
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+        find( Q const& key )
+        {
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find( key );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end() );
+        }
+        //@endcond
+
         /// Finds the key \p key using \p pred predicate for searching
         /**
-            The function is an analog of \ref cds_nonintrusive_MichaelSet_find_func "find(Q&, Func)"
-            but \p pred is used for key comparing.
+            The function is an analog of \p find(Q&, Func) but \p pred is used for key comparing.
             \p Less functor has the interface like \p std::less.
             \p Less must imply the same element order as the comparator used for building the set.
         */
@@ -663,9 +719,45 @@ namespace cds { namespace container {
         }
         //@endcond
 
+        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p pred must imply the same element order as the comparator used for building the set.
+
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for the set based on \p IterableList
+        */
+        template <typename Q, typename Less>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find_with( Q& key, Less pred )
+        {
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find_with( key, pred );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end() );
+        }
+        //@cond
+        template <typename Q, typename Less>
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+        find_with( Q const& key, Less pred )
+        {
+            internal_bucket_type& b = bucket( key );
+            typename internal_bucket_type::iterator it = b.find_with( key, pred );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end() );
+        }
+        //@endcond
+
         /// Checks whether the set contains \p key
         /**
-
             The function searches the item with key equal to \p key
             and returns \p true if the key is found, and \p false otherwise.
 
@@ -677,14 +769,6 @@ namespace cds { namespace container {
         {
             return bucket( key ).contains( key );
         }
-        //@cond
-        template <typename Q>
-        CDS_DEPRECATED("use contains()")
-        bool find( Q const& key )
-        {
-            return contains( key );
-        }
-        //@endcond
 
         /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
@@ -697,14 +781,6 @@ namespace cds { namespace container {
         {
             return bucket( key ).contains( key, pred );
         }
-        //@cond
-        template <typename Q, typename Less>
-        CDS_DEPRECATED("use contains()")
-        bool find_with( Q const& key, Less pred )
-        {
-            return contains( key, pred );
-        }
-        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelHashSet_hp_get
@@ -720,7 +796,7 @@ namespace cds { namespace container {
             michael_set theSet;
             // ...
             {
-                michael_set::guarded_ptr gp( theSet.get( 5 ));
+                typename michael_set::guarded_ptr gp( theSet.get( 5 ));
                 if ( gp ) {
                     // Deal with gp
                     //...
@@ -785,6 +861,12 @@ namespace cds { namespace container {
             return m_ItemCounter;
         }
 
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
         /// Returns the size of hash table
         /**
             Since MichaelHashSet cannot dynamically extend the hash table size,
@@ -795,6 +877,95 @@ namespace cds { namespace container {
         {
             return m_nHashBitmask + 1;
         }
+
+    protected:
+        //@cond
+        /// Calculates hash value of \p key
+        template <typename Q>
+        size_t hash_value( Q const& key ) const
+        {
+            return m_HashFunctor( key ) & m_nHashBitmask;
+        }
+
+        /// Returns the bucket (ordered list) for \p key
+        template <typename Q>
+        internal_bucket_type& bucket( Q const& key )
+        {
+            return m_Buckets[ hash_value( key ) ];
+        }
+        template <typename Q>
+        internal_bucket_type const& bucket( Q const& key ) const
+        {
+            return m_Buckets[hash_value( key )];
+        }
+        //@endcond
+
+    private:
+        //@cond
+        internal_bucket_type* bucket_begin() const
+        {
+            return m_Buckets;
+        }
+
+        internal_bucket_type* bucket_end() const
+        {
+            return m_Buckets + bucket_count();
+        }
+
+        const_iterator get_const_begin() const
+        {
+            return const_iterator( bucket_begin()->cbegin(), bucket_begin(), bucket_end() );
+        }
+        const_iterator get_const_end() const
+        {
+            return const_iterator(( bucket_end() -1 )->cend(), bucket_end() - 1, bucket_end() );
+        }
+
+        template <typename Stat>
+        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        {
+            new (bucket) internal_bucket_type;
+        }
+
+        template <typename Stat>
+        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        {
+            new (bucket) internal_bucket_type( m_Stat );
+        }
+
+        template <typename List, typename... Args>
+        typename std::enable_if< !is_iterable_list<List>::value, bool>::type
+        bucket_emplace( Args&&... args )
+        {
+            class list_accessor: public List
+            {
+            public:
+                using List::alloc_node;
+                using List::node_to_value;
+                using List::insert_node;
+            };
+
+            auto pNode = list_accessor::alloc_node( std::forward<Args>( args )... );
+            assert( pNode != nullptr );
+            return static_cast<list_accessor&>( bucket( list_accessor::node_to_value( *pNode ))).insert_node( pNode );
+        }
+
+        template <typename List, typename... Args>
+        typename std::enable_if< is_iterable_list<List>::value, bool>::type
+        bucket_emplace( Args&&... args )
+        {
+            class list_accessor: public List
+            {
+            public:
+                using List::alloc_data;
+                using List::insert_node;
+            };
+
+            auto pData = list_accessor::alloc_data( std::forward<Args>( args )... );
+            assert( pData != nullptr );
+            return static_cast<list_accessor&>( bucket( *pData )).insert_node( pData );
+        }
+        //@endcond
     };
 
 }} // namespace cds::container

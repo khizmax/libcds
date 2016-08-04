@@ -35,6 +35,8 @@
     <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_iterable_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\set\michael_iterable_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\set\michael_lazy_dhp.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
@@ -206,10 +208,13 @@
     <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset_hp.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_michael_iterable.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_michael_iterable_hp.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_michael_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_michael_michael_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_ordered_set_hp.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set.h" />
+    <ClInclude Include="..\..\..\test\unit\set\test_set_data.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set_hp.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set_nogc.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set_rcu.h" />

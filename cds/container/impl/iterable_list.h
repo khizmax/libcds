@@ -139,6 +139,22 @@ namespace cds { namespace container {
 
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
 
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef IterableList<
+                gc
+                , value_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
+
     protected:
         //@cond
         typedef typename maker::cxx_data_allocator   cxx_data_allocator;
@@ -750,12 +766,6 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        //template <typename Q>
-        //static value_type* alloc_data( Q const& v )
-        //{
-        //    return cxx_data_allocator().New( v );
-        //}
-
         template <typename... Args>
         static value_type* alloc_data( Args&&... args )
         {
