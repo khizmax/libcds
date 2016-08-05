@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TYPE_MICHAEL_LIST_H
@@ -61,6 +61,20 @@ namespace set {
         typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_cmp_stdAlloc > MichaelList_RCU_SHT_cmp_stdAlloc;
 #endif
 
+        struct traits_MichaelList_cmp_stdAlloc_stat: public traits_MichaelList_cmp_stdAlloc
+        {
+            typedef cc::michael_list::stat<> stat;
+        };
+        typedef cc::MichaelList< cds::gc::HP,  key_val, traits_MichaelList_cmp_stdAlloc_stat > MichaelList_HP_cmp_stdAlloc_stat;
+        typedef cc::MichaelList< cds::gc::DHP, key_val, traits_MichaelList_cmp_stdAlloc_stat > MichaelList_DHP_cmp_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_gpi, key_val, traits_MichaelList_cmp_stdAlloc_stat > MichaelList_RCU_GPI_cmp_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_gpb, key_val, traits_MichaelList_cmp_stdAlloc_stat > MichaelList_RCU_GPB_cmp_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_cmp_stdAlloc_stat > MichaelList_RCU_GPT_cmp_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_cmp_stdAlloc_stat > MichaelList_RCU_SHB_cmp_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_cmp_stdAlloc_stat > MichaelList_RCU_SHT_cmp_stdAlloc_stat;
+#endif
+
         struct traits_MichaelList_cmp_stdAlloc_seqcst : public traits_MichaelList_cmp_stdAlloc
         {
             typedef co::v::sequential_consistent memory_model;
@@ -88,6 +102,20 @@ namespace set {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_less_stdAlloc > MichaelList_RCU_SHB_less_stdAlloc;
         typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_less_stdAlloc > MichaelList_RCU_SHT_less_stdAlloc;
+#endif
+
+        struct traits_MichaelList_less_stdAlloc_stat : public traits_MichaelList_less_stdAlloc
+        {
+            typedef cc::michael_list::stat<> stat;
+        };
+        typedef cc::MichaelList< cds::gc::HP,  key_val, traits_MichaelList_less_stdAlloc_stat > MichaelList_HP_less_stdAlloc_stat;
+        typedef cc::MichaelList< cds::gc::DHP, key_val, traits_MichaelList_less_stdAlloc_stat > MichaelList_DHP_less_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_gpi, key_val, traits_MichaelList_less_stdAlloc_stat > MichaelList_RCU_GPI_less_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_gpb, key_val, traits_MichaelList_less_stdAlloc_stat > MichaelList_RCU_GPB_less_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_less_stdAlloc_stat > MichaelList_RCU_GPT_less_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_less_stdAlloc_stat > MichaelList_RCU_SHB_less_stdAlloc_stat;
+        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_less_stdAlloc_stat > MichaelList_RCU_SHT_less_stdAlloc_stat;
 #endif
 
         struct traits_MichaelList_less_stdAlloc_seqcst :

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "set_insdel_string.h"
@@ -34,5 +34,6 @@
 namespace set {
 
     CDSSTRESS_MichaelSet( Set_InsDel_string_LF, run_test_extract, std::string, size_t )
+    CDSSTRESS_MichaelIterableSet( Set_InsDel_string_LF, run_test_extract, std::string, size_t )
 
 } // namespace set

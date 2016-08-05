@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TYPE_LAZY_LIST_H
@@ -46,7 +46,7 @@ namespace set {
         typedef typename set_type_base< Key, Val >::compare compare;
         typedef typename set_type_base< Key, Val >::less    less;
 
-                struct traits_LazyList_cmp_stdAlloc :
+        struct traits_LazyList_cmp_stdAlloc :
             public cc::lazy_list::make_traits<
                 co::compare< compare >
             >::type
@@ -60,6 +60,21 @@ namespace set {
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHB_cmp_stdAlloc;
         typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHT_cmp_stdAlloc;
 #endif
+
+        struct traits_LazyList_cmp_stdAlloc_stat : public traits_LazyList_cmp_stdAlloc
+        {
+            typedef cc::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyList< cds::gc::HP,  key_val, traits_LazyList_cmp_stdAlloc_stat > LazyList_HP_cmp_stdAlloc_stat;
+        typedef cc::LazyList< cds::gc::DHP, key_val, traits_LazyList_cmp_stdAlloc_stat > LazyList_DHP_cmp_stdAlloc_stat;
+        typedef cc::LazyList< rcu_gpi, key_val, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPI_cmp_stdAlloc_stat;
+        typedef cc::LazyList< rcu_gpb, key_val, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPB_cmp_stdAlloc_stat;
+        typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPT_cmp_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_SHB_cmp_stdAlloc_stat;
+        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_SHT_cmp_stdAlloc_stat;
+#endif
+
         struct traits_LazyList_cmp_stdAlloc_seqcst :
             public cc::lazy_list::make_traits<
                 co::compare< compare >
@@ -104,6 +119,20 @@ namespace set {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_less_stdAlloc > LazyList_RCU_SHB_less_stdAlloc;
         typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_less_stdAlloc > LazyList_RCU_SHT_less_stdAlloc;
+#endif
+
+        struct traits_LazyList_less_stdAlloc_stat: public traits_LazyList_less_stdAlloc
+        {
+            typedef cc::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyList< cds::gc::HP, key_val, traits_LazyList_less_stdAlloc_stat > LazyList_HP_less_stdAlloc_stat;
+        typedef cc::LazyList< cds::gc::DHP, key_val, traits_LazyList_less_stdAlloc_stat > LazyList_DHP_less_stdAlloc_stat;
+        typedef cc::LazyList< rcu_gpi, key_val, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPI_less_stdAlloc_stat;
+        typedef cc::LazyList< rcu_gpb, key_val, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPB_less_stdAlloc_stat;
+        typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPT_less_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_SHB_less_stdAlloc_stat;
+        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_SHT_less_stdAlloc_stat;
 #endif
 
         struct traits_LazyList_less_stdAlloc_seqcst :

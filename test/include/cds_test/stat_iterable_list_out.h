@@ -28,12 +28,43 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "set_delodd.h"
-#include "set_type_michael.h"
+#ifndef CDSTEST_STAT_ITERABLE_LIST_OUT_H
+#define CDSTEST_STAT_ITERABLE_LIST_OUT_H
 
-namespace set {
+#include <cds/intrusive/details/iterable_list_base.h>
 
-    CDSSTRESS_MichaelSet( Set_DelOdd_LF, run_test_extract, key_thread, size_t )
-    CDSSTRESS_MichaelIterableSet( Set_DelOdd_LF, run_test_extract, key_thread, size_t )
+namespace cds_test {
 
-} // namespace set
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::iterable_list::empty_stat const& /*s*/ )
+    {
+        return o;
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::iterable_list::stat<> const& s )
+    {
+        return o
+            << CDSSTRESS_STAT_OUT( s, m_nInsertSuccess )
+            << CDSSTRESS_STAT_OUT( s, m_nInsertFailed )
+            << CDSSTRESS_STAT_OUT( s, m_nInsertRetry )
+            << CDSSTRESS_STAT_OUT( s, m_nUpdateNew )
+            << CDSSTRESS_STAT_OUT( s, m_nUpdateExisting )
+            << CDSSTRESS_STAT_OUT( s, m_nUpdateFailed )
+            << CDSSTRESS_STAT_OUT( s, m_nUpdateRetry )
+            << CDSSTRESS_STAT_OUT( s, m_nEraseSuccess )
+            << CDSSTRESS_STAT_OUT( s, m_nEraseFailed )
+            << CDSSTRESS_STAT_OUT( s, m_nEraseRetry )
+            << CDSSTRESS_STAT_OUT( s, m_nFindSuccess )
+            << CDSSTRESS_STAT_OUT( s, m_nFindFailed )
+            << CDSSTRESS_STAT_OUT( s, m_nNodeCreated )
+            << CDSSTRESS_STAT_OUT( s, m_nNodeRemoved );
+    }
+
+    template <typename Stat>
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::iterable_list::wrapped_stat<Stat> const& s )
+    {
+        return o << s.m_stat;
+    }
+
+} // namespace cds_test
+
+#endif // #ifndef CDSTEST_STAT_ITERABLE_LIST_OUT_H

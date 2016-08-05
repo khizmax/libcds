@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds.vcxproj", "{408FE9BC-44F0-4E6A-89FA-D6F952584239}"
 EndProject
@@ -24,6 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cds_test", "cds_test", "{3A
 		..\..\..\test\include\cds_test\stat_ellenbintree_out.h = ..\..\..\test\include\cds_test\stat_ellenbintree_out.h
 		..\..\..\test\include\cds_test\stat_feldman_hashset_out.h = ..\..\..\test\include\cds_test\stat_feldman_hashset_out.h
 		..\..\..\test\include\cds_test\stat_flat_combining_out.h = ..\..\..\test\include\cds_test\stat_flat_combining_out.h
+		..\..\..\test\include\cds_test\stat_iterable_list_out.h = ..\..\..\test\include\cds_test\stat_iterable_list_out.h
+		..\..\..\test\include\cds_test\stat_lazy_list_out.h = ..\..\..\test\include\cds_test\stat_lazy_list_out.h
+		..\..\..\test\include\cds_test\stat_michael_list_out.h = ..\..\..\test\include\cds_test\stat_michael_list_out.h
 		..\..\..\test\include\cds_test\stat_skiplist_out.h = ..\..\..\test\include\cds_test\stat_skiplist_out.h
 		..\..\..\test\include\cds_test\stat_splitlist_out.h = ..\..\..\test\include\cds_test\stat_splitlist_out.h
 		..\..\..\test\include\cds_test\stat_sync_monitor_out.h = ..\..\..\test\include\cds_test\stat_sync_monitor_out.h
@@ -122,6 +125,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header File
 		..\..\..\test\stress\set\set_type_cuckoo.h = ..\..\..\test\stress\set\set_type_cuckoo.h
 		..\..\..\test\stress\set\set_type_ellen_bintree.h = ..\..\..\test\stress\set\set_type_ellen_bintree.h
 		..\..\..\test\stress\set\set_type_feldman_hashset.h = ..\..\..\test\stress\set\set_type_feldman_hashset.h
+		..\..\..\test\stress\set\set_type_iterable_list.h = ..\..\..\test\stress\set\set_type_iterable_list.h
 		..\..\..\test\stress\set\set_type_lazy_list.h = ..\..\..\test\stress\set\set_type_lazy_list.h
 		..\..\..\test\stress\set\set_type_michael.h = ..\..\..\test\stress\set\set_type_michael.h
 		..\..\..\test\stress\set\set_type_michael_list.h = ..\..\..\test\stress\set\set_type_michael_list.h
