@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\include\cds_test\stress_test.h" />
+    <ClInclude Include="..\..\..\test\stress\framework\city.h" />
     <ClInclude Include="..\..\..\test\stress\framework\ellen_bintree_update_desc_pool.h" />
     <ClInclude Include="..\..\..\test\stress\framework\michael_alloc.h" />
   </ItemGroup>

@@ -17,6 +17,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cds_test", "cds_test", "{3A510E45-180B-4ADC-AFCD-D75774B68580}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\test\include\cds_test\check_size.h = ..\..\..\test\include\cds_test\check_size.h
+		..\..\..\test\include\cds_test\city.h = ..\..\..\test\include\cds_test\city.h
 		..\..\..\test\include\cds_test\fixture.h = ..\..\..\test\include\cds_test\fixture.h
 		..\..\..\test\include\cds_test\hash_func.h = ..\..\..\test\include\cds_test\hash_func.h
 		..\..\..\test\include\cds_test\stat_bronson_avltree_out.h = ..\..\..\test\include\cds_test\stat_bronson_avltree_out.h
@@ -224,6 +225,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-insfind-int", "s
 		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
 		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-iteration", "stress-set-iteration.vcxproj", "{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -595,6 +598,18 @@ Global
 		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Release|Win32.Build.0 = Release|Win32
 		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Release|x64.ActiveCfg = Release|x64
 		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A}.Release|x64.Build.0 = Release|x64
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Debug|Win32.Build.0 = Debug|Win32
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Debug|x64.ActiveCfg = Debug|x64
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Debug|x64.Build.0 = Debug|x64
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.DebugVLD|Win32.ActiveCfg = DebugVLD|Win32
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.DebugVLD|Win32.Build.0 = DebugVLD|Win32
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.DebugVLD|x64.ActiveCfg = DebugVLD|x64
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.DebugVLD|x64.Build.0 = DebugVLD|x64
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Release|Win32.ActiveCfg = Release|Win32
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Release|Win32.Build.0 = Release|Win32
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Release|x64.ActiveCfg = Release|x64
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -633,6 +648,7 @@ Global
 		{50387CA5-F5B2-4C40-ACFD-FC3C9EE2CD6B} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 		{1BB746AC-7856-4E59-9430-51177621DC35} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
 		{24DF3B87-387E-4EFC-BDE0-8DAD279FE19A} = {7D3EE35B-185D-40B5-88C2-7F9933426978}
+		{31952FA8-A303-4A0B-94C4-ABA5A8A6DBCE} = {0D83E8C7-97D1-4BA1-928A-6846E7089652}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}

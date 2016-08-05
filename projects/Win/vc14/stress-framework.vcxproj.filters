@@ -24,6 +24,9 @@
     <ClInclude Include="..\..\..\test\stress\framework\ellen_bintree_update_desc_pool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\stress\framework\city.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\stress\framework\config.cpp">

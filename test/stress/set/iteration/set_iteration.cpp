@@ -28,27 +28,27 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "set_insdel_string.h"
+#include "set_iteration.h"
 
 namespace set {
 
-    size_t Set_InsDel_string::s_nSetSize = 1000000;      // set size
-    size_t Set_InsDel_string::s_nInsertThreadCount = 4;  // count of insertion thread
-    size_t Set_InsDel_string::s_nDeleteThreadCount = 4;  // count of deletion thread
-    size_t Set_InsDel_string::s_nThreadPassCount = 4;    // pass count for each thread
-    size_t Set_InsDel_string::s_nMaxLoadFactor = 8;      // maximum load factor
+    size_t Set_Iteration::s_nSetSize = 1000000;      // set size
+    size_t Set_Iteration::s_nInsertThreadCount = 4;  // count of insertion thread
+    size_t Set_Iteration::s_nDeleteThreadCount = 4;  // count of deletion thread
+    size_t Set_Iteration::s_nThreadPassCount = 4;    // pass count for each thread
+    size_t Set_Iteration::s_nMaxLoadFactor = 8;      // maximum load factor
 
-    size_t Set_InsDel_string::s_nCuckooInitialSize = 1024;// initial size for CuckooSet
-    size_t Set_InsDel_string::s_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
-    size_t Set_InsDel_string::s_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
+    size_t Set_Iteration::s_nCuckooInitialSize = 1024;// initial size for CuckooSet
+    size_t Set_Iteration::s_nCuckooProbesetSize = 16; // CuckooSet probeset size (only for list-based probeset)
+    size_t Set_Iteration::s_nCuckooProbesetThreshold = 0; // CUckooSet probeset threshold (0 - use default)
 
-    size_t Set_InsDel_string::s_nFeldmanSet_HeadBits = 10;
-    size_t Set_InsDel_string::s_nFeldmanSet_ArrayBits = 4;
+    size_t Set_Iteration::s_nFeldmanSet_HeadBits = 10;
+    size_t Set_Iteration::s_nFeldmanSet_ArrayBits = 4;
 
-    size_t Set_InsDel_string::s_nLoadFactor = 1;
-    std::vector<std::string> Set_InsDel_string::m_arrString;
+    size_t Set_Iteration::s_nLoadFactor = 1;
+    std::vector<std::string> Set_Iteration::m_arrString;
 
-    void Set_InsDel_string::SetUpTestCase()
+    void Set_Iteration::SetUpTestCase()
     {
         cds_test::config const& cfg = get_config( "map_insdel_string" );
 
@@ -94,12 +94,12 @@ namespace set {
         m_arrString = load_dictionary();
     }
 
-    void Set_InsDel_string::TearDownTestCase()
+    void Set_Iteration::TearDownTestCase()
     {
         m_arrString.clear();
     }
 
-    std::vector<size_t> Set_InsDel_string_LF::get_load_factors()
+    std::vector<size_t> Set_Iteration_LF::get_load_factors()
     {
         cds_test::config const& cfg = get_config( "map_insdel_string" );
 
@@ -114,5 +114,5 @@ namespace set {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Set_InsDel_string_LF, ::testing::ValuesIn( Set_InsDel_string_LF::get_load_factors()));
+    INSTANTIATE_TEST_CASE_P( a, Set_Iteration_LF, ::testing::ValuesIn( Set_Iteration_LF::get_load_factors()));
 } // namespace set
