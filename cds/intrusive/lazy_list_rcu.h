@@ -31,7 +31,7 @@
 #ifndef CDSLIB_INTRUSIVE_LAZY_LIST_RCU_H
 #define CDSLIB_INTRUSIVE_LAZY_LIST_RCU_H
 
-#include <mutex>        // unique_lock
+#include <mutex> // unique_lock
 #include <cds/intrusive/details/lazy_list_base.h>
 #include <cds/urcu/details/check_deadlock.h>
 #include <cds/details/binary_functor_wrapper.h>
@@ -161,18 +161,14 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
-        //@cond
-        typedef typename node_type::marked_ptr  marked_node_ptr;  ///< Node marked pointer
-        typedef node_type *                     auxiliary_head;   ///< Auxiliary head type (for split-list support)
-        //@endcond
-
-    protected:
         node_type       m_Head;        ///< List head (dummy node)
         node_type       m_Tail;        ///< List tail (dummy node)
         item_counter    m_ItemCounter; ///< Item counter
         mutable stat    m_Stat;        ///< Internal statistics
 
         //@cond
+        typedef typename node_type::marked_ptr  marked_node_ptr;  ///< Node marked pointer
+        typedef node_type *                     auxiliary_head;   ///< Auxiliary head type (for split-list support)
 
         /// Position pointer for item search
         struct position {
@@ -197,14 +193,6 @@ namespace cds { namespace intrusive {
         typedef std::unique_lock< position > scoped_position_lock;
 
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock>   deadlock_policy;
-        //@endcond
-
-    protected:
-        //@cond
-        static void clear_links( node_type * pNode )
-        {
-            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
-        }
 
         struct clear_and_dispose {
             void operator()( value_type * p )
@@ -214,34 +202,6 @@ namespace cds { namespace intrusive {
                 disposer()( p );
             }
         };
-
-        static void dispose_node( node_type * pNode )
-        {
-            assert( pNode );
-            assert( !gc::is_locked());
-
-            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ));
-        }
-
-        static void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
-        {
-            assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
-            link_checker::is_empty( pNode );
-
-            pNode->m_pNext.store( marked_node_ptr(pCur), memory_model::memory_order_relaxed );
-            pPred->m_pNext.store( marked_node_ptr(pNode), memory_model::memory_order_release );
-        }
-
-        void unlink_node( node_type * pPred, node_type * pCur, node_type * pHead )
-        {
-            assert( pPred->m_pNext.load(memory_model::memory_order_relaxed).ptr() == pCur );
-            assert( pCur != &m_Tail );
-
-            node_type * pNext = pCur->m_pNext.load(memory_model::memory_order_relaxed).ptr();
-            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_relaxed ); // logical deletion + back-link for search
-            pPred->m_pNext.store( marked_node_ptr( pNext ), memory_model::memory_order_release); // physically deleting
-        }
-
         //@endcond
 
     public:
@@ -409,20 +369,6 @@ namespace cds { namespace intrusive {
             return get_const_end();
         }
     //@}
-
-    private:
-        //@cond
-        const_iterator get_const_begin() const
-        {
-            const_iterator it( const_cast<node_type *>( &m_Head ));
-            ++it        ;   // skip dummy head
-            return it;
-        }
-        const_iterator get_const_end() const
-        {
-            return const_iterator( const_cast<node_type *>( &m_Tail ));
-        }
-        //@endcond
 
     public:
         /// Default constructor initializes empty list
@@ -900,6 +846,38 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
+        static void clear_links( node_type * pNode )
+        {
+            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+        }
+
+        static void dispose_node( node_type * pNode )
+        {
+            assert( pNode );
+            assert( !gc::is_locked() );
+
+            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ) );
+        }
+
+        static void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
+        {
+            assert( pPred->m_pNext.load( memory_model::memory_order_relaxed ).ptr() == pCur );
+            link_checker::is_empty( pNode );
+
+            pNode->m_pNext.store( marked_node_ptr( pCur ), memory_model::memory_order_relaxed );
+            pPred->m_pNext.store( marked_node_ptr( pNode ), memory_model::memory_order_release );
+        }
+
+        void unlink_node( node_type * pPred, node_type * pCur, node_type * pHead )
+        {
+            assert( pPred->m_pNext.load( memory_model::memory_order_relaxed ).ptr() == pCur );
+            assert( pCur != &m_Tail );
+
+            node_type * pNext = pCur->m_pNext.load( memory_model::memory_order_relaxed ).ptr();
+            pCur->m_pNext.store( marked_node_ptr( pHead, 1 ), memory_model::memory_order_relaxed ); // logical deletion + back-link for search
+            pPred->m_pNext.store( marked_node_ptr( pNext ), memory_model::memory_order_release ); // physically deleting
+        }
+
         // split-list support
         bool insert_aux_node( node_type * pNode )
         {
@@ -1302,6 +1280,20 @@ namespace cds { namespace intrusive {
             ++m_ItemCounter;
             m_Stat.onUpdateNew();
             return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
+        }
+        //@endcond
+
+    private:
+        //@cond
+        const_iterator get_const_begin() const
+        {
+            const_iterator it( const_cast<node_type *>(&m_Head) );
+            ++it;   // skip dummy head
+            return it;
+        }
+        const_iterator get_const_end() const
+        {
+            return const_iterator( const_cast<node_type *>(&m_Tail) );
         }
         //@endcond
     };

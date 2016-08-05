@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef CDSUNIT_SET_TEST_MICHAEL_LAZY_RCU_H
 #define CDSUNIT_SET_TEST_MICHAEL_LAZY_RCU_H
@@ -216,11 +216,58 @@ TYPED_TEST_P( MichaelLazySet, mutex )
     this->test( s );
 }
 
+TYPED_TEST_P( MichaelLazySet, stat )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+
+    struct list_traits: public cc::lazy_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cds::backoff::pause back_off;
+        typedef cc::lazy_list::stat<> stat;
+    };
+    typedef cc::LazyList< rcu_type, int_item, list_traits > list_type;
+
+    struct set_traits: public cc::michael_set::traits
+    {
+        typedef typename TestFixture::hash_int hash;
+        typedef cds::atomicity::item_counter item_counter;
+    };
+    typedef cc::MichaelHashSet< rcu_type, list_type, set_traits >set_type;
+
+    set_type s( TestFixture::kSize, 4 );
+    this->test( s );
+}
+
+TYPED_TEST_P( MichaelLazySet, wrapped_stat )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+
+    struct list_traits: public cc::lazy_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cds::backoff::pause back_off;
+        typedef cc::lazy_list::wrapped_stat<> stat;
+    };
+    typedef cc::LazyList< rcu_type, int_item, list_traits > list_type;
+
+    struct set_traits: public cc::michael_set::traits
+    {
+        typedef typename TestFixture::hash_int hash;
+        typedef cds::atomicity::item_counter item_counter;
+    };
+    typedef cc::MichaelHashSet< rcu_type, list_type, set_traits >set_type;
+
+    set_type s( TestFixture::kSize, 4 );
+    this->test( s );
+}
 
 // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No test named <test_name> can be found in this test case"
 REGISTER_TYPED_TEST_CASE_P( MichaelLazySet,
-    compare, less, cmpmix, item_counting, backoff, seq_cst, mutex
+    compare, less, cmpmix, item_counting, backoff, seq_cst, mutex, stat, wrapped_stat
 );
 
 

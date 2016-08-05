@@ -163,12 +163,6 @@ namespace cds { namespace intrusive {
 
         typedef cds::urcu::details::check_deadlock_policy< gc, rcu_check_deadlock>   check_deadlock_policy;
 
-        static void clear_links( node_type * pNode )
-        {
-            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_release );
-            pNode->m_pDelChain = nullptr;
-        }
-
         struct clear_and_dispose {
             void operator()( value_type * p )
             {
@@ -177,31 +171,6 @@ namespace cds { namespace intrusive {
                 disposer()( p );
             }
         };
-
-        static void dispose_node( node_type * pNode )
-        {
-            assert( pNode );
-            assert( !gc::is_locked() );
-
-            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ) );
-        }
-
-        static void dispose_chain( node_type * pChain )
-        {
-            if ( pChain ) {
-                assert( !gc::is_locked() );
-
-                auto f = [&pChain]() -> cds::urcu::retired_ptr {
-                    node_type * p = pChain;
-                    if ( p ) {
-                        pChain = p->m_pDelChain;
-                        return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ));
-                    }
-                    return cds::urcu::make_retired_ptr<clear_and_dispose>( static_cast<value_type *>(nullptr));
-                };
-                gc::batch_retire(std::ref(f));
-            }
-        }
 
         /// Position pointer for item search
         struct position {
@@ -222,7 +191,6 @@ namespace cds { namespace intrusive {
                 dispose_chain( pDelChain );
             }
         };
-
         //@endcond
 
     public:
@@ -242,56 +210,6 @@ namespace cds { namespace intrusive {
     public:
         /// Result of \p get(), \p get_with() functions - pointer to the node found
         typedef cds::urcu::raw_ptr< gc, value_type, raw_ptr_disposer > raw_ptr;
-
-    protected:
-        //@cond
-
-        bool link_node( node_type * pNode, position& pos )
-        {
-            assert( pNode != nullptr );
-            link_checker::is_empty( pNode );
-
-            marked_node_ptr p( pos.pCur );
-            pNode->m_pNext.store( p, memory_model::memory_order_release );
-            if ( cds_likely( pos.pPrev->compare_exchange_strong( p, marked_node_ptr(pNode), memory_model::memory_order_release, atomics::memory_order_relaxed )))
-                return true;
-
-            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
-            return false;
-        }
-
-        static void link_to_remove_chain( position& pos, node_type * pDel )
-        {
-            assert( pDel->m_pDelChain == nullptr );
-
-            pDel->m_pDelChain = pos.pDelChain;
-            pos.pDelChain = pDel;
-        }
-
-        bool unlink_node( position& pos, erase_node_mask nMask )
-        {
-            assert(gc::is_locked() );
-
-            // Mark the node (logical deletion)
-            marked_node_ptr next(pos.pNext, 0);
-
-            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed ))) {
-
-                // Try physical removal - fast path
-                marked_node_ptr cur(pos.pCur);
-                if ( cds_likely( pos.pPrev->compare_exchange_strong(cur, marked_node_ptr(pos.pNext), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
-                    if ( nMask == erase_mask )
-                        link_to_remove_chain( pos, pos.pCur );
-                }
-                else {
-                    // Slow path
-                    search( pos.refHead, *node_traits::to_value_ptr( pos.pCur ), pos, key_comparator() );
-                }
-                return true;
-            }
-            return false;
-        }
-        //@endcond
 
     protected:
         //@cond
@@ -916,8 +834,86 @@ namespace cds { namespace intrusive {
         {
             return m_Stat;
         }
+
     protected:
         //@cond
+        static void clear_links( node_type * pNode )
+        {
+            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_release );
+            pNode->m_pDelChain = nullptr;
+        }
+
+        static void dispose_node( node_type * pNode )
+        {
+            assert( pNode );
+            assert( !gc::is_locked() );
+
+            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ) );
+        }
+
+        static void dispose_chain( node_type * pChain )
+        {
+            if ( pChain ) {
+                assert( !gc::is_locked() );
+
+                auto f = [&pChain]() -> cds::urcu::retired_ptr {
+                    node_type * p = pChain;
+                    if ( p ) {
+                        pChain = p->m_pDelChain;
+                        return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ) );
+                    }
+                    return cds::urcu::make_retired_ptr<clear_and_dispose>( static_cast<value_type *>(nullptr) );
+                };
+                gc::batch_retire( std::ref( f ) );
+            }
+        }
+
+        bool link_node( node_type * pNode, position& pos )
+        {
+            assert( pNode != nullptr );
+            link_checker::is_empty( pNode );
+
+            marked_node_ptr p( pos.pCur );
+            pNode->m_pNext.store( p, memory_model::memory_order_release );
+            if ( cds_likely( pos.pPrev->compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) )
+                return true;
+
+            pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
+            return false;
+        }
+
+        static void link_to_remove_chain( position& pos, node_type * pDel )
+        {
+            assert( pDel->m_pDelChain == nullptr );
+
+            pDel->m_pDelChain = pos.pDelChain;
+            pos.pDelChain = pDel;
+        }
+
+        bool unlink_node( position& pos, erase_node_mask nMask )
+        {
+            assert( gc::is_locked() );
+
+            // Mark the node (logical deletion)
+            marked_node_ptr next( pos.pNext, 0 );
+
+            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) ) {
+
+                // Try physical removal - fast path
+                marked_node_ptr cur( pos.pCur );
+                if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) ) {
+                    if ( nMask == erase_mask )
+                        link_to_remove_chain( pos, pos.pCur );
+                }
+                else {
+                    // Slow path
+                    search( pos.refHead, *node_traits::to_value_ptr( pos.pCur ), pos, key_comparator() );
+                }
+                return true;
+            }
+            return false;
+        }
+
         // split-list support
         bool insert_aux_node( node_type * pNode )
         {

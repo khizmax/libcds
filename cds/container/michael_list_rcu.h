@@ -154,6 +154,22 @@ namespace cds { namespace container {
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
 
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef MichaelList<
+                gc
+                , value_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
+
     protected:
         //@cond
         typedef typename base_class::value_type   node_type;
@@ -162,10 +178,15 @@ namespace cds { namespace container {
         typedef typename maker::intrusive_traits::compare  intrusive_key_comparator;
 
         typedef typename base_class::atomic_node_ptr      head_type;
-        //@endcond
 
-    public:
-        using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >; ///< pointer to extracted node
+        struct node_disposer {
+            void operator()( node_type * pNode )
+            {
+                free_node( pNode );
+            }
+        };
+        typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
+        //@endcond
 
     private:
         //@cond
@@ -189,58 +210,14 @@ namespace cds { namespace container {
         //@endcond
 
     public:
+        ///< pointer to extracted node
+        using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >;
+
         /// Result of \p get(), \p get_with() functions - pointer to the node found
         typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
 
     protected:
         //@cond
-        static value_type& node_to_value( node_type& n )
-        {
-            return n.m_Value;
-        }
-        static value_type const& node_to_value( node_type const& n )
-        {
-            return n.m_Value;
-        }
-
-        template <typename Q>
-        static node_type * alloc_node( Q const& v )
-        {
-            return cxx_allocator().New( v );
-        }
-
-        template <typename... Args>
-        static node_type * alloc_node( Args&&... args )
-        {
-            return cxx_allocator().MoveNew( std::forward<Args>(args)... );
-        }
-
-        static void free_node( node_type * pNode )
-        {
-            cxx_allocator().Delete( pNode );
-        }
-
-        struct node_disposer {
-            void operator()( node_type * pNode )
-            {
-                free_node( pNode );
-            }
-        };
-        typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
-
-        head_type& head()
-        {
-            return base_class::m_pHead;
-        }
-
-        head_type& head() const
-        {
-            return const_cast<head_type&>( base_class::m_pHead );
-        }
-        //@endcond
-
-    protected:
-                //@cond
         template <bool IsConst>
         class iterator_type: protected base_class::template iterator_type<IsConst>
         {
@@ -392,9 +369,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename Q>
-        bool insert( Q const& val )
+        bool insert( Q&& val )
         {
-            return insert_at( head(), val );
+            return insert_at( head(), std::forward<Q>( val ));
         }
 
         /// Inserts new node
@@ -423,9 +400,9 @@ namespace cds { namespace container {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename Q, typename Func>
-        bool insert( Q const& key, Func func )
+        bool insert( Q&& key, Func func )
         {
-            return insert_at( head(), key, func );
+            return insert_at( head(), std::forward<Q>( key ), func );
         }
 
         /// Updates data by \p key
@@ -817,15 +794,15 @@ namespace cds { namespace container {
         }
 
         template <typename Q>
-        bool insert_at( head_type& refHead, Q const& val )
+        bool insert_at( head_type& refHead, Q&& val )
         {
-            return insert_node_at( refHead, alloc_node( val ));
+            return insert_node_at( refHead, alloc_node( std::forward<Q>( val )));
         }
 
         template <typename Q, typename Func>
-        bool insert_at( head_type& refHead, Q const& key, Func f )
+        bool insert_at( head_type& refHead, Q&& key, Func f )
         {
-            scoped_node_ptr pNode( alloc_node( key ));
+            scoped_node_ptr pNode( alloc_node( std::forward<Q>( key )));
 
             if ( base_class::insert_at( refHead, *pNode, [&f]( node_type& node ) { f( node_to_value(node) ); } )) {
                 pNode.release();
@@ -884,6 +861,41 @@ namespace cds { namespace container {
             return raw_ptr( base_class::get_at( refHead, val, cmp ));
         }
 
+        static value_type& node_to_value( node_type& n )
+        {
+            return n.m_Value;
+        }
+        static value_type const& node_to_value( node_type const& n )
+        {
+            return n.m_Value;
+        }
+
+        template <typename Q>
+        static node_type * alloc_node( Q&& v )
+        {
+            return cxx_allocator().New( std::forward<Q>( v ));
+        }
+
+        template <typename... Args>
+        static node_type * alloc_node( Args&&... args )
+        {
+            return cxx_allocator().MoveNew( std::forward<Args>( args )... );
+        }
+
+        static void free_node( node_type * pNode )
+        {
+            cxx_allocator().Delete( pNode );
+        }
+
+        head_type& head()
+        {
+            return base_class::m_pHead;
+        }
+
+        head_type& head() const
+        {
+            return const_cast<head_type&>(base_class::m_pHead);
+        }
         //@endcond
     };
 
