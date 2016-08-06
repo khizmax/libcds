@@ -630,8 +630,7 @@ namespace cds { namespace intrusive {
                     // slot value has been changed - retry
                     stats().onSlotChanged();
                 }
-
-                if ( slot.ptr()) {
+                else if ( slot.ptr()) {
                     if ( cmp( hash, hash_accessor()( *slot.ptr())) == 0 ) {
                         // the item with that hash value already exists
                         stats().onInsertFailed();
