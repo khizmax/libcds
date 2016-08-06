@@ -370,7 +370,7 @@ namespace set {
             }
         };
 
-        template <class Set>
+        template <typename GC, class Set>
         class Iterator: public cds_test::thread
         {
             typedef cds_test::thread base_class;
@@ -413,13 +413,57 @@ namespace set {
             }
         };
 
+        template <typename RCU, class Set>
+        class Iterator<cds::urcu::gc<RCU>, Set>: public cds_test::thread
+        {
+            typedef cds_test::thread base_class;
+
+            Set&     m_Set;
+            typedef typename Set::value_type keyval_type;
+
+        public:
+            size_t  m_nPassCount = 0;
+            size_t  m_nVisitCount = 0; // how many items the iterator visited
+
+        public:
+            Iterator( cds_test::thread_pool& pool, Set& set )
+                : base_class( pool, iterator_thread )
+                , m_Set( set )
+            {}
+
+            Iterator( Iterator& src )
+                : base_class( src )
+                , m_Set( src.m_Set )
+            {}
+
+            virtual thread * clone()
+            {
+                return new Iterator( *this );
+            }
+
+            virtual void test()
+            {
+                Set& rSet = m_Set;
+
+                Set_Iteration& fixture = pool().template fixture<Set_Iteration>();
+                while ( !fixture.all_modifiers_done() ) {
+                    ++m_nPassCount;
+                    typename Set::rcu_lock l;
+                    for ( auto it = rSet.begin(); it != rSet.end(); ++it ) {
+                        it->val.hash = CityHash64( it->key.c_str(), it->key.length() );
+                        ++m_nVisitCount;
+                    }
+                }
+            }
+        };
+
     protected:
         template <class Set>
         void do_test( Set& testSet )
         {
             typedef Inserter<Set> InserterThread;
             typedef Deleter<Set>  DeleterThread;
-            typedef Iterator<Set> IteratorThread;
+            typedef Iterator<typename Set::gc, Set> IteratorThread;
 
             cds_test::thread_pool& pool = get_pool();
             pool.add( new InserterThread( pool, testSet ), s_nInsertThreadCount );
@@ -495,7 +539,7 @@ namespace set {
             typedef Inserter<Set> InserterThread;
             typedef Deleter<Set>  DeleterThread;
             typedef Extractor<typename Set::gc, Set> ExtractThread;
-            typedef Iterator<Set> IteratorThread;
+            typedef Iterator<typename Set::gc, Set> IteratorThread;
 
             size_t const nDelThreadCount = s_nDeleteThreadCount / 2;
             size_t const nExtractThreadCount = s_nDeleteThreadCount - nDelThreadCount;

@@ -33,7 +33,7 @@
 
 namespace set {
 
-    CDSSTRESS_FeldmanHashSet_stdhash( Set_Iteration, run_test_extract, std::string, Set_Iteration::value_type )
-    CDSSTRESS_FeldmanHashSet_city( Set_Iteration, run_test_extract, std::string, Set_Iteration::value_type )
+    CDSSTRESS_FeldmanHashSet_stdhash_quick( Set_Iteration, run_test_extract, std::string, Set_Iteration::value_type )
+    CDSSTRESS_FeldmanHashSet_city_quick( Set_Iteration, run_test_extract, std::string, Set_Iteration::value_type )
 
 } // namespace set
