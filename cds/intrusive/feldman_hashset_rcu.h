@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_FELDMAN_HASHSET_RCU_H
@@ -896,9 +896,10 @@ namespace cds { namespace intrusive {
         /** @anchor cds_intrusive_FeldmanHashSet_rcu_iterators
             The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment
             under explicit RCU lock.
-            RCU lock requirement means that inserting or searching is allowed but you must not erase the items from the set
-            because erasing under RCU lock can lead to a deadlock. However, another thread can call \p erase() safely
-            while your thread is iterating.
+
+            RCU lock requirement means that inserting or searching is allowed for iterating thread 
+            but you must not erase the items from the set because erasing under RCU lock can lead 
+            to a deadlock. However, another thread can call \p erase() safely while your thread is iterating.
 
             A typical example is:
             \code
