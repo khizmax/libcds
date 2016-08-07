@@ -190,35 +190,32 @@ namespace cds { namespace intrusive {
 
         protected:
             node_type*  m_pNode;
-            value_type* m_pVal;
-            typename gc::Guard  m_Guard; // for m_pVal
+            typename gc::Guard  m_Guard; // data guard
 
             void next()
             {
                 while ( m_pNode ) {
-                    m_pNode = m_pNode->next.load( memory_model::memory_order_relaxed );
-                    if ( !m_pNode )
+                    m_pNode = m_pNode->next.load( memory_model::memory_order_acquire );
+                    if ( !m_pNode ) {
+                        m_Guard.clear();
                         break;
-                    m_pVal = m_Guard.protect( m_pNode->data );
-                    if ( m_pVal )
+                    }
+                    if ( m_Guard.protect( m_pNode->data ))
                         break;
                 }
             }
 
             explicit iterator_type( atomic_node_ptr const& pNode )
-                : m_pNode( pNode.load( memory_model::memory_order_relaxed ))
-                , m_pVal( nullptr )
+                : m_pNode( pNode.load( memory_model::memory_order_acquire ))
             {
                 if ( m_pNode ) {
-                    m_pVal = m_Guard.protect( m_pNode->data );
-                    if ( !m_pVal )
+                    if ( !m_Guard.protect( m_pNode->data ))
                         next();
                 }
             }
 
             iterator_type( node_type* pNode, value_type* pVal )
                 : m_pNode( pNode )
-                , m_pVal( pVal )
             {
                 if ( m_pNode ) {
                     assert( pVal != nullptr );
@@ -232,25 +229,23 @@ namespace cds { namespace intrusive {
 
             iterator_type()
                 : m_pNode( nullptr )
-                , m_pVal( nullptr )
             {}
 
             iterator_type( iterator_type const& src )
                 : m_pNode( src.m_pNode )
-                , m_pVal( src.m_pVal )
             {
-                m_Guard.assign( m_pVal );
+                m_Guard.copy( src.m_Guard );
             }
 
             value_ptr operator ->() const
             {
-                return m_pVal;
+                return m_Guard.get<value_type>();
             }
 
             value_ref operator *() const
             {
-                assert( m_pVal != nullptr );
-                return *m_pVal;
+                assert( m_Guard.get_native() != nullptr );
+                return *m_Guard.get<value_type>();
             }
 
             /// Pre-increment
@@ -263,8 +258,7 @@ namespace cds { namespace intrusive {
             iterator_type& operator = (iterator_type const& src)
             {
                 m_pNode = src.m_pNode;
-                m_pVal = src.m_pVal;
-                m_Guard.assign( m_pVal );
+                m_Guard.copy( src.m_Guard );
                 return *this;
             }
 
@@ -276,7 +270,7 @@ namespace cds { namespace intrusive {
             template <bool C>
             bool operator !=(iterator_type<C> const& i ) const
             {
-                return m_pNode != i.m_pNode;
+                return !( *this == i );
             }
         };
         //@endcond
