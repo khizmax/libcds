@@ -405,7 +405,10 @@ namespace set {
                 Set_Iteration& fixture = pool().template fixture<Set_Iteration>();
                 while ( !fixture.all_modifiers_done() ) {
                     ++m_nPassCount;
-                    for ( auto it = rSet.begin(); it != rSet.end(); ++it ) {
+                    typename Set::iterator it;
+                    typename Set::iterator itEnd;
+                    itEnd = rSet.end();
+                    for ( it = rSet.begin(); it != itEnd; ++it ) {
                         it->val.hash = CityHash64( it->key.c_str(), it->key.length());
                         ++m_nVisitCount;
                     }
