@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_GC_DETAILS_HP_H
@@ -182,9 +182,10 @@ namespace cds {
 
                 char padding[cds::c_nCacheLineSize];
                 atomics::atomic<unsigned int> m_nSync; ///< dummy var to introduce synchronizes-with relationship between threads
+                char padding2[cds::c_nCacheLineSize];
 
                 /// Ctor
-                hp_record( const cds::gc::hp::GarbageCollector& HzpMgr );    // inline
+                hp_record( const cds::gc::hp::GarbageCollector& HzpMgr ); // inline
                 ~hp_record()
                 {}
 
@@ -261,13 +262,13 @@ namespace cds {
                 //@endcond
             };
 
-            /// Not enough required Hazard Pointer count
+            /// Not enough Hazard Pointer
             class too_many_hazard_ptr : public std::length_error
             {
             public:
                 //@cond
                 too_many_hazard_ptr()
-                    : std::length_error( "Not enough required Hazard Pointer count" )
+                    : std::length_error( "Not enough Hazard Pointer" )
                 {}
                 //@endcond
             };
@@ -461,10 +462,10 @@ namespace cds {
         public:    // Internals for threads
 
             /// Allocates Hazard Pointer GC record. For internal use only
-            details::hp_record * alloc_hp_record();
+            details::hp_record* alloc_hp_record();
 
             /// Free HP record. For internal use only
-            void free_hp_record( details::hp_record * pRec );
+            void free_hp_record( details::hp_record* pRec );
 
             /// The main garbage collecting function
             /**
@@ -546,8 +547,8 @@ namespace cds {
         */
         class ThreadGC
         {
-            GarbageCollector&    m_HzpManager; ///< Hazard Pointer GC singleton
-            details::hp_record * m_pHzpRec;    ///< Pointer to thread's HZP record
+            GarbageCollector&   m_HzpManager; ///< Hazard Pointer GC singleton
+            details::hp_record* m_pHzpRec;    ///< Pointer to thread's HZP record
 
         public:
             /// Default constructor
@@ -565,7 +566,7 @@ namespace cds {
             }
 
             /// Checks if thread GC is initialized
-            bool    isInitialized() const   { return m_pHzpRec != nullptr; }
+            bool isInitialized() const   { return m_pHzpRec != nullptr; }
 
             /// Initialization. Repeat call is available
             void init()
@@ -578,21 +579,21 @@ namespace cds {
             void fini()
             {
                 if ( m_pHzpRec ) {
-                    details::hp_record * pRec = m_pHzpRec;
+                    details::hp_record* pRec = m_pHzpRec;
                     m_pHzpRec = nullptr;
                     m_HzpManager.free_hp_record( pRec );
                 }
             }
 
             /// Initializes HP guard \p guard
-            details::hp_guard& allocGuard()
+            details::hp_guard* allocGuard()
             {
                 assert( m_pHzpRec );
                 return m_pHzpRec->m_hzp.alloc();
             }
 
             /// Frees HP guard \p guard
-            void freeGuard( details::hp_guard& guard )
+            void freeGuard( details::hp_guard* guard )
             {
                 assert( m_pHzpRec );
                 m_pHzpRec->m_hzp.free( guard );
@@ -600,10 +601,10 @@ namespace cds {
 
             /// Initializes HP guard array \p arr
             template <size_t Count>
-            void allocGuard( details::hp_array<Count>& arr )
+            size_t allocGuard( details::hp_array<Count>& arr )
             {
                 assert( m_pHzpRec );
-                m_pHzpRec->m_hzp.alloc( arr );
+                return m_pHzpRec->m_hzp.alloc( arr );
             }
 
             /// Frees HP guard array \p arr
@@ -618,21 +619,6 @@ namespace cds {
             template <typename T>
             void retirePtr( T * p, void (* pFunc)(T *) )
             {
-                /*
-                union {
-                    T * p;
-                    hazard_pointer hp;
-                } cast_ptr;
-                cast_ptr.p = p;
-
-                union{
-                    void( *pFunc )(T *);
-                    free_retired_ptr_func hpFunc;
-                } cast_func;
-                cast_func.pFunc = pFunc;
-
-                retirePtr( details::retired_ptr( cast_ptr.hp, cast_func.hpFunc ) );
-                */
                 retirePtr( details::retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc )));
             }
 
@@ -659,74 +645,6 @@ namespace cds {
                 assert( m_pHzpRec != nullptr );
                 m_pHzpRec->sync();
             }
-        };
-
-        /// Auto hp_guard.
-        /**
-            This class encapsulates Hazard Pointer guard to protect a pointer against deletion.
-            It allocates one HP from thread's HP array in constructor and free the hazard pointer allocated
-            in destructor.
-        */
-        class guard
-        {
-            details::hp_guard&  m_hp    ; ///< Hazard pointer guarded
-
-        public:
-            typedef details::hp_guard::hazard_ptr hazard_ptr ;  ///< Hazard pointer type
-
-        public:
-            /// Allocates HP guard
-            guard(); // inline in hp_impl.h
-
-            /// Allocates HP guard from \p gc and protects the pointer \p p of type \p T
-            template <typename T>
-            explicit guard( T * p ); // inline in hp_impl.h
-
-            /// Frees HP guard. The pointer guarded may be deleted after this.
-            ~guard(); // inline in hp_impl.h
-
-            /// Protects the pointer \p p against reclamation (guards the pointer).
-            template <typename T>
-            T * operator =( T * p )
-            {
-                return m_hp = p;
-            }
-
-            //@cond
-            std::nullptr_t operator =(std::nullptr_t)
-            {
-                return m_hp = nullptr;
-            }
-            //@endcond
-
-            /// Get raw guarded pointer
-            hazard_ptr get() const
-            {
-                return m_hp;
-            }
-        };
-
-        /// Auto-managed array of hazard pointers
-        /**
-            This class is wrapper around cds::gc::hp::details::hp_array class.
-            \p Count is the size of HP array
-        */
-        template <size_t Count>
-        class array : public details::hp_array<Count>
-        {
-        public:
-            /// Rebind array for other size \p COUNT2
-            template <size_t Count2>
-            struct rebind {
-                typedef array<Count2>  other;   ///< rebinding result
-            };
-
-        public:
-            /// Allocates array of HP guard
-            array(); // inline in hp_impl.h
-
-            /// Frees array of HP guard
-            ~array(); //inline in hp_impl.h
         };
 
     }   // namespace hp

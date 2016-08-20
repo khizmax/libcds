@@ -721,9 +721,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            guarded_ptr gp;
-            extract_at( &m_Head, gp.guard(), key, key_comparator());
-            return gp;
+            return extract_at( &m_Head, key, key_comparator());
         }
 
         /// Extracts the item from the list with comparing functor \p pred
@@ -739,9 +737,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            extract_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>());
-            return gp;
+            return extract_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Finds the key \p key
@@ -867,9 +863,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            guarded_ptr gp;
-            get_at( &m_Head, gp.guard(), key, key_comparator());
-            return gp;
+            return get_at( &m_Head, key, key_comparator());
         }
 
         /// Finds \p key and return the item found
@@ -885,9 +879,7 @@ namespace cds { namespace intrusive {
         guarded_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            get_at( &m_Head, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>());
-            return gp;
+            return get_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Clears the list
@@ -1154,14 +1146,12 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_at( node_type * pHead, typename guarded_ptr::native_guard& gp, const Q& val, Compare cmp )
+        guarded_ptr extract_at( node_type * pHead, const Q& val, Compare cmp )
         {
             position pos;
-            if ( erase_at( pHead, val, cmp, [](value_type const &){}, pos )) {
-                gp.set( pos.guards.template get<value_type>(position::guard_current_item));
-                return true;
-            }
-            return false;
+            if ( erase_at( pHead, val, cmp, [](value_type const &){}, pos ))
+                return guarded_ptr( pos.guards.release( position::guard_current_item ));
+            return guarded_ptr();
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -1201,7 +1191,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_at( node_type * pHead, typename guarded_ptr::native_guard& gp, Q const& val, Compare cmp )
+        guarded_ptr get_at( node_type * pHead, Q const& val, Compare cmp )
         {
             position pos;
 
@@ -1210,13 +1200,12 @@ namespace cds { namespace intrusive {
                 && !pos.pCur->is_marked()
                 && cmp( *node_traits::to_value_ptr( *pos.pCur ), val ) == 0 )
             {
-                gp.set( pos.guards.template get<value_type>( position::guard_current_item ));
                 m_Stat.onFindSuccess();
-                return true;
+                return guarded_ptr( pos.guards.release( position::guard_current_item ));
             }
 
             m_Stat.onFindFailed();
-            return false;
+            return guarded_ptr();
         }
 
         //@endcond

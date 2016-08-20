@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_DETAILS_FELDMAN_HASHSET_BASE_H
@@ -300,8 +300,8 @@ namespace cds { namespace intrusive {
 
         //@cond
         namespace details {
-            template <typename HashType, typename UInt = size_t >
-            using hash_splitter = cds::algo::split_bitstring< HashType, UInt >;
+            template <typename HashType >
+            using hash_splitter = cds::algo::split_bitstring< HashType >;
 
             struct metrics {
                 size_t  head_node_size;     // power-of-two

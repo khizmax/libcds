@@ -330,11 +330,11 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
-            bool extract_at( dummy_node_type * pHead, typename guarded_ptr::native_guard& guard, split_list::details::search_value_type<Q> const& val, Compare cmp )
+            guarded_ptr extract_at( dummy_node_type * pHead, split_list::details::search_value_type<Q> const& val, Compare cmp )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
-                return base_class::extract_at( h, guard, val, cmp );
+                return base_class::extract_at( h, val, cmp );
             }
 
             template <typename Q, typename Compare, typename Func>
@@ -354,11 +354,11 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
-            bool get_at( dummy_node_type * pHead, typename guarded_ptr::native_guard& guard, split_list::details::search_value_type<Q> const& val, Compare cmp )
+            guarded_ptr get_at( dummy_node_type * pHead, split_list::details::search_value_type<Q> const& val, Compare cmp )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
-                return base_class::get_at( h, guard, val, cmp );
+                return base_class::get_at( h, val, cmp );
             }
 
             bool insert_aux_node( dummy_node_type * pNode )
@@ -539,26 +539,28 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
+        guarded_ptr get_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return m_Stat.onFind( m_List.get_at( pHead, guard, sv, cmp ));
+            guarded_ptr gp = m_List.get_at( pHead, sv, cmp );
+            m_Stat.onFind( !gp.empty() );
+            return gp;
         }
 
         template <typename Q>
-        bool get_( typename guarded_ptr::native_guard& guard, Q const& key )
+        guarded_ptr get_( Q const& key )
         {
-            return get_( guard, key, key_comparator());
+            return get_( key, key_comparator());
         }
 
         template <typename Q, typename Less>
-        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less )
+        guarded_ptr get_with_( Q const& key, Less )
         {
-            return get_( guard, key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
+            return get_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -596,32 +598,33 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
+        guarded_ptr extract_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash( nHash ));
             dummy_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            if ( m_List.extract_at( pHead, guard, sv, cmp )) {
+            guarded_ptr gp = m_List.extract_at( pHead, sv, cmp );
+            if ( gp ) {
                 --m_ItemCounter;
                 m_Stat.onExtractSuccess();
-                return true;
             }
-            m_Stat.onExtractFailed();
-            return false;
+            else
+                m_Stat.onExtractFailed();
+            return gp;
         }
 
         template <typename Q>
-        bool extract_( typename guarded_ptr::native_guard& guard, Q const& key )
+        guarded_ptr extract_( Q const& key )
         {
-            return extract_( guard, key, key_comparator());
+            return extract_( key, key_comparator());
         }
 
         template <typename Q, typename Less>
-        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less )
+        guarded_ptr extract_with_( Q const& key, Less )
         {
-            return extract_( guard, key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
+            return extract_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
         }
         //@endcond
 
@@ -898,9 +901,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            guarded_ptr gp;
-            extract_( gp.guard(), key );
-            return gp;
+            return extract_( key );
         }
 
         /// Extracts the item using compare functor \p pred
@@ -915,9 +916,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr extract_with( Q const& key, Less pred )
         {
-            guarded_ptr gp;
-            extract_with_( gp.guard(), key, pred );
-            return gp;
+            return extract_with_( key, pred );
         }
 
         /// Finds the key \p key
@@ -1052,9 +1051,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            guarded_ptr gp;
-            get_( gp.guard(), key );
-            return gp;
+            return get_( key );
         }
 
         /// Finds the key \p key and return the item found
@@ -1069,9 +1066,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr get_with( Q const& key, Less pred )
         {
-            guarded_ptr gp;
-            get_with_( gp.guard(), key, pred );
-            return gp;
+            return get_with_( key, pred );
         }
 
         /// Returns item count in the set

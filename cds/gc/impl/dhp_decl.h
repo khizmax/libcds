@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_GC_IMPL_DHP_DECL_H
@@ -119,8 +119,8 @@ namespace cds { namespace gc {
 
         public: // for internal use only!!!
             //@cond
-            static void alloc_guard( cds::gc::dhp::details::guard& g ); // inline in dhp_impl.h
-            static void free_guard( cds::gc::dhp::details::guard& g ); // inline in dhp_impl.h
+            static dhp::details::guard_data* alloc_guard(); // inline in dhp_impl.h
+            static void free_guard( dhp::details::guard_data* g ); // inline in dhp_impl.h
             //@endcond
         };
 
@@ -132,31 +132,80 @@ namespace cds { namespace gc {
             A guard is the hazard pointer.
             Additionally, the \p %Guard class manages allocation and deallocation of the hazard pointer
 
-            A \p %Guard object is not copy- and move-constructible
-            and not copy- and move-assignable.
+            \p %Guard object is movable but not copyable.
+
+            The guard object can be in two states:
+            - unlinked - the guard is not linked with any internal hazard pointer.
+              In this state no operation except \p link() and move assignment is supported.
+            - linked (default) - the guard allocates an internal hazard pointer and fully operable.
+
+            Due to performance reason the implementation does not check state of the guard in runtime.
+
+            @warning Move assignment can transfer the guard in unlinked state, use with care.
         */
-        class Guard: public dhp::Guard
+        class Guard
         {
-            //@cond
-            typedef dhp::Guard base_class;
-            //@endcond
-
-        public: // for internal use only
-            //@cond
-            typedef cds::gc::dhp::details::guard native_guard;
-            //@endcond
-
         public:
-            // Default ctor
-            Guard()
+            /// Default ctor allocates a guard (hazard pointer) from thread-private storage
+            Guard() CDS_NOEXCEPT
+                : m_guard( thread_gc::alloc_guard())
             {}
 
-            //@cond
+            /// Initilalizes an unlinked guard i.e. the guard contains no hazard pointer. Used for move semantics support
+            explicit Guard( std::nullptr_t ) CDS_NOEXCEPT
+                : m_guard( nullptr )
+            {}
+
+            /// Move ctor - \p src guard becomes unlinked (transfer internal guard ownership)
+            Guard( Guard&& src ) CDS_NOEXCEPT
+                : m_guard( src.m_guard )
+            {
+                src.m_guard = nullptr;
+            }
+
+            /// Move assignment: the internal guards are swapped between \p src and \p this
+            /**
+                @warning \p src will become in unlinked state if \p this was unlinked on entry.
+            */
+            Guard& operator=( Guard&& src ) CDS_NOEXCEPT
+            {
+                std::swap( m_guard, src.m_guard );
+                return *this;
+            }
+
+            /// Copy ctor is prohibited - the guard is not copyable
             Guard( Guard const& ) = delete;
-            Guard( Guard&& s ) = delete;
-            Guard& operator=(Guard const&) = delete;
-            Guard& operator=(Guard&&) = delete;
-            //@endcond
+
+            /// Copy assignment is prohibited
+            Guard& operator=( Guard const& ) = delete;
+
+            ~Guard()
+            {
+                if ( m_guard )
+                    thread_gc::free_guard( m_guard );
+            }
+
+            /// Checks if the guard object linked with any internal hazard pointer
+            bool is_linked() const
+            {
+                return m_guard != nullptr;
+            }
+
+            /// Links the guard with internal hazard pointer if the guard is in unlinked state
+            void link()
+            {
+                if ( !m_guard )
+                    m_guard = thread_gc::alloc_guard();
+            }
+
+            /// Unlinks the guard from internal hazard pointer; the guard becomes in unlinked state
+            void unlink()
+            {
+                if ( m_guard ) {
+                    thread_gc::free_guard( m_guard );
+                    m_guard = nullptr;
+                }
+            }
 
             /// Protects a pointer of type <tt> atomic<T*> </tt>
             /**
@@ -214,15 +263,18 @@ namespace cds { namespace gc {
                 or for already guarded pointer.
             */
             template <typename T>
-            T * assign( T * p )
+            T* assign( T* p )
             {
-                return base_class::operator =(p);
+                assert( m_guard != nullptr );
+                m_guard->pPost.store( p, atomics::memory_order_release );
+                return p;
             }
 
             //@cond
             std::nullptr_t assign( std::nullptr_t )
             {
-                return base_class::operator =(nullptr);
+                clear();
+                return nullptr;
             }
             //@endcond
 
@@ -233,9 +285,9 @@ namespace cds { namespace gc {
                 or for already guarded pointer.
             */
             template <typename T, int BITMASK>
-            T * assign( cds::details::marked_ptr<T, BITMASK> p )
+            T* assign( cds::details::marked_ptr<T, BITMASK> p )
             {
-                return base_class::operator =( p.ptr() );
+                return assign( p.ptr() );
             }
 
             /// Copy from \p src guard to \p this guard
@@ -247,7 +299,8 @@ namespace cds { namespace gc {
             /// Clears value of the guard
             void clear()
             {
-                base_class::clear();
+                assert( m_guard != nullptr );
+                m_guard->pPost.store( nullptr, atomics::memory_order_release );
             }
 
             /// Gets the value currently protected (relaxed read)
@@ -258,10 +311,25 @@ namespace cds { namespace gc {
             }
 
             /// Gets native guarded pointer stored
-            guarded_pointer get_native() const
+            void* get_native() const
             {
-                return base_class::get_guard()->pPost.load(atomics::memory_order_relaxed);
+                assert( m_guard != nullptr );
+                return m_guard->pPost.load( atomics::memory_order_acquire );
             }
+
+            //@cond
+            dhp::details::guard_data* release()
+            {
+                dhp::details::guard_data* g = m_guard;
+                m_guard = nullptr;
+                return g;
+            }
+            //@endcond
+
+        private:
+            //@cond
+            dhp::details::guard_data* m_guard;
+            //@endcond
         };
 
         /// Array of Dynamic Hazard Pointer guards
@@ -274,11 +342,8 @@ namespace cds { namespace gc {
             and not copy- and move-assignable.
         */
         template <size_t Count>
-        class GuardArray: public dhp::GuardArray<Count>
+        class GuardArray
         {
-            //@cond
-            typedef dhp::GuardArray<Count> base_class;
-            //@endcond
         public:
             /// Rebind array for other size \p OtherCount
             template <size_t OtherCount>
@@ -286,17 +351,27 @@ namespace cds { namespace gc {
                 typedef GuardArray<OtherCount>  other   ;   ///< rebinding result
             };
 
-        public:
-            // Default ctor
-            GuardArray()
-            {}
+            /// Array capacity
+            static CDS_CONSTEXPR const size_t c_nCapacity = Count;
 
-            //@cond
-            GuardArray( GuardArray const& ) = delete;
+        public:
+            /// Default ctor allocates \p Count hazard pointers
+            GuardArray(); // inline in dhp_impl.h
+
+            /// Move ctor is prohibited
             GuardArray( GuardArray&& ) = delete;
-            GuardArray& operator=(GuardArray const&) = delete;
-            GuardArray& operator-(GuardArray&&) = delete;
-            //@endcond
+
+            /// Move assignment is prohibited
+            GuardArray& operator=( GuardArray&& ) = delete;
+
+            /// Copy ctor is prohibited
+            GuardArray( GuardArray const& ) = delete;
+
+            /// Copy assignment is prohibited
+            GuardArray& operator=( GuardArray const& ) = delete;
+
+            /// Frees allocated hazard pointers
+            ~GuardArray(); // inline in dhp_impl.h
 
             /// Protects a pointer of type \p atomic<T*>
             /**
@@ -351,7 +426,10 @@ namespace cds { namespace gc {
             template <typename T>
             T * assign( size_t nIndex, T * p )
             {
-                base_class::set(nIndex, p);
+                assert( nIndex < capacity());
+                assert( m_arr[nIndex] != nullptr );
+
+                m_arr[nIndex]->pPost.store( p, atomics::memory_order_release );
                 return p;
             }
 
@@ -382,7 +460,10 @@ namespace cds { namespace gc {
             /// Clear value of the slot \p nIndex
             void clear( size_t nIndex )
             {
-                base_class::clear( nIndex );
+                assert( nIndex < capacity() );
+                assert( m_arr[nIndex] != nullptr );
+
+                m_arr[nIndex]->pPost.store( nullptr, atomics::memory_order_release );
             }
 
             /// Get current value of slot \p nIndex
@@ -395,14 +476,33 @@ namespace cds { namespace gc {
             /// Get native guarded pointer stored
             guarded_pointer get_native( size_t nIndex ) const
             {
-                return base_class::operator[](nIndex).get_guard()->pPost.load(atomics::memory_order_relaxed);
+                assert( nIndex < capacity() );
+                assert( m_arr[nIndex] != nullptr );
+
+                return m_arr[nIndex]->pPost.load( atomics::memory_order_acquire );
             }
+
+            //@cond
+            dhp::details::guard_data* release( size_t nIndex ) CDS_NOEXCEPT
+            {
+                assert( nIndex < capacity() );
+
+                dhp::details::guard_data* ret = m_arr[ nIndex ];
+                m_arr[nIndex] = nullptr;
+                return ret;
+            }
+            //@endcond
 
             /// Capacity of the guard array
             static CDS_CONSTEXPR size_t capacity()
             {
                 return Count;
             }
+
+        private:
+            //@cond
+            dhp::details::guard_data* m_arr[c_nCapacity];
+            //@endcond
         };
 
         /// Guarded pointer
@@ -455,6 +555,8 @@ namespace cds { namespace gc {
                     return p;
                 }
             };
+
+            template <typename GT, typename VT, typename C> friend class guarded_ptr;
             //@endcond
 
         public:
@@ -464,37 +566,46 @@ namespace cds { namespace gc {
             /// Functor for casting \p guarded_type to \p value_type
             typedef typename std::conditional< std::is_same<Cast, void>::value, trivial_cast, Cast >::type value_cast;
 
-            //@cond
-            typedef cds::gc::dhp::details::guard native_guard;
-            //@endcond
-
-        private:
-            //@cond
-            native_guard    m_guard;
-            //@endcond
-
         public:
             /// Creates empty guarded pointer
             guarded_ptr() CDS_NOEXCEPT
+                : m_guard( nullptr )
             {}
 
             //@cond
+            explicit guarded_ptr( dhp::details::guard_data* g ) CDS_NOEXCEPT
+                : m_guard( g )
+            {}
+
             /// Initializes guarded pointer with \p p
             explicit guarded_ptr( guarded_type * p ) CDS_NOEXCEPT
             {
-                alloc_guard();
-                assert( m_guard.is_initialized() );
-                m_guard.set( p );
+                reset( p );
             }
             explicit guarded_ptr( std::nullptr_t ) CDS_NOEXCEPT
+                : m_guard( nullptr )
             {}
             //@endcond
 
             /// Move ctor
             guarded_ptr( guarded_ptr&& gp ) CDS_NOEXCEPT
+                : m_guard( gp.m_guard )
             {
-                m_guard.set_guard( gp.m_guard.release_guard() );
+                gp.m_guard = nullptr;
             }
+
+            /// Move ctor
+            template <typename GT, typename VT, typename C>
+            guarded_ptr( guarded_ptr<GT, VT, C>&& gp ) CDS_NOEXCEPT
+                : m_guard( gp.m_guard )
+            {
+                gp.m_guard = nullptr;
+            }
+
+            /// Ctor from \p Guard
+            explicit guarded_ptr( Guard&& g ) CDS_NOEXCEPT
+                : m_guard( g.release() )
+            {}
 
             /// The guarded pointer is not copy-constructible
             guarded_ptr( guarded_ptr const& gp ) = delete;
@@ -505,14 +616,20 @@ namespace cds { namespace gc {
             */
             ~guarded_ptr() CDS_NOEXCEPT
             {
-                free_guard();
+                release();
             }
 
             /// Move-assignment operator
             guarded_ptr& operator=( guarded_ptr&& gp ) CDS_NOEXCEPT
             {
-                free_guard();
-                m_guard.set_guard( gp.m_guard.release_guard() );
+                std::swap( m_guard, gp.m_guard );
+                return *this;
+            }
+
+            /// Move-assignment from \p Guard
+            guarded_ptr& operator=( Guard&& g ) CDS_NOEXCEPT
+            {
+                std::swap( m_guard, g.m_guard );
                 return *this;
             }
 
@@ -523,27 +640,27 @@ namespace cds { namespace gc {
             value_type * operator ->() const CDS_NOEXCEPT
             {
                 assert( !empty() );
-                return value_cast()( reinterpret_cast<guarded_type *>(m_guard.get()));
+                return value_cast()( reinterpret_cast<guarded_type *>(m_guard->get()));
             }
 
             /// Returns a reference to guarded value
             value_type& operator *() CDS_NOEXCEPT
             {
                 assert( !empty());
-                return *value_cast()(reinterpret_cast<guarded_type *>(m_guard.get()));
+                return *value_cast()(reinterpret_cast<guarded_type *>(m_guard->get()));
             }
 
             /// Returns const reference to guarded value
             value_type const& operator *() const CDS_NOEXCEPT
             {
                 assert( !empty() );
-                return *value_cast()(reinterpret_cast<guarded_type *>(m_guard.get()));
+                return *value_cast()(reinterpret_cast<guarded_type *>(m_guard->get()));
             }
 
             /// Checks if the guarded pointer is \p nullptr
             bool empty() const CDS_NOEXCEPT
             {
-                return !m_guard.is_initialized() || m_guard.get( atomics::memory_order_relaxed ) == nullptr;
+                return m_guard == nullptr || m_guard->get( atomics::memory_order_relaxed ) == nullptr;
             }
 
             /// \p bool operator returns <tt>!empty()</tt>
@@ -564,18 +681,11 @@ namespace cds { namespace gc {
 
             //@cond
             // For internal use only!!!
-            native_guard& guard() CDS_NOEXCEPT
-            {
-                alloc_guard();
-                assert( m_guard.is_initialized() );
-                return m_guard;
-            }
-
             void reset(guarded_type * p) CDS_NOEXCEPT
             {
                 alloc_guard();
-                assert( m_guard.is_initialized() );
-                m_guard.set(p);
+                assert( m_guard );
+                m_guard->set( p );
             }
 
             //@endcond
@@ -584,15 +694,22 @@ namespace cds { namespace gc {
             //@cond
             void alloc_guard()
             {
-                if ( !m_guard.is_initialized() )
-                    thread_gc::alloc_guard( m_guard );
+                if ( !m_guard )
+                    m_guard = thread_gc::alloc_guard();
             }
 
             void free_guard()
             {
-                if ( m_guard.is_initialized() )
+                if ( m_guard ) {
                     thread_gc::free_guard( m_guard );
+                    m_guard = nullptr;
+                }
             }
+            //@endcond
+
+        private:
+            //@cond
+            dhp::details::guard_data* m_guard;
             //@endcond
         };
 

@@ -585,7 +585,7 @@ namespace cds { namespace intrusive {
             ord_list theList;
             // ...
             {
-                ord_list::guarded_ptr gp(theList.extract( 5 ));
+                ord_list::guarded_ptr gp( theList.extract( 5 ));
                 if ( gp ) {
                     // Deal with gp
                     // ...
@@ -597,9 +597,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            guarded_ptr gp;
-            extract_at( m_pHead, gp.guard(), key, key_comparator());
-            return gp;
+            return extract_at( m_pHead, key, key_comparator());
         }
 
         /// Extracts the item using compare functor \p pred
@@ -615,9 +613,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            extract_at( m_pHead, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>());
-            return gp;
+            return extract_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Finds \p key in the list
@@ -754,9 +750,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr get( Q const& key ) const
         {
-            guarded_ptr gp;
-            get_at( m_pHead, gp.guard(), key, key_comparator());
-            return gp;
+            return get_at( m_pHead, key, key_comparator());
         }
 
         /// Finds the \p key and return the item found
@@ -772,9 +766,7 @@ namespace cds { namespace intrusive {
         guarded_ptr get_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            get_at( m_pHead, gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>());
-            return gp;
+            return get_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Clears the list (thread safe, not atomic)
@@ -989,16 +981,16 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_at( atomic_node_ptr& refHead, typename guarded_ptr::native_guard& dest, Q const& val, Compare cmp )
+        guarded_ptr extract_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
             position pos;
             back_off bkoff;
             while ( search( refHead, val, pos, cmp )) {
                 if ( unlink_node( pos )) {
-                    dest.set( pos.pFound );
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
-                    return true;
+                    assert( pos.pFound != nullptr );
+                    return guarded_ptr( std::move( pos.guard ));
                 }
                 else
                     bkoff();
@@ -1007,7 +999,7 @@ namespace cds { namespace intrusive {
             }
 
             m_Stat.onEraseFailed();
-            return false;
+            return guarded_ptr();
         }
 
         template <typename Q, typename Compare>
@@ -1054,17 +1046,16 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_at( atomic_node_ptr const& refHead, typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp ) const
+        guarded_ptr get_at( atomic_node_ptr const& refHead, Q const& val, Compare cmp ) const
         {
             position pos;
             if ( search( refHead, val, pos, cmp )) {
-                guard.set( pos.pFound );
                 m_Stat.onFindSuccess();
-                return true;
+                return guarded_ptr( std::move( pos.guard ));
             }
 
             m_Stat.onFindFailed();
-            return false;
+            return guarded_ptr();
         }
         //@endcond
 

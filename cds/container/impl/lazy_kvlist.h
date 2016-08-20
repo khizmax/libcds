@@ -589,9 +589,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr extract( K const& key )
         {
-            guarded_ptr gp;
-            extract_at( head(), gp.guard(), key, intrusive_key_comparator() );
-            return gp;
+            return extract_at( head(), key, intrusive_key_comparator() );
         }
 
         /// Extracts the item from the list with comparing functor \p pred
@@ -607,9 +605,7 @@ namespace cds { namespace container {
         guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            extract_at( head(), gp.guard(), key, typename maker::template less_wrapper<Less>::type() );
-            return gp;
+            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Checks whether the list contains \p key
@@ -719,9 +715,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr get( K const& key )
         {
-            guarded_ptr gp;
-            get_at( head(), gp.guard(), key, intrusive_key_comparator() );
-            return gp;
+            return get_at( head(), key, intrusive_key_comparator() );
         }
 
         /// Finds the key \p val and return the item found
@@ -737,9 +731,7 @@ namespace cds { namespace container {
         guarded_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            get_at( head(), gp.guard(), key, typename maker::template less_wrapper<Less>::type() );
-            return gp;
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Checks if the list is empty
@@ -831,9 +823,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        bool extract_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr extract_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::extract_at( &refHead, guard, key, cmp );
+            return base_class::extract_at( &refHead, key, cmp );
         }
 
         template <typename K, typename Func>
@@ -863,9 +855,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        bool get_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr get_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::get_at( &refHead, guard, key, cmp );
+            return base_class::get_at( &refHead, key, cmp );
         }
 
         //@endcond

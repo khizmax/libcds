@@ -357,6 +357,9 @@ namespace cds_test {
                 EXPECT_EQ( i.s.nUpdateExistsCall, 1 );
             }
 
+            // Apply retired pointer to clean links
+            List::gc::force_dispose();
+
             for ( auto& i : arr ) {
                 EXPECT_EQ( i.s.nUpdateExistsCall, 0 );
                 std::pair<bool, bool> ret = l.update( i, []( value_type& i, value_type * old ) {

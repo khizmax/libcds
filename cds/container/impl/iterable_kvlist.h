@@ -691,9 +691,9 @@ namespace cds { namespace container {
             return base_class::erase_at( refHead, key, cmp, f );
         }
         template <typename K, typename Compare>
-        bool extract_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr extract_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::extract_at( refHead, guard, key, cmp );
+            return base_class::extract_at( refHead, key, cmp );
         }
 
         template <typename K, typename Compare>
@@ -709,9 +709,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        bool get_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr get_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::get_at( refHead, guard, key, cmp );
+            return base_class::get_at( refHead, key, cmp );
         }
 
         //@endcond

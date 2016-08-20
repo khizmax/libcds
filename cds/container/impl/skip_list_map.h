@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_IMPL_SKIP_LIST_MAP_H
@@ -466,9 +466,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr extract( K const& key )
         {
-            guarded_ptr gp;
-            base_class::extract_( gp.guard(), key, typename base_class::key_comparator() );
-            return gp;
+            return base_class::extract_( key, typename base_class::key_comparator() );
         }
 
         /// Extracts the item from the map with comparing functor \p pred
@@ -485,9 +483,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >  wrapped_less;
-            guarded_ptr gp;
-            base_class::extract_( gp.guard(), key, cds::opt::details::make_comparator_from_less<wrapped_less>() );
-            return gp;
+            return base_class::extract_( key, cds::opt::details::make_comparator_from_less<wrapped_less>() );
         }
 
         /// Extracts an item with minimal key from the map
@@ -516,9 +512,7 @@ namespace cds { namespace container {
         */
         guarded_ptr extract_min()
         {
-            guarded_ptr gp;
-            base_class::extract_min_( gp.guard() );
-            return gp;
+            return base_class::extract_min_();
         }
 
         /// Extracts an item with maximal key from the map
@@ -547,9 +541,7 @@ namespace cds { namespace container {
         */
         guarded_ptr extract_max()
         {
-            guarded_ptr gp;
-            base_class::extract_max_( gp.guard() );
-            return gp;
+            return base_class::extract_max_();
         }
 
         /// Find the key \p key
@@ -662,9 +654,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr get( K const& key )
         {
-            guarded_ptr gp;
-            base_class::get_with_( gp.guard(), key, typename base_class::key_comparator() );
-            return gp;
+            return base_class::get_with_( key, typename base_class::key_comparator() );
         }
 
         /// Finds the key \p key and return the item found
@@ -681,9 +671,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor > wrapped_less;
-            guarded_ptr gp;
-            base_class::get_with_( gp.guard(), key, cds::opt::details::make_comparator_from_less< wrapped_less >());
-            return gp;
+            return base_class::get_with_( key, cds::opt::details::make_comparator_from_less< wrapped_less >());
         }
 
         /// Clears the map

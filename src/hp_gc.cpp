@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
@@ -195,7 +195,7 @@ namespace cds { namespace gc {
             while ( pNode ) {
                 for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
                     pRec->sync();
-                    void * hptr = pNode->m_hzp[i];
+                    void * hptr = pNode->m_hzp[i].get();
                     if ( hptr )
                         plist.push_back( hptr );
                 }
@@ -277,7 +277,7 @@ namespace cds { namespace gc {
                     if ( !pNode->m_bFree.load( atomics::memory_order_acquire ) ) {
                         for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
                             pRec->sync();
-                            void * hptr = pNode->m_hzp[i];
+                            void * hptr = pNode->m_hzp[i].get();
                             if ( hptr ) {
                                 dummyRetired.m_p = hptr;
                                 details::retired_vector::iterator it = std::lower_bound( itRetired, itRetiredEnd, dummyRetired, cds::gc::details::retired_ptr::less );

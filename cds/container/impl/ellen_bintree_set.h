@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_IMPL_ELLEN_BINTREE_SET_H
@@ -383,9 +383,7 @@ namespace cds { namespace container {
         */
         guarded_ptr extract_min()
         {
-            guarded_ptr gp;
-            base_class::extract_min_( gp.guard() );
-            return gp;
+            return guarded_ptr( base_class::extract_min_());
         }
 
         /// Extracts an item with maximal key from the set
@@ -404,9 +402,7 @@ namespace cds { namespace container {
         */
         guarded_ptr extract_max()
         {
-            guarded_ptr gp;
-            base_class::extract_max_( gp.guard() );
-            return gp;
+            return guarded_ptr( base_class::extract_max_());
         }
 
         /// Extracts an item from the tree
@@ -422,9 +418,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            guarded_ptr gp;
-            base_class::extract_( gp.guard(), key );
-            return gp;
+            return base_class::extract_( key );
         }
 
         /// Extracts an item from the set using \p pred for searching
@@ -438,10 +432,8 @@ namespace cds { namespace container {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            base_class::extract_with_( gp.guard(), key,
+            return base_class::extract_with_( key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
-            return gp;
         }
 
         /// Find the key \p key
@@ -559,9 +551,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            guarded_ptr gp;
-            base_class::get_( gp.guard(), key );
-            return gp;
+            return base_class::get_( key );
         }
 
         /// Finds \p key with predicate \p pred and returns the item found
@@ -575,10 +565,8 @@ namespace cds { namespace container {
         guarded_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED(pred);
-            guarded_ptr gp;
-            base_class::get_with_( gp.guard(), key,
+            return base_class::get_with_( key,
                 cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >() );
-            return gp;
         }
 
         /// Clears the set (not atomic)

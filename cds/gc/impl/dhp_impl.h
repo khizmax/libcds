@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_GC_IMPL_DHP_IMPL_H
@@ -38,27 +38,32 @@ namespace cds { namespace gc {
 
     namespace dhp {
 
-        inline Guard::Guard()
+        static inline ThreadGC& get_thread_gc()
         {
-            cds::threading::getGC<DHP>().allocGuard( *this );
+            return cds::threading::getGC<DHP>();
         }
 
-        inline Guard::~Guard()
-        {
-            cds::threading::getGC<DHP>().freeGuard( *this );
-        }
+        //inline Guard::Guard()
+        //{
+        //    cds::threading::getGC<DHP>().allocGuard( *this );
+        //}
 
-        template <size_t Count>
-        inline GuardArray<Count>::GuardArray()
-        {
-            cds::threading::getGC<DHP>().allocGuard( *this );
-        }
+        //inline Guard::~Guard()
+        //{
+        //    cds::threading::getGC<DHP>().freeGuard( *this );
+        //}
 
-        template <size_t Count>
-        inline GuardArray<Count>::~GuardArray()
-        {
-            cds::threading::getGC<DHP>().freeGuard( *this );
-        }
+        //template <size_t Count>
+        //inline GuardArray<Count>::GuardArray()
+        //{
+        //    cds::threading::getGC<DHP>().allocGuard( *this );
+        //}
+
+        //template <size_t Count>
+        //inline GuardArray<Count>::~GuardArray()
+        //{
+        //    cds::threading::getGC<DHP>().freeGuard( *this );
+        //}
     } // namespace dhp
 
 
@@ -77,13 +82,26 @@ namespace cds { namespace gc {
             cds::threading::Manager::detachThread();
     }
 
-    inline /*static*/ void DHP::thread_gc::alloc_guard( cds::gc::dhp::details::guard& g )
+    inline /*static*/ dhp::details::guard_data* DHP::thread_gc::alloc_guard()
     {
-        return cds::threading::getGC<DHP>().allocGuard(g);
+        return dhp::get_thread_gc().allocGuard();
     }
-    inline /*static*/ void DHP::thread_gc::free_guard( cds::gc::dhp::details::guard& g )
+    inline /*static*/ void DHP::thread_gc::free_guard( dhp::details::guard_data* g )
     {
-        cds::threading::getGC<DHP>().freeGuard(g);
+        if ( g )
+            dhp::get_thread_gc().freeGuard( g );
+    }
+
+    template <size_t Count>
+    inline DHP::GuardArray<Count>::GuardArray()
+    {
+        dhp::get_thread_gc().allocGuard( m_arr );
+    }
+
+    template <size_t Count>
+    inline DHP::GuardArray<Count>::~GuardArray()
+    {
+        dhp::get_thread_gc().freeGuard( m_arr );
     }
 
     inline void DHP::scan()
