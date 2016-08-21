@@ -163,6 +163,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header File
 		..\..\..\test\stress\map\map_type_cuckoo.h = ..\..\..\test\stress\map\map_type_cuckoo.h
 		..\..\..\test\stress\map\map_type_ellen_bintree.h = ..\..\..\test\stress\map\map_type_ellen_bintree.h
 		..\..\..\test\stress\map\map_type_feldman_hashmap.h = ..\..\..\test\stress\map\map_type_feldman_hashmap.h
+		..\..\..\test\stress\map\map_type_iterable_list.h = ..\..\..\test\stress\map\map_type_iterable_list.h
 		..\..\..\test\stress\map\map_type_lazy_list.h = ..\..\..\test\stress\map\map_type_lazy_list.h
 		..\..\..\test\stress\map\map_type_michael.h = ..\..\..\test\stress\map\map_type_michael.h
 		..\..\..\test\stress\map\map_type_michael_list.h = ..\..\..\test\stress\map\map_type_michael_list.h
