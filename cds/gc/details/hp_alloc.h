@@ -34,6 +34,7 @@
 #include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/gc/details/hp_type.h>
+#include <string.h> // memset
 
 //@cond
 namespace cds {
