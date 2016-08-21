@@ -28,9 +28,9 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "test_map_hp.h"
+#include "test_michael_iterable_hp.h"
 
-#include <cds/container/lazy_kvlist_hp.h>
+#include <cds/container/iterable_kvlist_hp.h>
 #include <cds/container/michael_map.h>
 
 namespace {
@@ -38,18 +38,18 @@ namespace {
     namespace cc = cds::container;
     typedef cds::gc::HP gc_type;
 
-    class MichaelLazyMap_HP: public cds_test::container_map_hp
+    class MichaelIterableMap_HP: public cds_test::michael_iterable_hp
     {
     protected:
-        typedef cds_test::container_map_hp base_class;
+        typedef cds_test::michael_iterable_hp base_class;
 
         void SetUp()
         {
-            typedef cc::LazyKVList< gc_type, key_type, value_type > list_type;
+            typedef cc::IterableKVList< gc_type, key_type, value_type > list_type;
             typedef cc::MichaelHashMap< gc_type, list_type >   map_type;
 
-            // +1 - for guarded_ptr and iterator
-            cds::gc::hp::GarbageCollector::Construct( map_type::c_nHazardPtrCount + 1, 1, 16 );
+            // +3 - for guarded_ptr and iterator
+            cds::gc::hp::GarbageCollector::Construct( map_type::c_nHazardPtrCount + 3, 1, 16 );
             cds::threading::Manager::attachThread();
         }
 
@@ -60,10 +60,10 @@ namespace {
         }
     };
 
-    TEST_F( MichaelLazyMap_HP, compare )
+    TEST_F( MichaelIterableMap_HP, compare )
     {
-        typedef cc::LazyKVList< gc_type, key_type, value_type,
-            typename cc::lazy_list::make_traits<
+        typedef cc::IterableKVList< gc_type, key_type, value_type,
+            typename cc::iterable_list::make_traits<
                 cds::opt::compare< cmp >
             >::type
         > list_type;
@@ -78,10 +78,10 @@ namespace {
         test( m );
     }
 
-    TEST_F( MichaelLazyMap_HP, less )
+    TEST_F( MichaelIterableMap_HP, less )
     {
-        typedef cc::LazyKVList< gc_type, key_type, value_type,
-            typename cc::lazy_list::make_traits<
+        typedef cc::IterableKVList< gc_type, key_type, value_type,
+            typename cc::iterable_list::make_traits<
                 cds::opt::less< less >
             >::type
         > list_type;
@@ -96,10 +96,10 @@ namespace {
         test( m );
     }
 
-    TEST_F( MichaelLazyMap_HP, cmpmix )
+    TEST_F( MichaelIterableMap_HP, cmpmix )
     {
-        typedef cc::LazyKVList< gc_type, key_type, value_type,
-            typename cc::lazy_list::make_traits<
+        typedef cc::IterableKVList< gc_type, key_type, value_type,
+            typename cc::iterable_list::make_traits<
                 cds::opt::less< less >
                 ,cds::opt::compare< cmp >
             >::type
@@ -115,14 +115,14 @@ namespace {
         test( m );
     }
 
-    TEST_F( MichaelLazyMap_HP, backoff )
+    TEST_F( MichaelIterableMap_HP, backoff )
     {
-        struct list_traits: public cc::lazy_list::traits
+        struct list_traits: public cc::iterable_list::traits
         {
             typedef cmp compare;
             typedef cds::backoff::exponential<cds::backoff::pause, cds::backoff::yield> back_off;
         };
-        typedef cc::LazyKVList< gc_type, key_type, value_type, list_traits > list_type;
+        typedef cc::IterableKVList< gc_type, key_type, value_type, list_traits > list_type;
 
         struct map_traits: public cc::michael_map::traits
         {
@@ -135,15 +135,15 @@ namespace {
         test( m );
     }
 
-    TEST_F( MichaelLazyMap_HP, seq_cst )
+    TEST_F( MichaelIterableMap_HP, seq_cst )
     {
-        struct list_traits: public cc::lazy_list::traits
+        struct list_traits: public cc::iterable_list::traits
         {
             typedef cmp compare;
             typedef cds::backoff::yield back_off;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cc::LazyKVList< gc_type, key_type, value_type, list_traits > list_type;
+        typedef cc::IterableKVList< gc_type, key_type, value_type, list_traits > list_type;
 
         struct map_traits: public cc::michael_map::traits
         {
@@ -151,19 +151,19 @@ namespace {
         };
         typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
 
-        map_type m( kSize, 8 );
-        test( m );
+        map_type s( kSize, 8 );
+        test( s );
     }
 
-    TEST_F( MichaelLazyMap_HP, mutex )
+    TEST_F( MichaelIterableMap_HP, stat )
     {
-        struct list_traits: public cc::lazy_list::traits
+        struct list_traits: public cc::iterable_list::traits
         {
             typedef cmp compare;
             typedef cds::backoff::yield back_off;
-            typedef std::mutex lock_type;
+            typedef cc::iterable_list::stat<> stat;
         };
-        typedef cc::LazyKVList< gc_type, key_type, value_type, list_traits > list_type;
+        typedef cc::IterableKVList< gc_type, key_type, value_type, list_traits > list_type;
 
         struct map_traits: public cc::michael_map::traits
         {
@@ -171,19 +171,18 @@ namespace {
         };
         typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
 
-        map_type m( kSize, 2 );
-        test( m );
+        map_type s( kSize, 8 );
+        test( s );
     }
 
-    TEST_F( MichaelLazyMap_HP, stat )
+    TEST_F( MichaelIterableMap_HP, wrapped_stat )
     {
-        struct list_traits: public cc::lazy_list::traits
+        struct list_traits: public cc::iterable_list::traits
         {
             typedef cmp compare;
-            typedef cds::backoff::yield back_off;
-            typedef cc::lazy_list::stat<> stat;
+            typedef cc::iterable_list::wrapped_stat<> stat;
         };
-        typedef cc::LazyKVList< gc_type, key_type, value_type, list_traits > list_type;
+        typedef cc::IterableKVList< gc_type, key_type, value_type, list_traits > list_type;
 
         struct map_traits: public cc::michael_map::traits
         {
@@ -191,28 +190,8 @@ namespace {
         };
         typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
 
-        map_type m( kSize, 2 );
-        test( m );
-    }
-
-    TEST_F( MichaelLazyMap_HP, wrapped_stat )
-    {
-        struct list_traits: public cc::lazy_list::traits
-        {
-            typedef cmp compare;
-            typedef cds::backoff::yield back_off;
-            typedef cc::lazy_list::wrapped_stat<> stat;
-        };
-        typedef cc::LazyKVList< gc_type, key_type, value_type, list_traits > list_type;
-
-        struct map_traits: public cc::michael_map::traits
-        {
-            typedef hash1 hash;
-        };
-        typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
-
-        map_type m( kSize, 2 );
-        test( m );
+        map_type s( kSize, 8 );
+        test( s );
     }
 
 } // namespace

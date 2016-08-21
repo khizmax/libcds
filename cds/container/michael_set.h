@@ -463,8 +463,7 @@ namespace cds { namespace container {
             The operation performs inserting or changing data with lock-free manner.
 
             If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later
-            by call \p Traits::disposer.
+            Otherwise, the current element is changed to \p val, the old element will be retired later.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
             \p second is \p true if \p val has been added or \p false if the item with that key

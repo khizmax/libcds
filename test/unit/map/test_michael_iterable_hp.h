@@ -28,16 +28,16 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CDSUNIT_MAP_TEST_MAP_HP_H
-#define CDSUNIT_MAP_TEST_MAP_HP_H
+#ifndef CDSUNIT_MAP_TEST_MICHAEL_ITERABLE_MAP_HP_H
+#define CDSUNIT_MAP_TEST_MICHAEL_ITERABLE_MAP_HP_H
 
-#include "test_map.h"
+#include "test_michael_iterable.h"
 
 namespace cds_test {
 
-    class container_map_hp: public container_map
+    class michael_iterable_hp: public michael_iterable_map
     {
-        typedef container_map base_class;
+        typedef michael_iterable_map base_class;
 
     protected:
         template <class Map>
@@ -139,4 +139,4 @@ namespace cds_test {
 
 } // namespace cds_test
 
-#endif // #ifndef CDSUNIT_MAP_TEST_MAP_H
+#endif // #ifndef CDSUNIT_MAP_TEST_MICHAEL_ITERABLE_MAP_HP_H

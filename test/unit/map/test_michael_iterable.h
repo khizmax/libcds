@@ -28,8 +28,8 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CDSUNIT_MAP_TEST_MAP_H
-#define CDSUNIT_MAP_TEST_MAP_H
+#ifndef CDSUNIT_MAP_TEST_MICHAEL_ITERABLE_MAP_H
+#define CDSUNIT_MAP_TEST_MICHAEL_ITERABLE_MAP_H
 
 #include "test_map_data.h"
 
@@ -38,7 +38,7 @@ namespace cds { namespace container {} }
 
 namespace cds_test {
 
-    class container_map: public map_fixture
+    class michael_iterable_map: public map_fixture
     {
     public:
         static size_t const kSize = 1000;
@@ -88,7 +88,7 @@ namespace cds_test {
 
                 std::pair< bool, bool > updResult;
 
-                switch ( i.nKey % 16 ) {
+                switch ( i.nKey % 17 ) {
                 case 0:
                     EXPECT_TRUE( m.insert( i ));
                     EXPECT_FALSE( m.insert( i ));
@@ -153,66 +153,69 @@ namespace cds_test {
                     } ));
                     break;
                 case 9:
-                    updResult = m.update( i.nKey, []( bool, map_pair& ) {
+                    updResult = m.update( i.nKey, []( map_pair&, map_pair* ) {
                         EXPECT_TRUE( false );
                     }, false );
                     EXPECT_FALSE( updResult.first );
                     EXPECT_FALSE( updResult.second );
 
-                    updResult = m.update( i.nKey, []( bool bNew, map_pair& v ) {
-                        EXPECT_TRUE( bNew );
+                    updResult = m.update( i.nKey, []( map_pair& v, map_pair* old ) {
+                        EXPECT_TRUE( old == nullptr );
                         v.second.nVal = v.first.nKey;
                     });
                     EXPECT_TRUE( updResult.first );
                     EXPECT_TRUE( updResult.second );
 
-                    updResult = m.update( i.nKey, []( bool bNew, map_pair& v ) {
-                        EXPECT_FALSE( bNew );
-                        EXPECT_EQ( v.first.nKey, v.second.nVal );
-                        v.second.strVal = std::to_string( v.second.nVal );
+                    updResult = m.update( i.nKey, []( map_pair& v, map_pair* old ) {
+                        ASSERT_FALSE( old == nullptr );
+                        EXPECT_EQ( v.first.nKey, old->second.nVal );
+                        v.second.nVal = old->second.nVal;
+                        v.second.strVal = std::to_string( old->second.nVal );
                     } );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 10:
-                    updResult = m.update( i, []( bool, map_pair& ) {
+                    updResult = m.update( i, []( map_pair&, map_pair* ) {
                         EXPECT_TRUE( false );
                     }, false );
                     EXPECT_FALSE( updResult.first );
                     EXPECT_FALSE( updResult.second );
 
-                    updResult = m.update( i, []( bool bNew, map_pair& v ) {
-                        EXPECT_TRUE( bNew );
+                    updResult = m.update( i, []( map_pair& v, map_pair* old ) {
+                        EXPECT_TRUE( old == nullptr );
                         v.second.nVal = v.first.nKey;
                     });
                     EXPECT_TRUE( updResult.first );
                     EXPECT_TRUE( updResult.second );
 
-                    updResult = m.update( i, []( bool bNew, map_pair& v ) {
-                        EXPECT_FALSE( bNew );
-                        EXPECT_EQ( v.first.nKey, v.second.nVal );
+                    updResult = m.update( i, []( map_pair& v, map_pair* old ) {
+                        ASSERT_FALSE( old == nullptr );
+                        EXPECT_EQ( v.first.nKey, old->second.nVal );
+                        v.second.nVal = old->second.nVal;
                         v.second.strVal = std::to_string( v.second.nVal );
                     } );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 11:
-                    updResult = m.update( val.strVal, []( bool, map_pair& ) {
+                    updResult = m.update( val.strVal, []( map_pair&, map_pair* ) {
                         EXPECT_TRUE( false );
                     }, false );
                     EXPECT_FALSE( updResult.first );
                     EXPECT_FALSE( updResult.second );
 
-                    updResult = m.update( val.strVal, []( bool bNew, map_pair& v ) {
-                        EXPECT_TRUE( bNew );
+                    updResult = m.update( val.strVal, []( map_pair& v, map_pair* old ) {
+                        EXPECT_TRUE( old == nullptr );
                         v.second.nVal = v.first.nKey;
                     });
                     EXPECT_TRUE( updResult.first );
                     EXPECT_TRUE( updResult.second );
 
-                    updResult = m.update( val.strVal, []( bool bNew, map_pair& v ) {
-                        EXPECT_FALSE( bNew );
-                        EXPECT_EQ( v.first.nKey, v.second.nVal );
+                    updResult = m.update( val.strVal, []( map_pair& v, map_pair* old ) {
+                        ASSERT_FALSE( old == nullptr );
+                        EXPECT_EQ( v.first.nKey, old->second.nVal );
+                        v.second.nVal = old->second.nVal;
                         v.second.strVal = std::to_string( v.second.nVal );
                     } );
                     EXPECT_TRUE( updResult.first );
@@ -248,6 +251,23 @@ namespace cds_test {
                         str = val.strVal;
                         EXPECT_FALSE( m.emplace( i, i.nKey, std::move( str )));
                         EXPECT_TRUE( str.empty());
+                    }
+                    break;
+                case 16:
+                    {
+                        auto res = m.upsert( i, i.nKey, false );
+                        EXPECT_FALSE( res.first );
+                        EXPECT_FALSE( res.second );
+
+                        res = m.upsert( i, i.nKey );
+                        EXPECT_TRUE( res.first );
+                        EXPECT_TRUE( res.second );
+
+                        std::string str = val.strVal;
+                        res = m.upsert( i, std::move( str ));
+                        EXPECT_TRUE( res.first );
+                        EXPECT_FALSE( res.second );
+                        EXPECT_TRUE( str.empty() );
                     }
                     break;
                 }
@@ -388,4 +408,4 @@ namespace cds_test {
 
 } // namespace cds_test
 
-#endif // #ifndef CDSUNIT_MAP_TEST_MAP_H
+#endif // #ifndef CDSUNIT_MAP_TEST_MICHAEL_ITERABLE_MAP_H

@@ -118,7 +118,8 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef GC gc; ///< Garbage collector
+        typedef GC     gc;     ///< Garbage collector
+        typedef Traits traits; ///< Traits
 #ifdef CDS_DOXYGEN_INVOKED
         typedef Key                                 key_type        ;   ///< Key type
         typedef Value                               mapped_type     ;   ///< Type of value stored in the list
@@ -136,6 +137,22 @@ namespace cds { namespace container {
         typedef typename base_class::stat         stat;           ///< Internal statistics
 
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef LazyKVList<
+                gc
+                , key_type, mapped_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
 
     protected:
         //@cond
@@ -397,9 +414,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename K>
-        bool insert( const K& key )
+        bool insert( K&& key )
         {
-            return insert_at( head(), key );
+            return insert_at( head(), std::forward<K>( key ));
         }
 
         /// Inserts new node with a key and a value
@@ -413,12 +430,12 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename K, typename V>
-        bool insert( const K& key, const V& val )
+        bool insert( K&& key, V&& val )
         {
             // We cannot use insert with functor here
             // because we cannot lock inserted node for updating
             // Therefore, we use separate function
-            return insert_at( head(), key, val );
+            return insert_at( head(), std::forward<K>( key ), std::forward<V>( val ));
         }
 
         /// Inserts new node and initializes it by a functor
@@ -446,9 +463,9 @@ namespace cds { namespace container {
             it is preferable that the initialization should be completed only if inserting is successful.
         */
         template <typename K, typename Func>
-        bool insert_with( const K& key, Func func )
+        bool insert_with( K&& key, Func func )
         {
-            return insert_with_at( head(), key, func );
+            return insert_with_at( head(), std::forward<K>( key ), func );
         }
 
         /// Inserts data of type \ref mapped_type constructed with <tt>std::forward<Args>(args)...</tt>
@@ -489,9 +506,9 @@ namespace cds { namespace container {
             already exists.
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> update( const K& key, Func f, bool bAllowInsert = true )
+        std::pair<bool, bool> update( K&& key, Func f, bool bAllowInsert = true )
         {
-            return update_at( head(), key, f, bAllowInsert );
+            return update_at( head(), std::forward<K>( key ), f, bAllowInsert );
         }
         //@cond
         template <typename K, typename Func>
@@ -781,21 +798,21 @@ namespace cds { namespace container {
         }
 
         template <typename K>
-        bool insert_at( head_type& refHead, const K& key )
+        bool insert_at( head_type& refHead, K&& key )
         {
-            return insert_node_at( refHead, alloc_node( key ));
+            return insert_node_at( refHead, alloc_node( std::forward<K>( key )));
         }
 
         template <typename K, typename V>
-        bool insert_at( head_type& refHead, const K& key, const V& val )
+        bool insert_at( head_type& refHead, K&& key, V&& val )
         {
-            return insert_node_at( refHead, alloc_node( key, val ));
+            return insert_node_at( refHead, alloc_node( std::forward<K>( key ), std::forward<V>( val )));
         }
 
         template <typename K, typename Func>
-        bool insert_with_at( head_type& refHead, const K& key, Func f )
+        bool insert_with_at( head_type& refHead, K&& key, Func f )
         {
-            scoped_node_ptr pNode( alloc_node( key ));
+            scoped_node_ptr pNode( alloc_node( std::forward<K>( key )));
 
             if ( base_class::insert_at( &refHead, *pNode, [&f](node_type& node){ f( node.m_Data ); } )) {
                 pNode.release();
@@ -829,9 +846,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Func>
-        std::pair<bool, bool> update_at( head_type& refHead, const K& key, Func f, bool bAllowInsert )
+        std::pair<bool, bool> update_at( head_type& refHead, K&& key, Func f, bool bAllowInsert )
         {
-            scoped_node_ptr pNode( alloc_node( key ));
+            scoped_node_ptr pNode( alloc_node( std::forward<K>( key )));
 
             std::pair<bool, bool> ret = base_class::update_at( &refHead, *pNode,
                 [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); },
